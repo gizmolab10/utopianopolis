@@ -131,23 +131,23 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	}
 
 	func updateFrame(_ childrenViewHeight : CGFloat = .zero) {
-		let    drawnHeight = drawnSize.height
-		let  hasNoChildren = childrenViewHeight < drawnHeight
-		let         height = hasNoChildren ? CGFloat.zero : (childrenViewHeight - drawnHeight) / CGFloat(2.0)
+		if  let    textWidget = widget?.textWidget {
+			let   drawnHeight = drawnSize.height
+			let hasNoChildren = childrenViewHeight < drawnHeight
+			let             y = hasNoChildren ? CGFloat.zero : (childrenViewHeight - drawnHeight) / CGFloat(2.0)
+			var             x = textWidget.frame.minX - drawnSize.width
 
-		if  isReveal,
-			let textWidget = widget?.textWidget {
-			let drawnWidth = drawnSize.width
-			let revealDotX = drawnWidth + textWidget.drawnSize.width
-			frame          = CGRect(origin: CGPoint(x: revealDotX,   y: height), size: drawnSize)
-		} else  {
-			frame          = CGRect(origin: CGPoint(x: CGFloat.zero, y: height), size: drawnSize)
-		}
+			if  isReveal {
+				x             = textWidget.frame.maxX
+			}
 
-		if  let   i = innerDot {
-			let   s = i.drawnSize
-			let   o = CGPoint((drawnSize - s).multiplyBy(0.5))        // center inner dot within self
-			i.frame = CGRect(origin: o, size: s)
+			frame = CGRect(origin: CGPoint(x: x, y: y), size: drawnSize)
+
+			if  let   i = innerDot {
+				let   s = i.drawnSize
+				let   o = CGPoint((drawnSize - s).multiplyBy(0.5))        // center inner dot within self
+				i.frame = CGRect(origin: o, size: s)
+			}
 		}
 	}
 
