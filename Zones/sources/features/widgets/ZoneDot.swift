@@ -165,20 +165,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			innerDot?.setupForWidget(iWidget, asReveal: isReveal)
 		}
 
-		if  gAutoLayoutMaps {
-			snp.removeConstraints()
-			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? kUnknown)")
-			snp.makeConstraints { make in
-				make.size.equalTo(drawnSize)
-			}
-
-			if !isInnerDot {
-				innerDot?.snp.makeConstraints { make in
-					make.center.equalTo(self)
-				}
-			}
-		}
-
 		#if os(iOS)
 		backgroundColor = kClearColor
 		#endif

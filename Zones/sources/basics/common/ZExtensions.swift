@@ -676,6 +676,13 @@ extension CGPoint {
 
 extension CGSize {
 
+	public init(_ point: CGPoint) {
+		self.init()
+
+		width  = point.x
+		height = point.y
+	}
+
 	static var big: CGSize {
 		return CGSize(width: 1000000, height: 1000000)
 	}

@@ -149,7 +149,6 @@ class ZTextPack: NSObject {
 			let w = gWidgets.widgetForZone(z) {
 			let t = w.textWidget
 			w.addDots()
-			w.autoLayoutDots()
 			w.revealDot.setNeedsDisplay()
 			w.setNeedsDisplay()
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
@@ -317,7 +316,6 @@ class ZTextEditor: ZTextView {
 
 				if  let textWidget = zone.widget?.textWidget {
 					textWidget.enableUndo()
-					textWidget.applyConstraints()
 					textWidget.becomeFirstResponder()
 				}
 

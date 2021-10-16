@@ -152,45 +152,6 @@ class ZoneWidget: ZView {
     // MARK:-
 
 	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
-		if  gAutoLayoutMaps {
-			return oldLayoutInView(inView, for: mapType, atIndex: atIndex, recursing: recursing, kind, visited: visited)
-		} else {
-			return newLayoutInView(inView, for: mapType, atIndex: atIndex, recursing: recursing, kind, visited: visited)
-		}
-	}
-
-	func oldLayoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
-		var count = 1
-
-		if  let thisView = inView,
-            !thisView.subviews.contains(self) {
-            thisView.addSubview(self)
-        }
-
-        #if os(iOS)
-            backgroundColor = kClearColor
-        #endif
-
-		gStartupController?.fullStartupUpdate()
-		gWidgets.setWidgetForZone(self, for: mapType)
-        addTextView()
-		addDots()
-        textWidget.layoutText()
-        autoLayoutDots()
-
-		if  let zone = widgetZone {
-			addChildrenView()
-			addChildrenWidgets()
-
-			if  recursing && !visited.contains(zone), zone.hasVisibleChildren {
-				count += layoutChildrenWidgets(kind, mapType: mapType, visited: visited + [zone])
-			}
-		}
-
-		return count
-    }
-
-	func newLayoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
 
 		if  let thisView = inView,
@@ -217,7 +178,6 @@ class ZoneWidget: ZView {
 		}
 
 		textWidget.layoutText()
-		autoLayoutDots()
 		updateSize()
 
 		return count
@@ -228,33 +188,12 @@ class ZoneWidget: ZView {
 
         if  let  zone = widgetZone, zone.hasVisibleChildren {
             var index = childrenWidgets.count
-            var previous: ZoneWidget?
 
             while index           > 0 {
                 index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
                 let child         = childrenWidgets[index]
 				child.widgetZone  =            zone[index]
 				count            += child.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: visited)
-
-				if  gAutoLayoutMaps {
-					child.snp.setLabel("<p> \(child.widgetZone?.zoneName ?? kUnknown)")
-					child.snp.removeConstraints()
-					child.snp.makeConstraints { make in
-						make.left.right.equalTo(childrenView)
-
-						if  index == 0 {
-							make.top.equalTo(childrenView).priority(ConstraintPriority(250))
-						}
-
-						if  previous == nil {
-							make.bottom.equalTo(childrenView)
-						} else {
-							make.bottom.equalTo(previous!.snp.top)
-						}
-					}
-				}
-
-                previous = child
             }
         }
 
@@ -271,28 +210,6 @@ class ZoneWidget: ZView {
 		if !subviews.contains(revealDot) {
 			insertSubview(revealDot, belowSubview: textWidget)
 			revealDot.setupForWidget(self, asReveal: true)
-		}
-	}
-
-    func autoLayoutDots() {
-		let verticalDotOffset = 0.5
-
-		if  gAutoLayoutMaps {
-			if !hideDragDot {
-				dragDot.innerDot?.snp.removeConstraints()
-				dragDot.innerDot?.snp.setLabel("<d> \(widgetZone?.zoneName ?? kUnknown)")
-				dragDot.innerDot?.snp.makeConstraints { make in
-					make.right.equalTo(textWidget.snp.left).offset(-6.0)
-					make.centerY.equalTo(textWidget).offset(verticalDotOffset)
-				}
-			}
-
-			revealDot.innerDot?.snp.setLabel("<r> \(widgetZone?.zoneName ?? kUnknown)")
-			revealDot.innerDot?.snp.removeConstraints()
-			revealDot.innerDot?.snp.makeConstraints { make in
-				make.left.equalTo(textWidget.snp.right).offset(6.0)
-				make.centerY.equalTo(textWidget).offset(verticalDotOffset)
-			}
 		}
 	}
 
@@ -357,19 +274,16 @@ class ZoneWidget: ZView {
 	}
 
 	func updateChildrenFrames() {
-		if !gAutoLayoutMaps {
-			if  hasVisibleChildren {
-				var height = CGFloat.zero
-				var  index = childrenWidgets.count
-
-				while index    > 0 {
-					index     -= 1 // go backwards down the children arrays, bottom and top constraints expect it
-					let  child = childrenWidgets[index]
-					let   size = child.drawnSize
-					let origin = CGPoint(x: .zero, y: height)
-					height    += size.height
-					child.frame = CGRect(origin: origin, size: size)
-				}
+		if  hasVisibleChildren {
+			var      height = CGFloat.zero
+			var       index = childrenWidgets.count
+			while index     > 0 {
+				index      -= 1 // go backwards [up] the children array
+				let   child = childrenWidgets[index]
+				let    size = child.drawnSize
+				let  origin = CGPoint(x: .zero, y: height)
+				height     += size.height
+				child.frame = CGRect(origin: origin, size: size)
 			}
 		}
 	}
@@ -384,8 +298,10 @@ class ZoneWidget: ZView {
 
 	func updateChildrenViewFrame() {
 		if  hasVisibleChildren {
+			let          ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
 			let      textFrame = textWidget.frame
-			let         origin = CGPoint(x: textFrame.maxX, y: CGFloat.zero)
+			let              x = textFrame.maxX + (CGFloat(gChildrenViewOffset) * ratio)
+			let         origin = CGPoint(x: x, y: CGFloat.zero)
 			let  childrenFrame = CGRect(origin: origin, size: childrenViewDrawnSize)
 			childrenView.frame = childrenFrame
 		}
@@ -433,17 +349,6 @@ class ZoneWidget: ZView {
 			return
 		} else if !subviews.contains(childrenView) {
             insertSubview(childrenView, belowSubview: textWidget)
-		}
-
-		if  gAutoLayoutMaps {
-			childrenView.snp.removeConstraints()
-			childrenView.snp.setLabel("<c> \(widgetZone?.zoneName ?? kUnknown)")
-			childrenView.snp.makeConstraints { (make: ConstraintMaker) -> Void in
-				let ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
-
-				make.left.equalTo(textWidget.snp.right).offset(gChildrenViewOffset * Double(ratio))
-				make.bottom.top.right.equalTo(self)
-			}
 		}
 	}
 
