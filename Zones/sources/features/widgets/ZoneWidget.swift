@@ -148,8 +148,8 @@ class ZoneWidget: ZView {
 		removeAllSubviews()
     }
 
-    // MARK:- layout
-    // MARK:-
+	// MARK:- view hierarchy
+	// MARK:-
 
 	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
@@ -173,7 +173,15 @@ class ZoneWidget: ZView {
 			addChildrenWidgets()
 
 			if  recursing && !visited.contains(zone), zone.hasVisibleChildren {
-				count += layoutChildrenWidgets(kind, mapType: mapType, visited: visited + [zone])
+				var index = childrenWidgets.count
+				let vplus = visited + [zone]
+
+				while index           > 0 {
+					index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
+					let child         = childrenWidgets[index]
+					child.widgetZone  =            zone[index]
+					count            += child.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
+				}
 			}
 		}
 
@@ -182,23 +190,6 @@ class ZoneWidget: ZView {
 
 		return count
 	}
-
-    func layoutChildrenWidgets(_ kind: ZSignalKind, mapType: ZWidgetType, visited: ZoneArray) -> Int {
-		var count = 0
-
-        if  let  zone = widgetZone, zone.hasVisibleChildren {
-            var index = childrenWidgets.count
-
-            while index           > 0 {
-                index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
-                let child         = childrenWidgets[index]
-				child.widgetZone  =            zone[index]
-				count            += child.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: visited)
-            }
-        }
-
-		return count
-    }
 
 	func addDots() {
 		if !hideDragDot,
@@ -213,7 +204,55 @@ class ZoneWidget: ZView {
 		}
 	}
 
-	// MARK:- computed layout
+	func addTextView() {
+		if !subviews.contains(textWidget) {
+			textWidget.widget = self
+
+			addSubview(textWidget)
+		}
+
+		textWidget.setup()
+	}
+
+	func addChildrenView() {
+		if  let zone = widgetZone, !zone.hasVisibleChildren {
+			childrenView.removeFromSuperview()
+			return
+		} else if !subviews.contains(childrenView) {
+			insertSubview(childrenView, belowSubview: textWidget)
+		}
+	}
+
+	func addChildrenWidgets() {
+		if  let zone = widgetZone {
+
+			if !zone.isExpanded {
+				childrenWidgets.removeAll()
+
+				for view in childrenView.subviews {
+					view.removeFromSuperview()
+				}
+			} else {
+				var count = zone.count
+
+				if  count > 60 {
+					count = 60
+				}
+
+				while childrenWidgets.count < count {
+					childrenWidgets.append(ZoneWidget())
+				}
+
+				while childrenWidgets.count > count {
+					let widget = childrenWidgets.removeLast()
+
+					widget.removeFromSuperview()
+				}
+			}
+		}
+	}
+
+	// MARK:- compute sizes and frames
 	// MARK:-
 
 	func updateSize() {
@@ -313,80 +352,6 @@ class ZoneWidget: ZView {
 			childrenView.frame = childrenFrame
 		}
 	}
-
-	@discardableResult func notesOnUpdateFrame() -> CGRect {
-
-		// reveal dot x == textwidget.frame.maxX
-		// inner dot height == width ==                   14
-		// reveal dot width is related to generic offset: 25.5
-		// dot height       is related to generic offset: 25
-		// drag dot x value is:                           12
-		// drag dot widths are both 3.5 smaller:          22   and 10.5 (outer and inner)
-		// dots y values are:                             -0.5 and  5.5 "
-		// inner dots x values are:                        6   and  5.5 (reveal and drag)
-
-
-//		dragDot            .frame = CGRect(x:  11.5, y: -0.5, width: 22.0, height: 24.5) // why?
-//		dragDot  .innerDot?.frame = CGRect(x:   6.0, y:  5.5, width: 10.5, height: 13.5) // why?
-//		revealDot          .frame = CGRect(x: 109.0, y: -0.5, width: 25.5, height: 24.5) // why?
-//		revealDot.innerDot?.frame = CGRect(x:   5.5, y:  5.5, width: 14.0, height: 13.5) // why?
-		childrenView       .frame = CGRect(x: 280.5, y:  0.0, width: 16.5, height: 25.0) // why?
-
-		// use all but children's view to compute frame
-
-		return CGRect.zero
-	}
-
-    // MARK:- view hierarchy
-    // MARK:-
-
-    func addTextView() {
-        if !subviews.contains(textWidget) {
-            textWidget.widget = self
-
-            addSubview(textWidget)
-        }
-
-        textWidget.setup()
-    }
-
-    func addChildrenView() {
-		if  let zone = widgetZone, !zone.hasVisibleChildren {
-			childrenView.removeFromSuperview()
-			return
-		} else if !subviews.contains(childrenView) {
-            insertSubview(childrenView, belowSubview: textWidget)
-		}
-	}
-
-    func addChildrenWidgets() {
-        if  let zone = widgetZone {
-
-            if !zone.isExpanded {
-                childrenWidgets.removeAll()
-
-                for view in childrenView.subviews {
-                    view.removeFromSuperview()
-                }
-            } else {
-                var count = zone.count
-
-                if  count > 60 {
-                    count = 60
-                }
-
-                while childrenWidgets.count < count {
-                    childrenWidgets.append(ZoneWidget())
-                }
-
-                while childrenWidgets.count > count {
-                    let widget = childrenWidgets.removeLast()
-
-                    widget.removeFromSuperview()
-                }
-            }
-        }
-    }
 
     // MARK:- drag
     // MARK:-

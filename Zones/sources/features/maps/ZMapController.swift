@@ -108,7 +108,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
     func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-        if  doNotLayout { return }
+		if  doNotLayout || kind == .sResize { return }
 
 		var specificIndex:   Int?
         var specificView:  ZView? = mapView
@@ -141,10 +141,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		if  !gDeferringRedraw {
 			prepare(for: kind)
 			layoutForCurrentScrollOffset()
-			layoutWidgets(for: iSignalObject, kind)
-			mapView?.setAllSubviewsNeedDisplay()
-        }
-    }
+
+			if  kind != .sResize {
+				layoutWidgets(for: iSignalObject, kind)
+				mapView?.setAllSubviewsNeedDisplay()
+			}
+		}
+	}
 	
 	func prepare(for kind: ZSignalKind) {
 		if  kind == .sRelayout {

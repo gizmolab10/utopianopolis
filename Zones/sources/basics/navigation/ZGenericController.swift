@@ -28,13 +28,13 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 			case .idSubscription,
 				 .idData,
-				 .idMain:    return [.spStartupStatus]
-			case .idActions: return [.sSearch, .sFound]
+				 .idMain:    return [.sResize, .spStartupStatus]
+			case .idActions: return [.sResize, .sSearch, .sFound]
 			case .idBigMap:  return [.sData]             // ignore the signal from the end of process next batch
 			default: break
 		}
 
-		return []
+		return [.sResize]
 	}
 
 	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
@@ -42,7 +42,7 @@ class ZGenericController: ZController, ZGeneric {
 			case .idHelpEssayIntroduction,
 				 .idHelpEssayGraphicals,
 				 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .sRelayout]
-			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .sRelayout,     .spBigMap, .sLaunchDone]
+			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .sRelayout,     .spBigMap, .sLaunchDone, .sResize]
 			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .sRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
 			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
 			case .idSearchResults: return [.sFound]
