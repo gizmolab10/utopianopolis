@@ -23,12 +23,14 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
-	override var preferredFont : ZFont { return (widget?.type.isBigMap ?? true) ? gWidgetFont : gSmallMapFont }
-    var             widgetZone : Zone? { return  widget?.widgetZone }
+	override var preferredFont : ZFont   { return (widget?.type.isBigMap ?? true) ? gWidgetFont : gSmallMapFont }
+    var             widgetZone : Zone?   { return  widget?.widgetZone }
+	var               textSize : CGSize? { return text?.sizeWithFont(preferredFont) }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
 	var              drawnSize = CGSize.zero
 	var             isHovering = false
+
 
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
@@ -87,9 +89,23 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		updateTooltips()
 	}
 
+	func updateAncestorChildrenViewSize() {
+		widgetZone?.traverseAncestors { ancestor in
+			if  let widget = ancestor.widget {
+				widget.updateChildrenViewDrawnSize()
+				widget.updateSize()
+			}
+
+			return ancestor == gHere ? .eStop : .eContinue
+		}
+	}
+
     func updateGUI() {
 		updateTooltips()
-        widget?.setNeedsDisplay()
+		updateAncestorChildrenViewSize()
+		gHere.widget?.updateAllFrames()
+		gHere.widget?.updateFrame()
+		gHere.widget?.superview?.setAllSubviewsNeedDisplay()
     }
 
 	func setText(_ iText: String?) {
@@ -99,11 +115,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
 	func updateSize() {
-		if  let        t = text {
-			let textSize = t.sizeWithFont(preferredFont)
-			let   height = textSize.height + 1.0
+		if  let     size = textSize {
+			let   height = size.height + 1.0
 			let     hide = widgetZone?.onlyShowRevealDot ?? false                   // only show reveal dot is for small map here
-			let    width = hide ? 0.0 : textSize.width + 6.0
+			let    width = hide ? 0.0 : size.width + 6.0
 			drawnSize    = CGSize(width: width, height: height)
 		}
 	}

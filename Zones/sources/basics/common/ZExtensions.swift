@@ -2528,23 +2528,16 @@ extension ZView {
 		}
 	}
 
-    func addBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
+    func drawBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius
         zlayer.borderWidth  = thickness
         zlayer.borderColor  = color
     }
 
-    func addBorderRelative(thickness: CGFloat, radius: CGFloat, color: CGColor) {
-        let            size = self.bounds.size
-        let radius: CGFloat = min(size.height, size.width) * radius
-
-        self.addBorder(thickness: thickness, radius: radius, color: color)
-    }
-
     func setAllSubviewsNeedDisplay() {
         if !gDeferringRedraw {
-            applyToAllSubviews { iView in
-                iView.setNeedsDisplay()
+            applyToAllSubviews { view in
+                view.setNeedsDisplay()
             }
         }
     }

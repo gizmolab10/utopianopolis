@@ -86,6 +86,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                onlyShowRevealDot :               Bool  { return isExpanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
 	var                  dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                 hasBadRecordName :               Bool  { return recordName == nil }
+	var                    showRevealDot :               Bool  { return count > 0 || isTraveller }
 	var                    hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                    hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                     hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }

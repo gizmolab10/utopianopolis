@@ -28,7 +28,7 @@ class ZHelpEssayIntroductionController : ZGenericController {
 		topLabel?   .text = "Any idea can [optionally] have a note, which can be viewed, edited, saved and printed in the essay editor. Each note has a title at top (the idea text) followed by the full text of the note (like this, ignoring the grey rectangle)."
 		bottomLabel?.font = kLargeHelpFont
 		bottomLabel?.text = "An essay is made from a note when any of the listed ideas within its idea also contain a note. Each such note displays a drag dot preceding its title (like the grabbed note at bottom left)."
-		imageView?.addBorder(thickness: 0.5, radius: 0.0, color: kDarkGrayColor.cgColor)
+		imageView?.drawBorder(thickness: 0.5, radius: 0.0, color: kDarkGrayColor.cgColor)
 	}
 
 }

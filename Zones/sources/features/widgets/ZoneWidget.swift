@@ -221,10 +221,11 @@ class ZoneWidget: ZView {
 
 		var   width = childrenViewDrawnSize.width
 		var  height = childrenViewDrawnSize.height
+		let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
 		width      += textWidget.drawnSize.width
 		let dSize   = dragDot.drawnSize
 		let dheight = dSize.height
-		width      += dSize.width * 2.0 + gGenericOffset.width
+		width      += dSize.width * 2.0 + extra
 
 		if  height  < dheight {
 			height  = dheight
@@ -234,9 +235,11 @@ class ZoneWidget: ZView {
 	}
 
 	func updateChildrenViewDrawnSize() {
-		if  hasVisibleChildren {
-			var           height = CGFloat.zero
-			var biggestChildSize = CGSize.zero
+		if !hasVisibleChildren {
+			childrenViewDrawnSize = CGSize.zero
+		} else {
+			var  biggestChildSize = CGSize.zero
+			var            height = CGFloat.zero
 
 			for child in childrenWidgets {			// traverse progeny, updating their frames
 				let    childSize = child.drawnSize
@@ -254,12 +257,16 @@ class ZoneWidget: ZView {
 	func updateAllFrames() {
 		widgetZone?.traverseAllVisibleProgeny(inReverse: true) { iZone in
 			if  let child = iZone.widget {
-				child.updateFrame()
+				child.updateSubframes()
 			}
 		}
 	}
 
 	func updateFrame() {
+		setFrameSize(drawnSize)
+	}
+
+	func updateSubframes() {
 		updateChildrenFrames()
 		updateTextViewFrame()
 
