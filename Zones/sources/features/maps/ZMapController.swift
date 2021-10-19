@@ -89,9 +89,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func layoutForCurrentScrollOffset() {
-		if  let widget = gHere.widget {
-			applyOffset(to: widget)
-		}
+		applyOffset(to: rootWidget)
 	}
 
 	func applyOffset(to widget: ZoneWidget) {
@@ -128,8 +126,19 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let total = specificWidget.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
-		specificWidget.updateAllFrames()
-		applyOffset(to: specificWidget)
+		rootWidget.updateAllFrames()
+		applyOffset(to: rootWidget)
+
+		if  !isBigMap,
+			let  width = mapView?.frame.width {
+			let height = rootWidget.frame.height
+			let  inner = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: height))
+			let   rect = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: height + 8.0))
+
+			mapView?.frame = inner
+			mapView?.superview?.frame = rect
+			mapView?.superview?.superview?.frame = rect
+		}
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }

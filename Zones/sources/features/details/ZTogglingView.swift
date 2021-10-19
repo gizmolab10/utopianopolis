@@ -174,10 +174,14 @@ class ZTogglingView: ZStackView {
 				addSubview(hideableView!)
 
 				bannerView?.snp.removeConstraints()
-				hideableView?.snp.makeConstraints { make in
-					make.top.equalTo((self.bannerView?.snp.bottom)!)
-					make.left.right.bottom.equalTo(self)
-				}
+//				if  identity == .vSmallMap {
+//					print("hah")
+//				} else {
+					hideableView?.snp.makeConstraints { make in
+						make.top.equalTo((self.bannerView?.snp.bottom)!)
+						make.left.right.bottom.equalTo(self)
+					}
+//				}
 			}
 		}
     }
