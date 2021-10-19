@@ -2507,7 +2507,7 @@ extension ZView {
 		print(result.joined(separator: kReturn))
 	}
 
-	func drawColoredRect(_ rect: CGRect, _ color: ZColor, thickness: CGFloat = 2.0) {
+	func drawColoredRect(_ rect: CGRect, _ color: ZColor, thickness: CGFloat = 0.5) {
 		let     radius = CGFloat(8.0)
 		let       path = ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
 		path.lineWidth = thickness

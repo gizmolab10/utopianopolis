@@ -127,18 +127,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		let total = specificWidget.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
 		rootWidget.updateAllFrames()
-		applyOffset(to: rootWidget)
-
-		if  !isBigMap,
-			let  width = mapView?.frame.width {
-			let height = rootWidget.frame.height
-			let  inner = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: height))
-			let   rect = CGRect(origin: CGPoint.zero, size: CGSize(width: width, height: height + 8.0))
-
-			mapView?.frame = inner
-			mapView?.superview?.frame = rect
-			mapView?.superview?.superview?.frame = rect
-		}
+		layoutForCurrentScrollOffset()
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }
@@ -149,9 +138,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  !gDeferringRedraw {
 			prepare(for: kind)
-			layoutForCurrentScrollOffset()
 
-			if  kind != .sResize {
+			if  kind == .sResize {
+				layoutForCurrentScrollOffset()
+			} else {
 				layoutWidgets(for: iSignalObject, kind)
 				mapView?.setAllSubviewsNeedDisplay()
 			}
@@ -159,7 +149,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 	
 	func prepare(for kind: ZSignalKind) {
-		if  kind == .sRelayout {
+		if  [.sRelayout].contains(kind) {
 			gWidgets.clearRegistry(for: widgetType)
 		}
 

@@ -255,24 +255,6 @@ class ZoneWidget: ZView {
 	// MARK:- compute sizes and frames
 	// MARK:-
 
-	func updateSize() {
-		updateChildrenViewDrawnSize()
-
-		var   width = childrenViewDrawnSize.width
-		var  height = childrenViewDrawnSize.height
-		let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
-		width      += textWidget.drawnSize.width
-		let dSize   = dragDot.drawnSize
-		let dheight = dSize.height
-		width      += dSize.width * 2.0 + extra
-
-		if  height  < dheight {
-			height  = dheight
-		}
-
-		drawnSize = CGSize(width: width, height: height)
-	}
-
 	func updateChildrenViewDrawnSize() {
 		if !hasVisibleChildren {
 			childrenViewDrawnSize = CGSize.zero
@@ -293,16 +275,35 @@ class ZoneWidget: ZView {
 		}
 	}
 
+	func updateFrame() {
+		setFrameSize(drawnSize)
+	}
+
+	func updateSize() {
+		updateChildrenViewDrawnSize()
+
+		var   width = childrenViewDrawnSize.width
+		var  height = childrenViewDrawnSize.height
+		let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
+		width      += textWidget.drawnSize.width
+		let dSize   = revealDot.drawnSize
+		let dheight = dSize.height
+		let dWidth  = dSize.width * 2.0
+		width      += dWidth + extra - (hideDragDot ? 5.0 : 4.0)
+
+		if  height  < dheight {
+			height  = dheight
+		}
+
+		drawnSize = CGSize(width: width, height: height)
+	}
+
 	func updateAllFrames() {
 		widgetZone?.traverseAllVisibleProgeny(inReverse: true) { iZone in
 			if  let child = iZone.widget {
 				child.updateSubframes()
 			}
 		}
-	}
-
-	func updateFrame() {
-		setFrameSize(drawnSize)
 	}
 
 	func updateSubframes() {
@@ -651,11 +652,9 @@ class ZoneWidget: ZView {
 			let isHovering = textWidget.isHovering
 			let   expanded = zone.isExpanded
 
-			if !nowDrawLines {
-				nowDrawLines = true
-
 				if  gDebugDraw {
-					drawColoredRect(iDirtyRect, .purple)
+					drawColoredRect(iDirtyRect, .green)
+					drawColoredRect(childrenView.frame, .orange)
 				}
 
 				textWidget.updateTextColor()
@@ -664,16 +663,11 @@ class ZoneWidget: ZView {
 					drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
 				}
 
-				if    expanded {
-					draw(iDirtyRect)             // recurse
+				if  expanded {
+					for child in childrenWidgets {   // this is after child dots have been autolayed out
+						drawLine(to: child)
+					}
 				}
-			} else if expanded {
-				for child in childrenWidgets {   // this is after child dots have been autolayed out
-					drawLine(to: child)
-                }
-            }
-
-            nowDrawLines = false
         }
     }
 
