@@ -70,13 +70,17 @@ class ZReceipt: NSObject {
 			}
 
 			let task : URLSessionDataTask = session.dataTask(with: request) { data, response, error in
-				do {
-					let jsonDict = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers) as! ZStringAnyDictionary
+				if  let d = data {
+					do {
+						let jsonDict = try JSONSerialization.jsonObject(with: d, options: .mutableContainers) as! ZStringAnyDictionary
 
-					onCompletion?(jsonDict)
+						onCompletion?(jsonDict)
 
-				} catch {
-					print("ERROR: " + error.localizedDescription)
+					} catch {
+						print("ERROR: " + error.localizedDescription)
+					}
+				} else {
+					onCompletion?([:])
 				}
 			}
 

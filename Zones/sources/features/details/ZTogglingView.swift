@@ -165,6 +165,10 @@ class ZTogglingView: ZStackView {
 
 		if  hide == visible { // need for update
 			hideableView?.isHidden = hide
+
+			hideableView?.snp.removeConstraints()
+			bannerView?.snp.removeConstraints()
+
 			if  hide {
 				hideableView?.removeFromSuperview()
 				bannerView?.snp.makeConstraints { make in
@@ -172,16 +176,10 @@ class ZTogglingView: ZStackView {
 				}
 			} else {
 				addSubview(hideableView!)
-
-				bannerView?.snp.removeConstraints()
-//				if  identity == .vSmallMap {
-//					print("hah")
-//				} else {
-					hideableView?.snp.makeConstraints { make in
-						make.top.equalTo((self.bannerView?.snp.bottom)!)
-						make.left.right.bottom.equalTo(self)
-					}
-//				}
+				hideableView?.snp.makeConstraints { make in
+					make.top.equalTo((self.bannerView?.snp.bottom)!)
+					make.left.right.bottom.equalTo(self)
+				}
 			}
 		}
     }

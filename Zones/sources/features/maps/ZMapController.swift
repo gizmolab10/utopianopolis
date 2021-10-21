@@ -89,16 +89,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func layoutForCurrentScrollOffset() {
-		applyOffset(to: rootWidget)
-	}
-
-	func applyOffset(to widget: ZoneWidget) {
-		var   offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
-		offset.y     = -offset.y
-		let    wSize = widget.drawnSize
-		let    vSize = view.frame.size
-		let    delta = CGPoint((vSize - wSize).multiplyBy(0.5) + CGSize(offset))
-		widget.frame = CGRect(origin: delta, size: wSize)
+		var       offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
+		offset.y         = -offset.y
+		let         size = rootWidget.drawnSize
+		let        vSize = isBigMap ? view.frame.size : size
+		let       origin = CGPoint((vSize - size).multiplyBy(0.5) + CGSize(offset))
+		rootWidget.frame = CGRect(origin: origin, size: size)
 	}
 
 	var doNotLayout: Bool {

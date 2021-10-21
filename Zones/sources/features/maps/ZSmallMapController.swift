@@ -39,6 +39,24 @@ class ZSmallMapController: ZMapController {
 		}
 	}
 
+	func updateFrames() {
+		if  var       v = mapView as ZView? {
+			let    size = CGSize(width: view.frame.width, height: rootWidget.sizeToFit.height)
+			let    rect = CGRect(origin: .zero, size: size)
+			var   count = 5
+			while count > 0 {
+				v.frame = rect
+
+				if  let s  = v.superview {
+					count -= 1
+					v      = s
+				} else {
+					return
+				}
+			}
+		}
+	}
+
 	func update() {
 		gMapControlsView?.update()
 		gCurrentSmallMapRecords?.updateCurrentBookmark()

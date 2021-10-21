@@ -99,8 +99,9 @@ class ZoneWidget: ZView {
     let            childrenView = ZView          ()
 	let            widgetObject = ZWidgetObject  ()
     private var childrenWidgets = [ZoneWidget]   ()
-	var               drawnSize = CGSize.zero
 	var   childrenViewDrawnSize = CGSize.zero
+	var               drawnSize = CGSize.zero
+	var               sizeToFit :     CGSize  { return drawnSize + CGSize(frame.origin) }
 	var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
 	var      hasVisibleChildren :       Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var             hideDragDot :       Bool  { return widgetZone?.onlyShowRevealDot ?? false }
