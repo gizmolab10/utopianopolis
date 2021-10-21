@@ -54,19 +54,19 @@ class ZStartup: NSObject {
 						gHasFinishedStartup                   = true
 						gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 
-						gRecents.push()
-						gHereMaybe?.grab()
-						gSignal([.sLaunchDone])
-
 						if  gIsStartupMode {
 							gSetBigMapMode()
 						}
 
+						gRecents.push()
+						gHereMaybe?.grab()
+						gSignal([.sLaunchDone])
+
 						FOREGROUND(after: 0.1) {
 							self.requestFeedback() {
-								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
-								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences])
 								gTimers.stopTimer (for: .tStartup)
+								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
+								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap])
 							}
 						}
 					}
