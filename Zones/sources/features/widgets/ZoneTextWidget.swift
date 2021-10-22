@@ -103,9 +103,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     func updateGUI() {
 		updateTooltips()
 		updateAncestorChildrenViewSize()
-		gHere.widget?.updateAllFrames()
-		gHere.widget?.updateFrame()
-		gHere.widget?.superview?.setAllSubviewsNeedDisplay()
+		let rootWidget = controller?.rootWidget
+		rootWidget?.updateAllFrames()
+		rootWidget?.updateFrame()
+		controller?.layoutForCurrentScrollOffset()
+		controller?.mapView?.setAllSubviewsNeedDisplay()
     }
 
 	func setText(_ iText: String?) {
