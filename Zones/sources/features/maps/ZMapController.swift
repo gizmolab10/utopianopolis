@@ -465,30 +465,30 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, Zone?, CGPoint)? {
 		if  let         viewG = gesture?.view,
 			let     locationG = gesture?.location(in: viewG),
-			let     locationW = mapView?.convert(locationG, from: viewG),
-			let       widgetW = rootWidget.widgetNearestTo(locationW, in: mapView, hereZone) {
+			let     locationM = mapView?.convert(locationG, from: viewG),
+			let       widgetM = rootWidget.widgetNearestTo(locationM, in: mapView, hereZone) {
 			let     alternate = isBigMap ? gSmallMapController : gMapController
 			if  !kIsPhone,
 				let  mapViewA = alternate?.mapView,
-				let locationA = mapView?.convert(locationW, to: mapViewA),
+				let locationA = mapView?.convert(locationM, to: mapViewA),
 				let   widgetA = alternate?.rootWidget.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone) {
-				let  dragDotW = widgetW.dragDot
+				let  dragDotM = widgetM.dragDot
                 let  dragDotA = widgetA.dragDot
-                let   vectorW = dragDotW.convert(dragDotW.bounds.center, to: mapView) - locationW
-                let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: mapView) - locationW
-                let   lengthW = vectorW.length
+                let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: mapView) - locationM
+                let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: mapView) - locationM
+                let   lengthM = vectorM.length
                 let   lengthA = vectorA.length
 
 				// ////////////////////////////////////////////////////// //
 				// determine which drag dot's center is closest to cursor //
 				// ////////////////////////////////////////////////////// //
 
-                if  lengthW > lengthA {
-					return (false, widgetA.widgetZone, locatedInBigMap ? locationW : locationA)
+                if  lengthA < lengthM {
+					return (false, widgetA.widgetZone, locatedInBigMap ? locationM : locationA)
                 }
             }
 
-            return (true, widgetW.widgetZone, locationW)
+            return (true, widgetM.widgetZone, locationM)
         }
 
         return nil

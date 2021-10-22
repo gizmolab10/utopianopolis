@@ -451,16 +451,11 @@ class ZoneWidget: ZView {
     }
 
 	func dragHitRect(in view: ZView, _ here: Zone) -> CGRect {
-		let widget = textWidget
-		let isHere = widgetZone == here
-		let cFrame =        convert(childrenView.frame, to: view)
-		let tFrame = widget.convert(     widget.bounds, to: view)
-		let   left =    isHere ? 0.0                                  : tFrame.minX - (gGenericOffset.width * 0.8)
-		let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
-		let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
-		let  right =                                                                  view.bounds .maxX
+		if  here == widgetZone {
+			return view.bounds
+		}
 
-		return CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
+		return convert(bounds, to: view)
 	}
 
     func widgetNearestTo(_ point: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: [ZoneWidget] = []) -> ZoneWidget? {
@@ -471,7 +466,7 @@ class ZoneWidget: ZView {
 
 			for child in childrenWidgets {
 				if  self        != child,
-					let    found = child.widgetNearestTo(point, in: view, here, visited + [self]) { // recurse into child
+					let    found = child.widgetNearestTo(point, in: view, here, visited + [self]) {    // recurse into child
 					return found
 				}
 			}
