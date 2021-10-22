@@ -138,14 +138,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var visibleDoneZone: Zone? {
 		var done: Zone?
 
-		gHere.traverseProgeny { child in
-			if !child.isVisible || child == self {
-				return .eSkip
-			} else if  child.zoneName == kDone {
+		gHere.traverseAllProgeny { child in
+			if  child.zoneName == kDone,
+				child != self,
+				child.isVisible,
+				(done == nil || done!.level > child.level) {
 				done = child
 			}
-
-			return done == nil ? .eContinue : .eStop
 		}
 
 		return done
@@ -2368,12 +2367,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var isVisible = true
 
 		traverseAncestors { iAncestor -> ZTraverseStatus in
-			let showing = iAncestor.isExpanded
+			let showsChildren = iAncestor.isExpanded
 
-			if      iAncestor != self {
-				if  iAncestor == gHere || !showing {
-					isVisible = showing
-				}
+			if  iAncestor != self,
+				iAncestor == gHere || !showsChildren {
+				isVisible = showsChildren
+
+				return .eStop
 			}
 
 			return .eContinue

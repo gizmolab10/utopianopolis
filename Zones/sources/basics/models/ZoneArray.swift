@@ -690,8 +690,10 @@ extension ZoneArray {
 		gCurrentSmallMapRecords?.showRoot()             // point here to root, and expand
 		groupOwner.alterAttribute(.groupOwner, remove: false)
 		gFavorites.insertAsNext(groupOwner)
-		gRelayoutMaps()
-		groupOwner.edit()
+		FOREGROUND {
+			gRelayoutMaps()
+			groupOwner.edit()
+		}
 	}
 
 }
