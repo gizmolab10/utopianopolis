@@ -89,25 +89,30 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		updateTooltips()
 	}
 
-	func updateAncestorChildrenViewSize() {
+	func updateChildrenViewDrawnSizesOfAllAncestors() {
 		widgetZone?.traverseAncestors { ancestor in
 			if  let widget = ancestor.widget {
 				widget.updateChildrenViewDrawnSize()
 				widget.updateSize()
+
+				return .eContinue
 			}
 
-			return ancestor == gHere ? .eStop : .eContinue
+			return .eStop
 		}
+	}
+
+	func updateFrameSize() {
+		setFrameSize(drawnSize)
 	}
 
     func updateGUI() {
 		updateTooltips()
-		updateAncestorChildrenViewSize()
+		updateChildrenViewDrawnSizesOfAllAncestors()
 		let rootWidget = controller?.rootWidget
 		rootWidget?.updateAllFrames()
-		rootWidget?.updateFrame()
+		rootWidget?.updateFrameSize()
 		controller?.layoutForCurrentScrollOffset()
-		controller?.mapView?.setAllSubviewsNeedDisplay()
     }
 
 	func setText(_ iText: String?) {

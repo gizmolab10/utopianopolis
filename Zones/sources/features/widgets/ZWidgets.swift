@@ -14,14 +14,14 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var   bigMapWidgets: [Int :  ZoneWidget]  = [:]
-	var   recentWidgets: [Int :  ZoneWidget]  = [:]
-	var favoriteWidgets: [Int :  ZoneWidget]  = [:]
-	var exemplarWidgets: [Int :  ZoneWidget]  = [:]
-    var currentlyEditedWidget :  ZoneWidget? { return widgetForZone(gTextEditor.currentlyEditedZone) }
-    var  currentMovableWidget :  ZoneWidget? { return widgetForZone(gSelecting.currentMoveable) }
-    var  firstGrabbableWidget :  ZoneWidget? { return widgetForZone(gSelecting.firstSortedGrab) }
-    var        visibleWidgets : [ZoneWidget] { return gHere.visibleWidgets + (gSmallMapHere?.visibleWidgets ?? []) }
+	var   bigMapWidgets: [Int : ZoneWidget]     = [:]
+	var   recentWidgets: [Int : ZoneWidget]     = [:]
+	var favoriteWidgets: [Int : ZoneWidget]     = [:]
+	var exemplarWidgets: [Int : ZoneWidget]     = [:]
+    var currentlyEditedWidget : ZoneWidget?     { return widgetForZone(gTextEditor.currentlyEditedZone) }
+    var  currentMovableWidget : ZoneWidget?     { return widgetForZone(gSelecting.currentMoveable) }
+    var  firstGrabbableWidget : ZoneWidget?     { return widgetForZone(gSelecting.firstSortedGrab) }
+    var        visibleWidgets : ZoneWidgetArray { return gHere.visibleWidgets + (gSmallMapHere?.visibleWidgets ?? []) }
 
     func clearRegistry(for type: ZWidgetType) {
 		setZoneWidgetRegistry([:], for: type)

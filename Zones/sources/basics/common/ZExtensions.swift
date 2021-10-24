@@ -24,6 +24,7 @@ typealias              CKReference = CKRecord.Reference
 typealias             StringsArray = [String]
 typealias            ZRecordsArray = [ZRecord]
 typealias            ZObjectsArray = [NSObject]
+typealias          ZoneWidgetArray = [ZoneWidget]
 typealias          ZObjectIDsArray = [NSManagedObjectID]
 typealias         CKRecordIDsArray = [CKRecordID]
 typealias         ZTraitDictionary = [ZTraitType : ZTrait]
@@ -2341,7 +2342,8 @@ extension Data {
 		let query = [
 			kSecValueData   as String : self,
 			kSecAttrAccount as String : key,
-			kSecClass       as String : kSecClassGenericPassword as String ] as CFDictionary
+			kSecClass       as String : kSecClassGenericPassword as String
+		] as CFDictionary
 
 		SecItemDelete(query)
 		SecItemAdd   (query, nil)
@@ -2350,9 +2352,10 @@ extension Data {
 	static func loadFor(_ key: String) -> Data? {
 		let query = [
 			kSecClass       as String : kSecClassGenericPassword as String,
-			kSecAttrAccount as String : kSubscriptionToken,
-			kSecReturnData  as String : kCFBooleanTrue!,
-			kSecMatchLimit  as String : kSecMatchLimitOne ] as CFDictionary
+			kSecAttrAccount as String : key,
+			kSecReturnData  as String : kCFBooleanTrue,
+			kSecMatchLimit  as String : kSecMatchLimitOne
+		] as CFDictionary
 
 		var dataTypeRef : AnyObject? = nil
 

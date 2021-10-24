@@ -98,7 +98,7 @@ class ZoneWidget: ZView {
     let              textWidget = ZoneTextWidget ()
     let            childrenView = ZView          ()
 	let            widgetObject = ZWidgetObject  ()
-    private var childrenWidgets = [ZoneWidget]   ()
+    private var childrenWidgets = ZoneWidgetArray()
 	var   childrenViewDrawnSize = CGSize.zero
 	var               drawnSize = CGSize.zero
 	var               sizeToFit :     CGSize  { return drawnSize + CGSize(frame.origin) }
@@ -276,7 +276,7 @@ class ZoneWidget: ZView {
 		}
 	}
 
-	func updateFrame() {
+	func updateFrameSize() {
 		setFrameSize(drawnSize)
 	}
 
@@ -314,10 +314,10 @@ class ZoneWidget: ZView {
 		let childrenHeight = childrenViewDrawnSize.height
 
 		if !hideDragDot {
-			dragDot.updateFrame(childrenHeight)
+			dragDot.updateFrame(accountingFor: childrenHeight)
 		}
 
-		revealDot.updateFrame(childrenHeight)
+		revealDot.updateFrame(accountingFor: childrenHeight)
 		updateChildrenViewFrame()
 	}
 
@@ -458,7 +458,7 @@ class ZoneWidget: ZView {
 		return convert(bounds, to: view)
 	}
 
-    func widgetNearestTo(_ point: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: [ZoneWidget] = []) -> ZoneWidget? {
+    func widgetNearestTo(_ point: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
 		if  !visited.contains(self),
 			let view = iView,
 			let here = iHere,

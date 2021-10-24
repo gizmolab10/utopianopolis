@@ -130,7 +130,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		return drawnSize
 	}
 
-	func updateFrame(_ childrenViewHeight : CGFloat = .zero) {
+	func updateFrame(accountingFor childrenViewHeight : CGFloat = .zero) {
 		if  let    textWidget = widget?.textWidget {
 			let   drawnHeight = drawnSize.height
 			let hasNoChildren = childrenViewHeight < drawnHeight

@@ -2447,8 +2447,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK:- traverse progeny
 	// MARK:-
 
-	var visibleWidgets: [ZoneWidget] {
-		var visible = [ZoneWidget] ()
+	var visibleWidgets: ZoneWidgetArray {
+		var visible = ZoneWidgetArray()
 
 		traverseProgeny { iZone -> ZTraverseStatus in
 			if let w = iZone.widget {

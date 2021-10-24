@@ -25,7 +25,7 @@ class ZReceipt: NSObject {
 	}
 
 	func unravelReceiptDict(_ dict: ZStringAnyDictionary, transactionID: String?, _ receipt: String) -> ZToken? {
-		if  let i = transactionID, i == dict.transactionID {
+		if  transactionID == nil || transactionID == dict.transactionID {
 			return dict.createZToken(with: receipt)
 		}
 
@@ -47,8 +47,8 @@ class ZReceipt: NSObject {
 
 			for baseURL in [productionURL, sandboxURL] {
 				sendReceipt(receipt, to: baseURL) { responseDict in
-					if  let status = responseDict["status"] as? NSNumber, status.intValue == 0,
-						let  token = self.unravelReceiptDict(responseDict, transactionID: transactionID, receipt) {
+					if  let status = responseDict["status"] as? NSNumber, status.intValue == 0 {
+						let  token = self.unravelReceiptDict(responseDict, transactionID: transactionID, receipt)
 						onCompletion?(token)
 					}
 				}
