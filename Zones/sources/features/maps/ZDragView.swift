@@ -43,7 +43,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
             let  floatRect = widget.floatingDropDotRect
             let   dragRect = widget.convert(floatRect, to: self)
-			let    dotRect = convert(dot.bounds, from: dot)
+			let    dotRect = dot.convert(dot.bounds, to: self)
 
 			gActiveColor.setFill()
             gActiveColor.setStroke()

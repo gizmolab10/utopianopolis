@@ -26,16 +26,7 @@ class ZSmallMapController: ZMapController {
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller
 			update()
-
-			if ![.spSmallMap, .sRelayout].contains(kind) {
-				super.handleSignal(iSignalObject, kind: kind)
-			} else if let m = mapView {
-				m.snp.removeConstraints()
-				super.handleSignal(iSignalObject, kind: kind)
-				m.snp.makeConstraints { make in
-					make.top.equalTo(rootWidget)
-				}
-			}
+			super.handleSignal(iSignalObject, kind: kind)
 		}
 	}
 

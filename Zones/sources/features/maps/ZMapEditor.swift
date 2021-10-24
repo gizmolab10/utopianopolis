@@ -603,7 +603,7 @@ class ZMapEditor: ZBaseEditor {
 
     func alterCase(up: Bool) {
         for grab in gSelecting.currentMapGrabs {
-            if  let tWidget = grab.widget?.textWidget {
+			if  let tWidget = grab.widget?.textWidget {
                 tWidget.alterCase(up: up)
             }
         }

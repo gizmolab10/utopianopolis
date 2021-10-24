@@ -195,7 +195,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
 			if  var prior = gSelecting.grabAndNoUI([zone]) {
 				prior.appendUnique(item: zone)
-				gSelecting.updateWidgetsNeedDisplay(for: prior)
 			}
 
 			printDebug(.dEdit, " RESPOND " + zone.unwrappedName)

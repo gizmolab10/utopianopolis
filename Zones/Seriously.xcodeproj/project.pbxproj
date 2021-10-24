@@ -231,6 +231,12 @@
 		A77976F724996DBC00A6734B /* ZHelpDotsExemplarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77976F624996DBC00A6734B /* ZHelpDotsExemplarController.swift */; };
 		A77976F824996EC200A6734B /* ZHelpDotsExemplarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77976F624996DBC00A6734B /* ZHelpDotsExemplarController.swift */; };
 		A77976F924996EC200A6734B /* ZHelpDotsExemplarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77976F624996DBC00A6734B /* ZHelpDotsExemplarController.swift */; };
+		A78460E12724FAC5006A4075 /* ZPseudoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460E02724FAC5006A4075 /* ZPseudoView.swift */; };
+		A78460E22724FAC5006A4075 /* ZPseudoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460E02724FAC5006A4075 /* ZPseudoView.swift */; };
+		A78460E32724FAC5006A4075 /* ZPseudoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460E02724FAC5006A4075 /* ZPseudoView.swift */; };
+		A78460E62726047F006A4075 /* ZPseudoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460E52726047F006A4075 /* ZPseudoTextView.swift */; };
+		A78460E72726047F006A4075 /* ZPseudoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460E52726047F006A4075 /* ZPseudoTextView.swift */; };
+		A78460E82726047F006A4075 /* ZPseudoTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460E52726047F006A4075 /* ZPseudoTextView.swift */; };
 		A786C6F125DF5F9F00B23FBF /* ZDebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */; };
 		A786C6F225DF5F9F00B23FBF /* ZDebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */; };
 		A786C6F325DF5F9F00B23FBF /* ZDebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */; };
@@ -559,6 +565,8 @@
 		A774ED1923E225A500080DC9 /* ZGesturesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGesturesController.swift; sourceTree = "<group>"; };
 		A777A7AE260FAC0300361265 /* ZMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMapView.swift; sourceTree = "<group>"; };
 		A77976F624996DBC00A6734B /* ZHelpDotsExemplarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpDotsExemplarController.swift; sourceTree = "<group>"; };
+		A78460E02724FAC5006A4075 /* ZPseudoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZPseudoView.swift; sourceTree = "<group>"; };
+		A78460E52726047F006A4075 /* ZPseudoTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPseudoTextView.swift; sourceTree = "<group>"; };
 		A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebugController.swift; sourceTree = "<group>"; };
 		A78A6DFF23B02163000F581F /* ZEssayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayController.swift; sourceTree = "<group>"; };
 		A78A6E0923B021EA000F581F /* ZEssayEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayEditor.swift; sourceTree = "<group>"; };
@@ -769,6 +777,8 @@
 				A74DBDEA244E004000DF751A /* ZContextualMenu.swift */,
 				A7B48A8823E0E80C00654DBD /* ZGridCell.swift */,
 				A7B48A7A23E0E80C00654DBD /* ZMobileKeyInput.swift */,
+				A78460E52726047F006A4075 /* ZPseudoTextView.swift */,
+				A78460E02724FAC5006A4075 /* ZPseudoView.swift */,
 				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
 				A793722E25BE2EE0008C98AE /* ZSimpleToolButton.swift */,
@@ -1469,6 +1479,7 @@
 				A7B48AB123E0E80C00654DBD /* ZoneDot.swift in Sources */,
 				A7CC53AF267FD07300370BC0 /* ZSubscriptionController.swift in Sources */,
 				A7D507CC2688F2BA001CEA9F /* ZProducts.swift in Sources */,
+				A78460E62726047F006A4075 /* ZPseudoTextView.swift in Sources */,
 				A700F94E24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
 				A706443B246F720700F90B86 /* ZMapControlsView.swift in Sources */,
 				A7B48AB423E0E80C00654DBD /* ZGridCell.swift in Sources */,
@@ -1518,6 +1529,7 @@
 				0C39B2B01F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				A7E5A5EA23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */,
 				A745ED0B26AF4E7D0013D1A4 /* ZHovering.swift in Sources */,
+				A78460E12724FAC5006A4075 /* ZPseudoView.swift in Sources */,
 				A793723225BE2EE0008C98AE /* ZSimpleToolButton.swift in Sources */,
 				A7B48AB723E0E80C00654DBD /* ZoneWidget.swift in Sources */,
 				A7D2D64B248F11B300F652B0 /* ZHelpDotsData.swift in Sources */,
@@ -1606,6 +1618,7 @@
 				A73175662638CCA900DF1CE5 /* ZFilesRegistry.swift in Sources */,
 				A70CAD422609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */,
 				0C39B2EB1F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
+				A78460E82726047F006A4075 /* ZPseudoTextView.swift in Sources */,
 				0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */,
 				A7395BB121B877B600F5759F /* ZTextEditor.swift in Sources */,
 				0CAC18E32006A84800D641C4 /* ZBookmarks.swift in Sources */,
@@ -1644,6 +1657,7 @@
 				A7DF7DBE247AFE2800F03060 /* ZRubberband.swift in Sources */,
 				0C43EFE221010F62000976CE /* ZCloud.swift in Sources */,
 				A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */,
+				A78460E32724FAC5006A4075 /* ZPseudoView.swift in Sources */,
 				A7E9A3B223C115470064C89A /* ZHelpMapData.swift in Sources */,
 				A7D3A3E7259BEABD00B10788 /* ZManagedObject.swift in Sources */,
 				A7B78D3F244B768400DB2C14 /* ZTraitAssets.swift in Sources */,
@@ -1701,6 +1715,7 @@
 				A764067923F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
 				A7CC53B0267FD07300370BC0 /* ZSubscriptionController.swift in Sources */,
 				A7D507CD2688F2BA001CEA9F /* ZProducts.swift in Sources */,
+				A78460E72726047F006A4075 /* ZPseudoTextView.swift in Sources */,
 				A700F94F24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
@@ -1750,6 +1765,7 @@
 				A72A0B6A23B13CE6002A97E9 /* ZBaseEditor.swift in Sources */,
 				A70644232461EC3600F90B86 /* ZSmallMapController.swift in Sources */,
 				A745ED0C26AF4E7D0013D1A4 /* ZHovering.swift in Sources */,
+				A78460E22724FAC5006A4075 /* ZPseudoView.swift in Sources */,
 				A793723325BE2EE0008C98AE /* ZSimpleToolButton.swift in Sources */,
 				A78A6E0B23B021EA000F581F /* ZEssayEditor.swift in Sources */,
 				A7DF4869249B1AC0008B35AC /* ZActionsController.swift in Sources */,

@@ -44,14 +44,13 @@ struct  ZDotParameters {
 
 }
 
-class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
+class ZoneDot: ZPseudoView {
 
     // MARK:- properties
     // MARK:-
 
     weak var     widget : ZoneWidget?
     var        innerDot : ZoneDot?
-    var       dragStart : CGPoint?
 	var       drawnSize = CGSize.zero
 	var        isReveal = true
     var      isInnerDot = false
@@ -161,7 +160,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			innerDot             = ZoneDot()
 			innerDot?.isInnerDot = true
 
-			addSubview(innerDot!)
 			innerDot?.setupForWidget(iWidget, asReveal: isReveal)
 		}
 
@@ -169,8 +167,6 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 		backgroundColor = kClearColor
 		#endif
 
-        updateConstraints()
-        setNeedsDisplay()
 		updateTracking()
 		updateTooltips()
 	}
@@ -178,34 +174,26 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 	// MARK:- hover
 	// MARK:-
 
-	func updateTracking() { if !isInnerDot { addTracking(for: frame) } }
+	func updateTracking() {} // if !isInnerDot { addTracking(for: frame) } }
 
-	override func mouseEntered(with event: ZEvent) {
-		super.mouseEntered(with: event)
+	func mouseEntered(with event: ZEvent) {
 		gHovering.declareHover(innerDot)
 	}
 
-	override func mouseMoved(with event: ZEvent) {
-		super.mouseMoved(with: event)
+	func mouseMoved(with event: ZEvent) {
 		gHovering.declareHover(innerDot)
 	}
 
-	override func mouseExited(with event: ZEvent) {
-		super.mouseExited(with: event)
+	func mouseExited(with event: ZEvent) {
 		gHovering.clear()
 	}
 
-	override func mouseUp(with event: ZEvent) {
-		super.mouseUp(with: event)
+	func mouseUp(with event: ZEvent) {
 		gHovering.clear()
 	}
 
     // MARK:- draw
     // MARK:-
-
-    func isVisible(_ rect: CGRect) -> Bool {
-        return isVisible && window?.contentView?.bounds.intersects(rect) ?? false
-    }
 
 	func drawSmallMapSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let       radius = parameters.sideDotRadius
@@ -421,7 +409,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)
 
-		if  isVisible(iDirtyRect),
+		if  isVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			if  isInnerDot {
 				drawInnerDot(iDirtyRect, parameters)

@@ -248,19 +248,6 @@ class ZSelecting: NSObject {
         gFavorites.updateFavoritesAndRedraw(needsRedraw: needsRedraw)
     }
 
-	func updateWidgetsNeedDisplay(for zones: ZoneArray) {
-		for zone in zones {
-			updateWidgetNeedDisplay(for: zone)
-		}
-	}
-
-	func updateWidgetNeedDisplay(for zone: Zone?) {
-		if  let widget = zone?.widget {
-			widget                  .setNeedsDisplay()
-			widget.dragDot.innerDot?.setNeedsDisplay()
-		}
-	}
-
 	func maybeClearBrowsingLevel() {
 		if  currentMapGrabs.count == 0 {
 			gCurrentBrowseLevel = nil
@@ -288,7 +275,6 @@ class ZSelecting: NSObject {
 
     func ungrabAll(retaining: ZoneArray? = nil) {
         let        more = retaining ?? []
-        let     grabbed = currentMapGrabs
 		currentMapGrabs = []
         sortedGrabs     = []
         cousinList      = []
@@ -297,7 +283,6 @@ class ZSelecting: NSObject {
             hasNewGrab = more[0]
         }
 
-		updateWidgetsNeedDisplay(for: grabbed)
 		currentMapGrabs.append(contentsOf: more)
     }
 
@@ -319,7 +304,6 @@ class ZSelecting: NSObject {
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentMapGrabs.firstIndex(of: zone) {
 			currentMapGrabs.remove(at: index)
-            updateWidgetNeedDisplay(for: zone)
             maybeClearBrowsingLevel()
         }
     }
@@ -328,8 +312,6 @@ class ZSelecting: NSObject {
 		for zone in iZones {
             addOneGrab(zone)
         }
-
-        updateWidgetsNeedDisplay(for: iZones)
     }
 
     func addOneGrab(_ iZone: Zone?) { // caller must update widgets need display
@@ -360,8 +342,7 @@ class ZSelecting: NSObject {
 	}
     
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
-		if  let oldGrabs = grabAndNoUI(iZones) {
-            updateWidgetsNeedDisplay(for: oldGrabs)
+		if  let _ = grabAndNoUI(iZones) {
 			gSignal([.spCrumbs, .spPreferences])                // so color wells and breadcrumbs are updated
 
             if  updateBrowsingLevel,

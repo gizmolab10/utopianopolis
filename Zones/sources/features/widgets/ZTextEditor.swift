@@ -149,8 +149,6 @@ class ZTextPack: NSObject {
 			let w = gWidgets.widgetForZone(z) {
 			let t = w.textWidget
 			w.addDots()
-			w.revealDot.setNeedsDisplay()
-			w.setNeedsDisplay()
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
 			t.deselectAllText()
 			t.updateTextColor()

@@ -497,11 +497,10 @@ extension ZView {
         return min(wScale, hScale)
     }
 
-	@objc func printView() { // NSView
+	@objc func printView() { // ZView
 		if  gProducts.hasEnabledSubscription {
-			let view: NSView = self
 			let    printInfo = NSPrintInfo.shared
-			let      isWider = view.bounds.size.width > view.bounds.size.height
+			let      isWider = bounds.size.width > bounds.size.height
 			let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
 			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
 
@@ -509,10 +508,10 @@ extension ZView {
 			PMSetOrientation(pmPageFormat, orientation, false)
 			printInfo.updateFromPMPrintSettings()
 			printInfo.updateFromPMPageFormat()
-			NSPrintOperation(view: view, printInfo: printInfo).run()
+			NSPrintOperation(view: self, printInfo: printInfo).run()
 		}
 	}
-        
+
 }
 
 extension ZMapView {
@@ -1140,6 +1139,13 @@ extension Zone {
 }
 
 extension ZoneWidget {
+
+	@objc func printView() { // ZoneWidget
+		let view = ZView(frame: bounds)
+
+		layoutInPseudoview(self, for: .tBigMap, atIndex: nil, recursing: true, .sRelayout, visited: [])
+		view.printView()
+	}
 
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var             frame = CGRect ()

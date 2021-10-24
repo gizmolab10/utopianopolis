@@ -35,7 +35,7 @@ class ZRubberband: NSObject {
 		return false
 	}
 
-	func updateGrabs(in iView: ZView?) {
+	func updateGrabs(in iView: ZPseudoView?) {
 		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 		gHere.ungrab()
 
@@ -50,8 +50,6 @@ class ZRubberband: NSObject {
 						!zone.isRecentsRoot,
 						widgetRect.intersects(rect) {
 						gSelecting.addOneGrab(zone)
-						widget                  .setNeedsDisplay()
-						widget.dragDot.innerDot?.setNeedsDisplay()
 					}
 				}
 			}

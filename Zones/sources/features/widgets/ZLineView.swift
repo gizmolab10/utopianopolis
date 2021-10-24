@@ -14,7 +14,7 @@ import UIKit
 #endif
 
 
-class ZLineView: ZView {
+class ZLineView: ZPseudoView {
     
     override func draw(_ iDirtyRect: CGRect) {
         super.draw(iDirtyRect)

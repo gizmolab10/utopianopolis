@@ -28,7 +28,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
-	let                   rootWidget = ZoneWidget   ()
+	let                mapPseudoView = ZPseudoView()
+	let                   rootWidget = ZoneWidget()
 
     override func setup() {
 		gestureView                     = mapView // do this before calling super setup, which uses gesture view
@@ -37,7 +38,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		super.setup()
 		platformSetup()
-        mapView?.addSubview(rootWidget)
+//        mapView?.addSubview(rootWidget)
     }
 
     #if os(OSX)
@@ -105,7 +106,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		if  doNotLayout || kind == .sResize { return }
 
 		var specificIndex:   Int?
-        var specificView:  ZView? = mapView
+		let specificView          = mapPseudoView
 		var specificWidget        = rootWidget
         var             recursing = true
 		let                  here = hereZone
@@ -116,11 +117,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			widget.type          == zone.widgetType {
             specificWidget        = widget
             specificIndex         = zone.siblingIndex
-            specificView          = specificWidget.superview
             recursing             = [.sData, .sRelayout].contains(kind)
         }
 
-		let total = specificWidget.layoutInView(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
+		let total = specificWidget.layoutInPseudoview(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
 		rootWidget.updateAllFrames()
 		layoutForCurrentScrollOffset()
@@ -149,9 +149,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			gWidgets.clearRegistry(for: widgetType)
 		}
 
-		if  kIsPhone {
-			rootWidget.isHidden = gShowSmallMapForIOS
-		}
+//		if  kIsPhone {
+//			rootWidget.isHidden = gShowSmallMapForIOS
+//		}
 	}
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
@@ -190,7 +190,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					dropMaybeGesture(iGesture)                    // logic for drawing the drop dot, and for dropping dragged idea
 				} else if state == .changed,                      // enlarge rubberband
 						  gRubberband.setRubberbandExtent(to: location) {
-					gRubberband.updateGrabs(in: mapView)
+					gRubberband.updateGrabs(in: mapPseudoView)
 					gDragView?.setNeedsDisplay()
 				} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 					gRubberband.rubberbandRect = nil              // erase rubberband
@@ -306,8 +306,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
         if  var      zone = dot.widgetZone,              // should always be true
 			let   gesture = iGesture {
-			let  location = gesture.location(in: dot)
-			dot.dragStart = location
 
             if  gesture.isOptionDown {
 				zone = zone.deepCopy(dbID: .mineID) // option means drag a copy
@@ -418,7 +416,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let      sameIndex = dragIndex == index || dragIndex == index - 1
 				let   dropIsParent = dropZone.children.intersects(gDraggedZones)
 				let     spawnCycle = dropZone.spawnCycle
-				let          prior = gDropWidget
 				let    isForbidden = gIsEssayMode && dropZone.isInBigMap
 				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0 || isForbidden
 				let         isDone = iGesture?.isDone ?? false
@@ -432,8 +429,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                     gDropIndices?.add(index - 1)
                 }
 
-                prior?                       .displayForDrag()  // erase    child lines
-				dropWidget                   .displayForDrag()  // relayout child lines
 				gMapController?     .mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 				gSmallMapController?.mapView?.setNeedsDisplay()
 
@@ -463,30 +458,30 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
 	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, Zone?, CGPoint)? {
-		if  let         viewG = gesture?.view,
-			let     locationG = gesture?.location(in: viewG),
-			let     locationM = mapView?.convert(locationG, from: viewG),
-			let       widgetM = rootWidget.widgetNearestTo(locationM, in: mapView, hereZone) {
-			let     alternate = isBigMap ? gSmallMapController : gMapController
-			if  !kIsPhone,
-				let  mapViewA = alternate?.mapView,
-				let locationA = mapView?.convert(locationM, to: mapViewA),
-				let   widgetA = alternate?.rootWidget.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone) {
-				let  dragDotM = widgetM.dragDot
-                let  dragDotA = widgetA.dragDot
-                let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: mapView) - locationM
-                let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: mapView) - locationM
-                let   lengthM = vectorM.length
-                let   lengthA = vectorA.length
+		if  let             viewG = gesture?.view,
+			let         locationG = gesture?.location(in: viewG),
+			let         locationM = mapView?.convert(locationG, from: viewG),
+			let           widgetM = rootWidget.widgetNearestTo(locationM, in: mapPseudoView, hereZone) {
+			let         alternate = isBigMap ? gSmallMapController : gMapController
+			if  let      mapViewA = alternate?.mapPseudoView, !kIsPhone {
+				let     locationA = mapPseudoView.convert(locationM, to: mapViewA)
+				if  let   widgetA = alternate?.rootWidget.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone) {
+					let  dragDotM = widgetM.dragDot
+					let  dragDotA = widgetA.dragDot
+					let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: mapPseudoView) - locationM
+					let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: mapPseudoView) - locationM
+					let   lengthM = vectorM.length
+					let   lengthA = vectorA.length
 
-				// ////////////////////////////////////////////////////// //
-				// determine which drag dot's center is closest to cursor //
-				// ////////////////////////////////////////////////////// //
+					// ////////////////////////////////////////////////////// //
+					// determine which drag dot's center is closest to cursor //
+					// ////////////////////////////////////////////////////// //
 
-                if  lengthA < lengthM {
-					return (false, widgetA.widgetZone, locatedInBigMap ? locationM : locationA)
-                }
-            }
+					if  lengthA < lengthM {
+						return (false, widgetA.widgetZone, locatedInBigMap ? locationM : locationA)
+					}
+				}
+			}
 
             return (true, widgetM.widgetZone, locationM)
         }
@@ -512,7 +507,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		gRubberband.rubberbandStart = .zero
 
-		let       dot = gDropWidget?.revealDot.innerDot // drag view does not "un"draw this
 		gDragRelation = nil
 		gDropIndices  = nil
 		gDropWidget   = nil
@@ -520,14 +514,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gDragPoint    = nil
 
 		gDragView?.setNeedsDisplay() // erase drag: line and dot
-        rootWidget.setNeedsDisplay()
 		mapView?  .setNeedsDisplay()
-		dot?      .setNeedsDisplay()
     }
 
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {
         var     relation = ZRelation.upon
-        if  let     text = iWidget?.textWidget,
+		if  let     text = iWidget?.textWidget,
 			let     rect = gDragView?.convert(text.bounds, from: text).insetBy(dx: 0.0, dy: 5.0) {
 			let     minY = rect.minY
 			let     maxY = rect.maxY
@@ -557,7 +549,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			var smallest = CGSize.big
 			let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
 			for  widget in widgets {
-                let rect = widget.convert(widget.outerHitRect, to: d)
+                let rect = widget.convert(widget.outerHitRect, to: mapPseudoView)
 				let size = rect.size
 
                 if  rect.contains(location),
@@ -577,7 +569,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         if  let                d = mapView,
             let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
-                let         rect = iDot.convert(iDot.bounds, to: d)
+				let         rect = iDot.convert(iDot.bounds, to: self.mapPseudoView)
 
                 if  rect.contains(location) {
                     hit = iDot

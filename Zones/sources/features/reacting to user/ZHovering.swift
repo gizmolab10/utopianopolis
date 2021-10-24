@@ -18,8 +18,6 @@ class ZHovering: NSObject {
 	func clear() {
 		dot?                 .isHovering = false
 		textWidget?          .isHovering = false
-		dot?               .needsDisplay = true
-		textWidget?.widget?.needsDisplay = true
 		dot                              = nil
 		textWidget                       = nil
 	}
@@ -30,7 +28,6 @@ class ZHovering: NSObject {
 		if  let             d = iDot {
 			dot               = d
 			dot?  .isHovering = true
-			dot?.needsDisplay = true
 		}
 	}
 
@@ -40,7 +37,6 @@ class ZHovering: NSObject {
 		if  let                            t = iTextWidget {
 			textWidget                       = t
 			textWidget?          .isHovering = true
-			textWidget?.widget?.needsDisplay = true
 		}
 	}
 

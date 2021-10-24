@@ -296,7 +296,7 @@ extension UIView {
         }
     }
 
-	@objc func printView() {}
+	func printView() {}
 
 }
 

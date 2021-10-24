@@ -2584,6 +2584,10 @@ extension ZView {
 		addTrackingArea(tracker)
 	}
 
+}
+
+extension ZPseudoView {
+
 	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {
 		if  var       dotCount = count {
 			var      fatHollow = false

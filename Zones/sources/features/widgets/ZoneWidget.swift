@@ -91,22 +91,23 @@ class ZWidgetObject: NSObject {
 	}
 }
 
-class ZoneWidget: ZView {
+class ZoneWidget: ZPseudoView {
 
     let                 dragDot = ZoneDot        ()
     let               revealDot = ZoneDot        ()
-    let              textWidget = ZoneTextWidget ()
-    let            childrenView = ZView          ()
+    let            childrenView = ZPseudoView    ()
 	let            widgetObject = ZWidgetObject  ()
-    private var childrenWidgets = ZoneWidgetArray()
+	var        pseudoTextWidget = ZPseudoTextView()
+	private var childrenWidgets = ZoneWidgetArray()
 	var   childrenViewDrawnSize = CGSize.zero
 	var               drawnSize = CGSize.zero
-	var               sizeToFit :     CGSize  { return drawnSize + CGSize(frame.origin) }
-	var            parentWidget : ZoneWidget? { return widgetZone?.parentZone?.widget }
-	var      hasVisibleChildren :       Bool  { return widgetZone?.hasVisibleChildren ?? false }
-	var             hideDragDot :       Bool  { return widgetZone?.onlyShowRevealDot ?? false }
-	var                   ratio :    CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
-	override var    description :     String  { return widgetZone?.description ?? kEmptyIdea }
+	var              textWidget : ZoneTextWidget  { return pseudoTextWidget.actualTextWidget }
+	var               sizeToFit :         CGSize  { return drawnSize + CGSize(frame.origin) }
+	var            parentWidget :     ZoneWidget? { return widgetZone?.parentZone?.widget }
+	var      hasVisibleChildren :           Bool  { return widgetZone?.hasVisibleChildren ?? false }
+	var             hideDragDot :           Bool  { return widgetZone?.onlyShowRevealDot ?? false }
+	var                   ratio :        CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
+	override var    description :         String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
 		var result    = widgetZone?.widgetType
@@ -146,18 +147,17 @@ class ZoneWidget: ZView {
 
     deinit {
         childrenWidgets.removeAll()
-		removeAllSubviews()
     }
 
 	// MARK:- view hierarchy
 	// MARK:-
 
-	func layoutInView(_ inView: ZView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func layoutInPseudoview(_ inView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
 
 		if  let thisView = inView,
-			!thisView.subviews.contains(self) {
-			thisView.addSubview(self)
+			!thisView.subpseudoviews.contains(self) {
+			thisView.addSubpseudoview(self)
 		}
 
 		#if os(iOS)
@@ -181,7 +181,7 @@ class ZoneWidget: ZView {
 					index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
 					let child         = childrenWidgets[index]
 					child.widgetZone  =            zone[index]
-					count            += child.layoutInView(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
+					count            += child.layoutInPseudoview(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
 				}
 			}
 		}
@@ -193,23 +193,19 @@ class ZoneWidget: ZView {
 	}
 
 	func addDots() {
-		if !hideDragDot,
-		   !subviews.contains(dragDot) {
-			insertSubview(dragDot, belowSubview: textWidget)
+		if !hideDragDot {
 			dragDot.setupForWidget(self, asReveal: false)
 		}
 
-		if !subviews.contains(revealDot) {
-			insertSubview(revealDot, belowSubview: textWidget)
-			revealDot.setupForWidget(self, asReveal: true)
-		}
+		revealDot.setupForWidget(self, asReveal: true)
 	}
 
 	func addTextView() {
-		if !subviews.contains(textWidget) {
-			textWidget.widget = self
+		if  textWidget.widget == nil {
+			textWidget.widget  = self
 
-			addSubview(textWidget)
+			controller?.mapView?.addSubview(textWidget)
+			addSubpseudoview(pseudoTextWidget)
 		}
 
 		textWidget.setup()
@@ -217,10 +213,10 @@ class ZoneWidget: ZView {
 
 	func addChildrenView() {
 		if  let zone = widgetZone, !zone.hasVisibleChildren {
-			childrenView.removeFromSuperview()
+			childrenView.removeFromSuperpseudoview()
 			return
-		} else if !subviews.contains(childrenView) {
-			insertSubview(childrenView, belowSubview: textWidget)
+		} else if !subpseudoviews.contains(childrenView) {
+			addSubpseudoview(childrenView)
 		}
 	}
 
@@ -230,8 +226,8 @@ class ZoneWidget: ZView {
 			if !zone.isExpanded {
 				childrenWidgets.removeAll()
 
-				for view in childrenView.subviews {
-					view.removeFromSuperview()
+				for view in childrenView.subpseudoviews {
+					view.removeFromSuperpseudoview()
 				}
 			} else {
 				var count = zone.count
@@ -247,7 +243,7 @@ class ZoneWidget: ZView {
 				while childrenWidgets.count > count {
 					let widget = childrenWidgets.removeLast()
 
-					widget.removeFromSuperview()
+					widget.removeFromSuperpseudoview()
 				}
 			}
 		}
@@ -450,7 +446,7 @@ class ZoneWidget: ZView {
         }
     }
 
-	func dragHitRect(in view: ZView, _ here: Zone) -> CGRect {
+	func dragHitRect(in view: ZPseudoView, _ here: Zone) -> CGRect {
 		if  here == widgetZone {
 			return view.bounds
 		}
@@ -458,7 +454,7 @@ class ZoneWidget: ZView {
 		return convert(bounds, to: view)
 	}
 
-    func widgetNearestTo(_ point: CGPoint, in iView: ZView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
+    func widgetNearestTo(_ point: CGPoint, in iView: ZPseudoView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
 		if  !visited.contains(self),
 			let view = iView,
 			let here = iHere,
@@ -475,17 +471,6 @@ class ZoneWidget: ZView {
 		}
 
         return nil
-    }
-
-    func displayForDrag() {
-        revealDot.innerDot?        .setNeedsDisplay()
-        parentWidget?              .setNeedsDisplay() // sibling lines
-        self                       .setNeedsDisplay() // children lines
-
-        for child in childrenWidgets {
-            child.dragDot.innerDot?.setNeedsDisplay()
-            child                  .setNeedsDisplay() // grandchildren lines
-        }
     }
 
     // MARK:- child lines
@@ -648,10 +633,10 @@ class ZoneWidget: ZView {
 			let isHovering = textWidget.isHovering
 			let   expanded = zone.isExpanded
 
-				if  gDebugDraw {
-					drawColoredRect(iDirtyRect, .green)
-					drawColoredRect(childrenView.frame, .orange)
-				}
+//				if  gDebugDraw {
+//					drawColoredRect(iDirtyRect, .green)
+//					drawColoredRect(childrenView.frame, .orange)
+//				}
 
 				textWidget.updateTextColor()
 
