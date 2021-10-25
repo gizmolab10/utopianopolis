@@ -626,6 +626,10 @@ extension CGPoint {
         y = size.height
     }
 
+	public static func + (left: CGPoint, right: CGPoint) -> CGPoint {
+		return CGPoint(x: left.x + right.x, y: left.y + right.y)
+	}
+
     static func - ( left: CGPoint, right: CGPoint) -> CGSize {
         return CGSize(width: left.x - right.x, height: left.y - right.y)
     }

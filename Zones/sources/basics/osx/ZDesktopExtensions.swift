@@ -1143,15 +1143,15 @@ extension ZoneWidget {
 	@objc func printView() { // ZoneWidget
 		let view = ZView(frame: bounds)
 
-		layoutInPseudoview(self, for: .tBigMap, atIndex: nil, recursing: true, .sRelayout, visited: [])
+		layoutAllPseudoViews(inPseudoView: self, for: .tBigMap, atIndex: nil, recursing: true, .sRelayout, visited: [])
 		view.printView()
 	}
 
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var             frame = CGRect ()
 
-        if  let     sourceDot = revealDot.innerDot, kind != nil {
-            let   sourceFrame = sourceDot.convert( sourceDot.bounds, to: self)
+        if              kind != nil {
+            let   sourceFrame = revealDot.convert( revealDot.bounds, toContaining: self)
             let     thickness = CGFloat(gLineThickness)
 			let     dotHeight = CGFloat(gDotHeight)
 			let    adjustment = CGFloat(2.0)

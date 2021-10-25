@@ -50,39 +50,14 @@ class ZoneDot: ZPseudoView {
     // MARK:-
 
     weak var     widget : ZoneWidget?
-    var        innerDot : ZoneDot?
-	var       drawnSize = CGSize.zero
 	var        isReveal = true
-    var      isInnerDot = false
 	var      isHovering = false
 	var dragDotIsHidden : Bool    { return widgetZone?.dragDotIsHidden ?? true }
 	var      isDragDrop : Bool    { return widget == gDropWidget }
     var      widgetZone : Zone?   { return widget?.widgetZone }
 	var           ratio : CGFloat { return widget?.ratio ?? 1.0 }
-	var   innerDotWidth : CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth) }
-	var  innerDotHeight : CGFloat { return ratio * CGFloat(gDotHeight) }
 
-    var innerOrigin: CGPoint? {
-        if  let inner = innerDot {
-            let  rect = inner.convert(inner.bounds, to: self)
-
-            return rect.origin
-        }
-
-        return nil
-	}
-
-    var innerExtent: CGPoint? {
-        if  let inner = innerDot {
-            let  rect = inner.convert(inner.bounds, to: self)
-
-            return rect.extent
-        }
-
-        return nil
-    }
-
-    var isVisible: Bool {
+	var isVisible: Bool {
 		guard let zone = widgetZone else {
 			return false
 		}
@@ -112,25 +87,24 @@ class ZoneDot: ZPseudoView {
     // MARK:-
 
 	@discardableResult func updateSize() -> CGSize {
-		var height = innerDotHeight
-		var  width = innerDotWidth
+		let  dotWidth = ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth)
+		let dotHeight = ratio * CGFloat(gDotHeight)
+		let    height = dotHeight + 5.0 + (gGenericOffset.height * 3.0)
+		var    width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + dotWidth - 48.0
 
-		if !isInnerDot {
-			height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
-			width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + innerDotWidth - 48.0
-
-			if  let w = widget, !w.type.isBigMap {
-				width *= kSmallMapReduction
-			}
+		if  let     w = widget, !w.type.isBigMap {
+			width    *= kSmallMapReduction
 		}
 
-		drawnSize = CGSize(width: width, height: height)
+		drawnSize     = CGSize(width: width, height: height)
 
 		return drawnSize
 	}
 
-	func updateFrame(accountingFor childrenViewHeight : CGFloat = .zero) {
-		if  let    textWidget = widget?.textWidget {
+	func updateFrame(accountingFor childrenViewHeight : CGFloat = .zero, _ absolute: Bool = false) {
+		if  absolute {
+			updateAbsoluteFrame(toController: widget?.controller)
+		} else if let textWidget = widget?.textWidget {
 			let   drawnHeight = drawnSize.height
 			let hasNoChildren = childrenViewHeight < drawnHeight
 			let             y = hasNoChildren ? CGFloat.zero : (childrenViewHeight - drawnHeight) / CGFloat(2.0)
@@ -141,12 +115,6 @@ class ZoneDot: ZPseudoView {
 			}
 
 			frame = CGRect(origin: CGPoint(x: x, y: y), size: drawnSize)
-
-			if  let   i = innerDot {
-				let   s = i.drawnSize
-				let   o = CGPoint((drawnSize - s).multiplyBy(0.5))        // center inner dot within self
-				i.frame = CGRect(origin: o, size: s)
-			}
 		}
 	}
 
@@ -155,18 +123,6 @@ class ZoneDot: ZPseudoView {
         widget   = iWidget
 
 		updateSize()
-
-		if !isInnerDot, innerDot == nil {
-			innerDot             = ZoneDot()
-			innerDot?.isInnerDot = true
-
-			innerDot?.setupForWidget(iWidget, asReveal: isReveal)
-		}
-
-		#if os(iOS)
-		backgroundColor = kClearColor
-		#endif
-
 		updateTracking()
 		updateTooltips()
 	}
@@ -177,11 +133,11 @@ class ZoneDot: ZPseudoView {
 	func updateTracking() {} // if !isInnerDot { addTracking(for: frame) } }
 
 	func mouseEntered(with event: ZEvent) {
-		gHovering.declareHover(innerDot)
+		gHovering.declareHover(self)
 	}
 
 	func mouseMoved(with event: ZEvent) {
-		gHovering.declareHover(innerDot)
+		gHovering.declareHover(self)
 	}
 
 	func mouseExited(with event: ZEvent) {
@@ -411,14 +367,7 @@ class ZoneDot: ZPseudoView {
 
 		if  isVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
-			if  isInnerDot {
-				drawInnerDot(iDirtyRect, parameters)
-			} else if innerDot != nil,
-				let rect = innerDot?.frame.offsetBy(dx: -0.1, dy: -0.1),
-				let zone = widgetZone,
-				(!zone.isExpanded || zone.isBookmark) {
-				drawOuterDot(rect, parameters)
-			}
+			drawOuterDot(iDirtyRect, parameters)
 		}
     }
 

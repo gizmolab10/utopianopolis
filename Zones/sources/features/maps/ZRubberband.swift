@@ -42,15 +42,14 @@ class ZRubberband: NSObject {
 		if  let    view = iView,
 			let    rect = rubberbandRect {
 			for widget in gWidgets.visibleWidgets {
-				if  let    hitRect = widget.hitRect {
-					let widgetRect = widget.convert(hitRect, to: view)
+				let    hitRect = widget.hitRect
+				let widgetRect = widget.convert(hitRect, toContaining: view)
 
-					if  let   zone = widget.widgetZone,
-						!zone.isFavoritesRoot,
-						!zone.isRecentsRoot,
-						widgetRect.intersects(rect) {
-						gSelecting.addOneGrab(zone)
-					}
+				if  let   zone = widget.widgetZone,
+					!zone.isFavoritesRoot,
+					!zone.isRecentsRoot,
+					widgetRect.intersects(rect) {
+					gSelecting.addOneGrab(zone)
 				}
 			}
 		}

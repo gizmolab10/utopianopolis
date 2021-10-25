@@ -38,12 +38,12 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 		// draw dragged dot and line in active color
 
-		if  let     widget = gDropWidget,
-			let        dot = widget.revealDot.innerDot {
+		if  let     widget = gDropWidget {
+			let        dot = widget.revealDot
 			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
             let  floatRect = widget.floatingDropDotRect
-            let   dragRect = widget.convert(floatRect, to: self)
-			let    dotRect = dot.convert(dot.bounds, to: self)
+			let   dragRect = widget.convert(floatRect,  toContaining: gMapController?.mapPseudoView)
+			let    dotRect = dot   .convert(dot.bounds, toContaining: gMapController?.mapPseudoView)
 
 			gActiveColor.setFill()
             gActiveColor.setStroke()

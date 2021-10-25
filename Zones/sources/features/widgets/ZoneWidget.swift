@@ -99,8 +99,6 @@ class ZoneWidget: ZPseudoView {
 	let            widgetObject = ZWidgetObject  ()
 	var        pseudoTextWidget = ZPseudoTextView()
 	private var childrenWidgets = ZoneWidgetArray()
-	var   childrenViewDrawnSize = CGSize.zero
-	var               drawnSize = CGSize.zero
 	var              textWidget : ZoneTextWidget  { return pseudoTextWidget.actualTextWidget }
 	var               sizeToFit :         CGSize  { return drawnSize + CGSize(frame.origin) }
 	var            parentWidget :     ZoneWidget? { return widgetZone?.parentZone?.widget }
@@ -152,10 +150,10 @@ class ZoneWidget: ZPseudoView {
 	// MARK:- view hierarchy
 	// MARK:-
 
-	@discardableResult func layoutInPseudoview(_ inView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func layoutAllPseudoViews(inPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
 
-		if  let thisView = inView,
+		if  let thisView = inPseudoView,
 			!thisView.subpseudoviews.contains(self) {
 			thisView.addSubpseudoview(self)
 		}
@@ -181,7 +179,7 @@ class ZoneWidget: ZPseudoView {
 					index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
 					let child         = childrenWidgets[index]
 					child.widgetZone  =            zone[index]
-					count            += child.layoutInPseudoview(childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
+					count            += child.layoutAllPseudoViews(inPseudoView: childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
 				}
 			}
 		}
@@ -194,9 +192,11 @@ class ZoneWidget: ZPseudoView {
 
 	func addDots() {
 		if !hideDragDot {
+			addSubpseudoview(dragDot)
 			dragDot.setupForWidget(self, asReveal: false)
 		}
 
+		addSubpseudoview(revealDot)
 		revealDot.setupForWidget(self, asReveal: true)
 	}
 
@@ -214,7 +214,6 @@ class ZoneWidget: ZPseudoView {
 	func addChildrenView() {
 		if  let zone = widgetZone, !zone.hasVisibleChildren {
 			childrenView.removeFromSuperpseudoview()
-			return
 		} else if !subpseudoviews.contains(childrenView) {
 			addSubpseudoview(childrenView)
 		}
@@ -233,14 +232,14 @@ class ZoneWidget: ZPseudoView {
 				var count = zone.count
 
 				if  count > 60 {
-					count = 60
+					count = 60     // shrink count to what will reasonably fit vertically
 				}
 
 				while childrenWidgets.count < count {
-					childrenWidgets.append(ZoneWidget())
+					childrenWidgets.append(ZoneWidget())      // add missing
 				}
 
-				while childrenWidgets.count > count {
+				while childrenWidgets.count > count {         // shrink all beyond count
 					let widget = childrenWidgets.removeLast()
 
 					widget.removeFromSuperpseudoview()
@@ -254,21 +253,21 @@ class ZoneWidget: ZPseudoView {
 
 	func updateChildrenViewDrawnSize() {
 		if !hasVisibleChildren {
-			childrenViewDrawnSize = CGSize.zero
+			childrenView.drawnSize = CGSize.zero
 		} else {
-			var  biggestChildSize = CGSize.zero
-			var            height = CGFloat.zero
+			var        biggestSize = CGSize.zero
+			var             height = CGFloat.zero
 
 			for child in childrenWidgets {			// traverse progeny, updating their frames
-				let    childSize = child.drawnSize
-				height          += childSize.height
+				let           size = child.drawnSize
+				height            += size.height
 
-				if  childSize.width  > biggestChildSize.width {
-					biggestChildSize = childSize
+				if  size.width     > biggestSize.width {
+					biggestSize    = size
 				}
 			}
 
-			childrenViewDrawnSize = CGSize(width: biggestChildSize.width, height: height)
+			childrenView.drawnSize = CGSize(width: biggestSize.width, height: height)
 		}
 	}
 
@@ -279,8 +278,8 @@ class ZoneWidget: ZPseudoView {
 	func updateSize() {
 		updateChildrenViewDrawnSize()
 
-		var   width = childrenViewDrawnSize.width
-		var  height = childrenViewDrawnSize.height
+		var   width = childrenView.drawnSize.width
+		var  height = childrenView.drawnSize.height
 		let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
 		width      += textWidget.drawnSize.width
 		let dSize   = revealDot.drawnSize
@@ -295,76 +294,89 @@ class ZoneWidget: ZPseudoView {
 		drawnSize = CGSize(width: width, height: height)
 	}
 
-	func updateAllFrames() {
-		widgetZone?.traverseAllVisibleProgeny(inReverse: true) { iZone in
+	func updateAllFrames(_ absolute: Bool = false) {
+		widgetZone?.traverseAllVisibleProgeny(inReverse: !absolute) { iZone in
 			if  let child = iZone.widget {
-				child.updateSubframes()
+				child.updateSubframes(absolute)
 			}
 		}
 	}
 
-	func updateSubframes() {
-		updateChildrenFrames()
-		updateTextViewFrame()
+	func updateSubframes(_ absolute: Bool = false) {
+		updateChildrenFrames(absolute)
+		updateTextViewFrame(absolute)
 
-		let childrenHeight = childrenViewDrawnSize.height
+		let childrenHeight = childrenView.drawnSize.height
 
 		if !hideDragDot {
-			dragDot.updateFrame(accountingFor: childrenHeight)
+			dragDot.updateFrame(accountingFor: childrenHeight, absolute)
 		}
 
-		revealDot.updateFrame(accountingFor: childrenHeight)
-		updateChildrenViewFrame()
+		revealDot.updateFrame(accountingFor: childrenHeight, absolute)
+		updateChildrenViewFrame(absolute)
 	}
 
-	func updateChildrenFrames() {
+	func updateChildrenFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
-			var      height = CGFloat.zero
-			var       index = childrenWidgets.count
-			while index     > 0 {
-				index      -= 1 // go backwards [up] the children array
-				let   child = childrenWidgets[index]
-				let    size = child.drawnSize
-				let  origin = CGPoint(x: .zero, y: height)
-				height     += size.height
-				child.frame = CGRect(origin: origin, size: size)
+			var    height = CGFloat.zero
+			var     index = childrenWidgets.count
+			while   index > 0 {
+				index    -= 1 // go backwards [up] the children array
+				let child = childrenWidgets[index]
+
+				if  absolute {
+					child.updateAbsoluteFrame(toController: controller)
+				} else {
+					let    size = child.drawnSize
+					let  origin = CGPoint(x: .zero, y: height)
+					height     += size.height
+					let    rect = CGRect(origin: origin, size: size)
+					child.frame = rect
+				}
 			}
 		}
 	}
 
-	func updateTextViewFrame() {
-		let     textSize = textWidget.drawnSize
-		let       offset = gGenericOffset.add(width: 4.0, height: 0.5).multiplyBy(ratio) // why?
-		let            y = (drawnSize.height - textSize.height) / 2.0
-		let   textOrigin = CGPoint(x: offset.width, y: y)
-		textWidget.frame = CGRect(origin: textOrigin, size: textSize)
-	}
+	func updateTextViewFrame(_ absolute: Bool = false) {
+		if  absolute {
+			pseudoTextWidget.updateAbsoluteFrame(toController: controller)
 
-	func updateChildrenViewFrame() {
+			textWidget.frame = pseudoTextWidget.absoluteFrame
+		} else {
+			let     textSize = textWidget.drawnSize
+			let       offset = gGenericOffset.add(width: 4.0, height: 0.5).multiplyBy(ratio) // why?
+			let            y = (drawnSize.height - textSize.height) / 2.0
+			let   textOrigin = CGPoint(x: offset.width, y: y)
+			pseudoTextWidget.frame = CGRect(origin: textOrigin, size: textSize)
+		}
+	}
+	func updateChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
-			let          ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
-			let      textFrame = textWidget.frame
-			let              x = textFrame.maxX + (CGFloat(gChildrenViewOffset) * ratio)
-			let         origin = CGPoint(x: x, y: CGFloat.zero)
-			let  childrenFrame = CGRect(origin: origin, size: childrenViewDrawnSize)
-			childrenView.frame = childrenFrame
+			if  absolute {
+				childrenView.updateAbsoluteFrame(toController: controller)
+			} else {
+				let          ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
+				let      textFrame = pseudoTextWidget.frame
+				let              x = textFrame.maxX + (CGFloat(gChildrenViewOffset) * ratio)
+				let         origin = CGPoint(x: x, y: CGFloat.zero)
+				let  childrenFrame = CGRect(origin: origin, size: childrenView.drawnSize)
+				childrenView.frame = childrenFrame
+			}
 		}
 	}
 
     // MARK:- drag
     // MARK:-
 
-    var hitRect: CGRect? {
-        if  let  start =   dragDot.innerOrigin,
-			let extent = revealDot.innerExtent {
-            return CGRect(start: convert(start, from: dragDot), extent: convert(extent, from: revealDot))
-        }
+    var hitRect: CGRect {
+		let  start =   dragDot.frame.origin
+		let extent = revealDot.frame.extent
 
-        return nil
+			return CGRect(start: dragDot.convert(start, toContaining: self), extent: revealDot.convert(extent, toContaining: self))
     }
 
     var outerHitRect: CGRect {
-		return CGRect(start: dragDot.convert(.zero, to: self), extent: revealDot.convert(revealDot.bounds.extent, to: self))
+		return CGRect(start: dragDot.convert(.zero, toContaining: self), extent: revealDot.convert(revealDot.bounds.extent, toContaining: self))
     }
 
     var floatingDropDotRect: CGRect {
@@ -377,15 +389,13 @@ class ZoneWidget: ZPseudoView {
                 // DOT IS STRAIGHT OUT //
                 // //////////////////////
 
-                if  let            dot = revealDot.innerDot {
-                    let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-                    rect               = dot.convert(dot.bounds, to: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
-                }
+                let             insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
+				rect                   = revealDot.convert(revealDot.bounds, toContaining: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
             } else if let      indices = gDropIndices, indices.count > 0 {
                 let         firstindex = indices.firstIndex
 
                 if  let       firstDot = dot(at: firstindex) {
-                    rect               = firstDot.convert(firstDot.bounds, to: self)
+                    rect               = firstDot.convert(firstDot.bounds, toContaining: self)
                     let      lastIndex = indices.lastIndex
 
                     if  indices.count == 1 || lastIndex >= zone.count {
@@ -407,7 +417,7 @@ class ZoneWidget: ZPseudoView {
                         // DOT IS TWEEN //
                         // ///////////////
 
-                        let secondRect = secondDot.convert(secondDot.bounds, to: self)
+                        let secondRect = secondDot.convert(secondDot.bounds, toContaining: self)
                         let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
                         rect           = rect.offsetBy(dx: 0.0, dy: -delta)
                     }
@@ -440,7 +450,7 @@ class ZoneWidget: ZPseudoView {
             let  index = min(iIndex, zone.count - 1)
             let target = zone.children[index]
 
-            return target.widget?.dragDot.innerDot
+            return target.widget?.dragDot
         } else {
             return nil
         }
@@ -451,7 +461,7 @@ class ZoneWidget: ZPseudoView {
 			return view.bounds
 		}
 
-		return convert(bounds, to: view)
+		return convert(bounds, toContaining: view)
 	}
 
     func widgetNearestTo(_ point: CGPoint, in iView: ZPseudoView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
@@ -477,14 +487,10 @@ class ZoneWidget: ZPseudoView {
     // MARK:-
 
     func lineKind(to dragRect: CGRect) -> ZLineKind? {
-        var kind: ZLineKind?
-        if  let    toggleDot = revealDot.innerDot {
-            let   toggleRect = toggleDot.convert(toggleDot.bounds,  to: self)
-            let        delta = Double(dragRect.midY - toggleRect.midY)
-            kind             = lineKind(for: delta)
-        }
+		let   toggleRect = revealDot.convert(revealDot.bounds, toContaining: self)
+		let        delta = Double(dragRect.midY - toggleRect.midY)
 
-        return kind
+		return lineKind(for: delta)
     }
 
     func lineKind(to widget: ZoneWidget?) -> ZLineKind {
@@ -492,8 +498,8 @@ class ZoneWidget: ZPseudoView {
 
         if  let           zone = widgetZone,
             zone        .count > 1,
-            let        dragDot = widget?.dragDot.innerDot {
-            let       dragRect = dragDot.convert(dragDot.bounds, to: self)
+            let        dragDot = widget?.dragDot {
+            let       dragRect = dragDot.convert(dragDot.bounds, toContaining: self)
             if  let   dragKind = lineKind(to: dragRect) {
                 kind           = dragKind
             }
@@ -507,7 +513,7 @@ class ZoneWidget: ZPseudoView {
 
         if  let kind = lineKind(to: dragRect) {
             rect     = lineRect(to: dragRect, kind: kind)
-            rect     = convert (rect!,          to: iView)
+            rect     = convert (rect!, toContaining: controller?.mapPseudoView)
         }
 
         return rect
@@ -517,10 +523,10 @@ class ZoneWidget: ZPseudoView {
         let  hasIndent = widget?.widgetZone?.isCurrentFavorite ?? false
         let      inset = CGFloat(hasIndent ? -5.0 : 0.0)
         var      frame = CGRect ()
-        if  let    dot = widget?.dragDot.innerDot {
+        if  let    dot = widget?.dragDot {
             let dFrame = dot.bounds.insetBy(dx: inset, dy: 0.0)
             let   kind = lineKind(to: widget)
-            frame      = dot.convert(dFrame, to: self)
+            frame      = dot.convert(dFrame, toContaining: self)
             frame      = lineRect(to: frame, kind: kind)
         }
 
@@ -569,8 +575,7 @@ class ZoneWidget: ZPseudoView {
         let       gapInset =  gap         /  8.0
 		let     widthInset = (gap + 32.0) / -2.0
         let    widthExpand = (gap + 24.0) /  6.0
-		let innerRevealDot = revealDot.innerDot
-        let revealDotDelta = innerRevealDot?.isVisible ?? false ? CGFloat(0.0) : innerRevealDot!.bounds.size.width + 3.0      // expand around reveal dot, only if it is visible
+        let revealDotDelta = revealDot.isVisible ? CGFloat(0.0) : revealDot.bounds.size.width + 3.0      // expand around reveal dot, only if it is visible
 		var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
 		rect.size .height += (gHighlightHeightOffset + 2.0) / ratio
         rect.size  .width += (widthExpand - revealDotDelta) / ratio

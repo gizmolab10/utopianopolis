@@ -36,9 +36,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		view    .layer?.backgroundColor = kClearColor.cgColor
 		mapView?.layer?.backgroundColor = kClearColor.cgColor
 
+		if  let           frame = mapView?.frame {
+			mapPseudoView.frame = frame
+		}
+
 		super.setup()
 		platformSetup()
-//        mapView?.addSubview(rootWidget)
+		mapPseudoView.addSubpseudoview(rootWidget)
     }
 
     #if os(OSX)
@@ -120,9 +124,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             recursing             = [.sData, .sRelayout].contains(kind)
         }
 
-		let total = specificWidget.layoutInPseudoview(specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
+		let total = specificWidget.layoutAllPseudoViews(inPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
-		rootWidget.updateAllFrames()
+		rootWidget.updateAllFrames(false)
+		rootWidget.updateAllFrames(true)
 		layoutForCurrentScrollOffset()
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
@@ -464,12 +469,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let           widgetM = rootWidget.widgetNearestTo(locationM, in: mapPseudoView, hereZone) {
 			let         alternate = isBigMap ? gSmallMapController : gMapController
 			if  let      mapViewA = alternate?.mapPseudoView, !kIsPhone {
-				let     locationA = mapPseudoView.convert(locationM, to: mapViewA)
+				let     locationA = mapPseudoView.convert(locationM, toContaining: mapViewA)
 				if  let   widgetA = alternate?.rootWidget.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone) {
 					let  dragDotM = widgetM.dragDot
 					let  dragDotA = widgetA.dragDot
-					let   vectorM = dragDotM.convert(dragDotM.bounds.center, to: mapPseudoView) - locationM
-					let   vectorA = dragDotA.convert(dragDotA.bounds.center, to: mapPseudoView) - locationM
+					let   vectorM = dragDotM.convert(dragDotM.bounds.center, toContaining: mapPseudoView) - locationM
+					let   vectorA = dragDotA.convert(dragDotA.bounds.center, toContaining: mapPseudoView) - locationM
 					let   lengthM = vectorM.length
 					let   lengthA = vectorA.length
 
@@ -549,7 +554,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			var smallest = CGSize.big
 			let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
 			for  widget in widgets {
-                let rect = widget.convert(widget.outerHitRect, to: mapPseudoView)
+                let rect = widget.convert(widget.outerHitRect, toContaining: mapPseudoView)
 				let size = rect.size
 
                 if  rect.contains(location),
@@ -569,7 +574,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         if  let                d = mapView,
             let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
-				let         rect = iDot.convert(iDot.bounds, to: self.mapPseudoView)
+				let         rect = iDot.convert(iDot.bounds, toContaining: self.mapPseudoView)
 
                 if  rect.contains(location) {
                     hit = iDot
