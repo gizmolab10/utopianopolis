@@ -1151,7 +1151,7 @@ extension ZoneWidget {
         var             frame = CGRect ()
 
         if              kind != nil {
-            let   sourceFrame = revealDot.convert( revealDot.bounds, toContaining: self)
+            let   sourceFrame = revealDot.absoluteFrame
             let     thickness = CGFloat(gLineThickness)
 			let     dotHeight = CGFloat(gDotHeight)
 			let    adjustment = CGFloat(2.0)

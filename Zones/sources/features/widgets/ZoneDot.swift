@@ -87,18 +87,25 @@ class ZoneDot: ZPseudoView {
     // MARK:-
 
 	@discardableResult func updateSize() -> CGSize {
-		let  dotWidth = ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth)
-		let dotHeight = ratio * CGFloat(gDotHeight)
-		let    height = dotHeight + 5.0 + (gGenericOffset.height * 3.0)
-		var    width  = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + dotWidth - 48.0
+		let   dotWidth = ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth)
+		let  dotHeight = ratio * CGFloat(gDotHeight)
+		let     height = dotHeight + 6.0 + (gGenericOffset.height * 3.0)
+		let      width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + dotWidth - 48.0
+		var       size = CGSize(width: width, height: height)
 
-		if  let     w = widget, !w.type.isBigMap {
-			width    *= kSmallMapReduction
+		if  let      w = widget, !w.type.isBigMap {
+			size       = size.multiplyBy(kSmallMapReduction)
 		}
 
-		drawnSize     = CGSize(width: width, height: height)
+		drawnSize      = size
 
 		return drawnSize
+	}
+
+	func updateFrame(relativeTo textFrame: CGRect) {
+		let    offset = CGPoint(drawnSize)//.multiplyBy(0.5))
+		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-offset.x, 0.0)
+		absoluteFrame = CGRect(origin: origin, size: drawnSize)
 	}
 
 	func updateFrame(accountingFor childrenViewHeight : CGFloat = .zero, _ absolute: Bool = false) {
@@ -362,12 +369,13 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
-    override func draw(_ iDirtyRect: CGRect) {
-        super.draw(iDirtyRect)
-
+    override func draw() {
 		if  isVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
-			drawOuterDot(iDirtyRect, parameters)
+			let offset = absoluteFrame.height / -9.0
+			let rect = absoluteFrame.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
+			drawInnerDot(rect, parameters)
+			drawOuterDot(rect, parameters)
 		}
     }
 

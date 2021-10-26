@@ -94,6 +94,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func layoutForCurrentScrollOffset() {
+		rootWidget.updateAllFrames(false)
+		rootWidget.updateAllFrames(true)
+
 		var       offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y         = -offset.y
 		let         size = rootWidget.drawnSize
@@ -126,8 +129,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let total = specificWidget.layoutAllPseudoViews(inPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
-		rootWidget.updateAllFrames(false)
-		rootWidget.updateAllFrames(true)
 		layoutForCurrentScrollOffset()
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")

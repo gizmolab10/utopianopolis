@@ -643,8 +643,11 @@ DQ
                         <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="myf-PZ-JAt">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="myf-PZ-JAt" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
+                                <connections>
+                                    <outlet property="controller" destination="XfG-lQ-9wD" id="uYG-tf-2Vn"/>
+                                </connections>
                             </customView>
                         </subviews>
                         <constraints>

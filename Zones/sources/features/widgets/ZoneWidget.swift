@@ -227,6 +227,11 @@ class ZoneWidget: ZPseudoView {
 
 				for view in childrenView.subpseudoviews {
 					view.removeFromSuperpseudoview()
+					if  let w = view as? ZoneWidget {
+						let t = w.textWidget
+
+						t.removeFromSuperview()
+					}
 				}
 			} else {
 				var count = zone.count
@@ -291,7 +296,7 @@ class ZoneWidget: ZPseudoView {
 			height  = dheight
 		}
 
-		drawnSize = CGSize(width: width, height: height)
+		drawnSize   = CGSize(width: width, height: height)
 	}
 
 	func updateAllFrames(_ absolute: Bool = false) {
@@ -303,16 +308,9 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateSubframes(_ absolute: Bool = false) {
-		updateChildrenFrames(absolute)
-		updateTextViewFrame(absolute)
-
-		let childrenHeight = childrenView.drawnSize.height
-
-		if !hideDragDot {
-			dragDot.updateFrame(accountingFor: childrenHeight, absolute)
-		}
-
-		revealDot.updateFrame(accountingFor: childrenHeight, absolute)
+		updateChildrenFrames   (absolute)
+		updateTextViewFrame    (absolute)
+		updateDotFrames        (absolute)
 		updateChildrenViewFrame(absolute)
 	}
 
@@ -350,6 +348,19 @@ class ZoneWidget: ZPseudoView {
 			pseudoTextWidget.frame = CGRect(origin: textOrigin, size: textSize)
 		}
 	}
+
+	fileprivate func updateDotFrames(_ absolute: Bool) {
+		if  absolute {
+			let textFrame = textWidget.frame
+
+			if !hideDragDot {
+				dragDot.updateFrame(relativeTo: textFrame)
+			}
+
+			revealDot  .updateFrame(relativeTo: textFrame)
+		}
+	}
+
 	func updateChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			if  absolute {
@@ -522,12 +533,11 @@ class ZoneWidget: ZPseudoView {
     func lineRect(to widget: ZoneWidget?) -> CGRect {
         let  hasIndent = widget?.widgetZone?.isCurrentFavorite ?? false
         let      inset = CGFloat(hasIndent ? -5.0 : 0.0)
-        var      frame = CGRect ()
+        var      frame = CGRect()
         if  let    dot = widget?.dragDot {
-            let dFrame = dot.bounds.insetBy(dx: inset, dy: 0.0)
+            let dFrame = dot.absoluteFrame.insetBy(dx: inset, dy: 0.0)
             let   kind = lineKind(to: widget)
-            frame      = dot.convert(dFrame, toContaining: self)
-            frame      = lineRect(to: frame, kind: kind)
+            frame      = lineRect(to: dFrame, kind: kind)
         }
 
         return frame
@@ -628,9 +638,7 @@ class ZoneWidget: ZPseudoView {
 
     var nowDrawLines = false
 
-    override func draw(_ iDirtyRect: CGRect) {
-        super.draw(iDirtyRect)
-
+    override func draw() {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let       zone = widgetZone {
             let  isGrabbed = zone.isGrabbed
@@ -638,22 +646,23 @@ class ZoneWidget: ZPseudoView {
 			let isHovering = textWidget.isHovering
 			let   expanded = zone.isExpanded
 
-//				if  gDebugDraw {
-//					drawColoredRect(iDirtyRect, .green)
-//					drawColoredRect(childrenView.frame, .orange)
-//				}
+			if  gDebugDraw {
+				absoluteFrame     .drawColoredRect(.green)
+				childrenView.frame.drawColoredRect(.orange)
+			}
 
-				textWidget.updateTextColor()
+			dragDot  .draw()
+			revealDot.draw()
 
-				if  (isGrabbed || isEditing || isHovering) && !gIsPrinting {
-					drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
+			if  (isGrabbed || isEditing || isHovering) && !gIsPrinting {
+				drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
+			}
+
+			if  expanded {
+				for child in childrenWidgets {   // this is after child dots have been autolayed out
+					drawLine(to: child)
 				}
-
-				if  expanded {
-					for child in childrenWidgets {   // this is after child dots have been autolayed out
-						drawLine(to: child)
-					}
-				}
+			}
         }
     }
 

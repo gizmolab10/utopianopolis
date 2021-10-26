@@ -626,10 +626,6 @@ extension CGPoint {
         y = size.height
     }
 
-	public static func + (left: CGPoint, right: CGPoint) -> CGPoint {
-		return CGPoint(x: left.x + right.x, y: left.y + right.y)
-	}
-
     static func - ( left: CGPoint, right: CGPoint) -> CGSize {
         return CGSize(width: left.x - right.x, height: left.y - right.y)
     }
@@ -796,22 +792,21 @@ extension CGSize {
 
 extension CGRect {
 
-	var topRight:     CGPoint { return CGPoint(x: maxX, y: minY) }
 	var centerTop:    CGPoint { return CGPoint(x: midX, y: minY) }
 	var centerLeft:   CGPoint { return CGPoint(x: minX, y: midY) }
 	var centerRight:  CGPoint { return CGPoint(x: maxX, y: midY) }
 	var center:       CGPoint { return CGPoint(x: midX, y: midY) }
 	var centerBottom: CGPoint { return CGPoint(x: midX, y: maxY) }
-	var bottomLeft:   CGPoint { return CGPoint(x: minX, y: maxY) }
-	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: minY) }
+	var topLeft:      CGPoint { return CGPoint(x: minX, y: maxY) }
 	var extent:       CGPoint { return CGPoint(x: maxX, y: maxY) }
 
 	var cornerPoints: [ZDirection : CGPoint] {
 		var           result = [ZDirection : CGPoint]()
-		result[.topLeft]     = origin
-		result[.topRight]    = topRight
-		result[.bottomLeft]  = bottomLeft
-		result[.bottomRight] = extent
+		result[.topLeft]     = topLeft
+		result[.topRight]    = extent
+		result[.bottomLeft]  = origin
+		result[.bottomRight] = bottomRight
 
 		return result
 	}
@@ -929,6 +924,27 @@ extension CGRect {
 		let  delta = radius - sqrt(deltaX * deltaX + deltaY * deltaY)
 
 		return delta > 0
+	}
+
+	func drawColoredRect(_ color: ZColor, thickness: CGFloat = 0.5) {
+		let     radius = CGFloat(8.0)
+		let       path = ZBezierPath(roundedRect: self, xRadius: radius, yRadius: radius)
+		path.lineWidth = thickness
+
+		color.setStroke()
+		path.stroke()
+	}
+
+	func drawColoredOval(_ color: ZColor, filled: Bool = false) {
+		let oval = ZBezierPath(ovalIn: self)
+
+		color.setStroke()
+		oval.stroke()
+
+		if  filled {
+			color.setFill()
+			oval.fill()
+		}
 	}
 
 }

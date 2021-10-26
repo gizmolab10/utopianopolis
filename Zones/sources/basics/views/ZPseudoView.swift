@@ -19,13 +19,14 @@ class ZPseudoView: NSObject {
 	var superpseudoview : ZPseudoView?
 	var         toolTip : String?
 
-	func draw(_ iDirtyRect: CGRect) {}
+	func draw() {}
 
 	func convert(_ point: NSPoint, toContaining view: ZPseudoView?) -> NSPoint {
 		if	view != self,
 			let s = superpseudoview {
 			let f = s.frame
-			return s.convert(f.origin + point, toContaining: view) // recurse
+
+			return s.convert(f.origin.offsetBy(point), toContaining: view) // recurse
 		}
 
 		return point

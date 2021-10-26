@@ -147,8 +147,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="291" height="156"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="FRa-h5-v7h">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="FRa-h5-v7h" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="291" height="148"/>
+                                <connections>
+                                    <outlet property="controller" destination="bl3-7n-UyN" id="UXf-WV-0Cu"/>
+                                </connections>
                             </customView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-YN-HVE">
                                 <rect key="frame" x="0.0" y="-2" width="291" height="5"/>
