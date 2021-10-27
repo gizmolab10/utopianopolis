@@ -2451,7 +2451,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var visible = ZoneWidgetArray()
 
 		traverseProgeny { iZone -> ZTraverseStatus in
-			if let w = iZone.widget {
+			if  let w = iZone.widget {
 				visible.append(w)
 			}
 
@@ -2527,7 +2527,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		traverseProgeny { iZone -> ZTraverseStatus in
 			if begun {
-				if iZone.level > iLevel || iZone == self {
+				if  iZone.level > iLevel || iZone == self {
 					return .eSkip
 				} else if iZone.level == iLevel && iZone != self && (iZone.parentZone == nil || iZone.parentZone!.isExpanded) {
 					progeny.append(iZone)

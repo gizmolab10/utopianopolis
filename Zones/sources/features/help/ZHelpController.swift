@@ -16,7 +16,7 @@ import SnapKit
 #endif
 
 var gHelpWindowController : NSWindowController?         // instantiated once, in startupCloudAndUI
-var gHelpController       : ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
+var gHelpController       : ZHelpController? { return gHelpWindowController?.contentViewController as? ZHelpController }
 let gAllHelpModes         : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
 
 class ZHelpController: ZGenericTableController {
@@ -25,7 +25,6 @@ class ZHelpController: ZGenericTableController {
 	@IBOutlet var   mapHelpGrid : ZHelpGridView?
 	@IBOutlet var  dotsHelpGrid : ZHelpGridView?
 	@IBOutlet var essayHelpGrid : ZHelpGridView?
-	override  var  controllerID : ZControllerID  { return .idHelp }
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons = ZHelpButtonsView()

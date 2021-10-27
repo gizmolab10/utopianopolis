@@ -48,11 +48,11 @@ class ZHelpGridView: ZView {
 						let r = c.rect(p)
 						let m = c.helpDotParameters()
 
-						d.drawInnerDot(r, m)
+						d.drawDot(r, m)
 
 						if  c == .favorite {
 							m.color.withAlphaComponent(0.7).setFill()
-							d.drawOuterDot(r, m)
+							d.drawSurroundingDot(r, m)
 						}
 					}
 
@@ -63,8 +63,8 @@ class ZHelpGridView: ZView {
 						let r = c.rect(p)
 						let m = c.helpDotParameters(isFilled: true)
 
-						d.drawInnerDot(r, m)
-						d.drawOuterDot(r, m)
+						d.drawDot(r, m)
+						d.drawSurroundingDot(r, m)
 					}
 				}
 			}

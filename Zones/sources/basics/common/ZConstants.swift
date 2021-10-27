@@ -46,6 +46,7 @@ let  kDefaultEssayTextFontSize = CGFloat(18.0)
 let kDefaultEssayTitleFontSize = CGFloat(24.0)
 let      kDevelopmentStartDate = Date(timeIntervalSinceReferenceDate: 14.0 * 365.0 * 24.0 * 60.0 * 16.0) // jan 1 2015
 let       kTimeOfSystemStartup = Date.timeIntervalSinceReferenceDate
+let          kDragDotReduction = CGFloat(0.75)
 let         kSmallMapReduction = CGFloat(kIsPhone ? 1.0 : 0.8)
 let         kDefaultWindowRect = CGRect(x:0.0, y:0.0, width: 500.0, height: 500.0) // smallest size user to which can shrink window
 let         kLightestGrayColor = ZColor(calibratedHue: 0.0, saturation: 0.0, brightness: 0.85, alpha: 1.0)

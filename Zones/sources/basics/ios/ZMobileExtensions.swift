@@ -60,8 +60,8 @@ public typealias ZEdgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer
 
 public protocol ZNullProtocol {}
 
-let      gHighlightHeightOffset = CGFloat(-3.0)
-let             gVerticalWeight = -1.0
+let      kHighlightHeightOffset = CGFloat(-3.0)
+let             kVerticalWeight = CGFloat(-1.0)
 var                  windowKeys : [UIKeyCommand]?
 var                 gIsPrinting : Bool                                                { return false }
 func           NSStringFromSize                    (_ size:        CGSize) -> String  { return NSCoder.string(for: size) }

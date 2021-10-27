@@ -14,7 +14,7 @@ import Foundation
 // NOT async: create bookmarks
 
 var          gPrintModes : ZPrintMode    = []
-var          gDebugModes : ZDebugMode    = [.dDebugDraw]
+var          gDebugModes : ZDebugMode    = []
 var        gCoreDataMode : ZCoreDataMode = []
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }

@@ -36,9 +36,7 @@ enum ZHelpDotType: String {
 	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 
 	var size: CGSize {
-		let w = isReveal ? gDotHeight : gDotWidth
-
-		return CGSize(width: w, height: gDotHeight)
+		return gDotSize(forReveal: isReveal)
 	}
 
 	func rect(_ origin: CGPoint) -> CGRect {

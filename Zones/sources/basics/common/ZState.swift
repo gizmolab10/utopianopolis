@@ -9,18 +9,6 @@
 import Foundation
 import CloudKit
 
-#if os(OSX)
-import Cocoa
-let gFontDelta = 15.0
-let gDotFactor = CGFloat(2.5)
-var gTextOffset: CGFloat?
-#elseif os(iOS)
-import UIKit
-let gFontDelta = 17.0
-let gDotFactor = CGFloat(1.25)
-var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
-#endif
-
 var  gTextEditorHandlesArrows                     = false
 var   gIsEditingStateChanging                     = false
 var    gRefusesFirstResponder                     = false
@@ -91,10 +79,6 @@ var            gModifierFlags:        ZEventFlags { return ZEvent.modifierFlags 
 var    gTimeSinceCurrentEvent:       TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
 var   gDeciSecondsSinceLaunch:                Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var          gOtherDatabaseID:        ZDatabaseID { return gDatabaseID == .mineID ? .everyoneID : .mineID }
-var                 gFontSize:            CGFloat { return gGenericOffset.height + CGFloat(gFontDelta) } // height 2 .. 20
-var                 gDotWidth:             Double { return gDotHeight * 0.75 }
-var                gDotHeight:             Double { return Double(gGenericOffset.height / gDotFactor) + 13.0 }
-var       gChildrenViewOffset:             Double { return gDotWidth + Double(gGenericOffset.height) * 1.2 }
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
 var          gDarkAccentColor:             ZColor { return gAccentColor.darker  (by: 1.3) }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }

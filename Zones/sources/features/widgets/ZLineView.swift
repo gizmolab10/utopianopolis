@@ -16,7 +16,7 @@ import UIKit
 
 class ZLineView: ZPseudoView {
     
-    override func draw() {
+    override func draw(_ phase: ZDrawPhase) {
         kGridColor.setFill()
 		ZBezierPath(rect: absoluteFrame).fill()
     }

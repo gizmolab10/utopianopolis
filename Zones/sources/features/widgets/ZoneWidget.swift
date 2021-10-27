@@ -253,6 +253,46 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
+	func traverseAllProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
+		safeTraverseProgeny(visited: [], inReverse: inReverse) { iWidget -> ZTraverseStatus in
+			block(iWidget)
+
+			return .eContinue
+		}
+	}
+
+	@discardableResult func traverseProgeny(inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
+		return safeTraverseProgeny(visited: [], inReverse: inReverse, block)
+	}
+
+	@discardableResult func safeTraverseProgeny(visited: ZoneWidgetArray, inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
+		var status  = ZTraverseStatus.eContinue
+
+		if !inReverse {
+			status  = block(self)               // first call block on self, then recurse on each child
+		}
+
+		if  status == .eContinue {
+			for child in childrenWidgets {
+				if  visited.contains(child) {
+					break						// do not revisit or traverse further inward
+				}
+
+				status = child.safeTraverseProgeny(visited: visited + [self], block)
+
+				if  status == .eStop {
+					break						// halt traversal
+				}
+			}
+		}
+
+		if  inReverse {
+			status  = block(self)
+		}
+
+		return status
+	}
+
 	// MARK:- compute sizes and frames
 	// MARK:-
 
@@ -300,10 +340,8 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateAllFrames(_ absolute: Bool = false) {
-		widgetZone?.traverseAllVisibleProgeny(inReverse: !absolute) { iZone in
-			if  let child = iZone.widget {
-				child.updateSubframes(absolute)
-			}
+		traverseAllProgeny(inReverse: !absolute) { iWidget in
+			iWidget.updateSubframes(absolute)
 		}
 	}
 
@@ -417,10 +455,10 @@ class ZoneWidget: ZPseudoView {
 
                         let   relation = gDragRelation
                         let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
-                        let multiplier = (isAbove ? 1.0 : -1.0) * gVerticalWeight
-                        let    gHeight = Double(gGenericOffset.height)
+                        let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
+                        let    gHeight = gGenericOffset.height
                         let      delta = (gHeight + gDotWidth) * multiplier
-                        rect           = rect.offsetBy(dx: 0.0, dy: CGFloat(delta))
+                        rect           = rect.offsetBy(dx: 0.0, dy: delta)
 
                     } else if lastIndex < zone.count, let secondDot = dot(at: lastIndex) {
 
@@ -439,9 +477,9 @@ class ZoneWidget: ZPseudoView {
         return rect
     }
 
-    func lineKind(for delta: Double) -> ZLineKind {
-        let threshold = 2.0   * gVerticalWeight
-        let  adjusted = delta * gVerticalWeight
+    func lineKind(for delta: CGFloat) -> ZLineKind {
+        let threshold = 2.0   * kVerticalWeight
+        let  adjusted = delta * kVerticalWeight
         
         if adjusted > threshold {
             return .above
@@ -498,21 +536,19 @@ class ZoneWidget: ZPseudoView {
     // MARK:-
 
     func lineKind(to dragRect: CGRect) -> ZLineKind? {
-		let   toggleRect = revealDot.convert(revealDot.bounds, toContaining: self)
-		let        delta = Double(dragRect.midY - toggleRect.midY)
+		let toggleRect = revealDot.absoluteFrame
+		let      delta = dragRect.midY - toggleRect.midY
 
 		return lineKind(for: delta)
     }
 
     func lineKind(to widget: ZoneWidget?) -> ZLineKind {
-        var kind:    ZLineKind = .straight
-
-        if  let           zone = widgetZone,
-            zone        .count > 1,
-            let        dragDot = widget?.dragDot {
-            let       dragRect = dragDot.convert(dragDot.bounds, toContaining: self)
-            if  let   dragKind = lineKind(to: dragRect) {
-                kind           = dragKind
+        var kind:  ZLineKind = .straight
+        if  let         zone = widgetZone,
+            zone      .count > 1,
+            let      dragDot = widget?.dragDot {
+			if  let dragKind = lineKind(to: dragDot.absoluteFrame) {
+                kind         = dragKind
             }
         }
 
@@ -530,17 +566,14 @@ class ZoneWidget: ZPseudoView {
         return rect
     }
 
-    func lineRect(to widget: ZoneWidget?) -> CGRect {
-        let  hasIndent = widget?.widgetZone?.isCurrentFavorite ?? false
-        let      inset = CGFloat(hasIndent ? -5.0 : 0.0)
-        var      frame = CGRect()
+	func lineRect(to widget: ZoneWidget?, kind: ZLineKind) -> CGRect {
         if  let    dot = widget?.dragDot {
-            let dFrame = dot.absoluteFrame.insetBy(dx: inset, dy: 0.0)
-            let   kind = lineKind(to: widget)
-            frame      = lineRect(to: dFrame, kind: kind)
+			let dFrame = dot.absoluteFrame
+
+			return lineRect(to: dFrame, kind: kind)
         }
 
-        return frame
+		return CGRect.zero
     }
 
     func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
@@ -587,7 +620,7 @@ class ZoneWidget: ZPseudoView {
         let    widthExpand = (gap + 24.0) /  6.0
         let revealDotDelta = revealDot.isVisible ? CGFloat(0.0) : revealDot.bounds.size.width + 3.0      // expand around reveal dot, only if it is visible
 		var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
-		rect.size .height += (gHighlightHeightOffset + 2.0) / ratio
+		rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
         rect.size  .width += (widthExpand - revealDotDelta) / ratio
 		rect               = rect.offsetBy(dx: -1.0, dy: 0.0)
         let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
@@ -624,9 +657,9 @@ class ZoneWidget: ZPseudoView {
     func drawLine(to child: ZoneWidget) {
         if  let  zone = child.widgetZone {
             let color = zone.color
-            let  rect = lineRect(to: child)
-            let  kind = lineKind(to: child)
-            let  path = linePath(in: rect, kind: kind, isDragLine: false)
+			let  kind = lineKind(to: child)
+            let  rect = lineRect(to: child, kind: kind)
+            let  path = linePath(in:  rect, kind: kind, isDragLine: false)
 
             color?.setStroke()
             line(on: path)
@@ -638,7 +671,7 @@ class ZoneWidget: ZPseudoView {
 
     var nowDrawLines = false
 
-    override func draw() {
+    override func draw(_ phase: ZDrawPhase) {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let       zone = widgetZone {
             let  isGrabbed = zone.isGrabbed
@@ -647,23 +680,25 @@ class ZoneWidget: ZPseudoView {
 			let   expanded = zone.isExpanded
 
 			if  gDebugDraw {
-				absoluteFrame     .drawColoredRect(.green)
-				childrenView.frame.drawColoredRect(.orange)
+				absoluteFrame             .drawColoredRect(.green)
+				childrenView.absoluteFrame.drawColoredRect(.orange)
 			}
 
-			dragDot  .draw()
-			revealDot.draw()
-
-			if  (isGrabbed || isEditing || isHovering) && !gIsPrinting {
+			if  (isGrabbed || isEditing || isHovering) && !gIsPrinting, phase == .pHighlight {
 				drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
 			}
 
-			if  expanded {
+			if  phase == .pLines, expanded {
 				for child in childrenWidgets {   // this is after child dots have been autolayed out
 					drawLine(to: child)
 				}
 			}
-        }
+
+			if  phase == .pDots {
+				dragDot  .draw(phase)
+				revealDot.draw(phase)
+			}
+		}
     }
 
 }

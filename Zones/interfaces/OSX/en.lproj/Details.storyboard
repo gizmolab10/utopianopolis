@@ -737,33 +737,33 @@ CA
                                             <rect key="frame" x="8" y="0.0" width="100" height="74"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1Ja-OD-89z">
-                                                    <rect key="frame" x="-2" y="48" width="104" height="22"/>
+                                                    <rect key="frame" x="-2" y="49" width="104" height="18"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="22" id="E1u-F7-yma"/>
+                                                        <constraint firstAttribute="height" constant="18" id="E1u-F7-yma"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="thickness" id="Ukl-QF-qxm">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="line thickness" id="Ukl-QF-qxm">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N3k-Vd-PsQ">
-                                                    <rect key="frame" x="-2" y="26" width="104" height="22"/>
+                                                    <rect key="frame" x="-2" y="27" width="104" height="18"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="22" id="ads-0v-NG0"/>
+                                                        <constraint firstAttribute="height" constant="18" id="ads-0v-NG0"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="size" id="xJc-At-88z">
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="font size" id="xJc-At-88z">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b2f-4b-i9J">
-                                                    <rect key="frame" x="-2" y="4" width="104" height="22"/>
+                                                    <rect key="frame" x="-2" y="5" width="104" height="18"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="22" id="BNZ-fl-QS2"/>
+                                                        <constraint firstAttribute="height" constant="18" id="BNZ-fl-QS2"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="stretch" id="mLK-OR-6f6">
+                                                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="horizontal stretch" id="mLK-OR-6f6">
                                                         <font key="font" metaFont="smallSystem"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -773,14 +773,14 @@ CA
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="N3k-Vd-PsQ" secondAttribute="trailing" id="0Bh-c3-otV"/>
                                                 <constraint firstAttribute="trailing" secondItem="1Ja-OD-89z" secondAttribute="trailing" id="0VS-I7-1pw"/>
-                                                <constraint firstItem="1Ja-OD-89z" firstAttribute="top" secondItem="FKt-Xz-j3O" secondAttribute="top" constant="4" id="2qA-ln-QzT"/>
+                                                <constraint firstItem="1Ja-OD-89z" firstAttribute="top" secondItem="FKt-Xz-j3O" secondAttribute="top" constant="7" id="2qA-ln-QzT"/>
                                                 <constraint firstItem="1Ja-OD-89z" firstAttribute="leading" secondItem="FKt-Xz-j3O" secondAttribute="leading" id="CUp-0S-sue"/>
-                                                <constraint firstItem="N3k-Vd-PsQ" firstAttribute="top" secondItem="1Ja-OD-89z" secondAttribute="bottom" id="Dc9-BE-j2b"/>
+                                                <constraint firstItem="N3k-Vd-PsQ" firstAttribute="top" secondItem="1Ja-OD-89z" secondAttribute="bottom" constant="4" id="Dc9-BE-j2b"/>
                                                 <constraint firstItem="N3k-Vd-PsQ" firstAttribute="leading" secondItem="FKt-Xz-j3O" secondAttribute="leading" id="EPz-T7-tnQ"/>
                                                 <constraint firstItem="b2f-4b-i9J" firstAttribute="leading" secondItem="FKt-Xz-j3O" secondAttribute="leading" id="WtQ-al-8JI"/>
                                                 <constraint firstAttribute="trailing" secondItem="b2f-4b-i9J" secondAttribute="trailing" id="eV3-Jk-5oa"/>
-                                                <constraint firstAttribute="bottom" secondItem="b2f-4b-i9J" secondAttribute="bottom" constant="4" id="hkg-aa-7zF"/>
-                                                <constraint firstItem="b2f-4b-i9J" firstAttribute="top" secondItem="N3k-Vd-PsQ" secondAttribute="bottom" id="lVH-AS-hYY"/>
+                                                <constraint firstAttribute="bottom" secondItem="b2f-4b-i9J" secondAttribute="bottom" constant="5" id="hkg-aa-7zF"/>
+                                                <constraint firstItem="b2f-4b-i9J" firstAttribute="top" secondItem="N3k-Vd-PsQ" secondAttribute="bottom" constant="4" id="lVH-AS-hYY"/>
                                                 <constraint firstAttribute="width" constant="100" id="zLR-4P-YMH"/>
                                             </constraints>
                                         </customView>

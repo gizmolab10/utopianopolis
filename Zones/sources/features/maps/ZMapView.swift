@@ -15,12 +15,11 @@ class ZMapView: ZView {
 	override func draw(_ iDirtyRect: CGRect) {
 		super.draw(iDirtyRect)
 
-		if  let root = controller?.rootWidget.widgetZone {
-			root.traverseAllVisibleProgeny(inReverse: true) { iZone in
-				if  let widget = iZone.widget {
-					widget.draw()
-				}
+		for phase in ZDrawPhase.allInOrder {
+			controller?.rootWidget.traverseAllProgeny(inReverse: true) { iWidget in
+				iWidget.draw(phase)
 			}
 		}
 	}
+
 }

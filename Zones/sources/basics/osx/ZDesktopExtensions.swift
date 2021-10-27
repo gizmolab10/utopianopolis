@@ -73,8 +73,8 @@ public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
 public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
-let        gVerticalWeight = 1.0
-let gHighlightHeightOffset = CGFloat(-3.0)
+let        kVerticalWeight = CGFloat( 1.0)
+let kHighlightHeightOffset = CGFloat(-3.0)
 
 var gIsPrinting: Bool {
     return NSPrintOperation.current != nil
@@ -1148,38 +1148,29 @@ extension ZoneWidget {
 	}
 
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
-        var             frame = CGRect ()
+        var              rect = CGRect ()
 
         if              kind != nil {
-            let   sourceFrame = revealDot.absoluteFrame
+			let         delta = CGFloat(4.0)
             let     thickness = CGFloat(gLineThickness)
-			let     dotHeight = CGFloat(gDotHeight)
-			let    adjustment = CGFloat(2.0)
-            let halfDotHeight = dotHeight / 2.0
-            let thinThickness = thickness / 2.0
-            let    targetMidY = targetFrame.midY
-            let    sourceMidY = sourceFrame.midY
-            frame.origin   .x = sourceFrame.midX
+			let   sourceFrame = revealDot.absoluteFrame
+            rect.origin    .x = sourceFrame    .midX
+			rect.origin    .y = sourceFrame    .midY - delta
+			rect.size  .width = abs(targetFrame.midX - rect.minX)
 
             switch kind! {
             case .above:
-				frame.origin   .y = sourceFrame.maxY - adjustment
-				frame.size.height = abs(  targetMidY + thinThickness - frame.minY)
-				frame.size .width = abs(  targetFrame.minX           - frame.minX)
+				rect.size.height = abs(targetFrame.midY - rect.minY) - delta
             case .below:
-                frame.origin   .y = targetFrame.minY + halfDotHeight - thickness  - thinThickness
-                frame.size.height = abs(  sourceMidY - frame.minY    - halfDotHeight + 2.0)
-				frame.size .width = abs( targetFrame.minX            - frame.minX)
+				rect.origin   .y = targetFrame    .midY              - delta
+				rect.size.height = abs(sourceFrame.midY - rect.minY) - delta
             case .straight:
-                frame.origin   .y =       targetMidY - thinThickness / 2.0
-                frame.origin   .x = sourceFrame.maxX - adjustment           // adjust to eliminate gap
-                frame.size.height =                    thinThickness
-				frame.size .width = abs(targetFrame.minX - frame.minX)
+                rect.size.height = thickness / 2.0
             }
 
         }
         
-        return frame
+        return rect
     }
 
     func curvedPath(in iRect: CGRect, kind: ZLineKind) -> ZBezierPath {

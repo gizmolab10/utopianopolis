@@ -87,17 +87,8 @@ class ZoneDot: ZPseudoView {
     // MARK:-
 
 	@discardableResult func updateSize() -> CGSize {
-		let   dotWidth = ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth)
-		let  dotHeight = ratio * CGFloat(gDotHeight)
-		let     height = dotHeight + 6.0 + (gGenericOffset.height * 3.0)
-		let      width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) + dotWidth - 48.0
-		var       size = CGSize(width: width, height: height)
-
-		if  let      w = widget, !w.type.isBigMap {
-			size       = size.multiplyBy(kSmallMapReduction)
-		}
-
-		drawnSize      = size
+		let isBigMap = widget?.type.isBigMap ?? true
+		drawnSize    = gDotSize(forReveal: isReveal, forBigMap: isBigMap)
 
 		return drawnSize
 	}
@@ -279,7 +270,7 @@ class ZoneDot: ZPseudoView {
 		text.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
 	}
 
-	func drawInnerRevealDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawRevealDotDecorations(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		if parameters.hasTarget || parameters.hasTargetNote {
@@ -300,20 +291,15 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
-	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		parameters.color.setStroke()
 		parameters.fill.setFill()
-
-		// //////// //
-		// MAIN DOT //
-		// //////// //
-
-		drawMainDot(in: iDirtyRect, using: parameters)
+		drawMainDot(in: iDirtyRect, using: parameters) // needed for dots help view
 
 		if  parameters.isReveal {
-			drawInnerRevealDot(iDirtyRect, parameters)
+			drawRevealDotDecorations(iDirtyRect, parameters)
 		} else {
 			decorationFillColor.setFill()
 
@@ -338,50 +324,40 @@ class ZoneDot: ZPseudoView {
 
 	}
 
-	func drawOuterDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawSurroundingDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		if  parameters.showSideDot {
 
-		// /////////////////////////////
-		// MOSTLY INVISIBLE OUTER DOT //
-		// /////////////////////////////
-
-		if  parameters.isReveal {
-
-			// //////////////////
-			// TINY COUNT DOTS //
-			// //////////////////
-
-			if !parameters.hasTarget,
-			    gCountsMode == .dots {
-
-				drawTinyCountDots(iDirtyRect, parameters: parameters)
-			}
-		} else if parameters.showSideDot {
-
-			// ////////////////////////////////////
-			// HIGHLIGHT OF CURRENT IN SMALL MAP //
-			// ////////////////////////////////////
+			// ////////////////////////////////
+			// INDICATE CURRENT IN SMALL MAP //
+			// ////////////////////////////////
 
 			let color = parameters.color.withAlphaComponent(0.7)
 
 			color.setFill()
 			color.setStroke()
 			drawSmallMapSideDot(in: iDirtyRect, parameters)
+		} else if  parameters.isReveal,
+				   !parameters.hasTarget,
+				   !parameters.showList,
+				   gCountsMode == .dots {
+
+			// //////////////////
+			// TINY COUNT DOTS //
+			// //////////////////
+
+			drawTinyCountDots(iDirtyRect, parameters: parameters)
 		}
 	}
 
-    override func draw() {
+    override func draw(_ phase: ZDrawPhase) {
 		if  isVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
-			let offset = absoluteFrame.height / -9.0
-			let rect = absoluteFrame.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
-			drawInnerDot(rect, parameters)
-			drawOuterDot(rect, parameters)
+			let     offset = absoluteFrame.height / -9.0
+			let       rect = absoluteFrame.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
+
+			drawDot           (rect, parameters)
+			drawSurroundingDot(rect, parameters)
 		}
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
 }

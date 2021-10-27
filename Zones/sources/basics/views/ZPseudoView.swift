@@ -8,10 +8,18 @@
 
 import Foundation
 
+enum ZDrawPhase: String {
+	case pDots      = "d"
+	case pLines     = "l"
+	case pHighlight = "h"
+
+	static let allInOrder: [ZDrawPhase] = [.pLines, .pDots, .pHighlight]
+}
+
 class ZPseudoView: NSObject {
 
 	var   absoluteFrame = CGRect.zero
-	var       drawnSize = CGSize.zero
+	var       drawnSize = CGSize.zero { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
 	var          bounds = CGRect.zero
 	var           frame = CGRect.zero
 	var      identifier = NSUserInterfaceItemIdentifier("")
@@ -19,7 +27,7 @@ class ZPseudoView: NSObject {
 	var superpseudoview : ZPseudoView?
 	var         toolTip : String?
 
-	func draw() {}
+	func draw(_ phase: ZDrawPhase) {}
 
 	func convert(_ point: NSPoint, toContaining view: ZPseudoView?) -> NSPoint {
 		if	view != self,
