@@ -628,15 +628,15 @@ class ZoneWidget: ZPseudoView {
         if  dashes || thin {
             path.addDashes()
 
-			if thin {
+			if  thin {
 				path.lineWidth = CGFloat(1.5)
 			}
 		}
 
         strokeColor?.setStroke()
-//        fillColor?  .setFill()
+        fillColor?  .setFill()
         path.stroke()
-//        path.fill()
+        path.fill()
     }
 
     func drawDragLine(to dotRect: CGRect, in iView: ZView) {

@@ -20,12 +20,10 @@ let gMapEditor = ZMapEditor()
 // mix of zone mutations and web services requests
 
 class ZMapEditor: ZBaseEditor {
-	var             priorHere: Zone?
-	override var canHandleKey: Bool { return gIsMapOrEditIdeaMode }
-
-	var moveables: ZoneArray? {
-		
-		return (gIsEssayMode && !gSmallMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
+	var             priorHere : Zone?
+	override var canHandleKey : Bool       { return gIsMapOrEditIdeaMode }
+	var             moveables : ZoneArray? { return (gIsEssayMode && !gSmallMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
+	func          forceRedraw()            { gSelecting.sortedGrabs.first?.widget?.controller?.mapView?.setNeedsDisplay() }
 
 	// MARK:- events
 	// MARK:-
@@ -923,6 +921,7 @@ class ZMapEditor: ZBaseEditor {
 		if  let grabs = moveables {
 			moveUp(iMoveUp, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
 				gSignal(kinds)
+				self.forceRedraw()
 			}
 		}
 	}
@@ -1177,6 +1176,7 @@ class ZMapEditor: ZBaseEditor {
 				move(out: isLeft, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
 					gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
 					onCompletion?() // invoke closure from essay editor
+					self.forceRedraw()
 				}
 			} else {
 
