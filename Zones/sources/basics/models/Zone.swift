@@ -2500,7 +2500,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					break						// do not revisit or traverse further inward
 				}
 
-				status = child.safeTraverseProgeny(visited: visited + [self], block)
+				status = child.safeTraverseProgeny(visited: visited + [self], inReverse: inReverse, block)
 
 				if  status == .eStop {
 					break						// halt traversal

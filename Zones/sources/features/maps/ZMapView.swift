@@ -16,6 +16,7 @@ class ZMapView: ZView {
 		super.draw(iDirtyRect)
 
 		for phase in ZDrawPhase.allInOrder {
+			ZBezierPath(rect: iDirtyRect).setClip()
 			controller?.rootWidget.traverseAllProgeny(inReverse: true) { iWidget in
 				iWidget.draw(phase)
 			}

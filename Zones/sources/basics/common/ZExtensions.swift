@@ -926,8 +926,7 @@ extension CGRect {
 		return delta > 0
 	}
 
-	func drawColoredRect(_ color: ZColor, thickness: CGFloat = 0.5) {
-		let     radius = CGFloat(8.0)
+	func drawColoredRect(_ color: ZColor, radius: CGFloat = 8.0, thickness: CGFloat = 0.5) {
 		let       path = ZBezierPath(roundedRect: self, xRadius: radius, yRadius: radius)
 		path.lineWidth = thickness
 

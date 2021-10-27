@@ -1148,21 +1148,21 @@ extension ZoneWidget {
 	}
 
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
-        var              rect = CGRect ()
+        var                 rect = CGRect ()
 
-        if              kind != nil {
-			let         delta = CGFloat(4.0)
-            let     thickness = CGFloat(gLineThickness)
-			let   sourceFrame = revealDot.absoluteFrame
-            rect.origin    .x = sourceFrame    .midX
-			rect.origin    .y = sourceFrame    .midY - delta
-			rect.size  .width = abs(targetFrame.midX - rect.minX)
+        if                 kind != nil {
+			let            delta = CGFloat(4.0)
+            let        thickness = CGFloat(gLineThickness)
+			let      sourceFrame = revealDot.absoluteFrame
+            rect.origin       .x = sourceFrame    .midX
+			rect.origin       .y = sourceFrame    .midY              - delta
+			rect.size     .width = abs(targetFrame.midX - rect.minX)
 
             switch kind! {
             case .above:
 				rect.size.height = abs(targetFrame.midY - rect.minY) - delta
             case .below:
-				rect.origin   .y = targetFrame    .midY              - delta
+				rect.origin   .y =     targetFrame.midY              - delta
 				rect.size.height = abs(sourceFrame.midY - rect.minY) - delta
             case .straight:
                 rect.size.height = thickness / 2.0
@@ -1182,7 +1182,7 @@ extension ZoneWidget {
         let        isAbove = kind == .above
         var           rect = iRect
 
-        if isAbove {
+        if  isAbove {
             rect.origin.y -= rect.height + halfDotHeight
         }
 

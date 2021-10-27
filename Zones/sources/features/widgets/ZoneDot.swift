@@ -235,17 +235,19 @@ class ZoneDot: ZPseudoView {
 	}
 
 	func drawGroupingDecorations(for parameters: ZDotParameters, in iDirtyRect: CGRect) {
+		var path      = ZBezierPath()
+
 		if  parameters.isGroupOwner {
 			let (a,b) = iDirtyRect.insetEquallyBy(fraction: 0.25).twoDotsVertically(fractionalDiameter: 0.7)
-			let  path = ZBezierPath(ovalIn: a)
+			path      = ZBezierPath(ovalIn: a)
 
 			path.append(ZBezierPath(ovalIn: b))
-			path.fill()
 		} else {
 			let  rect = iDirtyRect.insetEquallyBy(fraction: 0.10).centeredHorizontalLine(thick: 1.25)
-
-			ZBezierPath(rect: rect).fill()
+			path      = ZBezierPath(rect: rect)
 		}
+
+		path.fill()
 	}
 
 	func offsetFor(_ string: String) -> CGFloat {
@@ -295,7 +297,7 @@ class ZoneDot: ZPseudoView {
 		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		parameters.color.setStroke()
-		parameters.fill.setFill()
+		parameters .fill.setFill()
 		drawMainDot(in: iDirtyRect, using: parameters) // needed for dots help view
 
 		if  parameters.isReveal {
@@ -321,7 +323,6 @@ class ZoneDot: ZPseudoView {
 				drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
 			}
 		}
-
 	}
 
 	func drawSurroundingDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {

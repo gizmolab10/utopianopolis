@@ -269,20 +269,22 @@ class ZoneWidget: ZPseudoView {
 		var status  = ZTraverseStatus.eContinue
 
 		if !inReverse {
-			status  = block(self)               // first call block on self, then recurse on each child
+			status  = block(self)           // first call block on self, then recurse on each child
+
+			if  status == .eStop {
+				return status               // halt traversal
+			}
 		}
 
-		if  status == .eContinue {
-			for child in childrenWidgets {
-				if  visited.contains(child) {
-					break						// do not revisit or traverse further inward
-				}
+		for child in childrenWidgets {
+			if  visited.contains(child) {
+				break						// do not revisit or traverse further inward
+			}
 
-				status = child.safeTraverseProgeny(visited: visited + [self], block)
+			status = child.safeTraverseProgeny(visited: visited + [self], inReverse: inReverse, block)
 
-				if  status == .eStop {
-					break						// halt traversal
-				}
+			if  status == .eStop {
+				break                       // halt traversal
 			}
 		}
 
@@ -605,14 +607,6 @@ class ZoneWidget: ZPseudoView {
 	// MARK:- draw
 	// MARK:-
 
-    func line(on path: ZBezierPath?) {
-        if  path != nil {
-            path!.lineWidth = CGFloat(gLineThickness)
-
-            path!.stroke()
-        }
-    }
-
 	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
         let            gap = gGenericOffset.height
         let       gapInset =  gap         /  8.0
@@ -640,63 +634,61 @@ class ZoneWidget: ZPseudoView {
 		}
 
         strokeColor?.setStroke()
-        fillColor?  .setFill()
+//        fillColor?  .setFill()
         path.stroke()
-        path.fill()
+//        path.fill()
     }
 
     func drawDragLine(to dotRect: CGRect, in iView: ZView) {
-        if  let rect = lineRect(to: dotRect, in:iView),
-            let kind = lineKind(to: dotRect) {
-            let path = linePath(in: rect, kind: kind, isDragLine: true)
+        if  let       rect = lineRect(to: dotRect, in:iView),
+            let       kind = lineKind(to: dotRect) {
+            let       path = linePath(in: rect, kind: kind, isDragLine: true)
+			path.lineWidth = CGFloat(gLineThickness)
 
-            line(on: path)
+			path.stroke()
         }
     }
 
     func drawLine(to child: ZoneWidget) {
-        if  let  zone = child.widgetZone {
-            let color = zone.color
-			let  kind = lineKind(to: child)
-            let  rect = lineRect(to: child, kind: kind)
-            let  path = linePath(in:  rect, kind: kind, isDragLine: false)
+        if  let       zone = child.widgetZone {
+			let      color = zone.color
+			let       kind = lineKind(to: child)
+			let       rect = lineRect(to: child, kind: kind)
+            let       path = linePath(in:  rect, kind: kind, isDragLine: false)
+			path.lineWidth = CGFloat(gLineThickness)
 
             color?.setStroke()
-            line(on: path)
+			path.stroke()
         }
     }
 
-    // lines need CHILD dots drawn first.
-    // extra pass through hierarchy to do lines
-
-    var nowDrawLines = false
-
     override func draw(_ phase: ZDrawPhase) {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
-			let       zone = widgetZone {
-            let  isGrabbed = zone.isGrabbed
-            let  isEditing = textWidget.isFirstResponder
-			let isHovering = textWidget.isHovering
-			let   expanded = zone.isExpanded
+			let zone = widgetZone {
 
-			if  gDebugDraw {
-				absoluteFrame             .drawColoredRect(.green)
-				childrenView.absoluteFrame.drawColoredRect(.orange)
-			}
+			switch phase {
+				case .pDots:
+					dragDot  .draw(phase)
+					revealDot.draw(phase)
+				case .pLines:
+					if  zone.isExpanded {
+						for child in childrenWidgets {   // this is after child dots have been autolayed out
+							drawLine(to: child)
+						}
+					}
+				case .pHighlight:
+					let  isGrabbed = zone.isGrabbed
+					let  isEditing = textWidget.isFirstResponder
+					let isHovering = textWidget.isHovering
 
-			if  (isGrabbed || isEditing || isHovering) && !gIsPrinting, phase == .pHighlight {
-				drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
-			}
+					if  (isGrabbed || isEditing || isHovering) && !gIsPrinting {
+						drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
+					}
 
-			if  phase == .pLines, expanded {
-				for child in childrenWidgets {   // this is after child dots have been autolayed out
-					drawLine(to: child)
-				}
-			}
-
-			if  phase == .pDots {
-				dragDot  .draw(phase)
-				revealDot.draw(phase)
+					if  gDebugDraw {
+						absoluteFrame             .drawColoredRect(.green)
+						childrenView.absoluteFrame.drawColoredRect(.orange)
+					}
 			}
 		}
     }
