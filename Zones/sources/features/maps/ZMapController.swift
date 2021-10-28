@@ -196,8 +196,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					dropMaybeGesture(iGesture)                    // logic for drawing the drop dot, and for dropping dragged idea
 				} else if state == .changed,                      // enlarge rubberband
 						  gRubberband.setRubberbandExtent(to: location) {
-					gRubberband.updateGrabs(in: mapPseudoView)
+					gRubberband.updateGrabs()
 					gDragView?.setNeedsDisplay()
+					mapView?.setNeedsDisplay()
 				} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 					gRubberband.rubberbandRect = nil              // erase rubberband
 

@@ -35,20 +35,18 @@ class ZRubberband: NSObject {
 		return false
 	}
 
-	func updateGrabs(in iView: ZPseudoView?) {
+	func updateGrabs() {
 		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 		gHere.ungrab()
 
-		if  let    view = iView,
-			let    rect = rubberbandRect {
+		if  let    rect = rubberbandRect {
 			for widget in gWidgets.visibleWidgets {
-				let    hitRect = widget.hitRect
-				let widgetRect = widget.convert(hitRect, toContaining: view)
+				let hitRect = widget.absoluteHitRect
 
 				if  let   zone = widget.widgetZone,
 					!zone.isFavoritesRoot,
 					!zone.isRecentsRoot,
-					widgetRect.intersects(rect) {
+					hitRect.intersects(rect) {
 					gSelecting.addOneGrab(zone)
 				}
 			}

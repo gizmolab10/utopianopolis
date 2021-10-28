@@ -794,14 +794,15 @@ extension CGSize {
 
 extension CGRect {
 
-	var centerTop:    CGPoint { return CGPoint(x: midX, y: minY) }
-	var centerLeft:   CGPoint { return CGPoint(x: minX, y: midY) }
-	var centerRight:  CGPoint { return CGPoint(x: maxX, y: midY) }
-	var center:       CGPoint { return CGPoint(x: midX, y: midY) }
-	var centerBottom: CGPoint { return CGPoint(x: midX, y: maxY) }
-	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: minY) }
-	var topLeft:      CGPoint { return CGPoint(x: minX, y: maxY) }
-	var extent:       CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var centerTop:        CGPoint { return CGPoint(x: midX, y: minY) }
+	var centerLeft:       CGPoint { return CGPoint(x: minX, y: midY) }
+	var centerRight:      CGPoint { return CGPoint(x: maxX, y: midY) }
+	var center:           CGPoint { return CGPoint(x: midX, y: midY) }
+	var centerBottom:     CGPoint { return CGPoint(x: midX, y: maxY) }
+	var bottomRight:      CGPoint { return CGPoint(x: maxX, y: minY) }
+	var topLeft:          CGPoint { return CGPoint(x: minX, y: maxY) }
+	var extent:           CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var minimumDimension: CGFloat { return min(size.height, size.width) }
 
 	var cornerPoints: [ZDirection : CGPoint] {
 		var           result = [ZDirection : CGPoint]()

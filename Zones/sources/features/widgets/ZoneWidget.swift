@@ -99,6 +99,7 @@ class ZoneWidget: ZPseudoView {
 	let            widgetObject = ZWidgetObject  ()
 	var        pseudoTextWidget = ZPseudoTextView()
 	private var childrenWidgets = ZoneWidgetArray()
+	var         absoluteHitRect = CGRect.zero
 	var              textWidget : ZoneTextWidget  { return pseudoTextWidget.actualTextWidget }
 	var               sizeToFit :         CGSize  { return drawnSize + CGSize(frame.origin) }
 	var            parentWidget :     ZoneWidget? { return widgetZone?.parentZone?.widget }
@@ -341,6 +342,20 @@ class ZoneWidget: ZPseudoView {
 		drawnSize   = CGSize(width: width, height: height)
 	}
 
+	func updateHitRect(_ absolute: Bool = false) {
+		if  absolute {
+			let            gap = gGenericOffset.height
+			let       gapInset =  gap         /  8.0
+			let     widthInset = (gap + 32.0) / -2.0
+			let    widthExpand = (gap + 24.0) /  6.0
+			let revealDotDelta = revealDot.isVisible ? CGFloat(0.0) : revealDot.drawnSize.width - 6.0      // expand around reveal dot, only if it is visible
+			var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
+			rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
+			rect.size  .width += (widthExpand - revealDotDelta) / ratio
+			absoluteHitRect    = rect
+		}
+	}
+
 	func updateAllFrames(_ absolute: Bool = false) {
 		traverseAllProgeny(inReverse: !absolute) { iWidget in
 			iWidget.updateSubframes(absolute)
@@ -351,6 +366,7 @@ class ZoneWidget: ZPseudoView {
 		updateChildrenFrames   (absolute)
 		updateTextViewFrame    (absolute)
 		updateDotFrames        (absolute)
+		updateHitRect          (absolute)
 		updateChildrenViewFrame(absolute)
 	}
 
@@ -418,13 +434,6 @@ class ZoneWidget: ZPseudoView {
 
     // MARK:- drag
     // MARK:-
-
-    var hitRect: CGRect {
-		let  start =   dragDot.frame.origin
-		let extent = revealDot.frame.extent
-
-			return CGRect(start: dragDot.convert(start, toContaining: self), extent: revealDot.convert(extent, toContaining: self))
-    }
 
     var outerHitRect: CGRect {
 		return CGRect(start: dragDot.convert(.zero, toContaining: self), extent: revealDot.convert(revealDot.bounds.extent, toContaining: self))
@@ -509,7 +518,7 @@ class ZoneWidget: ZPseudoView {
 
 	func dragHitRect(in view: ZPseudoView, _ here: Zone) -> CGRect {
 		if  here == widgetZone {
-			return view.bounds
+			return view.frame
 		}
 
 		return convert(bounds, toContaining: view)
@@ -608,22 +617,13 @@ class ZoneWidget: ZPseudoView {
 	// MARK:-
 
 	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
-        let            gap = gGenericOffset.height
-        let       gapInset =  gap         /  8.0
-		let     widthInset = (gap + 32.0) / -2.0
-        let    widthExpand = (gap + 24.0) /  6.0
-        let revealDotDelta = revealDot.isVisible ? CGFloat(0.0) : revealDot.bounds.size.width + 3.0      // expand around reveal dot, only if it is visible
-		var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
-		rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
-        rect.size  .width += (widthExpand - revealDotDelta) / ratio
-		rect               = rect.offsetBy(dx: -1.0, dy: 0.0)
-        let         radius = min(rect.size.height, rect.size.width) / 2.08 - 1.0
-        let          color = widgetZone?.color
-        let      fillColor = color?.withAlphaComponent(0.01)
-        let    strokeColor = color?.withAlphaComponent(0.30)
-        let           path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
-        path    .lineWidth = CGFloat(gDotWidth) / 3.5
-        path     .flatness = 0.0001
+		let        rect = absoluteHitRect
+        let      radius = rect.minimumDimension / 2.08 - 1.0
+        let       color = widgetZone?.color
+        let strokeColor = color?.withAlphaComponent(0.30)
+        let        path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
+        path .lineWidth = CGFloat(gDotWidth) / 3.5
+        path  .flatness = 0.0001
 
         if  dashes || thin {
             path.addDashes()
@@ -634,9 +634,7 @@ class ZoneWidget: ZPseudoView {
 		}
 
         strokeColor?.setStroke()
-        fillColor?  .setFill()
         path.stroke()
-        path.fill()
     }
 
     func drawDragLine(to dotRect: CGRect, in iView: ZView) {
