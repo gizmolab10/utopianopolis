@@ -114,6 +114,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize { return }
 
+		removeAllTextViews()
+
 		var specificIndex:   Int?
 		let specificView          = mapPseudoView
 		var specificWidget        = rootWidget
@@ -135,6 +137,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
     }
+
+	func removeAllTextViews() {
+		if  let subviews = mapView?.subviews {
+			for subview in subviews {
+				if  let textView = subview as? ZoneTextWidget {
+					textView.removeFromSuperview()
+				}
+			}
+		}
+	}
 
 	// MARK:- events
 	// MARK:-
@@ -295,6 +307,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 					if !kIsPhone {	// default reaction to click on background: select here
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
+						mapView?.setNeedsDisplay()
 					}
                 } else if gIsEssayMode {
 					gControllers.swapMapAndEssay(force: .wMapMode)

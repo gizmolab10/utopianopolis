@@ -209,6 +209,10 @@ class ZoneWidget: ZPseudoView {
 			addSubpseudoview(pseudoTextWidget)
 		}
 
+		if  textWidget.superview == nil {
+			controller?.mapView?.addSubview(textWidget)
+		}
+
 		textWidget.setup()
 	}
 
