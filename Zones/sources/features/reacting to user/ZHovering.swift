@@ -25,18 +25,18 @@ class ZHovering: NSObject {
 	func declareHover(_ iDot: ZoneDot?) {
 		clear()
 
-		if  let             d = iDot {
-			dot               = d
-			dot?  .isHovering = true
+		if  let           d = iDot {
+			dot             = d
+			dot?.isHovering = true
 		}
 	}
 
 	func declareHover(_ iTextWidget: ZoneTextWidget?) {
 		clear()
 
-		if  let                            t = iTextWidget {
-			textWidget                       = t
-			textWidget?          .isHovering = true
+		if  let                  t = iTextWidget {
+			textWidget             = t
+			textWidget?.isHovering = true
 		}
 	}
 

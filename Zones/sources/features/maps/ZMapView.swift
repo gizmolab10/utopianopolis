@@ -52,10 +52,34 @@ class ZMapView: ZView {
 			mapMapView             = ZMapView()
 			highlightMapView       = ZMapView()
 
+			updateTracking()
 			addSubview(mapMapView!)
 			addSubview(highlightMapView!)
 			mapMapView?      .setup(.mMap,       mapController: controller!)
 			highlightMapView?.setup(.mHighlight, mapController: controller!)
+		}
+	}
+
+	// MARK:- hover
+	// MARK:-
+
+	func updateTracking() { addTracking(for: frame) }
+
+	override func mouseMoved(with event: ZEvent) {
+		super.mouseMoved(with: event)
+
+		let     locationW = event.locationInWindow
+		let      location = convert(locationW, from: nil)
+		if  let    widget = controller?.detectWidget(at: location) {
+			if  widget.dragDot.absoluteFrame.contains(location) {
+				gHovering.declareHover(widget.dragDot)
+			} else if widget.revealDot.absoluteFrame.contains(location) {
+				gHovering.declareHover(widget.revealDot)
+			} else {
+				gHovering.declareHover(widget.textWidget)
+			}
+
+			setNeedsDisplay()
 		}
 	}
 

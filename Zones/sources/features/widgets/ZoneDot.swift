@@ -121,29 +121,7 @@ class ZoneDot: ZPseudoView {
         widget   = iWidget
 
 		updateSize()
-		updateTracking()
 		updateTooltips()
-	}
-
-	// MARK:- hover
-	// MARK:-
-
-	func updateTracking() {} // if !isInnerDot { addTracking(for: frame) } }
-
-	func mouseEntered(with event: ZEvent) {
-		gHovering.declareHover(self)
-	}
-
-	func mouseMoved(with event: ZEvent) {
-		gHovering.declareHover(self)
-	}
-
-	func mouseExited(with event: ZEvent) {
-		gHovering.clear()
-	}
-
-	func mouseUp(with event: ZEvent) {
-		gHovering.clear()
 	}
 
     // MARK:- draw

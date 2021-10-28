@@ -565,18 +565,26 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			return widget
 		}
 
-		if  let        d = mapView,
-            let location = iGesture?.location(in: d), d.bounds.contains(location) {
-			let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
-			for  widget in widgets {
-                if  widget.highlightFrame.contains(location) {
-					return widget
-                }
-            }
+		if  let        v = mapView,
+            let location = iGesture?.location(in: v),
+			v.bounds.contains(location) {
+
+			return detectWidget(at: location)
         }
 
         return nil
     }
+
+	func detectWidget(at location: CGPoint) -> ZoneWidget? {
+		let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
+		for  widget in widgets {
+			if  widget.highlightFrame.contains(location) {
+				return widget
+			}
+		}
+
+		return nil
+	}
 
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit: ZoneDot?
