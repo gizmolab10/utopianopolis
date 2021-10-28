@@ -550,24 +550,17 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			return widget
 		}
 
-		var          hit : ZoneWidget?
 		if  let        d = mapView,
             let location = iGesture?.location(in: d), d.bounds.contains(location) {
-			var smallest = CGSize.big
 			let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
 			for  widget in widgets {
-                let rect = widget.convert(widget.outerHitRect, toContaining: mapPseudoView)
-				let size = rect.size
-
-                if  rect.contains(location),
-					smallest.isLargerThan(size) { // prefer widget with shortest text size; why?
-					smallest = size
-					hit      = widget
+                if  widget.absoluteHitRect.contains(location) {
+					return widget
                 }
             }
         }
 
-        return hit
+        return nil
     }
 
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
@@ -576,9 +569,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         if  let                d = mapView,
             let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
-				let         rect = iDot.convert(iDot.bounds, toContaining: self.mapPseudoView)
-
-                if  rect.contains(location) {
+                if  iDot.absoluteFrame.contains(location) {
                     hit = iDot
                 }
             }
@@ -591,7 +582,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     }
 
     func detectDot(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        if  let widget = detectWidget(iGesture) {
+        if  let widget = detectWidget (iGesture) {
             return detectDotIn(widget, iGesture)
         }
 
