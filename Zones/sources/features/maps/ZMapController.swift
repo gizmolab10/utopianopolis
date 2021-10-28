@@ -554,7 +554,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             let location = iGesture?.location(in: d), d.bounds.contains(location) {
 			let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
 			for  widget in widgets {
-                if  widget.absoluteHitRect.contains(location) {
+                if  widget.highlightFrame.contains(location) {
 					return widget
                 }
             }

@@ -99,7 +99,7 @@ class ZoneWidget: ZPseudoView {
 	let            widgetObject = ZWidgetObject  ()
 	var        pseudoTextWidget = ZPseudoTextView()
 	private var childrenWidgets = ZoneWidgetArray()
-	var         absoluteHitRect = CGRect.zero
+	var          highlightFrame = CGRect.zero
 	var              textWidget : ZoneTextWidget  { return pseudoTextWidget.actualTextWidget }
 	var               sizeToFit :         CGSize  { return drawnSize + CGSize(frame.origin) }
 	var            parentWidget :     ZoneWidget? { return widgetZone?.parentZone?.widget }
@@ -352,7 +352,7 @@ class ZoneWidget: ZPseudoView {
 			var           rect = textWidget.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
 			rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
 			rect.size  .width += (widthExpand - revealDotDelta) / ratio
-			absoluteHitRect    = rect
+			highlightFrame     = rect
 		}
 	}
 
@@ -588,12 +588,6 @@ class ZoneWidget: ZPseudoView {
     }
 
     func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-        if  !isDragLine,
-            let   zone = widgetZone,
-            zone.count > 1 {
-            ZBezierPath(rect: bounds).setClip()
-        }
-
         let path = ZBezierPath()
 
         path.move(to: CGPoint(x: iRect.minX, y: iRect.midY))
@@ -617,7 +611,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK:-
 
 	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
-		let        rect = absoluteHitRect
+		let        rect = highlightFrame
         let      radius = rect.minimumDimension / 2.08 - 1.0
         let       color = widgetZone?.color
         let strokeColor = color?.withAlphaComponent(0.30)

@@ -41,7 +41,7 @@ class ZRubberband: NSObject {
 
 		if  let    rect = rubberbandRect {
 			for widget in gWidgets.visibleWidgets {
-				let hitRect = widget.absoluteHitRect
+				let hitRect = widget.highlightFrame
 
 				if  let   zone = widget.widgetZone,
 					!zone.isFavoritesRoot,

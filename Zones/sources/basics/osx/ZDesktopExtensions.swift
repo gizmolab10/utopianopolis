@@ -1155,16 +1155,17 @@ extension ZoneWidget {
             let        thickness = CGFloat(gLineThickness)
 			let      sourceFrame = revealDot.absoluteFrame
             rect.origin       .x = sourceFrame    .midX
-			rect.origin       .y = sourceFrame    .midY              - delta
 			rect.size     .width = abs(targetFrame.midX - rect.minX)
 
             switch kind! {
             case .above:
-				rect.size.height = abs(targetFrame.midY - rect.minY) - delta
+				rect.origin   .y =     sourceFrame.midY                - delta
+				rect.size.height = abs(targetFrame.midY - rect.minY)   - delta
             case .below:
-				rect.origin   .y =     targetFrame.midY              - delta
-				rect.size.height = abs(sourceFrame.midY - rect.minY) - delta
+				rect.origin   .y =     targetFrame.midY                - delta
+				rect.size.height = abs(sourceFrame.midY - rect.minY)   - delta
             case .straight:
+				rect.origin   .y =     sourceFrame.midY + CGFloat(1.0) - delta
                 rect.size.height = thickness / 2.0
             }
 
