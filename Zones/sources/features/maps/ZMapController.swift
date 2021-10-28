@@ -42,6 +42,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		super.setup()
 		platformSetup()
+		mapView?.setup(mapController: self)
 		mapPseudoView.addSubpseudoview(rootWidget)
     }
 
@@ -94,15 +95,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func layoutForCurrentScrollOffset() {
-		rootWidget.updateAllFrames(false)
-		rootWidget.updateAllFrames(true)
-
 		var       offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y         = -offset.y
 		let         size = rootWidget.drawnSize
 		let        vSize = isBigMap ? view.frame.size : size
 		let       origin = CGPoint((vSize - size).multiplyBy(0.5) + CGSize(offset))
 		rootWidget.frame = CGRect(origin: origin, size: size)
+
+		rootWidget.updateAllFrames(false)
+		rootWidget.updateAllFrames(true)
+		mapView?.setNeedsDisplay()
 	}
 
 	var doNotLayout: Bool {

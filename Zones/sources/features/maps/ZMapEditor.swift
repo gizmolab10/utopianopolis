@@ -23,7 +23,7 @@ class ZMapEditor: ZBaseEditor {
 	var             priorHere : Zone?
 	override var canHandleKey : Bool       { return gIsMapOrEditIdeaMode }
 	var             moveables : ZoneArray? { return (gIsEssayMode && !gSmallMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
-	func          forceRedraw()            { gSelecting.sortedGrabs.first?.widget?.controller?.mapView?.setNeedsDisplay() }
+	func          forceRedraw()            { gMapController?.mapView?.setNeedsDisplay(); gSmallMapController?.mapView?.setNeedsDisplay() }
 
 	// MARK:- events
 	// MARK:-
@@ -165,8 +165,8 @@ class ZMapEditor: ZBaseEditor {
 				gTextEditor.handleArrow(arrow, flags: flags)
 			} else if !((flags.isOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
 				switch arrow {
-					case .down,    .up: moveUp  (arrow == .up, flags: flags)
-					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion); return
+					case .down,    .up: moveUp  (arrow == .up, flags: flags);                               forceRedraw()
+					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion); forceRedraw(); return
 				}
 			}
 		}
@@ -921,7 +921,6 @@ class ZMapEditor: ZBaseEditor {
 		if  let grabs = moveables {
 			moveUp(iMoveUp, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
 				gSignal(kinds)
-				self.forceRedraw()
 			}
 		}
 	}
@@ -1176,7 +1175,6 @@ class ZMapEditor: ZBaseEditor {
 				move(out: isLeft, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
 					gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
 					onCompletion?() // invoke closure from essay editor
-					self.forceRedraw()
 				}
 			} else {
 
