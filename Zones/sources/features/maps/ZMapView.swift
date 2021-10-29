@@ -32,8 +32,8 @@ class ZMapView: ZView {
 				for phase in ZDrawPhase.allInOrder {
 					ZBezierPath(rect: iDirtyRect).setClip()
 
-					if  (phase == .pHighlight) != (mapID == .mMap) {
-						controller?.rootWidget?.traverseAllProgeny(inReverse: true) { iWidget in
+					if  (phase == .pDots) != (mapID == .mMap) {
+						controller?.rootWidget?.traverseAllProgeny(inReverse: false) { iWidget in
 							iWidget.draw(phase)
 						}
 					}
@@ -68,11 +68,12 @@ class ZMapView: ZView {
 	override func mouseMoved(with event: ZEvent) {
 		super.mouseMoved(with: event)
 
-		let  locationW = event.locationInWindow
-		let   location = convert(locationW, from: nil)
-		if  let widget = controller?.detectWidget(at: location) {
-			widget.detectHover(at: location)
+		let   location = convert(event.locationInWindow, from: nil)
+		if  let widget = controller?.detectWidget(at: location),
+			widget.detectHover(at: location) {
 			setNeedsDisplay()
+		} else if let view = gHovering.clear() {
+			view.setNeedsDisplay()
 		}
 	}
 

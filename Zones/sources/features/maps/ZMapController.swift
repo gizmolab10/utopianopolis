@@ -31,6 +31,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 	var          priorScrollLocation = CGPoint.zero
 
+	func updateFrames() {}
+
 	override func setup() {
 		if  let                         map = mapView {
 			gestureView                     = map                    // do this before calling super setup, which uses gesture view
@@ -108,6 +110,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 			rootWidget?.updateAllFrames(false)
 			rootWidget?.updateAllFrames(true)
+			updateFrames()
 			mapView?.setNeedsDisplay()
 		}
 	}
@@ -140,7 +143,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		layoutForCurrentScrollOffset()
 
-		printDebug(.dWidget, "layout \(widgetType.description): \(total)")
+		if  let t = total {
+			printDebug(.dWidget, "layout \(widgetType.description): \(t)")
+		}
     }
 
 	func removeAllTextViews() {

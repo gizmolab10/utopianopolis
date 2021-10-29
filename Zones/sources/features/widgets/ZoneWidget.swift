@@ -462,14 +462,16 @@ class ZoneWidget: ZPseudoView {
 	// MARK:- hover
 	// MARK:-
 
-	func detectHover(at location: CGPoint) {
+	func detectHover(at location: CGPoint) -> Bool {
 		if  let       d = dragDot,   d.absoluteFrame.contains(location) {
 			gHovering.declareHover(d)
 		} else if let r = revealDot, r.absoluteFrame.contains(location) {
 			gHovering.declareHover(r)
 		} else {
-			gHovering.declareHover(textWidget)
+			return false
 		}
+
+		return true
 	}
 
     // MARK:- drag
@@ -697,16 +699,16 @@ class ZoneWidget: ZPseudoView {
 			let zone = widgetZone {
 
 			switch phase {
-				case .pDots:
-					dragDot?  .draw(phase)
-					revealDot?.draw(phase)
 				case .pLines:
 					if  zone.isExpanded {
 						for child in childrenWidgets {   // this is after child dots have been autolayed out
 							drawLine(to: child)
 						}
 					}
-				case .pHighlight:
+				case .pDots:
+					dragDot?  .draw(phase)
+					revealDot?.draw(phase)
+
 					if  let          t = textWidget {
 						let  isGrabbed = zone.isGrabbed
 						let  isEditing = t.isFirstResponder

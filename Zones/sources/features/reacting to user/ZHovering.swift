@@ -12,14 +12,18 @@ let gHovering = ZHovering()
 
 class ZHovering: NSObject {
 
-	var dot        : ZoneDot?
-	var textWidget : ZoneTextWidget?
+	var dot          : ZoneDot?
+	var textWidget   : ZoneTextWidget?
+	var absoluteView : ZView? { return textWidget?.widget?.absoluteView ?? dot?.absoluteView }
 
-	func clear() {
-		dot?                 .isHovering = false
-		textWidget?          .isHovering = false
-		dot                              = nil
-		textWidget                       = nil
+	@discardableResult func clear() -> ZView? {
+		let            cleared = absoluteView
+		dot?       .isHovering = false
+		textWidget?.isHovering = false
+		dot                    = nil
+		textWidget             = nil
+
+		return cleared
 	}
 
 	func declareHover(_ iDot: ZoneDot?) {

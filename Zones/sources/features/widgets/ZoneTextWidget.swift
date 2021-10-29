@@ -163,7 +163,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
 	override func mouseExited(with event: ZEvent) {
 		super.mouseExited(with: event)
-		gHovering.clear()
+		gHovering.clear()?.setNeedsDisplay()
 	}
 
 	override func mouseDown(with event: ZEvent) {

@@ -30,12 +30,12 @@ class ZSmallMapController: ZMapController {
 		}
 	}
 
-	func updateFrames() {
+	override func updateFrames() {
 		if  var       v = mapView as ZView?,
 			let  height = rootWidget?.sizeToFit.height {
 			let    size = CGSize(width: view.frame.width, height: height)
 			let    rect = CGRect(origin: .zero, size: size)
-			var   count = 5
+			var   count = 3
 			while count > 0 {
 				v.frame = rect
 
