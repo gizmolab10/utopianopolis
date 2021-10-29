@@ -1150,10 +1150,10 @@ extension ZoneWidget {
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
         var                 rect = CGRect ()
 
-        if                 kind != nil {
+        if  kind                != nil,
+			let      sourceFrame = revealDot?.absoluteFrame {
 			let            delta = CGFloat(4.0)
             let        thickness = CGFloat(gLineThickness)
-			let      sourceFrame = revealDot.absoluteFrame
             rect.origin       .x = sourceFrame    .midX
 			rect.size     .width = abs(targetFrame.midX - rect.minX)
 

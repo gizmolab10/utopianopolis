@@ -25,9 +25,30 @@ class ZPseudoView: NSObject {
 	var      identifier = NSUserInterfaceItemIdentifier("")
 	var  subpseudoviews = [ZPseudoView] ()
 	var superpseudoview : ZPseudoView?
-	var         toolTip : String?
+	var      toolTipTag : NSView.ToolTipTag?
+	var    absoluteView : ZView?
 
-	func draw(_ phase: ZDrawPhase) {}
+	override var description: String { return toolTip ?? super.description }
+	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses
+	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }
+
+	var toolTip : String? {
+		didSet {
+			if  toolTip    != nil {
+				toolTipTag  = absoluteView?.addToolTip(absoluteFrame, owner: self, userData: nil)
+			} else if let t = toolTipTag {
+				toolTipTag  = nil
+
+				absoluteView?.removeToolTip(t)
+			}
+		}
+	}
+
+	init(view: ZView?) {
+		super.init()
+
+		absoluteView = view
+	}
 
 	func convert(_ point: NSPoint, toContaining view: ZPseudoView?) -> NSPoint {
 		if	view != self,
@@ -61,7 +82,12 @@ class ZPseudoView: NSObject {
 		}
 	}
 
-	func addSubpseudoview(_ sub: ZPseudoView) { subpseudoviews.append(sub); sub.superpseudoview = self }
-	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }
+	func addSubpseudoview(_ sub: ZPseudoView?) {
+		if  let s = sub {
+			subpseudoviews.append(s)
+
+			s.superpseudoview = self
+		}
+	}
 
 }

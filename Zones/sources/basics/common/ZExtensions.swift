@@ -163,7 +163,7 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gMapController?.rootWidget.bounds.size.width, w < 1.0 {
+        if  let w = gMapController?.rootWidget?.bounds.size.width, w < 1.0 {
             bam("blank map !!!!!!")
         }
     }

@@ -1150,7 +1150,7 @@ class ZMapEditor: ZBaseEditor {
 			let child = grabThis.children[index]
 
 			if  let   offset = iOffset,
-				let anOffset = grabThis.widget?.textWidget.offset(for: range, iMoveUp),
+				let anOffset = grabThis.widget?.textWidget?.offset(for: range, iMoveUp),
 				offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
 				grabThis     = child
 			} else if let level = gCurrentBrowseLevel,

@@ -97,23 +97,8 @@ class ZoneDot: ZPseudoView {
 		let    offset = CGPoint(drawnSize)//.multiplyBy(0.5))
 		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-offset.x, 0.0)
 		absoluteFrame = CGRect(origin: origin, size: drawnSize)
-	}
 
-	func updateFrame(accountingFor childrenViewHeight : CGFloat = .zero, _ absolute: Bool = false) {
-		if  absolute {
-			updateAbsoluteFrame(toController: widget?.controller)
-		} else if let textWidget = widget?.textWidget {
-			let   drawnHeight = drawnSize.height
-			let hasNoChildren = childrenViewHeight < drawnHeight
-			let             y = hasNoChildren ? CGFloat.zero : (childrenViewHeight - drawnHeight) / CGFloat(2.0)
-			var             x = textWidget.frame.minX - drawnSize.width
-
-			if  isReveal {
-				x             = textWidget.frame.maxX
-			}
-
-			frame = CGRect(origin: CGPoint(x: x, y: y), size: drawnSize)
-		}
+		updateTooltips()
 	}
 
     func setupForWidget(_ iWidget: ZoneWidget, asReveal: Bool) {
@@ -121,7 +106,6 @@ class ZoneDot: ZPseudoView {
         widget   = iWidget
 
 		updateSize()
-		updateTooltips()
 	}
 
     // MARK:- draw

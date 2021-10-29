@@ -146,8 +146,8 @@ class ZTextPack: NSObject {
 
     func updateWidgetsForEndEdit() {
 		if  let z = packedZone,
-			let w = gWidgets.widgetForZone(z) {
-			let t = w.textWidget
+			let w = gWidgets.widgetForZone(z),
+			let t = w.textWidget {
 			w.addDots()
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
 			t.deselectAllText()
@@ -473,7 +473,7 @@ class ZTextEditor: ZTextView {
             gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { kinds in
                 gControllers.signalFor(nil, multiple: kinds) {
                     if  isHere {
-                        self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
+                        self.currentOffset = currentZone?.widget?.textWidget?.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
                     }
                     
                     if  stopEdit,

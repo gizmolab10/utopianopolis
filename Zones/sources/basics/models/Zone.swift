@@ -1298,7 +1298,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func insertSelectedText() {
 		if  let     index = siblingIndex,
 			let    parent = parentZone,
-			let childName = widget?.textWidget.extractTitleOrSelectedText() {
+			let childName = widget?.textWidget?.extractTitleOrSelectedText() {
 
 			gTextEditor.stopCurrentEdit()
 
@@ -1532,7 +1532,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		FOREGROUND(canBeDirect: true) {
 			let newRange = range ?? NSRange(location: 0, length: self.zoneName?.length ?? 0)
 
-			self.widget?.textWidget.selectCharacter(in: newRange)
+			self.widget?.textWidget?.selectCharacter(in: newRange)
 		}
 	}
 
@@ -2860,7 +2860,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func createIdeaFromSelectedText(_ asNewParent: Bool) {
-		if  let newName  = widget?.textWidget.extractTitleOrSelectedText() {
+		if  let newName  = widget?.textWidget?.extractTitleOrSelectedText() {
 
 			gTextEditor.stopCurrentEdit()
 
@@ -3327,7 +3327,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			zoneName  = t
 
 			gTextEditor.updateText(inZone: self, isEditing: true)
-			widget?.textWidget.updateGUI()
+			widget?.textWidget?.updateGUI()
 			editAndSelect(range: r)
 
 			return true
@@ -3337,7 +3337,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func convertToFromLine() -> Bool {
-		if  let childName = widget?.textWidget.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
+		if  let childName = widget?.textWidget?.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
 			var location = 12
 
 			if  zoneName != childName {
@@ -3358,7 +3358,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func convertFromLineWithTitle() {
-		if  let childName = widget?.textWidget.extractedTitle {
+		if  let childName = widget?.textWidget?.extractedTitle {
 			zoneName  = childName
 			colorized = false
 		}

@@ -33,7 +33,7 @@ class ZHelpGridView: ZView {
 					let v = Double(data.rowHeight) + 2.0
 					let y = Double(row)    *    -v + Double(dirtyRect.extent.y) - 24.0
 					let x = Double(column) * 580.0 + Double(dirtyRect.origin.x) + 30.0
-					let d = ZoneDot()
+					let d = ZoneDot(view: self)
 
 					switch t {
 						case .filled: e = false
