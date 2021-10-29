@@ -1166,7 +1166,7 @@ extension ZoneWidget {
 				rect.size.height = abs(sourceFrame.midY - rect.minY)   - delta
             case .straight:
 				rect.origin   .y =     sourceFrame.midY + CGFloat(1.0) - delta
-                rect.size.height = thickness / 2.0
+                rect.size.height = thickness
             }
 
         }

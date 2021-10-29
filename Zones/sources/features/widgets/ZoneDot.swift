@@ -57,6 +57,13 @@ class ZoneDot: ZPseudoView {
     var      widgetZone : Zone?   { return widget?.widgetZone }
 	var           ratio : CGFloat { return widget?.ratio ?? 1.0 }
 
+	var absoluteDotFrame: CGRect {
+		let     offset = absoluteFrame.height / -9.0
+		let       rect = absoluteFrame.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
+
+		return rect
+	}
+
 	var isVisible: Bool {
 		guard let zone = widgetZone else {
 			return false
@@ -315,8 +322,7 @@ class ZoneDot: ZPseudoView {
     override func draw(_ phase: ZDrawPhase) {
 		if  isVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
-			let     offset = absoluteFrame.height / -9.0
-			let       rect = absoluteFrame.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
+			let       rect = absoluteDotFrame
 
 			drawDot           (rect, parameters)
 			drawSurroundingDot(rect, parameters)

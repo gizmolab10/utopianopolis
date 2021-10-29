@@ -489,13 +489,13 @@ class ZoneWidget: ZPseudoView {
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-					rect               = dot.convert(dot.bounds, toContaining: self).insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+					rect               = dot.absoluteDotFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
 				}
             } else if let      indices = gDropIndices, indices.count > 0 {
                 let         firstindex = indices.firstIndex
 
                 if  let       firstDot = dot(at: firstindex) {
-                    rect               = firstDot.convert(firstDot.bounds, toContaining: self)
+                    rect               = firstDot.absoluteDotFrame
                     let      lastIndex = indices.lastIndex
 
                     if  indices.count == 1 || lastIndex >= zone.count {
@@ -517,7 +517,7 @@ class ZoneWidget: ZPseudoView {
                         // DOT IS TWEEN //
                         // ///////////////
 
-                        let secondRect = secondDot.convert(secondDot.bounds, toContaining: self)
+                        let secondRect = secondDot.absoluteDotFrame
                         let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
                         rect           = rect.offsetBy(dx: 0.0, dy: -delta)
                     }
@@ -587,7 +587,7 @@ class ZoneWidget: ZPseudoView {
     // MARK:-
 
     func lineKind(to dragRect: CGRect) -> ZLineKind? {
-		let toggleRect = revealDot?.absoluteFrame ?? .zero
+		let toggleRect = revealDot?.absoluteDotFrame ?? .zero
 		let      delta = dragRect.midY - toggleRect.midY
 
 		return lineKind(for: delta)
@@ -598,7 +598,7 @@ class ZoneWidget: ZPseudoView {
         if  let         zone = widgetZone,
             zone      .count > 1,
             let      dragDot = widget?.dragDot {
-			if  let dragKind = lineKind(to: dragDot.absoluteFrame) {
+			if  let dragKind = lineKind(to: dragDot.absoluteDotFrame) {
                 kind         = dragKind
             }
         }
@@ -619,7 +619,7 @@ class ZoneWidget: ZPseudoView {
 
 	func lineRect(to widget: ZoneWidget?, kind: ZLineKind) -> CGRect {
         if  let    dot = widget?.dragDot {
-			let dFrame = dot.absoluteFrame
+			let dFrame = dot.absoluteDotFrame
 
 			return lineRect(to: dFrame, kind: kind)
         }
@@ -628,10 +628,10 @@ class ZoneWidget: ZPseudoView {
     }
 
     func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-        let path = ZBezierPath()
+		let rect = iRect.centeredHorizontalLine(thick: CGFloat(gLineThickness))
+        let path = ZBezierPath(rect: rect)
 
-        path.move(to: CGPoint(x: iRect.minX, y: iRect.midY))
-        path.line(to: CGPoint(x: iRect.maxX, y: iRect.midY))
+		path.setClip()
 
         return path
     }
