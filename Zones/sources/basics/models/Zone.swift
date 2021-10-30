@@ -109,7 +109,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                 isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
 	var                   isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                   spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
-	var                       spawnCycle :               Bool  { return spawnedByAGrab  || dropCycle }
+	var                       spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
+	var                        dropCycle :               Bool  { return gDraggedZones.contains(self) || spawnedByAny(of: gDraggedZones) || (bookmarkTarget?.dropCycle ?? false) }
 	var                       isInAGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
 	var                    isAGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
 	var                      userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
@@ -388,14 +389,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return theCopy
-	}
-
-	var dropCycle: Bool {
-		if  let target = bookmarkTarget, (gDraggedZones.contains(target) || target.spawnedByAny(of: gDraggedZones)) {
-			return true
-		}
-
-		return false
 	}
 
 	var ancestralPath: ZoneArray {

@@ -147,7 +147,7 @@ class ZoneDot: ZPseudoView {
 			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
 		}
 
-		if  parameters.isDragged {
+		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
 			gActiveColor.setFill()
 			gActiveColor.setStroke()
 		}
