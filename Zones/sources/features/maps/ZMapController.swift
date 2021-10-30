@@ -111,6 +111,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget?.updateAllFrames(false)
 			rootWidget?.updateAllFrames(true)
 			updateFrames()
+			detectHover(at: mapView?.currentMouseLocation)
 			mapView?.setNeedsDisplay()
 		}
 	}
@@ -566,6 +567,19 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
     // MARK:- detect
     // MARK:-
+
+	@discardableResult func detectHover(at location: CGPoint?) -> ZView? {
+		if  let l = location {
+			if  let widget = detectWidget(at: l),
+				widget.detectHover(at: l) {
+				return mapView
+			} else if let view = gHovering.clear() {
+				return view
+			}
+		}
+
+		return nil
+	}
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
 		if  isBigMap,

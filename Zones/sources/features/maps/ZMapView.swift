@@ -68,13 +68,9 @@ class ZMapView: ZView {
 	override func mouseMoved(with event: ZEvent) {
 		super.mouseMoved(with: event)
 
-		let   location = convert(event.locationInWindow, from: nil)
-		if  let widget = controller?.detectWidget(at: location),
-			widget.detectHover(at: location) {
-			setNeedsDisplay()
-		} else if let view = gHovering.clear() {
-			view.setNeedsDisplay()
-		}
+		let location = convert(event.locationInWindow, from: nil)
+
+		controller?.detectHover(at: location)?.setNeedsDisplay()
 	}
 
 }

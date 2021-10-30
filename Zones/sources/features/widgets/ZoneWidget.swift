@@ -467,6 +467,8 @@ class ZoneWidget: ZPseudoView {
 			gHovering.declareHover(d)
 		} else if let r = revealDot, r.absoluteFrame.contains(location) {
 			gHovering.declareHover(r)
+		} else if let t = pseudoTextWidget, t.absoluteFrame.contains(location) {
+			gHovering.declareHover(t.actualTextWidget)
 		} else {
 			return false
 		}

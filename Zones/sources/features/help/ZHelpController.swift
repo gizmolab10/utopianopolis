@@ -239,10 +239,8 @@ class ZHelpController: ZGenericTableController {
 
 		if  let              table = genericTableView,
 			let                row = table.selectedRowIndexes.first {
-			let     screenLocation = ZEvent.mouseLocation
-			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
-				let              l = table.convert(windowLocation, from: nil)
-				let         column = Int(floor(l.x / CGFloat(helpData.columnWidth)))
+			if  let       location = table.currentMouseLocation {
+				let         column = Int(floor(location.x / CGFloat(helpData.columnWidth)))
 
 				table.deselectRow(row)
 				

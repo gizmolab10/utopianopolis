@@ -2444,6 +2444,14 @@ extension ZView {
 
 	@objc var size: CGSize { return bounds.size }
 
+	var currentMouseLocation: CGPoint? {
+		if  let windowLocation = window?.convertPoint(fromScreen: ZEvent.mouseLocation) {
+			return convert(windowLocation, from: nil)
+		}
+
+		return nil
+	}
+
 	var simpleToolID : ZSimpleToolID? {
 		let           item = self as NSUserInterfaceItemIdentification
 		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
