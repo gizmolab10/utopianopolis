@@ -953,12 +953,6 @@ extension CGRect {
 
 extension ZBezierPath {
 
-	func addDashes() {
-		let pattern: [CGFloat] = [3.0, 3.0]
-
-		setLineDash(pattern, count: 2, phase: 3.0)
-	}
-
 	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
 		let path = trianglePath(orientedUp: orientedUp, in: iRect)
 
@@ -971,19 +965,6 @@ extension ZBezierPath {
 		path.appendTriangle(orientedUp: orientedUp, in: iRect)
 
 		return path
-	}
-
-	func appendTriangle(orientedUp: Bool, in iRect: CGRect) {
-		let yStart = orientedUp ? iRect.minY : iRect.maxY
-		let   yEnd = orientedUp ? iRect.maxY : iRect.minY
-		let    tip = CGPoint(x: iRect.midX, y: yStart)
-		let   left = CGPoint(x: iRect.minX, y: yEnd)
-		let  right = CGPoint(x: iRect.maxX, y: yEnd)
-
-		move(to: tip)
-		line(to: left)
-		line(to: right)
-		line(to: tip)
 	}
 
 	static func drawCircle(in iRect: CGRect, thickness: CGFloat) {
@@ -1011,6 +992,33 @@ extension ZBezierPath {
 		return (path, rect)
 	}
 
+	static func bloatedTrianglePath(in iRect: CGRect, aimedRight: Bool) -> ZBezierPath {
+		let path = ZBezierPath()
+
+		path.appendBloatedTriangle(in: iRect, aimedRight: aimedRight)
+
+		return path
+	}
+
+	func addDashes() {
+		let pattern: [CGFloat] = [3.0, 3.0]
+
+		setLineDash(pattern, count: 2, phase: 3.0)
+	}
+
+	func appendTriangle(orientedUp: Bool, in iRect: CGRect) {
+		let yStart = orientedUp ? iRect.minY : iRect.maxY
+		let   yEnd = orientedUp ? iRect.maxY : iRect.minY
+		let    tip = CGPoint(x: iRect.midX, y: yStart)
+		let   left = CGPoint(x: iRect.minX, y: yEnd)
+		let  right = CGPoint(x: iRect.maxX, y: yEnd)
+
+		move(to: tip)
+		line(to: left)
+		line(to: right)
+		line(to: tip)
+	}
+
 	func appendCircles(orientedUp: Bool, in iRect: CGRect) -> CGRect {
 		let   rect = iRect.offsetBy(fractionX: 0.0, fractionY: orientedUp ? 0.1 : -0.1)
 		var    top = rect.insetBy(fractionX: 0.0, fractionY: 0.375)  // shrink to one-fifth size
@@ -1031,21 +1039,7 @@ extension ZBezierPath {
 		stroke()
 	}
 
-	static func drawBloatedTriangle(aimedRight: Bool, in iRect: CGRect, thickness: CGFloat) {
-		let path = bloatedTrianglePath(aimedRight: aimedRight, in: iRect)
-
-		path.draw(thickness: thickness)
-	}
-
-	static func bloatedTrianglePath(aimedRight: Bool, in iRect: CGRect) -> ZBezierPath {
-		let path = ZBezierPath()
-
-		path.appendBloatedTriangle(aimedRight: aimedRight, in: iRect)
-
-		return path
-	}
-
-	func appendBloatedTriangle(aimedRight: Bool, in iRect: CGRect) {
+	func appendBloatedTriangle(in iRect: CGRect, aimedRight: Bool) {
 		let      center = iRect.center
 		let  insetRatio = 0.35
 		let      radius = Double(iRect.width) * insetRatio

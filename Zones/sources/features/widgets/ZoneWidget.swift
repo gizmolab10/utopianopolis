@@ -418,17 +418,17 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateTextViewFrame(_ absolute: Bool = false) {
-		if  let                p = pseudoTextWidget {
+		if  let                 p = pseudoTextWidget {
 			if  absolute {
 				p.updateAbsoluteFrame(toController: controller)
 
 				textWidget?.frame = p.absoluteFrame
-			} else if let      t = textWidget {
-				let     textSize = t.drawnSize
-				let       offset = gGenericOffset.add(width: 4.0, height: 0.5).multiplyBy(ratio) // why?
-				let            y = (drawnSize.height - textSize.height) / 2.0
-				let   textOrigin = CGPoint(x: offset.width, y: y)
-				p         .frame = CGRect(origin: textOrigin, size: textSize)
+			} else if let       t = textWidget {
+				let      textSize = t.drawnSize
+				let        offset = gGenericOffset.add(width: 4.0, height: 0.5).multiplyBy(ratio) // why?
+				let             y = (drawnSize.height - textSize.height) / 2.0
+				let    textOrigin = CGPoint(x: offset.width, y: y)
+				p          .frame = CGRect(origin: textOrigin, size: textSize)
 			}
 		}
 	}
@@ -477,7 +477,7 @@ class ZoneWidget: ZPseudoView {
     // MARK:- drag
     // MARK:-
 
-    var floatingDropDotRect: CGRect {
+    var absoluteDropDotRect: CGRect {
         var rect = CGRect()
 
         if  let zone = widgetZone {
@@ -489,13 +489,13 @@ class ZoneWidget: ZPseudoView {
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-					rect               = dot.absoluteDotFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+					rect               = dot.absoluteActualFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
 				}
             } else if let      indices = gDropIndices, indices.count > 0 {
                 let         firstindex = indices.firstIndex
 
                 if  let       firstDot = dot(at: firstindex) {
-                    rect               = firstDot.absoluteDotFrame
+                    rect               = firstDot.absoluteActualFrame
                     let      lastIndex = indices.lastIndex
 
                     if  indices.count == 1 || lastIndex >= zone.count {
@@ -517,7 +517,7 @@ class ZoneWidget: ZPseudoView {
                         // DOT IS TWEEN //
                         // ///////////////
 
-                        let secondRect = secondDot.absoluteDotFrame
+                        let secondRect = secondDot.absoluteActualFrame
                         let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
                         rect           = rect.offsetBy(dx: 0.0, dy: -delta)
                     }
@@ -561,13 +561,13 @@ class ZoneWidget: ZPseudoView {
 			return view.frame
 		}
 
-		return convert(bounds, toContaining: view)
+		return absoluteFrame
 	}
 
     func widgetNearestTo(_ point: CGPoint, in iView: ZPseudoView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
-		if  !visited.contains(self),
-			let view = iView,
+		if  let view = iView,
 			let here = iHere,
+			!visited.contains(self),
 			dragHitRect(in: view, here).contains(point) {
 
 			for child in childrenWidgets {
@@ -587,7 +587,7 @@ class ZoneWidget: ZPseudoView {
     // MARK:-
 
     func lineKind(to dragRect: CGRect) -> ZLineKind? {
-		let toggleRect = revealDot?.absoluteDotFrame ?? .zero
+		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
 		let      delta = dragRect.midY - toggleRect.midY
 
 		return lineKind(for: delta)
@@ -598,7 +598,7 @@ class ZoneWidget: ZPseudoView {
         if  let         zone = widgetZone,
             zone      .count > 1,
             let      dragDot = widget?.dragDot {
-			if  let dragKind = lineKind(to: dragDot.absoluteDotFrame) {
+			if  let dragKind = lineKind(to: dragDot.absoluteActualFrame) {
                 kind         = dragKind
             }
         }
@@ -606,12 +606,11 @@ class ZoneWidget: ZPseudoView {
         return kind
     }
 
-    func lineRect(to dragRect: CGRect, in iView: ZView) -> CGRect? {
+    func lineRect(to dragRect: CGRect) -> CGRect? {
         var rect: CGRect?
 
         if  let kind = lineKind(to: dragRect) {
             rect     = lineRect(to: dragRect, kind: kind)
-            rect     = convert (rect!, toContaining: controller?.mapPseudoView)
         }
 
         return rect
@@ -619,7 +618,7 @@ class ZoneWidget: ZPseudoView {
 
 	func lineRect(to widget: ZoneWidget?, kind: ZLineKind) -> CGRect {
         if  let    dot = widget?.dragDot {
-			let dFrame = dot.absoluteDotFrame
+			let dFrame = dot.absoluteActualFrame
 
 			return lineRect(to: dFrame, kind: kind)
         }
@@ -671,8 +670,8 @@ class ZoneWidget: ZPseudoView {
         path.stroke()
     }
 
-    func drawDragLine(to dotRect: CGRect, in iView: ZView) {
-        if  let       rect = lineRect(to: dotRect, in:iView),
+    func drawDragLine(to dotRect: CGRect) {
+        if  let       rect = lineRect(to: dotRect),
             let       kind = lineKind(to: dotRect) {
             let       path = linePath(in: rect, kind: kind, isDragLine: true)
 			path.lineWidth = CGFloat(gLineThickness)

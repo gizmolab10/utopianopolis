@@ -490,18 +490,17 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // MARK:-
 
 	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, Zone?, CGPoint)? {
-		if  let             viewG = gesture?.view,
-			let         locationG = gesture?.location(in: viewG),
-			let         locationM = mapView?.convert(locationG, from: viewG),
-			let           widgetM = rootWidget?.widgetNearestTo(locationM, in: mapPseudoView, hereZone) {
-			let         alternate = isBigMap ? gSmallMapController : gMapController
-			if  let      mapViewA = alternate?.mapPseudoView, !kIsPhone,
-				let     locationA = mapPseudoView?.convert(locationM, toContaining: mapViewA),
+		if  let         viewG = gesture?.view,
+			let     locationM = gesture?.location(in: viewG),
+			let       widgetM = rootWidget?.widgetNearestTo(locationM, in: mapPseudoView, hereZone) {
+			let     alternate = isBigMap ? gSmallMapController : gMapController
+			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
+				let locationA = mapPseudoView?.convert(locationM, toContaining: mapViewA),
 				let   widgetA = alternate?.rootWidget?.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone),
 				let  dragDotM = widgetM.dragDot,
 				let  dragDotA = widgetA.dragDot {
-				let   vectorM = dragDotM.convert(dragDotM.bounds.center, toContaining: mapPseudoView) - locationM
-				let   vectorA = dragDotA.convert(dragDotA.bounds.center, toContaining: mapPseudoView) - locationM
+				let   vectorM = dragDotM.absoluteFrame.center - locationM
+				let   vectorA = dragDotA.absoluteFrame.center - locationM
 				let   lengthM = vectorM.length
 				let   lengthA = vectorA.length
 
@@ -550,8 +549,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {
         var     relation = ZRelation.upon
-		if  let     text = iWidget?.textWidget,
-			let     rect = gDragView?.convert(text.bounds, from: text).insetBy(dx: 0.0, dy: 5.0) {
+		if  let     text = iWidget?.pseudoTextWidget {
+			let     rect = text.absoluteFrame.insetBy(dx: 0.0, dy: 5.0)
 			let     minY = rect.minY
 			let     maxY = rect.maxY
 			let        y = point.y

@@ -39,17 +39,16 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 		// draw dragged dot and line in active color
 
 		if  let     widget = gDropWidget,
-			let        dot = widget.revealDot {
-			let parameters = widget.widgetZone?.dropDotParameters() ?? ZDotParameters()
-            let  floatRect = widget.floatingDropDotRect
-			let   dragRect = widget.convert(floatRect,  toContaining: gMapController?.mapPseudoView)
-			let    dotRect = dot   .convert(dot.bounds, toContaining: gMapController?.mapPseudoView)
+			let        dot = widget.revealDot,
+			let parameters = widget.widgetZone?.dropDotParameters() {
+            let  floatRect = widget.absoluteDropDotRect
+			let    dotRect = dot   .absoluteActualFrame
 
 			gActiveColor.setFill()
             gActiveColor.setStroke()
-			ZBezierPath(ovalIn: dragRect).fill()
-			widget.drawDragLine(to: floatRect, in: self)
-			dot.drawDot(dotRect, parameters)
+			ZBezierPath(ovalIn: floatRect).fill()  // target [floater] dot
+			widget.drawDragLine(to: floatRect)
+			dot.drawDot(dotRect, parameters)       // [future] parent [reveal] dot
         }
 	}
 
