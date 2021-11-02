@@ -105,6 +105,7 @@ class ZoneWidget: ZPseudoView {
 	var            parentWidget :     ZoneWidget? { return widgetZone?.parentZone?.widget }
 	var      hasVisibleChildren :           Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var             hideDragDot :           Bool  { return widgetZone?.onlyShowRevealDot ?? false }
+	var                isBigMap :           Bool  { return controller?.isBigMap ?? true }
 	var                   ratio :        CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	override var    description :         String  { return widgetZone?.description ?? kEmptyIdea }
 
@@ -383,7 +384,7 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateAllFrames(_ absolute: Bool = false) {
-		traverseAllProgeny(inReverse: !absolute) { iWidget in
+		traverseAllProgeny(inReverse: true) { iWidget in
 			iWidget.updateSubframes(absolute)
 		}
 	}
@@ -719,7 +720,7 @@ class ZoneWidget: ZPseudoView {
 							drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
 						}
 
-						if  gDebugDraw {
+						if  !isBigMap {
 							absoluteFrame              .drawColoredRect(.green)
 							childrenView?.absoluteFrame.drawColoredRect(.orange)
 						}

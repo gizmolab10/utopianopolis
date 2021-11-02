@@ -29,7 +29,6 @@ var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTim
 var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
 var          gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
 var           gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
-var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
 var           gReadFiles : Bool { return  gDebugModes.contains(.dReadFiles) }
 var             gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
 
@@ -58,7 +57,6 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dNewUser             = ZDebugMode() // exercise new-user, first-time arrival code
 	static let dReadFiles           = ZDebugMode() // read files
 	static let dDebugInfo           = ZDebugMode() // inject debugging information into UI
-	static let dDebugDraw           = ZDebugMode() // colorize rects
 	static let dWriteFiles          = ZDebugMode() // write files
 	static let dDebugAccess         = ZDebugMode() // test write access by me not having full
 	static let dShowDestroy         = ZDebugMode() // add destroy bookmark to favorites
@@ -70,7 +68,6 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 		return [(.dNewUser,             "arrival"),
 				(.dReadFiles,           "read files"),
 				(.dDebugInfo,           "show debug info"),
-				(.dDebugDraw,           "debug draw"),
 				(.dWriteFiles,          "write files"),
 				(.dDebugAccess,         "debug write access"),
 				(.dShowDestroy,         "add destroy bookmark"),

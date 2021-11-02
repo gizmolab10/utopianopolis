@@ -22,30 +22,12 @@ class ZSmallMapController: ZMapController {
 	override  var controllerID : ZControllerID { return .idSmallMap }
 	override  var     isBigMap : Bool          { return false }
 	var            isRecentMap : Bool          { return rootWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
+	override func updateFrames()               { mapView?.updateFrames() }
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller
 			update()
 			super.handleSignal(iSignalObject, kind: kind)
-		}
-	}
-
-	override func updateFrames() {
-		if  var       v = mapView as ZView?,
-			let  height = rootWidget?.sizeToFit.height {
-			let    size = CGSize(width: view.frame.width, height: height)
-			let    rect = CGRect(origin: .zero, size: size)
-			var   count = 3
-			while count > 0 {
-				v.frame = rect
-
-				if  let s  = v.superview {
-					count -= 1
-					v      = s
-				} else {
-					return
-				}
-			}
 		}
 	}
 
