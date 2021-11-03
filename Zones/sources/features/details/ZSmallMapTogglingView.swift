@@ -25,34 +25,29 @@ class ZSmallMapTogglingView: ZTogglingView {
 		let    hide = hideHideable
 		let visible = subviews.contains(hideableView!)
 
-		titleButton?.updateTooltips()
-
 		if  hide == visible { // need for update
-			hideableView?.isHidden = hide
-
-			if  hide {
-				hideableView?.removeFromSuperview()
-			} else {
-				addSubview(hideableView!)
-			}
 
 			if  let            bannerFrame = bannerView?.frame {
-				var                 height = bannerFrame.height
+				var                      y = bannerFrame.height
 				if  let   rootWidgetHeight = gSmallMapController?.rootWidget?.drawnSize.height, !hide {
-					let               size = CGSize(width: frame.width, height: rootWidgetHeight + 8.0)
-					hideableView?   .frame = CGRect(origin: CGPoint(x: 0.0, y: height + 1.0), size: size)
-					height                += rootWidgetHeight + 9.0
+					let             height = rootWidgetHeight + 8.0
+					let               size = CGSize(width: bannerFrame.width, height: height)
+					hideableView?   .frame = CGRect(origin: CGPoint(x: 0.0, y: y), size: size)
+					y                     += height
 				}
 
-				heightConstraint?.constant = height
+				heightConstraint?.constant = y
 			}
 		}
+
+		super.updateHideableView()
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
 		super.draw(iDirtyRect)
 
-		if  !hideHideable {
+		if  !hideHideable, gDebugDraw {
+			hideableView?.drawBox(in: self, inset: 1.5, with: ZColor.magenta) // height is zero
 			gSmallMapController?.mapView?.debugDraw()
 		}
 	}

@@ -9,10 +9,10 @@
 import Foundation
 
 enum ZDrawPhase: String {
-	case pLines     = "l"
-	case pDots      = "d"
+	case pLines            = "l"
+	case pDotsAndHighlight = "d"
 
-	static let allInOrder: [ZDrawPhase] = [.pLines, .pDots]
+	static let allInOrder: [ZDrawPhase] = [.pLines, .pDotsAndHighlight]
 }
 
 class ZPseudoView: NSObject {

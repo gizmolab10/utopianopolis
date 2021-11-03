@@ -512,6 +512,10 @@ extension ZView {
 		}
 	}
 
+	func drawBox(in view: ZView, inset: CGFloat = 0.0, with color: ZColor) {
+		convert(bounds, to: view).insetEquallyBy(inset).drawColoredRect(color)
+	}
+
 }
 
 extension ZMapView {

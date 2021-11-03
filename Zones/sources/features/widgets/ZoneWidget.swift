@@ -707,7 +707,7 @@ class ZoneWidget: ZPseudoView {
 							drawLine(to: child)
 						}
 					}
-				case .pDots:
+				case .pDotsAndHighlight:
 					dragDot?  .draw(phase)
 					revealDot?.draw(phase)
 
@@ -720,7 +720,7 @@ class ZoneWidget: ZPseudoView {
 							drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
 						}
 
-						if  !isBigMap {
+						if  !isBigMap, gDebugDraw {
 							absoluteFrame              .drawColoredRect(.green)
 							childrenView?.absoluteFrame.drawColoredRect(.orange)
 						}

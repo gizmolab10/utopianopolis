@@ -149,9 +149,6 @@
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="FRa-h5-v7h" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="226" height="148"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="226" id="ieW-rD-xCd"/>
-                                </constraints>
                                 <connections>
                                     <outlet property="controller" destination="bl3-7n-UyN" id="UXf-WV-0Cu"/>
                                 </connections>

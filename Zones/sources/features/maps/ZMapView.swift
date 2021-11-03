@@ -24,25 +24,17 @@ class ZMapView: ZView {
 	override func menu(for event: ZEvent) -> ZMenu? { return controller?.mapContextualMenu }
 
 	func debugDraw() {
-		if  !isBigMap {
+		if  !isBigMap, gDebugDraw {
 			if  var rRect = controller?.rootWidget?.frame {
 				rRect     = convert(rRect, to: self)
-				rRect                                  .drawColoredRect(ZColor.green)
+				rRect                                  .drawColoredRect(ZColor.green)   // good
 			}
 
-			if  let sView = superview {
-				let sRect = sView.convert(sView.bounds, to: self)
-				sRect                                  .drawColoredRect(ZColor.orange)
-			}
-
-			if  let hView = gSmallTogglingView {
-				let hRect = hView.convert(hView.bounds, to: self)
-				hRect                                  .drawColoredRect(ZColor.magenta)
-			}
-
-			bounds                 .insetEquallyBy(1.5).drawColoredRect(ZColor.blue)   // height too small
-			dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(ZColor.red)    // height too tall, width too small
-			highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(ZColor.purple) //       ",             "
+			bounds                 .insetEquallyBy(1.5).drawColoredRect(ZColor.blue)    // too small
+			dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(ZColor.red)     // too tall, too narrow
+			highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(ZColor.purple)  //    ",        "
+			superview?         .drawBox(in: self,                 with: ZColor.orange)  // height too small
+			gSmallTogglingView?.drawBox(in: self, inset: 1.5,     with: ZColor.magenta) // too tall, too low
 		}
 	}
 
@@ -51,7 +43,7 @@ class ZMapView: ZView {
 			var                rect = widget.frame
 			rect          .origin.x = 8.0
 			widget           .frame = rect
-			let                size = widget.drawnSize.insetBy(0.0, -8.0)
+			let                size = widget.drawnSize.insetBy(0.0, -8.0)   // 8 for margins at both top and bottom
 			rect                    = CGRect(origin: .zero, size: size)
 			frame                   = rect
 			dotsAndLinesView?.frame = rect
@@ -70,7 +62,7 @@ class ZMapView: ZView {
 				for phase in ZDrawPhase.allInOrder {
 					ZBezierPath(rect: iDirtyRect).setClip()
 
-					if  (phase == .pDots) != (mapID == .mDotsAndLines) {
+					if  (phase == .pDotsAndHighlight) != (mapID == .mDotsAndLines) {
 						controller?.rootWidget?.traverseAllProgeny(inReverse: false) { widget in
 							widget.draw(phase)
 						}
