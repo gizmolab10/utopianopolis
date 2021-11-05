@@ -635,10 +635,10 @@ DQ
             </objects>
             <point key="canvasLocation" x="485" y="176"/>
         </scene>
-        <!--Graph-->
+        <!--Map-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" userLabel="Graph" customClass="ZMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" userLabel="Map" customClass="ZMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
                         <autoresizingMask key="autoresizingMask"/>

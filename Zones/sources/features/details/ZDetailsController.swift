@@ -18,7 +18,7 @@ private let  detailIds : [ZDetailsViewID] = [.vPreferences, .vSubscribe, .vSimpl
 class ZDetailsController: ZGesturesController {
 
 	var              viewsByID = [Int : ZTogglingView]()
-    @IBOutlet var    stackView : ZStackView?
+	@IBOutlet var    stackView : ZStackView?
 	override  var controllerID : ZControllerID                          { return .idDetails }
 	func viewIsVisible(for id: ZDetailsViewID) ->                 Bool  { return !(view(for: id)?.hideHideable ?? true) }
 	func view         (for id: ZDetailsViewID) ->        ZTogglingView? { return viewsByID[id.rawValue] }

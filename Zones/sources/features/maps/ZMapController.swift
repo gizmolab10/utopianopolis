@@ -19,17 +19,18 @@ var gCurrentMapView: ZMapView?       { return gMapController?.mapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
     
-	override  var       controllerID : ZControllerID { return .idBigMap }
-	var                   widgetType : ZWidgetType   { return .tBigMap }
-	var                   isExemplar : Bool          { return false }
-	var                     isBigMap : Bool          { return true }
-	var                     hereZone : Zone?         { return gHereMaybe ?? gCloud?.rootZone }
-	var                mapPseudoView : ZPseudoView?
-	var                   rootWidget : ZoneWidget?
-	@IBOutlet var            mapView : ZMapView?
-	@IBOutlet var  mapContextualMenu : ZContextualMenu?
-	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
-	var          priorScrollLocation = CGPoint.zero
+	override  var        controllerID : ZControllerID { return .idBigMap }
+	var                    widgetType : ZWidgetType   { return .tBigMap }
+	var                    isExemplar : Bool          { return false }
+	var                      isBigMap : Bool          { return true }
+	var                      hereZone : Zone?         { return gHereMaybe ?? gCloud?.rootZone }
+	var                       mapView : ZMapView?     { return gDragView?.mapView }
+	var                 mapPseudoView : ZPseudoView?
+	var                    rootWidget : ZoneWidget?
+	@IBOutlet var   mapContextualMenu : ZContextualMenu?
+	@IBOutlet var  ideaContextualMenu : ZoneContextualMenu?
+	var            smallMapController : ZSmallMapController?
+	var           priorScrollLocation = CGPoint.zero
 
 	func updateFrames() {}
 
@@ -38,6 +39,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			gestureView                     = map                    // do this before calling super setup, which uses gesture view
 			rootWidget                      = ZoneWidget (view: map)
 			mapPseudoView                   = ZPseudoView(view: map)
+			smallMapController              = ZSmallMapController()
 			view    .layer?.backgroundColor = kClearColor.cgColor
 			mapView?.layer?.backgroundColor = kClearColor.cgColor
 

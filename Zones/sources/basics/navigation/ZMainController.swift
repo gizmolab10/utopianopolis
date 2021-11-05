@@ -44,6 +44,7 @@ class ZMainController: ZGesturesController {
 		searchResultsView?.isHidden = true
 		view.gestureHandler         = self
 
+		dragView?.setup()
 		update()
 	}
 
@@ -74,6 +75,8 @@ class ZMainController: ZGesturesController {
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 		hamburgerButton?    .image = hamburgerImage
+
+		dragView?.update()
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {

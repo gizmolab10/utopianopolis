@@ -95,12 +95,7 @@ extension ZDragView {
 
 	override func mouseMoved(with event: ZEvent) {
 		super.mouseMoved(with: event)
-
-		if  let v = gMapController?.detectHover(at: event.locationInWindow) {
-			v.setNeedsDisplay()
-		} else {
-			gSmallMapController?   .detectHover(at: event.locationInWindow)?.setNeedsDisplay()
-		}
+		gMapController?.detectHover(at: event.locationInWindow)?.setNeedsDisplay()
 	}
 
 }

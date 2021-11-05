@@ -137,33 +137,18 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1825"/>
+            <point key="canvasLocation" x="-95" y="1528"/>
         </scene>
         <!--Small Map-->
         <scene sceneID="6c8-8d-0Jq">
             <objects>
                 <viewController title="favorites" id="bl3-7n-UyN" userLabel="Small Map" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="sgs-hY-cUq">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="156"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="1"/>
                         <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="FRa-h5-v7h" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="226" height="148"/>
-                                <connections>
-                                    <outlet property="controller" destination="bl3-7n-UyN" id="UXf-WV-0Cu"/>
-                                </connections>
-                            </customView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstAttribute="bottom" secondItem="FRa-h5-v7h" secondAttribute="bottom" id="4tp-Va-8vT"/>
-                            <constraint firstAttribute="trailing" secondItem="FRa-h5-v7h" secondAttribute="trailing" id="anl-8G-OBK"/>
-                            <constraint firstItem="FRa-h5-v7h" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="s1F-Gw-z12"/>
-                            <constraint firstItem="FRa-h5-v7h" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" constant="8" id="td8-bl-RRq"/>
-                        </constraints>
                     </view>
                     <connections>
                         <outlet property="ideaContextualMenu" destination="VWK-W7-ztK" id="Da8-5x-01f"/>
-                        <outlet property="mapView" destination="FRa-h5-v7h" id="Et8-Od-MJs"/>
                     </connections>
                 </viewController>
                 <menu title="Actions" id="VWK-W7-ztK" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
@@ -316,7 +301,7 @@ CA
                 </menu>
                 <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95.5" y="2037"/>
+            <point key="canvasLocation" x="-95" y="1964"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
@@ -562,10 +547,10 @@ CA
                                             <outlet property="titleButton" destination="Jzv-og-1RG" id="hSD-AO-alL"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="smallMap" wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Small Map View" customClass="ZSmallMapTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="smallMap" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Small Map View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
                                         <subviews>
-                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Small Map Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Small Map Banner">
                                                 <rect key="frame" x="0.0" y="32" width="226" height="18"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Small Map Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
@@ -605,11 +590,8 @@ CA
                                                     <constraint firstAttribute="trailing" secondItem="zUL-Q6-aba" secondAttribute="trailing" constant="1" id="dHV-eH-A3m"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Small Map Hideable">
+                                            <containerView hidden="YES" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Small Map Hideable">
                                                 <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
-                                                <connections>
-                                                    <segue destination="bl3-7n-UyN" kind="embed" id="6BI-ay-Jbg"/>
-                                                </connections>
                                             </containerView>
                                         </subviews>
                                         <constraints>
@@ -620,12 +602,10 @@ CA
                                             <constraint firstAttribute="trailing" secondItem="s1s-Ki-o6t" secondAttribute="trailing" id="Pys-YU-oaH"/>
                                             <constraint firstAttribute="trailing" secondItem="n0Y-Iw-0NV" secondAttribute="trailing" id="ebN-UQ-ter"/>
                                             <constraint firstItem="n0Y-Iw-0NV" firstAttribute="leading" secondItem="Utx-K3-0a0" secondAttribute="leading" id="egM-f6-ekq"/>
-                                            <constraint firstAttribute="height" constant="50" id="xur-RH-jl9"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="s1s-Ki-o6t" id="33f-CI-SSo"/>
                                             <outlet property="extraButton" destination="zUL-Q6-aba" id="bYv-op-sMa"/>
-                                            <outlet property="heightConstraint" destination="xur-RH-jl9" id="vdm-Is-0lT"/>
                                             <outlet property="hideableView" destination="n0Y-Iw-0NV" id="Q6s-o8-Vgy"/>
                                             <outlet property="titleButton" destination="3bx-6i-bTg" id="exk-Jc-pw4"/>
                                         </connections>
@@ -1001,7 +981,7 @@ CA
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1044"/>
+            <point key="canvasLocation" x="-95" y="1785"/>
         </scene>
         <!--Simple Tools Controller-->
         <scene sceneID="uRy-JP-y7m">
@@ -1314,7 +1294,7 @@ CA
                 </viewController>
                 <customObject id="XNg-DL-aaz" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1390"/>
+            <point key="canvasLocation" x="-95" y="1232"/>
         </scene>
         <!--Subscriptions-->
         <scene sceneID="h1I-uz-EaF">
@@ -1403,7 +1383,7 @@ CA
                 </viewController>
                 <customObject id="xup-2U-YzY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1648"/>
+            <point key="canvasLocation" x="-95" y="973"/>
         </scene>
     </scenes>
 </document>

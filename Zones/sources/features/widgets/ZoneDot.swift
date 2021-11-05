@@ -147,7 +147,7 @@ class ZoneDot: ZPseudoView {
 			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
 		}
 
-		if  let z = widgetZone {
+		if  let z = widgetZone, gDebugDraw {
 			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
 		}
 
