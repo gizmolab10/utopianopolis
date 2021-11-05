@@ -52,6 +52,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 	}
 
+	func drawWidgets(for phase: ZDrawPhase) {
+		rootWidget?.traverseAllProgeny(inReverse: false) { widget in
+			widget.draw(phase)
+		}
+	}
+
     #if os(OSX)
     
 	func platformSetup() {}

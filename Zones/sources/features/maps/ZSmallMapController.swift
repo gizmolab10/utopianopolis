@@ -22,7 +22,7 @@ class ZSmallMapController: ZMapController {
 	override  var controllerID : ZControllerID { return .idSmallMap }
 	override  var     isBigMap : Bool          { return false }
 	var            isRecentMap : Bool          { return rootWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
-	override func updateFrames()               { mapView?.updateFrames() }
+	override func updateFrames()               { mapView?.updateFrames(with: self) }
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller
@@ -32,6 +32,7 @@ class ZSmallMapController: ZMapController {
 	}
 
 	func update() {
+		updateFrames()
 		gMapControlsView?.update()
 		gCurrentSmallMapRecords?.updateCurrentBookmark()
 	}

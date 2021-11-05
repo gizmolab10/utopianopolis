@@ -19,26 +19,18 @@ class ZMapView: ZView {
 	var mapID            : ZMapID?
 	var dotsAndLinesView : ZMapView?
 	var highlightMapView : ZMapView?
-	var controller       : ZMapController?
-	var isBigMap         : Bool { return controller?.isBigMap ?? true }
-	override func menu(for event: ZEvent) -> ZMenu? { return controller?.mapContextualMenu }
+	override func menu(for event: ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
 	func debugDraw() {
-		if  !isBigMap, gDebugDraw {
-			if  var rRect = controller?.rootWidget?.frame {
-				rRect     = convert(rRect, to: self)
-				rRect                                  .drawColoredRect(ZColor.green)   // good
-			}
-
-			bounds                 .insetEquallyBy(1.5).drawColoredRect(ZColor.blue)    // too small
-			dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(ZColor.red)     // too tall, too narrow
-			highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(ZColor.purple)  //    ",        "
-			superview?         .drawBox(in: self,                 with: ZColor.orange)  // height too small
-		}
+		bounds                 .insetEquallyBy(1.5).drawColoredRect(ZColor.blue)    // too small
+		dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(ZColor.red)     // too tall, too narrow
+		highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(ZColor.purple)  //    ",        "
+		superview?.drawBox(in: self, with:                          ZColor.orange)  // height too small
 	}
 
-	func updateFrames() {
-		if  let   widget = controller?.rootWidget, !isBigMap {
+	func updateFrames(with controller: ZMapController?) {
+		if  let   widget = controller?.rootWidget,
+			let isBigMap = controller?.isBigMap, !isBigMap {
 			var   origin = gDetailsController?.view(for: .vSmallMap)?.frame.origin ?? .zero
 			var     rect = widget.frame
 			origin    .x = 8.0
@@ -58,17 +50,15 @@ class ZMapView: ZView {
 					ZBezierPath(rect: iDirtyRect).setClip()
 
 					if  (phase == .pDotsAndHighlight) != (mapID == .mDotsAndLines) {
-						controller?.rootWidget?.traverseAllProgeny(inReverse: false) { widget in
-							widget.draw(phase)
-						}
+						gMapController?     .drawWidgets(for: phase)
+						gSmallMapController?.drawWidgets(for: phase)
 					}
 				}
 		}
 	}
 
 	func setup(_ id: ZMapID = .mText, mapController: ZMapController) {
-		controller = mapController
-		mapID      = id
+		mapID = id
 
 		if  id != .mText {
 			zlayer.backgroundColor = CGColor.clear
@@ -80,8 +70,8 @@ class ZMapView: ZView {
 			updateTracking()
 			addSubview(dotsAndLinesView!)
 			addSubview(highlightMapView!)
-			dotsAndLinesView?.setup(.mDotsAndLines, mapController: controller!)
-			highlightMapView?.setup(.mHighlight,    mapController: controller!)
+			dotsAndLinesView?.setup(.mDotsAndLines, mapController: mapController)
+			highlightMapView?.setup(.mHighlight,    mapController: mapController)
 		}
 	}
 
