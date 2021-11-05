@@ -29,7 +29,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                    rootWidget : ZoneWidget?
 	@IBOutlet var   mapContextualMenu : ZContextualMenu?
 	@IBOutlet var  ideaContextualMenu : ZoneContextualMenu?
-	var            smallMapController : ZSmallMapController?
 	var           priorScrollLocation = CGPoint.zero
 
 	func updateFrames() {}
@@ -39,12 +38,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			gestureView                     = gDragView                    // do this before calling super setup, which uses gesture view
 			rootWidget                      = ZoneWidget (view: map)
 			mapPseudoView                   = ZPseudoView(view: map)
-			smallMapController              = ZSmallMapController()
 			view    .layer?.backgroundColor = kClearColor.cgColor
 			mapView?.layer?.backgroundColor = kClearColor.cgColor
 
-			if  let            frame = mapView?.frame {
-				mapPseudoView?.frame = frame
+			if  let                   frame = mapView?.frame {
+				mapPseudoView?       .frame = frame
 			}
 
 			super.setup()
@@ -126,8 +124,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize { return }
 
-		removeAllTextViews()
-
 		var specificIndex:    Int?
 		let specificView           = mapPseudoView
 		var specificWidget         = rootWidget
@@ -140,7 +136,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			widget.type           == zone.widgetType {
             specificWidget         = widget
             specificIndex          = zone.siblingIndex
-            recursing              = [.sData, .sRelayout].contains(kind)
+            recursing              = [.sData, .spRelayout].contains(kind)
         }
 
 		let total = specificWidget?.layoutAllPseudoViews(inPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
@@ -151,16 +147,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			printDebug(.dWidget, "layout \(widgetType.description): \(t)")
 		}
     }
-
-	func removeAllTextViews() {
-		if  let subviews = mapView?.subviews {
-			for subview in subviews {
-				if  let textView = subview as? ZoneTextWidget {
-					textView.removeFromSuperview()
-				}
-			}
-		}
-	}
 
 	// MARK:- events
 	// MARK:-
@@ -179,13 +165,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 	
 	func prepare(for kind: ZSignalKind) {
-		if  [.sRelayout].contains(kind) {
+		if  [.spRelayout].contains(kind) {
 			gWidgets.clearRegistry(for: widgetType)
 		}
-
-//		if  kIsPhone {
-//			rootWidget.isHidden = gShowSmallMapForIOS
-//		}
 	}
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {

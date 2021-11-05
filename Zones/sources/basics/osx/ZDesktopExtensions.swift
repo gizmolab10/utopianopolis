@@ -1147,7 +1147,7 @@ extension ZoneWidget {
 	@objc func printView() { // ZoneWidget
 		let view = ZView(frame: bounds)
 
-		layoutAllPseudoViews(inPseudoView: self, for: .tBigMap, atIndex: nil, recursing: true, .sRelayout, visited: [])
+		layoutAllPseudoViews(inPseudoView: self, for: .tBigMap, atIndex: nil, recursing: true, .spRelayout, visited: [])
 		view.printView()
 	}
 

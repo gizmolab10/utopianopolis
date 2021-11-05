@@ -1068,7 +1068,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		    userCanMutateProgeny {
 			expand()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
-				gControllers.signalFor(self, multiple: [.sRelayout]) {
+				gControllers.signalFor(self, multiple: [.spRelayout]) {
 					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}
@@ -1916,7 +1916,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				gShowSmallMapForIOS = targetDBID.isSmallMapDB
 
-				complete(target, .sRelayout)
+				complete(target, .spRelayout)
 			} else {
 				gShowSmallMapForIOS = targetDBID.isSmallMapDB
 
@@ -1932,17 +1932,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							gHere = here
 
 							gHere.prepareForArrival()
-							complete(gHere, .sRelayout)
+							complete(gHere, .spRelayout)
 						}
 					} else if let here = gCloud?.maybeZoneForRecordName(targetRecordName) {
 						gHere          = here
 
 						gHere.prepareForArrival()
 						gRecents.focusOnGrab {
-							complete(gHere, .sRelayout)
+							complete(gHere, .spRelayout)
 						}
 					} else {
-						complete(gHere, .sRelayout)
+						complete(gHere, .spRelayout)
 					}
 				} else {
 
@@ -1962,12 +1962,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						gHere = here
 
 						grabbed?.grab()
-						complete(here, .sRelayout)
+						complete(here, .spRelayout)
 					}
 
 					let grabHere = {
 						gHereMaybe?.prepareForArrival()
-						complete(gHereMaybe, .sRelayout)
+						complete(gHereMaybe, .spRelayout)
 					}
 
 					if  there != nil {
@@ -2085,7 +2085,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gSignal([.spSmallMap, .sRelayout])
+				gSignal([.spSmallMap, .spRelayout])
 			}
 		}
 	}

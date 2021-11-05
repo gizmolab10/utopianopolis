@@ -214,7 +214,7 @@ class ZCoreDataStack: NSObject {
 						gRemoteStorage.updateManifestCount(for: dbID)
 						gRemoteStorage.recount()
 						gHere.grab()
-						gSignal([.sRelayout, .spData, .spCrumbs])
+						gSignal([.spRelayout, .spData, .spCrumbs])
 						self.makeAvailable()
 						onCompletion?(0)
 					}

@@ -926,7 +926,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: ZSignalKindArray? = nil, onCompletion: SignalArrayClosure? = nil) {
-		var       response = forcedResponse ?? [ZSignalKind.sRelayout]
+		var       response = forcedResponse ?? [ZSignalKind.spRelayout]
 		let   doCousinJump = !gBrowsingIsConfined
 		let      hereMaybe = gHereMaybe
 		let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
@@ -966,7 +966,7 @@ class ZMapEditor: ZBaseEditor {
 						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
 					} else {
 						gFavorites.updateAllFavorites()
-						onCompletion?([.sRelayout])
+						onCompletion?([.spRelayout])
 					}
 				}
 			}
@@ -1016,7 +1016,7 @@ class ZMapEditor: ZBaseEditor {
 						moveThese.moveIntoAndGrab(intoParent, at: newIndex, orphan: true) { reveal in
 							gSelecting.grab(moveThese)
 							intoParent.children.updateOrder()
-							onCompletion?([.sRelayout])
+							onCompletion?([.spRelayout])
 						}
 					}
 				}

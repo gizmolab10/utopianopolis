@@ -34,21 +34,16 @@ class ZMapView: ZView {
 			dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(ZColor.red)     // too tall, too narrow
 			highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(ZColor.purple)  //    ",        "
 			superview?         .drawBox(in: self,                 with: ZColor.orange)  // height too small
-			gSmallTogglingView?.drawBox(in: self, inset: 1.5,     with: ZColor.magenta) // too tall, too low
 		}
 	}
 
 	func updateFrames() {
-		if  let              widget = controller?.rootWidget, !isBigMap {
-			var                rect = widget.frame
-			rect          .origin.x = 8.0
-			widget           .frame = rect
-			let                size = widget.drawnSize.insetBy(0.0, -8.0)   // 8 for margins at both top and bottom
-			rect                    = CGRect(origin: .zero, size: size)
-			frame                   = rect
-			dotsAndLinesView?.frame = rect
-			highlightMapView?.frame = rect
-			superview?       .frame = rect
+		if  let   widget = controller?.rootWidget, !isBigMap {
+			var   origin = gDetailsController?.view(for: .vSmallMap)?.frame.origin ?? .zero
+			var     rect = widget.frame
+			origin    .x = 8.0
+			rect .origin = origin
+			widget.frame = rect
 		}
 	}
 
@@ -87,6 +82,14 @@ class ZMapView: ZView {
 			addSubview(highlightMapView!)
 			dotsAndLinesView?.setup(.mDotsAndLines, mapController: controller!)
 			highlightMapView?.setup(.mHighlight,    mapController: controller!)
+		}
+	}
+
+	func removeAllTextViews() {
+		for subview in subviews {
+			if  let textView = subview as? ZoneTextWidget {
+				textView.removeFromSuperview()
+			}
 		}
 	}
 

@@ -69,7 +69,7 @@ func gSignal(for object: Any? = nil, _ multiple: ZSignalKindArray, _ onCompletio
 private var canUpdate = true
 
 func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
-	gSignal(for: object, [.sRelayout], onCompletion)
+	gSignal(for: object, [.spRelayout], onCompletion)
 	gMapController?.view.setNeedsDisplay()
 }
 

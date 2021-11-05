@@ -243,9 +243,6 @@
 		A78460F127289E7D006A4075 /* ZonesLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460F027289E7D006A4075 /* ZonesLine.swift */; };
 		A78460F227289E7D006A4075 /* ZonesLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460F027289E7D006A4075 /* ZonesLine.swift */; };
 		A78460F327289E7D006A4075 /* ZonesLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460F027289E7D006A4075 /* ZonesLine.swift */; };
-		A78460F5272F1F52006A4075 /* ZSmallMapTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460F4272F1F52006A4075 /* ZSmallMapTogglingView.swift */; };
-		A78460F6272F1F52006A4075 /* ZSmallMapTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460F4272F1F52006A4075 /* ZSmallMapTogglingView.swift */; };
-		A78460F7272F1F52006A4075 /* ZSmallMapTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A78460F4272F1F52006A4075 /* ZSmallMapTogglingView.swift */; };
 		A786C6F125DF5F9F00B23FBF /* ZDebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */; };
 		A786C6F225DF5F9F00B23FBF /* ZDebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */; };
 		A786C6F325DF5F9F00B23FBF /* ZDebugController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */; };
@@ -1511,7 +1508,6 @@
 				A764067423F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
 				0C43EFD721010F62000976CE /* ZRemoteStorage.swift in Sources */,
-				A78460F5272F1F52006A4075 /* ZSmallMapTogglingView.swift in Sources */,
 				A711059D25BB95E400D051E9 /* ZSmallMapRecords.swift in Sources */,
 				A7B48AA523E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
 				A70064DD22484808004E3A8D /* ZManifest.swift in Sources */,
@@ -1630,7 +1626,6 @@
 				0C39B31B1F182EBB0091F4D1 /* Zone.swift in Sources */,
 				0C43EFD321010F62000976CE /* ZOnboarding.swift in Sources */,
 				A7D2D64D248F11B300F652B0 /* ZHelpDotsData.swift in Sources */,
-				A78460F7272F1F52006A4075 /* ZSmallMapTogglingView.swift in Sources */,
 				0C39B2B21F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				A7CF320B260D7D9B00285A03 /* ZHelpEditor.swift in Sources */,
 				A7B48AB323E0E80C00654DBD /* ZoneDot.swift in Sources */,
@@ -1753,7 +1748,6 @@
 				A7E096CB23EB98FA0017EC32 /* ZLinkDialogController.swift in Sources */,
 				A711059E25BB95E400D051E9 /* ZSmallMapRecords.swift in Sources */,
 				A7CFA81C21F516E0008DA880 /* ZSearchBarController.swift in Sources */,
-				A78460F6272F1F52006A4075 /* ZSmallMapTogglingView.swift in Sources */,
 				A7D2D64C248F11B300F652B0 /* ZHelpDotsData.swift in Sources */,
 				0C39B2CF1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
 				0C43EFD221010F62000976CE /* ZOnboarding.swift in Sources */,

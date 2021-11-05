@@ -660,7 +660,6 @@ DQ
                     <connections>
                         <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
                         <outlet property="mapContextualMenu" destination="HLb-eX-LkY" id="8lR-R2-tPJ"/>
-                        <outlet property="mapView" destination="myf-PZ-JAt" id="GM0-He-36T"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -905,6 +904,13 @@ CA
                                     <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="rde-p1-TdC"/>
                                 </constraints>
                             </customView>
+                            <containerView id="vVa-lj-l9p" userLabel="Small Map Container View">
+                                <rect key="frame" x="0.0" y="0.0" width="451" height="300"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <connections>
+                                    <segue destination="SUz-Nq-f3E" kind="embed" id="Cx4-n4-INZ"/>
+                                </connections>
+                            </containerView>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="HK5-4i-dSB">
                                 <rect key="frame" x="0.0" y="0.0" width="451" height="300"/>
                                 <connections>
@@ -1875,6 +1881,170 @@ DQ
                 <customObject id="933-fU-289" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="957" y="466"/>
+        </scene>
+        <!--Small Map-->
+        <scene sceneID="fRz-nE-ecT">
+            <objects>
+                <viewController title="favorites" id="SUz-Nq-f3E" userLabel="Small Map" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="kOn-SC-u0e">
+                        <rect key="frame" x="0.0" y="0.0" width="121" height="1"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </view>
+                    <connections>
+                        <outlet property="ideaContextualMenu" destination="GDQ-ws-BTH" id="tdv-6e-F2S"/>
+                    </connections>
+                </viewController>
+                <menu title="Actions" id="GDQ-ws-BTH" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
+                    <items>
+                        <menuItem title="Focus" keyEquivalent="/" id="X4M-FO-fpj">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="2rw-Jo-HIE" id="IYL-Y1-4Tl"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Delete" id="LOo-W1-lPc">
+                            <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="RTl-a3-7gM"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Bookmark" keyEquivalent="b" id="zVH-12-G5V">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="JO0-Nb-by0"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Duplicate" keyEquivalent="d" id="Izz-f1-uYf">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="beO-An-t2P"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Note" keyEquivalent="n" id="lC6-Mv-Bwn">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="R21-HJ-MXk"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Swap with Parent" keyEquivalent="t" id="mUb-rc-Xsg">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="XBL-48-RNx"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="37v-cJ-Udl">
+                            <connections>
+                                <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="C9c-HO-K1X"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Children" id="7kc-De-ui2">
+                            <menu key="submenu" title="Children" id="vBx-BK-1br">
+                                <items>
+                                    <menuItem title="Show" keyEquivalent="" id="IWJ-AX-yhl">
+                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="7qC-SW-EbE"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Hide" keyEquivalent="" id="vT4-iD-aHY">
+                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="pvR-gC-nQd"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem isSeparatorItem="YES" id="Cme-5Z-ZmQ">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="kps-3l-UhW"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Add Child Idea" keyEquivalent=" " id="ZGe-hY-fL7">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="qMu-WS-Zzk"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Alphabetize" keyEquivalent="a" id="Foi-Kc-9Dc">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="f9o-C6-gbQ"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Sort by Length" keyEquivalent="m" id="FPB-VN-lEv">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="4WO-mI-4Ve"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Reverse Order" keyEquivalent="r" id="HDk-aF-Zju">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="vC9-uu-E60"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="Attachment" id="mx8-4q-iOr">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <menu key="submenu" title="Attachment" id="2Bp-sV-NWV">
+                                <items>
+                                    <menuItem title="Email" keyEquivalent="e" id="UEj-od-JiR">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="98q-ER-VIo"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Hyperlink" keyEquivalent="h" id="DU9-MX-Oq5">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="ZN3-oZ-SY3"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="Case" id="tjm-6G-qLA">
+                            <menu key="submenu" title="Case" id="SJI-Dy-u2u">
+                                <items>
+                                    <menuItem title="Lower" keyEquivalent="l" id="TYb-iP-wmz">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="5MX-2c-kNG"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Upper" keyEquivalent="u" id="QTu-HA-K7I">
+                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="SWL-gy-xU6"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                        <menuItem title="File" id="Q1l-OO-6aF">
+                            <menu key="submenu" title="File" id="z6G-e4-KSm">
+                                <items>
+                                    <menuItem title="Import" keyEquivalent="o" id="vd6-hG-Vys">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="L7e-Sb-pPg"/>
+                                        </connections>
+                                    </menuItem>
+                                    <menuItem title="Export" keyEquivalent="s" id="UzI-oj-5dB">
+                                        <connections>
+                                            <action selector="genericMenuHandler:" target="GDQ-ws-BTH" id="ZML-3p-fu4"/>
+                                        </connections>
+                                    </menuItem>
+                                </items>
+                            </menu>
+                        </menuItem>
+                    </items>
+                </menu>
+                <customObject id="2rw-Jo-HIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="679" y="977"/>
         </scene>
     </scenes>
     <resources>

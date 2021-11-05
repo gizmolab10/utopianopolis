@@ -97,7 +97,7 @@ class ZSmallMapRecords: ZRecords {
 
 			if  gIsMapMode {
 				focusOnGrab(.eSelected) {
-					gSignal([.sRelayout])
+					gSignal([.spRelayout])
 				}
 			} else if gCurrentEssayZone != tHere {
 				gEssayView?.resetCurrentEssay(tHere.note)
@@ -290,7 +290,7 @@ class ZSmallMapRecords: ZRecords {
 					gShowDetailsView = true
 
 					gDetailsController?.showViewFor(.vSmallMap)
-					gSignal([.spMain, .sDetails, .spSmallMap, .sRelayout])
+					gSignal([.spMain, .sDetails, .spSmallMap, .spRelayout])
 
 					return true
 				}

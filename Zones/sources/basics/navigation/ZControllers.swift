@@ -43,7 +43,7 @@ enum ZSignalKind: Int {
 	case sResize
 	case sSearch
 	case sDetails
-    case sRelayout
+    case spRelayout
 	case sLaunchDone
     case sAppearance
 
@@ -92,7 +92,7 @@ class ZControllers: NSObject {
 		gSignal([.sSwap, .spCrumbs, .spSmallMap])
 
 		if !gIsEssayMode {
-			gSignal([.sRelayout])
+			gSignal([.spRelayout])
 		}
 	}
 
@@ -163,6 +163,7 @@ class ZControllers: NSObject {
 						case .spPreferences:   if identifier == .idPreferences    { closure() }
 						case .spSubscription:  if identifier == .idSubscription   { closure() }
 						case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
+						case .spRelayout:      if identifier == .idBigMap         { gCurrentMapView?.removeAllTextViews(); closure() }
 						default:                                                    closure()
 					}
                 }

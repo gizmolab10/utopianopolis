@@ -126,7 +126,7 @@ func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 
 		gShowDetailsView = true    	// make sure the details view is visible
 
-		gSignal([.spMain, .sDetails, .spSmallMap, .sRelayout])
+		gSignal([.spMain, .sDetails, .spSmallMap, .spRelayout])
 	}
 }
 

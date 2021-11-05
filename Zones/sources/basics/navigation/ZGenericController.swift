@@ -41,9 +41,9 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 			case .idHelpEssayIntroduction,
 				 .idHelpEssayGraphicals,
-				 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .sRelayout]
-			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .sRelayout,     .spBigMap, .sLaunchDone, .sResize]
-			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .sRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
+				 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .spRelayout]
+			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .spRelayout,     .spBigMap, .sLaunchDone, .sResize]
+			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .spRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
 			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
 			case .idSearchResults: return [.sFound]
 			case .idSearch:        return [.sSearch]
