@@ -153,24 +153,9 @@
                                     <outlet property="controller" destination="bl3-7n-UyN" id="UXf-WV-0Cu"/>
                                 </connections>
                             </customView>
-                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="YCv-YN-HVE">
-                                <rect key="frame" x="0.0" y="-2" width="226" height="5"/>
-                            </box>
-                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="pEz-hB-ZvT">
-                                <rect key="frame" x="223" y="0.0" width="5" height="156"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="1" id="DvJ-uK-BbF"/>
-                                </constraints>
-                            </box>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="FRa-h5-v7h" secondAttribute="bottom" id="4tp-Va-8vT"/>
-                            <constraint firstAttribute="bottom" secondItem="pEz-hB-ZvT" secondAttribute="bottom" id="7Vv-Hc-ISd"/>
-                            <constraint firstItem="pEz-hB-ZvT" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" id="9YU-xa-4nm"/>
-                            <constraint firstItem="YCv-YN-HVE" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="Af1-M9-9OB"/>
-                            <constraint firstAttribute="trailing" secondItem="pEz-hB-ZvT" secondAttribute="trailing" id="SKZ-ji-sE6"/>
-                            <constraint firstAttribute="trailing" secondItem="YCv-YN-HVE" secondAttribute="trailing" id="a2P-j8-F0d"/>
-                            <constraint firstAttribute="bottom" secondItem="YCv-YN-HVE" secondAttribute="bottom" id="aEx-6M-ttW"/>
                             <constraint firstAttribute="trailing" secondItem="FRa-h5-v7h" secondAttribute="trailing" id="anl-8G-OBK"/>
                             <constraint firstItem="FRa-h5-v7h" firstAttribute="leading" secondItem="sgs-hY-cUq" secondAttribute="leading" id="s1F-Gw-z12"/>
                             <constraint firstItem="FRa-h5-v7h" firstAttribute="top" secondItem="sgs-hY-cUq" secondAttribute="top" constant="8" id="td8-bl-RRq"/>

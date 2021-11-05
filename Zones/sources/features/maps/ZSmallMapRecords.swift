@@ -152,6 +152,7 @@ class ZSmallMapRecords: ZRecords {
 			}
 		}
 
+		gSignal([.sDetails])
 		gRelayoutMaps()
 	}
 

@@ -147,9 +147,8 @@ class ZoneDot: ZPseudoView {
 			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
 		}
 
-		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
-			gActiveColor.setFill()
-			gActiveColor.setStroke()
+		if  let z = widgetZone {
+			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
 		}
 
 		path.lineWidth = thickness
@@ -265,8 +264,14 @@ class ZoneDot: ZPseudoView {
 	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
 
-		parameters.color.setStroke()
-		parameters .fill.setFill()
+		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
+			gActiveColor.setStroke()
+			gActiveColor.setFill()
+		} else {
+			parameters.color.setStroke()
+			parameters .fill.setFill()
+		}
+
 		drawMainDot(in: iDirtyRect, using: parameters) // needed for dots help view
 
 		if  parameters.isReveal {
@@ -319,9 +324,17 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
+	override func setupDrawView() {
+		super.setupDrawView()
+
+		if  let    m = absoluteView as? ZMapView {
+			drawView = m.dotsAndLinesView
+		}
+	}
+
     override func draw(_ phase: ZDrawPhase) {
 		if  isVisible,
-			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
+			let parameters = widgetZone?.plainDotParameters(isFilled || isHovering, isReveal) {
 			let       rect = absoluteActualFrame
 
 			drawDot           (rect, parameters)

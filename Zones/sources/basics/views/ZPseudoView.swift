@@ -26,10 +26,12 @@ class ZPseudoView: NSObject {
 	var superpseudoview : ZPseudoView?
 	var      toolTipTag : NSView.ToolTipTag?
 	var    absoluteView : ZView?
+	var        drawView : ZView?
 
 	override var description: String { return toolTip ?? super.description }
 	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses
 	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }
+	func setupDrawView() { drawView = absoluteView }
 
 	var toolTip : String? {
 		didSet {
@@ -47,6 +49,8 @@ class ZPseudoView: NSObject {
 		super.init()
 
 		absoluteView = view
+
+		setupDrawView()
 	}
 
 	func convert(_ point: NSPoint, toContaining view: ZPseudoView?) -> NSPoint {

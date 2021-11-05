@@ -95,12 +95,4 @@ class ZMapView: ZView {
 
 	func updateTracking() { addTracking(for: frame) }
 
-	override func mouseMoved(with event: ZEvent) {
-		super.mouseMoved(with: event)
-
-		let location = convert(event.locationInWindow, from: nil)
-
-		controller?.detectHover(at: location)?.setNeedsDisplay()
-	}
-
 }

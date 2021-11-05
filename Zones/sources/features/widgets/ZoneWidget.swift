@@ -460,23 +460,6 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
-	// MARK:- hover
-	// MARK:-
-
-	func detectHover(at location: CGPoint) -> Bool {
-		if  let       d = dragDot,   d.absoluteFrame.contains(location) {
-			gHovering.declareHover(d)
-		} else if let r = revealDot, r.absoluteFrame.contains(location) {
-			gHovering.declareHover(r)
-		} else if let t = pseudoTextWidget, t.absoluteFrame.contains(location) {
-			gHovering.declareHover(t.actualTextWidget)
-		} else {
-			return false
-		}
-
-		return true
-	}
-
     // MARK:- drag
     // MARK:-
 

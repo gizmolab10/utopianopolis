@@ -177,8 +177,12 @@ class ZTogglingView: ZStackView {
 			} else {
 				addSubview(hideableView!)
 				hideableView?.snp.makeConstraints { make in
-					make.top.equalTo((self.bannerView?.snp.bottom)!)
-					make.left.right.bottom.equalTo(self)
+					make.bottom.equalTo(self)
+
+					if  let b = self.bannerView {
+						make.top.equalTo(b.snp.bottom)
+						make.left.right.equalTo(b)
+					}
 				}
 			}
 		}

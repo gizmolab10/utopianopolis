@@ -2123,7 +2123,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				p.grab()
-				gSignal([.spCrumbs, .spData, .spSmallMap])
+				gSignal([.spCrumbs, .spData, .spSmallMap, .sDetails])
 			}
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self

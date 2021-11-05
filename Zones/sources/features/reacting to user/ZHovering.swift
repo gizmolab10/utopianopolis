@@ -14,7 +14,16 @@ class ZHovering: NSObject {
 
 	var dot          : ZoneDot?
 	var textWidget   : ZoneTextWidget?
-	var absoluteView : ZView? { return textWidget?.widget?.absoluteView ?? dot?.absoluteView }
+
+	var absoluteView : ZView? {
+		if  let    t = textWidget?.widget?.absoluteView as? ZMapView {
+			return t
+		} else if let m = dot?.absoluteView as? ZMapView {
+			return    m.dotsAndLinesView
+		}
+
+		return nil
+	}
 
 	@discardableResult func clear() -> ZView? {
 		let            cleared = absoluteView
@@ -41,6 +50,56 @@ class ZHovering: NSObject {
 		if  let                  t = iTextWidget {
 			textWidget             = t
 			textWidget?.isHovering = true
+		}
+	}
+
+}
+
+extension ZoneWidget {
+
+	func detectHover(at location: CGPoint) -> Bool {
+		if  let       d = dragDot,   d.absoluteFrame.contains(location) {
+			gHovering.declareHover(d)
+		} else if let r = revealDot, r.absoluteFrame.contains(location) {
+			gHovering.declareHover(r)
+		} else if let t = pseudoTextWidget, t.absoluteFrame.contains(location) {
+			gHovering.declareHover(t.actualTextWidget)
+		} else {
+			return false
+		}
+
+		return true
+	}
+
+}
+
+extension ZMapController {
+
+	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
+		if  let              w = locationInWindow,
+			let       location = mapView?.convert(w, from: mapView?.window?.contentView) {
+			if  let     widget = detectWidget(at: location),
+				widget.detectHover(at: location) {
+				return   mapView
+			} else if let view = gHovering.clear() {
+				return    view
+			}
+		}
+
+		return nil
+	}
+
+}
+
+extension ZDragView {
+
+	override func mouseMoved(with event: ZEvent) {
+		super.mouseMoved(with: event)
+
+		if  let v = gMapController?.detectHover(at: event.locationInWindow) {
+			v.setNeedsDisplay()
+		} else {
+			gSmallMapController?   .detectHover(at: event.locationInWindow)?.setNeedsDisplay()
 		}
 	}
 
