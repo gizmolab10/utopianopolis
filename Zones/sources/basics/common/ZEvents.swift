@@ -70,7 +70,7 @@ class ZEvents: ZGeneric {
 					let isWindow = event.type == .keyDown || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
 
 					if  gIsEssayMode,
-						gSmallMapIsResponder {
+						gMapIsResponder {
 						return gMapEditor.handleEvent(event, isWindow: isWindow, forced: true)   // if in essay mode and first responder is in a map
 					}
 

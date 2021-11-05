@@ -22,8 +22,8 @@ let gMapEditor = ZMapEditor()
 class ZMapEditor: ZBaseEditor {
 	var             priorHere : Zone?
 	override var canHandleKey : Bool       { return gIsMapOrEditIdeaMode }
-	var             moveables : ZoneArray? { return (gIsEssayMode && !gSmallMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
-	func          forceRedraw()            { gMapController?.mapView?.setNeedsDisplay(); gSmallMapController?.mapView?.setNeedsDisplay() }
+	var             moveables : ZoneArray? { return (gIsEssayMode && !gMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
+	func          forceRedraw()            { gMapController?.mapView?.setNeedsDisplay() }
 
 	// MARK:- events
 	// MARK:-

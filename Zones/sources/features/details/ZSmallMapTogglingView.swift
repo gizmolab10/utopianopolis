@@ -42,7 +42,6 @@ class ZSmallMapTogglingView: ZTogglingView {
 
 		if  !hideHideable, gDebugDraw {
 			hideableView?.drawBox(in: self, inset: 1.5, with: ZColor.magenta) // height is zero
-			gSmallMapController?.mapView?.debugDraw()
 		}
 	}
 

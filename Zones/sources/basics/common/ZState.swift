@@ -67,7 +67,7 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
-var      gSmallMapIsResponder:               Bool { return gMainWindow?.firstResponder == gSmallMapController?.mapView }
+var           gMapIsResponder:               Bool { return gMainWindow?.firstResponder == gMapController?.mapView && gMapController?.mapView != nil }
 var             gUserIsExempt:               Bool { return gIgnoreExemption ? false : gUser?.isExempt ?? false } // discard this?
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName:             String { return CKRecordID().recordName }
@@ -104,7 +104,7 @@ func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 		func toggle() {
 			gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
-			gSmallMapController?.mapView?.snp.removeConstraints()      // avoid conflict with spSmallMap signal [its call to make constraints], below
+//			gSmallMapController?.mapView?.snp.removeConstraints()      // avoid conflict with spSmallMap signal [its call to make constraints], below
 
 			if  OPTION {			        // if any grabs are in current small map, move them to other map
 				let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID

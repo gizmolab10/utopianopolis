@@ -36,7 +36,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	override func setup() {
 		if  let                         map = mapView {
-			gestureView                     = map                    // do this before calling super setup, which uses gesture view
+			gestureView                     = gDragView                    // do this before calling super setup, which uses gesture view
 			rootWidget                      = ZoneWidget (view: map)
 			mapPseudoView                   = ZPseudoView(view: map)
 			smallMapController              = ZSmallMapController()
@@ -465,8 +465,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                     gDropIndices?.add(index - 1)
                 }
 
-				gMapController?     .mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
-				gSmallMapController?.mapView?.setNeedsDisplay()
+				gMapController?.mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 
                 if !isNoop, isDone {
                     let   toBookmark = dropZone.isBookmark
