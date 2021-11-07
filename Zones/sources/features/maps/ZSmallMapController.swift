@@ -22,7 +22,20 @@ class ZSmallMapController: ZMapController {
 	override  var controllerID : ZControllerID { return .idSmallMap }
 	override  var     isBigMap : Bool          { return false }
 	var            isRecentMap : Bool          { return rootWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
-	override func updateFrames()               { mapView?.updateFrames(with: self) }
+
+	override func updateFrames() {
+		mapView?.updateFrames(with: self)
+		if  let          mHeight = mapView?.bounds.size.height,
+			let          rHeight = rootWidget?.drawnSize.height,
+			let          cHeight = gMapControlsView?.frame.height,
+			let           sFrame = gDetailsController?.stackView?.frame {
+			let           yDelta = CGFloat(16.0)
+			let           height = mHeight - rHeight - cHeight - sFrame.height - yDelta
+			let             size = CGSize(width: sFrame.width, height: rHeight + yDelta)
+			let           origin = CGPoint(x: .zero, y: height)
+			mapPseudoView?.frame = CGRect(origin: origin, size: size)
+		}
+	}
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller

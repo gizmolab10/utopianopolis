@@ -29,11 +29,8 @@ class ZMapView: ZView {
 	}
 
 	func updateFrames(with controller: ZMapController?) {
-		if  let   widget = controller?.rootWidget,
-			let isBigMap = controller?.isBigMap, !isBigMap {
-			let        y = gDetailsController?.verticalOffset(for: .vSmallMap) ?? .zero
-			let   origin = CGPoint(x: 8.0, y: y)
-			widget.frame = CGRect(origin: origin, size: widget.drawnSize)
+		if  let   root = controller?.rootWidget {
+			root.frame = CGRect(origin: .zero, size: root.drawnSize)
 		}
 	}
 
