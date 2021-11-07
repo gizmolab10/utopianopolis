@@ -146,6 +146,7 @@ class ZControllers: NSObject {
 
 	func signalFor(_ object: Any? = nil, multiple: ZSignalKindArray, onCompletion: Closure? = nil) {
 		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
+		let    mapsIDs : [ZControllerID] = [.idBigMap, .idSmallMap]
 
 		if  multiple.contains(.spRelayout) {
 			gCurrentMapView?.removeAllTextViews()
@@ -168,6 +169,7 @@ class ZControllers: NSObject {
 						case .spPreferences:   if identifier == .idPreferences    { closure() }
 						case .spSubscription:  if identifier == .idSubscription   { closure() }
 						case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
+						case .spRelayout:      if    mapsIDs.contains(identifier) { closure() }
 						default:                                                    closure()
 					}
                 }

@@ -1160,7 +1160,7 @@ extension ZoneWidget {
 			let       smallDelta = CGFloat(1.0)
             let        thickness = CGFloat(gLineThickness)
             rect.origin       .x = sourceFrame    .midX
-			rect.size     .width = abs(targetFrame.midX - rect.minX)
+			rect.size     .width = abs(targetFrame.minX - rect.minX)   + 1.0
 
             switch kind! {
             case .above:

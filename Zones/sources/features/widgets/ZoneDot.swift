@@ -101,8 +101,8 @@ class ZoneDot: ZPseudoView {
 	}
 
 	func updateFrame(relativeTo textFrame: CGRect) {
-		let    offset = CGPoint(drawnSize)//.multiplyBy(0.5))
-		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-offset.x, 0.0)
+		let         x = CGPoint(drawnSize).x
+		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-x, 0.0)
 		absoluteFrame = CGRect(origin: origin, size: drawnSize)
 
 		updateTooltips()
@@ -300,7 +300,8 @@ class ZoneDot: ZPseudoView {
 	}
 
 	func drawSurroundingDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		if  parameters.showSideDot {
+		if  parameters.showSideDot,
+			!parameters.isReveal {
 
 			// ////////////////////////////////
 			// INDICATE CURRENT IN SMALL MAP //
