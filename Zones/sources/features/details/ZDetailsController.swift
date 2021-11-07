@@ -25,7 +25,17 @@ class ZDetailsController: ZGesturesController {
 	func register         (id: ZDetailsViewID, for view: ZTogglingView) { viewsByID[id.rawValue] = view }
 	func showViewFor    (_ id: ZDetailsViewID)                          { view(for: id)?.hideHideable = false; update() }
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+	func verticalOffset(for id: ZDetailsViewID) -> CGFloat {
+		if  let  dView = view(for: id) {
+			let origin = dView.convert(dView.frame.origin, to: gDragView)
+
+			return origin.y
+		}
+
+		return 0.0
+	}
+
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gShowDetailsView {
 			update()
 		}

@@ -147,6 +147,11 @@ class ZControllers: NSObject {
 	func signalFor(_ object: Any? = nil, multiple: ZSignalKindArray, onCompletion: Closure? = nil) {
 		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
 
+		if  multiple.contains(.spRelayout) {
+			gCurrentMapView?.removeAllTextViews()
+			gDragView?.setAllSubviewsNeedDisplay()
+		}
+
 		FOREGROUND(canBeDirect: true) {
 			for regarding in multiple {
 				for (identifier, signalObject) in self.signalObjectsByControllerID {
@@ -163,7 +168,6 @@ class ZControllers: NSObject {
 						case .spPreferences:   if identifier == .idPreferences    { closure() }
 						case .spSubscription:  if identifier == .idSubscription   { closure() }
 						case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
-						case .spRelayout:      if identifier == .idBigMap         { gCurrentMapView?.removeAllTextViews(); closure() }
 						default:                                                    closure()
 					}
                 }
