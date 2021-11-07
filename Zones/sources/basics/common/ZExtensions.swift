@@ -36,10 +36,11 @@ typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias       ZRecordsDictionary = [ZDatabaseID: ZRecordsArray]
 typealias       ZStorageDictionary = [ZStorageType : NSObject]
 typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
-typealias     ZStringAnyDictionary = [String :      Any]
-typealias  ZStringObjectDictionary = [String : NSObject]
-typealias  StringZRecordDictionary = [String :  ZRecord]
-typealias StringZRecordsDictionary = [String :  ZRecordsArray]
+typealias     WidgetHashDictionary = [Int    : ZoneWidget]
+typealias     ZStringAnyDictionary = [String :        Any]
+typealias  ZStringObjectDictionary = [String :   NSObject]
+typealias  StringZRecordDictionary = [String :    ZRecord]
+typealias StringZRecordsDictionary = [String :    ZRecordsArray]
 let                   gApplication = ZApplication.shared
 
 protocol ZGeneric {

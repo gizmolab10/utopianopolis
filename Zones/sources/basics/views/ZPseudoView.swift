@@ -54,8 +54,7 @@ class ZPseudoView: NSObject {
 	}
 
 	func convert(_ point: NSPoint, toContaining view: ZPseudoView?) -> NSPoint {
-		if	view != self,
-			let s = superpseudoview {
+		if	let s = superpseudoview, s != self, view != self {
 			let f = s.frame
 
 			return s.convert(f.origin.offsetBy(point), toContaining: view) // recurse

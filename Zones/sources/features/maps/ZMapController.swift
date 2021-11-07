@@ -40,7 +40,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			mapPseudoView                   = ZPseudoView(view: map)
 			view    .layer?.backgroundColor = kClearColor.cgColor
 			mapView?.layer?.backgroundColor = kClearColor.cgColor
-
 			if  let                   frame = mapView?.frame {
 				mapPseudoView?       .frame = frame
 			}
@@ -159,20 +158,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
     override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  !gDeferringRedraw {
-			prepare(for: kind)
-
 			if  kind == .sResize {
 				layoutForCurrentScrollOffset()
 			} else {
 				layoutWidgets(for: iSignalObject, kind)
 				mapView?.setAllSubviewsNeedDisplay()
 			}
-		}
-	}
-	
-	func prepare(for kind: ZSignalKind) {
-		if  [.spRelayout].contains(kind) {
-			gWidgets.clearRegistry(for: widgetType)
 		}
 	}
 	
@@ -575,10 +566,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     }
 
 	func detectWidget(at location: CGPoint) -> ZoneWidget? {
-		let  widgets = gWidgets.getZoneWidgetRegistry(for: widgetType).values.reversed()
-		for  widget in widgets {
-			if  widget.highlightFrame.contains(location) {
-				return widget
+		if  let widgets = gWidgets.allWidgets(for: widgetType) {
+			for widget in widgets.reversed() {
+				if  widget.highlightFrame.contains(location) {
+					return widget
+				}
 			}
 		}
 

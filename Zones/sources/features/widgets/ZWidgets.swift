@@ -14,20 +14,34 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var   bigMapWidgets: [Int : ZoneWidget]     = [:]
-	var   recentWidgets: [Int : ZoneWidget]     = [:]
-	var favoriteWidgets: [Int : ZoneWidget]     = [:]
-	var exemplarWidgets: [Int : ZoneWidget]     = [:]
+	var   bigMapWidgets: WidgetHashDictionary = [:]
+	var   recentWidgets: WidgetHashDictionary = [:]
+	var favoriteWidgets: WidgetHashDictionary = [:]
+	var exemplarWidgets: WidgetHashDictionary = [:]
     var currentlyEditedWidget : ZoneWidget?     { return widgetForZone(gTextEditor.currentlyEditedZone) }
     var  currentMovableWidget : ZoneWidget?     { return widgetForZone(gSelecting.currentMoveable) }
     var  firstGrabbableWidget : ZoneWidget?     { return widgetForZone(gSelecting.firstSortedGrab) }
     var        visibleWidgets : ZoneWidgetArray { return gHere.visibleWidgets + (gSmallMapHere?.visibleWidgets ?? []) }
 
+	func clearAll() {
+		bigMapWidgets   = [:]
+		recentWidgets   = [:]
+		favoriteWidgets = [:]
+		exemplarWidgets = [:]
+	}
+
+	func  allWidgets(for type: ZWidgetType) -> ZoneWidgetArray? {
+		switch type {
+			case .tExemplar: return exemplarWidgets.justWidgets
+			default:         return bigMapWidgets.justWidgets + recentWidgets.justWidgets + favoriteWidgets.justWidgets
+		}
+	}
+
     func clearRegistry(for type: ZWidgetType) {
 		setZoneWidgetRegistry([:], for: type)
     }
 
-	func getZoneWidgetRegistry(for type: ZWidgetType) -> [Int : ZoneWidget] {
+	func getZoneWidgetRegistry(for type: ZWidgetType) -> WidgetHashDictionary {
 		if type.isBigMap   { return   bigMapWidgets }
 		if type.isRecent   { return   recentWidgets }
 		if type.isFavorite { return favoriteWidgets }
@@ -36,7 +50,7 @@ class ZWidgets: NSObject {
 		return [:]
 	}
 
-	func setZoneWidgetRegistry(_ dict: [Int : ZoneWidget], for type: ZWidgetType) {
+	func setZoneWidgetRegistry(_ dict: WidgetHashDictionary, for type: ZWidgetType) {
 		if      type.isBigMap   {   bigMapWidgets = dict }
 		else if type.isRecent   {   recentWidgets = dict }
 		else if type.isFavorite { favoriteWidgets = dict }
@@ -73,5 +87,11 @@ class ZWidgets: NSObject {
 
         return nil
     }
+
+}
+
+extension WidgetHashDictionary {
+
+	var justWidgets : ZoneWidgetArray { return ZoneWidgetArray(values) }
 
 }

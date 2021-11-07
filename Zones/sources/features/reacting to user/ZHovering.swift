@@ -81,8 +81,8 @@ extension ZMapController {
 			if  let     widget = detectWidget(at: location),
 				widget.detectHover(at: location) {
 				return   mapView
-			} else if let view = gHovering.clear() {
-				return    view
+			} else if gHovering.clear() != nil {
+				return   mapView
 			}
 		}
 

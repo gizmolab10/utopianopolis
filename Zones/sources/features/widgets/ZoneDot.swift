@@ -335,7 +335,7 @@ class ZoneDot: ZPseudoView {
 
     override func draw(_ phase: ZDrawPhase) {
 		if  isVisible,
-			let parameters = widgetZone?.plainDotParameters(isFilled || isHovering, isReveal) {
+			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			let       rect = absoluteActualFrame
 
 			drawDot           (rect, parameters)

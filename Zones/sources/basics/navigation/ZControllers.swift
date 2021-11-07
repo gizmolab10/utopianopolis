@@ -149,7 +149,8 @@ class ZControllers: NSObject {
 		let    mapsIDs : [ZControllerID] = [.idBigMap, .idSmallMap]
 
 		if  multiple.contains(.spRelayout) {
-			gCurrentMapView?.removeAllTextViews()
+			gWidgets.clearAll()
+			gCurrentMapView?.clear()
 			gDragView?.setAllSubviewsNeedDisplay()
 		}
 

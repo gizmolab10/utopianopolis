@@ -16,6 +16,7 @@ enum ZMapID: String {
 
 class ZMapView: ZView {
 
+	var needsClear       = false
 	var mapID            : ZMapID?
 	var dotsAndLinesView : ZMapView?
 	var highlightMapView : ZMapView?
@@ -42,14 +43,25 @@ class ZMapView: ZView {
 				highlightMapView?.draw(iDirtyRect)
 			default:
 				for phase in ZDrawPhase.allInOrder {
-					ZBezierPath(rect: iDirtyRect).setClip()
-
 					if  (phase == .pDotsAndHighlight) != (mapID == .mDotsAndLines) {
+						ZBezierPath(rect: iDirtyRect).setClip()
+
+						switch mapID {
+							case .mDotsAndLines: dotsAndLinesView?.clearRect(iDirtyRect)
+							case .mHighlight:    highlightMapView?.clearRect(iDirtyRect)
+							default:             break
+						}
+
 						gMapController?     .drawWidgets(for: phase)
 						gSmallMapController?.drawWidgets(for: phase)
 					}
 				}
 		}
+	}
+
+	func clearRect(_ iDirtyRect: CGRect) {
+		gBackgroundColor.setFill()
+		ZBezierPath(rect: iDirtyRect).fill()
 	}
 
 	func setup(_ id: ZMapID = .mText, mapController: ZMapController) {
@@ -67,6 +79,15 @@ class ZMapView: ZView {
 			addSubview(highlightMapView!)
 			dotsAndLinesView?.setup(.mDotsAndLines, mapController: mapController)
 			highlightMapView?.setup(.mHighlight,    mapController: mapController)
+		}
+	}
+
+	func clear() {
+		if  mapID == .mText {
+			highlightMapView?.needsClear = true
+			dotsAndLinesView?.needsClear = true
+
+			removeAllTextViews()
 		}
 	}
 

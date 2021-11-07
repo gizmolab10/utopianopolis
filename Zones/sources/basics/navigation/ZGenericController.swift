@@ -42,7 +42,7 @@ class ZGenericController: ZController, ZGeneric {
 			case .idHelpEssayIntroduction,
 				 .idHelpEssayGraphicals,
 				 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .spRelayout]
-			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .spRelayout,     .spBigMap, .sLaunchDone, .sResize]
+			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .spRelayout,     .sResize,  .sLaunchDone, .spBigMap]
 			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .spRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
 			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
 			case .idSearchResults: return [.sFound]
