@@ -67,7 +67,7 @@ var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEdit
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
-var           gMapIsResponder:               Bool { return gMainWindow?.firstResponder == gMapController?.mapView && gMapController?.mapView != nil }
+var           gMapIsResponder:               Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
 var             gUserIsExempt:               Bool { return gIgnoreExemption ? false : gUser?.isExempt ?? false } // discard this?
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName:             String { return CKRecordID().recordName }

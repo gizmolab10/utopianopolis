@@ -150,7 +150,7 @@ class ZControllers: NSObject {
 
 		if  multiple.contains(.spRelayout) {
 			gWidgets.clearAll()
-			gCurrentMapView?.clear()
+			gMapView?.clear()
 			gDragView?.setAllSubviewsNeedDisplay()
 		}
 

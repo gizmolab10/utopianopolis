@@ -30,7 +30,11 @@ class ZMapView: ZView {
 	}
 
 	func updateFrames(with controller: ZMapController?) {
-		if  let   root = controller?.rootWidget {
+		if  let root = controller?.rootWidget {
+			if  root.drawnSize.height == .zero {
+				controller?.layoutWidgets(for: nil, .spRelayout)
+			}
+
 			root.frame = CGRect(origin: .zero, size: root.drawnSize)
 		}
 	}
@@ -82,19 +86,22 @@ class ZMapView: ZView {
 		}
 	}
 
-	func clear() {
+	func clear(forSmallMapOnly: Bool = false) {
 		if  mapID == .mText {
 			highlightMapView?.needsClear = true
 			dotsAndLinesView?.needsClear = true
 
-			removeAllTextViews()
+			removeAllTextViews(forSmallMap: forSmallMapOnly)
 		}
 	}
 
-	func removeAllTextViews() {
+	func removeAllTextViews(forSmallMap: Bool) {
 		for subview in subviews {
-			if  let textView = subview as? ZoneTextWidget {
-				textView.removeFromSuperview()
+			if  let textView = subview as? ZoneTextWidget,
+				let inBig = textView.widgetZone?.isInBigMap {
+				if  !(forSmallMap && inBig) {
+					textView.removeFromSuperview()
+				}
 			}
 		}
 	}

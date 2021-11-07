@@ -24,16 +24,19 @@ class ZSmallMapController: ZMapController {
 	var            isRecentMap : Bool          { return rootWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func updateFrames() {
-		mapView?.updateFrames(with: self)
-		if  let          mHeight = mapView?.bounds.size.height,
-			let          rHeight = rootWidget?.drawnSize.height,
-			let          cHeight = gMapControlsView?.frame.height,
-			let           sFrame = gDetailsController?.stackView?.frame {
-			let           yDelta = CGFloat(16.0)
-			let           height = mHeight - rHeight - cHeight - sFrame.height - yDelta
-			let             size = CGSize(width: sFrame.width, height: rHeight + yDelta)
-			let           origin = CGPoint(x: .zero, y: height)
-			mapPseudoView?.frame = CGRect(origin: origin, size: size)
+		if  gHasFinishedStartup, gDetailsViewIsVisible(for: .vSmallMap) {
+			gMapView?.updateFrames(with: self)
+
+			if	let          mHeight = gMapView?.bounds.size.height,
+				  let          rHeight = rootWidget?.drawnSize.height,
+				  let          cHeight = gMapControlsView?.frame.height,
+				  let           sFrame = gDetailsController?.stackView?.frame {
+				let           yDelta = CGFloat(16.0)
+				let           height = mHeight - rHeight - cHeight - sFrame.height - yDelta
+				let             size = CGSize(width: sFrame.width, height: rHeight + yDelta)
+				let           origin = CGPoint(x: .zero, y: height)
+				mapPseudoView?.frame = CGRect(origin: origin, size: size)
+			}
 		}
 	}
 

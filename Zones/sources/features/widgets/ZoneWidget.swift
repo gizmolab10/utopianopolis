@@ -201,12 +201,12 @@ class ZoneWidget: ZPseudoView {
 			if  t.widget == nil {
 				t.widget  = self
 
-				controller?.mapView?.addSubview(t)
+				gMapView?.addSubview(t)
 				addSubpseudoview(pseudoTextWidget)
 			}
 
 			if  t.superview == nil {
-				controller?.mapView?.addSubview(t)
+				gMapView?.addSubview(t)
 			}
 
 			t.setup()

@@ -77,12 +77,12 @@ extension ZMapController {
 
 	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
 		if  let              w = locationInWindow,
-			let       location = mapView?.convert(w, from: mapView?.window?.contentView) {
+			let       location = gMapView?.convert(w, from: gMapView?.window?.contentView) {
 			if  let     widget = detectWidget(at: location),
 				widget.detectHover(at: location) {
-				return   mapView
+				return   gMapView
 			} else if gHovering.clear() != nil {
-				return   mapView
+				return   gMapView
 			}
 		}
 

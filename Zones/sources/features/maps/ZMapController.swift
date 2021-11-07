@@ -15,7 +15,7 @@ import SnapKit
 #endif
 
 var gMapController:  ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
-var gCurrentMapView: ZMapView?       { return gMapController?.mapView }
+var gMapView:        ZMapView?       { return gDragView?.mapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
     
@@ -24,7 +24,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                    isExemplar : Bool          { return false }
 	var                      isBigMap : Bool          { return true }
 	var                      hereZone : Zone?         { return gHereMaybe ?? gCloud?.rootZone }
-	var                       mapView : ZMapView?     { return gDragView?.mapView }
 	var                 mapPseudoView : ZPseudoView?
 	var                    rootWidget : ZoneWidget?
 	@IBOutlet var   mapContextualMenu : ZContextualMenu?
@@ -34,13 +33,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func updateFrames() {}
 
 	override func setup() {
-		if  let                         map = mapView {
+		if  let                         map = gMapView {
 			gestureView                     = gDragView                    // do this before calling super setup, which uses gesture view
 			rootWidget                      = ZoneWidget (view: map)
 			mapPseudoView                   = ZPseudoView(view: map)
 			view    .layer?.backgroundColor = kClearColor.cgColor
-			mapView?.layer?.backgroundColor = kClearColor.cgColor
-			if  let                   frame = mapView?.frame {
+			gMapView?.layer?.backgroundColor = kClearColor.cgColor
+			if  let                   frame = gMapView?.frame {
 				mapPseudoView?       .frame = frame
 			}
 
@@ -52,8 +51,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func drawWidgets(for phase: ZDrawPhase) {
-		rootWidget?.traverseAllProgeny(inReverse: false) { widget in
-			widget.draw(phase)
+		if  isBigMap || gDetailsViewIsVisible(for: .vSmallMap) {
+			rootWidget?.traverseAllProgeny(inReverse: false) { widget in
+				widget.draw(phase)
+			}
 		}
 	}
 
@@ -117,8 +118,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget?.updateAllFrames(true)
 			rootWidget?.updateAbsoluteFrame(toController: self)
 			updateFrames()
-			detectHover(at: mapView?.currentMouseLocationInWindow)
-			mapView?.setNeedsDisplay()
+			detectHover(at: gMapView?.currentMouseLocationInWindow)
+			gMapView?.setNeedsDisplay()
 		}
 	}
 
@@ -162,7 +163,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				layoutForCurrentScrollOffset()
 			} else {
 				layoutWidgets(for: iSignalObject, kind)
-				mapView?.setAllSubviewsNeedDisplay()
+				gMapView?.setAllSubviewsNeedDisplay()
 			}
 		}
 	}
@@ -205,7 +206,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						  gRubberband.setRubberbandExtent(to: location) {
 					gRubberband.updateGrabs()
 					gDragView?.setNeedsDisplay()
-					mapView?.setNeedsDisplay()
+					gMapView?.setNeedsDisplay()
 				} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 					gRubberband.rubberbandRect = nil              // erase rubberband
 
@@ -222,7 +223,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					}
 				} else {                                          // begin drag
 					gRubberband.rubberbandStartEvent(location, iGesture)
-					gMainWindow?.makeFirstResponder(mapView)
+					gMainWindow?.makeFirstResponder(gMapView)
 				}
 
 				gDragView?.setNeedsDisplay()
@@ -256,8 +257,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				// detect click inside text being edited //
 				// ////////////////////////////////////////
 
-                let location = gesture.location(in: mapView)
-                let textRect = editWidget!.convert(editWidget!.bounds, to: mapView)
+                let location = gesture.location(in: gMapView)
+                let textRect = editWidget!.convert(editWidget!.bounds, to: gMapView)
                 notInEdit    = !textRect.contains(location)
             }
 
@@ -276,7 +277,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 						if  let dot = detectDotIn(widget, gesture) {
 
 							if  gIsEssayMode {
-								gMainWindow?.makeFirstResponder(mapView)
+								gMainWindow?.makeFirstResponder(gMapView)
 							}
 
 							// ///////////////
@@ -300,7 +301,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 					if !kIsPhone {	// default reaction to click on background: select here
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
-						mapView?.setNeedsDisplay()
+						gMapView?.setNeedsDisplay()
 					}
                 } else if gIsEssayMode {
 					gControllers.swapMapAndEssay(force: .wMapMode)
@@ -335,7 +336,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			gDraggedZones = gSelecting.currentMapGrabs
 
 			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(mapView)
+				gMainWindow?.makeFirstResponder(gMapView)
 			}
         }
     }
@@ -444,7 +445,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                     gDropIndices?.add(index - 1)
                 }
 
-				gMapController?.mapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
+				gMapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
 
                 if !isNoop, isDone {
                     let   toBookmark = dropZone.isBookmark
@@ -503,7 +504,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     
     func isEditingText(at location: CGPoint) -> Bool {
         if  gIsEditIdeaMode, let textWidget = gCurrentlyEditingWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: mapView)
+            let rect = textWidget.convert(textWidget.bounds, to: gMapView)
 
             return rect.contains(location)
         }
@@ -526,7 +527,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gDragPoint    = nil
 
 		gDragView?.setNeedsDisplay() // erase drag: line and dot
-		mapView?  .setNeedsDisplay()
+		gMapView?  .setNeedsDisplay()
     }
 
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {
@@ -555,7 +556,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			return widget
 		}
 
-		if  let        v = mapView,
+		if  let        v = gMapView,
             let location = iGesture?.location(in: v),
 			v.bounds.contains(location) {
 
@@ -580,7 +581,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit: ZoneDot?
 
-        if  let                d = mapView,
+        if  let                d = gMapView,
             let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
                 if  iDot?.absoluteFrame.contains(location) ?? false {

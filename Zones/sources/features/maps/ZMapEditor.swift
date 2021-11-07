@@ -23,7 +23,7 @@ class ZMapEditor: ZBaseEditor {
 	var             priorHere : Zone?
 	override var canHandleKey : Bool       { return gIsMapOrEditIdeaMode }
 	var             moveables : ZoneArray? { return (gIsEssayMode && !gMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
-	func          forceRedraw()            { gMapController?.mapView?.setNeedsDisplay() }
+	func          forceRedraw()            { gMapView?.setNeedsDisplay() }
 
 	// MARK:- events
 	// MARK:-
@@ -479,9 +479,9 @@ class ZMapEditor: ZBaseEditor {
 	func applyToMenu(_ createMenu: ToMenuClosure) {
 		if  let widget = gSelecting.lastGrab.widget?.textWidget {
 			var  point = widget.bounds.bottomRight
-			point      = widget.convert(point, to: gCurrentMapView).offsetBy(-160.0, -20.0)
+			point      = widget.convert(point, to: gMapView).offsetBy(-160.0, -20.0)
 
-			createMenu().popUp(positioning: nil, at: point, in: gCurrentMapView)
+			createMenu().popUp(positioning: nil, at: point, in: gMapView)
 		}
 	}
 

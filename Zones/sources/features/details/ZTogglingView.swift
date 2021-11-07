@@ -124,7 +124,13 @@ class ZTogglingView: ZStackView {
 
     func toggleHideableVisibility() {
         hideHideable = !hideHideable
-    }
+
+		if  identity == .vSmallMap {
+			gMapView?.clear(forSmallMapOnly: true)
+			gMapView?.setNeedsLayout()
+			gMapView?.setNeedsDisplay()
+		}
+	}
     
     func update() {
 		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
