@@ -104,8 +104,6 @@ func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 		func toggle() {
 			gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
-//			gSmallMapController?.mapView?.snp.removeConstraints()      // avoid conflict with spSmallMap signal [its call to make constraints], below
-
 			if  OPTION {			        // if any grabs are in current small map, move them to other map
 				let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
 				let   priorID : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID

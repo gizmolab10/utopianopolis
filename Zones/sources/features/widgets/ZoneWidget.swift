@@ -426,9 +426,9 @@ class ZoneWidget: ZPseudoView {
 				textWidget?.frame = p.absoluteFrame
 			} else if let       t = textWidget {
 				let      textSize = t.drawnSize
-				let        offset = gGenericOffset.add(width: 4.0, height: 0.5)
+				let             x = hideDragDot ? 20.0 : gGenericOffset.width + 4.0
 				let             y = (drawnSize.height - textSize.height) / 2.0
-				let    textOrigin = CGPoint(x: offset.width, y: y)
+				let    textOrigin = CGPoint(x: x, y: y)
 				p          .frame = CGRect(origin: textOrigin, size: textSize)
 			}
 		}
