@@ -46,6 +46,7 @@ class ZMapView: ZView {
 				dotsAndLinesView?.draw(iDirtyRect)
 				highlightMapView?.draw(iDirtyRect)
 			default:
+				super            .draw(iDirtyRect)
 				for phase in ZDrawPhase.allInOrder {
 					if  (phase == .pDotsAndHighlight) != (mapID == .mDotsAndLines) {
 						ZBezierPath(rect: iDirtyRect).setClip()

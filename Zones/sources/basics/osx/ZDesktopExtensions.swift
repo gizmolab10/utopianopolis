@@ -1145,10 +1145,14 @@ extension Zone {
 extension ZoneWidget {
 
 	@objc func printView() { // ZoneWidget
-		let view = ZView(frame: bounds)
+		let  view = ZMapView(frame: bounds)
+		let pView = ZoneWidget(view: absoluteView)
 
-		layoutAllPseudoViews(inPseudoView: self, for: .tBigMap, atIndex: nil, recursing: true, .spRelayout, visited: [])
-		view.printView()
+		layoutAllPseudoViews(inPseudoView: pView, for: .tBigMap, atIndex: nil, recursing: true, .spRelayout, visited: [])
+		view.setNeedsDisplay()
+		FOREGROUND {
+			view.printView()
+		}
 	}
 
     func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
@@ -1160,7 +1164,7 @@ extension ZoneWidget {
 			let       smallDelta = CGFloat(1.0)
             let        thickness = CGFloat(gLineThickness)
             rect.origin       .x = sourceFrame    .midX
-			rect.size     .width = abs(targetFrame.minX - rect.minX)   + 1.0
+			rect.size     .width = abs(targetFrame.minX - rect.minX)   + 2.0
 
             switch kind! {
             case .above:

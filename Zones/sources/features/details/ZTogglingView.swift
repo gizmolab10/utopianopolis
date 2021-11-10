@@ -13,10 +13,10 @@
 #endif
 
 class ZBannerButton : ZButton {
-	@IBOutlet var   togglingView : ZTogglingView? // point back at the container (specific stack view)
-	var                       on : Bool { return togglingView?.hideHideable ?? false }
-	var            offStateImage : ZImage?
-	var             onStateImage : ZImage?
+	@IBOutlet var togglingView : ZTogglingView? // point back at the container (specific stack view)
+	var                     on : Bool { return togglingView?.hideHideable ?? false }
+	var          offStateImage : ZImage?
+	var           onStateImage : ZImage?
 
 	func setup() {
 		imagePosition = .imageLeft
@@ -24,13 +24,13 @@ class ZBannerButton : ZButton {
 		offStateImage = onStateImage?.imageRotatedByDegrees(180.0)
 	}
 
-	func updateImage() {
+	func updateImageForState() {
 		image = on ? onStateImage : offStateImage
 	}
 
 }
 
-class ZTogglingView: ZStackView {
+class ZTogglingView: ZView {
 
 	@IBOutlet var      spinner : ZProgressIndicator?
 	@IBOutlet var  titleButton : ZBannerButton?
@@ -83,19 +83,30 @@ class ZTogglingView: ZStackView {
                 gHiddenDetailViewIDs.remove(identity)
             }
 
-			titleButton?.updateImage()
+			titleButton?.updateImageForState()
         }
     }
 
+	func toggleHideableVisibility() {
+		hideHideable = !hideHideable
+	}
+
     // MARK:- update UI
     // MARK:-
+
+	@IBAction func toggleAction(_ sender: Any) {
+		toggleHideableVisibility()
+		gDetailsController?.redisplayOnToggle()
+	}
 
     override func awakeFromNib() {
         super.awakeFromNib()
 		titleButton?.setup()
 
-		zlayer              .backgroundColor = kClearColor.cgColor
-		hideableView?.zlayer.backgroundColor = kClearColor.cgColor
+		zlayer              .backgroundColor =      kClearColor.cgColor
+		hideableView?.zlayer.backgroundColor =      kClearColor.cgColor
+		titleButton? .zlayer.backgroundColor =     gAccentColor.cgColor
+		extraButton? .zlayer.backgroundColor = gDarkAccentColor.cgColor
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
@@ -115,27 +126,10 @@ class ZTogglingView: ZStackView {
 		}
 
 		gRelayoutMaps()
+		gSmallMapController?.updateSmallMap()
 	}
 
-	@IBAction func toggleAction(_ sender: Any) {
-		toggleHideableVisibility()
-		gSignal([.sDetails])
-	}
-
-    func toggleHideableVisibility() {
-        hideHideable = !hideHideable
-
-		if  identity == .vSmallMap {
-			gMapView?.clear(forSmallMapOnly: true)
-			gMapView?.setNeedsLayout()
-			gMapView?.setNeedsDisplay()
-		}
-	}
-    
-    func update() {
-		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
-		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
-
+	fileprivate func updateTitleButton() {
 		if  gIsReadyToShowUI {
 			switch identity {
 				case .vSmallMap:  titleButton?.title = gSmallMapHere?.ancestralString ?? "gerglagaster"
@@ -143,11 +137,15 @@ class ZTogglingView: ZStackView {
 				case .vSubscribe: titleButton?.title = gSubscriptionController?.bannerTitle ?? kSubscribe
 				default:          titleButton?.title = titleButton?.alternateTitle ?? "gargleblaster"
 			}
-		}
 
-		titleButton?.updateImage()
-		updateHideableView()
+			titleButton?.updateImageForState()
+		}
+	}
+
+	func update() {
 		updateSpinner()
+		updateTitleButton()
+		updateHideableView()
     }
 
 	func updateSpinner() {

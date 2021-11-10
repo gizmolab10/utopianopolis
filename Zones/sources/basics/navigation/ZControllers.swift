@@ -151,7 +151,6 @@ class ZControllers: NSObject {
 		if  multiple.contains(.spRelayout) {
 			gWidgets.clearAll()
 			gMapView?.clear()
-			gDragView?.setAllSubviewsNeedDisplay()
 		}
 
 		FOREGROUND(canBeDirect: true) {

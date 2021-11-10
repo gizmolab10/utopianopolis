@@ -424,12 +424,11 @@ class ZoneWidget: ZPseudoView {
 				p.updateAbsoluteFrame(toController: controller)
 
 				textWidget?.frame = p.absoluteFrame
-			} else if let       t = textWidget {
-				let      textSize = t.drawnSize
+			} else if let    size = textWidget?.drawnSize {
 				let             x = hideDragDot ? 20.0 : gGenericOffset.width + 4.0
-				let             y = (drawnSize.height - textSize.height) / 2.0
-				let    textOrigin = CGPoint(x: x, y: y)
-				p          .frame = CGRect(origin: textOrigin, size: textSize)
+				let             y = (drawnSize.height - size.height) / 2.0
+				let        origin = CGPoint(x: x, y: y)
+				p          .frame = CGRect(origin: origin, size: size)
 			}
 		}
 	}

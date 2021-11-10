@@ -441,19 +441,19 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hCN-9w-wLa"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Out" keyEquivalent="" id="8ry-4U-hmV">
+                                                    <menuItem title="Left" keyEquivalent="" id="8ry-4U-hmV">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="zg8-A2-e7r"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="In" keyEquivalent="" id="z73-ac-ZOW">
+                                                    <menuItem title="Right" keyEquivalent="" id="z73-ac-ZOW">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Tb0-go-IcO"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Follow" keyEquivalent="=" id="z1w-26-QzR">
+                                                    <menuItem title="Activate" keyEquivalent="=" id="z1w-26-QzR">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="0X2-pp-xtA"/>
@@ -478,13 +478,13 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="yc8-kI-kIG"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Out" tag="10" keyEquivalent="" id="Mz9-sk-WIT">
+                                                    <menuItem title="Left" tag="10" keyEquivalent="" id="Mz9-sk-WIT">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Hsb-zh-n3e"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="In" tag="10" keyEquivalent="" id="kLu-OH-6ht">
+                                                    <menuItem title="Right" tag="10" keyEquivalent="" id="kLu-OH-6ht">
                                                         <modifierMask key="keyEquivalentModifierMask" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Qm7-zT-Ksg"/>

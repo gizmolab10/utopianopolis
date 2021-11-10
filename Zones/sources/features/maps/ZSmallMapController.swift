@@ -23,20 +23,33 @@ class ZSmallMapController: ZMapController {
 	override  var     isBigMap : Bool          { return false }
 	var            isRecentMap : Bool          { return rootWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
+	func updateSmallMap() {
+		self.updateFrames()                           // calculate new origin
+		layoutForCurrentScrollOffset()
+		gMapView?.setAllSubviewsNeedDisplay()
+		gMapView?.displayAllSubviews()
+	}
+
 	override func updateFrames() {
 		if  gHasFinishedStartup, gDetailsViewIsVisible(for: .vSmallMap) {
-			gMapView?.updateFrames(with: self)
-
-			if	let          mHeight = gMapView?.bounds.size.height,
-				  let          rHeight = rootWidget?.drawnSize.height,
-				  let          cHeight = gMapControlsView?.frame.height,
-				  let           sFrame = gDetailsController?.stackView?.frame {
-				let           yDelta = CGFloat(16.0)
-				let           height = mHeight - rHeight - cHeight - sFrame.height - yDelta
-				let             size = CGSize(width: sFrame.width, height: rHeight + yDelta)
-				let           origin = CGPoint(x: .zero, y: height)
-				mapPseudoView?.frame = CGRect(origin: origin, size: size)
+			if  let           r = rootWidget,
+				let           p = mapPseudoView,
+				let detailsSize = gDetailsController?.view.frame.size,
+				let   controlsY = gMapControlsView?.frame.height,
+				let        mapY = gMapView?.bounds.height {
+				let     widgetY = r.drawnSize.height
+				let      deltaY = CGFloat(16.0)
+				let           y = mapY - widgetY - controlsY - detailsSize.height - deltaY
+				let        size = CGSize(width: detailsSize.width, height: widgetY + deltaY)
+				let      origin = CGPoint(x: .zero, y: y)
+				let        rect = CGRect(origin: origin, size: size)
+				r.absoluteFrame = rect
+				p.absoluteFrame = rect
+				r        .frame = rect
+				p        .frame = rect
 			}
+
+			gMapView?.updateFrames(with: self)
 		}
 	}
 
@@ -48,7 +61,7 @@ class ZSmallMapController: ZMapController {
 	}
 
 	func update() {
-		updateFrames()
+		layoutForCurrentScrollOffset()
 		gMapControlsView?.update()
 		gCurrentSmallMapRecords?.updateCurrentBookmark()
 	}

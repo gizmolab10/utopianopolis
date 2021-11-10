@@ -575,7 +575,6 @@
 		A78460E52726047F006A4075 /* ZPseudoTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPseudoTextView.swift; sourceTree = "<group>"; };
 		A78460EB2727B332006A4075 /* ZGeometry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGeometry.swift; sourceTree = "<group>"; };
 		A78460F027289E7D006A4075 /* ZonesLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZonesLine.swift; sourceTree = "<group>"; };
-		A78460F4272F1F52006A4075 /* ZSmallMapTogglingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSmallMapTogglingView.swift; sourceTree = "<group>"; };
 		A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebugController.swift; sourceTree = "<group>"; };
 		A78A6DFF23B02163000F581F /* ZEssayController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayController.swift; sourceTree = "<group>"; };
 		A78A6E0923B021EA000F581F /* ZEssayEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayEditor.swift; sourceTree = "<group>"; };
@@ -706,7 +705,6 @@
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
 				A706444E247316DA00F90B86 /* ZRecents.swift */,
 				A793722D25BE2EE0008C98AE /* ZSimpleToolsController.swift */,
-				A78460F4272F1F52006A4075 /* ZSmallMapTogglingView.swift */,
 				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 			);

@@ -13,17 +13,17 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.vPreferences, .vSubscribe, .vSimpleTools, .vData, .vSmallMap]
+private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vSimpleTools, .vData, .vPreferences, .vSmallMap]
 
 class ZDetailsController: ZGesturesController {
 
-	var              viewsByID = [Int : ZTogglingView]()
-	@IBOutlet var    stackView : ZStackView?
-	override  var controllerID : ZControllerID                            { return .idDetails }
-	func viewIsVisible (for id : ZDetailsViewID) ->                 Bool  { return !(view(for: id)?.hideHideable ?? true) }
-	func view          (for id : ZDetailsViewID) ->        ZTogglingView? { return viewsByID[id.rawValue] }
-	func register          (id : ZDetailsViewID, for view: ZTogglingView) { viewsByID[id.rawValue] = view }
-	func showViewFor     (_ id : ZDetailsViewID)                          { view(for: id)?.hideHideable = false; update() }
+	var                  viewsByID = [Int : ZTogglingView]()
+	@IBOutlet var        stackView : ZStackView?
+	override  var     controllerID : ZControllerID                            { return .idDetails }
+	func viewIsVisible     (for id : ZDetailsViewID) ->                 Bool  { return !(view(for: id)?.hideHideable ?? true) }
+	func view              (for id : ZDetailsViewID) ->        ZTogglingView? { return viewsByID[id.rawValue] }
+	func register              (id : ZDetailsViewID, for view: ZTogglingView) { viewsByID[id.rawValue] = view }
+	func showViewFor         (_ id : ZDetailsViewID)                          { view(for: id)?.hideHideable = false; update() }
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gShowDetailsView {
@@ -35,6 +35,7 @@ class ZDetailsController: ZGesturesController {
 		super.viewDidLoad()
 
 		gestureView = view
+		stackView?.layer?.backgroundColor = kClearColor.cgColor
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
@@ -46,12 +47,14 @@ class ZDetailsController: ZGesturesController {
 
     func update() {
 		if  gIsReadyToShowUI {
-			stackView?.isHidden               = false
-			stackView?.layer?.backgroundColor = kClearColor.cgColor
+			stackView?.isHidden = false
 
 			for id in detailIds {
 				view(for: id)?.update()
 			}
+
+			stackView?.layoutAllSubviews()
+			stackView?.setAllSubviewsNeedLayout()
 		}
 	}
 
@@ -61,8 +64,15 @@ class ZDetailsController: ZGesturesController {
 				v.toggleHideableVisibility()
             }
         }
-        
-        update()
+
+		redisplayOnToggle()
     }
+
+	func redisplayOnToggle() {
+		update()
+		stackView?.setAllSubviewsNeedDisplay()
+		stackView?.displayAllSubviews()
+		gSmallMapController?.updateSmallMap()
+	}
 
 }

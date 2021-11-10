@@ -70,7 +70,9 @@ func gSignal(for object: Any? = nil, _ multiple: ZSignalKindArray, _ onCompletio
 private var canUpdate = true
 
 func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
+	gMapView?.clear()
 	gSignal(for: object, [.spRelayout], onCompletion)
+	gSmallMapController?.updateSmallMap()
 }
 
 func gDeferRedraw(_ closure: Closure) {
@@ -2564,6 +2566,14 @@ extension ZView {
         zlayer.borderColor  = color
     }
 
+	func displayAllSubviews() {
+		if !gDeferringRedraw {
+			applyToAllSubviews { view in
+				view.display()
+			}
+		}
+	}
+
     func setAllSubviewsNeedDisplay() {
         if !gDeferringRedraw {
             applyToAllSubviews { view in
@@ -2571,6 +2581,22 @@ extension ZView {
             }
         }
     }
+
+	func layoutAllSubviews() {
+		if !gDeferringRedraw {
+			applyToAllSubviews { view in
+				view.layout()
+			}
+		}
+	}
+
+	func setAllSubviewsNeedLayout() {
+		if !gDeferringRedraw {
+			applyToAllSubviews { view in
+				view.setNeedsLayout()
+			}
+		}
+	}
 
     func applyToAllSubviews(_ closure: ViewClosure) {
 		closure(self)

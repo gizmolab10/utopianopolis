@@ -163,7 +163,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				layoutForCurrentScrollOffset()
 			} else {
 				layoutWidgets(for: iSignalObject, kind)
-				gMapView?.setAllSubviewsNeedDisplay()
+				gDragView?.setAllSubviewsNeedDisplay()
 			}
 		}
 	}

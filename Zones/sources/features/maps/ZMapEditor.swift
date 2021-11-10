@@ -815,7 +815,6 @@ class ZMapEditor: ZBaseEditor {
 							let z = p.children[i]
 
 							z.grab()
-//							gCurrentSmallMapRecords?.setAsCurrent(z, alterHere: true)
 						}
 					}
 
