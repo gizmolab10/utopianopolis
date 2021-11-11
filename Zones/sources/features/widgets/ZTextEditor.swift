@@ -72,7 +72,7 @@ class ZTextPack: NSObject {
 			} else if need == 0 {                // dups trump count mode
 				switch gCountsMode {
 					case .fetchable: need = zone.indirectCount
-					case .progeny:   need = zone.progenyCount + 1
+					case .progeny:   need = zone.progenyCount
 					default:         return result
 				}
 			}

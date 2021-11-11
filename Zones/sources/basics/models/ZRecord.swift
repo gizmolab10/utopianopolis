@@ -200,7 +200,7 @@ class ZRecord: ZManagedObject { // NSObject {
     func removeState(_ state: ZRecordState)         {        zRecords?.clearRecordName(recordName, for:[state]) }
     func clearAllStates()                           {        zRecords?.clearRecordName(recordName, for: zRecords?.allStates ?? []) }
 
-    func needCount()    { addState(.needsCount) }
+	func needCount()    { addState(.needsCount); gNeedsRecount = true }
 	func needAdoption() { addState(.needsAdoption) }
 	func needDestroy()  { addState(.needsDestroy) }
 

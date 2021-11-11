@@ -99,7 +99,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	func updateThermometerBar() {
 		if  gAssureProgressTimesAreLoaded() {
-//			progressIndicator?     .text = progressText
 			operationLabel?        .text = gCurrentOp.fullStatus
 			operationLabel?.needsDisplay = true
 

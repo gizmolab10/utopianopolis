@@ -1405,6 +1405,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	// MARK:- import
+	// MARK:-
+
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
 		ZFiles.presentOpenPanel() { (iAny) in
 			if  let url = iAny as? URL {
@@ -1425,21 +1428,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				zone = Zone.uniqueZone(from: dict, in: databaseID)
 			}
 		}
-
-		return zone
-	}
-
-	func childWithName(_ name: String) -> Zone {
-		for child in children {
-			if  child.zoneName == name {
-				return child
-			}
-		}
-
-		let      zone = Zone.uniqueZone(recordName: nil, in: databaseID)
-		zone.zoneName = name
-
-		addChildAndReorder(zone)
 
 		return zone
 	}
@@ -3506,6 +3494,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// MARK:- initialization
 	// MARK:-
+
+	func childWithName(_ name: String) -> Zone {
+		for child in children {
+			if  child.zoneName == name {
+				return child
+			}
+		}
+
+		let zone = Zone.uniqueZoneNamed(name, recordName: nil, databaseID: databaseID)
+
+		addChildAndReorder(zone)
+
+		return zone
+	}
 
 	// /////////////////////////////
 	// exemplar and scratch ideas //

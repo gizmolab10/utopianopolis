@@ -107,9 +107,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
     func updateGUI() {
+		let rootWidget = controller?.rootWidget
+
 		updateTooltips()
 		updateChildrenViewDrawnSizesOfAllAncestors()
-		let rootWidget = controller?.rootWidget
 		rootWidget?.updateAllFrames()
 		rootWidget?.updateFrameSize()
 		controller?.layoutForCurrentScrollOffset()

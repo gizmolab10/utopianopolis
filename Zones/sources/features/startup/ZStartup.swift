@@ -13,14 +13,14 @@ let gStartup = ZStartup()
 class ZStartup: NSObject {
 	var              prior = 0.0
 	let          startedAt = Date()
-	var elapsedStartupTime : Double { return Date().timeIntervalSince(startedAt) }
+	var elapsedStartupTime = 0.0
 	
 	var oneTimerIntervalElapsed : Bool {
-		let  lapse = elapsedStartupTime
+		let  lapse = Date().timeIntervalSince(startedAt)
 		let enough = (lapse - prior) > kOneTimerInterval
-
 		if  enough {
-			prior = lapse
+			prior  = lapse
+			elapsedStartupTime += kOneTimerInterval
 		}
 
 		return enough
