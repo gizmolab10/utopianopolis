@@ -100,14 +100,6 @@ class ZoneDot: ZPseudoView {
 		return drawnSize
 	}
 
-	func updateFrame(relativeTo textFrame: CGRect) {
-		let         x = CGPoint(drawnSize).x
-		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-x, 0.0)
-		absoluteFrame = CGRect(origin: origin, size: drawnSize)
-
-		updateTooltips()
-	}
-
     func setupForWidget(_ iWidget: ZoneWidget, asReveal: Bool) {
         isReveal = asReveal
         widget   = iWidget
@@ -135,27 +127,6 @@ class ZoneDot: ZPseudoView {
 		} else {
 			path.fill()
 		}
-	}
-
-	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		let  thickness = CGFloat(gLineThickness) * 2.0
-		var       path = ZBezierPath()
-
-		if  parameters.isReveal {
-			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
-		} else {
-			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
-		}
-
-		if  let z = widgetZone, gDebugDraw { // for debugging hover
-			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
-		}
-
-		path.lineWidth = thickness
-		path .flatness = 0.0001
-
-		path.stroke()
-		path.fill()
 	}
 
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {

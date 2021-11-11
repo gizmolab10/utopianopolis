@@ -14,11 +14,11 @@ import UIKit
 #endif
 
 
-class ZLineView: ZPseudoView {
+class ZLineView: ZView {
     
-    override func draw(_ phase: ZDrawPhase) {
+	override func draw(_ iDirtyRect: CGRect) {
         kGridColor.setFill()
-		ZBezierPath(rect: absoluteFrame).fill()
+		ZBezierPath(rect: iDirtyRect).fill()
     }
 
 }

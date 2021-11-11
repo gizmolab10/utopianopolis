@@ -261,7 +261,7 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="biU-wq-VIU">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="biU-wq-VIU" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="51" y="124" width="500" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="500" id="dRm-Nx-NZp"/>
@@ -293,7 +293,7 @@
                     </view>
                     <connections>
                         <outlet property="bottomLabel" destination="KDc-oP-JYJ" id="jZc-n5-DE4"/>
-                        <outlet property="mapView" destination="biU-wq-VIU" id="5Hr-sX-p2L"/>
+                        <outlet property="mapView" destination="biU-wq-VIU" id="Kek-j3-vlD"/>
                         <outlet property="topLabel" destination="NcL-My-K47" id="b0a-di-QaH"/>
                     </connections>
                 </viewController>

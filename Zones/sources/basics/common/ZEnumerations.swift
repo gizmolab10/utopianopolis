@@ -154,7 +154,7 @@ enum ZCountsMode: Int { // do not change the order, they are persisted
 }
 
 enum ZMapLayoutMode: Int { // do not change the order, they are persisted
-	case sideways
+	case linear
 	case circular
 }
 
