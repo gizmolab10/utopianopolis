@@ -87,8 +87,8 @@ class ZMapEditor: ZBaseEditor {
 						case "p":      printCurrentFocus()
 						case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
 						case "/":      return handleSlash(flags)
-						case kDotSeparator,
-							 ",":      commaAndPeriod(COMMAND, OPTION, with: key == ",")
+						case kCommaSeparator,
+							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:     addSibling(OPTION)
 						case kSpace:   gSelecting.currentMoveable.addIdea()
 						case kReturn:  if COMMAND { editNote(OPTION) }
@@ -120,7 +120,7 @@ class ZMapEditor: ZBaseEditor {
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "n":        editNote(OPTION)
-						case "o":        moveable.importFromFile(OPTION ? .eOutline : .eSeriously) { gRelayoutMaps() }
+						case "o":        moveable.importFromFile(OPTION ? .eOutline : SPLAYED ? .eCSV : .eSeriously) { gRelayoutMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
 						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
@@ -138,8 +138,8 @@ class ZMapEditor: ZBaseEditor {
 						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRelayoutMaps() }
-						case kDotSeparator,
-							 ",":        commaAndPeriod(COMMAND, OPTION, with: key == ",")
+						case kCommaSeparator,
+							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:       addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRelayoutMaps() } }

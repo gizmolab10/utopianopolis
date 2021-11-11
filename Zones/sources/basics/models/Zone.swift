@@ -1406,35 +1406,93 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
-		if  type == .eSeriously {
-			ZFiles.presentOpenPanel() { (iAny) in
-				if  let url = iAny as? URL {
-					self.importFile(from: url.path, onCompletion: onCompletion)
-				} else if let panel = iAny as? NSPanel {
-					let  suffix = type.rawValue
-					panel.title = "Import as \(suffix)"
-					panel.setAllowedFileType(suffix)
-				}
+		ZFiles.presentOpenPanel() { (iAny) in
+			if  let url = iAny as? URL {
+				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
+			} else if let panel = iAny as? NSPanel {
+				let  suffix = type.rawValue
+				panel.title = "Import as \(suffix)"
+				panel.setAllowedFileType(suffix)
 			}
 		}
 	}
 
-	func importFile(from path: String, onCompletion: Closure?) {
-		do {
-			if  let   data = FileManager.default.contents(atPath: path),
-				data.count > 0,
-				let   json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
-				let   dict = self.dictFromJSON(json)
-				temporarilyOverrideIgnore { // allow needs save
-					let zone = Zone.uniqueZone(from: dict, in: databaseID)
-					addChildNoDuplicate(zone, at: 0)
+	func importSeriously(from data: Data) -> Zone? {
+		var zone: Zone?
+		if  let json = data.extractJSONDict() {
+			let dict = dictFromJSON(json)
+			temporarilyOverrideIgnore { // allow needs save
+				zone = Zone.uniqueZone(from: dict, in: databaseID)
+			}
+		}
+
+		return zone
+	}
+
+	func childWithName(_ name: String) -> Zone {
+		for child in children {
+			if  child.zoneName == name {
+				return child
+			}
+		}
+
+		let      zone = Zone.uniqueZone(recordName: nil, in: databaseID)
+		zone.zoneName = name
+
+		addChildAndReorder(zone)
+
+		return zone
+	}
+
+	func importCSV(from data: Data, kumuFlavor: Bool = false) -> Zone {
+		let   rows = data.extractCSV()
+		var titles = [String : Int]()
+		let first = rows[0]
+		for (index, title) in first.enumerated() {
+			titles[title] = index
+		}
+
+		let top = childWithName("Press Conference")
+
+		for (index, row) in rows.enumerated() {
+			if  index     != 0,
+				let nIndex = titles["Name"],
+				let tIndex = titles["Type"],
+				row.count  > tIndex {
+				let   name = row[nIndex]
+				let   type = row[tIndex]
+				let  child = top  .childWithName(type)
+				let   zone = child.childWithName(name)
+
+				if  let dIndex = titles["Description"] {
+					let   text = row[dIndex]
+					let  trait = ZTrait.uniqueTrait(recordName: nil, in: databaseID)
+					trait.traitType = .tNote
+					trait.text = text
+					zone.addTrait(trait)
+				}
+			}
+		}
+
+		return top
+	}
+
+	func importFile(from path: String, type: ZExportType = .eSeriously, onCompletion: Closure?) {
+			if  let     data = FileManager.default.contents(atPath: path),
+				data.count > 0 {
+				var zone: Zone?
+
+				switch type {
+					case .eSeriously: zone = importSeriously(from: data)
+					default:          zone = importCSV      (from: data, kumuFlavor: true)
+				}
+
+				if  let z = zone {
+					addChildNoDuplicate(z, at: 0)
 				}
 
 				onCompletion?()
 			}
-		} catch {
-			printDebug(.dError, "\(error)")    // de-serialization
-		}
 	}
 
 	// MARK:- convenience

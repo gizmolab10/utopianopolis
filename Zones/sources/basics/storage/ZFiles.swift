@@ -25,6 +25,7 @@ enum ZExportType: String {
 	case eSeriously = "seriously"
 	case eOutline   = "outline"
 	case eEssay	    = "rtfd"
+	case eCSV       = "csv"
 }
 
 class ZFiles: NSObject {
@@ -176,6 +177,7 @@ class ZFiles: NSObject {
 								printDebug(.dError, "\(error)")
 							}
 						}
+					default: break
 				}
 			}
 

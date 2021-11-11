@@ -103,6 +103,12 @@
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OI6-tT-JiO"/>
                                                         </connections>
                                                     </menuItem>
+                                                    <menuItem title="From CSV File ..." keyEquivalent="o" id="EK9-JA-KQC">
+                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="HNj-kn-9Yl"/>
+                                                        </connections>
+                                                    </menuItem>
                                                 </items>
                                             </menu>
                                         </menuItem>

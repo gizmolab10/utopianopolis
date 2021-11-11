@@ -15,32 +15,35 @@ import CloudKit
     import UIKit
 #endif
 
-typealias                ZoneArray = [Zone]
 typealias               CKRecordID = CKRecord.ID
+typealias              CKReference = CKRecord.Reference
+typealias         ZStoryboardSegue = NSStoryboardSegue
+
+typealias                ZoneArray = [Zone]
 typealias              ZOpIDsArray = [ZOperationID]
 typealias              ZFilesArray = [ZFile]
 typealias              ZTraitArray = [ZTrait]
-typealias              CKReference = CKRecord.Reference
 typealias             StringsArray = [String]
 typealias            ZRecordsArray = [ZRecord]
 typealias            ZObjectsArray = [NSObject]
 typealias          ZoneWidgetArray = [ZoneWidget]
 typealias          ZObjectIDsArray = [NSManagedObjectID]
 typealias         CKRecordIDsArray = [CKRecordID]
-typealias         ZTraitDictionary = [ZTraitType : ZTrait]
-typealias         ZStoryboardSegue = NSStoryboardSegue
 typealias         ZSignalKindArray = [ZSignalKind]
 typealias        CKReferencesArray = [CKReference]
-typealias        ZAssetsDictionary = [UUID : CKAsset]
 typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
-typealias       ZRecordsDictionary = [ZDatabaseID: ZRecordsArray]
+
+typealias         ZTraitDictionary = [ZTraitType   : ZTrait]
+typealias        ZAssetsDictionary = [UUID         : CKAsset]
+typealias       ZRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
 typealias       ZStorageDictionary = [ZStorageType : NSObject]
+typealias     WidgetHashDictionary = [Int          : ZoneWidget]
+typealias     ZStringAnyDictionary = [String       : Any]
+typealias  ZStringObjectDictionary = [String       : NSObject]
+typealias  StringZRecordDictionary = [String       : ZRecord]
+typealias StringZRecordsDictionary = [String       : ZRecordsArray]
 typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
-typealias     WidgetHashDictionary = [Int    : ZoneWidget]
-typealias     ZStringAnyDictionary = [String :        Any]
-typealias  ZStringObjectDictionary = [String :   NSObject]
-typealias  StringZRecordDictionary = [String :    ZRecord]
-typealias StringZRecordsDictionary = [String :    ZRecordsArray]
+
 let                   gApplication = ZApplication.shared
 
 protocol ZGeneric {
@@ -542,7 +545,7 @@ extension CKRecord {
 		if  let        type = self["type"] as? String,
 			let       trait = ZTraitType(rawValue: type),
 			let description = trait.description {
-			string          = description + kSearchSeparator
+			string          = description + kUncommonSeparator
 		}
 
 		return string
@@ -1792,6 +1795,7 @@ extension NSTextAttachment {
 extension String {
     var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
     var   asciiValue:  UInt32  { return asciiArray[0] }
+	var  smartStripped: String { return substring(fromInclusive: 4).spacesStripped }
     var           length: Int  { return unicodeScalars.count }
 	var         isHyphen: Bool { return self == "-" }
     var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
@@ -1802,7 +1806,7 @@ extension String {
     var       isOpposite: Bool { return "]}>)".contains(self) }
 	var     isDashedLine: Bool { return contains(kHalfLineOfDashes) }
 	var      isValidLink: Bool { return components != nil }
-	var  components: StringsArray? { return components(separatedBy: kColonSeparator) }
+	var components: StringsArray? { return components(separatedBy: kColonSeparator) }
 
     var opposite: String {
 		switch self {
@@ -1829,6 +1833,19 @@ extension String {
         return result
     }
 
+	var escapeCommasWithinQuotes: String {
+		let parts = components(separatedBy: "\"")
+
+		if  parts.count > 2 {
+			let  bad = parts[1]
+			let good = bad.replacingOccurrences(of: kCommaSeparator, with: kUncommonSeparator)
+
+			return parts[0] + good + parts[2]
+		}
+
+		return self
+	}
+
     var spacesStripped: String {
         var before = self
         
@@ -1841,21 +1858,6 @@ extension String {
         }
         
         return before
-    }
-
-    /// remove underline from leading spaces
-
-	var smartStripped: String {     //
-        var altered = substring(fromInclusive: 4)
-//        let lastIndex = altered.length - 1
-//
-//        if  altered[lastIndex] == "+" {
-//            altered = altered.substring(toExclusive: lastIndex)
-//        }
-
-        altered = altered.spacesStripped
-
-        return altered
     }
 
 	var modern: String {
@@ -2381,6 +2383,30 @@ extension Data {
 		}
 
 		return nil
+	}
+
+	func extractJSONDict() -> ZStringObjectDictionary? {
+		do {
+			if  let    json = try JSONSerialization.jsonObject(with: self) as? ZStringObjectDictionary {
+				return json
+			}
+		} catch {
+			printDebug(.dError, "\(error)")    // de-serialization
+		}
+		return nil
+	}
+
+	func extractCSV() -> [StringsArray] {
+		var           rows  = [StringsArray]()
+		if  let     string  = String(data: self, encoding: .ascii)?.substring(fromInclusive: 3) {
+			let      items  = string.components(separatedBy: "\n")
+			for item in items {
+				let fields  = item.escapeCommasWithinQuotes.components(separatedBy: kCommaSeparator)
+				rows.append(fields)
+			}
+		}
+
+		return rows
 	}
 
 }
