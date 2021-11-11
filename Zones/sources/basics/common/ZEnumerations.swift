@@ -153,6 +153,11 @@ enum ZCountsMode: Int { // do not change the order, they are persisted
 	case progeny
 }
 
+enum ZMapLayoutMode: Int { // do not change the order, they are persisted
+	case sideways
+	case circular
+}
+
 enum ZToolTipsLength: Int { // do not change the order, they are persisted
 	case none
 	case clip

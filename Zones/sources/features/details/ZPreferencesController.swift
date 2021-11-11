@@ -17,7 +17,8 @@ import Foundation
 
 class ZPreferencesController: ZGenericController {
 
-    @IBOutlet var    countsModeControl : ZSegmentedControl?
+	@IBOutlet var     mapLayoutControl : ZSegmentedControl?
+	@IBOutlet var    countsModeControl : ZSegmentedControl?
 	@IBOutlet var  colorPreferencesBox : NSView?
     @IBOutlet var   backgroundColorBox : ZColorWell?
     @IBOutlet var   activeMineColorBox : ZColorWell?
@@ -31,7 +32,8 @@ class ZPreferencesController: ZGenericController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vPreferences) {
             let                        grabbed = gSelecting.firstSortedGrab
-            countsModeControl?.selectedSegment = gCountsMode.rawValue
+            countsModeControl?.selectedSegment = gCountsMode   .rawValue
+			mapLayoutControl? .selectedSegment = gMapLayoutMode.rawValue
             thickness?            .doubleValue = gLineThickness
             verticalSpacing?      .doubleValue = Double(gGenericOffset.height)
             stretch?              .doubleValue = Double(gGenericOffset.width)
@@ -63,7 +65,6 @@ class ZPreferencesController: ZGenericController {
         }
     }
 
-
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
         let color = iColorBox.color
 
@@ -78,7 +79,6 @@ class ZPreferencesController: ZGenericController {
 			gSignal([.sDatum])
         }
     }
-
 
     @IBAction func clearColorAction(_ button: ZButton) {
         if  let     grab = gSelecting.firstSortedGrab {
@@ -95,17 +95,16 @@ class ZPreferencesController: ZGenericController {
         }
     }
 
-
     @IBAction func segmentedControlAction(_ iControl: ZSegmentedControl) {
         let          selection = iControl.selectedSegment
         if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
 			switch (identifier) {
-				case "counts":
-					gCountsMode = ZCountsMode(rawValue: selection)!
-					gRelayoutMaps()
-				default:
-					break
+				case "counts":    gCountsMode = ZCountsMode   (rawValue: selection)!
+				case "layout": gMapLayoutMode = ZMapLayoutMode(rawValue: selection)!
+				default:       return
 			}
+
+			gRelayoutMaps()
         }
     }
 

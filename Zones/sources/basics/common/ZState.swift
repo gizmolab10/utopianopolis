@@ -471,6 +471,27 @@ var gCountsMode: ZCountsMode {
 	}
 }
 
+var gMapLayoutMode: ZMapLayoutMode {
+	get {
+		let value  = UserDefaults.standard.object(forKey: kMapLayoutMode) as? Int
+		var mode   = ZMapLayoutMode.sideways
+
+		if  value != nil {
+			mode   = ZMapLayoutMode(rawValue: value!)!
+		} else {
+			UserDefaults.standard.set(mode.rawValue, forKey:kMapLayoutMode)
+			UserDefaults.standard.synchronize()
+		}
+
+		return mode
+	}
+
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kMapLayoutMode)
+		UserDefaults.standard.synchronize()
+	}
+}
+
 var gScaling: Double {
 	get {
 		var value: Double? = UserDefaults.standard.object(forKey: kScaling) as? Double
