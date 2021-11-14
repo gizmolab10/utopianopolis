@@ -52,7 +52,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func drawWidgets(for phase: ZDrawPhase) {
 		if  isBigMap || gDetailsViewIsVisible(for: .vSmallMap) {
-			rootWidget?.traverseAllProgeny(inReverse: false) { widget in
+			rootWidget?.traverseAllWidgetProgeny(inReverse: false) { widget in
 				widget.draw(phase)
 			}
 		}
@@ -480,8 +480,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
 				let locationA = mapPseudoView?.convert(locationM, toContaining: mapViewA),
 				let   widgetA = alternate?.rootWidget?.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone),
-				let  dragDotM = widgetM.dragDot,
-				let  dragDotA = widgetA.dragDot {
+				let  dragDotM = widgetM.parentLine?.dragDot,
+				let  dragDotA = widgetA.parentLine?.dragDot {
 				let   vectorM = dragDotM.absoluteFrame.center - locationM
 				let   vectorA = dragDotA.absoluteFrame.center - locationM
 				let   lengthM = vectorM.length
@@ -589,8 +589,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
                 }
             }
 
-            test(widget.dragDot)
-            test(widget.revealDot)
+            test(widget.parentLine?.dragDot)
+
+			for childLine in widget.childrenLines {
+				test(childLine.revealDot)
+			}
         }
 
         return hit

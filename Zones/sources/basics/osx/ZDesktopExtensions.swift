@@ -1154,6 +1154,9 @@ extension ZoneWidget {
 			view.printView()
 		}
 	}
+}
+
+extension ZoneLine {
 
 	func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
 		switch gMapLayoutMode {
@@ -1216,6 +1219,7 @@ extension ZoneWidget {
 
         return ZBezierPath(ovalIn: rect)
     }
+
 }
 
 extension ZOnboarding {

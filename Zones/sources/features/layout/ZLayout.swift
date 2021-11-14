@@ -27,13 +27,6 @@ extension ZoneWidget {
 		}
 	}
 
-	func updateHitRect(_ absolute: Bool = false) {
-		switch gMapLayoutMode {
-			case .linear:     linearUpdateHitRect(absolute)
-			case .circular: circularUpdateHitRect(absolute)
-		}
-	}
-
 	func updateChildrenFrames(_ absolute: Bool = false) {
 		switch gMapLayoutMode {
 			case .linear:     linearUpdateChildrenFrames(absolute)
@@ -55,24 +48,10 @@ extension ZoneWidget {
 		}
 	}
 
-	var absoluteDropDotRect: CGRect {
-		switch gMapLayoutMode {
-			case .linear:   return   linearAbsoluteDropDotRect
-			case .circular: return circularAbsoluteDropDotRect
-		}
-	}
-
-	func lineKind(for delta: CGFloat) -> ZLineKind {
-		switch gMapLayoutMode {
-			case .linear:   return   linearLineKind(for: delta)
-			case .circular: return circularLineKind(for: delta)
-		}
-	}
-
-	func lineKind(to dragRect: CGRect) -> ZLineKind? {
-		switch gMapLayoutMode {
-			case .linear:   return   linearLineKind(to: dragRect)
-			case .circular: return circularLineKind(to: dragRect)
+	func updateHighlightRect(_ absolute: Bool = false) {
+		if  gMapLayoutMode == .linear,
+			childrenLines.count > 0 {
+			childrenLines[0].updateHighlightRect(absolute)
 		}
 	}
 
@@ -101,6 +80,41 @@ extension ZoneDot {
 		switch gMapLayoutMode {
 			case .linear:     linearDrawMainDot(in: iDirtyRect, using: parameters)
 			case .circular: circularDrawMainDot(in: iDirtyRect, using: parameters)
+		}
+	}
+
+}
+
+// MARK:- line
+// MARK:-
+
+extension ZoneLine {
+
+	var absoluteDropDotRect: CGRect {
+		switch gMapLayoutMode {
+			case .linear:   return   linearAbsoluteDropDotRect
+			case .circular: return circularAbsoluteDropDotRect
+		}
+	}
+
+	var lineRect : CGRect {
+		switch gMapLayoutMode {
+			case .linear:   return   linearLineRect
+			case .circular: return circularLineRect
+		}
+	}
+
+	func lineKind(for delta: CGFloat) -> ZLineKind {
+		switch gMapLayoutMode {
+			case .linear:   return   linearLineKind(for: delta)
+			case .circular: return circularLineKind(for: delta)
+		}
+	}
+
+	func lineKind(to dragRect: CGRect) -> ZLineKind? {
+		switch gMapLayoutMode {
+			case .linear:   return   linearLineKind(to: dragRect)
+			case .circular: return circularLineKind(to: dragRect)
 		}
 	}
 

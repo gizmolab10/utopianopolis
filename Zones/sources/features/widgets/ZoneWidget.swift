@@ -98,18 +98,18 @@ class ZoneWidget: ZPseudoView {
 	var       highlightFrame = CGRect .zero
 	var         parentRadius = CGFloat.zero
 	var          parentAngle = CGFloat.zero
-	var              dragDot : ZoneDot?
-	var            revealDot : ZoneDot?
-	var         childrenView : ZPseudoView?
+	var        childrenLines = [ZoneLine]()
+	var         childrenView :     ZPseudoView?
+	var           parentLine :        ZoneLine?
 	var     pseudoTextWidget : ZPseudoTextView?
-	var           textWidget : ZoneTextWidget? { return pseudoTextWidget?.actualTextWidget }
-	var            sizeToFit :         CGSize  { return drawnSize + CGSize(frame.origin) }
-	var         parentWidget :     ZoneWidget? { return widgetZone?.parentZone?.widget }
-	var   hasVisibleChildren :           Bool  { return widgetZone?.hasVisibleChildren ?? false }
-	var          hideDragDot :           Bool  { return widgetZone?.onlyShowRevealDot ?? false }
-	var             isBigMap :           Bool  { return controller?.isBigMap ?? true }
-	var                ratio :        CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
-	override var description :         String  { return widgetZone?.description ?? kEmptyIdea }
+	var         parentWidget :      ZoneWidget? { return widgetZone?.parentZone?.widget }
+	var           textWidget :  ZoneTextWidget? { return pseudoTextWidget?.actualTextWidget }
+	var            sizeToFit :          CGSize  { return drawnSize + CGSize(frame.origin) }
+	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
+	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot ?? false }
+	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
+	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
+	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
 		var result    = widgetZone?.widgetType
@@ -136,13 +136,13 @@ class ZoneWidget: ZPseudoView {
 	var widgetZone : Zone? {
 		get { return widgetObject.zone }
 		set {
-			widgetObject           .zone = newValue
-			if  let                 name = widgetZone?.zoneName {
-				identifier               = NSUserInterfaceItemIdentifier("<z> \(name)")
-				childrenView?.identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
-				revealDot?   .identifier = NSUserInterfaceItemIdentifier("<r> \(name)")
-				dragDot?     .identifier = NSUserInterfaceItemIdentifier("<d> \(name)")
-				textWidget?  .identifier = NSUserInterfaceItemIdentifier("<t> \(name)")
+			widgetObject                  .zone = newValue
+			if  let                        name = widgetZone?.zoneName {
+				identifier                      = NSUserInterfaceItemIdentifier("<z> \(name)")
+				childrenView?       .identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
+//				revealDot?          .identifier = NSUserInterfaceItemIdentifier("<r> \(name)")
+				parentLine?.dragDot?.identifier = NSUserInterfaceItemIdentifier("<d> \(name)")
+				textWidget?         .identifier = NSUserInterfaceItemIdentifier("<t> \(name)")
 			}
 		}
 	}
@@ -186,22 +186,20 @@ class ZoneWidget: ZPseudoView {
 		gStartupController?.fullStartupUpdate()
 		gWidgets.setWidgetForZone(self, for: mapType)
 		addTextView()
-		addDots()
+		addChildrenView()
+		addChildrenWidgets()
+		addChildrenLines()
 
-		if  let zone = widgetZone {
-			addChildrenView()
-			addChildrenWidgets()
+		if  recursing,
+			let  zone = widgetZone, !visited.contains(zone), zone.hasVisibleChildren {
+			var index = childrenWidgets.count
+			let vplus = visited + [zone]
 
-			if  recursing && !visited.contains(zone), zone.hasVisibleChildren {
-				var index = childrenWidgets.count
-				let vplus = visited + [zone]
-
-				while index           > 0 {
-					index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
-					let child         = childrenWidgets[index]
-					child.widgetZone  =            zone[index]
-					count            += child.layoutAllPseudoViews(inPseudoView: childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
-				}
+			while index           > 0 {
+				index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
+				let child         = childrenWidgets[index]
+				child.widgetZone  =            zone[index]
+				count            += child.layoutAllPseudoViews(inPseudoView: childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
 			}
 		}
 
@@ -230,23 +228,6 @@ class ZoneWidget: ZPseudoView {
 			}
 
 			t.setup()
-		}
-	}
-
-	func addDots() {
-		if  !hideDragDot,
-		    dragDot == nil {
-			dragDot  = ZoneDot(view: absoluteView)
-
-			addSubpseudoview(dragDot)
-			dragDot?.setupForWidget(self, asReveal: false)
-		}
-
-		if  revealDot == nil {
-			revealDot  = ZoneDot(view: absoluteView)
-
-			addSubpseudoview(revealDot)
-			revealDot?.setupForWidget(self, asReveal: true)
 		}
 	}
 
@@ -297,19 +278,31 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
-	func traverseAllProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
-		safeTraverseProgeny(visited: [], inReverse: inReverse) { iWidget -> ZTraverseStatus in
+	func addChildrenLines() {
+		for child in childrenWidgets {
+			let          line = ZoneLine(view: absoluteView)
+			line .childWidget = child
+			line.parentWidget = self
+
+			line.addDots()
+			addSubpseudoview(line)
+			childrenLines.append(line)
+		}
+	}
+
+	func traverseAllWidgetProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
+		safeTraverseWidgetProgeny(visited: [], inReverse: inReverse) { iWidget -> ZTraverseStatus in
 			block(iWidget)
 
 			return .eContinue
 		}
 	}
 
-	@discardableResult func traverseProgeny(inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
-		return safeTraverseProgeny(visited: [], inReverse: inReverse, block)
+	@discardableResult func traverseWidgetProgeny(inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
+		return safeTraverseWidgetProgeny(visited: [], inReverse: inReverse, block)
 	}
 
-	@discardableResult func safeTraverseProgeny(visited: ZoneWidgetArray, inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
+	@discardableResult func safeTraverseWidgetProgeny(visited: ZoneWidgetArray, inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
 		var status  = ZTraverseStatus.eContinue
 
 		if !inReverse {
@@ -325,7 +318,7 @@ class ZoneWidget: ZPseudoView {
 				break						// do not revisit or traverse further inward
 			}
 
-			status = child.safeTraverseProgeny(visited: visited + [self], inReverse: inReverse, block)
+			status = child.safeTraverseWidgetProgeny(visited: visited + [self], inReverse: inReverse, block)
 
 			if  status == .eStop {
 				break                       // halt traversal
@@ -347,7 +340,7 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateAllFrames(_ absolute: Bool = false) {
-		traverseAllProgeny(inReverse: true) { iWidget in
+		traverseAllWidgetProgeny(inReverse: true) { iWidget in
 			iWidget.updateSubframes(absolute)
 		}
 	}
@@ -356,7 +349,7 @@ class ZoneWidget: ZPseudoView {
 		updateChildrenFrames   (absolute)
 		updateTextViewFrame    (absolute)
 		updateDotFrames        (absolute)
-		updateHitRect          (absolute)
+		updateHighlightRect    (absolute)
 		updateChildrenViewFrame(absolute)
 	}
 
@@ -365,10 +358,12 @@ class ZoneWidget: ZPseudoView {
 			let textFrame = textWidget?.frame {
 
 			if !hideDragDot {
-				dragDot?.updateFrame(relativeTo: textFrame)
+				parentLine?.dragDot?.updateFrame(relativeTo: textFrame)
 			}
 
-			revealDot?  .updateFrame(relativeTo: textFrame)
+			for childLine in childrenLines {
+				childLine.revealDot? .updateFrame(relativeTo: textFrame)
+			}
 		}
 	}
 
@@ -381,7 +376,7 @@ class ZoneWidget: ZPseudoView {
             let  index = min(iIndex, zone.count - 1)
             let target = zone.children[index]
 
-            return target.widget?.dragDot
+            return target.widget?.parentLine?.dragDot
         } else {
             return nil
         }
@@ -414,88 +409,8 @@ class ZoneWidget: ZPseudoView {
         return nil
     }
 
-    // MARK:- child lines
-    // MARK:-
-
-    func lineKind(to widget: ZoneWidget?) -> ZLineKind {
-        var kind:  ZLineKind = .straight
-        if  let         zone = widgetZone,
-            zone      .count > 1,
-            let      dragDot = widget?.dragDot {
-			if  let dragKind = lineKind(to: dragDot.absoluteActualFrame) {
-                kind         = dragKind
-            }
-        }
-
-        return kind
-    }
-
-    func lineRect(to dragRect: CGRect) -> CGRect? {
-        var rect: CGRect?
-
-        if  let kind = lineKind(to: dragRect) {
-            rect     = lineRect(to: dragRect, kind: kind)
-        }
-
-        return rect
-    }
-
-	func lineRect(to widget: ZoneWidget?, kind: ZLineKind) -> CGRect {
-        if  let      w = widget,
-			let    dot = gMapLayoutMode == .linear ? w.dragDot : w.revealDot {
-			let dFrame = dot.absoluteActualFrame
-
-			return lineRect(to: dFrame, kind: kind)
-        }
-
-		return CGRect.zero
-    }
-
-    func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let rect = iRect.centeredHorizontalLine(thick: CGFloat(gLineThickness))
-        let path = ZBezierPath(rect: rect)
-
-		path.setClip()
-
-        return path
-    }
-
-    func linePath(in iRect: CGRect, kind: ZLineKind?, isDragLine: Bool) -> ZBezierPath {
-        if  let    k = kind {
-            switch k {
-            case .straight: return straightPath(in: iRect, isDragLine)
-            default:        return   curvedPath(in: iRect, kind: k)
-            }
-        }
-
-        return ZBezierPath()
-    }
-
 	// MARK:- draw
 	// MARK:-
-
-    func drawDragLine(to dotRect: CGRect) {
-        if  let       rect = lineRect(to: dotRect),
-            let       kind = lineKind(to: dotRect) {
-            let       path = linePath(in: rect, kind: kind, isDragLine: true)
-			path.lineWidth = CGFloat(gLineThickness)
-
-			path.stroke()
-        }
-    }
-
-    func drawLine(to child: ZoneWidget) {
-        if  let       zone = child.widgetZone {
-			let      color = zone.color
-			let       kind = lineKind(to: child)
-			let       rect = lineRect(to: child, kind: kind)
-            let       path = linePath(in:  rect, kind: kind, isDragLine: false)
-			path.lineWidth = CGFloat(gLineThickness)
-
-            color?.setStroke()
-			path.stroke()
-        }
-    }
 
     override func draw(_ phase: ZDrawPhase) {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
@@ -504,13 +419,16 @@ class ZoneWidget: ZPseudoView {
 			switch phase {
 				case .pLines:
 					if  zone.isExpanded {
-						for child in childrenWidgets {   // this is after child dots have been autolayed out
-							drawLine(to: child)
+						for child in childrenLines {   // this is after child dots have been autolayed out
+							child.drawLine()
 						}
 					}
 				case .pDotsAndHighlight:
-					dragDot?  .draw(phase)
-					revealDot?.draw(phase)
+					parentLine?    .dragDot?.draw(phase)
+
+					for childLine in childrenLines {
+						childLine.revealDot?.draw(phase)
+					}
 
 					if  let          t = textWidget {
 						let  isGrabbed = zone.isGrabbed

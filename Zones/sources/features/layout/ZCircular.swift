@@ -33,9 +33,13 @@ extension ZoneWidget {
 		}
 	}
 
+	var childrenLinesDrawnSize : CGSize {
+		return .zero
+	}
+
 	func circularUpdateSize() {
-		if  let       t = textWidget,
-			let   dSize = revealDot?.drawnSize {
+		if  let       t = textWidget {
+			let   dSize = childrenLinesDrawnSize
 			var   width = childrenView?.drawnSize.width  ?? 0.0
 			var  height = childrenView?.drawnSize.height ?? 0.0
 			let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
@@ -49,22 +53,6 @@ extension ZoneWidget {
 			}
 
 			drawnSize   = CGSize(width: width, height: height)
-		}
-	}
-
-	func circularUpdateHitRect(_ absolute: Bool = false) {
-		if  absolute,
-			let              t = textWidget,
-			let            dot = revealDot {
-			let revealDotDelta = dot.isVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
-			let            gap = gGenericOffset.height
-			let       gapInset =  gap         /  8.0
-			let     widthInset = (gap + 32.0) / -2.0
-			let    widthExpand = (gap + 24.0) /  6.0
-			var           rect = t.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
-			rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
-			rect.size  .width += (widthExpand - revealDotDelta) / ratio
-			highlightFrame     = rect
 		}
 	}
 
@@ -125,77 +113,6 @@ extension ZoneWidget {
 		}
 	}
 
-	var circularAbsoluteDropDotRect: CGRect {
-		var rect = CGRect()
-
-		if  let zone = widgetZone {
-			if !zone.hasVisibleChildren {
-
-				// //////////////////////
-				// DOT IS STRAIGHT OUT //
-				// //////////////////////
-
-				if  let            dot = revealDot {
-					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-					rect               = dot.absoluteActualFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
-				}
-			} else if let      indices = gDropIndices, indices.count > 0 {
-				let         firstindex = indices.firstIndex
-
-				if  let       firstDot = dot(at: firstindex) {
-					rect               = firstDot.absoluteActualFrame
-					let      lastIndex = indices.lastIndex
-
-					if  indices.count == 1 || lastIndex >= zone.count {
-
-						// ////////////////////////
-						// DOT IS ABOVE OR BELOW //
-						// ////////////////////////
-
-						let   relation = gDragRelation
-						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
-						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
-						let    gHeight = gGenericOffset.height
-						let      delta = (gHeight + gDotWidth) * multiplier
-						rect           = rect.offsetBy(dx: 0.0, dy: delta)
-
-					} else if lastIndex < zone.count, let secondDot = dot(at: lastIndex) {
-
-						// ///////////////
-						// DOT IS TWEEN //
-						// ///////////////
-
-						let secondRect = secondDot.absoluteActualFrame
-						let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
-						rect           = rect.offsetBy(dx: 0.0, dy: -delta)
-					}
-				}
-			}
-		}
-
-		return rect
-	}
-
-	func circularLineKind(for delta: CGFloat) -> ZLineKind {
-		let threshold = 2.0   * kVerticalWeight
-		let  adjusted = delta * kVerticalWeight
-
-		if adjusted > threshold {
-			return .above
-		} else if adjusted < -threshold {
-			return .below
-		}
-
-		return .straight
-	}
-
-	func circularLineKind(to dragRect: CGRect) -> ZLineKind? {
-		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
-		let      delta = dragRect.midY - toggleRect.midY
-
-		return lineKind(for: delta)
-	}
-
 	func circularDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		let        rect = highlightFrame
 		let      radius = rect.minimumDimension / 2.08 - 1.0
@@ -251,6 +168,88 @@ extension ZoneDot {
 
 		path.stroke()
 		path.fill()
+	}
+
+}
+
+// MARK:- line
+// MARK:-
+
+extension ZoneLine {
+
+	var circularLineRect : CGRect {
+		return .zero
+	}
+
+	var circularAbsoluteDropDotRect: CGRect {
+		var rect = CGRect()
+
+		if  let zone = parentWidget?.widgetZone {
+			if !zone.hasVisibleChildren {
+
+				// //////////////////////
+				// DOT IS STRAIGHT OUT //
+				// //////////////////////
+
+				if  let            dot = revealDot {
+					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
+					rect               = dot.absoluteActualFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+				}
+			} else if let      indices = gDropIndices, indices.count > 0 {
+				let         firstindex = indices.firstIndex
+
+				if  let       firstDot = parentWidget?.dot(at: firstindex) {
+					rect               = firstDot.absoluteActualFrame
+					let      lastIndex = indices.lastIndex
+
+					if  indices.count == 1 || lastIndex >= zone.count {
+
+						// ////////////////////////
+						// DOT IS ABOVE OR BELOW //
+						// ////////////////////////
+
+						let   relation = gDragRelation
+						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
+						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
+						let    gHeight = gGenericOffset.height
+						let      delta = (gHeight + gDotWidth) * multiplier
+						rect           = rect.offsetBy(dx: 0.0, dy: delta)
+
+					} else if lastIndex < zone.count, let secondDot = parentWidget?.dot(at: lastIndex) {
+
+						// ///////////////
+						// DOT IS TWEEN //
+						// ///////////////
+
+						let secondRect = secondDot.absoluteActualFrame
+						let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
+						rect           = rect.offsetBy(dx: 0.0, dy: -delta)
+					}
+				}
+			}
+		}
+
+		return rect
+	}
+
+	func circularLineKind(for delta: CGFloat) -> ZLineKind {
+		let threshold = 2.0   * kVerticalWeight
+		let  adjusted = delta * kVerticalWeight
+
+		if adjusted > threshold {
+			return .above
+		} else if adjusted < -threshold {
+			return .below
+		}
+
+		return .straight
+	}
+
+	func circularLineKind(to targetRect: CGRect) -> ZLineKind? {
+		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
+		let      delta = targetRect.midY - toggleRect.midY
+
+		return lineKind(for: delta)
 	}
 
 }
