@@ -34,8 +34,6 @@ extension ZoneWidget {
 	}
 
 	func linearUpdateSize() {
-		updateChildrenViewDrawnSize()
-
 		if  let       t = textWidget,
 			let   dSize = revealDot?.drawnSize {
 			var   width = childrenView?.drawnSize.width  ?? 0.0

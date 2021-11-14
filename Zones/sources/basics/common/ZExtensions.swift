@@ -632,6 +632,10 @@ extension CGPoint {
         y = size.height
     }
 
+	static func + ( left: CGPoint, right: CGPoint) -> CGPoint {
+		return CGPoint(x: left.x + right.x, y: left.y + right.y)
+	}
+
     static func - ( left: CGPoint, right: CGPoint) -> CGSize {
         return CGSize(width: left.x - right.x, height: left.y - right.y)
     }
@@ -673,10 +677,11 @@ extension CGPoint {
 		return sqrt(x * x + y * y)
 	}
 
-	func rotate(by angle: Double) -> CGPoint {
-		let r = hypontenuse
+	func rotate(by angle: Double, around center: CGPoint = .zero) -> CGPoint {
+		let     r = hypontenuse
+		let delta = CGPoint(x: r * CGFloat(cos(angle)), y: r * CGFloat(sin(angle)))
 
-		return CGPoint(x: r * CGFloat(cos(angle)), y: r * CGFloat(sin(angle)))
+		return center + delta
 	}
 
 }
@@ -2667,6 +2672,24 @@ extension ZView {
 
 extension ZPseudoView {
 
+	func anglesArray(_ count: Int, startAngle: Double, oneSet: Bool, isFat: Bool, clockwise: Bool) -> [Double] {
+		var angles             = [Double]()
+		let fullCircle         = Double.pi * 2.0
+		if  count              > 0 {
+			let isEven = count % 2 == 0
+			let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-count)
+
+			for index in 0 ... count - 1 {
+				let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
+				let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+
+				angles.append(angle)
+			}
+		}
+
+		return angles
+	}
+
 	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {
 		if  var       dotCount = count {
 			var      fatHollow = false
@@ -2689,20 +2712,18 @@ extension ZPseudoView {
 			if  dotCount       > 0 {
 				let  tinyCount = dotCount % countMax
 				let   fatCount = dotCount / countMax
-				let fullCircle = Double.pi * 2.0
 
 				let drawDots: IntBooleanClosure = { (iCount, isFat) in
-					let             oneSet = (isFat ? tinyCount : fatCount) == 0
-					let           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
+					let     oneSet = (isFat ? tinyCount : fatCount) == 0
+					let   isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
 
-					if  iCount             > 0 {
-						let         isEven = iCount % 2 == 0
-						let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-iCount)
-						let     startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : Double.pi)
+					if  iCount     > 0 {
+						let isEven = iCount % 2 == 0
+						let fullCircle = Double.pi * 2.0
+						let startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : Double.pi)
+						let angles = self.anglesArray(iCount, startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
 
-						for index in 0 ... iCount - 1 {
-							let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
-							let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+						for (index, angle) in angles.enumerated() {
 							let (ideaFocus, asIdea, asEssay) = (false, true, false)
 
 							// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)

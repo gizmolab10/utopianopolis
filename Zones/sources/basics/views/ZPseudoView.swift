@@ -17,21 +17,21 @@ enum ZDrawPhase: String {
 
 class ZPseudoView: NSObject {
 
-	var   absoluteFrame = CGRect.zero
-	var       drawnSize = CGSize.zero { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
-	var          bounds = CGRect.zero
-	var           frame = CGRect.zero
+	var   absoluteFrame = CGRect .zero
+	var          bounds = CGRect .zero
+	var           frame = CGRect .zero
+	var       drawnSize = CGSize .zero { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
 	var      identifier = NSUserInterfaceItemIdentifier("")
 	var  subpseudoviews = [ZPseudoView] ()
 	var superpseudoview : ZPseudoView?
 	var      toolTipTag : NSView.ToolTipTag?
 	var    absoluteView : ZView?
-	var        drawView : ZView?
+	var       drawnView : ZView?
 
 	override var description: String { return toolTip ?? super.description }
 	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses
 	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }
-	func setupDrawView() { drawView = absoluteView }
+	func setupDrawnView() { drawnView = absoluteView }
 
 	var toolTip : String? {
 		didSet {
@@ -50,7 +50,7 @@ class ZPseudoView: NSObject {
 
 		absoluteView = view
 
-		setupDrawView()
+		setupDrawnView()
 	}
 
 	func convert(_ point: NSPoint, toContaining view: ZPseudoView?) -> NSPoint {

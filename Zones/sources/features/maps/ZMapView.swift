@@ -16,7 +16,6 @@ enum ZMapID: String {
 
 class ZMapView: ZView {
 
-	var needsClear       = false
 	var mapID            : ZMapID?
 	var dotsAndLinesView : ZMapView?
 	var highlightMapView : ZMapView?
@@ -89,8 +88,8 @@ class ZMapView: ZView {
 
 	func clear(forSmallMapOnly: Bool = false) {
 		if  mapID == .mText {
-			highlightMapView?.needsClear = true
-			dotsAndLinesView?.needsClear = true
+			highlightMapView?.clear()
+			dotsAndLinesView?.clear()
 
 			removeAllTextViews(forSmallMap: forSmallMapOnly)
 		}

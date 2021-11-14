@@ -673,7 +673,7 @@ CA
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectOne" id="kkM-fg-4gO">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <segments>
-                                                    <segment label="sideways" selected="YES"/>
+                                                    <segment label="linear" selected="YES"/>
                                                     <segment label="circular" tag="1"/>
                                                 </segments>
                                             </segmentedCell>

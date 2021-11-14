@@ -95,7 +95,9 @@ class ZoneWidget: ZPseudoView {
 
 	let         widgetObject = ZWidgetObject  ()
 	var      childrenWidgets = ZoneWidgetArray()
-	var       highlightFrame = CGRect.zero
+	var       highlightFrame = CGRect .zero
+	var         parentRadius = CGFloat.zero
+	var          parentAngle = CGFloat.zero
 	var              dragDot : ZoneDot?
 	var            revealDot : ZoneDot?
 	var         childrenView : ZPseudoView?
@@ -145,6 +147,23 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
+	var drawnLevel : Int {
+		var level = 0
+		if  let here = controller?.hereZone {
+			widgetZone?.traverseAncestors { ancestor in
+				level += 1
+
+				if  here == ancestor {
+					return .eStop
+				}
+
+				return .eContinue
+			}
+		}
+
+		return level
+	}
+
     deinit {
         childrenWidgets.removeAll()
     }
@@ -187,6 +206,7 @@ class ZoneWidget: ZPseudoView {
 		}
 
 		textWidget?.layoutText()
+		updateChildrenViewDrawnSize()
 		updateSize()
 
 		return count
@@ -421,7 +441,8 @@ class ZoneWidget: ZPseudoView {
     }
 
 	func lineRect(to widget: ZoneWidget?, kind: ZLineKind) -> CGRect {
-        if  let    dot = widget?.dragDot {
+        if  let      w = widget,
+			let    dot = gMapLayoutMode == .linear ? w.dragDot : w.revealDot {
 			let dFrame = dot.absoluteActualFrame
 
 			return lineRect(to: dFrame, kind: kind)

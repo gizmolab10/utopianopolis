@@ -34,8 +34,6 @@ extension ZoneWidget {
 	}
 
 	func circularUpdateSize() {
-		updateChildrenViewDrawnSize()
-
 		if  let       t = textWidget,
 			let   dSize = revealDot?.drawnSize {
 			var   width = childrenView?.drawnSize.width  ?? 0.0
@@ -70,10 +68,15 @@ extension ZoneWidget {
 		}
 	}
 
+	func circularUpdateChildrenAngles() {
+
+	}
+
 	func circularUpdateChildrenFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var    height = CGFloat.zero
 			var     index = childrenWidgets.count
+			let    angles = anglesArray(index, startAngle: 0.0, oneSet: true, isFat: false, clockwise: true)
 			while   index > 0 {
 				index    -= 1 // go backwards [up] the children array
 				let child = childrenWidgets[index]
@@ -81,11 +84,13 @@ extension ZoneWidget {
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
 				} else {
-					let    size = child.drawnSize
-					let  origin = CGPoint(x: .zero, y: height)
-					height     += size.height
-					let    rect = CGRect(origin: origin, size: size)
-					child.frame = rect
+					let           size = child.drawnSize
+					let         origin = CGPoint(x: .zero, y: height)
+					height            += size.height
+					let           rect = CGRect(origin: origin, size: size)
+					child       .frame = rect
+					child .parentAngle = CGFloat(angles[index])
+					child.parentRadius = 25.0
 				}
 			}
 		}

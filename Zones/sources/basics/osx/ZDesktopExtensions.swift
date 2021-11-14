@@ -1155,16 +1155,31 @@ extension ZoneWidget {
 		}
 	}
 
-    func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
-        var                 rect = CGRect ()
+	func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+		switch gMapLayoutMode {
+			case .linear:   return   linearLineRect(from: revealDot, to: targetFrame, kind: kind)
+			case .circular: return circularLineRect(from:   dragDot, to: targetFrame, kind: kind)
+		}
+	}
+
+	func circularLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+		if  let origin = sourceDot?.absoluteFrame.center {
+			return CGRect(origin: origin, size: targetFrame.center - origin)
+		}
+
+		return .zero
+	}
+
+    func linearLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+		var                 rect = CGRect.zero
 
         if  kind                != nil,
-			let      sourceFrame = revealDot?.absoluteFrame {
+			let      sourceFrame = sourceDot?.absoluteFrame {
+            rect.origin       .x = sourceFrame    .midX
+			rect.size     .width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
 			let            delta = CGFloat(4.0)
 			let       smallDelta = CGFloat(1.0)
-            let        thickness = CGFloat(gLineThickness)
-            rect.origin       .x = sourceFrame    .midX
-			rect.size     .width = abs(targetFrame.minX - rect.minX)   + 2.0
+			let        thickness = CGFloat(gLineThickness)
 
             switch kind! {
             case .above:

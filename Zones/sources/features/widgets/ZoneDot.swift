@@ -296,11 +296,11 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
-	override func setupDrawView() {
-		super.setupDrawView()
+	override func setupDrawnView() {
+		super.setupDrawnView()
 
-		if  let    m = absoluteView as? ZMapView {
-			drawView = m.dotsAndLinesView
+		if  let     m = absoluteView as? ZMapView {
+			drawnView = m.dotsAndLinesView
 		}
 	}
 

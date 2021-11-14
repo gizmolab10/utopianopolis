@@ -8,6 +8,9 @@
 
 import Foundation
 
+// MARK:- widget
+// MARK:-
+
 extension ZoneWidget {
 
 	func updateChildrenViewDrawnSize() {
@@ -52,18 +55,12 @@ extension ZoneWidget {
 		}
 	}
 
-	// MARK:- drag
-	// MARK:-
-
 	var absoluteDropDotRect: CGRect {
 		switch gMapLayoutMode {
 			case .linear:   return   linearAbsoluteDropDotRect
 			case .circular: return circularAbsoluteDropDotRect
 		}
 	}
-
-	// MARK:- child lines
-	// MARK:-
 
 	func lineKind(for delta: CGFloat) -> ZLineKind {
 		switch gMapLayoutMode {
@@ -79,9 +76,6 @@ extension ZoneWidget {
 		}
 	}
 
-	// MARK:- draw
-	// MARK:-
-
 	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		switch gMapLayoutMode {
 			case .linear:     linearDrawSelectionHighlight(dashes, thin)
@@ -91,6 +85,9 @@ extension ZoneWidget {
 
 }
 
+// MARK:- dot
+// MARK:-
+
 extension ZoneDot {
 
 	func updateFrame(relativeTo textFrame: CGRect) {
@@ -99,9 +96,6 @@ extension ZoneDot {
 			case .circular: circularUpdateFrame(relativeTo: textFrame)
 		}
 	}
-
-	// MARK:- draw
-	// MARK:-
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		switch gMapLayoutMode {
