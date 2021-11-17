@@ -93,13 +93,13 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
+	var           linesLevel = 0
 	let         widgetObject = ZWidgetObject  ()
 	var      childrenWidgets = ZoneWidgetArray()
 	var       highlightFrame = CGRect .zero
-	var         parentRadius = CGFloat.zero
-	var          parentAngle = CGFloat.zero
 	var        childrenLines = [ZoneLine]()
 	var         childrenView :     ZPseudoView?
+	var            linesView :     ZPseudoView?
 	var           parentLine :        ZoneLine?
 	var     pseudoTextWidget : ZPseudoTextView?
 	var         parentWidget :      ZoneWidget? { return widgetZone?.parentZone?.widget }
@@ -147,23 +147,6 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
-	var drawnLevel : Int {
-		var level = 0
-		if  let here = controller?.hereZone {
-			widgetZone?.traverseAncestors { ancestor in
-				level += 1
-
-				if  here == ancestor {
-					return .eStop
-				}
-
-				return .eContinue
-			}
-		}
-
-		return level
-	}
-
     deinit {
         childrenWidgets.removeAll()
     }
@@ -171,10 +154,10 @@ class ZoneWidget: ZPseudoView {
 	// MARK:- view hierarchy
 	// MARK:-
 
-	@discardableResult func layoutAllPseudoViews(inPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		var count = 1
 
-		if  let v = inPseudoView,
+		if  let v = parentPseudoView,
 		   !v.subpseudoviews.contains(self) {
 			v.addSubpseudoview(self)
 		}
@@ -186,6 +169,7 @@ class ZoneWidget: ZPseudoView {
 		gStartupController?.fullStartupUpdate()
 		gWidgets.setWidgetForZone(self, for: mapType)
 		addTextView()
+		addLinesView()
 		addChildrenView()
 		addChildrenWidgets()
 		addChildrenLines()
@@ -199,15 +183,33 @@ class ZoneWidget: ZPseudoView {
 				index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
 				let child         = childrenWidgets[index]
 				child.widgetZone  =            zone[index]
-				count            += child.layoutAllPseudoViews(inPseudoView: childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
+				count            += child.layoutAllPseudoViews(parentPseudoView: childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
 			}
 		}
 
 		textWidget?.layoutText()
+		updateChildrenLinesDrawnSize()
 		updateChildrenViewDrawnSize()
 		updateSize()
 
 		return count
+	}
+
+	func updateChildrenLinesDrawnSize() {
+		var     width = CGFloat(0.0)
+		var    height = CGFloat(0.0)
+
+		for line in childrenLines {
+			line.updateSize()
+
+			let  size = line.drawnSize
+			height   += size.height
+			if  width < size.width {
+				width = size.width
+			}
+		}
+
+		linesView?.drawnSize = CGSize(width: width, height: height)
 	}
 
 	func addTextView() {
@@ -245,6 +247,16 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
+	func addLinesView() {
+		if  linesView == nil {
+			linesView  = ZPseudoView(view: absoluteView)
+		}
+
+		if  let v = linesView, !subpseudoviews.contains(v) {
+			addSubpseudoview(v)
+		}
+	}
+
 	func addChildrenWidgets() {
 		if  let zone = widgetZone {
 			if !zone.isExpanded, let v = childrenView {
@@ -278,15 +290,28 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
+
 	func addChildrenLines() {
-		for child in childrenWidgets {
+		let level = (parentWidget?.linesLevel ?? -1) + 1
+
+		func addLineFor(_ child: ZoneWidget?) {
 			let          line = ZoneLine(view: absoluteView)
 			line .childWidget = child
 			line.parentWidget = self
+			child?.parentLine = line
+			child?.linesLevel = level
 
 			line.addDots()
-			addSubpseudoview(line)
 			childrenLines.append(line)
+			linesView?.addSubpseudoview(line)
+		}
+
+		if  !(widgetZone?.hasVisibleChildren ?? false) {
+			addLineFor(nil)
+		} else {
+			for child in childrenWidgets {
+				addLineFor(child)
+			}
 		}
 	}
 
@@ -340,12 +365,13 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateAllFrames(_ absolute: Bool = false) {
-		traverseAllWidgetProgeny(inReverse: true) { iWidget in
+		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.updateSubframes(absolute)
 		}
 	}
 
 	func updateSubframes(_ absolute: Bool = false) {
+		updateChildrenVectors  (absolute)
 		updateChildrenFrames   (absolute)
 		updateTextViewFrame    (absolute)
 		updateDotFrames        (absolute)
@@ -362,7 +388,8 @@ class ZoneWidget: ZPseudoView {
 			}
 
 			for childLine in childrenLines {
-				childLine.revealDot? .updateFrame(relativeTo: textFrame)
+				childLine.updateLineKind()
+				childLine.revealDot?.updateFrame(relativeTo: textFrame)
 			}
 		}
 	}
@@ -439,7 +466,7 @@ class ZoneWidget: ZPseudoView {
 							drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
 						}
 
-						if  !isBigMap, gDebugDraw {
+						if  gDebugDraw {
 							absoluteFrame              .drawColoredRect(.green)
 							childrenView?.absoluteFrame.drawColoredRect(.orange)
 						}

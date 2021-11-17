@@ -15,37 +15,38 @@ extension ZoneWidget {
 
 	func linearUpdateChildrenViewDrawnSize() {
 		if !hasVisibleChildren {
-			childrenView?.drawnSize = CGSize.zero
+			childrenView?  .drawnSize = CGSize.zero
 		} else {
-			var         biggestSize = CGSize.zero
-			var              height = CGFloat.zero
+			var           biggestSize = CGSize.zero
+			var                height = CGFloat.zero
 
 			for child in childrenWidgets {			// traverse progeny, updating their frames
-				let            size = child.drawnSize
-				height             += size.height
+				let              size = child.drawnSize
+				height               += size.height
 
-				if  size.width      > biggestSize.width {
-					biggestSize     = size
+				if  biggestSize.width > size.width {
+					biggestSize       = size
 				}
 			}
 
-			childrenView?.drawnSize = CGSize(width: biggestSize.width, height: height)
+			childrenView?  .drawnSize = CGSize(width: biggestSize.width, height: height)
 		}
 	}
 
 	func linearUpdateSize() {
-		if  let       t = textWidget {
-			let   dSize = childrenLinesDrawnSize
-			var   width = childrenView?.drawnSize.width  ?? 0.0
-			var  height = childrenView?.drawnSize.height ?? 0.0
+		if  let       t = textWidget,
+			let   lSize = linesView?.drawnSize {
+			let   cSize = childrenView?.drawnSize
+			var   width = cSize?.width  ?? 0.0
+			var  height = cSize?.height ?? 0.0
 			let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
 			width      += t.drawnSize.width
-			let dheight = dSize.height
-			let dWidth  = dSize.width * 2.0
-			width      += dWidth + extra - (hideDragDot ? 5.0 : 4.0)
+			let lheight = lSize.height
+			let  lWidth = lSize.width * 2.0
+			width      += lWidth + extra - (hideDragDot ? 5.0 : 4.0)
 
-			if  height  < dheight {
-				height  = dheight
+			if  height  < lheight {
+				height  = lheight
 			}
 
 			drawnSize   = CGSize(width: width, height: height)
@@ -121,42 +122,6 @@ extension ZoneWidget {
 
 		strokeColor?.setStroke()
 		path.stroke()
-	}
-
-}
-
-// MARK:- dot
-// MARK:-
-
-extension ZoneDot {
-
-	func linearUpdateFrame(relativeTo textFrame: CGRect) {
-		let         x = CGPoint(drawnSize).x
-		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-x, 0.0)
-		absoluteFrame = CGRect(origin: origin, size: drawnSize)
-
-		updateTooltips()
-	}
-
-	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		let  thickness = CGFloat(gLineThickness) * 2.0
-		var       path = ZBezierPath()
-
-		if  parameters.isReveal {
-			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
-		} else {
-			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
-		}
-
-		if  let z = widgetZone, gDebugDraw { // for debugging hover
-			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
-		}
-
-		path.lineWidth = thickness
-		path .flatness = 0.0001
-
-		path.stroke()
-		path.fill()
 	}
 
 }
@@ -238,7 +203,50 @@ extension ZoneLine {
 		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
 		let      delta = targetRect.midY - toggleRect.midY
 
-		return lineKind(for: delta)
+		return linearLineKind(for: delta)
+	}
+
+	func linearUpdateSize() {
+		// all lines have at least a reveal dot
+		drawnSize = revealDot?.updateSize() ?? .zero
+	}
+
+	func linearUpdateFrame(relativeTo textFrame: CGRect) {}
+
+}
+
+// MARK:- dot
+// MARK:-
+
+extension ZoneDot {
+
+	func linearUpdateFrame(relativeTo textFrame: CGRect) {
+		let         x = CGPoint(drawnSize).x
+		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-x, 0.0)
+		absoluteFrame = CGRect(origin: origin, size: drawnSize)
+
+		updateTooltips()
+	}
+
+	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
+		let  thickness = CGFloat(gLineThickness) * 2.0
+		var       path = ZBezierPath()
+
+		if  parameters.isReveal {
+			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
+		} else {
+			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
+		}
+
+//		if  let z = widgetZone, gDebugDraw { // for debugging hover
+//			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
+//		}
+
+		path.lineWidth = thickness
+		path .flatness = 0.0001
+
+		path.stroke()
+		path.fill()
 	}
 
 }

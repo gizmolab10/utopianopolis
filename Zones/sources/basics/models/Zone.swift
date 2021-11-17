@@ -83,6 +83,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var        isCurrentSmallMapBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var                  isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
+	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                onlyShowRevealDot :               Bool  { return isExpanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
 	var                  dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                 hasBadRecordName :               Bool  { return recordName == nil }
@@ -1667,8 +1668,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			updateCoreDataRelationships()  // need to record changes in core data traits array
 
 			switch (type) {
-				case .tEmail:     emailMaybe         = iText
-				case .tHyperlink: hyperLinkMaybe     = iText
+				case .tEmail:     emailMaybe     = iText
+				case .tHyperlink: hyperLinkMaybe = iText
 				default: break
 			}
 		}
@@ -2658,10 +2659,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// MARK:- children visibility
 	// MARK:-
-
-	var hasVisibleChildren: Bool {
-		return isExpanded && count > 0
-	}
 
 	var isExpanded: Bool {
 		if  let name = recordName,

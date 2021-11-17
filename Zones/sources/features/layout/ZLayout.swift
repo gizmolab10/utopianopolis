@@ -27,6 +27,13 @@ extension ZoneWidget {
 		}
 	}
 
+	func updateChildrenVectors(_ absolute: Bool = false) {
+		switch gMapLayoutMode {
+			case .linear:   break
+			case .circular: circularUpdateChildrenVectors(absolute)
+		}
+	}
+
 	func updateChildrenFrames(_ absolute: Bool = false) {
 		switch gMapLayoutMode {
 			case .linear:     linearUpdateChildrenFrames(absolute)
@@ -104,17 +111,24 @@ extension ZoneLine {
 		}
 	}
 
-	func lineKind(for delta: CGFloat) -> ZLineKind {
+	func lineKind(to dragRect: CGRect) -> ZLineKind? {
 		switch gMapLayoutMode {
-			case .linear:   return   linearLineKind(for: delta)
-			case .circular: return circularLineKind(for: delta)
+			case .linear:   return linearLineKind(to: dragRect)
+			case .circular: return .straight
 		}
 	}
 
-	func lineKind(to dragRect: CGRect) -> ZLineKind? {
+	func updateSize() {
 		switch gMapLayoutMode {
-			case .linear:   return   linearLineKind(to: dragRect)
-			case .circular: return circularLineKind(to: dragRect)
+			case .linear:     linearUpdateSize()
+			case .circular: circularUpdateSize()
+		}
+	}
+
+	func updateFrame(relativeTo textFrame: CGRect) {
+		switch gMapLayoutMode {
+			case .linear:     linearUpdateFrame(relativeTo: textFrame)
+			case .circular: circularUpdateFrame(relativeTo: textFrame)
 		}
 	}
 

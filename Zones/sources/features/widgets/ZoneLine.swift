@@ -10,19 +10,23 @@ import Foundation
 
 class ZoneLine: ZPseudoView {
 
+	var     lineKind : ZLineKind?
 	var      dragDot : ZoneDot?
 	var    revealDot : ZoneDot?
 	var  childWidget : ZoneWidget?
 	var parentWidget : ZoneWidget?
+	var parentRadius = CGFloat.zero
+	var  parentAngle = CGFloat.zero
 
 	func addDots() {
-		if  let p = parentWidget {
-			if  !p.hideDragDot,
+		if  let     p    = parentWidget {
+			if  let c    = childWidget,
+				!p.hideDragDot,
 				dragDot == nil {
 				dragDot  = ZoneDot(view: absoluteView)
 
 				addSubpseudoview(dragDot)
-				dragDot?.setupForWidget(p, asReveal: false)
+				dragDot?.setupForWidget(c, asReveal: false)
 			}
 
 			if  revealDot == nil {
@@ -34,21 +38,15 @@ class ZoneLine: ZPseudoView {
 		}
 	}
 
-	@discardableResult func updateSize() -> CGSize {
-		return .zero
-	}
-
-	var lineKind: ZLineKind {
-		var kind:  ZLineKind = .straight
+	func updateLineKind() {
+		lineKind             = .straight
 		if  let         zone = parentWidget?.widgetZone,
 			let          dot = dragDot,
 			zone      .count > 1 {
 			if  let dragKind = lineKind(to: dot.absoluteActualFrame) {
-				kind         = dragKind
+				lineKind     = dragKind
 			}
 		}
-
-		return kind
 	}
 
 	func lineRect(to dragRect: CGRect) -> CGRect? {
@@ -109,13 +107,17 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawLine() {
-		if  let      child = childWidget,
+		if  let       kind = lineKind,
+			let      child = childWidget,
 			let       zone = child.widgetZone {
-			let      color = zone.color
-			let       kind = lineKind
 			let       rect = lineRect(to: child, kind: kind)
 			let       path = linePath(in:  rect, kind: kind, isDragLine: false)
+			let      color = zone.color
 			path.lineWidth = CGFloat(gLineThickness)
+
+			if  gDebugDraw {
+				absoluteFrame.drawColoredRect(.blue)
+			}
 
 			color?.setStroke()
 			path.stroke()

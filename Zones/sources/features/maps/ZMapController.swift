@@ -117,7 +117,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget?.updateAllFrames(false)
 			rootWidget?.updateAllFrames(true)
 			rootWidget?.updateAbsoluteFrame(toController: self)
-			updateFrames()
+//			updateFrames()
 			detectHover(at: gMapView?.currentMouseLocationInWindow)
 			gMapView?.setNeedsDisplay()
 		}
@@ -145,7 +145,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             recursing              = [.sData, .spRelayout].contains(kind)
         }
 
-		let total = specificWidget?.layoutAllPseudoViews(inPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
+		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
 		layoutForCurrentScrollOffset()
 

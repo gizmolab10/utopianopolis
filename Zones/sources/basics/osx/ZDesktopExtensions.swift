@@ -1148,7 +1148,7 @@ extension ZoneWidget {
 		let  view = ZMapView(frame: bounds)
 		let pView = ZoneWidget(view: absoluteView)
 
-		layoutAllPseudoViews(inPseudoView: pView, for: .tBigMap, atIndex: nil, recursing: true, .spRelayout, visited: [])
+		layoutAllPseudoViews(parentPseudoView: pView, for: .tBigMap, atIndex: nil, recursing: true, .spRelayout, visited: [])
 		view.setNeedsDisplay()
 		FOREGROUND {
 			view.printView()

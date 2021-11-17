@@ -2672,12 +2672,11 @@ extension ZView {
 
 extension ZPseudoView {
 
-	func anglesArray(_ count: Int, startAngle: Double, oneSet: Bool, isFat: Bool, clockwise: Bool) -> [Double] {
+	func anglesArray(_ count: Int, startAngle: Double, spreadAngle: Double = Double.pi * 2.0, oneSet: Bool, isFat: Bool, clockwise: Bool) -> [Double] {
 		var angles             = [Double]()
-		let fullCircle         = Double.pi * 2.0
 		if  count              > 0 {
 			let isEven = count % 2 == 0
-			let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-count)
+			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-count)
 
 			for index in 0 ... count - 1 {
 				let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
