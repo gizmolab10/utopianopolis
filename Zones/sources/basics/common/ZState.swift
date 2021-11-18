@@ -35,6 +35,7 @@ var              gDropIndices: NSMutableIndexSet?
 var               gDropWidget:        ZoneWidget?
 var                gDropCrumb: ZBreadcrumbButton?
 var                gDragPoint:           CGPoint?
+var                 gDropLine:          ZoneLine?
 var                 gExpanded:      StringsArray?
 var     gCurrentMouseDownZone:              Zone?
 var gCurrentMouseDownLocation:           CGFloat?

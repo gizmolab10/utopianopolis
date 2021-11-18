@@ -52,11 +52,10 @@ extension ZoneArray {
 		return requiresAll
 	}
 
-	func anyParentMatches(_ zone: Zone) -> Bool {
+	func anyParentMatches(_ iZone: Zone) -> Bool {
 		return applyBooleanToZone { zone in
-			return zone.parentZone == zone
+			return zone.parentZone == iZone
 		}
-
 	}
 
 	func containsMatch(to other: AnyObject) -> Bool {

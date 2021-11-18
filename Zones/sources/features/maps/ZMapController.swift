@@ -427,7 +427,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					dropZone       = dropParent
 					dropWidget     = pWidget
 
-					if  relation == .below {
+					if  relation  == .below {
 						noop()
 					}
 				}
@@ -447,6 +447,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				gDropWidget        = forgetAll ? nil : dropWidget
                 gDragRelation      = forgetAll ? nil : relation
                 gDragPoint         = forgetAll ? nil : location
+				gDropLine          = forgetAll ? nil : gDropWidget?.addLineFor(nil)
+
+				gDropLine?.parentWidget = gDropWidget
+
+				gDropLine?.addDots(sharedDot: dropWidget.sharedDot)
 
                 if !forgetAll && notDropHere && index > 0 {
                     gDropIndices?.add(index - 1)
@@ -532,6 +537,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gDropWidget   = nil
 		gDropCrumb    = nil
 		gDragPoint    = nil
+		gDropLine     = nil
 
 		gDragView?.setNeedsDisplay() // erase drag: line and dot
 		gMapView?  .setNeedsDisplay()

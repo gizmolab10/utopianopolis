@@ -100,6 +100,7 @@ class ZoneWidget: ZPseudoView {
 	var        childrenLines = [ZoneLine]()
 	var         childrenView :     ZPseudoView?
 	var            linesView :     ZPseudoView?
+	var            sharedDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var     pseudoTextWidget : ZPseudoTextView?
 	var         parentWidget :      ZoneWidget? { return widgetZone?.parentZone?.widget }
@@ -155,6 +156,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK:-
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+		sharedDot = gIsLinearMapLayout ? ZoneDot(view: absoluteView) : nil
 		var count = 1
 
 		if  let v = parentPseudoView,
@@ -301,8 +303,6 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func addLines() {
-		let         sharedDot = gIsLinearMapLayout ? ZoneDot(view: absoluteView) : nil
-
 		childrenLines.removeAll()
 		linesView?.removeAllSubpseudoviews()
 
