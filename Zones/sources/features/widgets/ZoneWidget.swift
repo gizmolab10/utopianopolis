@@ -292,7 +292,12 @@ class ZoneWidget: ZPseudoView {
 
 
 	func addChildrenLines() {
-		let level = (parentWidget?.linesLevel ?? -1) + 1
+		let     level = (parentWidget?.linesLevel ?? -1) + 1
+		let sharedDot = gIsLinearMapLayout ? ZoneDot(view: absoluteView) : nil
+
+
+		childrenLines.removeAll()
+		linesView?.removeAllSubpseudoviews()
 
 		func addLineFor(_ child: ZoneWidget?) {
 			let          line = ZoneLine(view: absoluteView)
@@ -301,7 +306,7 @@ class ZoneWidget: ZPseudoView {
 			child?.parentLine = line
 			child?.linesLevel = level
 
-			line.addDots()
+			line.addDots(sharedDot: sharedDot)
 			childrenLines.append(line)
 			linesView?.addSubpseudoview(line)
 		}
@@ -380,16 +385,15 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	fileprivate func updateDotFrames(_ absolute: Bool) {
-		if  absolute,
-			let textFrame = textWidget?.frame {
+		if  let textFrame = textWidget?.frame, absolute {
 
 			if !hideDragDot {
 				parentLine?.dragDot?.updateFrame(relativeTo: textFrame)
 			}
 
 			for childLine in childrenLines {
-				childLine.updateLineKind()
 				childLine.revealDot?.updateFrame(relativeTo: textFrame)
+				childLine.updateLineKind()
 			}
 		}
 	}

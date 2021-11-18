@@ -115,9 +115,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget?.frame = CGRect(origin: origin, size: size)
 
 			rootWidget?.updateAllFrames(false)
+			rootWidget?.updateFrameSize()
 			rootWidget?.updateAllFrames(true)
 			rootWidget?.updateAbsoluteFrame(toController: self)
-//			updateFrames()
 			detectHover(at: gMapView?.currentMouseLocationInWindow)
 			gMapView?.setNeedsDisplay()
 		}

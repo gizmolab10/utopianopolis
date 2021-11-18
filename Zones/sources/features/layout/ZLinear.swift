@@ -187,12 +187,10 @@ extension ZoneLine {
 	}
 
 	func linearLineKind(for delta: CGFloat) -> ZLineKind {
-		let threshold = 2.0   * kVerticalWeight
-		let  adjusted = delta * kVerticalWeight
-
-		if adjusted > threshold {
+		let   threshold =  CGFloat(2.0)
+		if        delta >  threshold {
 			return .above
-		} else if adjusted < -threshold {
+		} else if delta < -threshold {
 			return .below
 		}
 

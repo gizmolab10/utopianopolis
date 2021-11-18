@@ -18,7 +18,7 @@ class ZoneLine: ZPseudoView {
 	var parentRadius = CGFloat.zero
 	var  parentAngle = CGFloat.zero
 
-	func addDots() {
+	func addDots(sharedDot: ZoneDot?) {
 		if  let     p    = parentWidget {
 			if  let c    = childWidget,
 				!p.hideDragDot,
@@ -30,7 +30,7 @@ class ZoneLine: ZPseudoView {
 			}
 
 			if  revealDot == nil {
-				revealDot  = ZoneDot(view: absoluteView)
+				revealDot  = sharedDot ?? ZoneDot(view: absoluteView)
 
 				addSubpseudoview(revealDot)
 				revealDot?.setupForWidget(p, asReveal: true)
@@ -115,8 +115,10 @@ class ZoneLine: ZPseudoView {
 			let      color = zone.color
 			path.lineWidth = CGFloat(gLineThickness)
 
-			if  gDebugDraw {
-				absoluteFrame.drawColoredRect(.blue)
+			if  kind != .straight {
+				if  gDebugDraw {
+					absoluteFrame.drawColoredRect(.blue)
+				}
 			}
 
 			color?.setStroke()

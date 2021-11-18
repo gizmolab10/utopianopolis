@@ -148,7 +148,6 @@ class ZTextPack: NSObject {
 		if  let z = packedZone,
 			let w = gWidgets.widgetForZone(z),
 			let t = w.textWidget {
-//			w.addDots()
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
 			t.deselectAllText()
 			t.updateTextColor()

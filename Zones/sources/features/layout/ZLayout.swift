@@ -8,6 +8,8 @@
 
 import Foundation
 
+var gIsLinearMapLayout : Bool { return gMapLayoutMode == .linear }
+
 // MARK:- widget
 // MARK:-
 
@@ -56,7 +58,7 @@ extension ZoneWidget {
 	}
 
 	func updateHighlightRect(_ absolute: Bool = false) {
-		if  gMapLayoutMode == .linear,
+		if  gIsLinearMapLayout,
 			childrenLines.count > 0 {
 			childrenLines[0].updateHighlightRect(absolute)
 		}

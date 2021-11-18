@@ -92,4 +92,13 @@ class ZPseudoView: NSObject {
 		}
 	}
 
+	func removeAllSubpseudoviews() {
+		var index   = subpseudoviews.count
+		while index > 0 {
+			index  -= 1
+
+			subpseudoviews.remove(at: index)
+		}
+	}
+
 }

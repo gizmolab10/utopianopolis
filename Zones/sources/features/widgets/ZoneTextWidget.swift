@@ -92,6 +92,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	func updateChildrenViewDrawnSizesOfAllAncestors() {
 		widgetZone?.traverseAncestors { ancestor in
 			if  let widget = ancestor.widget {
+				widget.updateChildrenLinesDrawnSize()
 				widget.updateChildrenViewDrawnSize()
 				widget.updateSize()
 
@@ -107,12 +108,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
     func updateGUI() {
-		let rootWidget = controller?.rootWidget
-
 		updateTooltips()
 		updateChildrenViewDrawnSizesOfAllAncestors()
-		rootWidget?.updateAllFrames()
-		rootWidget?.updateFrameSize()
 		controller?.layoutForCurrentScrollOffset()
     }
 
