@@ -26,11 +26,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                      hereZone : Zone?         { return gHereMaybe ?? gCloud?.rootZone }
 	var                 mapPseudoView : ZPseudoView?
 	var                    rootWidget : ZoneWidget?
+	var                      rootLine : ZoneLine?
 	@IBOutlet var   mapContextualMenu : ZContextualMenu?
 	@IBOutlet var  ideaContextualMenu : ZoneContextualMenu?
 	var           priorScrollLocation = CGPoint.zero
-
-	func updateFrames() {}
 
 	override func setup() {
 		if  let                         map = gMapView {
@@ -52,6 +51,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func drawWidgets(for phase: ZDrawPhase) {
 		if  isBigMap || gDetailsViewIsVisible(for: .vSmallMap) {
+			rootLine?.draw(phase)
 			rootWidget?.traverseAllWidgetProgeny(inReverse: false) { widget in
 				widget.draw(phase)
 			}
@@ -146,6 +146,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
+
+		if  let    r = rootWidget {
+			let line = r.addLineFor(r)
+			rootLine = line
+
+			line.addDots(sharedDot: ZoneDot(view: gMapView))
+		}
 
 		layoutForCurrentScrollOffset()
 

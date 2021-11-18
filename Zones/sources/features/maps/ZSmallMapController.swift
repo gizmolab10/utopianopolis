@@ -23,15 +23,10 @@ class ZSmallMapController: ZMapController {
 	override  var     isBigMap : Bool          { return false }
 	var            isRecentMap : Bool          { return rootWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
-	func updateSmallMap() {
-		self.updateFrames()                           // calculate new origin
-		layoutForCurrentScrollOffset()
-		gMapView?.setAllSubviewsNeedDisplay()
-		gMapView?.displayAllSubviews()
-	}
-
-	override func updateFrames() {
+	override func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gDetailsViewIsVisible(for: .vSmallMap) {
+			super.layoutWidgets(for: nil, .spRelayout)
+
 			if  let           r = rootWidget,
 				let           p = mapPseudoView,
 				let detailsSize = gDetailsController?.view.frame.size,
@@ -47,9 +42,10 @@ class ZSmallMapController: ZMapController {
 				p.absoluteFrame = rect
 				r        .frame = rect
 				p        .frame = rect
-			}
 
-			gMapView?.updateFrames(with: self)
+				gMapView?.setAllSubviewsNeedDisplay()
+				gMapView?.displayAllSubviews()
+			}
 		}
 	}
 

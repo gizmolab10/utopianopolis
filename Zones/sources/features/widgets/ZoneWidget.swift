@@ -172,7 +172,7 @@ class ZoneWidget: ZPseudoView {
 		addLinesView()
 		addChildrenView()
 		addChildrenWidgets()
-		addChildrenLines()
+		addLines()
 
 		if  recursing,
 			let  zone = widgetZone, !visited.contains(zone), zone.hasVisibleChildren {
@@ -290,32 +290,36 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
+	func addLineFor(_ child: ZoneWidget?) -> ZoneLine {
+		let          line = ZoneLine(view: absoluteView)
+		let         level = (parentWidget?.linesLevel ?? -1) + 1
+		line .childWidget = child
+		child?.parentLine = line
+		child?.linesLevel = level
 
-	func addChildrenLines() {
-		let     level = (parentWidget?.linesLevel ?? -1) + 1
-		let sharedDot = gIsLinearMapLayout ? ZoneDot(view: absoluteView) : nil
+		return line
+	}
 
+	func addLines() {
+		let         sharedDot = gIsLinearMapLayout ? ZoneDot(view: absoluteView) : nil
 
 		childrenLines.removeAll()
 		linesView?.removeAllSubpseudoviews()
 
-		func addLineFor(_ child: ZoneWidget?) {
-			let          line = ZoneLine(view: absoluteView)
-			line .childWidget = child
+		func addLine(for child: ZoneWidget?) {
+			let          line = addLineFor(child)
 			line.parentWidget = self
-			child?.parentLine = line
-			child?.linesLevel = level
 
 			line.addDots(sharedDot: sharedDot)
-			childrenLines.append(line)
 			linesView?.addSubpseudoview(line)
+			childrenLines.append(line)
 		}
 
-		if  !(widgetZone?.hasVisibleChildren ?? false) {
-			addLineFor(nil)
+		if  !(widgetZone?.hasVisibleChildren ?? true) {
+			addLine(for: nil)
 		} else {
 			for child in childrenWidgets {
-				addLineFor(child)
+				addLine(for: child)
 			}
 		}
 	}
@@ -393,7 +397,6 @@ class ZoneWidget: ZPseudoView {
 
 			for childLine in childrenLines {
 				childLine.revealDot?.updateFrame(relativeTo: textFrame)
-				childLine.updateLineKind()
 			}
 		}
 	}

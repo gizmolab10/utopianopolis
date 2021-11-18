@@ -126,7 +126,6 @@ class ZTogglingView: ZView {
 		}
 
 		gRelayoutMaps()
-		gSmallMapController?.updateSmallMap()
 	}
 
 	fileprivate func updateTitleButton() {

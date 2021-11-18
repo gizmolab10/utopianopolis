@@ -28,16 +28,6 @@ class ZMapView: ZView {
 		superview?.drawBox(in: self, with:                          ZColor.orange)  // height too small
 	}
 
-	func updateFrames(with controller: ZMapController?) {
-		if  let root = controller?.rootWidget {
-			if  root.drawnSize.height == .zero {
-				controller?.layoutWidgets(for: nil, .spRelayout)
-			}
-
-			root.frame = CGRect(origin: .zero, size: root.drawnSize)
-		}
-	}
-
 	override func draw(_ iDirtyRect: CGRect) {
 		switch mapID {
 			case .mText:

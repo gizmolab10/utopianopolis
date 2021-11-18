@@ -75,7 +75,6 @@ private var canUpdate = true
 func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 	gMapView?.clear()
 	gSignal(for: object, [.spRelayout], onCompletion)
-	gSmallMapController?.updateSmallMap()
 }
 
 func gDeferRedraw(_ closure: Closure) {
