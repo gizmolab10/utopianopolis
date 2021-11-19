@@ -190,28 +190,11 @@ class ZoneWidget: ZPseudoView {
 		}
 
 		textWidget?.layoutText()
-		updateChildrenLinesDrawnSize()
 		updateChildrenViewDrawnSize()
+		updateChildrenLinesDrawnSize()
 		updateSize()
 
 		return count
-	}
-
-	func updateChildrenLinesDrawnSize() {
-		var     width = CGFloat(0.0)
-		var    height = CGFloat(0.0)
-
-		for line in childrenLines {
-			line.updateSize()
-
-			let  size = line.drawnSize
-			height   += size.height
-			if  width < size.width {
-				width = size.width
-			}
-		}
-
-		linesView?.drawnSize = CGSize(width: width, height: height)
 	}
 
 	func addTextView() {
@@ -386,6 +369,23 @@ class ZoneWidget: ZPseudoView {
 		updateDotFrames        (absolute)
 		updateHighlightRect    (absolute)
 		updateChildrenViewFrame(absolute)
+	}
+
+	func updateChildrenLinesDrawnSize() {
+		var     width = CGFloat(0.0)
+		var    height = CGFloat(0.0)
+
+		for line in childrenLines {
+			line.updateSize()
+
+			let  size = line.drawnSize
+			height   += size.height
+			if  width < size.width {
+				width = size.width
+			}
+		}
+
+		linesView?.drawnSize = CGSize(width: width, height: height)
 	}
 
 	fileprivate func updateDotFrames(_ absolute: Bool) {

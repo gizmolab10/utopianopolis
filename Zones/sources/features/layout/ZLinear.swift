@@ -13,29 +13,9 @@ import Foundation
 
 extension ZoneWidget {
 
-	func linearUpdateChildrenViewDrawnSize() {
-		if !hasVisibleChildren {
-			childrenView?  .drawnSize = CGSize.zero
-		} else {
-			var           biggestSize = CGSize.zero
-			var                height = CGFloat.zero
-
-			for child in childrenWidgets {			// traverse progeny, updating their frames
-				let              size = child.drawnSize
-				height               += size.height
-
-				if  biggestSize.width > size.width {
-					biggestSize       = size
-				}
-			}
-
-			childrenView?  .drawnSize = CGSize(width: biggestSize.width, height: height)
-		}
-	}
-
 	func linearUpdateSize() {
 		if  let       t = textWidget,
-			let   lSize = linesView?.drawnSize {
+			let   lSize = linesView?   .drawnSize {
 			let   cSize = childrenView?.drawnSize
 			var   width = cSize?.width  ?? 0.0
 			var  height = cSize?.height ?? 0.0
@@ -51,6 +31,34 @@ extension ZoneWidget {
 
 			drawnSize   = CGSize(width: width, height: height)
 		}
+	}
+
+	func linearUpdateChildrenViewDrawnSize() {
+		var  childrenSize = CGSize.zero
+
+		if  hasVisibleChildren {
+			var    height = CGFloat.zero
+			var     width = CGFloat.zero
+			var     index = childrenWidgets.count
+			while   index > 0 {
+				index    -= 1 // go backwards [up] the children array
+				let child = childrenWidgets[index]
+				let  size = child.drawnSize
+				height   += size.height
+
+				if  width < size.width {
+					width = size.width
+				}
+			}
+
+			childrenSize  = CGSize(width: width, height: height)
+		}
+
+		childrenView?    .drawnSize = childrenSize
+		childrenView?.absoluteFrame = .zero
+		childrenView?        .frame = .zero
+		linesView?   .absoluteFrame = .zero
+		linesView?           .frame = .zero
 	}
 
 	func linearUpdateChildrenFrames(_ absolute: Bool = false) {

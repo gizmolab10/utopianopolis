@@ -22,10 +22,10 @@ class ZMapView: ZView {
 	override func menu(for event: ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
 	func debugDraw() {
-		bounds                 .insetEquallyBy(1.5).drawColoredRect(ZColor.blue)    // too small
-		dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(ZColor.red)     // too tall, too narrow
-		highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(ZColor.purple)  //    ",        "
-		superview?.drawBox(in: self, with:                          ZColor.orange)  // height too small
+		bounds                 .insetEquallyBy(1.5).drawColoredRect(.blue)    // too small
+		dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)     // too tall, too narrow
+		highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(.purple)  //    ",        "
+		superview?.drawBox(in: self, with:                          .orange)  // height too small
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {

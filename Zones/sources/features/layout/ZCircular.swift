@@ -13,26 +13,6 @@ import Foundation
 
 extension ZoneWidget {
 
-	func circularUpdateChildrenViewDrawnSize() {
-		if !hasVisibleChildren {
-			childrenView?.drawnSize = CGSize.zero
-		} else {
-			var         biggestSize = CGSize.zero
-			var              height = CGFloat.zero
-
-			for child in childrenWidgets {			// traverse progeny, updating their frames
-				let            size = child.drawnSize
-				height             += size.height
-
-				if  size.width      > biggestSize.width {
-					biggestSize     = size
-				}
-			}
-
-			childrenView?.drawnSize = CGSize(width: biggestSize.width, height: height)
-		}
-	}
-
 	func circularUpdateSize() {
 		if  let       t = textWidget,
 			let   lSize = linesView?.drawnSize {
@@ -89,6 +69,9 @@ extension ZoneWidget {
 		return [0.0]
 	}
 
+	func circularUpdateChildrenViewDrawnSize() {
+	}
+
 	func circularUpdateChildrenFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var    height = CGFloat.zero
@@ -100,11 +83,11 @@ extension ZoneWidget {
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
 				} else {
-					let           size = child.drawnSize
-					let         origin = CGPoint(x: .zero, y: height)
-					height            += size.height
-					let           rect = CGRect(origin: origin, size: size)
-					child       .frame = rect
+					let    size = child.drawnSize
+					let  origin = CGPoint(x: .zero, y: height)
+					height     += size.height
+					let    rect = CGRect(origin: origin, size: size)
+					child.frame = rect
 				}
 			}
 		}

@@ -15,17 +15,17 @@ var gIsLinearMapLayout : Bool { return gMapLayoutMode == .linear }
 
 extension ZoneWidget {
 
-	func updateChildrenViewDrawnSize() {
-		switch gMapLayoutMode {
-			case .linear:     linearUpdateChildrenViewDrawnSize()
-			case .circular: circularUpdateChildrenViewDrawnSize()
-		}
-	}
-
 	func updateSize() {
 		switch gMapLayoutMode {
 			case .linear:     linearUpdateSize()
 			case .circular: circularUpdateSize()
+		}
+	}
+
+	func updateChildrenViewDrawnSize() {
+		switch gMapLayoutMode {
+			case .linear:     linearUpdateChildrenViewDrawnSize()
+			case .circular: circularUpdateChildrenViewDrawnSize()
 		}
 	}
 
