@@ -1159,14 +1159,19 @@ extension ZoneWidget {
 extension ZoneLine {
 
 	func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
-		switch gMapLayoutMode {
-			case .linear:   return   linearLineRect(from: revealDot, to: targetFrame, kind: kind)
-			case .circular: return circularLineRect(from:   dragDot, to: targetFrame, kind: kind)
+		var    rect = CGRect.zero
+		if  let dot = revealDot {
+			switch gMapLayoutMode {
+				case .linear:   rect =   linearLineRect(from: dot, to: targetFrame, kind: kind)
+				case .circular: rect = circularLineRect(from: dot, to: targetFrame, kind: kind)
+			}
 		}
+
+		return rect
 	}
 
 	func circularLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
-		if  let origin = sourceDot?.absoluteFrame.center {
+		if  let origin = sourceDot?.absoluteActualFrame.center {
 			return CGRect(origin: origin, size: targetFrame.center - origin)
 		}
 

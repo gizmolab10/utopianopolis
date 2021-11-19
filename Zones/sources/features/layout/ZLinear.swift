@@ -194,6 +194,15 @@ extension ZoneLine {
 		return rect
 	}
 
+	func linearStraightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
+		let rect = iRect.centeredHorizontalLine(thick: CGFloat(gLineThickness))
+		let path = ZBezierPath(rect: rect)
+
+		path.setClip()
+
+		return path
+	}
+
 	func linearLineKind(for delta: CGFloat) -> ZLineKind {
 		let   threshold =  CGFloat(2.0)
 		if        delta >  threshold {

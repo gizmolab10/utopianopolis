@@ -37,21 +37,23 @@ extension ZoneWidget {
 		// TODO: use line level, if 0, puff ball spread
 		// else if children count is 4 or less, narrow fan spread, else puff ball spread
 		// puff balls have longer radius
-		// longest if immediate sibling(s) is a (are) puff ball(s)
+		// longer yet if immediate siblings are both puff balls
 
-		if  let            zone = widgetZone, hasVisibleChildren {
+		if  let        zone = widgetZone, hasVisibleChildren {
 			let       count = zone.count
 			var isPuffBall  = true
 			if  linesLevel != 0,
 				count       < 5 {
 				isPuffBall  = false
 			}
+
 			if  absolute {
 				// adjust radius
 			} else {
 				var spreadAngle = Double.pi * 2.0
 				let  startAngle = Double(parentLine?.parentAngle ?? 0.0)
-				if  isPuffBall {
+
+				if !isPuffBall {
 					spreadAngle = spreadAngle * Double(count) / 16.0
 				}
 
@@ -205,6 +207,19 @@ extension ZoneLine {
 		return rect
 	}
 
+	func circularStraightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
+		let  angle = parentAngle
+		let radius = iRect.size.length
+		let  start = angle.upward ? iRect.origin : iRect.topLeft
+		let    end = CGPoint(x: radius, y: CGFloat(0.0)).rotate(by: Double(angle)).offsetBy(start)
+		let   path = ZBezierPath()
+
+		path.move(to: start)
+		path.line(to: end)
+
+		return path
+	}
+
 	func circularUpdateSize() {
 		// TODO: use radius to create point (vector)
 		// use angle to rotate
@@ -222,12 +237,17 @@ extension ZoneLine {
 
 extension ZoneDot {
 
-	func circularUpdateFrame(relativeTo textFrame: CGRect) {
-		let         x = CGPoint(drawnSize).x
-		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-x, 0.0)
-		absoluteFrame = CGRect(origin: origin, size: drawnSize)
+	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
 
-		updateTooltips()
+	func circularUpdateFrame(relativeTo textFrame: CGRect) {
+		if  let         l = line {
+			let     angle = l.parentAngle
+			let    radius = l.parentRadius + (isReveal ? 0.0 : 25.0)
+			let    origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle)).offsetBy(textFrame.center)
+			absoluteFrame = CGRect(origin: origin, size: drawnSize)
+
+			updateTooltips()
+		}
 	}
 
 	func circularDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {

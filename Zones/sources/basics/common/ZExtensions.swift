@@ -612,10 +612,15 @@ extension Double {
 
 	static func ** (base: Double, power: Double) -> Double { return pow(base, power) }
 	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
+	var    upward                                 : Bool   { return self < Double.pi }
+
 }
 
 extension CGFloat {
+
 	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
+	var    upward                                 : Bool   { return self < CGFloat(Double.pi) }
+
 }
 
 infix operator -- : AdditionPrecedence

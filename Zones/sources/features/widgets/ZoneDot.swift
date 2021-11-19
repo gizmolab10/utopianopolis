@@ -50,6 +50,7 @@ class ZoneDot: ZPseudoView {
     // MARK:-
 
     weak var     widget : ZoneWidget?
+	var            line : ZoneLine?
 	var        isReveal = true
 	var      isHovering = false
 	var dragDotIsHidden : Bool    { return widgetZone?.dragDotIsHidden ?? true }

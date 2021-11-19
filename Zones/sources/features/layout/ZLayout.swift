@@ -113,6 +113,13 @@ extension ZoneLine {
 		}
 	}
 
+	func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
+		switch gMapLayoutMode {
+			case .linear:   return   linearStraightPath(in: iRect, isDragLine)
+			case .circular: return circularStraightPath(in: iRect, isDragLine)
+		}
+	}
+
 	func lineKind(to dragRect: CGRect) -> ZLineKind? {
 		switch gMapLayoutMode {
 			case .linear:   return linearLineKind(to: dragRect)

@@ -18,18 +18,20 @@ class ZoneLine: ZPseudoView {
 	var  parentAngle = CGFloat.zero
 
 	func addDots(sharedDot: ZoneDot?) {
-		if  let p          = parentWidget {
-			if  revealDot == nil {
-				revealDot  = sharedDot ?? ZoneDot(view: absoluteView)
+		if  let p               = parentWidget {
+			if  revealDot      == nil {
+				revealDot       = sharedDot ?? ZoneDot(view: absoluteView)
+				revealDot?.line = self
 
 				addSubpseudoview(revealDot)
 				revealDot?.setupForWidget(p, asReveal: true)
 			}
 		}
 
-		if  let c    = childWidget, !c.hideDragDot,
-			dragDot == nil {
-			dragDot  = ZoneDot(view: absoluteView)
+		if  let c         = childWidget, !c.hideDragDot,
+			dragDot      == nil {
+			dragDot       = ZoneDot(view: absoluteView)
+			dragDot?.line = self
 
 			addSubpseudoview(dragDot)
 			dragDot?.setupForWidget(c, asReveal: false)
@@ -65,15 +67,6 @@ class ZoneLine: ZPseudoView {
 		}
 
 		return CGRect.zero
-	}
-
-	func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let rect = iRect.centeredHorizontalLine(thick: CGFloat(gLineThickness))
-		let path = ZBezierPath(rect: rect)
-
-		path.setClip()
-
-		return path
 	}
 
 	func linePath(in iRect: CGRect, kind: ZLineKind?, isDragLine: Bool) -> ZBezierPath {
