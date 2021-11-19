@@ -1881,9 +1881,9 @@ extension String {
 	var unCamelcased: String {
 		guard self.count > 0 else { return self }
 
-		var newString: String = kEmpty
-		let         uppercase = CharacterSet.uppercaseLetters
-		let             first = unicodeScalars.first!
+		var newString = kEmpty
+		let uppercase = CharacterSet.uppercaseLetters
+		let     first = unicodeScalars.first!
 
 		newString.append(Character(first))
 
@@ -1891,8 +1891,8 @@ extension String {
 			if  uppercase.contains(scalar) {
 				newString.append(kSpace)
 			}
-			let character = Character(scalar)
-			newString.append(character)
+
+			newString.append(Character(scalar))
 		}
 
 		return newString.lowercased()
