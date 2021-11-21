@@ -70,7 +70,9 @@ extension ZoneWidget {
 		// children view drawn size is used
 	}
 
-	func circularUpdateChildrenFrames(_ absolute: Bool = false) {
+	func circularUpdateChildrenLinesDrawnSize() {}
+
+	func circularUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var     index = childrenWidgets.count
 			while   index > 0 {
@@ -93,16 +95,13 @@ extension ZoneWidget {
 	}
 
 	func circularUpdateTextViewFrame(_ absolute: Bool = false) {
-		if  let                 p = pseudoTextWidget {
-			if  absolute {
-				p.updateAbsoluteFrame(toController: controller)
+		if  let                 t = pseudoTextWidget {
+			if !absolute {
+				linearUpdateTextViewFrame(absolute)
+			} else {
+				t.updateAbsoluteFrame(toController: controller)
 
-				textWidget?.frame = p.absoluteFrame
-			} else if let    size = textWidget?.drawnSize {
-				let             x = hideDragDot ? 20.0 : gGenericOffset.width + 4.0
-				let             y = (drawnSize.height - size.height) / 2.0
-				let        origin = CGPoint(x: x, y: y)
-				p          .frame = CGRect(origin: origin, size: size)
+				textWidget?.frame = t.absoluteFrame
 			}
 		}
 	}
@@ -121,9 +120,22 @@ extension ZoneWidget {
 		}
 	}
 
+	func circularUpdateHighlightFrame(_ absolute: Bool = false) {
+		if  absolute,
+			let          t = pseudoTextWidget {
+			let      frame = t.absoluteFrame
+			let     center = frame.center
+			let     radius = frame.size.width / 2.0
+			let       rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
+			highlightFrame = rect
+		}
+	}
+
 	func circularDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		let        rect = highlightFrame
-		if rect.isEmpty { return }
+		if  rect.isEmpty {
+			return
+		}
 		let      radius = rect.minimumDimension / 2.08 - 1.0
 		let       color = widgetZone?.color
 		let strokeColor = color?.withAlphaComponent(0.30)
@@ -245,7 +257,7 @@ extension ZoneDot {
 
 	func circularDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		let     angle = line?.angle ?? 0.0
-		let thickness = CGFloat(gLineThickness) * 2.0
+		let thickness = CGFloat(gLineThickness * 2.0)
 		let      rect = iDirtyRect.insetEquallyBy(thickness)
 		var      path = ZBezierPath()
 

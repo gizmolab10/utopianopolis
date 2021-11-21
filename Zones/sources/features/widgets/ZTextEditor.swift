@@ -151,7 +151,7 @@ class ZTextPack: NSObject {
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
 			t.deselectAllText()
 			t.updateTextColor()
-			t.layoutText()
+			t.updateText()
 		}
     }
 

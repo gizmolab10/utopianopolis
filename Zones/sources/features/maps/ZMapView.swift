@@ -29,6 +29,10 @@ class ZMapView: ZView {
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
+		if  iDirtyRect.isEmpty {
+			return
+		}
+
 		switch mapID {
 			case .mText:
 				super            .draw(iDirtyRect)
@@ -54,6 +58,10 @@ class ZMapView: ZView {
 	}
 
 	func clearRect(_ iDirtyRect: CGRect) {
+		if  iDirtyRect.isEmpty {
+			return
+		}
+
 		gBackgroundColor.setFill()
 		ZBezierPath(rect: iDirtyRect).fill()
 	}

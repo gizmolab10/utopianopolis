@@ -49,6 +49,7 @@ class ZoneDot: ZPseudoView {
     // MARK:- properties
     // MARK:-
 
+	var      controller : ZMapController? { return widget?.controller }
     weak var     widget : ZoneWidget?
 	var            line : ZoneLine?
 	var        isReveal = true
@@ -309,6 +310,8 @@ class ZoneDot: ZPseudoView {
 		if  isVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			let       rect = absoluteActualFrame
+
+			if  rect.isEmpty { return }
 
 			if  gDebugDraw {
 				rect.drawColoredRect(.red)

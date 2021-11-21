@@ -61,7 +61,24 @@ extension ZoneWidget {
 		linesView?           .frame = .zero
 	}
 
-	func linearUpdateChildrenFrames(_ absolute: Bool = false) {
+	func linearUpdateChildrenLinesDrawnSize() {
+		var     width = CGFloat(0.0)
+		var    height = CGFloat(0.0)
+
+		for line in childrenLines {
+			line.updateSize()
+
+			let  size = line.drawnSize
+			height   += size.height
+			if  width < size.width {
+				width = size.width
+			}
+		}
+
+		linesView?.drawnSize = CGSize(width: width, height: height)
+	}
+
+	func linearUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var    height = CGFloat.zero
 			var     index = childrenWidgets.count
@@ -83,16 +100,16 @@ extension ZoneWidget {
 	}
 
 	func linearUpdateTextViewFrame(_ absolute: Bool = false) {
-		if  let                 p = pseudoTextWidget {
+		if  let                 t = pseudoTextWidget {
 			if  absolute {
-				p.updateAbsoluteFrame(toController: controller)
+				t.updateAbsoluteFrame(toController: controller)
 
-				textWidget?.frame = p.absoluteFrame
+				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
 				let             x = hideDragDot ? 20.0 : gGenericOffset.width + 4.0
 				let             y = (drawnSize.height - size.height) / 2.0
 				let        origin = CGPoint(x: x, y: y)
-				p          .frame = CGRect(origin: origin, size: size)
+				t          .frame = CGRect(origin: origin, size: size)
 			}
 		}
 	}
@@ -108,6 +125,22 @@ extension ZoneWidget {
 				let   childrenFrame = CGRect(origin: origin, size: c.drawnSize)
 				c            .frame = childrenFrame
 			}
+		}
+	}
+
+	func linearUpdateHighlightFrame(_ absolute: Bool = false) {
+		if  absolute,
+			let              t = textWidget,
+			let            dot = childrenLines.first?.revealDot {
+			let revealDotDelta = dot.isVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
+			let            gap = gGenericOffset.height
+			let       gapInset =  gap         /  8.0
+			let     widthInset = (gap + 32.0) / -2.0
+			let    widthExpand = (gap + 24.0) /  6.0
+			var           rect = t.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
+			rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
+			rect.size  .width += (widthExpand - revealDotDelta) / ratio
+			highlightFrame     = rect
 		}
 	}
 

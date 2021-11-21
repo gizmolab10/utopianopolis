@@ -157,7 +157,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK:-
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
-		sharedDot = gIsLinearMapLayout ? ZoneDot(view: absoluteView) : nil
+		sharedDot = (mode == .linear) ? ZoneDot(view: absoluteView) : nil
 		var count = 1
 
 		if  let v = parentPseudoView,
@@ -190,7 +190,7 @@ class ZoneWidget: ZPseudoView {
 			}
 		}
 
-		textWidget?.layoutText()
+		textWidget?.updateText()
 		updateChildrenViewDrawnSize()
 		updateChildrenLinesDrawnSize()
 		updateSize()
@@ -294,7 +294,7 @@ class ZoneWidget: ZPseudoView {
 			let          line = addLineFor(child)
 			line.parentWidget = self
 
-			line.addDots(sharedDot: gIsLinearMapLayout ? sharedDot : nil)
+			line.addDots(sharedDot: (mode == .linear) ? sharedDot : nil)
 			linesView?.addSubpseudoview(line)
 			childrenLines.append(line)
 		}
@@ -357,6 +357,13 @@ class ZoneWidget: ZPseudoView {
 		setFrameSize(drawnSize)
 	}
 
+	func grandUpdate() {
+		updateAllFrames(false)
+		updateFrameSize()
+		updateAllFrames(true)
+		updateAbsoluteFrame(toController: controller)
+	}
+
 	func updateAllFrames(_ absolute: Bool = false) {
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.updateSubframes(absolute)
@@ -365,28 +372,11 @@ class ZoneWidget: ZPseudoView {
 
 	func updateSubframes(_ absolute: Bool = false) {
 		updateChildrenVectors  (absolute)
-		updateChildrenFrames   (absolute)
+		updateChildrenWidgetFrames   (absolute)
 		updateTextViewFrame    (absolute)
 		updateDotFrames        (absolute)
-		updateHighlightRect    (absolute)
+		updateHighlightFrame   (absolute)
 		updateChildrenViewFrame(absolute)
-	}
-
-	func updateChildrenLinesDrawnSize() {
-		var     width = CGFloat(0.0)
-		var    height = CGFloat(0.0)
-
-		for line in childrenLines {
-			line.updateSize()
-
-			let  size = line.drawnSize
-			height   += size.height
-			if  width < size.width {
-				width = size.width
-			}
-		}
-
-		linesView?.drawnSize = CGSize(width: width, height: height)
 	}
 
 	fileprivate func updateDotFrames(_ absolute: Bool) {

@@ -18,12 +18,13 @@ var gMapController:  ZMapController? { return gControllers.controllerForID(.idBi
 var gMapView:        ZMapView?       { return gDragView?.mapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
-    
-	override  var        controllerID : ZControllerID { return .idBigMap }
-	var                    widgetType : ZWidgetType   { return .tBigMap }
-	var                    isExemplar : Bool          { return false }
-	var                      isBigMap : Bool          { return true }
-	var                      hereZone : Zone?         { return gHereMaybe ?? gCloud?.rootZone }
+
+	var                 mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
+	override  var        controllerID : ZControllerID  { return .idBigMap }
+	var                    widgetType : ZWidgetType    { return .tBigMap }
+	var                    isExemplar : Bool           { return false }
+	var                      isBigMap : Bool           { return true }
+	var                      hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
 	var                 mapPseudoView : ZPseudoView?
 	var                    rootWidget : ZoneWidget?
 	var                      rootLine : ZoneLine?
@@ -116,10 +117,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let        origin = (isBigMap ? relocate : .zero) + offset
 			rootWidget?.frame = CGRect(origin: origin, size: size)
 
-			rootWidget?.updateAllFrames(false)
-			rootWidget?.updateFrameSize()
-			rootWidget?.updateAllFrames(true)
-			rootWidget?.updateAbsoluteFrame(toController: self)
+			rootWidget?.grandUpdate()
 			detectHover(at: gMapView?.currentMouseLocationInWindow)
 			gMapView?.setNeedsDisplay()
 		}

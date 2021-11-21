@@ -14,6 +14,7 @@ class ZoneLine: ZPseudoView {
 	var    revealDot : ZoneDot?
 	var  childWidget : ZoneWidget?
 	var parentWidget : ZoneWidget?
+	var   controller : ZMapController? { return parentWidget?.controller }
 	var  angle = CGFloat.zero
 
 	func addDots(sharedDot: ZoneDot?) {
@@ -77,23 +78,6 @@ class ZoneLine: ZPseudoView {
 		}
 
 		return ZBezierPath()
-	}
-
-	func updateHighlightRect(_ absolute: Bool = false) {
-		if  absolute,
-			let              p = parentWidget,
-			let              t = p.textWidget,
-			let            dot = revealDot {
-			let revealDotDelta = dot.isVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
-			let            gap = gGenericOffset.height
-			let       gapInset =  gap         /  8.0
-			let     widthInset = (gap + 32.0) / -2.0
-			let    widthExpand = (gap + 24.0) /  6.0
-			var           rect = t.frame.insetBy(dx: (widthInset - gapInset - 2.0) * p.ratio, dy: -gapInset)               // get size from text widget
-			rect.size .height += (kHighlightHeightOffset + 2.0) / p.ratio
-			rect.size  .width += (widthExpand - revealDotDelta) / p.ratio
-			p.highlightFrame   = rect
-		}
 	}
 
 	func drawLine() {

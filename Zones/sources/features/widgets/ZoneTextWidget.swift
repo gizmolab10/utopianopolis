@@ -26,11 +26,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	override var preferredFont : ZFont   { return (widget?.type.isBigMap ?? true) ? gWidgetFont : gSmallMapFont }
     var             widgetZone : Zone?   { return  widget?.widgetZone }
 	var               textSize : CGSize? { return text?.sizeWithFont(preferredFont) }
+	var             controller : ZMapController? { return widget?.controller }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
 	var              drawnSize = CGSize.zero
 	var             isHovering = false
-
+	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool { return true }
 
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
@@ -69,10 +70,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		updateTracking()
     }
 
-	var controller: ZMapController? {
-		return widget?.controller
-	}
-
 	override func menu(for event: ZEvent) -> ZMenu? {
 		let         contextualMenu = controller?.ideaContextualMenu
 		contextualMenu?.textWidget = self
@@ -80,11 +77,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		return contextualMenu
 	}
 
-	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-		return true
-	}
-
-	func layoutText(isEditing: Bool = false) {
+	func updateText(isEditing: Bool = false) {
 		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
 		updateTooltips()
 	}

@@ -8,64 +8,71 @@
 
 import Foundation
 
-var gIsLinearMapLayout : Bool { return gMapLayoutMode == .linear }
-
 // MARK:- widget
 // MARK:-
 
 extension ZoneWidget {
 
+	var mode: ZMapLayoutMode { return controller?.mapLayoutMode ?? .linear }
+
 	func updateSize() {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearUpdateSize()
 			case .circular: circularUpdateSize()
 		}
 	}
 
 	func updateChildrenViewDrawnSize() {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearUpdateChildrenViewDrawnSize()
 			case .circular: circularUpdateChildrenViewDrawnSize()
 		}
 	}
 
+	func updateChildrenLinesDrawnSize() {
+		switch mode {
+			case .linear:     linearUpdateChildrenLinesDrawnSize()
+			case .circular: circularUpdateChildrenLinesDrawnSize()
+		}
+	}
+
 	func updateChildrenVectors(_ absolute: Bool = false) {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:   break
 			case .circular: circularUpdateChildrenVectors(absolute)
 		}
 	}
 
-	func updateChildrenFrames(_ absolute: Bool = false) {
-		switch gMapLayoutMode {
-			case .linear:     linearUpdateChildrenFrames(absolute)
-			case .circular: circularUpdateChildrenFrames(absolute)
+	func updateChildrenWidgetFrames(_ absolute: Bool = false) {
+		switch mode {
+			case .linear:     linearUpdateChildrenWidgetFrames(absolute)
+			case .circular: circularUpdateChildrenWidgetFrames(absolute)
 		}
 	}
 
 	func updateTextViewFrame(_ absolute: Bool = false) {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearUpdateTextViewFrame(absolute)
 			case .circular: circularUpdateTextViewFrame(absolute)
 		}
 	}
 
 	func updateChildrenViewFrame(_ absolute: Bool = false) {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearUpdateChildrenViewFrame(absolute)
 			case .circular: circularUpdateChildrenViewFrame(absolute)
 		}
 	}
 
-	func updateHighlightRect(_ absolute: Bool = false) {
-		if  gIsLinearMapLayout,
-			childrenLines.count > 0 {
-			childrenLines[0].updateHighlightRect(absolute)
+	func updateHighlightFrame(_ absolute: Bool = false) {
+		switch mode {
+			case .linear:     linearUpdateHighlightFrame(absolute)
+			case .circular: circularUpdateHighlightFrame(absolute)
 		}
 	}
 
 	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearDrawSelectionHighlight(dashes, thin)
 			case .circular: circularDrawSelectionHighlight(dashes, thin)
 		}
@@ -78,8 +85,10 @@ extension ZoneWidget {
 
 extension ZoneDot {
 
+	var mode: ZMapLayoutMode { return controller?.mapLayoutMode ?? .linear }
+
 	func updateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
 			case .circular: circularUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
 		}
@@ -88,7 +97,7 @@ extension ZoneDot {
 	}
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearDrawMainDot(in: iDirtyRect, using: parameters)
 			case .circular: circularDrawMainDot(in: iDirtyRect, using: parameters)
 		}
@@ -101,36 +110,38 @@ extension ZoneDot {
 
 extension ZoneLine {
 
+	var mode: ZMapLayoutMode { return controller?.mapLayoutMode ?? .linear }
+
 	var absoluteDropDotRect: CGRect {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:   return   linearAbsoluteDropDotRect
 			case .circular: return circularAbsoluteDropDotRect
 		}
 	}
 
 	var lineRect : CGRect {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:   return   linearLineRect
 			case .circular: return circularLineRect
 		}
 	}
 
 	func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:   return   linearStraightPath(in: iRect, isDragLine)
 			case .circular: return circularStraightPath(in: iRect, isDragLine)
 		}
 	}
 
 	func lineKind(to dragRect: CGRect) -> ZLineKind? {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:   return linearLineKind(to: dragRect)
 			case .circular: return .straight
 		}
 	}
 
 	func updateSize() {
-		switch gMapLayoutMode {
+		switch mode {
 			case .linear:     linearUpdateSize()
 			case .circular: circularUpdateSize()
 		}
