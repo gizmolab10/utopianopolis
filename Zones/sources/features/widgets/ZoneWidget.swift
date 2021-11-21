@@ -98,7 +98,7 @@ class ZoneWidget: ZPseudoView {
 	let         widgetObject = ZWidgetObject  ()
 	var      childrenWidgets = ZoneWidgetArray()
 	var       highlightFrame = CGRect .zero
-	var        childrenLines = [ZoneLine]()
+	var        childrenLines =       [ZoneLine]()
 	var         childrenView :     ZPseudoView?
 	var            linesView :     ZPseudoView?
 	var            sharedDot :         ZoneDot?
@@ -127,7 +127,7 @@ class ZoneWidget: ZPseudoView {
 		return result!
 	}
 
-	var controller: ZMapController? {
+	override var controller: ZMapController? {
 		if type.isBigMap   { return      gMapController }
 		if type.isRecent   { return gSmallMapController }
 		if type.isFavorite { return gSmallMapController }
@@ -157,7 +157,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK:-
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
-		sharedDot = (mode == .linear) ? ZoneDot(view: absoluteView) : nil
+		sharedDot = (mode == .linearMode) ? ZoneDot(view: absoluteView) : nil
 		var count = 1
 
 		if  let v = parentPseudoView,
@@ -294,7 +294,7 @@ class ZoneWidget: ZPseudoView {
 			let          line = addLineFor(child)
 			line.parentWidget = self
 
-			line.addDots(sharedDot: (mode == .linear) ? sharedDot : nil)
+			line.addDots(sharedDot: (mode == .linearMode) ? sharedDot : nil)
 			linesView?.addSubpseudoview(line)
 			childrenLines.append(line)
 		}

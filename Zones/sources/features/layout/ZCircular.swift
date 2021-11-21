@@ -13,7 +13,7 @@ import Foundation
 
 extension ZoneWidget {
 
-	func circularUpdateSize() {
+	func circularModeUpdateSize() {
 		if  let       t = textWidget,
 			let   lSize = linesView?.drawnSize {
 			let   cSize = childrenView?.drawnSize
@@ -33,7 +33,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularUpdateChildrenVectors(_ absolute: Bool = false) {
+	func circularModeUpdateChildrenVectors(_ absolute: Bool = false) {
 		// TODO: use line level, if 0, puff ball spread
 		// else if children count is 4 or less, narrow fan spread, else puff ball spread
 		// puff balls have longer radius
@@ -66,13 +66,13 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularUpdateChildrenViewDrawnSize() {
+	func circularModeUpdateChildrenViewDrawnSize() {
 		// children view drawn size is used
 	}
 
-	func circularUpdateChildrenLinesDrawnSize() {}
+	func circularModeUpdateChildrenLinesDrawnSize() {}
 
-	func circularUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
+	func circularModeUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var     index = childrenWidgets.count
 			while   index > 0 {
@@ -94,10 +94,10 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularUpdateTextViewFrame(_ absolute: Bool = false) {
+	func circularModeUpdateTextViewFrame(_ absolute: Bool = false) {
 		if  let                 t = pseudoTextWidget {
 			if !absolute {
-				linearUpdateTextViewFrame(absolute)
+				linearModeUpdateTextViewFrame(absolute)
 			} else {
 				t.updateAbsoluteFrame(toController: controller)
 
@@ -106,7 +106,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularUpdateChildrenViewFrame(_ absolute: Bool = false) {
+	func circularModeUpdateChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren, let c = childrenView {
 			if  absolute {
 				c.updateAbsoluteFrame(toController: controller)
@@ -120,7 +120,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularUpdateHighlightFrame(_ absolute: Bool = false) {
+	func circularModeUpdateHighlightFrame(_ absolute: Bool = false) {
 		if  absolute,
 			let          t = pseudoTextWidget {
 			let      frame = t.absoluteFrame
@@ -131,7 +131,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
+	func circularModeDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		let        rect = highlightFrame
 		if  rect.isEmpty {
 			return
@@ -162,11 +162,11 @@ extension ZoneWidget {
 
 extension ZoneLine {
 
-	var circularLineRect : CGRect {
+	var circularModeLineRect : CGRect {
 		return .zero // TODO
 	}
 
-	var circularAbsoluteDropDotRect: CGRect {
+	var circularModeAbsoluteDropDotRect: CGRect {
 		var rect = CGRect()
 
 		if  let zone = parentWidget?.widgetZone {
@@ -217,12 +217,17 @@ extension ZoneLine {
 		return rect
 	}
 
-	func circularStraightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
+	func circularModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
 		let  angle = angle
 		let radius = iRect.size.length
 		let  start = angle.upward ? iRect.origin : iRect.topLeft
 		let    end = CGPoint(x: radius, y: CGFloat(0.0)).rotate(by: Double(angle)).offsetBy(start)
 		let   path = ZBezierPath()
+
+//		if  gDebugDraw {
+//			let  r = CGRect(start: start, extent: end)
+//			r.drawColoredRect(.blue)
+//		}
 
 		path.move(to: start)
 		path.line(to: end)
@@ -230,7 +235,7 @@ extension ZoneLine {
 		return path
 	}
 
-	func circularUpdateSize() {
+	func circularModeUpdateSize() {
 		// TODO: use radius to create point (vector)
 		// use angle to rotate
 		// use this to create drawnSize
@@ -245,7 +250,7 @@ extension ZoneDot {
 
 	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
 
-	func circularUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
+	func circularModeUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		if  let         l = line,
 			let         w = l.parentWidget {
 			let     angle = l.angle
@@ -255,7 +260,7 @@ extension ZoneDot {
 		}
 	}
 
-	func circularDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
+	func circularModeDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		let     angle = line?.angle ?? 0.0
 		let thickness = CGFloat(gLineThickness * 2.0)
 		let      rect = iDirtyRect.insetEquallyBy(thickness)

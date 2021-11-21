@@ -1162,15 +1162,15 @@ extension ZoneLine {
 		var    rect = CGRect.zero
 		if  let dot = revealDot {
 			switch gMapLayoutMode {
-				case .linear:   rect =   linearLineRect(from: dot, to: targetFrame, kind: kind)
-				case .circular: rect = circularLineRect(from: dot, to: targetFrame, kind: kind)
+				case .linearMode:   rect =   linearModeLineRect(from: dot, to: targetFrame, kind: kind)
+				case .circularMode: rect = circularModeLineRect(from: dot, to: targetFrame, kind: kind)
 			}
 		}
 
 		return rect
 	}
 
-	func circularLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+	func circularModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
 		if  let origin = sourceDot?.absoluteActualFrame.center {
 			return CGRect(origin: origin, size: targetFrame.center - origin)
 		}
@@ -1178,7 +1178,7 @@ extension ZoneLine {
 		return .zero
 	}
 
-    func linearLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+    func linearModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
 		var                 rect = CGRect.zero
 
         if  kind                != nil,
@@ -1206,7 +1206,7 @@ extension ZoneLine {
         return rect
     }
 
-    func curvedPath(in iRect: CGRect, kind: ZLineKind) -> ZBezierPath {
+    func curvedLinePath(in iRect: CGRect, kind: ZLineKind) -> ZBezierPath {
         ZBezierPath(rect: iRect).setClip()
 
         let      dotHeight = CGFloat(gDotHeight)

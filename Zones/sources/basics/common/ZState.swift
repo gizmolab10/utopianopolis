@@ -475,7 +475,7 @@ var gCountsMode: ZCountsMode {
 var gMapLayoutMode: ZMapLayoutMode {
 	get {
 		let value  = UserDefaults.standard.object(forKey: kMapLayoutMode) as? Int
-		var mode   = ZMapLayoutMode.linear
+		var mode   = ZMapLayoutMode.linearMode
 
 		if  value != nil {
 			mode   = ZMapLayoutMode(rawValue: value!)!

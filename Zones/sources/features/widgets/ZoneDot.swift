@@ -49,15 +49,15 @@ class ZoneDot: ZPseudoView {
     // MARK:- properties
     // MARK:-
 
-	var      controller : ZMapController? { return widget?.controller }
-    weak var     widget : ZoneWidget?
-	var            line : ZoneLine?
-	var        isReveal = true
-	var      isHovering = false
-	var dragDotIsHidden : Bool    { return widgetZone?.dragDotIsHidden ?? true }
-	var      isDragDrop : Bool    { return widget == gDropWidget }
-    var      widgetZone : Zone?   { return widget?.widgetZone }
-	var           ratio : CGFloat { return widget?.ratio ?? 1.0 }
+	var                line : ZoneLine?
+	weak var         widget : ZoneWidget?
+	override var controller : ZMapController? { return widget?.controller }
+	var     dragDotIsHidden : Bool            { return widgetZone?.dragDotIsHidden ?? true }
+	var          isDragDrop : Bool            { return widget == gDropWidget }
+    var          widgetZone : Zone?           { return widget?.widgetZone }
+	var               ratio : CGFloat         { return widget?.ratio ?? 1.0 }
+	var            isReveal = true
+	var          isHovering = false
 
 	var absoluteActualFrame: CGRect {
 		let     offset = absoluteFrame.height / -9.0
@@ -313,9 +313,9 @@ class ZoneDot: ZPseudoView {
 
 			if  rect.isEmpty { return }
 
-			if  gDebugDraw {
-				rect.drawColoredRect(.red)
-			}
+//			if  gDebugDraw {
+//				rect.drawColoredRect(.red)
+//			}
 
 			drawDot           (rect, parameters)
 			drawSurroundingDot(rect, parameters)

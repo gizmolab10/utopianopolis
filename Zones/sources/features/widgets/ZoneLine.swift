@@ -10,12 +10,12 @@ import Foundation
 
 class ZoneLine: ZPseudoView {
 
-	var      dragDot : ZoneDot?
-	var    revealDot : ZoneDot?
-	var  childWidget : ZoneWidget?
-	var parentWidget : ZoneWidget?
-	var   controller : ZMapController? { return parentWidget?.controller }
-	var  angle = CGFloat.zero
+	var             dragDot : ZoneDot?
+	var           revealDot : ZoneDot?
+	var         childWidget : ZoneWidget?
+	var        parentWidget : ZoneWidget?
+	override var controller : ZMapController? { return (parentWidget ?? childWidget)?.controller }
+	var               angle = CGFloat.zero
 
 	func addDots(sharedDot: ZoneDot?) {
 		if  let p               = parentWidget {
@@ -72,8 +72,8 @@ class ZoneLine: ZPseudoView {
 	func linePath(in iRect: CGRect, kind: ZLineKind?, isDragLine: Bool) -> ZBezierPath {
 		if  let    k = kind {
 			switch k {
-				case .straight: return straightPath(in: iRect, isDragLine)
-				default:        return   curvedPath(in: iRect, kind: k)
+				case .straight: return straightLinePath(in: iRect, isDragLine)
+				default:        return   curvedLinePath(in: iRect, kind: k)
 			}
 		}
 
@@ -88,12 +88,6 @@ class ZoneLine: ZPseudoView {
 			let       path = linePath(in:  rect, kind: kind, isDragLine: false)
 			let      color = zone.color
 			path.lineWidth = CGFloat(gLineThickness)
-
-			if  kind != .straight {
-				if  gDebugDraw {
-					absoluteFrame.drawColoredRect(.blue)
-				}
-			}
 
 			color?.setStroke()
 			path.stroke()

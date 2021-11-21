@@ -13,7 +13,7 @@ import Foundation
 
 extension ZoneWidget {
 
-	func linearUpdateSize() {
+	func linearModeUpdateSize() {
 		if  let       t = textWidget,
 			let   lSize = linesView?   .drawnSize {
 			let   cSize = childrenView?.drawnSize
@@ -33,7 +33,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearUpdateChildrenViewDrawnSize() {
+	func linearModeUpdateChildrenViewDrawnSize() {
 		var  childrenSize = CGSize.zero
 
 		if  hasVisibleChildren {
@@ -61,7 +61,7 @@ extension ZoneWidget {
 		linesView?           .frame = .zero
 	}
 
-	func linearUpdateChildrenLinesDrawnSize() {
+	func linearModeUpdateChildrenLinesDrawnSize() {
 		var     width = CGFloat(0.0)
 		var    height = CGFloat(0.0)
 
@@ -78,7 +78,7 @@ extension ZoneWidget {
 		linesView?.drawnSize = CGSize(width: width, height: height)
 	}
 
-	func linearUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
+	func linearModeUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var    height = CGFloat.zero
 			var     index = childrenWidgets.count
@@ -99,7 +99,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearUpdateTextViewFrame(_ absolute: Bool = false) {
+	func linearModeUpdateTextViewFrame(_ absolute: Bool = false) {
 		if  let                 t = pseudoTextWidget {
 			if  absolute {
 				t.updateAbsoluteFrame(toController: controller)
@@ -114,7 +114,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearUpdateChildrenViewFrame(_ absolute: Bool = false) {
+	func linearModeUpdateChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren, let c = childrenView {
 			if  absolute {
 				c.updateAbsoluteFrame(toController: controller)
@@ -128,7 +128,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearUpdateHighlightFrame(_ absolute: Bool = false) {
+	func linearModeUpdateHighlightFrame(_ absolute: Bool = false) {
 		if  absolute,
 			let              t = textWidget,
 			let            dot = childrenLines.first?.revealDot {
@@ -144,7 +144,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
+	func linearModeDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		let        rect = highlightFrame
 		let      radius = rect.minimumDimension / 2.08 - 1.0
 		let       color = widgetZone?.color
@@ -172,11 +172,11 @@ extension ZoneWidget {
 
 extension ZoneLine {
 
-	var linearLineRect : CGRect {
+	var linearModeLineRect : CGRect {
 		return .zero
 	}
 
-	var linearAbsoluteDropDotRect: CGRect {
+	var linearModeAbsoluteDropDotRect: CGRect {
 		var rect = CGRect()
 
 		if  let zone = parentWidget?.widgetZone {
@@ -227,7 +227,7 @@ extension ZoneLine {
 		return rect
 	}
 
-	func linearStraightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
+	func linearModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
 		let rect = iRect.centeredHorizontalLine(thick: CGFloat(gLineThickness))
 		let path = ZBezierPath(rect: rect)
 
@@ -236,7 +236,7 @@ extension ZoneLine {
 		return path
 	}
 
-	func linearLineKind(for delta: CGFloat) -> ZLineKind {
+	func linearModeLineKind(for delta: CGFloat) -> ZLineKind {
 		let   threshold =  CGFloat(2.0)
 		if        delta >  threshold {
 			return .above
@@ -247,14 +247,14 @@ extension ZoneLine {
 		return .straight
 	}
 
-	func linearLineKind(to targetRect: CGRect) -> ZLineKind? {
+	func linearModeLineKind(to targetRect: CGRect) -> ZLineKind? {
 		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
 		let      delta = targetRect.midY - toggleRect.midY
 
-		return linearLineKind(for: delta)
+		return linearModeLineKind(for: delta)
 	}
 
-	func linearUpdateSize() {
+	func linearModeUpdateSize() {
 		// all lines have at least a reveal dot
 		drawnSize = revealDot?.updateSize() ?? .zero
 	}
@@ -266,13 +266,13 @@ extension ZoneLine {
 
 extension ZoneDot {
 
-	func linearUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
+	func linearModeUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		let         x = CGPoint(drawnSize).x
 		let    origin = isReveal ? absoluteTextFrame.bottomRight : absoluteTextFrame.origin.offsetBy(-x, 0.0)
 		absoluteFrame = CGRect(origin: origin, size: drawnSize)
 	}
 
-	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
+	func linearModeDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		let  thickness = CGFloat(gLineThickness) * 2.0
 		var       path = ZBezierPath()
 

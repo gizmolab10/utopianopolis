@@ -13,68 +13,66 @@ import Foundation
 
 extension ZoneWidget {
 
-	var mode: ZMapLayoutMode { return controller?.mapLayoutMode ?? .linear }
-
 	func updateSize() {
 		switch mode {
-			case .linear:     linearUpdateSize()
-			case .circular: circularUpdateSize()
+			case .linearMode:     linearModeUpdateSize()
+			case .circularMode: circularModeUpdateSize()
 		}
 	}
 
 	func updateChildrenViewDrawnSize() {
 		switch mode {
-			case .linear:     linearUpdateChildrenViewDrawnSize()
-			case .circular: circularUpdateChildrenViewDrawnSize()
+			case .linearMode:     linearModeUpdateChildrenViewDrawnSize()
+			case .circularMode: circularModeUpdateChildrenViewDrawnSize()
 		}
 	}
 
 	func updateChildrenLinesDrawnSize() {
 		switch mode {
-			case .linear:     linearUpdateChildrenLinesDrawnSize()
-			case .circular: circularUpdateChildrenLinesDrawnSize()
+			case .linearMode:     linearModeUpdateChildrenLinesDrawnSize()
+			case .circularMode: circularModeUpdateChildrenLinesDrawnSize()
 		}
 	}
 
 	func updateChildrenVectors(_ absolute: Bool = false) {
 		switch mode {
-			case .linear:   break
-			case .circular: circularUpdateChildrenVectors(absolute)
+			case .linearMode:   break
+			case .circularMode: circularModeUpdateChildrenVectors(absolute)
 		}
 	}
 
 	func updateChildrenWidgetFrames(_ absolute: Bool = false) {
 		switch mode {
-			case .linear:     linearUpdateChildrenWidgetFrames(absolute)
-			case .circular: circularUpdateChildrenWidgetFrames(absolute)
+			case .linearMode:     linearModeUpdateChildrenWidgetFrames(absolute)
+			case .circularMode: circularModeUpdateChildrenWidgetFrames(absolute)
 		}
 	}
 
 	func updateTextViewFrame(_ absolute: Bool = false) {
 		switch mode {
-			case .linear:     linearUpdateTextViewFrame(absolute)
-			case .circular: circularUpdateTextViewFrame(absolute)
+			case .linearMode:     linearModeUpdateTextViewFrame(absolute)
+			case .circularMode: circularModeUpdateTextViewFrame(absolute)
 		}
 	}
 
 	func updateChildrenViewFrame(_ absolute: Bool = false) {
 		switch mode {
-			case .linear:     linearUpdateChildrenViewFrame(absolute)
-			case .circular: circularUpdateChildrenViewFrame(absolute)
+			case .linearMode:     linearModeUpdateChildrenViewFrame(absolute)
+			case .circularMode: circularModeUpdateChildrenViewFrame(absolute)
 		}
 	}
 
 	func updateHighlightFrame(_ absolute: Bool = false) {
 		switch mode {
-			case .linear:     linearUpdateHighlightFrame(absolute)
-			case .circular: circularUpdateHighlightFrame(absolute)
+			case .linearMode:     linearModeUpdateHighlightFrame(absolute)
+			case .circularMode: circularModeUpdateHighlightFrame(absolute)
 		}
 	}
 
 	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		switch mode {
-			case .linear:     linearDrawSelectionHighlight(dashes, thin)
-			case .circular: circularDrawSelectionHighlight(dashes, thin)
+			case .linearMode:     linearModeDrawSelectionHighlight(dashes, thin)
+			case .circularMode: circularModeDrawSelectionHighlight(dashes, thin)
 		}
 	}
 
@@ -85,12 +83,10 @@ extension ZoneWidget {
 
 extension ZoneDot {
 
-	var mode: ZMapLayoutMode { return controller?.mapLayoutMode ?? .linear }
-
 	func updateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		switch mode {
-			case .linear:     linearUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
-			case .circular: circularUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
+			case .linearMode:     linearModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
+			case .circularMode: circularModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
 		}
 
 		updateTooltips()
@@ -98,8 +94,8 @@ extension ZoneDot {
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		switch mode {
-			case .linear:     linearDrawMainDot(in: iDirtyRect, using: parameters)
-			case .circular: circularDrawMainDot(in: iDirtyRect, using: parameters)
+			case .linearMode:     linearModeDrawMainDot(in: iDirtyRect, using: parameters)
+			case .circularMode: circularModeDrawMainDot(in: iDirtyRect, using: parameters)
 		}
 	}
 
@@ -110,40 +106,38 @@ extension ZoneDot {
 
 extension ZoneLine {
 
-	var mode: ZMapLayoutMode { return controller?.mapLayoutMode ?? .linear }
-
 	var absoluteDropDotRect: CGRect {
 		switch mode {
-			case .linear:   return   linearAbsoluteDropDotRect
-			case .circular: return circularAbsoluteDropDotRect
+			case .linearMode:   return   linearModeAbsoluteDropDotRect
+			case .circularMode: return circularModeAbsoluteDropDotRect
 		}
 	}
 
 	var lineRect : CGRect {
 		switch mode {
-			case .linear:   return   linearLineRect
-			case .circular: return circularLineRect
+			case .linearMode:   return   linearModeLineRect
+			case .circularMode: return circularModeLineRect
 		}
 	}
 
-	func straightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
+	func straightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
 		switch mode {
-			case .linear:   return   linearStraightPath(in: iRect, isDragLine)
-			case .circular: return circularStraightPath(in: iRect, isDragLine)
+			case .linearMode:   return   linearModeStraightLinePath(in: iRect, isDragLine)
+			case .circularMode: return circularModeStraightLinePath(in: iRect, isDragLine)
 		}
 	}
 
 	func lineKind(to dragRect: CGRect) -> ZLineKind? {
 		switch mode {
-			case .linear:   return linearLineKind(to: dragRect)
-			case .circular: return .straight
+			case .linearMode:   return linearModeLineKind(to: dragRect)
+			case .circularMode: return .straight
 		}
 	}
 
 	func updateSize() {
 		switch mode {
-			case .linear:     linearUpdateSize()
-			case .circular: circularUpdateSize()
+			case .linearMode:     linearModeUpdateSize()
+			case .circularMode: circularModeUpdateSize()
 		}
 	}
 

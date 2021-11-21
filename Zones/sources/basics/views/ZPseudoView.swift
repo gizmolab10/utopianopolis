@@ -24,9 +24,11 @@ class ZPseudoView: NSObject {
 	var      identifier = NSUserInterfaceItemIdentifier("")
 	var  subpseudoviews = [ZPseudoView] ()
 	var superpseudoview : ZPseudoView?
+	var      controller : ZMapController? { return nil }
 	var      toolTipTag : NSView.ToolTipTag?
 	var    absoluteView : ZView?
 	var       drawnView : ZView?
+	var            mode : ZMapLayoutMode { return controller?.mapLayoutMode ?? .linearMode }
 
 	override var description: String { return toolTip ?? super.description }
 	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses
