@@ -106,16 +106,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		layoutForCurrentScrollOffset()
 	}
 
-	var zClassName: String {
-		var parts = className.components(separatedBy: ".")
-		let  name = parts[1].substring(fromInclusive: 1).unCamelcased.uppercased()
-		parts     = name.components(separatedBy: kSpace).dropLast()
-
-		return parts.joined(separator: kSpace)
-	}
-
 	func layoutForCurrentScrollOffset() {
-		print("\(zClassName) layoutForCurrentScrollOffset")
+		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
+
 		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y              = -offset.y               // why?
 		if  let          size = rootWidget?.drawnSize {
@@ -139,7 +132,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize { return }
 
-		print("\(zClassName) layoutWidgets")
+		printDebug(.dSpeed, "\(zClassName) layoutWidgets")
 
 		var specificIndex:    Int?
 		let specificView           = mapPseudoView

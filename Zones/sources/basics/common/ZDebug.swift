@@ -13,7 +13,7 @@ import Foundation
 //     create zone, trait ONLY if from dict
 // NOT async: create bookmarks
 
-var          gPrintModes : ZPrintMode    = []
+var          gPrintModes : ZPrintMode    = [] // [.dSpeed]
 var          gDebugModes : ZDebugMode    = []
 var        gCoreDataMode : ZCoreDataMode = []
 
@@ -21,12 +21,12 @@ var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gIsUsingCoreData }
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gIsUsingCoreData }
 var     gIsUsingCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gIsUsingCoreData }
-var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
-var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
-var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
+var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
+var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
+var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 var          gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
 var           gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
 var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }

@@ -226,8 +226,6 @@ extension ZoneLine {
 		drawnSize = revealDot?.updateSize() ?? .zero
 	}
 
-	func linearUpdateFrame(relativeTo textFrame: CGRect) {}
-
 }
 
 // MARK:- dot
@@ -235,12 +233,10 @@ extension ZoneLine {
 
 extension ZoneDot {
 
-	func linearUpdateFrame(relativeTo textFrame: CGRect) {
+	func linearUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		let         x = CGPoint(drawnSize).x
-		let    origin = isReveal ? textFrame.bottomRight : textFrame.origin.offsetBy(-x, 0.0)
+		let    origin = isReveal ? absoluteTextFrame.bottomRight : absoluteTextFrame.origin.offsetBy(-x, 0.0)
 		absoluteFrame = CGRect(origin: origin, size: drawnSize)
-
-		updateTooltips()
 	}
 
 	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {

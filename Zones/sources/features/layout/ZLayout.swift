@@ -78,11 +78,13 @@ extension ZoneWidget {
 
 extension ZoneDot {
 
-	func updateFrame(relativeTo textFrame: CGRect) {
+	func updateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		switch gMapLayoutMode {
-			case .linear:     linearUpdateFrame(relativeTo: textFrame)
-			case .circular: circularUpdateFrame(relativeTo: textFrame)
+			case .linear:     linearUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
+			case .circular: circularUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
 		}
+
+		updateTooltips()
 	}
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
@@ -131,13 +133,6 @@ extension ZoneLine {
 		switch gMapLayoutMode {
 			case .linear:     linearUpdateSize()
 			case .circular: circularUpdateSize()
-		}
-	}
-
-	func updateFrame(relativeTo textFrame: CGRect) {
-		switch gMapLayoutMode {
-			case .linear:     linearUpdateFrame(relativeTo: textFrame)
-			case .circular: circularUpdateFrame(relativeTo: textFrame)
 		}
 	}
 

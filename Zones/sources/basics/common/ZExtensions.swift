@@ -132,6 +132,14 @@ extension NSObject {
 
 	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
+	var zClassName: String {
+		var parts = className.components(separatedBy: ".")
+		let  name = parts[1].substring(fromInclusive: 1).unCamelcased.uppercased()
+		parts     = name.components(separatedBy: kSpace).dropLast()
+
+		return parts.joined(separator: kSpace)
+	}
+
 	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(kLogTabStop)
@@ -627,6 +635,7 @@ infix operator -- : AdditionPrecedence
 
 extension CGPoint {
 
+	var containsNAN: Bool { return x.isNaN || y.isNaN }
 	var descriptionToTwoDecimals: String { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
 
     public init(_ size: CGSize) {
@@ -699,17 +708,10 @@ extension CGSize {
 		height = point.y
 	}
 
-	static var big: CGSize {
-		return CGSize(width: 1000000, height: 1000000)
-	}
-
-	var smallDimension: CGFloat {
-		return min(abs(height), abs(width))
-	}
-
-    var length: CGFloat {
-        return sqrt(width * width + height * height)
-    }
+	static var big: CGSize { return CGSize(width: 1000000, height: 1000000) }
+	var smallDimension: CGFloat { return min(abs(height), abs(width)) }
+    var length: CGFloat { return sqrt(width * width + height * height) }
+	var containsNAN: Bool { return width.isNaN || height.isNaN }
 
 	public static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
 		var    size  = lhs
@@ -816,6 +818,7 @@ extension CGRect {
 	var topLeft:          CGPoint { return CGPoint(x: minX, y: maxY) }
 	var extent:           CGPoint { return CGPoint(x: maxX, y: maxY) }
 	var minimumDimension: CGFloat { return min(size.height, size.width) }
+	var containsNAN:         Bool { return origin.containsNAN || size.containsNAN }
 
 	var cornerPoints: [ZDirection : CGPoint] {
 		var           result = [ZDirection : CGPoint]()
@@ -965,7 +968,7 @@ extension CGRect {
 }
 
 extension ZBezierPath {
-
+	
 	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
 		let path = trianglePath(orientedUp: orientedUp, in: iRect)
 
@@ -1013,6 +1016,24 @@ extension ZBezierPath {
 		return path
 	}
 
+	static func bloatedTrianglePath(in iRect: CGRect, at angle: CGFloat) -> ZBezierPath {
+		let path = ZBezierPath()
+
+		path.appendBloatedTriangle(in: iRect, startAngle: Double(angle))
+
+		return path
+	}
+
+	static func ovalPath(in iRect: CGRect, at angle: CGFloat) -> ZBezierPath {
+		let rect = CGRect(origin: .zero, size: iRect.size)
+		let path = ZBezierPath(ovalIn: rect)
+
+		path.transform(using: AffineTransform(rotationByRadians: angle))
+		path.transform(using: AffineTransform(translationByX: iRect.origin.x, byY: iRect.origin.y))
+
+		return path
+	}
+
 	func addDashes() {
 		let pattern: [CGFloat] = [3.0, 3.0]
 
@@ -1053,10 +1074,13 @@ extension ZBezierPath {
 	}
 
 	func appendBloatedTriangle(in iRect: CGRect, aimedRight: Bool) {
+		appendBloatedTriangle(in: iRect, startAngle: aimedRight ? 0.0 : Double.pi)
+	}
+
+	func appendBloatedTriangle(in iRect: CGRect, startAngle: Double) {
 		let      center = iRect.center
 		let  insetRatio = 0.35
 		let      radius = Double(iRect.width) * insetRatio
-		let  startAngle = aimedRight ? 0.0 : Double.pi
 		let    bigAngle = Double.pi /  3.0 // one sixth of a circle
 		let  smallAngle = Double.pi / 15.0 // one thirtieth
 		let innerVector = CGPoint(x: radius,       y: 0.0)

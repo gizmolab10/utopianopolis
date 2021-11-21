@@ -94,6 +94,7 @@ class ZWidgetObject: NSObject {
 class ZoneWidget: ZPseudoView {
 
 	var           linesLevel = 0
+	var           ringRadius = CGFloat.zero
 	let         widgetObject = ZWidgetObject  ()
 	var      childrenWidgets = ZoneWidgetArray()
 	var       highlightFrame = CGRect .zero
@@ -293,7 +294,7 @@ class ZoneWidget: ZPseudoView {
 			let          line = addLineFor(child)
 			line.parentWidget = self
 
-			line.addDots(sharedDot: sharedDot)
+			line.addDots(sharedDot: gIsLinearMapLayout ? sharedDot : nil)
 			linesView?.addSubpseudoview(line)
 			childrenLines.append(line)
 		}
@@ -389,14 +390,15 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	fileprivate func updateDotFrames(_ absolute: Bool) {
-		if  let textFrame = textWidget?.frame, absolute {
+		if  absolute,
+			let textFrame = pseudoTextWidget?.absoluteFrame {
 
 			if !hideDragDot {
-				parentLine?.dragDot?.updateFrame(relativeTo: textFrame)
+				parentLine?.dragDot?.updateAbsoluteFrame(relativeTo: textFrame)
 			}
 
 			for childLine in childrenLines {
-				childLine.revealDot?.updateFrame(relativeTo: textFrame)
+				childLine.revealDot?.updateAbsoluteFrame(relativeTo: textFrame)
 			}
 		}
 	}

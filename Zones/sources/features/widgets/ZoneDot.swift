@@ -310,9 +310,9 @@ class ZoneDot: ZPseudoView {
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			let       rect = absoluteActualFrame
 
-//			if  gDebugDraw {
-//				rect.drawColoredRect(.red)
-//			}
+			if  gDebugDraw {
+				rect.drawColoredRect(.red)
+			}
 
 			drawDot           (rect, parameters)
 			drawSurroundingDot(rect, parameters)

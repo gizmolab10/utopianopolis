@@ -48,10 +48,10 @@ extension ZoneWidget {
 			}
 
 			if  absolute {
-				// adjust radius
+				ringRadius      = 40.0
 			} else {
 				var spreadAngle = Double.pi * 2.0
-				let  startAngle = Double(parentLine?.parentAngle ?? 0.0)
+				let  startAngle = Double(parentLine?.angle ?? 0.0)
 
 				if !isPuffBall {
 					spreadAngle = spreadAngle * Double(count) / 16.0
@@ -60,23 +60,18 @@ extension ZoneWidget {
 				let      angles = anglesArray(count, startAngle: startAngle, spreadAngle: spreadAngle, oneSet: true, isFat: false, clockwise: true)
 
 				for (index, child) in childrenLines.enumerated() {
-					child.parentAngle = CGFloat(angles[index])
+					child.angle = CGFloat(angles[index])
 				}
 			}
 		}
 	}
 
-	func angles(_ isPuffBall: Bool) -> [CGFloat] {
-		// TODO: assume parent angle is already set, add it to all the angles
-		return [0.0]
-	}
-
 	func circularUpdateChildrenViewDrawnSize() {
+		// children view drawn size is used
 	}
 
 	func circularUpdateChildrenFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
-			var    height = CGFloat.zero
 			var     index = childrenWidgets.count
 			while   index > 0 {
 				index    -= 1 // go backwards [up] the children array
@@ -85,9 +80,11 @@ extension ZoneWidget {
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
 				} else {
+					let    line = childrenLines[index]
 					let    size = child.drawnSize
-					let  origin = CGPoint(x: .zero, y: height)
-					height     += size.height
+					let   angle = line.angle
+					let  radius = ringRadius
+					let  origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle))
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect
 				}
@@ -126,6 +123,7 @@ extension ZoneWidget {
 
 	func circularDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		let        rect = highlightFrame
+		if rect.isEmpty { return }
 		let      radius = rect.minimumDimension / 2.08 - 1.0
 		let       color = widgetZone?.color
 		let strokeColor = color?.withAlphaComponent(0.30)
@@ -208,7 +206,7 @@ extension ZoneLine {
 	}
 
 	func circularStraightPath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let  angle = parentAngle
+		let  angle = angle
 		let radius = iRect.size.length
 		let  start = angle.upward ? iRect.origin : iRect.topLeft
 		let    end = CGPoint(x: radius, y: CGFloat(0.0)).rotate(by: Double(angle)).offsetBy(start)
@@ -226,10 +224,6 @@ extension ZoneLine {
 		// use this to create drawnSize
 	}
 
-	func circularUpdateFrame(relativeTo textFrame: CGRect) {
-		// TODO: use center of drag dot's rect for origin
-	}
-
 }
 
 // MARK:- dot
@@ -239,25 +233,26 @@ extension ZoneDot {
 
 	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
 
-	func circularUpdateFrame(relativeTo textFrame: CGRect) {
-		if  let         l = line {
-			let     angle = l.parentAngle
-			let    radius = l.parentRadius + (isReveal ? 0.0 : 25.0)
-			let    origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle)).offsetBy(textFrame.center)
+	func circularUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
+		if  let         l = line,
+			let         w = l.parentWidget {
+			let     angle = l.angle
+			let    radius = w.ringRadius + (isReveal ? 0.0 : 25.0)
+			let    origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle)).offsetBy(absoluteTextFrame.center)
 			absoluteFrame = CGRect(origin: origin, size: drawnSize)
-
-			updateTooltips()
 		}
 	}
 
 	func circularDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		let  thickness = CGFloat(gLineThickness) * 2.0
-		var       path = ZBezierPath()
+		let     angle = line?.angle ?? 0.0
+		let thickness = CGFloat(gLineThickness) * 2.0
+		let      rect = iDirtyRect.insetEquallyBy(thickness)
+		var      path = ZBezierPath()
 
 		if  parameters.isReveal {
-			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
+			path      = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
 		} else {
-			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
+			path      = ZBezierPath           .ovalPath(in: rect, at: angle)
 		}
 
 //		if  let z = widgetZone, gDebugDraw { // for debugging hover
