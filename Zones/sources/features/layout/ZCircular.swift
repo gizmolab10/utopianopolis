@@ -14,22 +14,8 @@ import Foundation
 extension ZoneWidget {
 
 	func circularModeUpdateSize() {
-		if  let       t = textWidget,
-			let   lSize = linesView?.drawnSize {
-			let   cSize = childrenView?.drawnSize
-			var   width = cSize?.width  ?? 0.0
-			var  height = cSize?.height ?? 0.0
-			let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
-			width      += t.drawnSize.width
-			let lheight = lSize.height
-			let  lWidth = lSize.width * 2.0
-			width      += lWidth + extra - (hideDragDot ? 5.0 : 4.0)
-
-			if  height  < lheight {
-				height  = lheight
-			}
-
-			drawnSize   = CGSize(width: width, height: height)
+		if  let  size = textWidget?.frame.size {
+			drawnSize = size.insetBy(gDotHeight, gDotHeight)
 		}
 	}
 
@@ -47,9 +33,7 @@ extension ZoneWidget {
 				isPuffBall  = false
 			}
 
-			if  absolute {
-				ringRadius      = 40.0
-			} else {
+			if !absolute {
 				var spreadAngle = Double.pi * 2.0
 				let  startAngle = Double(parentLine?.angle ?? 0.0)
 
@@ -62,15 +46,34 @@ extension ZoneWidget {
 				for (index, child) in childrenLines.enumerated() {
 					child.angle = CGFloat(angles[index])
 				}
+			} else if  let    w = textWidget?.frame.width {
+				ringRadius      = w / 2.0 + gDotWidth
 			}
 		}
 	}
 
 	func circularModeUpdateChildrenViewDrawnSize() {
-		// children view drawn size is used
+		childrenView?.drawnSize = CGSize(width: 100.0, height: 100.0)
 	}
 
-	func circularModeUpdateChildrenLinesDrawnSize() {}
+	func circularModeUpdateChildrenLinesDrawnSize() {
+		linesView?   .drawnSize = CGSize(width: 100.0, height: 100.0)
+	}
+
+	func updateFrame(of view: ZPseudoView?, _ absolute: Bool = false) {
+		if  let v = view, hasVisibleChildren {
+			if  absolute {
+				v.updateAbsoluteFrame(toController: controller)
+			} else  {
+				let size   = v.drawnSize
+				let origin = CGPoint(size.multiplyBy(-0.5))
+				v.frame    = CGRect(origin: origin, size: size)
+			}
+		}
+	}
+
+	func circularModeUpdateLinesViewFrame   (_ absolute: Bool = false) { updateFrame(of:    linesView, absolute)}
+	func circularModeUpdateChildrenViewFrame(_ absolute: Bool = false) { updateFrame(of: childrenView, absolute)}
 
 	func circularModeUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
@@ -83,10 +86,9 @@ extension ZoneWidget {
 					child.updateAbsoluteFrame(toController: controller)
 				} else {
 					let    line = childrenLines[index]
-					let    size = child.drawnSize
-					let   angle = line.angle
-					let  radius = ringRadius
-					let  origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle))
+					let   angle = Double(line.angle)
+					let    size = child.drawnSize               .rotate(by: angle)
+					let  origin = CGPoint(x: ringRadius, y: 0.0).rotate(by: angle)
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect
 				}
@@ -96,26 +98,13 @@ extension ZoneWidget {
 
 	func circularModeUpdateTextViewFrame(_ absolute: Bool = false) {
 		if  let                 t = pseudoTextWidget {
-			if !absolute {
-				linearModeUpdateTextViewFrame(absolute)
-			} else {
+			if  absolute {
 				t.updateAbsoluteFrame(toController: controller)
 
 				textWidget?.frame = t.absoluteFrame
-			}
-		}
-	}
-
-	func circularModeUpdateChildrenViewFrame(_ absolute: Bool = false) {
-		if  hasVisibleChildren, let c = childrenView {
-			if  absolute {
-				c.updateAbsoluteFrame(toController: controller)
-			} else if let textFrame = pseudoTextWidget?.frame {
-				let           ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
-				let               x = textFrame.maxX + (CGFloat(gChildrenViewOffset) * ratio)
-				let          origin = CGPoint(x: x, y: CGFloat.zero)
-				let   childrenFrame = CGRect(origin: origin, size: c.drawnSize)
-				c            .frame = childrenFrame
+			} else if let    size = textWidget?.drawnSize {
+				let        origin = CGPoint(x: -30.0, y: -10.0)
+				t          .frame = CGRect(origin: origin, size: size)
 			}
 		}
 	}
@@ -125,7 +114,7 @@ extension ZoneWidget {
 			let          t = pseudoTextWidget {
 			let      frame = t.absoluteFrame
 			let     center = frame.center
-			let     radius = frame.size.width / 2.0
+			let     radius = frame.size.width / 2.0 + 3.0
 			let       rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
 			highlightFrame = rect
 		}
@@ -255,7 +244,8 @@ extension ZoneDot {
 			let         w = l.parentWidget {
 			let     angle = l.angle
 			let    radius = w.ringRadius + (isReveal ? 0.0 : 25.0)
-			let    origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle)).offsetBy(absoluteTextFrame.center)
+			let    offset = absoluteTextFrame.center - CGPoint(x: gDotHeight, y: gDotWidth)
+			let    origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle)).offsetBy(offset)
 			absoluteFrame = CGRect(origin: origin, size: drawnSize)
 		}
 	}

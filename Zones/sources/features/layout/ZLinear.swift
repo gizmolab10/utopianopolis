@@ -128,6 +128,10 @@ extension ZoneWidget {
 		}
 	}
 
+	func linearModeUpdateLinesViewFrame(_ absolute: Bool = false) {
+
+	}
+
 	func linearModeUpdateHighlightFrame(_ absolute: Bool = false) {
 		if  absolute,
 			let              t = textWidget,

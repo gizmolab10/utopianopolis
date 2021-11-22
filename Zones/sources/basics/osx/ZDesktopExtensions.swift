@@ -1180,7 +1180,6 @@ extension ZoneLine {
 
     func linearModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
 		var                 rect = CGRect.zero
-
         if  kind                != nil,
 			let      sourceFrame = sourceDot?.absoluteFrame {
             rect.origin       .x = sourceFrame    .midX
@@ -1200,7 +1199,6 @@ extension ZoneLine {
 				rect.origin   .y =     sourceFrame.midY + CGFloat(1.0) - delta
                 rect.size.height = thickness
             }
-
         }
         
         return rect

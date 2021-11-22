@@ -371,12 +371,13 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateSubframes(_ absolute: Bool = false) {
-		updateChildrenVectors  (absolute)
-		updateChildrenWidgetFrames   (absolute)
-		updateTextViewFrame    (absolute)
-		updateDotFrames        (absolute)
-		updateHighlightFrame   (absolute)
-		updateChildrenViewFrame(absolute)
+		updateChildrenVectors     (absolute)
+		updateChildrenWidgetFrames(absolute)
+		updateTextViewFrame       (absolute)
+		updateDotFrames           (absolute)
+		updateHighlightFrame      (absolute)
+		updateChildrenViewFrame   (absolute)
+		updateLinesViewFrame      (absolute)
 	}
 
 	fileprivate func updateDotFrames(_ absolute: Bool) {

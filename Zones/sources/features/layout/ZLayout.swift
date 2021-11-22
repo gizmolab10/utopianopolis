@@ -62,6 +62,13 @@ extension ZoneWidget {
 		}
 	}
 
+	func updateLinesViewFrame(_ absolute: Bool = false) {
+		switch mode {
+			case .linearMode:     linearModeUpdateLinesViewFrame(absolute)
+			case .circularMode: circularModeUpdateLinesViewFrame(absolute)
+		}
+	}
+
 	func updateHighlightFrame(_ absolute: Bool = false) {
 		switch mode {
 			case .linearMode:     linearModeUpdateHighlightFrame(absolute)

@@ -650,7 +650,7 @@ extension CGPoint {
 	}
 
     static func - ( left: CGPoint, right: CGPoint) -> CGSize {
-        return CGSize(width: left.x - right.x, height: left.y - right.y)
+		return CGSize(width: left.x - right.x, height: left.y - right.y).absSize
     }
 
     static func -- ( left: CGPoint, right: CGPoint) -> CGFloat {
@@ -708,17 +708,18 @@ extension CGSize {
 		height = point.y
 	}
 
-	static var big: CGSize { return CGSize(width: 1000000, height: 1000000) }
-	var smallDimension: CGFloat { return min(abs(height), abs(width)) }
-    var length: CGFloat { return sqrt(width * width + height * height) }
-	var containsNAN: Bool { return width.isNaN || height.isNaN }
+	static var big     : CGSize  { return CGSize(width: 1000000, height: 1000000) }
+	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
+	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
+    var length         : CGFloat { return sqrt(width * width + height * height) }
+	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
 
 	public static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
 		var    size  = lhs
 		size.height += rhs.height
 		size.width  += rhs.width
 
-		return size
+		return size.absSize
 	}
 
 	public static func - (lhs: CGSize, rhs: CGSize) -> CGSize {
@@ -726,7 +727,7 @@ extension CGSize {
 		size.height -= rhs.height
 		size.width  -= rhs.width
 
-		return size
+		return size.absSize
 	}
 
 	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint {
@@ -766,33 +767,33 @@ extension CGSize {
 	}
 
 	func multiplyBy(_ fraction: CGFloat) -> CGSize {
-		return CGSize(width: width * fraction, height: height * fraction)
+		return CGSize(width: width * fraction, height: height * fraction).absSize
 	}
 
 	func multiplyBy(_ fraction: CGSize) -> CGSize {
-		return CGSize(width: width * fraction.width, height: height * fraction.height)
+		return CGSize(width: width * fraction.width, height: height * fraction.height).absSize
 	}
 
 	func fraction(_ delta: CGSize) -> CGSize {
-		CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height)
+		CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize
 	}
 
 	func fractionPreservingRatio(_ delta: CGSize) -> CGSize {
 		let ratio = (width - delta.width) / width
 
-		return CGSize(width: ratio, height: ratio)
+		return CGSize(width: ratio, height: ratio).absSize
 	}
 
 	func insetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
-		return CGSize(width: width - (x * 2.0), height: height - (y * 2.0))
+		return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize
 	}
 
 	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
-		return CGSize(width: width + x, height: height + y)
+		return CGSize(width: width + x, height: height + y).absSize
 	}
 
 	func offsetBy(_ delta: CGSize) -> CGSize {
-		return CGSize(width: width + delta.width, height: height + delta.height)
+		return CGSize(width: width + delta.width, height: height + delta.height).absSize
 	}
 
 	func force(horizotal: Bool, into range: NSRange) -> CGSize {
@@ -803,6 +804,14 @@ extension CGSize {
 			let value = max(min(height, CGFloat(range.upperBound)), CGFloat(range.lowerBound))
 			return CGSize(width: width, height: value)
 		}
+	}
+
+	func rotate(by angle: Double, around center: CGPoint = .zero) -> CGSize {
+		var point = CGPoint(self).rotate(by: angle, around: center)
+		point  .x = abs(point.x)
+		point  .y = abs(point.y)
+
+		return CGSize(point).absSize
 	}
 
 }
