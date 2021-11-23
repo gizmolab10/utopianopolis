@@ -46,7 +46,7 @@ class ZSmallMapController: ZMapController {
 				p        .frame = rect
 
 				gMapView?.setAllSubviewsNeedDisplay()
-				gMapView?.displayAllSubviews()
+//				gMapView?.displayAllSubviews()
 			}
 		}
 	}

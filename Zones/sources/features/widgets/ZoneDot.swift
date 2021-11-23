@@ -60,8 +60,8 @@ class ZoneDot: ZPseudoView {
 	var          isHovering = false
 
 	var absoluteActualFrame: CGRect {
-		let     offset = absoluteFrame.height / -9.0
-		let       rect = absoluteFrame.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
+		let offset = absoluteFrame.height / -9.0
+		let   rect = absoluteFrame.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
 
 		return rect
 	}
@@ -306,7 +306,7 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
-    override func draw(_ phase: ZDrawPhase) {
+    func draw() {
 		if  isVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			let       rect = absoluteActualFrame

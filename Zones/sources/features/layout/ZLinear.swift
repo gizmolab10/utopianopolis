@@ -148,25 +148,26 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearModeDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
-		let        rect = highlightFrame
-		let      radius = rect.minimumDimension / 2.08 - 1.0
-		let       color = widgetZone?.color
-		let strokeColor = color?.withAlphaComponent(0.30)
-		let        path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
-		path .lineWidth = CGFloat(gDotWidth) / 3.5
-		path  .flatness = 0.0001
+	var linearModeSelectionHighlightPath: ZBezierPath {
+		let   rect = highlightFrame
+		let radius = rect.minimumDimension / 2.08 - 1.0
+		let   path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
 
-		if  dashes || thin {
-			path.addDashes()
+		return path
+	}
 
-			if  thin {
-				path.lineWidth = CGFloat(1.5)
+	func linearModeUpdateDotFrames(_ absolute: Bool) {
+		if  absolute,
+			let textFrame = pseudoTextWidget?.absoluteFrame {
+
+			if !hideDragDot {
+				parentLine?.dragDot?.updateAbsoluteFrame(relativeTo: textFrame)
+			}
+
+			for line in childrenLines {
+				line.revealDot?.updateAbsoluteFrame(relativeTo: textFrame)
 			}
 		}
-
-		strokeColor?.setStroke()
-		path.stroke()
 	}
 
 }

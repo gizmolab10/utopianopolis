@@ -380,20 +380,6 @@ class ZoneWidget: ZPseudoView {
 		updateLinesViewFrame      (absolute)
 	}
 
-	fileprivate func updateDotFrames(_ absolute: Bool) {
-		if  absolute,
-			let textFrame = pseudoTextWidget?.absoluteFrame {
-
-			if !hideDragDot {
-				parentLine?.dragDot?.updateAbsoluteFrame(relativeTo: textFrame)
-			}
-
-			for childLine in childrenLines {
-				childLine.revealDot?.updateAbsoluteFrame(relativeTo: textFrame)
-			}
-		}
-	}
-
     func dot(at iIndex: Int) -> ZoneDot? {
         if  let zone = widgetZone {
             if  zone.count == 0 || iIndex < 0 {
@@ -439,38 +425,57 @@ class ZoneWidget: ZPseudoView {
 	// MARK:- draw
 	// MARK:-
 
+	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
+		if  highlightFrame.isEmpty {
+			return
+		}
+
+		let      color = widgetZone?.color?.withAlphaComponent(0.30)
+		let       path = selectionHighlightPath
+		path.lineWidth = CGFloat(gDotWidth) / 3.5
+		path .flatness = 0.0001
+
+		if  dashes || thin {
+			path.addDashes()
+
+			if  thin {
+				path.lineWidth = CGFloat(1.5)
+			}
+		}
+
+		color?.setStroke()
+		path.stroke()
+	}
+
     override func draw(_ phase: ZDrawPhase) {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let zone = widgetZone {
 
+			if  zone.isExpanded {
+				for line in childrenLines {   // this is after child dots have been autolayed out
+					line.draw(phase)
+				}
+			}
+
 			switch phase {
-				case .pLines:
-					if  zone.isExpanded {
-						for child in childrenLines {   // this is after child dots have been autolayed out
-							child.drawLine()
-						}
-					}
 				case .pDotsAndHighlight:
-					parentLine?    .dragDot?.draw(phase)
-
-					for childLine in childrenLines {
-						childLine.revealDot?.draw(phase)
-					}
-
 					if  let          t = textWidget {
 						let  isGrabbed = zone.isGrabbed
 						let  isEditing = t.isFirstResponder
 						let isHovering = t.isHovering
+						let isCircular = mode == .circularMode
 
-						if  (isGrabbed || isEditing || isHovering) && !gIsPrinting {
-							drawSelectionHighlight(isEditing, isHovering && !isGrabbed)
+						if  (isGrabbed || isEditing || isHovering || isCircular) && !gIsPrinting {
+							drawSelectionHighlight(isEditing, !isGrabbed && (isHovering || isCircular))
 						}
 
 						if  gDebugDraw {
 							absoluteFrame              .drawColoredRect(.green)
+							linesView?   .absoluteFrame.drawColoredRect(.red)
 							childrenView?.absoluteFrame.drawColoredRect(.orange)
 						}
 					}
+				default: break
 			}
 		}
     }

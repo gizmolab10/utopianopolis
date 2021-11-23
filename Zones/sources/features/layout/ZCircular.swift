@@ -120,28 +120,18 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularModeDrawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
-		let        rect = highlightFrame
-		if  rect.isEmpty {
-			return
-		}
-		let      radius = rect.minimumDimension / 2.08 - 1.0
-		let       color = widgetZone?.color
-		let strokeColor = color?.withAlphaComponent(0.30)
-		let        path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
-		path .lineWidth = CGFloat(gDotWidth) / 3.5
-		path  .flatness = 0.0001
+	var circularModeSelectionHighlightPath: ZBezierPath {
+		return ZBezierPath(ovalIn: highlightFrame)
+	}
 
-		if  dashes || thin {
-			path.addDashes()
+	func circularModeUpdateDotFrames(_ absolute: Bool) {
+		if  absolute,
+			let textFrame = pseudoTextWidget?.absoluteFrame {
 
-			if  thin {
-				path.lineWidth = CGFloat(1.5)
+			for line in childrenLines {
+				line.updateDotFrames(relativeTo: textFrame, hideDragDot: hideDragDot)
 			}
 		}
-
-		strokeColor?.setStroke()
-		path.stroke()
 	}
 
 }
@@ -241,12 +231,11 @@ extension ZoneDot {
 
 	func circularModeUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		if  let         l = line,
-			let         w = l.parentWidget {
-			let     angle = l.angle
-			let    radius = w.ringRadius + (isReveal ? 0.0 : 25.0)
-			let    offset = absoluteTextFrame.center - CGPoint(x: gDotHeight, y: gDotWidth)
-			let    origin = CGPoint(x: radius, y: 0.0).rotate(by: Double(angle)).offsetBy(offset)
-			absoluteFrame = CGRect(origin: origin, size: drawnSize)
+			let         r = l.parentWidget?.ringRadius {
+			let    radius = r + (isReveal ? 0.0 : l.length)
+			let    center = CGPoint(absoluteTextFrame.center - CGPoint(x: gDotHeight, y: gDotWidth))
+			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: Double(l.angle))
+			absoluteFrame = CGRect(origin: center + rotated, size: drawnSize)
 		}
 	}
 

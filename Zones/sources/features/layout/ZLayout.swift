@@ -69,6 +69,13 @@ extension ZoneWidget {
 		}
 	}
 
+	func updateDotFrames(_ absolute: Bool) {
+		switch mode {
+			case .linearMode:     linearModeUpdateDotFrames(absolute)
+			case .circularMode: circularModeUpdateDotFrames(absolute)
+		}
+}
+
 	func updateHighlightFrame(_ absolute: Bool = false) {
 		switch mode {
 			case .linearMode:     linearModeUpdateHighlightFrame(absolute)
@@ -76,10 +83,10 @@ extension ZoneWidget {
 		}
 	}
 
-	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
+	var selectionHighlightPath: ZBezierPath {
 		switch mode {
-			case .linearMode:     linearModeDrawSelectionHighlight(dashes, thin)
-			case .circularMode: circularModeDrawSelectionHighlight(dashes, thin)
+			case .linearMode:   return   linearModeSelectionHighlightPath
+			case .circularMode: return circularModeSelectionHighlightPath
 		}
 	}
 
