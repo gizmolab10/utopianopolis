@@ -97,15 +97,6 @@ extension ZoneWidget {
 
 extension ZoneDot {
 
-	func updateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		switch mode {
-			case .linearMode:     linearModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
-			case .circularMode: circularModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
-		}
-
-		updateTooltips()
-	}
-
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		switch mode {
 			case .linearMode:     linearModeDrawMainDot(in: iDirtyRect, using: parameters)

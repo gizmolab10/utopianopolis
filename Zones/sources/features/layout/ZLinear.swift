@@ -161,11 +161,11 @@ extension ZoneWidget {
 			let textFrame = pseudoTextWidget?.absoluteFrame {
 
 			if !hideDragDot {
-				parentLine?.dragDot?.updateAbsoluteFrame(relativeTo: textFrame)
+				parentLine?.dragDot?.linearModeUpdateAbsoluteFrame(relativeTo: textFrame)
 			}
 
 			for line in childrenLines {
-				line.revealDot?.updateAbsoluteFrame(relativeTo: textFrame)
+				line     .revealDot?.linearModeUpdateAbsoluteFrame(relativeTo: textFrame)
 			}
 		}
 	}
@@ -275,6 +275,8 @@ extension ZoneDot {
 		let         x = CGPoint(drawnSize).x
 		let    origin = isReveal ? absoluteTextFrame.bottomRight : absoluteTextFrame.origin.offsetBy(-x, 0.0)
 		absoluteFrame = CGRect(origin: origin, size: drawnSize)
+
+		updateTooltips()
 	}
 
 	func linearModeDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {

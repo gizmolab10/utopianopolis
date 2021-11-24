@@ -626,8 +626,8 @@ extension Double {
 
 extension CGFloat {
 
-	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
-	var    upward                                 : Bool   { return self < CGFloat(Double.pi) }
+	var stringToTwoDecimals : String { return String(format: "%.02f", self) }
+	var upward              : Bool   { return self < CGFloat(Double.pi) }
 
 }
 
@@ -645,15 +645,23 @@ extension CGPoint {
         y = size.height
     }
 
-	static func + ( left: CGPoint, right: CGPoint) -> CGPoint {
+	static func + (left: CGPoint, right: CGPoint) -> CGPoint {
 		return CGPoint(x: left.x + right.x, y: left.y + right.y)
 	}
 
-    static func - ( left: CGPoint, right: CGPoint) -> CGSize {
-		return CGSize(width: left.x - right.x, height: left.y - right.y).absSize
+    static func - (left: CGPoint, right: CGPoint) -> CGSize {
+		return CGSize(width: left.x - right.x, height: left.y - right.y)
     }
 
-    static func -- ( left: CGPoint, right: CGPoint) -> CGFloat {
+	static func + (left: CGPoint, right: CGSize) -> CGPoint {
+		return CGPoint(x: left.x + right.width, y: left.y + right.height)
+	}
+
+	static func - (left: CGPoint, right: CGSize) -> CGPoint {
+		return CGPoint(x: left.x - right.width, y: left.y - right.height)
+	}
+
+    static func -- (left: CGPoint, right: CGPoint) -> CGFloat {
         let  width = Double(left.x - right.x)
         let height = Double(left.y - right.y)
 
@@ -672,6 +680,10 @@ extension CGPoint {
 		return CGPoint(x: x + xOffset, y: y + yOffset)
 	}
 
+	func multiplyBy(_ fraction: CGFloat) -> CGPoint {
+		return CGPoint(x: x * fraction, y: y * fraction)
+	}
+
 	func intersectsTriangle(orientedUp: Bool, in iRect: CGRect) -> Bool {
 		return ZBezierPath.trianglePath(orientedUp: orientedUp, in: iRect).contains(self)
 	}
@@ -686,12 +698,12 @@ extension CGPoint {
 		return path.contains(self)
 	}
 
-	var hypontenuse: CGFloat {
+	var length: CGFloat {
 		return sqrt(x * x + y * y)
 	}
 
 	func rotate(by angle: Double, around center: CGPoint = .zero) -> CGPoint {
-		let     r = hypontenuse
+		let     r = length
 		let delta = CGPoint(x: r * CGFloat(cos(angle)), y: r * CGFloat(sin(angle)))
 
 		return center + delta
@@ -767,7 +779,7 @@ extension CGSize {
 	}
 
 	func multiplyBy(_ fraction: CGFloat) -> CGSize {
-		return CGSize(width: width * fraction, height: height * fraction).absSize
+		return CGSize(width: width * fraction, height: height * fraction)
 	}
 
 	func multiplyBy(_ fraction: CGSize) -> CGSize {
@@ -804,14 +816,6 @@ extension CGSize {
 			let value = max(min(height, CGFloat(range.upperBound)), CGFloat(range.lowerBound))
 			return CGSize(width: width, height: value)
 		}
-	}
-
-	func rotate(by angle: Double, around center: CGPoint = .zero) -> CGSize {
-		var point = CGPoint(self).rotate(by: angle, around: center)
-		point  .x = abs(point.x)
-		point  .y = abs(point.y)
-
-		return CGSize(point).absSize
 	}
 
 }
@@ -2709,14 +2713,14 @@ extension ZView {
 
 extension ZPseudoView {
 
-	func anglesArray(_ count: Int, startAngle: Double, spreadAngle: Double = Double.pi * 2.0, oneSet: Bool, isFat: Bool, clockwise: Bool) -> [Double] {
+	func anglesArray(_ count: Int, startAngle: Double, spreadAngle: Double = Double.pi * 2.0, offset: Int = 1, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
 		var angles             = [Double]()
 		if  count              > 0 {
 			let isEven = count % 2 == 0
 			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-count)
 
-			for index in 0 ... count - 1 {
-				let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
+			for index in 1 ... count {
+				let  increment = Double(index + offset) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
 				let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
 
 				angles.append(angle)

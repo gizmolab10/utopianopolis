@@ -81,14 +81,6 @@ class ZoneLine: ZPseudoView {
 		return ZBezierPath()
 	}
 
-	func updateDotFrames(relativeTo absoluteTextFrame: CGRect, hideDragDot: Bool) {
-		if !hideDragDot {
-			dragDot?.updateAbsoluteFrame(relativeTo: absoluteTextFrame)
-		}
-
-		revealDot?  .updateAbsoluteFrame(relativeTo: absoluteTextFrame)
-	}
-
 	func drawLine() {
 		if  let      child = childWidget,
 			let       zone = child.widgetZone {

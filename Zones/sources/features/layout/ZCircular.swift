@@ -20,9 +20,9 @@ extension ZoneWidget {
 	}
 
 	func circularModeUpdateChildrenVectors(_ absolute: Bool = false) {
-		// TODO: use line level, if 0, puff ball spread
+		// use line level, if 0, puff ball spread
 		// else if children count is 4 or less, narrow fan spread, else puff ball spread
-		// puff balls have longer radius
+		// TODO: puff balls have longer radius
 		// longer yet if immediate siblings are both puff balls
 
 		if  let        zone = widgetZone, hasVisibleChildren {
@@ -41,7 +41,7 @@ extension ZoneWidget {
 					spreadAngle = spreadAngle * Double(count) / 16.0
 				}
 
-				let      angles = anglesArray(count, startAngle: startAngle, spreadAngle: spreadAngle, oneSet: true, isFat: false, clockwise: true)
+				let      angles = anglesArray(count, startAngle: startAngle, spreadAngle: spreadAngle, offset: 0, clockwise: true)
 
 				for (index, child) in childrenLines.enumerated() {
 					child.angle = CGFloat(angles[index])
@@ -53,20 +53,20 @@ extension ZoneWidget {
 	}
 
 	func circularModeUpdateChildrenViewDrawnSize() {
-		childrenView?.drawnSize = CGSize(width: 100.0, height: 100.0)
+		childrenView?.drawnSize = .zero // CGSize(width: 200.0, height: 200.0)
 	}
 
 	func circularModeUpdateChildrenLinesDrawnSize() {
-		linesView?   .drawnSize = CGSize(width: 100.0, height: 100.0)
+		linesView?   .drawnSize = .zero // CGSize(width: 200.0, height: 200.0)
 	}
 
-	func updateFrame(of view: ZPseudoView?, _ absolute: Bool = false) {
+	private func updateFrame(of view: ZPseudoView?, _ absolute: Bool = false) {
 		if  let v = view, hasVisibleChildren {
 			if  absolute {
 				v.updateAbsoluteFrame(toController: controller)
 			} else  {
 				let size   = v.drawnSize
-				let origin = CGPoint(size.multiplyBy(-0.5))
+				let origin = CGPoint(size).multiplyBy(-0.5)
 				v.frame    = CGRect(origin: origin, size: size)
 			}
 		}
@@ -87,8 +87,9 @@ extension ZoneWidget {
 				} else {
 					let    line = childrenLines[index]
 					let   angle = Double(line.angle)
-					let    size = child.drawnSize               .rotate(by: angle)
-					let  origin = CGPoint(x: ringRadius, y: 0.0).rotate(by: angle)
+					let    size = child.drawnSize
+					let  offset = CGPoint(size)//.multiplyBy(-1.0)
+					let  origin = CGPoint(x: ringRadius, y: 0.0).rotate(by: angle) + offset
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect
 				}
@@ -129,7 +130,7 @@ extension ZoneWidget {
 			let textFrame = pseudoTextWidget?.absoluteFrame {
 
 			for line in childrenLines {
-				line.updateDotFrames(relativeTo: textFrame, hideDragDot: hideDragDot)
+				line.circularModeUpdateDotFrames(relativeTo: textFrame, hideDragDot: hideDragDot)
 			}
 		}
 	}
@@ -142,7 +143,7 @@ extension ZoneWidget {
 extension ZoneLine {
 
 	var circularModeLineRect : CGRect {
-		return .zero // TODO
+		return .zero // TODO: compute this
 	}
 
 	var circularModeAbsoluteDropDotRect: CGRect {
@@ -196,8 +197,15 @@ extension ZoneLine {
 		return rect
 	}
 
+	func circularModeUpdateDotFrames(relativeTo absoluteTextFrame: CGRect, hideDragDot: Bool) {
+		if !hideDragDot {
+			dragDot?.circularModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
+		}
+
+		revealDot?  .circularModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
+	}
+
 	func circularModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let  angle = angle
 		let radius = iRect.size.length
 		let  start = angle.upward ? iRect.origin : iRect.topLeft
 		let    end = CGPoint(x: radius, y: CGFloat(0.0)).rotate(by: Double(angle)).offsetBy(start)
@@ -233,9 +241,12 @@ extension ZoneDot {
 		if  let         l = line,
 			let         r = l.parentWidget?.ringRadius {
 			let    radius = r + (isReveal ? 0.0 : l.length)
-			let    center = CGPoint(absoluteTextFrame.center - CGPoint(x: gDotHeight, y: gDotWidth))
+			let      size = CGSize(width: gDotHeight, height: gDotWidth)
+			let    center = absoluteTextFrame.center - size
 			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: Double(l.angle))
 			absoluteFrame = CGRect(origin: center + rotated, size: drawnSize)
+
+			updateTooltips()
 		}
 	}
 

@@ -72,6 +72,7 @@ class ZDetailsController: ZGesturesController {
 		update()
 		stackView?.setAllSubviewsNeedDisplay()
 		stackView?.displayAllSubviews()
+		gSignal([.sDetails])
 		gRelayoutMaps()
 	}
 

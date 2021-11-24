@@ -1161,7 +1161,7 @@ extension ZoneLine {
 	func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
 		var    rect = CGRect.zero
 		if  let dot = revealDot {
-			switch gMapLayoutMode {
+			switch mode {
 				case .linearMode:   rect =   linearModeLineRect(from: dot, to: targetFrame, kind: kind)
 				case .circularMode: rect = circularModeLineRect(from: dot, to: targetFrame, kind: kind)
 			}
@@ -1172,7 +1172,8 @@ extension ZoneLine {
 
 	func circularModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
 		if  let origin = sourceDot?.absoluteActualFrame.center {
-			return CGRect(origin: origin, size: targetFrame.center - origin)
+			let   size = targetFrame.center - origin
+			return CGRect(origin: origin, size: size.absSize)
 		}
 
 		return .zero

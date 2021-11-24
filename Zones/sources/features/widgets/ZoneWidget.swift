@@ -451,10 +451,8 @@ class ZoneWidget: ZPseudoView {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let zone = widgetZone {
 
-			if  zone.isExpanded {
-				for line in childrenLines {   // this is after child dots have been autolayed out
-					line.draw(phase)
-				}
+			for line in childrenLines {   // this is after child dots have been autolayed out
+				line.draw(phase)
 			}
 
 			switch phase {
