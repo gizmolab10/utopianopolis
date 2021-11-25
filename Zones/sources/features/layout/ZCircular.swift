@@ -241,19 +241,19 @@ extension ZoneDot {
 		if  let         l = line,
 			let         r = l.parentWidget?.ringRadius {
 
-			// length of line = radius
-			// rotate around start, to angle
-			// move start to text center
-			// move further by [unrotated] dot size
-			// drag dot is off by a 1/4 dot height offset from end of line
+			// length of vector = ringRadius
+			// longer for drag dot: add line length and dot width
+			// rotate to angle (around zero point)
+			// move zero point to text center
+			// move further by size of dot
 
 			let     angle = Double(l.angle)
-			let    radius = r + (isReveal ? 0.0 : l.length)
-			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
-			let      size = CGSize(width: gDotHeight, height: gDotWidth)
-			let    offset = isReveal ? .zero : CGPoint(x: gDotHeight / 4.0, y: 0.0)
+			let     width = isReveal ? gDotHeight : gDotWidth
+			let    length = isReveal ? 0.0 : l.length + gDotWidth
+			let   rotated = CGPoint(x: r + length, y: 0.0).rotate(by: angle)
+			let      size = CGSize(width: width, height: gDotWidth)
 			let    center = absoluteTextFrame.center
-			let    origin = center + rotated + offset - size
+			let    origin = center + rotated - size
 			absoluteFrame = CGRect(origin: origin, size: drawnSize)
 
 			updateTooltips()
