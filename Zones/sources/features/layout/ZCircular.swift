@@ -240,11 +240,21 @@ extension ZoneDot {
 	func circularModeUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		if  let         l = line,
 			let         r = l.parentWidget?.ringRadius {
+
+			// length of line = radius
+			// rotate around start, to angle
+			// move start to text center
+			// move further by [unrotated] dot size
+			// drag dot is off by a 1/4 dot height offset from end of line
+
+			let     angle = Double(l.angle)
 			let    radius = r + (isReveal ? 0.0 : l.length)
+			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
 			let      size = CGSize(width: gDotHeight, height: gDotWidth)
-			let    center = absoluteTextFrame.center - size
-			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: Double(l.angle))
-			absoluteFrame = CGRect(origin: center + rotated, size: drawnSize)
+			let    offset = isReveal ? .zero : CGPoint(x: gDotHeight / 4.0, y: 0.0)
+			let    center = absoluteTextFrame.center
+			let    origin = center + rotated + offset - size
+			absoluteFrame = CGRect(origin: origin, size: drawnSize)
 
 			updateTooltips()
 		}
@@ -262,15 +272,19 @@ extension ZoneDot {
 			path      = ZBezierPath           .ovalPath(in: rect, at: angle)
 		}
 
-//		if  let z = widgetZone, gDebugDraw { // for debugging hover
-//			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
-//		}
-
 		path.lineWidth = thickness
 		path .flatness = 0.0001
 
 		path.stroke()
 		path.fill()
+
+//		if  let z = widgetZone, gDebugDraw { // for debugging hover
+//			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
+//		}
+//
+//		if !isReveal {
+//			iDirtyRect.insetEquallyBy(3.0).drawColoredCircle(.red)
+//		}
 	}
 
 }

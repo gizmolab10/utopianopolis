@@ -808,6 +808,12 @@ extension CGSize {
 		return CGSize(width: width + delta.width, height: height + delta.height).absSize
 	}
 
+	func rotate(by angle: Double) -> CGSize {
+		let r = length
+
+		return CGSize(width: r * CGFloat(cos(angle)), height: r * CGFloat(sin(angle)))
+	}
+
 	func force(horizotal: Bool, into range: NSRange) -> CGSize {
 		if  horizotal {
 			let value = max(min(width,  CGFloat(range.upperBound)), CGFloat(range.lowerBound))
@@ -978,6 +984,10 @@ extension CGRect {
 		}
 	}
 
+	func drawColoredCircle(_ color: ZColor, filled: Bool = false) {
+		squareCentered.drawColoredOval(color, filled: filled)
+	}
+
 }
 
 extension ZBezierPath {
@@ -1038,11 +1048,14 @@ extension ZBezierPath {
 	}
 
 	static func ovalPath(in iRect: CGRect, at angle: CGFloat) -> ZBezierPath {
-		let rect = CGRect(origin: .zero, size: iRect.size)
-		let path = ZBezierPath(ovalIn: rect)
+		let   size = iRect.size
+		let center = CGPoint(size).multiplyBy(-0.5)
+		let origin = CGPoint(iRect.origin - center)
+		let   rect = CGRect(origin: center, size: size)
+		let   path = ZBezierPath(ovalIn: rect)
 
 		path.transform(using: AffineTransform(rotationByRadians: angle))
-		path.transform(using: AffineTransform(translationByX: iRect.origin.x, byY: iRect.origin.y))
+		path.transform(using: AffineTransform(translationByX: origin.x, byY: origin.y))
 
 		return path
 	}
