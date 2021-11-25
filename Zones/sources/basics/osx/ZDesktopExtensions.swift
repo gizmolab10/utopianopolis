@@ -1172,8 +1172,8 @@ extension ZoneLine {
 
 	func circularModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
 		if  let origin = sourceDot?.absoluteActualFrame.center {
-			let   size = targetFrame.center - origin
-			return CGRect(origin: origin, size: size.absSize)
+			let   size = CGSize(targetFrame.center - origin).absSize
+			return CGRect(origin: origin, size: size)
 		}
 
 		return .zero

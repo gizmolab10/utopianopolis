@@ -1150,7 +1150,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  resizeDot    != nil,
 			let     start = resizeDragStart {
 			let     flags = event.modifierFlags
-			let sizeDelta = rectFromEvent(event).origin - start
+			let sizeDelta = CGSize(rectFromEvent(event).origin - start)
 
 			updateImageRubberband(for: sizeDelta, flags.isCommand)
 			setNeedsDisplay()

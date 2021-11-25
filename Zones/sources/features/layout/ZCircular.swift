@@ -84,12 +84,18 @@ extension ZoneWidget {
 
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
-				} else {
+				} else if let t = pseudoTextWidget,
+						  let w = child.textWidget?.frame.size.width {
 					let    line = childrenLines[index]
 					let   angle = Double(line.angle)
-					let    size = child.drawnSize
-					let  offset = CGPoint(size)//.multiplyBy(-1.0)
-					let  origin = CGPoint(x: ringRadius, y: 0.0).rotate(by: angle) + offset
+					let  radius = ringRadius + gDotHeight + line.length + gDotWidth
+					let  center = t.frame.center
+					let    size = CGSize(width: w, height: w)
+					let    half = CGPoint(size.multiplyBy(0.5))
+					let rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
+					let     ray = CGPoint(x: half.x, y: 0.0)
+					let  offset = ray.rotate(by: angle) - ray.multiplyBy(0.55)
+					let  origin = center + rotated + offset
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect
 				}

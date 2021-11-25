@@ -649,8 +649,8 @@ extension CGPoint {
 		return CGPoint(x: left.x + right.x, y: left.y + right.y)
 	}
 
-    static func - (left: CGPoint, right: CGPoint) -> CGSize {
-		return CGSize(width: left.x - right.x, height: left.y - right.y)
+    static func - (left: CGPoint, right: CGPoint) -> CGPoint {
+		return CGPoint(x: left.x - right.x, y: left.y - right.y)
     }
 
 	static func + (left: CGPoint, right: CGSize) -> CGPoint {
@@ -743,7 +743,7 @@ extension CGSize {
 	}
 
 	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint {
-		return CGPoint(CGPoint(lhs) - rhs)
+		return CGPoint(lhs) - rhs
 	}
 
 	func add(width: CGFloat, height: CGFloat) -> CGSize {
@@ -863,7 +863,7 @@ extension CGRect {
         self.init()
 
 		origin = start
-        size   = extent - origin
+        size   = CGSize(extent - origin)
 
         if  size .width < 0 {
             size .width = -size.width
@@ -1050,7 +1050,7 @@ extension ZBezierPath {
 	static func ovalPath(in iRect: CGRect, at angle: CGFloat) -> ZBezierPath {
 		let   size = iRect.size
 		let center = CGPoint(size).multiplyBy(-0.5)
-		let origin = CGPoint(iRect.origin - center)
+		let origin = iRect.origin - center
 		let   rect = CGRect(origin: center, size: size)
 		let   path = ZBezierPath(ovalIn: rect)
 
