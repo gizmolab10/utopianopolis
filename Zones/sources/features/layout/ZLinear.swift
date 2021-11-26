@@ -136,7 +136,7 @@ extension ZoneWidget {
 		if  absolute,
 			let              t = textWidget,
 			let            dot = childrenLines.first?.revealDot {
-			let revealDotDelta = dot.isVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
+			let revealDotDelta = dot.dotIsVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
 			let            gap = gGenericOffset.height
 			let       gapInset =  gap         /  8.0
 			let     widthInset = (gap + 32.0) / -2.0

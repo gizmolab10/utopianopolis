@@ -66,15 +66,19 @@ class ZoneDot: ZPseudoView {
 		return rect
 	}
 
-	var isVisible: Bool {
+	var dotIsVisible: Bool {
 		guard let zone = widgetZone else {
 			return false
 		}
 
-		if  isReveal {
-			return isDragDrop || zone.isTraveller || zone.count > 0
-		}   else {
+		if !isReveal {
 			return !zone.isSmallMapHere
+		}   else {
+			return isDragDrop               ||
+				((  zone.isTraveller        ||
+					zone.count > 0)         &&
+					(   mode == .linearMode ||
+						zone.hasVisibleChildren))
 		}
     }
 
@@ -307,7 +311,7 @@ class ZoneDot: ZPseudoView {
 	}
 
     func draw() {
-		if  isVisible,
+		if  dotIsVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 			let       rect = absoluteActualFrame
 

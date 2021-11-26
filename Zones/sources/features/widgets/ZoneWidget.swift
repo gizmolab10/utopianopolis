@@ -93,7 +93,6 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
-	var           linesLevel = 0
 	var           ringRadius = CGFloat.zero
 	let         widgetObject = ZWidgetObject  ()
 	var      childrenWidgets = ZoneWidgetArray()
@@ -111,6 +110,7 @@ class ZoneWidget: ZPseudoView {
 	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot ?? false }
 	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
 	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
+	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
 	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
@@ -278,10 +278,8 @@ class ZoneWidget: ZPseudoView {
 
 	func addLineFor(_ child: ZoneWidget?) -> ZoneLine {
 		let          line = ZoneLine(view: absoluteView)
-		let         level = (parentWidget?.linesLevel ?? -1) + 1
 		line .childWidget = child
 		child?.parentLine = line
-		child?.linesLevel = level
 
 		return line
 	}

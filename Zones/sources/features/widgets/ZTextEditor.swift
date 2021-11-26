@@ -114,18 +114,22 @@ class ZTextPack: NSObject {
     }
 
     func updateText(isEditing: Bool = false) {
-		var        text = isEditing ? unwrappedName : textWithSuffix
+		var          text = isEditing ? unwrappedName : textWithSuffix
 
 		if !isEditing,
-			text.length > 18,
-			let    type = widget?.type,
-			!type.contains(.tExemplar),
-			!type.contains(.tBigMap) {                                  // is in small map
-			let  isLine = text[0] == "-"
-			text        = text.substring(toExclusive: isLine ? 20 : 15) // shorten to fit (in small map area)
+			let         w = widget {
+			let  isLinear = w.mode == .linearMode
+			let threshold = isLinear ? 18 : 8
+			let      type = w.type
+			if  threshold < text.length,
+				!type.contains(.tExemplar),
+				!type.contains(.tBigMap) || !isLinear {                       // is in small map
+				let  isLine = text[0] == "-"
+				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 5) // shorten to fit (in small map area)
 
-			if !isLine {
-				text.append("...")
+				if !isLine {
+					text.append("...")
+				}
 			}
 		}
 
