@@ -2726,15 +2726,15 @@ extension ZView {
 
 extension ZPseudoView {
 
-	func anglesArray(_ count: Int, startAngle: Double, spreadAngle: Double = Double.pi * 2.0, offset: Int = 1, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
+	func anglesArray(_ count: Int, startAngle: Double, spreadAngle: Double = Double.pi * 2.0, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
 		var angles             = [Double]()
 		if  count              > 0 {
 			let isEven = count % 2 == 0
-			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-count)
+			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-count) // negative means clockwise in osx (counterclockwise in ios)
 
 			for index in 1 ... count {
-				let  increment = Double(index + offset) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
-				let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+				let increments = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
+				let      angle = startAngle + incrementAngle * increments
 
 				angles.append(angle)
 			}

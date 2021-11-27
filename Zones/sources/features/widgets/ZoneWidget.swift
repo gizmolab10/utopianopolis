@@ -93,25 +93,26 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
+	var          showAsPuffy = true
 	var           ringRadius = CGFloat.zero
+	var       highlightFrame = CGRect .zero
 	let         widgetObject = ZWidgetObject  ()
 	var      childrenWidgets = ZoneWidgetArray()
-	var       highlightFrame = CGRect .zero
 	var        childrenLines =       [ZoneLine]()
 	var         childrenView :     ZPseudoView?
 	var            linesView :     ZPseudoView?
 	var            sharedDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var     pseudoTextWidget : ZPseudoTextView?
+	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 	var         parentWidget :      ZoneWidget? { return widgetZone?.parentZone?.widget }
 	var           textWidget :  ZoneTextWidget? { return pseudoTextWidget?.actualTextWidget }
+	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	var            sizeToFit :          CGSize  { return drawnSize + CGSize(frame.origin) }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot ?? false }
 	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
-	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
-	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 
 	var type : ZWidgetType {
 		var result    = widgetZone?.widgetType
@@ -356,6 +357,10 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func grandUpdate() {
+		traverseAllWidgetProgeny() { iWidget in
+			iWidget.updateChildrenVectors(false)
+		}
+
 		updateAllFrames(false)
 		updateFrameSize()
 		updateAllFrames(true)
@@ -363,13 +368,15 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func updateAllFrames(_ absolute: Bool = false) {
-		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
+		let inReverse = !absolute // && mode == .linearMode
+
+		traverseAllWidgetProgeny(inReverse: inReverse) { iWidget in
 			iWidget.updateSubframes(absolute)
 		}
 	}
 
 	func updateSubframes(_ absolute: Bool = false) {
-		updateChildrenVectors     (absolute)
+//		updateChildrenVectors     (absolute)
 		updateChildrenWidgetFrames(absolute)
 		updateTextViewFrame       (absolute)
 		updateDotFrames           (absolute)

@@ -28,43 +28,39 @@ extension ZoneWidget {
 		// longer yet if immediate siblings are both puff balls
 
 		let          pi = Double.pi
-		var spreadAngle = pi * 2.0
-		var  startAngle = Double(parentLine?.angle ?? 0.0)
-		let       count = zone.count
+		let       count = Double(zone.count)
 		let    isCenter = linesLevel == 0
-		var isPuffBall  = true
-		if  count       < 5, !isCenter {
-			isPuffBall  = false
-		}
-
-		if  isPuffBall {
-			parentLine?.length = 125.0
-		}
+		let   increment = pi / 6.0
+		var  startAngle = Double(parentLine?.angle ?? 0.0)
+		var spreadAngle = pi * 2.0
+		showAsPuffy     = count > 4.0 || isCenter
 
 		if !isCenter {
-			if  isPuffBall {
-				spreadAngle = pi * 1.5
-				startAngle += pi
+			if !showAsPuffy {
+				spreadAngle        = increment * count    
+				startAngle        += increment
 			} else {
-				spreadAngle = pi * Double(count) / 6.0
-				startAngle -= spreadAngle / 2.0
+				spreadAngle        = pi * 1.5
+				parentLine?.length = 125.0
 			}
+
+			startAngle += spreadAngle / 2.0
 		}
 
 		return (startAngle, spreadAngle)
 	}
 
 	func circularModeUpdateChildrenVectors(_ absolute: Bool = false) {
-		if  let             zone = widgetZone, hasVisibleChildren {
-			if !absolute {
-				let (start, max) = specificAngles(for: zone)
-				let       angles = anglesArray(zone.count, startAngle: start, spreadAngle: max, offset: 0, clockwise: true)
+		if  let            zone = widgetZone, hasVisibleChildren {
+			let (start, spread) = specificAngles(for: zone)
+			let          angles = anglesArray(zone.count, startAngle: start, spreadAngle: spread, clockwise: true)
 
-				for (index, child) in childrenLines.enumerated() {
-					child .angle = CGFloat(angles[index])
-				}
-			} else if  let     w = textWidget?.frame.width {
-				ringRadius       = w / 2.0 + gDotWidth
+			for (index, child) in childrenLines.enumerated() {
+				child    .angle = CGFloat(angles[index])
+			}
+
+			if  let           w = textWidget?.frame.width  {
+				ringRadius      = w / 2.0 + gDotWidth
 			}
 		}
 	}
@@ -108,10 +104,9 @@ extension ZoneWidget {
 					let  radius = ringRadius + gDotHeight + line.length + gDotWidth
 					let  center = t.frame.center
 					let    size = CGSize(width: w, height: w)
-//					let    half = CGPoint(size.multiplyBy(0.5))
 					let rotated = CGPoint(x:  radius, y: 0.0).rotate(by: angle)
 					let textRay = CGPoint(x: w / 2.5, y: 0.0)
-					let  offset = textRay.rotate(by: angle) // - half.multiplyBy(0.1)
+					let  offset = textRay.rotate(by: angle)
 					let  origin = center + rotated + offset
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect
