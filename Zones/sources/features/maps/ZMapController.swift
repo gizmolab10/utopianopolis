@@ -153,7 +153,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let line = r.addLineFor(r)
 			rootLine = line
 
-			line.addDots(sharedDot: ZoneDot(view: gMapView))
+			line.addDots(sharedRevealDot: ZoneDot(view: gMapView))
 		}
 
 		layoutForCurrentScrollOffset()
@@ -453,7 +453,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 				gDropLine?.parentWidget = gDropWidget
 
-				gDropLine?.addDots(sharedDot: dropWidget.sharedDot)
+				gDropLine?.addDots(sharedRevealDot: dropWidget.sharedRevealDot)
 
                 if !forgetAll && notDropHere && index > 0 {
                     gDropIndices?.add(index - 1)

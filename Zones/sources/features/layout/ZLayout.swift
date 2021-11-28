@@ -34,10 +34,17 @@ extension ZoneWidget {
 		}
 	}
 
+	func updateAllChildrenVectors(_ absolute: Bool = false) {
+		if  mode == .circularMode {
+			traverseAllWidgetProgeny { widget in
+				widget.circularModeUpdateChildrenVectors(absolute)
+			}
+		}
+	}
+
 	func updateChildrenVectors(_ absolute: Bool = false) {
-		switch mode {
-			case .linearMode:   break
-			case .circularMode: circularModeUpdateChildrenVectors(absolute)
+		if  mode == .circularMode {
+			circularModeUpdateChildrenVectors(absolute)
 		}
 	}
 

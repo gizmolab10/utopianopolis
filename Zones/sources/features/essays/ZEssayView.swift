@@ -111,7 +111,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return false
 		}
 
-		let enabled = gProducts.hasEnabledSubscription
+		let enabled = gProducts.hasEnabledSubscription || true
 		let SPECIAL = flags.exactlySpecial
 		let COMMAND = flags.isCommand
 		let CONTROL = flags.isControl

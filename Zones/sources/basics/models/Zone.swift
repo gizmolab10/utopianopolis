@@ -84,7 +84,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                  isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
-	var                onlyShowRevealDot :               Bool  { return isExpanded && ((isSmallMapHere && !(widget?.type.isBigMap ??  true)) || (kIsPhone && self == gHereMaybe)) }
 	var                  dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                 hasBadRecordName :               Bool  { return recordName == nil }
 	var                    showRevealDot :               Bool  { return count > 0 || isTraveller }
@@ -136,6 +135,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                      recount()                        { updateAllProgenyCounts() }
 	class  func randomZone(in dbID: ZDatabaseID) ->      Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
+
+	var onlyShowRevealDot : Bool {
+		let isHere = self == gHereMaybe
+
+		if  isExpanded {
+			return isSmallMapHere || (kIsPhone && isHere)
+		} else {
+			return widget?.mode == .circularMode
+		}
+	}
 
 	var visibleDoneZone: Zone? {
 		var done: Zone?

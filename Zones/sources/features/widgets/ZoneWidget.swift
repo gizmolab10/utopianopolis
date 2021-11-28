@@ -101,7 +101,7 @@ class ZoneWidget: ZPseudoView {
 	var        childrenLines =       [ZoneLine]()
 	var         childrenView :     ZPseudoView?
 	var            linesView :     ZPseudoView?
-	var            sharedDot :         ZoneDot?
+	var            sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var     pseudoTextWidget : ZPseudoTextView?
 	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
@@ -110,7 +110,7 @@ class ZoneWidget: ZPseudoView {
 	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	var            sizeToFit :          CGSize  { return drawnSize + CGSize(frame.origin) }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
-	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot ?? false }
+	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot  ?? false }
 	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
 
@@ -158,7 +158,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK:-
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
-		sharedDot = (mode == .linearMode) ? ZoneDot(view: absoluteView) : nil
+		sharedRevealDot = (mode == .linearMode) ? ZoneDot(view: absoluteView) : nil
 		var count = 1
 
 		if  let v = parentPseudoView,
@@ -289,21 +289,25 @@ class ZoneWidget: ZPseudoView {
 		childrenLines.removeAll()
 		linesView?.removeAllSubpseudoviews()
 
+		let isCircular = mode == .circularMode
+		let   expanded = widgetZone?.hasVisibleChildren ?? false
+
 		func addLine(for child: ZoneWidget?) {
+			let           dot = (mode == .linearMode) ? sharedRevealDot : nil
 			let          line = addLineFor(child)
 			line.parentWidget = self
 
-			line.addDots(sharedDot: (mode == .linearMode) ? sharedDot : nil)
+			line.addDots(sharedRevealDot: dot)
 			linesView?.addSubpseudoview(line)
 			childrenLines.append(line)
 		}
 
-		if  !(widgetZone?.hasVisibleChildren ?? true) {
-			addLine(for: nil)
-		} else {
+		if  isCircular || expanded {
 			for child in childrenWidgets {
 				addLine(for: child)
 			}
+		} else if !expanded {
+			addLine(for: nil)
 		}
 	}
 
@@ -357,28 +361,22 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func grandUpdate() {
-		traverseAllWidgetProgeny() { iWidget in
-			iWidget.updateChildrenVectors(false)
-		}
-
-		updateAllFrames(false)
+		updateAllFrames()
 		updateFrameSize()
 		updateAllFrames(true)
 		updateAbsoluteFrame(toController: controller)
 	}
 
 	func updateAllFrames(_ absolute: Bool = false) {
-		let inReverse = !absolute // && mode == .linearMode
-
-		traverseAllWidgetProgeny(inReverse: inReverse) { iWidget in
+		updateAllChildrenVectors(absolute)   // needed for updating text view frames
+		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.updateSubframes(absolute)
 		}
 	}
 
 	func updateSubframes(_ absolute: Bool = false) {
-//		updateChildrenVectors     (absolute)
-		updateChildrenWidgetFrames(absolute)
 		updateTextViewFrame       (absolute)
+		updateChildrenWidgetFrames(absolute)
 		updateDotFrames           (absolute)
 		updateHighlightFrame      (absolute)
 		updateChildrenViewFrame   (absolute)
@@ -472,10 +470,11 @@ class ZoneWidget: ZPseudoView {
 							drawSelectionHighlight(isEditing, !isGrabbed && (isHovering || isCircular))
 						}
 
-						if  gDebugDraw {
-							absoluteFrame              .drawColoredRect(.green)
-							linesView?   .absoluteFrame.drawColoredRect(.red)
-							childrenView?.absoluteFrame.drawColoredRect(.orange)
+						if (gDebugDraw) { // || mode == .circularMode), linesLevel != 0 {
+							absoluteFrame              .drawColoredRect(.blue, radius: 0.0)
+							highlightFrame             .drawColoredRect(.red,  radius: 0.0)
+//							linesView?   .absoluteFrame.drawColoredRect(.green)
+//							childrenView?.absoluteFrame.drawColoredRect(.orange)
 						}
 					}
 				default: break

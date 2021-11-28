@@ -19,7 +19,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func specificAngles(for zone: Zone) -> (Double, Double) {
+	func specificAngles(for zone: Zone) -> (Double, Double, Double) {
 
 		// use line level, if 0, puff ball spread
 		// else if children count is 4 or less,
@@ -27,40 +27,39 @@ extension ZoneWidget {
 		// TODO: puff balls have longer radius
 		// longer yet if immediate siblings are both puff balls
 
-		let          pi = Double.pi
-		let       count = Double(zone.count)
-		let    isCenter = linesLevel == 0
-		let   increment = pi / 6.0
-		var  startAngle = Double(parentLine?.angle ?? 0.0)
-		var spreadAngle = pi * 2.0
-		showAsPuffy     = count > 4.0 || isCenter
+		let         pi = Double.pi
+		let      count = Double(zone.count)
+		var      start = Double(parentLine?.angle ?? 0.0)
+		var     offset = 1.0
+		var     spread = pi * 2.0
+		let  increment = pi / 6.0
+		let   isCenter = linesLevel == 0
+		showAsPuffy    = (count > 6.0 || isCenter) && hasVisibleChildren
 
 		if !isCenter {
-			if !showAsPuffy {
-				spreadAngle        = increment * count    
-				startAngle        += increment
-			} else {
-				spreadAngle        = pi * 1.5
+			if  showAsPuffy {
+				offset = 0.5
+				spread = pi * 1.5
 				parentLine?.length = 125.0
+			} else {
+				offset = 1.5
+				spread = increment * count
+				start += increment
 			}
 
-			startAngle += spreadAngle / 2.0
+			start += spread / 2.0
 		}
 
-		return (startAngle, spreadAngle)
+		return (start, spread, offset)
 	}
 
 	func circularModeUpdateChildrenVectors(_ absolute: Bool = false) {
-		if  let            zone = widgetZone, hasVisibleChildren {
-			let (start, spread) = specificAngles(for: zone)
-			let          angles = anglesArray(zone.count, startAngle: start, spreadAngle: spread, clockwise: true)
+		if  let                    zone = widgetZone {
+			let (start, spread, offset) = specificAngles(for: zone)
+			let                  angles = anglesArray(childrenLines.count, startAngle: start, spreadAngle: spread, offset: offset, clockwise: true)
 
 			for (index, child) in childrenLines.enumerated() {
-				child    .angle = CGFloat(angles[index])
-			}
-
-			if  let           w = textWidget?.frame.width  {
-				ringRadius      = w / 2.0 + gDotWidth
+				child            .angle = CGFloat(angles[index])
 			}
 		}
 	}
@@ -105,8 +104,7 @@ extension ZoneWidget {
 					let  center = t.frame.center
 					let    size = CGSize(width: w, height: w)
 					let rotated = CGPoint(x:  radius, y: 0.0).rotate(by: angle)
-					let textRay = CGPoint(x: w / 2.5, y: 0.0)
-					let  offset = textRay.rotate(by: angle)
+					let  offset = CGPoint(x: w / 2.5, y: 0.0).rotate(by: angle)
 					let  origin = center + rotated + offset
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect
@@ -122,8 +120,10 @@ extension ZoneWidget {
 
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
+				ringRadius        = size.width / 2.0 + gDotWidth
 				let        origin = CGPoint(x: -30.0, y: -10.0)
-				t          .frame = CGRect(origin: origin, size: size)
+				let          rect = CGRect(origin: origin, size: size)
+				t          .frame = rect
 			}
 		}
 	}

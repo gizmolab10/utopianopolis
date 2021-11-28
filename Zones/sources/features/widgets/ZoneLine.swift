@@ -18,10 +18,10 @@ class ZoneLine: ZPseudoView {
 	var              length = CGFloat(25.0)
 	var               angle = CGFloat.zero
 
-	func addDots(sharedDot: ZoneDot?) {
+	func addDots(sharedRevealDot: ZoneDot?) {
 		if  let p               = parentWidget {
 			if  revealDot      == nil {
-				revealDot       = sharedDot ?? ZoneDot(view: absoluteView)
+				revealDot       = sharedRevealDot ?? ZoneDot(view: absoluteView)
 				revealDot?.line = self
 
 				addSubpseudoview(revealDot)
