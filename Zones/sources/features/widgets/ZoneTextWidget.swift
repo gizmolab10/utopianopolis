@@ -23,7 +23,7 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
-	override var preferredFont : ZFont   { return (widget?.type.isBigMap ?? true) ? gWidgetFont : gSmallMapFont }
+	override var preferredFont : ZFont   { return (widget?.type.isBigMap ?? true) ? widget?.mode == .linearMode ? gWidgetFont : gCircularMapFont : gSmallMapFont }
     var             widgetZone : Zone?   { return  widget?.widgetZone }
 	var               textSize : CGSize? { return text?.sizeWithFont(preferredFont) }
 	var             controller : ZMapController? { return widget?.controller }

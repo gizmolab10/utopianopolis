@@ -21,6 +21,7 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
 var           gFontSize : CGFloat { return gGenericOffset.height + kFontDelta } // height 2 .. 20
+var   gCircularFontSize : CGFloat { return gFontSize / 2.5 }
 var           gDotWidth : CGFloat { return gDotHeight * kDragDotReduction }
 var          gDotHeight : CGFloat { return (gGenericOffset.height / kDotFactor) + 13.0 }
 var gChildrenViewOffset : CGFloat { return gDotWidth + (gGenericOffset.height) * 1.2 }

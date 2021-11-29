@@ -85,6 +85,7 @@ var          gDarkAccentColor:             ZColor { return gAccentColor.darker  
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLighterGrayColor : kBlackColor }
 var          gBackgroundColor:             ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
+var          gCircularMapFont:              ZFont { return .systemFont(ofSize: gCircularFontSize) }
 var             gSmallMapFont:              ZFont { return .systemFont(ofSize: gFontSize * kSmallMapReduction) }
 var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
 var                 gTinyFont:              ZFont { return .systemFont(ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }

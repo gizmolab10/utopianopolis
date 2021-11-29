@@ -2839,9 +2839,10 @@ extension ZPseudoView {
 
 extension ZTextField {
 
-    var       isEditingText:  Bool { return gIsEditIdeaMode }
+	var       isEditingText:  Bool { return gIsEditIdeaMode }
     @objc var preferredFont: ZFont { return gWidgetFont }
 
     @objc func selectCharacter(in range: NSRange) {}
     @objc func alterCase(up: Bool) {}
+
 }
