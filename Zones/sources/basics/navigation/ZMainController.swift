@@ -59,16 +59,6 @@ class ZMainController: ZGesturesController {
 		gSignal([.spMain, .sDetails])
 	}
 
-	@IBAction func debugInfoButtonAction(_ button: NSButton) {
-		if  gDebugModes.contains(.dDebugInfo) {
-			gDebugModes  .remove(.dDebugInfo)
-		} else {
-			gDebugModes  .insert(.dDebugInfo)
-		}
-
-		gSignal([.spMain])
-	}
-
 	func update() {
 		let            showDetails = gShowDetailsView
 		hamburgerButton?  .toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"

@@ -33,6 +33,14 @@ var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
 var           gReadFiles : Bool { return  gDebugModes.contains(.dReadFiles) }
 var             gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
 
+func gToggleDebugMode(_ mode: ZDebugMode) {
+	if  gDebugModes.contains(mode) {
+		gDebugModes  .remove(mode)
+	} else {
+		gDebugModes  .insert(mode)
+	}
+}
+
 struct ZCoreDataMode: OptionSet {
 	static var structValue = 0
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
@@ -157,3 +165,11 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 
 }
 
+extension ZMainController {
+
+	@IBAction func debugInfoButtonAction(_ button: NSButton) {
+		gToggleDebugMode(.dDebugInfo)
+		gSignal([.spDebug, .spMain])
+	}
+
+}

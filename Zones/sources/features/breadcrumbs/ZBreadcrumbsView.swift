@@ -58,14 +58,14 @@ class ZBreadcrumbsView : ZButtonsView {
 
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
 			let        button = ZBreadcrumbButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
-			button.font       = gSmallMapFont
+			button.font       = gSmallFont
 			button.tag        = index
 			button.zone       = zone
 			button.isBordered = true
 			let         title = NSMutableAttributedString(string: zone.unwrappedName)
 			let         range = NSRange(location:0, length: title.length)
 			var    attributes = ZAttributesDictionary()
-			attributes[.font] = gSmallMapFont
+			attributes[.font] = gSmallFont
 
 			if  zone.hasNote {
 				attributes[.underlineStyle] = 1

@@ -156,6 +156,13 @@ enum ZCountsMode: Int { // do not change the order, they are persisted
 enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 	case linearMode
 	case circularMode
+
+	var next: ZMapLayoutMode {
+		switch self {
+			case .linearMode: return .circularMode
+			default:          return .linearMode
+		}
+	}
 }
 
 enum ZToolTipsLength: Int { // do not change the order, they are persisted

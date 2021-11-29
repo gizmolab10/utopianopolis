@@ -516,9 +516,14 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="cUb-54-gft"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Toggle visibility of tooltips" keyEquivalent="y" id="ocY-HI-lhX">
+                                                    <menuItem title="Switch linear and circular mode" keyEquivalent="'" id="ocY-HI-lhX">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="a1Z-fH-D0W"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Toggle visibility of tooltips" keyEquivalent="y" id="AHf-wk-ab6">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="PlU-op-JxG"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Colorful Mode" keyEquivalent="k" id="RfO-CH-kxa">
@@ -1703,33 +1708,45 @@ DQ
                                     <rect key="frame" x="0.0" y="0.0" width="160" height="300"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" enabled="NO" rowHeight="16" id="8lm-kp-gkp">
-                                            <rect key="frame" x="0.0" y="0.0" width="210" height="300"/>
+                                        <tableView focusRingType="none" verticalHuggingPriority="750" mirrorLayoutDirectionWhenInternationalizing="never" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="16" id="8lm-kp-gkp">
+                                            <rect key="frame" x="0.0" y="0.0" width="172" height="300"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                             <color key="gridColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                             <tableColumns>
-                                                <tableColumn editable="NO" width="50" minWidth="50" maxWidth="50" id="2oE-1K-w0f">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" enabled="NO" borderStyle="border" alignment="left" title="0">
+                                                <tableColumn editable="NO" width="45" minWidth="45" maxWidth="50" id="2oE-1K-w0f">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="title">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" controlSize="mini" lineBreakMode="truncatingTail" enabled="NO" allowsUndo="NO" alignment="left" title="Text Cell" id="YBm-Mp-IBa">
+                                                    <textFieldCell key="dataCell" controlSize="mini" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" title="Text Cell" id="YBm-Mp-IBa">
                                                         <font key="font" metaFont="miniSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                 </tableColumn>
-                                                <tableColumn width="128" minWidth="40" maxWidth="1000" id="P12-Fw-oKL">
-                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" enabled="NO" borderStyle="border" alignment="left" title="1">
+                                                <tableColumn width="30" minWidth="30" maxWidth="1000" id="P12-Fw-oKL">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="value">
                                                         <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                     </tableHeaderCell>
-                                                    <textFieldCell key="dataCell" controlSize="mini" lineBreakMode="truncatingTail" enabled="NO" alignment="left" title="Text Cell" id="Q8n-XC-hwd">
+                                                    <textFieldCell key="dataCell" controlSize="mini" lineBreakMode="truncatingTail" alignment="left" title="Text Cell" id="Q8n-XC-hwd">
                                                         <font key="font" metaFont="miniSystem"/>
                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    </textFieldCell>
+                                                    <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                                </tableColumn>
+                                                <tableColumn width="65" minWidth="10" maxWidth="65" id="qem-nO-NdN">
+                                                    <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="thing">
+                                                        <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    </tableHeaderCell>
+                                                    <textFieldCell key="dataCell" controlSize="mini" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="sD4-WC-lFl">
+                                                        <font key="font" metaFont="miniSystem"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                     <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                 </tableColumn>

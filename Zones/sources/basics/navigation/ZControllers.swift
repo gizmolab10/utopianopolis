@@ -51,6 +51,7 @@ enum ZSignalKind: Int {
 
 	case spMain
 	case spData
+	case spDebug
 	case spCrumbs
 	case spBigMap
 	case spSmallMap
@@ -163,6 +164,7 @@ class ZControllers: NSObject {
 					switch regarding {  // these non-default cases send a signal only to the one corresponding controller
 						case .spMain:          if identifier == .idMain           { closure() }
 						case .spData:          if identifier == .idData           { closure() }
+						case .spDebug:         if identifier == .idDebug          { closure() }
 						case .spCrumbs:        if identifier == .idCrumbs         { closure() }
 						case .spBigMap:        if identifier == .idBigMap         { closure() }
 						case .spSmallMap:      if identifier == .idSmallMap       { closure() }

@@ -128,7 +128,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                   duplicateZones =          ZoneArray  ()
 	var                         children =          ZoneArray  ()
 	var                           traits =   ZTraitDictionary  ()
-	func                 copyWithZone() ->           NSObject  { return self }
 	func                   identifier() ->             String? { return isARoot ? databaseID.rawValue : recordName }
 	func                     toolName() ->             String? { return clippedName }
 	func                    toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
@@ -142,7 +141,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  isExpanded {
 			return isSmallMapHere || (kIsPhone && isHere)
 		} else {
-			return widget?.mode == .circularMode
+			return widget?.isCircularMode ?? false
 		}
 	}
 

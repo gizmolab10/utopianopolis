@@ -130,8 +130,6 @@ extension NSObject {
 	func     printCurrentFocus()                                { gHere.widget?.printView() }
 	func     printCurrentEssay()                                { gEssayView?.printView() }
 
-	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
-
 	var zClassName: String {
 		var parts = className.components(separatedBy: ".")
 		let  name = parts[1].substring(fromInclusive: 1).unCamelcased.uppercased()
@@ -139,6 +137,12 @@ extension NSObject {
 
 		return parts.joined(separator: kSpace)
 	}
+
+	@objc func copyWithZone(_ with: NSZone) -> NSObject {
+		return self
+	}
+
+	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
 	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
@@ -2840,7 +2844,7 @@ extension ZPseudoView {
 extension ZTextField {
 
 	var       isEditingText:  Bool { return gIsEditIdeaMode }
-    @objc var preferredFont: ZFont { return gWidgetFont }
+    @objc var preferredFont: ZFont { return gBigFont }
 
     @objc func selectCharacter(in range: NSRange) {}
     @objc func alterCase(up: Bool) {}

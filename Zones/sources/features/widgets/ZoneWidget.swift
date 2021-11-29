@@ -158,7 +158,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK:-
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
-		sharedRevealDot = (mode == .linearMode) ? ZoneDot(view: absoluteView) : nil
+		sharedRevealDot = isLinearMode ? ZoneDot(view: absoluteView) : nil
 		var count = 1
 
 		if  let v = parentPseudoView,
@@ -289,11 +289,10 @@ class ZoneWidget: ZPseudoView {
 		childrenLines.removeAll()
 		linesView?.removeAllSubpseudoviews()
 
-		let isCircular = mode == .circularMode
 		let   expanded = widgetZone?.hasVisibleChildren ?? false
 
 		func addLine(for child: ZoneWidget?) {
-			let           dot = (mode == .linearMode) ? sharedRevealDot : nil
+			let           dot = isLinearMode ? sharedRevealDot : nil
 			let          line = addLineFor(child)
 			line.parentWidget = self
 
@@ -302,7 +301,7 @@ class ZoneWidget: ZPseudoView {
 			childrenLines.append(line)
 		}
 
-		if  isCircular || expanded {
+		if  isCircularMode || expanded {
 			for child in childrenWidgets {
 				addLine(for: child)
 			}
@@ -464,14 +463,13 @@ class ZoneWidget: ZPseudoView {
 						let  isGrabbed = zone.isGrabbed
 						let  isEditing = t.isFirstResponder
 						let isHovering = t.isHovering
-						let isCircular = mode == .circularMode
 
-						if  (isGrabbed || isEditing || isHovering || isCircular) && !gIsPrinting {
-							drawSelectionHighlight(isEditing, !isGrabbed && (isHovering || isCircular))
+						if  (isGrabbed || isEditing || isHovering || isCircularMode) && !gIsPrinting {
+							drawSelectionHighlight(isEditing, !isGrabbed && (isHovering || isCircularMode))
 						}
 
-						if (gDebugDraw) { // || mode == .circularMode), linesLevel != 0 {
-							absoluteFrame              .drawColoredRect(.blue, radius: 0.0)
+						if  gDebugDraw, isCircularMode, linesLevel != 0 {
+//							absoluteFrame              .drawColoredRect(.blue, radius: 0.0)
 							highlightFrame             .drawColoredRect(.red,  radius: 0.0)
 //							linesView?   .absoluteFrame.drawColoredRect(.green)
 //							childrenView?.absoluteFrame.drawColoredRect(.orange)

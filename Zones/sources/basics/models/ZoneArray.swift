@@ -305,7 +305,7 @@ extension ZoneArray {
 	}
 
 	func sortByLength(_ iBackwards: Bool = false) {
-		let font = gWidgetFont
+		let font = gBigFont
 
 		alterOrdering { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in

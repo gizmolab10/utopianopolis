@@ -35,7 +35,7 @@ extension ZoneWidget {
 	}
 
 	func updateAllChildrenVectors(_ absolute: Bool = false) {
-		if  mode == .circularMode {
+		if  isCircularMode {
 			traverseAllWidgetProgeny { widget in
 				widget.circularModeUpdateChildrenVectors(absolute)
 			}
@@ -43,7 +43,7 @@ extension ZoneWidget {
 	}
 
 	func updateChildrenVectors(_ absolute: Bool = false) {
-		if  mode == .circularMode {
+		if  isCircularMode {
 			circularModeUpdateChildrenVectors(absolute)
 		}
 	}

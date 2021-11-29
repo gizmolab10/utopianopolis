@@ -118,7 +118,7 @@ class ZTextPack: NSObject {
 
 		if !isEditing,
 			let         w = widget {
-			let  isLinear = w.mode == .linearMode
+			let  isLinear = w.isLinearMode
 			let threshold = isLinear ? 18 : 8
 			let      type = w.type
 			if  threshold < text.length,
@@ -265,7 +265,7 @@ class ZTextEditor: ZTextView {
 	var currentlyEditedZone : Zone?           { return currentEdit?.packedZone }
 	var currentTextWidget   : ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
 	var currentZoneName	    : String          { return currentlyEditedZone?.zoneName ?? kEmpty }
-	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gWidgetFont }
+	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gBigFont }
 	var atEnd 	            : Bool            { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
 	var atStart  	        : Bool            { return selectedRange.upperBound == 0 }
 

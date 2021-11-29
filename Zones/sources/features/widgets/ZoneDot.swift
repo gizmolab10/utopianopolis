@@ -77,7 +77,7 @@ class ZoneDot: ZPseudoView {
 			return isDragDrop               ||
 				((  zone.isTraveller        ||
 					zone.count > 0)         &&
-					(   mode == .linearMode ||
+					(   isLinearMode ||
 						zone.hasVisibleChildren))
 		}
     }

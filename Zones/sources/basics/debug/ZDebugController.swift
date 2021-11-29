@@ -26,9 +26,21 @@ enum ZDebugID: Int {
 	var title: String { return "\(self)".lowercased().substring(fromInclusive: 1) }
 }
 
+enum ZDebugThingID: Int {
+	case bBoxes
+
+	var title: String { return "\(self)".lowercased().substring(fromInclusive: 1) }
+}
+
 class ZDebugController: ZGenericTableController {
 	override var controllerID : ZControllerID { return .idDebug }
 	var                  rows : Int { return ZDebugID.dEnd.rawValue }
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		genericTableView?.delegate = self
+	}
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && gDebugInfo
@@ -36,19 +48,40 @@ class ZDebugController: ZGenericTableController {
 
 	#if os(OSX)
 
-	override func numberOfRows(in tableView: ZTableView) -> Int { return rows }
+	override func numberOfRows(in tableView: ZTableView) -> Int {
+		return gDebugInfo ? rows : 0
+	}
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		if  let columnTitle = tableColumn?.title,
-			let     debugID = ZDebugID(rawValue: row) {
-
+		if  let columnTitle = tableColumn?.title {
+			let     debugID = ZDebugID     (rawValue: row)
+			let     thingID = ZDebugThingID(rawValue: row)
+			var      string : String? = nil
 			switch columnTitle {
-				case "0": return debugID.title
-				default:  return "\(gRecords?.debugValue(for: debugID) ?? 0)"
+				case "title": string = debugID?.title
+				case "value": string = "\(gRecords?.debugValue(for: debugID) ?? 0)"
+				default:      string = thingID?.title
 			}
+
+			return string
 		}
 
 		return nil
+	}
+
+	func tableView(_ tableView: NSTableView, shouldEdit tableColumn: NSTableColumn?, row: Int) -> Bool {
+		if  let     thingID = ZDebugThingID(rawValue: row),
+			let columnTitle = tableColumn?.title,
+			columnTitle    == "thing" {
+			handleThingAction(thingID)
+		}
+
+		return false
+	}
+
+	func handleThingAction(_ thingID: ZDebugThingID) {
+		gToggleDebugMode(.dDebugDraw)
+		gRelayoutMaps()
 	}
 
 	#endif

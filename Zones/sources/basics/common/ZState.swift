@@ -85,14 +85,19 @@ var          gDarkAccentColor:             ZColor { return gAccentColor.darker  
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
 var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLighterGrayColor : kBlackColor }
 var          gBackgroundColor:             ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
-var          gCircularMapFont:              ZFont { return .systemFont(ofSize: gCircularFontSize) }
-var             gSmallMapFont:              ZFont { return .systemFont(ofSize: gFontSize * kSmallMapReduction) }
-var               gWidgetFont:              ZFont { return .systemFont(ofSize: gFontSize) }
-var                 gTinyFont:              ZFont { return .systemFont(ofSize: gFontSize * kSmallMapReduction * kSmallMapReduction) }
+var                gSmallFont:              ZFont { return .systemFont(ofSize: gSmallFontSize) }
+var                 gTinyFont:              ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction) }
+var                  gBigFont:              ZFont { return .systemFont(ofSize: gBigFontSize) }
 
 func        gToggleDatabaseID()                   { gDatabaseID   =  gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode     = .wEditIdeaMode }
 func           gSetBigMapMode()                   { gWorkMode     = .wMapMode }
+
+func gToggleLayoutMode() {
+	gMapLayoutMode = gMapLayoutMode.next
+
+	gRelayoutMaps()
+}
 
 func gToggleShowTooltips() {
 	gShowToolTips = !gShowToolTips

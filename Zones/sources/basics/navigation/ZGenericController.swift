@@ -49,7 +49,7 @@ class ZGenericController: ZController, ZGeneric {
 			case .idSearch:        return [.sSearch]
 			case .idStartup:       return [.spStartupStatus]
 			case .idNote:          return [.sEssay, .sAppearance]             // ignore the signal from the end of process next batch
-			default: break
+			default:               break
 		}
 
 		return []

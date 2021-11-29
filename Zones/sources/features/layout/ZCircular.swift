@@ -100,11 +100,12 @@ extension ZoneWidget {
 						  let w = child.textWidget?.frame.size.width {
 					let    line = childrenLines[index]
 					let   angle = Double(line.angle)
+					let    half = w / 2.0
 					let  radius = ringRadius + gDotHeight + line.length + gDotWidth
 					let  center = t.frame.center
 					let    size = CGSize(width: w, height: w)
-					let rotated = CGPoint(x:  radius, y: 0.0).rotate(by: angle)
-					let  offset = CGPoint(x: w / 2.5, y: 0.0).rotate(by: angle)
+					let rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
+					let  offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
 					let  origin = center + rotated + offset
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect

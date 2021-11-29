@@ -188,31 +188,20 @@ class ZRecords: NSObject {
         set { hereZoneMaybe = newValue }
     }
 
-	var debugTotal: ZRecordsArray {
-		let totalIDS: [ZDebugID] = [.dValid, .dTraits]
-		var total = ZRecordsArray()
+	func debugApplyTo(_ ids: [ZDebugID]) -> ZRecordsArray {
+		var records = ZRecordsArray()
 
-		for id  in  totalIDS {
+		for id  in  ids {
 			if  let zRecords = debugZRecords(for: id) {
-				total.append(contentsOf: zRecords)
+				records.append(contentsOf: zRecords)
 			}
 		}
 
-		return total
+		return records
 	}
 
-	var debugValid: ZRecordsArray {
-		let totalIDS: [ZDebugID] = [.dFavorites, .dRecents, .dProgeny, .dDestroy, .dTrash, .dLost]
-		var total = ZRecordsArray()
-
-		for id  in  totalIDS {
-			if  let zRecords = debugZRecords(for: id) {
-				total.append(contentsOf: zRecords)
-			}
-		}
-
-		return total
-	}
+	var debugTotal: ZRecordsArray { return debugApplyTo([.dValid, .dTraits]) }
+	var debugValid: ZRecordsArray { return debugApplyTo([.dFavorites, .dRecents, .dProgeny, .dDestroy, .dTrash, .dLost]) }
 
 	func updateMaxLevel(with level: Int) {
 		maxLevel = max(level, maxLevel)
@@ -248,12 +237,16 @@ class ZRecords: NSObject {
 		}
 	}
 
-	func debugValue(for debugID: ZDebugID) -> Int? {
-		switch debugID {
-			case .dDuplicates: return duplicates                  .count
-			case .dRegistry:   return zRecordsLookup              .count
-			default:           return debugZRecords(for: debugID)?.count
+	func debugValue(for debugID: ZDebugID?) -> Int? {
+		if  let d = debugID {
+			switch d {
+				case .dDuplicates: return duplicates            .count
+				case .dRegistry:   return zRecordsLookup        .count
+				default:           return debugZRecords(for: d)?.count
+			}
 		}
+
+		return nil
 	}
 
 
