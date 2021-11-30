@@ -58,18 +58,22 @@ extension ZoneWidget {
 			let (start, spread, offset) = specificAngles(for: zone)
 			let                  angles = anglesArray(childrenLines.count, startAngle: start, spreadAngle: spread, offset: offset, clockwise: true)
 
-			for (index, child) in childrenLines.enumerated() {
-				child            .angle = CGFloat(angles[index])
+			if  angles.count > 0 {
+				halfAngle               = angles[0] / 2.0
+
+				for (index, child) in childrenLines.enumerated() {
+					child        .angle = CGFloat(angles[index])
+				}
 			}
 		}
 	}
 
 	func circularModeUpdateChildrenViewDrawnSize() {
-		childrenView?.drawnSize = .zero // CGSize(width: 200.0, height: 200.0)
+		childrenView?.drawnSize = .zero // CGSize.squared(200.0)
 	}
 
 	func circularModeUpdateChildrenLinesDrawnSize() {
-		linesView?   .drawnSize = .zero // CGSize(width: 200.0, height: 200.0)
+		linesView?   .drawnSize = .zero // CGSize.squared(200.0)
 	}
 
 	private func updateFrame(of view: ZPseudoView?, _ absolute: Bool = false) {
@@ -96,19 +100,19 @@ extension ZoneWidget {
 
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
-				} else if let t = pseudoTextWidget,
-						  let w = child.textWidget?.frame.size.width {
-					let    line = childrenLines[index]
-					let   angle = Double(line.angle)
-					let    half = w / 2.0
-					let  radius = ringRadius + gDotHeight + line.length + gDotWidth
-					let  center = t.frame.center
-					let    size = CGSize(width: w, height: w)
-					let rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
-					let  offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
-					let  origin = center + rotated + offset
-					let    rect = CGRect(origin: origin, size: size)
-					child.frame = rect
+				} else if  let t = pseudoTextWidget,
+						   let w = child.pseudoTextWidget?.frame.size.width {
+					let     line = childrenLines[index]
+					let    angle = Double(line.angle)
+					let     half = w / 2.0
+					let   radius = ringRadius + gDotHeight + line.length + gDotWidth
+					let   center = t.frame.center
+					let     size = CGSize.squared(w)
+					let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
+					child.offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
+					let   origin = center + rotated + child.offset
+					let     rect = CGRect(origin: origin, size: size)
+					child .frame = rect
 				}
 			}
 		}
@@ -225,7 +229,7 @@ extension ZoneLine {
 	}
 
 	func circularModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let radius = iRect.size.length
+		let radius = iRect.size.hypotenuse
 		let  start = angle.upward ? iRect.origin : iRect.topLeft
 		let    end = CGPoint(x: radius, y: CGFloat(0.0)).rotate(by: Double(angle)).offsetBy(start)
 		let   path = ZBezierPath()

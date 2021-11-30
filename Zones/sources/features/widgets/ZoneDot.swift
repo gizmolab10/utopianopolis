@@ -157,7 +157,7 @@ class ZoneDot: ZPseudoView {
             path      = ZBezierPath(rect: rect)
         case .sideDot:
             thickness = (thickness + 2.0) * iDirtyRect.size.height / 12.0
-            rect      = CGRect(origin: CGPoint(x: iDirtyRect.maxX -  thickness - 1.0,   y: iDirtyRect.midY - thickness / 2.0), size: CGSize(width: thickness, height: thickness))
+            rect      = CGRect(origin: CGPoint(x: iDirtyRect.maxX -  thickness - 1.0,   y: iDirtyRect.midY - thickness / 2.0), size: CGSize.squared(thickness))
             path      = ZBezierPath(ovalIn: rect)
         }
 

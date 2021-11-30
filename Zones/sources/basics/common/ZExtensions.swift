@@ -713,6 +713,13 @@ extension CGPoint {
 		return center + delta
 	}
 
+	func drawColoredLine(_ color: ZColor, to endPoint: CGPoint, thickness: CGFloat = 0.5) {
+		ZBezierPath.defaultLineWidth = thickness
+
+		color.setStroke()
+		ZBezierPath.strokeLine(from: self, to: endPoint)
+	}
+
 }
 
 extension CGSize {
@@ -724,11 +731,12 @@ extension CGSize {
 		height = point.y
 	}
 
-	static var big     : CGSize  { return CGSize(width: 1000000, height: 1000000) }
+	static var big     : CGSize  { return CGSize.squared(1000000.0) }
 	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
-	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
-    var length         : CGFloat { return sqrt(width * width + height * height) }
+	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
 	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
+	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
+	public static func squared(_ length: CGFloat) -> CGSize { return CGSize(width: length, height: length) }
 
 	public static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
 		var    size  = lhs
@@ -755,7 +763,7 @@ extension CGSize {
 	}
 
 	func absoluteDifferenceInDiagonals(relativeTo other: CGSize) -> CGFloat {
-		return abs(length - other.length)
+		return abs(hypotenuse - other.hypotenuse)
 	}
 
 	func fractionalScaleToFit(size: CGSize) -> CGFloat {
@@ -779,7 +787,7 @@ extension CGSize {
 	}
 
 	func isLargerThan(_ other: CGSize) -> Bool {
-		return length > other.length
+		return hypotenuse > other.hypotenuse
 	}
 
 	func multiplyBy(_ fraction: CGFloat) -> CGSize {
@@ -797,7 +805,7 @@ extension CGSize {
 	func fractionPreservingRatio(_ delta: CGSize) -> CGSize {
 		let ratio = (width - delta.width) / width
 
-		return CGSize(width: ratio, height: ratio).absSize
+		return CGSize.squared(ratio).absSize
 	}
 
 	func insetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
@@ -813,7 +821,7 @@ extension CGSize {
 	}
 
 	func rotate(by angle: Double) -> CGSize {
-		let r = length
+		let r = hypotenuse
 
 		return CGSize(width: r * CGFloat(cos(angle)), height: r * CGFloat(sin(angle)))
 	}
@@ -861,6 +869,23 @@ extension CGRect {
 		result[.bottom]      = centerBottom
 
 		return result
+	}
+
+	var normalized: CGRect {
+		var r = CGRect(origin: origin, size: size)
+		let h = size.height
+		let w = size.width
+		if  h < 0.0 {
+			r.size.height = -h
+			r.origin.y   +=  h
+		}
+
+		if  w < 0.0 {
+			r.size.width  = -w
+			r.origin.x   +=  w
+		}
+
+		return r
 	}
 
     public init(start: CGPoint, extent: CGPoint) {
@@ -955,7 +980,7 @@ extension CGRect {
 		let length = size.smallDimension
 		let origin = CGPoint(x: minX + (size.width - length) / 2.0, y: minY + (size.height - length) / 2.0)
 
-		return CGRect(origin: origin, size: CGSize(width: length, height: length))
+		return CGRect(origin: origin, size: CGSize.squared(length))
 	}
 
 	func intersectsOval(within other: CGRect) -> Bool {
@@ -1426,9 +1451,9 @@ extension NSRange {
 extension NSCursor {
 
 	class func fourArrows() -> NSCursor? {
-		let     length = 20
-		let halfLength = length / 2
-		let       size = CGSize(width: length, height: length)
+		let     length = CGFloat(20.0)
+		let halfLength = length / 2.0
+		let       size = CGSize.squared(length)
 		let    hotSpot = CGPoint(x: halfLength, y: halfLength)
 		if  let  image = kFourArrowsImage?.resize(size) {
 			return NSCursor(image: image, hotSpot: hotSpot)

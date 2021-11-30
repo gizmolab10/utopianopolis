@@ -938,7 +938,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			func buttonWith(_ title: String) -> ZTooltipButton {
 				let    action = #selector(handleButtonPress)
 
-				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
+				if  let image = ZImage(named: title)?.resize(CGSize.squared(14.0)) {
 					return      ZTooltipButton(image: image, target: self, action: action)
 				}
 
@@ -1012,7 +1012,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		titlesControl?   .isEnabled = enabled
 
 		if !isNote {
-			let image = ZImage(named: "show.drag.dot")?.resize(CGSize(width: 16, height: 16	))
+			let image = ZImage(named: "show.drag.dot")?.resize(CGSize.squared(16.0))
 			titlesControl?.setToolTip("show all titles", forSegment: 2)
 			titlesControl?.setImage(image,               forSegment: 2)
 		}

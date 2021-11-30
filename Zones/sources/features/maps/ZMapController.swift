@@ -33,14 +33,14 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var           priorScrollLocation = CGPoint.zero
 
 	override func setup() {
-		if  let                         map = gMapView {
-			gestureView                     = gDragView                    // do this before calling super setup, which uses gesture view
-			rootWidget                      = ZoneWidget (view: map)
-			mapPseudoView                   = ZPseudoView(view: map)
-			view    .layer?.backgroundColor = kClearColor.cgColor
+		if  let                          map = gMapView {
+			gestureView                      = gDragView                    // do this before calling super setup, which uses gesture view
+			rootWidget                       = ZoneWidget (view: map)
+			mapPseudoView                    = ZPseudoView(view: map)
+			view     .layer?.backgroundColor = kClearColor.cgColor
 			gMapView?.layer?.backgroundColor = kClearColor.cgColor
-			if  let                   frame = gMapView?.frame {
-				mapPseudoView?       .frame = frame
+			if  let                    frame = gMapView?.frame {
+				mapPseudoView?        .frame = frame
 			}
 
 			super.setup()

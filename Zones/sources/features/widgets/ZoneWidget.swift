@@ -93,20 +93,22 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
+	var            halfAngle = 0.0
 	var          showAsPuffy = true
+	var               offset = CGPoint.zero
 	var           ringRadius = CGFloat.zero
 	var       highlightFrame = CGRect .zero
-	let         widgetObject = ZWidgetObject  ()
+	let         widgetObject =   ZWidgetObject()
 	var      childrenWidgets = ZoneWidgetArray()
-	var        childrenLines =       [ZoneLine]()
+	var        childrenLines =      [ZoneLine]()
 	var         childrenView :     ZPseudoView?
 	var            linesView :     ZPseudoView?
-	var            sharedRevealDot :         ZoneDot?
+	var      sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var     pseudoTextWidget : ZPseudoTextView?
-	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
-	var         parentWidget :      ZoneWidget? { return widgetZone?.parentZone?.widget }
 	var           textWidget :  ZoneTextWidget? { return pseudoTextWidget?.actualTextWidget }
+	var         parentWidget :      ZoneWidget? { return widgetZone?.parentZone?.widget }
+	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	var            sizeToFit :          CGSize  { return drawnSize + CGSize(frame.origin) }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
@@ -468,16 +470,26 @@ class ZoneWidget: ZPseudoView {
 							drawSelectionHighlight(isEditing, !isGrabbed && (isHovering || isCircularMode))
 						}
 
-						if  gDebugDraw, isCircularMode, linesLevel != 0 {
-//							absoluteFrame              .drawColoredRect(.blue, radius: 0.0)
-							highlightFrame             .drawColoredRect(.red,  radius: 0.0)
-//							linesView?   .absoluteFrame.drawColoredRect(.green)
-//							childrenView?.absoluteFrame.drawColoredRect(.orange)
-						}
+						debugDraw()
 					}
 				default: break
 			}
 		}
     }
+
+	func debugDraw() {
+		if  gDebugDraw, isCircularMode, linesLevel != 0 {
+			let extent = highlightFrame.origin
+			let origin = extent + offset
+			let circle = CGRect(origin: origin, size: .zero).insetEquallyBy(-2.0)
+
+			circle                     .drawColoredCircle(.orange)
+			origin                     .drawColoredLine  (.green, to: extent, thickness: 2.0)
+			highlightFrame             .drawColoredRect  (.red,   radius: 0.0)
+//			absoluteFrame              .drawColoredRect  (.blue,  radius: 0.0)
+//			linesView?   .absoluteFrame.drawColoredRect  (.green)
+//			childrenView?.absoluteFrame.drawColoredRect  (.orange)
+		}
+	}
 
 }

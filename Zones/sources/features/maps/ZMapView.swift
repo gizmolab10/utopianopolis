@@ -9,9 +9,12 @@
 import Foundation
 
 enum ZMapID: String {
+	case mDotsAndLines = "d"
 	case mHighlight    = "h"
 	case mText         = "t"
-	case mDotsAndLines = "m"
+
+	var title          : String { return "\(self)".lowercased().substring(fromInclusive: 1) }
+	var identifier     : NSUserInterfaceItemIdentifier { return NSUserInterfaceItemIdentifier(title) }
 }
 
 class ZMapView: ZView {
@@ -67,7 +70,8 @@ class ZMapView: ZView {
 	}
 
 	func setup(_ id: ZMapID = .mText, mapController: ZMapController) {
-		mapID = id
+		identifier = id.identifier
+		mapID      = id
 
 		if  id != .mText {
 			zlayer.backgroundColor = CGColor.clear
