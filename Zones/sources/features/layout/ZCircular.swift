@@ -68,14 +68,6 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularModeUpdateChildrenViewDrawnSize() {
-		childrenView?.drawnSize = .zero // CGSize.squared(200.0)
-	}
-
-	func circularModeUpdateChildrenLinesDrawnSize() {
-		linesView?.drawnSize = .zero // CGSize.squared(200.0)
-	}
-
 	func circularModeUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var     index = childrenWidgets.count

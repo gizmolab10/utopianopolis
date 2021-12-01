@@ -135,6 +135,22 @@ func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 	}
 }
 
+func gLoadProgressTimes() {
+	if  let string = getPreferenceString(for: kProgressTimes) {
+		let  pairs = string.components(separatedBy: kCommaSeparator)
+
+		for pair in pairs {
+			let       items = pair.components(separatedBy: kColonSeparator)
+			if  items.count > 1,
+				let      op = items[0].integerValue,
+				let    time = items[1].doubleValue {
+
+				gSetProgressTime(opInt: op, value: time)
+			}
+		}
+	}
+}
+
 func gStoreProgressTimes() {
 	var separator = kEmpty
 	var  storable = kEmpty
@@ -158,34 +174,24 @@ var gTotalTime : Double {
 	return 0.0
 }
 
+func gSetProgressTime(opInt: Int, value: Double?) {
+	if  let op = ZOperationID(rawValue: opInt) {
+		let time = value ?? Double(op.progressTime)
+
+		if  time > 1 {
+			gProgressTimes[op] = time
+		}
+	}
+}
+
+
 func gAssureProgressTimesAreLoaded() -> Bool {
 	if  gProgressTimesReady, !gGotProgressTimes {
-		func setit(opInt: Int, value: Double?) {
-			if  let op = ZOperationID(rawValue: opInt) {
-				let time = value ?? Double(op.progressTime)
-
-				if  time > 1 {
-					gProgressTimes[op] = time
-				}
-			}
-		}
-
 		for op in ZOperationID.oStartingUp.rawValue ... ZOperationID.oDone.rawValue {
-			setit(opInt: op, value: nil)
+			gSetProgressTime(opInt: op, value: nil)
 		}
 
-		if  let string = getPreferenceString(for: kProgressTimes) {
-			let  pairs = string.components(separatedBy: kCommaSeparator)
-
-			for pair in pairs {
-				let       items = pair.components(separatedBy: kColonSeparator)
-				if  items.count > 1,
-					let      op = items[0].integerValue,
-					let    time = items[1].doubleValue {
-					setit(opInt: op, value: time)
-				}
-			}
-		}
+		gLoadProgressTimes()
 
 		gGotProgressTimes = true
 	}
@@ -204,6 +210,21 @@ var gCurrentEvent: ZEvent? {
 	didSet {
 		gTimeUntilCurrentEvent = Date.timeIntervalSinceReferenceDate
 	}
+}
+
+var gDebugModes : ZDebugMode {
+	get { return ZDebugMode(         rawValue: getPreferencesInt(for: kDebugModes, defaultInt: 0)) }
+	set { setPreferencesInt(newValue.rawValue,                   for: kDebugModes) }
+}
+
+var gPrintModes : ZPrintMode {
+	get { return ZPrintMode(         rawValue: getPreferencesInt(for: kPrintModes, defaultInt: 0)) }
+	set { setPreferencesInt(newValue.rawValue,                   for: kPrintModes) }
+}
+
+var gCoreDataMode : ZCoreDataMode {
+	get { return ZCoreDataMode(      rawValue: getPreferencesInt(for: kCoreDataMode, defaultInt: 0)) }
+	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
 var gExpandedZones : StringsArray {

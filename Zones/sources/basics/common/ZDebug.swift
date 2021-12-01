@@ -8,20 +8,6 @@
 
 import Foundation
 
-// async: start from zfiles read: create managed object zone
-//     storage dict create managed object zone and trait
-//     create zone, trait ONLY if from dict
-// NOT async: create bookmarks
-
-//var gDebugModes : ZPrintMode {
-//	get { return getPreferencesBool(   for: kOtherCircularAlgorithm, defaultBool: [.dDebugDraw]) }
-//	set { setPreferencesBool(newValue, for: kOtherCircularAlgorithm) }
-//}
-
-var          gPrintModes : ZPrintMode    = [] // [.dSpeed]
-var          gDebugModes : ZDebugMode    = [] // [.dDebugDraw]
-var        gCoreDataMode : ZCoreDataMode = []
-
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gIsUsingCoreData }
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gIsUsingCoreData }
@@ -65,9 +51,10 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
 
-	init() { rawValue = ZDebugMode.nextValue }
+	init()              { rawValue      = ZDebugMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
+	static let dNone                = ZDebugMode()
 	static let dNewUser             = ZDebugMode() // exercise new-user, first-time arrival code
 	static let dReadFiles           = ZDebugMode() // read files
 	static let dDebugInfo           = ZDebugMode() // inject debugging information into UI
@@ -79,7 +66,9 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dIgnoreExemption     = ZDebugMode() // ignore user exemption
 	static let dSubscriptionTimeout = ZDebugMode() // super short timeout
 
-	var description: String {
+	var description: String { return descriptions.joined(separator: kSpace) }
+
+	var descriptions: [String] {
 		return [(.dNewUser,             "arrival"),
 				(.dReadFiles,           "read files"),
 				(.dDebugInfo,           "show debug info"),
@@ -91,7 +80,6 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dIgnoreExemption,     "ignore user exemption"),
 				(.dSubscriptionTimeout, "ignore subscription duration")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
-			.joined(separator: kSpace)
 	}
 }
 
@@ -130,7 +118,9 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let dTimers = ZPrintMode() // assure completion
 	static let dLevels = ZPrintMode() // fetching depth
 
-	var description: String {
+	var description: String { return descriptions.joined(separator: kSpace) }
+
+	var descriptions: [String] {
 		return [(.dOps,    "     op"),
 				(.dFix,    "    fix"),
 				(.dLog,    "    log"),
@@ -157,7 +147,6 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dTimers, " timers"),
 				(.dLevels, " levels")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
-			.joined(separator: kSpace)
 	}
 
 	static func toggle(_ mode: ZPrintMode) {

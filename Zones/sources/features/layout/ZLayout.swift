@@ -21,16 +21,14 @@ extension ZoneWidget {
 	}
 
 	func updateChildrenViewDrawnSize() {
-		switch mode {
-			case .linearMode:     linearModeUpdateChildrenViewDrawnSize()
-			case .circularMode: circularModeUpdateChildrenViewDrawnSize()
+		if  isLinearMode {
+			linearModeUpdateChildrenViewDrawnSize()
 		}
 	}
 
 	func updateChildrenLinesDrawnSize() {
-		switch mode {
-			case .linearMode:     linearModeUpdateChildrenLinesDrawnSize()
-			case .circularMode: circularModeUpdateChildrenLinesDrawnSize()
+		if  isLinearMode {
+			linearModeUpdateChildrenLinesDrawnSize()
 		}
 	}
 
