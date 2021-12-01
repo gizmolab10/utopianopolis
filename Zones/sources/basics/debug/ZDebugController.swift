@@ -27,7 +27,8 @@ enum ZDebugID: Int {
 }
 
 enum ZDebugThingID: Int {
-	case bBoxes
+	case tBoxes
+	case tOther
 
 	var title: String { return "\(self)".lowercased().substring(fromInclusive: 1) }
 }
@@ -80,7 +81,12 @@ class ZDebugController: ZGenericTableController {
 	}
 
 	func handleThingAction(_ thingID: ZDebugThingID) {
-		gToggleDebugMode(.dDebugDraw)
+		switch thingID {
+			case .tBoxes: gToggleDebugMode(.dDebugDraw)
+			case .tOther: gOtherCircularAlgorithm = !gOtherCircularAlgorithm
+			default:      break
+		}
+
 		gRelayoutMaps()
 	}
 

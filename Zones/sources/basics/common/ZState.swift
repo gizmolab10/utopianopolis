@@ -260,6 +260,11 @@ var gCurrentHelpMode: ZHelpMode {
 	}
 }
 
+var gOtherCircularAlgorithm : Bool {
+	get { return getPreferencesBool(   for: kOtherCircularAlgorithm, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kOtherCircularAlgorithm) }
+}
+
 var gTemporaryFullTitleMode : Bool {
 	get { return getPreferencesBool(   for: kTemporaryFullTitleMode, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kTemporaryFullTitleMode) }

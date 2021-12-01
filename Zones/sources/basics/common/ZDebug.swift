@@ -13,8 +13,13 @@ import Foundation
 //     create zone, trait ONLY if from dict
 // NOT async: create bookmarks
 
+//var gDebugModes : ZPrintMode {
+//	get { return getPreferencesBool(   for: kOtherCircularAlgorithm, defaultBool: [.dDebugDraw]) }
+//	set { setPreferencesBool(newValue, for: kOtherCircularAlgorithm) }
+//}
+
 var          gPrintModes : ZPrintMode    = [] // [.dSpeed]
-var          gDebugModes : ZDebugMode    = [.dDebugDraw]
+var          gDebugModes : ZDebugMode    = [] // [.dDebugDraw]
 var        gCoreDataMode : ZCoreDataMode = []
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }

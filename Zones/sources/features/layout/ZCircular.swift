@@ -73,23 +73,8 @@ extension ZoneWidget {
 	}
 
 	func circularModeUpdateChildrenLinesDrawnSize() {
-		linesView?   .drawnSize = .zero // CGSize.squared(200.0)
+		linesView?.drawnSize = .zero // CGSize.squared(200.0)
 	}
-
-	private func updateFrame(of view: ZPseudoView?, _ absolute: Bool = false) {
-		if  let v = view, hasVisibleChildren {
-			if  absolute {
-				v.updateAbsoluteFrame(toController: controller)
-			} else  {
-				let size   = v.drawnSize
-				let origin = CGPoint(size).multiplyBy(-0.5)
-				v.frame    = CGRect(origin: origin, size: size)
-			}
-		}
-	}
-
-	func circularModeUpdateLinesViewFrame   (_ absolute: Bool = false) { updateFrame(of:    linesView, absolute)}
-	func circularModeUpdateChildrenViewFrame(_ absolute: Bool = false) { updateFrame(of: childrenView, absolute)}
 
 	func circularModeUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
@@ -102,17 +87,31 @@ extension ZoneWidget {
 					child.updateAbsoluteFrame(toController: controller)
 				} else if  let t = pseudoTextWidget,
 						   let w = child.pseudoTextWidget?.frame.size.width {
-					let     line = childrenLines[index]
-					let    angle = Double(line.angle)
-					let     half = w / 2.0
-					let   radius = ringRadius + gDotHeight + line.length + gDotWidth
-					let   center = t.frame.center
-					let     size = CGSize.squared(w)
-					let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
-					child.offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
-					let   origin = center + rotated + child.offset
-					let     rect = CGRect(origin: origin, size: size)
-					child .frame = rect
+					if  gOtherCircularAlgorithm {
+						let     line = childrenLines[index]
+						let    angle = Double(line.angle)
+						let     half = w / 2.0
+						let   radius = ringRadius + gDotHeight + line.length + gDotWidth
+						let   center = t.frame.center
+						let     size = CGSize.squared(w)
+						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
+						child.offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
+						let   origin = center + rotated + child.offset
+						let     rect = CGRect(origin: origin, size: size)
+						child .frame = rect
+					} else {
+						let     line = childrenLines[index]
+						let    angle = Double(line.angle)
+						let     half = w / 2.0
+						let   radius = ringRadius + gDotHeight + line.length + gDotWidth + half - 7.0
+						let   center = t.frame.extent + CGPoint(x: -10.0, y: half - 10.0)
+						let     size = CGSize.squared(w)
+						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
+						child.offset = CGPoint.equaled(half)
+						let   origin = center + rotated - child.offset
+						let     rect = CGRect(origin: origin, size: size)
+						child .frame = rect
+					}
 				}
 			}
 		}
@@ -133,15 +132,15 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularModeUpdateHighlightFrame(_ absolute: Bool = false) {
-		if  absolute,
-			let          t = pseudoTextWidget {
-			let      frame = t.absoluteFrame
+	var circularModeHighlightFrame : CGRect {
+		if  let      frame = pseudoTextWidget?.absoluteFrame {
 			let     center = frame.center
 			let     radius = frame.size.width / 2.0 + 3.0
 			let       rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
-			highlightFrame = rect
+			return rect
 		}
+
+		return.zero
 	}
 
 	var circularModeSelectionHighlightPath: ZBezierPath {
@@ -156,6 +155,19 @@ extension ZoneWidget {
 				line.circularModeUpdateDotFrames(relativeTo: textFrame, hideDragDot: hideDragDot)
 			}
 		}
+	}
+
+	func circularModeUpdateAllFrames(_ absolute: Bool) {
+		updateAllChildrenVectors(absolute)   // needed for updating text view frames
+		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
+			iWidget.circularModeUpdateSubframes(absolute)
+		}
+	}
+
+	func circularModeUpdateSubframes(_ absolute: Bool) {
+		circularModeUpdateTextViewFrame       (absolute)
+		circularModeUpdateChildrenWidgetFrames(absolute)
+		circularModeUpdateDotFrames           (absolute)
 	}
 
 }

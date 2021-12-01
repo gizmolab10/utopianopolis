@@ -34,6 +34,20 @@ extension ZoneWidget {
 		}
 	}
 
+	var selectionHighlightPath: ZBezierPath {
+		switch mode {
+			case .linearMode:   return   linearModeSelectionHighlightPath
+			case .circularMode: return circularModeSelectionHighlightPath
+		}
+	}
+
+	var highlightFrame : CGRect {
+		switch mode {
+			case .linearMode:   return   linearModeHighlightFrame
+			case .circularMode: return circularModeHighlightFrame
+		}
+	}
+
 	func updateAllChildrenVectors(_ absolute: Bool = false) {
 		if  isCircularMode {
 			traverseAllWidgetProgeny { widget in
@@ -48,52 +62,10 @@ extension ZoneWidget {
 		}
 	}
 
-	func updateChildrenWidgetFrames(_ absolute: Bool = false) {
+	func updateAllFrames(_ absolute: Bool = false) {
 		switch mode {
-			case .linearMode:     linearModeUpdateChildrenWidgetFrames(absolute)
-			case .circularMode: circularModeUpdateChildrenWidgetFrames(absolute)
-		}
-	}
-
-	func updateTextViewFrame(_ absolute: Bool = false) {
-		switch mode {
-			case .linearMode:     linearModeUpdateTextViewFrame(absolute)
-			case .circularMode: circularModeUpdateTextViewFrame(absolute)
-		}
-	}
-
-	func updateChildrenViewFrame(_ absolute: Bool = false) {
-		switch mode {
-			case .linearMode:     linearModeUpdateChildrenViewFrame(absolute)
-			case .circularMode: circularModeUpdateChildrenViewFrame(absolute)
-		}
-	}
-
-	func updateLinesViewFrame(_ absolute: Bool = false) {
-		switch mode {
-			case .linearMode:     linearModeUpdateLinesViewFrame(absolute)
-			case .circularMode: circularModeUpdateLinesViewFrame(absolute)
-		}
-	}
-
-	func updateDotFrames(_ absolute: Bool) {
-		switch mode {
-			case .linearMode:     linearModeUpdateDotFrames(absolute)
-			case .circularMode: circularModeUpdateDotFrames(absolute)
-		}
-}
-
-	func updateHighlightFrame(_ absolute: Bool = false) {
-		switch mode {
-			case .linearMode:     linearModeUpdateHighlightFrame(absolute)
-			case .circularMode: circularModeUpdateHighlightFrame(absolute)
-		}
-	}
-
-	var selectionHighlightPath: ZBezierPath {
-		switch mode {
-			case .linearMode:   return   linearModeSelectionHighlightPath
-			case .circularMode: return circularModeSelectionHighlightPath
+			case .linearMode:     linearModeUpdateAllFrames(absolute)
+			case .circularMode: circularModeUpdateAllFrames(absolute)
 		}
 	}
 

@@ -641,6 +641,7 @@ extension CGPoint {
 
 	var containsNAN: Bool { return x.isNaN || y.isNaN }
 	var descriptionToTwoDecimals: String { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
+	public static func equaled(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 
     public init(_ size: CGSize) {
         self.init()

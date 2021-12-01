@@ -97,7 +97,6 @@ class ZoneWidget: ZPseudoView {
 	var          showAsPuffy = true
 	var               offset = CGPoint.zero
 	var           ringRadius = CGFloat.zero
-	var       highlightFrame = CGRect .zero
 	let         widgetObject =   ZWidgetObject()
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
@@ -175,8 +174,12 @@ class ZoneWidget: ZPseudoView {
 		gStartupController?.fullStartupUpdate()
 		gWidgets.setWidgetForZone(self, for: mapType)
 		addTextView()
-		addLinesView()
-		addChildrenView()
+
+		if  isLinearMode {
+			addLinesView()
+			addChildrenView()
+		}
+
 		addChildrenWidgets()
 		addLines()
 
@@ -188,14 +191,19 @@ class ZoneWidget: ZPseudoView {
 			while index           > 0 {
 				index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
 				let child         = childrenWidgets[index]
-				child.widgetZone  =            zone[index]
-				count            += child.layoutAllPseudoViews(parentPseudoView: childrenView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
+				child .widgetZone =            zone[index]
+				let    parentView = isLinearMode ? childrenView : self
+				count            += child.layoutAllPseudoViews(parentPseudoView: parentView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
 			}
 		}
 
 		textWidget?.updateText()
-		updateChildrenViewDrawnSize()
-		updateChildrenLinesDrawnSize()
+
+		if  isLinearMode {
+			updateChildrenViewDrawnSize()
+			updateChildrenLinesDrawnSize()
+		}
+
 		updateSize()
 
 		return count
@@ -299,8 +307,11 @@ class ZoneWidget: ZPseudoView {
 			line.parentWidget = self
 
 			line.addDots(sharedRevealDot: dot)
-			linesView?.addSubpseudoview(line)
 			childrenLines.append(line)
+
+			if  isLinearMode {
+				linesView?.addSubpseudoview(line)
+			}
 		}
 
 		if  isCircularMode || expanded {
@@ -366,22 +377,6 @@ class ZoneWidget: ZPseudoView {
 		updateFrameSize()
 		updateAllFrames(true)
 		updateAbsoluteFrame(toController: controller)
-	}
-
-	func updateAllFrames(_ absolute: Bool = false) {
-		updateAllChildrenVectors(absolute)   // needed for updating text view frames
-		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			iWidget.updateSubframes(absolute)
-		}
-	}
-
-	func updateSubframes(_ absolute: Bool = false) {
-		updateTextViewFrame       (absolute)
-		updateChildrenWidgetFrames(absolute)
-		updateDotFrames           (absolute)
-		updateHighlightFrame      (absolute)
-		updateChildrenViewFrame   (absolute)
-		updateLinesViewFrame      (absolute)
 	}
 
     func dot(at iIndex: Int) -> ZoneDot? {

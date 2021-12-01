@@ -132,9 +132,8 @@ extension ZoneWidget {
 
 	}
 
-	func linearModeUpdateHighlightFrame(_ absolute: Bool = false) {
-		if  absolute,
-			let              t = textWidget,
+	var linearModeHighlightFrame : CGRect {
+		if  let              t = textWidget,
 			let            dot = childrenLines.first?.revealDot {
 			let revealDotDelta = dot.dotIsVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
 			let            gap = gGenericOffset.height
@@ -144,8 +143,11 @@ extension ZoneWidget {
 			var           rect = t.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
 			rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
 			rect.size  .width += (widthExpand - revealDotDelta) / ratio
-			highlightFrame     = rect
+
+			return rect
 		}
+
+		return .zero
 	}
 
 	var linearModeSelectionHighlightPath: ZBezierPath {
@@ -168,6 +170,20 @@ extension ZoneWidget {
 				line     .revealDot?.linearModeUpdateAbsoluteFrame(relativeTo: textFrame)
 			}
 		}
+	}
+
+	func linearModeUpdateAllFrames(_ absolute: Bool) {
+		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
+			iWidget.linearModeUpdateSubframes(absolute)
+		}
+	}
+
+	func linearModeUpdateSubframes(_ absolute: Bool = false) {
+		linearModeUpdateTextViewFrame       (absolute)
+		linearModeUpdateChildrenWidgetFrames(absolute)
+		linearModeUpdateDotFrames           (absolute)
+		linearModeUpdateChildrenViewFrame   (absolute)
+		linearModeUpdateLinesViewFrame      (absolute)
 	}
 
 }
