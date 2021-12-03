@@ -93,9 +93,7 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
-	var            halfAngle = 0.0
 	var               offset = CGPoint.zero
-	var           ringRadius = CGFloat.zero
 	let         widgetObject =   ZWidgetObject()
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
@@ -203,7 +201,7 @@ class ZoneWidget: ZPseudoView {
 			updateChildrenLinesDrawnSize()
 		}
 
-		updateSize()
+		updateWidgetSize()
 
 		return count
 	}
@@ -480,7 +478,7 @@ class ZoneWidget: ZPseudoView {
 			circle                     .drawColoredCircle(.orange)
 			origin                     .drawColoredLine  (.green, to: extent, thickness: 2.0)
 			highlightFrame             .drawColoredRect  (.red,   radius: 0.0)
-//			absoluteFrame              .drawColoredRect  (.blue,  radius: 0.0)
+			absoluteFrame              .drawColoredRect  (.blue,  radius: 0.0)
 //			linesView?   .absoluteFrame.drawColoredRect  (.green)
 //			childrenView?.absoluteFrame.drawColoredRect  (.orange)
 		}

@@ -35,7 +35,7 @@ extension ZoneWidget {
 		return CGFloat(Double.pi * 2.0) * CGFloat(zCount) / CGFloat(wCount)
 	}
 
-	func circularModeUpdateSize() {
+	func circularModeUpdateWidgetSize() {
 		if  let  size = textWidget?.frame.size {
 			drawnSize = size.insetBy(gDotHeight, gDotHeight)
 		}
@@ -72,8 +72,6 @@ extension ZoneWidget {
 			let                  angles = anglesArray(childrenLines.count, startAngle: start, spreadAngle: spread, offset: offset, clockwise: true)
 
 			if  angles.count > 0 {
-				halfAngle               = angles[0] / 2.0
-
 				for (index, child) in childrenLines.enumerated() {
 					child        .angle = CGFloat(angles[index])
 				}
@@ -90,22 +88,19 @@ extension ZoneWidget {
 
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
-				} else if  let t = pseudoTextWidget,
-						   let w = child.pseudoTextWidget?.frame.size.width {
+				} else if  let t = pseudoTextWidget {
 					let     line = childrenLines[index]
 					let    angle = Double(line.angle)
-					let     size = CGSize.squared(w)
+					let     half = kDefaultCircularModeRadius
+					let     size = CGSize.squared(half)
+					let   radius = half + gDotWidth + gDotHeight + line.length + gDotWidth
 					if  gOtherCircularAlgorithm {
-						let     half = w / 2.0
-						let   radius = ringRadius + gDotHeight + line.length + gDotWidth + half - 7.0
-						let   center = t.frame.extent + CGPoint(x: -20.0 - half, y: -15.0)
-						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
+						let   center = t.frame.extent + CGPoint(x: 10.0 - half, y: -5.0)
+						let  rotated = CGPoint(x: radius + half, y: 0.0).rotate(by: angle)
 						let   origin = center + rotated
 						let     rect = CGRect(origin: origin, size: size)
 						child .frame = rect
 					} else {
-						let     half = w / 2.0
-						let   radius = ringRadius + gDotHeight + line.length + gDotWidth
 						let   center = t.frame.center
 						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
 						child.offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
@@ -125,8 +120,8 @@ extension ZoneWidget {
 
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
-				ringRadius        = size.width / 2.0 + gDotWidth
-				let          rect = CGRect(origin: .zero, size: size)
+				let        origin = CGPoint(x: -30.0, y: -10.0)
+				let          rect = CGRect(origin: origin, size: size)
 				t          .frame = rect
 			}
 		}
@@ -135,7 +130,7 @@ extension ZoneWidget {
 	var circularModeHighlightFrame : CGRect {
 		if  let      frame = pseudoTextWidget?.absoluteFrame {
 			let     center = frame.center
-			let     radius = frame.size.width / 2.0 + 3.0
+			let     radius = kDefaultCircularModeRadius + 3.0
 			let       rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
 			return rect
 		}
@@ -234,30 +229,31 @@ extension ZoneLine {
 
 	func circularModeUpdateDotFrames(relativeTo absoluteTextFrame: CGRect, hideDragDot: Bool) {
 		if !hideDragDot {
-			dragDot?.circularModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
+			dragDot?.circularModeUpdateDotAbsoluteFrame(relativeTo: absoluteTextFrame)
 		}
 
-		revealDot?  .circularModeUpdateAbsoluteFrame(relativeTo: absoluteTextFrame)
+		revealDot?  .circularModeUpdateDotAbsoluteFrame(relativeTo: absoluteTextFrame)
 	}
 
 	func circularModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let radius = iRect.size.hypotenuse
-		let  start = angle.upward ? iRect.origin : iRect.topLeft
-		let    end = CGPoint(x: radius, y: CGFloat(0.0)).rotate(by: Double(angle)).offsetBy(start)
-		let   path = ZBezierPath()
+		let       path = ZBezierPath()
+		if  !iRect.isEmpty {
+			let radius = iRect.size.hypotenuse
+			let  start = angle.upward ? iRect.origin : iRect.topLeft
+			let    end = CGPoint(x: radius, y: .zero).rotate(by: Double(angle)).offsetBy(start)
 
-//		if  gDebugDraw {
-//			let  r = CGRect(start: start, extent: end)
-//			r.drawColoredRect(.blue)
-//		}
+			if  gDebugDraw {
+				iRect.drawColoredRect(.green)
+			}
 
-		path.move(to: start)
-		path.line(to: end)
+			path.move(to: start)
+			path.line(to: end)
+		}
 
 		return path
 	}
 
-	func circularModeUpdateSize() {
+	func circularModeUpdateLineSize() {
 		// TODO: use radius to create point (vector)
 		// use angle to rotate
 		// use this to create drawnSize
@@ -272,21 +268,22 @@ extension ZoneDot {
 
 	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
 
-	func circularModeUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		if  let         l = line,
-			let         r = l.parentWidget?.ringRadius {
+	func circularModeUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 
-			// length of vector = ringRadius
-			// longer for drag dot: add line length and dot width
-			// rotate to angle (around zero point)
-			// move zero point to text center
-			// move further by size of dot
+		// length of vector = kDefaultCircularModeRadius + gDotWidth
+		// longer for drag dot: add line length and dot width
+		// rotate to angle (around zero point)
+		// move zero point to text center
+		// move further by size of dot
 
+		if  let         l = line {
 			let     angle = Double(l.angle)
-			let     width = isReveal ? gDotHeight : gDotWidth
-			let    length = isReveal ? 0.0 : l.length + gDotWidth
-			let   rotated = CGPoint(x: r + length, y: 0.0).rotate(by: angle)
-			let      size = CGSize(width: width, height: gDotWidth)
+			let    height = gDotWidth
+			let     width = isReveal ? gDotHeight :      height
+			let     extra = isReveal ? 0.0 : l.length +  height
+			let      size = CGSize(width: width, height: height)
+			let    radius = kDefaultCircularModeRadius + gDotWidth + extra
+			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
 			let    center = absoluteTextFrame.center
 			let    origin = center + rotated - size
 			absoluteFrame = CGRect(origin: origin, size: drawnSize)

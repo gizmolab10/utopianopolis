@@ -13,7 +13,7 @@ import Foundation
 
 extension ZoneWidget {
 
-	func linearModeUpdateSize() {
+	func linearModeUpdateWidgetSize() {
 		if  let       t = textWidget,
 			let   lSize = linesView?   .drawnSize {
 			let   cSize = childrenView?.drawnSize
@@ -66,7 +66,7 @@ extension ZoneWidget {
 		var    height = CGFloat(0.0)
 
 		for line in childrenLines {
-			line.updateSize()
+			line.updateLineSize()
 
 			let  size = line.drawnSize
 			height   += size.height
@@ -275,7 +275,7 @@ extension ZoneLine {
 		return linearModeLineKind(for: delta)
 	}
 
-	func linearModeUpdateSize() {
+	func linearModeUpdateLineSize() {
 		// all lines have at least a reveal dot
 		drawnSize = revealDot?.updateSize() ?? .zero
 	}

@@ -52,7 +52,7 @@ class ZHelpGridView: ZView {
 
 						if  c == .favorite {
 							m.color.withAlphaComponent(0.7).setFill()
-							d.drawSurroundingDot(r, m)
+							d.drawAroundDot(r, m)
 						}
 					}
 
@@ -64,7 +64,7 @@ class ZHelpGridView: ZView {
 						let m = c.helpDotParameters(isFilled: true)
 
 						d.drawDot(r, m)
-						d.drawSurroundingDot(r, m)
+						d.drawAroundDot(r, m)
 					}
 				}
 			}

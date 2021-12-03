@@ -276,7 +276,7 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
-	func drawSurroundingDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawAroundDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		if  parameters.showSideDot,
 			!parameters.isReveal {
 
@@ -311,19 +311,17 @@ class ZoneDot: ZPseudoView {
 	}
 
     func draw() {
-		if  dotIsVisible,
+		let  rect = absoluteActualFrame
+		if  !rect.isEmpty, dotIsVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
-			let       rect = absoluteActualFrame
 
-			if  rect.isEmpty { return }
+			if  gDebugDraw {
+				rect.drawColoredRect(.red)
+			}
 
-//			if  gDebugDraw {
-//				rect.drawColoredRect(.red)
-//			}
-
-			drawDot           (rect, parameters)
-			drawSurroundingDot(rect, parameters)
+			drawDot      (rect, parameters)
+			drawAroundDot(rect, parameters)
 		}
-    }
+	}
 
 }

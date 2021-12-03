@@ -40,11 +40,11 @@ class ZoneLine: ZPseudoView {
 	}
 
 	var lineKind : ZLineKind {
-		if  let     zone = parentWidget?.widgetZone,
-			let      dot = dragDot,
-			zone  .count > 1,
-			let dragKind = lineKind(to: dot.absoluteActualFrame) {
-			return dragKind
+		if  isLinearMode,
+			let     dot = dragDot,
+			let    zone = parentWidget?.widgetZone, zone.count > 1,
+			let    kind = lineKind(to: dot.absoluteActualFrame) {
+			return kind
 		}
 
 		return .straight
@@ -70,7 +70,7 @@ class ZoneLine: ZPseudoView {
 		return CGRect.zero
 	}
 
-	func linePath(in iRect: CGRect, kind: ZLineKind?, isDragLine: Bool) -> ZBezierPath {
+	func linePath(in iRect: CGRect, kind: ZLineKind?, isDragLine: Bool = false) -> ZBezierPath {
 		if  let    k = kind {
 			switch k {
 				case .straight: return straightLinePath(in: iRect, isDragLine)
@@ -82,16 +82,17 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawLine() {
-		if  let      child = childWidget,
-			let       zone = child.widgetZone {
-			let       kind = lineKind
-			let       rect = lineRect(to: child, kind: kind)
-			let       path = linePath(in:  rect, kind: kind, isDragLine: false)
-			let      color = zone.color
-			path.lineWidth = CGFloat(gLineThickness)
+		if  let child = childWidget {
+			let  kind = lineKind
+			let  rect = lineRect(to: child, kind: kind)
 
-			color?.setStroke()
-			path.stroke()
+			if  let      color = child.widgetZone?.color, !rect.isEmpty {
+				let       path = linePath(in:  rect, kind: kind)
+				path.lineWidth = CGFloat(gLineThickness)
+
+				color.setStroke()
+				path.stroke()
+			}
 		}
 	}
 

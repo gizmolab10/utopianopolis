@@ -13,10 +13,10 @@ import Foundation
 
 extension ZoneWidget {
 
-	func updateSize() {
+	func updateWidgetSize() {
 		switch mode {
-			case .linearMode:     linearModeUpdateSize()
-			case .circularMode: circularModeUpdateSize()
+			case .linearMode:     linearModeUpdateWidgetSize()
+			case .circularMode: circularModeUpdateWidgetSize()
 		}
 	}
 
@@ -69,20 +69,6 @@ extension ZoneWidget {
 
 }
 
-// MARK:- dot
-// MARK:-
-
-extension ZoneDot {
-
-	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		switch mode {
-			case .linearMode:     linearModeDrawMainDot(in: iDirtyRect, using: parameters)
-			case .circularMode: circularModeDrawMainDot(in: iDirtyRect, using: parameters)
-		}
-	}
-
-}
-
 // MARK:- line
 // MARK:-
 
@@ -116,10 +102,24 @@ extension ZoneLine {
 		}
 	}
 
-	func updateSize() {
+	func updateLineSize() {
 		switch mode {
-			case .linearMode:     linearModeUpdateSize()
-			case .circularMode: circularModeUpdateSize()
+			case .linearMode:     linearModeUpdateLineSize()
+			case .circularMode: circularModeUpdateLineSize()
+		}
+	}
+
+}
+
+// MARK:- dot
+// MARK:-
+
+extension ZoneDot {
+
+	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
+		switch mode {
+			case .linearMode:     linearModeDrawMainDot(in: iDirtyRect, using: parameters)
+			case .circularMode: circularModeDrawMainDot(in: iDirtyRect, using: parameters)
 		}
 	}
 
