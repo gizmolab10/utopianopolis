@@ -97,20 +97,19 @@ extension ZoneWidget {
 					let     size = CGSize.squared(w)
 					if  gOtherCircularAlgorithm {
 						let     half = w / 2.0
+						let   radius = ringRadius + gDotHeight + line.length + gDotWidth + half - 7.0
+						let   center = t.frame.extent + CGPoint(x: -20.0 - half, y: -15.0)
+						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
+						let   origin = center + rotated
+						let     rect = CGRect(origin: origin, size: size)
+						child .frame = rect
+					} else {
+						let     half = w / 2.0
 						let   radius = ringRadius + gDotHeight + line.length + gDotWidth
 						let   center = t.frame.center
 						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
 						child.offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
 						let   origin = center + rotated + child.offset
-						let     rect = CGRect(origin: origin, size: size)
-						child .frame = rect
-					} else {
-						let     half = w / 2.0
-						let   radius = ringRadius + gDotHeight + line.length + gDotWidth + half - 7.0
-						let   center = t.frame.extent + CGPoint(x: -10.0, y: half - 10.0)
-						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
-						child.offset = CGPoint.equaled(half)
-						let   origin = center + rotated - child.offset
 						let     rect = CGRect(origin: origin, size: size)
 						child .frame = rect
 					}
@@ -127,8 +126,7 @@ extension ZoneWidget {
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
 				ringRadius        = size.width / 2.0 + gDotWidth
-				let        origin = CGPoint(x: -30.0, y: -10.0)
-				let          rect = CGRect(origin: origin, size: size)
+				let          rect = CGRect(origin: .zero, size: size)
 				t          .frame = rect
 			}
 		}
