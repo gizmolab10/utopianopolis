@@ -230,6 +230,9 @@
 		A76D19422703FEBD00E04044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A76D19412703FEBD00E04044 /* Assets.xcassets */; };
 		A76D19452703FEBD00E04044 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A76D19432703FEBD00E04044 /* Main.storyboard */; };
 		A76D196A2706400100E04044 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
+		A76F9B91275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */; };
+		A76F9B92275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */; };
+		A76F9B93275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */; };
 		A7738FE12628C3390040B9CD /* tutorial.idea.and.list.mov in Resources */ = {isa = PBXBuildFile; fileRef = A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */; };
 		A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
@@ -579,6 +582,7 @@
 		A76D19442703FEBD00E04044 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A76D19462703FEBD00E04044 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A76D19472703FEBD00E04044 /* simple.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = simple.entitlements; sourceTree = "<group>"; };
+		A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebugAnglesController.swift; sourceTree = "<group>"; };
 		A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = tutorial.idea.and.list.mov; sourceTree = "<group>"; };
 		A774ED1923E225A500080DC9 /* ZGesturesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGesturesController.swift; sourceTree = "<group>"; };
 		A777A7AE260FAC0300361265 /* ZMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMapView.swift; sourceTree = "<group>"; };
@@ -1040,6 +1044,7 @@
 		A786C6EE25DF5F7400B23FBF /* debug */ = {
 			isa = PBXGroup;
 			children = (
+				A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */,
 				A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */,
 			);
 			path = debug;
@@ -1133,7 +1138,6 @@
 				0C43EFC621010F62000976CE /* cloudkit */,
 				0C39B22E1F182EBB0091F4D1 /* common */,
 				0C39B2541F182EBB0091F4D1 /* models */,
-				A786C6EE25DF5F7400B23FBF /* debug */,
 				0C43EFBC21010F17000976CE /* storage */,
 				0C39B2361F182EBB0091F4D1 /* ios */,
 				A7EE245425292985003BF3C0 /* navigation */,
@@ -1148,6 +1152,7 @@
 			children = (
 				A769977E24983C2C00DF289D /* breadcrumbs */,
 				A796740D26597CD200F06769 /* controls */,
+				A786C6EE25DF5F7400B23FBF /* debug */,
 				0C39B2271F182EBB0091F4D1 /* details */,
 				A769977F24983C9600DF289D /* essays */,
 				A7D2D65224902F8F00F652B0 /* help */,
@@ -1522,6 +1527,7 @@
 				A7B48AA823E0E80C00654DBD /* ZToggleButton.swift in Sources */,
 				A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */,
 				A7B78D42244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */,
+				A76F9B91275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */,
 				A7CF3209260D7D9B00285A03 /* ZHelpEditor.swift in Sources */,
 				A73175642638CCA900DF1CE5 /* ZFilesRegistry.swift in Sources */,
 				A777A7AF260FAC0300361265 /* ZMapView.swift in Sources */,
@@ -1636,6 +1642,7 @@
 				A7948CAB2486CBD700CDA302 /* ZStartupController.swift in Sources */,
 				A7B48AB923E0E80C00654DBD /* ZoneWidget.swift in Sources */,
 				A793723425BE2EE0008C98AE /* ZSimpleToolButton.swift in Sources */,
+				A76F9B93275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */,
 				A786C6F325DF5F9F00B23FBF /* ZDebugController.swift in Sources */,
 				A7D2D649248F119A00F652B0 /* ZHelpEssayData.swift in Sources */,
 				0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */,
@@ -1768,6 +1775,7 @@
 				A759F70224269D29008CEA59 /* ZTimers.swift in Sources */,
 				A774ED1E23E2268E00080DC9 /* ZGesturesController.swift in Sources */,
 				A7064438246F6D2700F90B86 /* ZButtonsView.swift in Sources */,
+				A76F9B92275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */,
 				A7CF320A260D7D9B00285A03 /* ZHelpEditor.swift in Sources */,
 				A73175652638CCA900DF1CE5 /* ZFilesRegistry.swift in Sources */,
 				A777A7B0260FAC0300361265 /* ZMapView.swift in Sources */,

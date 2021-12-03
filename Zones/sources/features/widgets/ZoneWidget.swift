@@ -94,7 +94,6 @@ class ZWidgetObject: NSObject {
 class ZoneWidget: ZPseudoView {
 
 	var            halfAngle = 0.0
-	var          showAsPuffy = true
 	var               offset = CGPoint.zero
 	var           ringRadius = CGFloat.zero
 	let         widgetObject =   ZWidgetObject()

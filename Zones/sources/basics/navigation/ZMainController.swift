@@ -17,19 +17,18 @@ var gDragView       : ZDragView?       { return gMainController?.dragView }
 
 class ZMainController: ZGesturesController {
 
-	override  var controllerID          : ZControllerID { return .idMain }
-	@IBOutlet var alternateLeading      : NSLayoutConstraint?
-	@IBOutlet var smallMapContainerView : ZView?
-	@IBOutlet var essayContainerView    : ZView?
-	@IBOutlet var searchResultsView     : ZView?
-	@IBOutlet var mapContainerView      : ZView?
-	@IBOutlet var permissionView        : ZView?
-	@IBOutlet var searchBoxView         : ZView?
-	@IBOutlet var detailView            : ZView?
-	@IBOutlet var debugView             : ZView?
-	@IBOutlet var dragView              : ZDragView?
-	@IBOutlet var helpButton            : ZHelpButton?
-	@IBOutlet var hamburgerButton       : ZButton?
+	override  var controllerID       : ZControllerID { return .idMain }
+	@IBOutlet var alternateLeading   : NSLayoutConstraint?
+	@IBOutlet var essayContainerView : ZView?
+	@IBOutlet var searchResultsView  : ZView?
+	@IBOutlet var debugAnglesView    : ZView?
+	@IBOutlet var permissionView     : ZView?
+	@IBOutlet var searchBoxView      : ZView?
+	@IBOutlet var detailView         : ZView?
+	@IBOutlet var debugView          : ZView?
+	@IBOutlet var dragView           : ZDragView?
+	@IBOutlet var helpButton         : ZHelpButton?
+	@IBOutlet var hamburgerButton    : ZButton?
 
 	var hamburgerImage: ZImage? {
 		var image = kHamburgerImage
@@ -93,7 +92,6 @@ class ZMainController: ZGesturesController {
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
 		let   hideSearch = !isSearchMode || gSearchResultsVisible
 		let  hideResults = !isSearchMode || gIsSearchEssayMode || gIsNotSearching || gWaitingForSearchEntry || !hasResults
-		let      hideMap = !hideResults  || gIsSearchEssayMode || gIsEssayMode
 
 		switch kind {
 			case .sSearch:
@@ -109,8 +107,8 @@ class ZMainController: ZGesturesController {
 			default: break
         }
 
+		debugAnglesView?  .isHidden = !gDebugAngles
 		permissionView?   .isHidden = !gIsStartupMode
-		mapContainerView? .isHidden =  hideMap
 		searchResultsView?.isHidden =  hideResults || gIsEssayMode
 		searchBoxView?    .isHidden =  hideSearch
 

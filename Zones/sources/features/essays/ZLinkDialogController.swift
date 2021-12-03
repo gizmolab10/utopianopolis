@@ -19,8 +19,6 @@ struct ZEssayLinkParameters {
 	let closure : StringStringClosure?
 }
 
-var gLinkDialogController : ZLinkDialogController? { return gControllers.controllerForID(.idLink) as? ZLinkDialogController }
-
 class ZLinkDialogController: ZGenericController {
 
 	@IBOutlet var         link : ZTextField?

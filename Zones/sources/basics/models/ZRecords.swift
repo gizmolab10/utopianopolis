@@ -237,16 +237,12 @@ class ZRecords: NSObject {
 		}
 	}
 
-	func debugValue(for debugID: ZDebugID?) -> Int? {
-		if  let d = debugID {
-			switch d {
-				case .dDuplicates: return duplicates            .count
-				case .dRegistry:   return zRecordsLookup        .count
-				default:           return debugZRecords(for: d)?.count
-			}
+	func debugValue(for debugID: ZDebugID) -> Int? {
+		switch debugID {
+			case .dDuplicates: return duplicates                  .count
+			case .dRegistry:   return zRecordsLookup              .count
+			default:           return debugZRecords(for: debugID)?.count
 		}
-
-		return nil
 	}
 
 

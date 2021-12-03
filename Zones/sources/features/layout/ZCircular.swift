@@ -11,7 +11,29 @@ import Foundation
 // MARK:- widget
 // MARK:-
 
+func gCircularModeVisibleChildren(at level: Int) -> ZoneWidgetArray {
+	var widgets = ZoneWidgetArray()
+
+	for widget in gHere.visibleWidgets {
+		if  widget.linesLevel == level {
+			widgets.append(widget)
+		}
+	}
+
+	return widgets
+}
+
+func gCircularModeRingRadius(at level: Int) -> CGFloat { return CGFloat(level) * 200.0 }
+
 extension ZoneWidget {
+
+	var circularModeSpreadAngle: CGFloat {
+		let  zCount = widgetZone?.count ?? 1
+		let widgets = gCircularModeVisibleChildren(at: linesLevel)
+		let  wCount = widgets.count
+
+		return CGFloat(Double.pi * 2.0) * CGFloat(zCount) / CGFloat(wCount)
+	}
 
 	func circularModeUpdateSize() {
 		if  let  size = textWidget?.frame.size {
@@ -29,25 +51,16 @@ extension ZoneWidget {
 
 		let         pi = Double.pi
 		let      count = Double(zone.count)
-		var      start = Double(parentLine?.angle ?? 0.0)
+		var      start = Double(parentLine?.angle ?? 0.0) + (pi / 2.0)
 		var     offset = 1.0
 		var     spread = pi * 2.0
 		let  increment = pi / 6.0
 		let   isCenter = linesLevel == 0
-		showAsPuffy    = (count > 6.0 || isCenter) && hasVisibleChildren
 
 		if !isCenter {
-			if  showAsPuffy {
-				offset = 0.5
-				spread = pi * 1.5
-				parentLine?.length = 125.0
-			} else {
-				offset = 1.5
-				spread = increment * count
-				start += increment
-			}
-
-			start += spread / 2.0
+			offset = 1.5
+			spread = increment * count
+			start += increment - spread / 2.0
 		}
 
 		return (start, spread, offset)
@@ -79,25 +92,22 @@ extension ZoneWidget {
 					child.updateAbsoluteFrame(toController: controller)
 				} else if  let t = pseudoTextWidget,
 						   let w = child.pseudoTextWidget?.frame.size.width {
+					let     line = childrenLines[index]
+					let    angle = Double(line.angle)
+					let     size = CGSize.squared(w)
 					if  gOtherCircularAlgorithm {
-						let     line = childrenLines[index]
-						let    angle = Double(line.angle)
 						let     half = w / 2.0
 						let   radius = ringRadius + gDotHeight + line.length + gDotWidth
 						let   center = t.frame.center
-						let     size = CGSize.squared(w)
 						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
 						child.offset = CGPoint(x:   half, y: 0.0).rotate(by: angle)
 						let   origin = center + rotated + child.offset
 						let     rect = CGRect(origin: origin, size: size)
 						child .frame = rect
 					} else {
-						let     line = childrenLines[index]
-						let    angle = Double(line.angle)
 						let     half = w / 2.0
 						let   radius = ringRadius + gDotHeight + line.length + gDotWidth + half - 7.0
 						let   center = t.frame.extent + CGPoint(x: -10.0, y: half - 10.0)
-						let     size = CGSize.squared(w)
 						let  rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
 						child.offset = CGPoint.equaled(half)
 						let   origin = center + rotated - child.offset

@@ -16,6 +16,7 @@ var     gIsUsingCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && 
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
+var         gDebugAngles : Bool { return  gDebugModes.contains(.dDebugAngles) }
 var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
 var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 var          gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
@@ -60,6 +61,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dDebugInfo           = ZDebugMode() // inject debugging information into UI
 	static let dDebugDraw           = ZDebugMode() // colorize rects
 	static let dWriteFiles          = ZDebugMode() // write files
+	static let dDebugAngles         = ZDebugMode() // experiment with circular angle algorithm
 	static let dDebugAccess         = ZDebugMode() // test write access by me not having full
 	static let dShowDestroy         = ZDebugMode() // add destroy bookmark to favorites
 	static let dShowDuplicates      = ZDebugMode() // report duplicates
@@ -74,6 +76,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dDebugInfo,           "show debug info"),
 				(.dDebugDraw,           "debug draw"),
 				(.dWriteFiles,          "write files"),
+				(.dDebugAngles,         "debug circular angle algorithm"),
 				(.dDebugAccess,         "debug write access"),
 				(.dShowDestroy,         "add destroy bookmark"),
 				(.dShowDuplicates,      "indicate zones with duplicates"),

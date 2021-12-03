@@ -14,8 +14,8 @@ import SnapKit
     import UIKit
 #endif
 
-var gMapController:  ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
-var gMapView:        ZMapView?       { return gDragView?.mapView }
+var gMapController: ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
+var gMapView:       ZMapView?       { return gDragView?.mapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
