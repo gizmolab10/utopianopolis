@@ -649,28 +649,6 @@ DQ
         <!--Map-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" userLabel="Map" customClass="ZMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
-                        <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="myf-PZ-JAt" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
-                            </customView>
-                        </subviews>
-                        <constraints>
-                            <constraint firstItem="myf-PZ-JAt" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="IQP-o6-hsE"/>
-                            <constraint firstItem="myf-PZ-JAt" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="cQG-96-ohP"/>
-                            <constraint firstAttribute="trailing" secondItem="myf-PZ-JAt" secondAttribute="trailing" id="dLt-XS-TaK"/>
-                            <constraint firstAttribute="bottom" secondItem="myf-PZ-JAt" secondAttribute="bottom" id="z8m-0I-n0V"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
-                        <outlet property="mapContextualMenu" destination="HLb-eX-LkY" id="8lR-R2-tPJ"/>
-                    </connections>
-                </viewController>
-                <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <menu title="Actions" id="4NV-a6-tte" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
                     <items>
                         <menuItem title="Focus" keyEquivalent="/" id="1Xd-2W-Q0x">
@@ -819,6 +797,7 @@ CA
                         </menuItem>
                     </items>
                 </menu>
+                <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <menu title="Map Contextual Menu" identifier="Map Contextual Menu" id="HLb-eX-LkY" userLabel="Map Contextual Menu" customClass="ZContextualMenu" customModule="Seriously" customModuleProvider="target">
                     <items>
                         <menuItem title="Recenter Map" keyEquivalent="c" id="Apg-wy-AUv">
@@ -871,6 +850,27 @@ CA
                     </items>
                     <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
                 </menu>
+                <viewController id="XfG-lQ-9wD" userLabel="Map" customClass="ZMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" identifier="drag view" id="m2S-Jp-Qdl" userLabel="View">
+                        <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="myf-PZ-JAt" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="289" height="289"/>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="myf-PZ-JAt" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="IQP-o6-hsE"/>
+                            <constraint firstItem="myf-PZ-JAt" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="cQG-96-ohP"/>
+                            <constraint firstAttribute="trailing" secondItem="myf-PZ-JAt" secondAttribute="trailing" id="dLt-XS-TaK"/>
+                            <constraint firstAttribute="bottom" secondItem="myf-PZ-JAt" secondAttribute="bottom" id="z8m-0I-n0V"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="ideaContextualMenu" destination="4NV-a6-tte" id="idV-YI-eqw"/>
+                        <outlet property="mapContextualMenu" destination="HLb-eX-LkY" id="8lR-R2-tPJ"/>
+                    </connections>
+                </viewController>
             </objects>
             <point key="canvasLocation" x="127" y="1173"/>
         </scene>
@@ -1043,9 +1043,9 @@ CA
                                 </connections>
                             </containerView>
                             <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bXe-bA-sJU" userLabel="Debug Angles Controls View">
-                                <rect key="frame" x="0.0" y="0.0" width="350" height="150"/>
+                                <rect key="frame" x="0.0" y="0.0" width="350" height="250"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="150" id="ifk-8h-ZPC"/>
+                                    <constraint firstAttribute="height" constant="250" id="ifk-8h-ZPC"/>
                                     <constraint firstAttribute="width" constant="350" id="qkI-pD-7SY"/>
                                 </constraints>
                                 <connections>
@@ -1716,102 +1716,271 @@ DQ
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="Angles" translatesAutoresizingMaskIntoConstraints="NO" id="iU4-Yn-HWR">
-                                <rect key="frame" x="17" y="98" width="288" height="82"/>
+                                <rect key="frame" x="17" y="102" width="288" height="78"/>
                                 <view key="contentView" id="OLz-so-Ez9">
-                                    <rect key="frame" x="3" y="3" width="282" height="64"/>
+                                    <rect key="frame" x="3" y="3" width="282" height="60"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XHa-Tv-e1G">
-                                            <rect key="frame" x="6" y="36" width="54" height="20"/>
+                                        <customView identifier="central" translatesAutoresizingMaskIntoConstraints="NO" id="fII-si-7Qj" userLabel="Central" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="8" y="32" width="266" height="20"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XHa-Tv-e1G">
+                                                    <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="8gG-Lg-PQO"/>
+                                                        <constraint firstAttribute="width" constant="50" id="Jov-bD-PO6"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Central" id="0uH-o4-n4q">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZHJ-bz-J6K" userLabel="Text">
+                                                    <rect key="frame" x="56" y="0.0" width="29" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="3Rd-jV-9Yg"/>
+                                                        <constraint firstAttribute="width" constant="25" id="CiA-P4-lLb"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" editable="YES" alignment="left" title="Value" id="6rC-HJ-Zt6">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <connections>
+                                                        <action selector="handleTextAction:" target="fII-si-7Qj" id="Vq9-gN-cyL"/>
+                                                    </connections>
+                                                </textField>
+                                                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fIX-yF-2r1" userLabel="angle slider">
+                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="5Ne-Kw-FFA"/>
+                                                    </constraints>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="360" doubleValue="90" tickMarkPosition="above" sliderType="linear" id="eQe-Id-YN3"/>
+                                                    <connections>
+                                                        <action selector="handleSliderAction:" target="fII-si-7Qj" id="hed-wj-yq4"/>
+                                                    </connections>
+                                                </slider>
+                                            </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="8gG-Lg-PQO"/>
-                                                <constraint firstAttribute="width" constant="50" id="Jov-bD-PO6"/>
+                                                <constraint firstItem="fIX-yF-2r1" firstAttribute="leading" secondItem="ZHJ-bz-J6K" secondAttribute="trailing" constant="8" id="ISG-w0-hHL"/>
+                                                <constraint firstAttribute="trailing" secondItem="fIX-yF-2r1" secondAttribute="trailing" id="YT3-zb-gpS"/>
+                                                <constraint firstItem="XHa-Tv-e1G" firstAttribute="centerY" secondItem="fIX-yF-2r1" secondAttribute="centerY" id="bav-IV-fkz"/>
+                                                <constraint firstItem="XHa-Tv-e1G" firstAttribute="leading" secondItem="fII-si-7Qj" secondAttribute="leading" id="c34-Eu-nwo"/>
+                                                <constraint firstItem="ZHJ-bz-J6K" firstAttribute="leading" secondItem="XHa-Tv-e1G" secondAttribute="trailing" constant="8" id="fAv-Uq-4nh"/>
+                                                <constraint firstItem="fIX-yF-2r1" firstAttribute="top" secondItem="fII-si-7Qj" secondAttribute="top" id="g9D-aR-8qy"/>
+                                                <constraint firstItem="ZHJ-bz-J6K" firstAttribute="centerY" secondItem="fIX-yF-2r1" secondAttribute="centerY" id="p8z-XF-kOu"/>
+                                                <constraint firstAttribute="bottom" secondItem="fIX-yF-2r1" secondAttribute="bottom" id="qBN-60-gtT"/>
                                             </constraints>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Central" id="0uH-o4-n4q">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZHJ-bz-J6K" userLabel="Text">
-                                            <rect key="frame" x="64" y="36" width="29" height="20"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="3Rd-jV-9Yg"/>
-                                                <constraint firstAttribute="width" constant="25" id="CiA-P4-lLb"/>
-                                            </constraints>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" editable="YES" alignment="left" title="Value" id="6rC-HJ-Zt6">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
                                             <connections>
-                                                <action selector="handleTextAction:" target="mSh-jO-anT" id="aja-dv-BSN"/>
+                                                <outlet property="controller" destination="mSh-jO-anT" id="F8n-iB-pTd"/>
+                                                <outlet property="label" destination="XHa-Tv-e1G" id="R8P-If-xkt"/>
+                                                <outlet property="slider" destination="fIX-yF-2r1" id="Ydm-LV-C7z"/>
+                                                <outlet property="textField" destination="ZHJ-bz-J6K" id="yNB-VE-xeq"/>
                                             </connections>
-                                        </textField>
-                                        <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fIX-yF-2r1" userLabel="angle slider">
-                                            <rect key="frame" x="97" y="30" width="179" height="28"/>
+                                        </customView>
+                                        <customView identifier="outer" translatesAutoresizingMaskIntoConstraints="NO" id="23a-23-WTx" userLabel="Outer" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="8" y="8" width="266" height="20"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tmz-aB-rBP">
+                                                    <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="XC1-Hk-4WR"/>
+                                                        <constraint firstAttribute="width" constant="50" id="poh-CB-6Lx"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Outer" id="kz1-GY-jDj">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="oLb-xn-YbW" userLabel="Text">
+                                                    <rect key="frame" x="56" y="0.0" width="29" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="Uox-vf-Tb5"/>
+                                                        <constraint firstAttribute="width" constant="25" id="i9m-7Y-hxc"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" editable="YES" alignment="left" title="Value" id="Mvr-Er-BQJ">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <connections>
+                                                        <action selector="handleTextAction:" target="23a-23-WTx" id="3QM-f5-fgK"/>
+                                                    </connections>
+                                                </textField>
+                                                <slider verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="C99-9G-KTL" userLabel="angle slider">
+                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="dWQ-wZ-XXE"/>
+                                                    </constraints>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="360" doubleValue="180" tickMarkPosition="above" sliderType="linear" id="8oN-XU-2zf"/>
+                                                    <connections>
+                                                        <action selector="handleSliderAction:" target="23a-23-WTx" id="1Qp-hX-U8O"/>
+                                                    </connections>
+                                                </slider>
+                                            </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="5Ne-Kw-FFA"/>
+                                                <constraint firstItem="C99-9G-KTL" firstAttribute="top" secondItem="23a-23-WTx" secondAttribute="top" id="0lq-E7-vQj"/>
+                                                <constraint firstItem="oLb-xn-YbW" firstAttribute="centerY" secondItem="C99-9G-KTL" secondAttribute="centerY" id="Hgp-O3-hul"/>
+                                                <constraint firstItem="tmz-aB-rBP" firstAttribute="leading" secondItem="23a-23-WTx" secondAttribute="leading" id="VwK-ig-lv6"/>
+                                                <constraint firstItem="oLb-xn-YbW" firstAttribute="leading" secondItem="tmz-aB-rBP" secondAttribute="trailing" constant="8" id="ekw-aD-NFU"/>
+                                                <constraint firstItem="C99-9G-KTL" firstAttribute="leading" secondItem="oLb-xn-YbW" secondAttribute="trailing" constant="8" id="fBd-bz-iiR"/>
+                                                <constraint firstAttribute="bottom" secondItem="C99-9G-KTL" secondAttribute="bottom" id="p6r-5c-Vb1"/>
+                                                <constraint firstItem="tmz-aB-rBP" firstAttribute="centerY" secondItem="C99-9G-KTL" secondAttribute="centerY" id="zFK-3P-QKy"/>
+                                                <constraint firstAttribute="trailing" secondItem="C99-9G-KTL" secondAttribute="trailing" id="zud-Rg-C90"/>
                                             </constraints>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="360" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="eQe-Id-YN3"/>
                                             <connections>
-                                                <action selector="handleSliderAction:" target="mSh-jO-anT" id="4eI-Vd-sw3"/>
+                                                <outlet property="controller" destination="mSh-jO-anT" id="Ebt-se-8v8"/>
+                                                <outlet property="label" destination="tmz-aB-rBP" id="ylX-iJ-hrB"/>
+                                                <outlet property="slider" destination="C99-9G-KTL" id="CoV-T5-XOF"/>
+                                                <outlet property="textField" destination="oLb-xn-YbW" id="cRR-YT-iJB"/>
                                             </connections>
-                                        </slider>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tmz-aB-rBP">
-                                            <rect key="frame" x="6" y="8" width="54" height="20"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="XC1-Hk-4WR"/>
-                                                <constraint firstAttribute="width" constant="50" id="poh-CB-6Lx"/>
-                                            </constraints>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Outer" id="kz1-GY-jDj">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                        </textField>
-                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="oLb-xn-YbW" userLabel="Text">
-                                            <rect key="frame" x="64" y="8" width="29" height="20"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="Uox-vf-Tb5"/>
-                                                <constraint firstAttribute="width" constant="25" id="i9m-7Y-hxc"/>
-                                            </constraints>
-                                            <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" editable="YES" alignment="left" title="Value" id="Mvr-Er-BQJ">
-                                                <font key="font" metaFont="system"/>
-                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                            </textFieldCell>
-                                            <connections>
-                                                <action selector="handleTextAction:" target="mSh-jO-anT" id="Roc-OD-Bdw"/>
-                                            </connections>
-                                        </textField>
-                                        <slider verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="C99-9G-KTL" userLabel="angle slider">
-                                            <rect key="frame" x="97" y="2" width="179" height="28"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="20" id="dWQ-wZ-XXE"/>
-                                            </constraints>
-                                            <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="360" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="8oN-XU-2zf"/>
-                                            <connections>
-                                                <action selector="handleSliderAction:" target="mSh-jO-anT" id="yFR-37-7td"/>
-                                            </connections>
-                                        </slider>
+                                        </customView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="oLb-xn-YbW" firstAttribute="centerY" secondItem="C99-9G-KTL" secondAttribute="centerY" id="0Ip-8j-DUF"/>
-                                        <constraint firstItem="ZHJ-bz-J6K" firstAttribute="centerY" secondItem="fIX-yF-2r1" secondAttribute="centerY" id="Djp-1p-JKq"/>
-                                        <constraint firstAttribute="trailing" secondItem="C99-9G-KTL" secondAttribute="trailing" constant="8" id="Fgx-qT-2bR"/>
-                                        <constraint firstItem="fIX-yF-2r1" firstAttribute="top" secondItem="OLz-so-Ez9" secondAttribute="top" constant="8" id="Fr9-z7-u78"/>
-                                        <constraint firstItem="tmz-aB-rBP" firstAttribute="centerY" secondItem="C99-9G-KTL" secondAttribute="centerY" id="Hd8-c2-OMF"/>
-                                        <constraint firstItem="fIX-yF-2r1" firstAttribute="leading" secondItem="ZHJ-bz-J6K" secondAttribute="trailing" constant="8" id="N9i-JX-Ucc"/>
-                                        <constraint firstItem="oLb-xn-YbW" firstAttribute="leading" secondItem="tmz-aB-rBP" secondAttribute="trailing" constant="8" id="QTK-4g-mkO"/>
-                                        <constraint firstItem="ZHJ-bz-J6K" firstAttribute="leading" secondItem="XHa-Tv-e1G" secondAttribute="trailing" constant="8" id="ZvY-3P-Zgl"/>
-                                        <constraint firstItem="XHa-Tv-e1G" firstAttribute="leading" secondItem="OLz-so-Ez9" secondAttribute="leading" constant="8" id="bcD-LW-skK"/>
-                                        <constraint firstItem="XHa-Tv-e1G" firstAttribute="centerY" secondItem="fIX-yF-2r1" secondAttribute="centerY" id="bgJ-uS-TiM"/>
-                                        <constraint firstAttribute="trailing" secondItem="fIX-yF-2r1" secondAttribute="trailing" constant="8" id="clh-Ta-R75"/>
-                                        <constraint firstAttribute="bottom" secondItem="C99-9G-KTL" secondAttribute="bottom" constant="8" id="e2C-QE-9Bn"/>
-                                        <constraint firstItem="tmz-aB-rBP" firstAttribute="leading" secondItem="OLz-so-Ez9" secondAttribute="leading" constant="8" id="p2a-dT-GqF"/>
-                                        <constraint firstItem="C99-9G-KTL" firstAttribute="top" secondItem="fIX-yF-2r1" secondAttribute="bottom" constant="8" id="pmm-0e-RSN"/>
-                                        <constraint firstItem="C99-9G-KTL" firstAttribute="leading" secondItem="oLb-xn-YbW" secondAttribute="trailing" constant="8" id="x38-KF-mER"/>
+                                        <constraint firstItem="23a-23-WTx" firstAttribute="leading" secondItem="OLz-so-Ez9" secondAttribute="leading" constant="8" id="E0g-BE-1X2"/>
+                                        <constraint firstAttribute="trailing" secondItem="fII-si-7Qj" secondAttribute="trailing" constant="8" id="ZEL-hg-aOT"/>
+                                        <constraint firstItem="23a-23-WTx" firstAttribute="top" secondItem="fII-si-7Qj" secondAttribute="bottom" constant="4" id="c0y-cN-5Wb"/>
+                                        <constraint firstAttribute="bottom" secondItem="23a-23-WTx" secondAttribute="bottom" constant="8" id="dP8-LO-JM2"/>
+                                        <constraint firstAttribute="trailing" secondItem="23a-23-WTx" secondAttribute="trailing" constant="8" id="qSR-gu-6Mw"/>
+                                        <constraint firstItem="fII-si-7Qj" firstAttribute="top" secondItem="OLz-so-Ez9" secondAttribute="top" constant="8" id="xwB-R5-J30"/>
+                                        <constraint firstItem="fII-si-7Qj" firstAttribute="leading" secondItem="OLz-so-Ez9" secondAttribute="leading" constant="8" id="yvV-Nb-GiP"/>
+                                    </constraints>
+                                </view>
+                            </box>
+                            <box fixedFrame="YES" borderType="line" title="Adjustments" translatesAutoresizingMaskIntoConstraints="NO" id="80b-Hr-ftf">
+                                <rect key="frame" x="17" y="20" width="288" height="78"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <view key="contentView" id="1TR-XJ-hPU">
+                                    <rect key="frame" x="3" y="3" width="282" height="60"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <customView identifier="delta" translatesAutoresizingMaskIntoConstraints="NO" id="kxv-TD-meC" userLabel="Delta" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="8" y="32" width="266" height="20"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uXW-aI-cMT">
+                                                    <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="Gl5-NR-tSZ"/>
+                                                        <constraint firstAttribute="width" constant="50" id="uuI-46-Gxv"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Delta" id="2FK-5C-uxG">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Hqu-cu-hg6" userLabel="Text">
+                                                    <rect key="frame" x="56" y="0.0" width="29" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="2af-pL-m7R"/>
+                                                        <constraint firstAttribute="width" constant="25" id="b4v-Vh-PN6"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" editable="YES" alignment="left" title="Value" id="DKR-H6-DQG">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <connections>
+                                                        <action selector="handleTextAction:" target="kxv-TD-meC" id="Ldo-6c-fN0"/>
+                                                    </connections>
+                                                </textField>
+                                                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ccG-ej-D16" userLabel="angle slider">
+                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="sd1-Yq-edm"/>
+                                                    </constraints>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="50" doubleValue="20" tickMarkPosition="above" sliderType="linear" id="AHV-iJ-4oz"/>
+                                                    <connections>
+                                                        <action selector="handleSliderAction:" target="kxv-TD-meC" id="Mvr-3H-sHX"/>
+                                                    </connections>
+                                                </slider>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="uXW-aI-cMT" firstAttribute="centerY" secondItem="ccG-ej-D16" secondAttribute="centerY" id="5O3-on-uRc"/>
+                                                <constraint firstAttribute="trailing" secondItem="ccG-ej-D16" secondAttribute="trailing" id="NA2-Mb-cBh"/>
+                                                <constraint firstItem="ccG-ej-D16" firstAttribute="leading" secondItem="Hqu-cu-hg6" secondAttribute="trailing" constant="8" id="OTJ-fL-KP5"/>
+                                                <constraint firstItem="ccG-ej-D16" firstAttribute="top" secondItem="kxv-TD-meC" secondAttribute="top" id="Qsb-2Y-1FJ"/>
+                                                <constraint firstAttribute="bottom" secondItem="ccG-ej-D16" secondAttribute="bottom" id="Wjw-ak-fnt"/>
+                                                <constraint firstItem="uXW-aI-cMT" firstAttribute="leading" secondItem="kxv-TD-meC" secondAttribute="leading" id="hiC-kD-bcE"/>
+                                                <constraint firstItem="Hqu-cu-hg6" firstAttribute="centerY" secondItem="ccG-ej-D16" secondAttribute="centerY" id="jxO-o3-x0K"/>
+                                                <constraint firstItem="Hqu-cu-hg6" firstAttribute="leading" secondItem="uXW-aI-cMT" secondAttribute="trailing" constant="8" id="xUr-hM-vPe"/>
+                                            </constraints>
+                                            <connections>
+                                                <outlet property="controller" destination="mSh-jO-anT" id="Jj8-eS-hwx"/>
+                                                <outlet property="label" destination="uXW-aI-cMT" id="NcK-WZ-PIZ"/>
+                                                <outlet property="slider" destination="ccG-ej-D16" id="lGC-Wq-JmB"/>
+                                                <outlet property="textField" destination="Hqu-cu-hg6" id="iWk-4F-xXN"/>
+                                            </connections>
+                                        </customView>
+                                        <customView identifier="fraction" translatesAutoresizingMaskIntoConstraints="NO" id="EBw-V8-JKi" userLabel="Fraction" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="8" y="8" width="266" height="20"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dWF-W5-3Fs">
+                                                    <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="50" id="PmJ-4w-Agt"/>
+                                                        <constraint firstAttribute="height" constant="20" id="dS6-cW-YMD"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Fraction" id="BXx-70-Egb">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                </textField>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="GlT-7Q-ch1" userLabel="Text">
+                                                    <rect key="frame" x="56" y="0.0" width="29" height="20"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="amy-WF-8Ah"/>
+                                                        <constraint firstAttribute="width" constant="25" id="lpD-SR-pN1"/>
+                                                    </constraints>
+                                                    <textFieldCell key="cell" lineBreakMode="clipping" selectable="YES" editable="YES" alignment="left" title="Value" id="DJU-At-P3y">
+                                                        <font key="font" metaFont="system"/>
+                                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <connections>
+                                                        <action selector="handleTextAction:" target="EBw-V8-JKi" id="Zfp-Cq-XXD"/>
+                                                    </connections>
+                                                </textField>
+                                                <slider verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="1Pe-ny-uuR" userLabel="angle slider">
+                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="20" id="c58-65-7Qh"/>
+                                                    </constraints>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="100" doubleValue="80" tickMarkPosition="above" sliderType="linear" id="MEv-GE-14C"/>
+                                                    <connections>
+                                                        <action selector="handleSliderAction:" target="EBw-V8-JKi" id="7f6-kO-g0R"/>
+                                                    </connections>
+                                                </slider>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="GlT-7Q-ch1" firstAttribute="centerY" secondItem="1Pe-ny-uuR" secondAttribute="centerY" id="3cO-us-dqM"/>
+                                                <constraint firstAttribute="bottom" secondItem="1Pe-ny-uuR" secondAttribute="bottom" id="76g-K4-ejL"/>
+                                                <constraint firstAttribute="trailing" secondItem="1Pe-ny-uuR" secondAttribute="trailing" id="Mui-YJ-O19"/>
+                                                <constraint firstItem="GlT-7Q-ch1" firstAttribute="leading" secondItem="dWF-W5-3Fs" secondAttribute="trailing" constant="8" id="Ph8-cU-vk9"/>
+                                                <constraint firstItem="dWF-W5-3Fs" firstAttribute="centerY" secondItem="1Pe-ny-uuR" secondAttribute="centerY" id="YiK-tI-7fM"/>
+                                                <constraint firstItem="1Pe-ny-uuR" firstAttribute="leading" secondItem="GlT-7Q-ch1" secondAttribute="trailing" constant="8" id="e1z-5v-4IN"/>
+                                                <constraint firstItem="1Pe-ny-uuR" firstAttribute="top" secondItem="EBw-V8-JKi" secondAttribute="top" id="wWi-PJ-yKB"/>
+                                                <constraint firstItem="dWF-W5-3Fs" firstAttribute="leading" secondItem="EBw-V8-JKi" secondAttribute="leading" id="yfS-4P-7sA"/>
+                                            </constraints>
+                                            <connections>
+                                                <outlet property="controller" destination="mSh-jO-anT" id="mA6-3O-e0a"/>
+                                                <outlet property="label" destination="dWF-W5-3Fs" id="Jc2-93-0tZ"/>
+                                                <outlet property="slider" destination="1Pe-ny-uuR" id="UvF-kT-fzu"/>
+                                                <outlet property="textField" destination="GlT-7Q-ch1" id="8LP-M2-CNI"/>
+                                            </connections>
+                                        </customView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="kxv-TD-meC" firstAttribute="leading" secondItem="1TR-XJ-hPU" secondAttribute="leading" constant="8" id="6GW-go-1Vg"/>
+                                        <constraint firstItem="kxv-TD-meC" firstAttribute="top" secondItem="1TR-XJ-hPU" secondAttribute="top" constant="8" id="6PG-db-pia"/>
+                                        <constraint firstAttribute="trailing" secondItem="EBw-V8-JKi" secondAttribute="trailing" constant="8" id="aOA-X0-cyn"/>
+                                        <constraint firstAttribute="trailing" secondItem="kxv-TD-meC" secondAttribute="trailing" constant="8" id="d5b-fw-gho"/>
+                                        <constraint firstAttribute="bottom" secondItem="EBw-V8-JKi" secondAttribute="bottom" constant="8" id="eDS-vw-3UX"/>
+                                        <constraint firstItem="EBw-V8-JKi" firstAttribute="top" secondItem="kxv-TD-meC" secondAttribute="bottom" constant="4" id="utg-Ct-Wzz"/>
+                                        <constraint firstItem="EBw-V8-JKi" firstAttribute="leading" secondItem="1TR-XJ-hPU" secondAttribute="leading" constant="8" id="yKI-Je-Afx"/>
                                     </constraints>
                                 </view>
                             </box>
@@ -1823,10 +1992,10 @@ DQ
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="centralAngleSlider" destination="fIX-yF-2r1" id="PAH-dS-jCK"/>
-                        <outlet property="centralAngleText" destination="ZHJ-bz-J6K" id="zv8-um-TTO"/>
-                        <outlet property="outerAngleSlider" destination="C99-9G-KTL" id="fgE-QJ-JCR"/>
-                        <outlet property="outerAngleText" destination="oLb-xn-YbW" id="aTn-1z-c9d"/>
+                        <outlet property="centralAngle" destination="fII-si-7Qj" id="Kjc-Kq-R8O"/>
+                        <outlet property="deltaAdjustment" destination="kxv-TD-meC" id="xf5-1E-xns"/>
+                        <outlet property="fractionAdjustment" destination="EBw-V8-JKi" id="RLx-iC-geb"/>
+                        <outlet property="outerAngle" destination="23a-23-WTx" id="MhK-fE-oD9"/>
                     </connections>
                 </viewController>
                 <customObject id="T49-Ar-q9j" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

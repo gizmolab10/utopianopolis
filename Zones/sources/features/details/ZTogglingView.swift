@@ -42,7 +42,7 @@ class ZTogglingView: ZView {
     // MARK:-
 
 	var kind: String? {
-		return convertFromOptionalUserInterfaceItemIdentifier(identifier)
+		return gConvertFromOptionalUserInterfaceItemIdentifier(identifier)
 	}
 
 	var toolTipText: String {

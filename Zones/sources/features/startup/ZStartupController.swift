@@ -112,7 +112,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	@IBAction func handlePermissionAction(_ button: ZButton) {
-		let      identifier = convertFromOptionalUserInterfaceItemIdentifier(button.identifier)
+		let      identifier = gConvertFromOptionalUserInterfaceItemIdentifier(button.identifier)
 		switch   identifier {
 			case   "id yes": accessAppleID()
 			case    "id no": gStartupLevel = .localOkay;  startupCompletion?()

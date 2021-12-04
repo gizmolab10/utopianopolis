@@ -99,12 +99,12 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-func convertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
+func gConvertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
     guard let input = input else { return nil }
     return input.rawValue
 }
 
-func convertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceItemIdentifier {
+func gConvertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceItemIdentifier {
 	return NSUserInterfaceItemIdentifier(rawValue: string)
 }
 

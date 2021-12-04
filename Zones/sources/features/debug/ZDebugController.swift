@@ -28,7 +28,6 @@ enum ZDebugID: Int {
 
 enum ZDebugThingID: Int {
 	case tBoxes
-	case tOther
 	case tAngles
 
 	var title: String { return "\(self)".lowercased().substring(fromInclusive: 1) }
@@ -109,7 +108,6 @@ class ZDebugController: ZGenericTableController {
 
 		switch thingID {
 			case .tBoxes:  flag = gDebugDraw
-			case .tOther:  flag = gOtherCircularAlgorithm
 			case .tAngles: flag = gDebugAngles
 		}
 
@@ -121,7 +119,6 @@ class ZDebugController: ZGenericTableController {
 			let    thingID = ZDebugThingID(rawValue: tag) {
 			switch thingID {
 				case .tBoxes:  gToggleDebugMode(.dDebugDraw)
-				case .tOther:  gOtherCircularAlgorithm = !gOtherCircularAlgorithm
 				case .tAngles: gToggleDebugMode(.dDebugAngles); gSignal([.spMain])
 			}
 

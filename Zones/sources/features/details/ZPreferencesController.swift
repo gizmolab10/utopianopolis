@@ -53,7 +53,7 @@ class ZPreferencesController: ZGenericController {
 	@IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
-        if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
+        if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
 			switch (identifier) {
 				case "thickness": gLineThickness = Double(value)
 				case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
@@ -68,7 +68,7 @@ class ZPreferencesController: ZGenericController {
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
         let color = iColorBox.color
 
-        if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iColorBox.identifier) {
+        if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iColorBox.identifier) {
 			switch (identifier) {
 				case "drag targets":            gActiveColor = color
 				case       "accent":            gAccentColor = color
@@ -97,7 +97,7 @@ class ZPreferencesController: ZGenericController {
 
     @IBAction func segmentedControlAction(_ iControl: ZSegmentedControl) {
         let          selection = iControl.selectedSegment
-        if  let     identifier = convertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
+        if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
 			switch (identifier) {
 				case "counts":    gCountsMode = ZCountsMode   (rawValue: selection)!
 				case "layout": gMapLayoutMode = ZMapLayoutMode(rawValue: selection)!

@@ -2574,7 +2574,7 @@ extension ZView {
 
 	var simpleToolID : ZSimpleToolID? {
 		let           item = self as NSUserInterfaceItemIdentification
-		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+		if  let identifier = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),
 			let     itemID = ZSimpleToolID(rawValue: identifier) {
 			return  itemID
 		}
@@ -2584,7 +2584,7 @@ extension ZView {
 
 	var linkButtonType : ZLinkButtonType? {
 		let        item = self as NSUserInterfaceItemIdentification
-		if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+		if  let  itemID = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),
 			let    type = ZLinkButtonType(rawValue: itemID) {
 			return type
 		}
@@ -2595,7 +2595,7 @@ extension ZView {
 	var modeButtonType : ZModeButtonType? {
 		get {
 			let        item = self as NSUserInterfaceItemIdentification
-			if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+			if  let  itemID = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),
 				let    type = ZModeButtonType(rawValue: itemID) {
 				return type
 			}
@@ -2605,15 +2605,28 @@ extension ZView {
 
 		set {
 			if  let  value = newValue?.rawValue {
-				identifier = convertToUserInterfaceItemIdentifier(value)
+				identifier = gConvertToUserInterfaceItemIdentifier(value)
 			}
 		}
 	}
 
+	var viewIdentifierString: String? {
+		if  let id = viewIdentifier {
+			return gConvertFromOptionalUserInterfaceItemIdentifier(id)
+		}
+
+		return nil
+	}
+
+	var viewIdentifier: NSUserInterfaceItemIdentifier? {
+		let    item = self as NSUserInterfaceItemIdentification
+
+		return item.identifier
+	}
+
 	var helpMode : ZHelpMode? {
 		get {
-			let        item = self as NSUserInterfaceItemIdentification
-			if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+			if  let  itemID = viewIdentifierString,
 				let    mode = ZHelpMode(rawValue: itemID) {
 				return mode
 			}
@@ -2623,7 +2636,7 @@ extension ZView {
 
 		set {
 			if  let  value = newValue?.rawValue {
-				identifier = convertToUserInterfaceItemIdentifier(value)
+				identifier = gConvertToUserInterfaceItemIdentifier(value)
 			}
 		}
 	}

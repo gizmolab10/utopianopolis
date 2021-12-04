@@ -26,6 +26,8 @@ var             gNeedsRecount                     = false
 var               gLaunchedAt                     = Date()
 var             gDraggedZones                     = ZoneArray()
 var            gProgressTimes                     = [ZOperationID : Double]()
+var           gAnglesFraction                     = 42.0
+var              gAnglesDelta                     = 15.0
 var        gInterruptionCount                     = 0
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var           gMigrationState:    ZMigrationState = .firstTime
@@ -280,11 +282,6 @@ var gCurrentHelpMode: ZHelpMode {
 	set {
 		setPreferencesString(newValue.rawValue, for: kLastChosenCheatSheet)
 	}
-}
-
-var gOtherCircularAlgorithm : Bool {
-	get { return getPreferencesBool(   for: kOtherCircularAlgorithm, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kOtherCircularAlgorithm) }
 }
 
 var gTemporaryFullTitleMode : Bool {

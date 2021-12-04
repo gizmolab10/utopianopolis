@@ -34,7 +34,7 @@ class ZMapView: ZView {
 	// MARK:- initialize
 	// MARK:-
 
-	func setup(_ id: ZMapID = .mText, mapController: ZMapController) {
+	func setup(_ id: ZMapID = .mText) {
 		identifier = id.identifier
 		mapID      = id
 
@@ -48,9 +48,9 @@ class ZMapView: ZView {
 				addSubview(dotsAndLinesView!)
 				addSubview(highlightMapView!, positioned: .below, relativeTo: dotsAndLinesView)
 				addSubview( debugAnglesView!, positioned: .below, relativeTo: highlightMapView)
-				debugAnglesView? .setup(.mDebugAngles,  mapController: mapController)
-				dotsAndLinesView?.setup(.mDotsAndLines, mapController: mapController)
-				highlightMapView?.setup(.mHighlight,    mapController: mapController)
+				debugAnglesView? .setup(.mDebugAngles)
+				dotsAndLinesView?.setup(.mDotsAndLines)
+				highlightMapView?.setup(.mHighlight)
 			default:
 				zlayer.backgroundColor = CGColor.clear
 				bounds                 = superview!.bounds
@@ -83,9 +83,11 @@ class ZMapView: ZView {
 			return
 		}
 
+		let debugAngles = false // gDebugAngles
+
 		switch mapID {
 			case .mText:
-				if  gDebugAngles {
+				if  debugAngles {
 					removeAllTextViews(forSmallMap: false)
 				}
 
@@ -107,7 +109,7 @@ class ZMapView: ZView {
 
 						gSmallMapController?.drawWidgets(for: phase)
 
-						if  gDebugAngles {
+						if  debugAngles {
 							debugAnglesView?.drawDebug  (for: phase)
 						} else {
 							gMapController? .drawWidgets(for: phase)

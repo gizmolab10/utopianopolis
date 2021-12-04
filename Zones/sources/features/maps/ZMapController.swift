@@ -45,7 +45,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 			super.setup()
 			platformSetup()
-			map.setup(mapController: self)
 			mapPseudoView?.addSubpseudoview(rootWidget!)
 		}
 	}

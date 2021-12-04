@@ -18,6 +18,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 
 	func setup() {
 		addSubview(mapView)
+		mapView .setup(.mText)
 
 		mapView.zlayer.backgroundColor = ZColor.clear.cgColor
 	}

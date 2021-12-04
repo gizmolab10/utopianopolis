@@ -8,39 +8,36 @@
 
 import Foundation
 
-enum ZDebugAnglesID: Int {
-	case aCentral
-	case aOuter
-}
-
 var gDebugAnglesController : ZDebugAnglesController? { return gControllers.controllerForID(.idDebugAngles) as? ZDebugAnglesController }
 
 class ZDebugAnglesController: ZGenericController {
 
 	override  var       controllerID : ZControllerID { return .idDebugAngles }
-	@IBOutlet var     outerAngleText : ZTextField?
-	@IBOutlet var   centralAngleText : ZTextField?
-	@IBOutlet var   outerAngleSlider : ZSlider?
-	@IBOutlet var centralAngleSlider : ZSlider?
+	@IBOutlet var         outerAngle : ZSliderLabelCombo?
+	@IBOutlet var       centralAngle : ZSliderLabelCombo?
+	@IBOutlet var    deltaAdjustment : ZSliderLabelCombo?
+	@IBOutlet var fractionAdjustment : ZSliderLabelCombo?
 
-	@IBAction func handleTextAction(_ text: ZTextField) {
-		if  let value = text.text?.integerValue,
-			let    id = ZDebugAnglesID(rawValue: text.tag) {
-			switch id {
-				case .aCentral: centralAngleSlider?.integerValue = value
-				default:          outerAngleSlider?.integerValue = value
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		let closure : IntIntClosure = { (id, value) in
+			if  let comboId = ZDebugAnglesID(rawValue: id) {
+				let  dValue = Double(value)
+				switch comboId {
+					case .aDelta:    gAnglesDelta    = dValue
+					case .aFraction: gAnglesFraction = dValue // 100.0
+					default:         break
+				}
+
+				gRelayoutMaps()
 			}
 		}
-	}
 
-	@IBAction func handleSliderAction(_ slider: ZSlider) {
-		let     value = String(slider.integerValue)
-		if  let    id = ZDebugAnglesID(rawValue: slider.tag) {
-			switch id {
-				case .aCentral: centralAngleText?.text = value
-				default:          outerAngleText?.text = value
-			}
-		}
+		centralAngle?      .closure = closure
+		outerAngle?        .closure = closure
+		deltaAdjustment?   .closure = closure
+		fractionAdjustment?.closure = closure
 	}
 
 }

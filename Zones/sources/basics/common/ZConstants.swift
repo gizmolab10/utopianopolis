@@ -219,7 +219,6 @@ let       kShowMySubscriptions = "show my subscriptions"
 let      kSmallMapIsVisibleKey = "small map is visible"
 let      kLastChosenCheatSheet = "last chosen cheat sheet"
 let    kTemporaryFullTitleMode = "temporary full title mode"
-let    kOtherCircularAlgorithm = "other circular algorithm"
 let  kUnderstandsNeedForAccess = "understands need for access to apple id"
 
 let              kDotSeparator = "."
