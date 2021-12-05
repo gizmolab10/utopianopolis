@@ -922,6 +922,13 @@ extension CGRect {
         return offsetBy(dx:dX, dy:dY)
     }
 
+	func expandedBy(_ expansionSize: CGSize) -> CGRect {
+		let dX = -expansionSize.width
+		let dY = -expansionSize.height
+
+		return insetBy(dx: dX, dy: dY)
+	}
+
 	func insetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY

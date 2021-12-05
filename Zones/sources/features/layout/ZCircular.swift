@@ -88,18 +88,17 @@ extension ZoneWidget {
 
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
-				} else if  let t = pseudoTextWidget {
+				} else {
+					let   center = bounds.center
 					let     line = childrenLines[index]
 					let    angle = Double(line.angle)
 					let     half = kDefaultCircularModeRadius
-					let     size = CGSize.squared(half)
-					let   radius = half + gDotWidth + gDotHeight + line.length + half
-					let   offset = CGPoint(x: -CGFloat(gAnglesFraction), y: -CGFloat(gAnglesDelta))
-					let   center = t.frame.extent + offset
+					let   radius = half + gDotWidth + gDotHeight + line.length + half + gDotWidth
 					let  rotated = CGPoint(x: radius, y: .zero).rotate(by: angle)
 					let   origin = center + rotated
-					let     rect = CGRect(origin: origin, size: size)
-					child .frame = rect
+					let     size = CGSize.squared(half)
+					child.bounds = CGRect(origin:  .zero, size:                   size)
+					child .frame = CGRect(origin: origin, size: .zero).expandedBy(size)
 				}
 			}
 		}
@@ -112,22 +111,23 @@ extension ZoneWidget {
 
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
-				let        origin = CGPoint(x: 0.0, y: -10.0)
-				let          rect = CGRect(origin: origin, size: size)
+				let          half = size.multiplyBy(0.5)
+				let         delta = half.width * -0.5
+				let        center = CGPoint.equaled(kDefaultCircularModeRadius)
+				let        offset = linesLevel != 0 ? CGPoint.zero : CGPoint(x: delta + gDotWidth, y: delta - gDotWidth)
+				let        origin = center + offset
+				let          rect = CGRect(origin: origin, size: .zero).expandedBy(half)
 				t          .frame = rect
 			}
 		}
 	}
 
 	var circularModeHighlightFrame : CGRect {
-		if  let      frame = pseudoTextWidget?.absoluteFrame {
-			let     center = frame.center
-			let     radius = kDefaultCircularModeRadius + 3.0
-			let       rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
-			return rect
-		}
+		let center = absoluteFrame.center
+		let radius = kDefaultCircularModeRadius + 3.0
+		let   rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
 
-		return.zero
+		return rect
 	}
 
 	var circularModeSelectionHighlightPath: ZBezierPath {
@@ -150,7 +150,9 @@ extension ZoneWidget {
 	func circularModeUpdateAllFrames(_ absolute: Bool) {
 		updateAllChildrenVectors(absolute)   // needed for updating text view frames
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			iWidget.circularModeUpdateSubframes(absolute)
+			if  iWidget.widgetZone != nil {
+				iWidget.circularModeUpdateSubframes(absolute)
+			}
 		}
 	}
 
@@ -268,15 +270,15 @@ extension ZoneDot {
 		// move zero point to text center
 		// move further by size of dot
 
-		if  let         l = line {
+		if  let         l = line,
+			let    center = l.parentWidget?.absoluteFrame.center {
 			let     angle = Double(l.angle)
 			let    height = gDotWidth
 			let     width = isReveal ? gDotHeight :      height
-			let     extra = isReveal ? 0.0 : l.length +  height
+			let     extra = isReveal ? 0.0 : kDefaultCircularModeRadius +  height
 			let      size = CGSize(width: width, height: height)
 			let    radius = kDefaultCircularModeRadius + gDotWidth + extra
 			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
-			let    center = absoluteTextFrame.center
 			let    origin = center + rotated - size
 			absoluteFrame = CGRect(origin: origin, size: drawnSize)
 
