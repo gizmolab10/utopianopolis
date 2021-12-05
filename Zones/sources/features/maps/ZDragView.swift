@@ -17,14 +17,10 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 	let mapView = ZMapView()
 
 	func setup() {
-		addSubview(mapView)
-		mapView .setup(.mText)
-
 		mapView.zlayer.backgroundColor = ZColor.clear.cgColor
-	}
 
-	func update() {
-		mapView.setFrameSize(frame.size)
+		addSubview(mapView)
+		mapView.setup(.mText)
 	}
 
 	override func updateTrackingAreas() {

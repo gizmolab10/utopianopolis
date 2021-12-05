@@ -112,9 +112,9 @@ extension ZoneWidget {
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
 				let          half = size.multiplyBy(0.5)
-				let         delta = half.width * -0.5
+				let         delta = half.width   / -2.0
 				let        center = CGPoint.equaled(kDefaultCircularModeRadius)
-				let        offset = linesLevel != 0 ? CGPoint.zero : CGPoint(x: delta + gDotWidth, y: delta - gDotWidth)
+				let        offset = linesLevel != 0 ? CGPoint.zero : CGPoint(x: delta, y: delta - gDotWidth)
 				let        origin = center + offset
 				let          rect = CGRect(origin: origin, size: .zero).expandedBy(half)
 				t          .frame = rect
@@ -157,8 +157,8 @@ extension ZoneWidget {
 	}
 
 	func circularModeUpdateSubframes(_ absolute: Bool) {
+		circularModeUpdateChildrenWidgetFrames(absolute)
 		circularModeUpdateTextViewFrame       (absolute)
-		circularModeUpdateChildrenWidgetFrames(absolute) // must not depend on above (update text liew frame)
 		circularModeUpdateDotFrames           (absolute)
 	}
 

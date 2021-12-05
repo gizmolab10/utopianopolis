@@ -21,7 +21,6 @@ enum ZMapID: String {
 class ZMapView: ZView {
 
 	var mapID                   : ZMapID?
-	var debugAnglesView         : ZMapView?
 	var dotsAndLinesView        : ZMapView?
 	var highlightMapView        : ZMapView?
 	override func menu(for event: ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
@@ -40,20 +39,18 @@ class ZMapView: ZView {
 
 		switch id {
 			case .mText:
-				debugAnglesView  = ZMapView()
 				dotsAndLinesView = ZMapView()
 				highlightMapView = ZMapView()
 
 				updateTracking()
 				addSubview(dotsAndLinesView!)
 				addSubview(highlightMapView!, positioned: .below, relativeTo: dotsAndLinesView)
-				addSubview( debugAnglesView!, positioned: .below, relativeTo: highlightMapView)
-				debugAnglesView? .setup(.mDebugAngles)
 				dotsAndLinesView?.setup(.mDotsAndLines)
 				highlightMapView?.setup(.mHighlight)
+				fallthrough
 			default:
+				frame                  = superview!.bounds
 				zlayer.backgroundColor = CGColor.clear
-				bounds                 = superview!.bounds
 		}
 	}
 
@@ -92,7 +89,6 @@ class ZMapView: ZView {
 				}
 
 				super            .draw(iDirtyRect) // text fields are drawn by OS
-				debugAnglesView? .draw(iDirtyRect)
 				dotsAndLinesView?.draw(iDirtyRect)
 				highlightMapView?.draw(iDirtyRect)
 			default:
@@ -102,18 +98,12 @@ class ZMapView: ZView {
 
 						switch mapID {
 							case .mDotsAndLines: dotsAndLinesView?.clearRect(iDirtyRect)
-							case .mDebugAngles:  debugAnglesView? .clearRect(iDirtyRect)
 							case .mHighlight:    highlightMapView?.clearRect(iDirtyRect)
 							default:             break
 						}
 
 						gSmallMapController?.drawWidgets(for: phase)
-
-						if  debugAngles {
-							debugAnglesView?.drawDebug  (for: phase)
-						} else {
-							gMapController? .drawWidgets(for: phase)
-						}
+						gMapController?     .drawWidgets(for: phase)
 					}
 				}
 		}
@@ -134,7 +124,6 @@ class ZMapView: ZView {
 
 	func clear(forSmallMapOnly: Bool = false) {
 		if  mapID == .mText {
-			debugAnglesView? .clear()
 			highlightMapView?.clear()
 			dotsAndLinesView?.clear()
 

@@ -21,7 +21,6 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var alternateLeading   : NSLayoutConstraint?
 	@IBOutlet var essayContainerView : ZView?
 	@IBOutlet var searchResultsView  : ZView?
-	@IBOutlet var debugAnglesView    : ZView?
 	@IBOutlet var permissionView     : ZView?
 	@IBOutlet var searchBoxView      : ZView?
 	@IBOutlet var detailView         : ZView?
@@ -65,8 +64,6 @@ class ZMainController: ZGesturesController {
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 		hamburgerButton?    .image = hamburgerImage
-
-		dragView?.update()
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {         // false means not handled
@@ -107,7 +104,6 @@ class ZMainController: ZGesturesController {
 			default: break
         }
 
-		debugAnglesView?  .isHidden = !gDebugAngles
 		permissionView?   .isHidden = !gIsStartupMode
 		searchResultsView?.isHidden =  hideResults || gIsEssayMode
 		searchBoxView?    .isHidden =  hideSearch

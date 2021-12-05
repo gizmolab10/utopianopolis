@@ -1091,7 +1091,6 @@ CA
                     </view>
                     <connections>
                         <outlet property="alternateLeading" destination="fVF-7D-R74" id="yvC-gC-Taf"/>
-                        <outlet property="debugAnglesView" destination="bXe-bA-sJU" id="HPG-Yu-YXf"/>
                         <outlet property="debugView" destination="9jn-kU-BvC" id="5ub-Jm-aCW"/>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="7ha-dY-dLB"/>
                         <outlet property="dragView" destination="37A-oF-Gav" id="04a-KE-w1g"/>
@@ -1773,7 +1772,6 @@ DQ
                                                 <constraint firstAttribute="bottom" secondItem="fIX-yF-2r1" secondAttribute="bottom" id="qBN-60-gtT"/>
                                             </constraints>
                                             <connections>
-                                                <outlet property="controller" destination="mSh-jO-anT" id="F8n-iB-pTd"/>
                                                 <outlet property="label" destination="XHa-Tv-e1G" id="R8P-If-xkt"/>
                                                 <outlet property="slider" destination="fIX-yF-2r1" id="Ydm-LV-C7z"/>
                                                 <outlet property="textField" destination="ZHJ-bz-J6K" id="yNB-VE-xeq"/>
@@ -1831,7 +1829,6 @@ DQ
                                                 <constraint firstAttribute="trailing" secondItem="C99-9G-KTL" secondAttribute="trailing" id="zud-Rg-C90"/>
                                             </constraints>
                                             <connections>
-                                                <outlet property="controller" destination="mSh-jO-anT" id="Ebt-se-8v8"/>
                                                 <outlet property="label" destination="tmz-aB-rBP" id="ylX-iJ-hrB"/>
                                                 <outlet property="slider" destination="C99-9G-KTL" id="CoV-T5-XOF"/>
                                                 <outlet property="textField" destination="oLb-xn-YbW" id="cRR-YT-iJB"/>
@@ -1908,7 +1905,6 @@ DQ
                                                 <constraint firstItem="Hqu-cu-hg6" firstAttribute="leading" secondItem="uXW-aI-cMT" secondAttribute="trailing" constant="8" id="xUr-hM-vPe"/>
                                             </constraints>
                                             <connections>
-                                                <outlet property="controller" destination="mSh-jO-anT" id="Jj8-eS-hwx"/>
                                                 <outlet property="label" destination="uXW-aI-cMT" id="NcK-WZ-PIZ"/>
                                                 <outlet property="slider" destination="ccG-ej-D16" id="lGC-Wq-JmB"/>
                                                 <outlet property="textField" destination="Hqu-cu-hg6" id="iWk-4F-xXN"/>
@@ -1966,7 +1962,6 @@ DQ
                                                 <constraint firstItem="dWF-W5-3Fs" firstAttribute="leading" secondItem="EBw-V8-JKi" secondAttribute="leading" id="yfS-4P-7sA"/>
                                             </constraints>
                                             <connections>
-                                                <outlet property="controller" destination="mSh-jO-anT" id="mA6-3O-e0a"/>
                                                 <outlet property="label" destination="dWF-W5-3Fs" id="Jc2-93-0tZ"/>
                                                 <outlet property="slider" destination="1Pe-ny-uuR" id="UvF-kT-fzu"/>
                                                 <outlet property="textField" destination="GlT-7Q-ch1" id="8LP-M2-CNI"/>
