@@ -929,6 +929,10 @@ extension CGRect {
 		return insetBy(dx: dX, dy: dY)
 	}
 
+	func expandedEquallyBy(_ expansion: CGFloat) -> CGRect {
+		return insetBy(dx: -expansion, dy: -expansion)
+	}
+
 	func insetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY

@@ -81,24 +81,25 @@ extension ZoneWidget {
 
 	func circularModeUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
+			let    center = bounds.center
+			let      half = kDefaultCircularModeRadius
+			let    length = gDotHeight + (2.0 * (half + gDotWidth))
 			var     index = childrenWidgets.count
 			while   index > 0 {
-				index    -= 1 // go backwards [up] the children array
+				index    -= 1 // go backwards in the children array [up, counter-clockwise]
 				let child = childrenWidgets[index]
 
 				if  absolute {
 					child.updateAbsoluteFrame(toController: controller)
 				} else {
-					let   center = bounds.center
 					let     line = childrenLines[index]
 					let    angle = Double(line.angle)
-					let     half = kDefaultCircularModeRadius
-					let   radius = half + gDotWidth + gDotHeight + line.length + half + gDotWidth
+					let   radius = length + line.length
 					let  rotated = CGPoint(x: radius, y: .zero).rotate(by: angle)
 					let   origin = center + rotated
-					let     size = CGSize.squared(half)
-					child.bounds = CGRect(origin:  .zero, size:                   size)
-					child .frame = CGRect(origin: origin, size: .zero).expandedBy(size)
+					let     rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
+					child.bounds = CGRect(origin:  .zero, size: rect.size)
+					child .frame = rect
 				}
 			}
 		}
@@ -112,10 +113,7 @@ extension ZoneWidget {
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
 				let          half = size.multiplyBy(0.5)
-				let         delta = half.width   / -2.0
-				let        center = CGPoint.equaled(kDefaultCircularModeRadius)
-				let        offset = linesLevel != 0 ? CGPoint.zero : CGPoint(x: delta, y: delta - gDotWidth)
-				let        origin = center + offset
+				let        origin = bounds.center
 				let          rect = CGRect(origin: origin, size: .zero).expandedBy(half)
 				t          .frame = rect
 			}
@@ -149,17 +147,17 @@ extension ZoneWidget {
 
 	func circularModeUpdateAllFrames(_ absolute: Bool) {
 		updateAllChildrenVectors(absolute)   // needed for updating text view frames
-		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			if  iWidget.widgetZone != nil {
-				iWidget.circularModeUpdateSubframes(absolute)
-			}
+		traverseAllWidgetProgeny() { iWidget in
+			iWidget.circularModeUpdateSubframes(absolute)
 		}
 	}
 
 	func circularModeUpdateSubframes(_ absolute: Bool) {
-		circularModeUpdateChildrenWidgetFrames(absolute)
-		circularModeUpdateTextViewFrame       (absolute)
-		circularModeUpdateDotFrames           (absolute)
+		if  widgetZone != nil {
+			circularModeUpdateChildrenWidgetFrames(absolute)
+			circularModeUpdateTextViewFrame       (absolute)
+			circularModeUpdateDotFrames           (absolute)
+		}
 	}
 
 }

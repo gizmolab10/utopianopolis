@@ -172,6 +172,9 @@ extension ZoneWidget {
 		}
 	}
 
+	// this is called twice in grand update
+	// first with absolute false, then with true
+
 	func linearModeUpdateAllFrames(_ absolute: Bool) {
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.linearModeUpdateSubframes(absolute)
