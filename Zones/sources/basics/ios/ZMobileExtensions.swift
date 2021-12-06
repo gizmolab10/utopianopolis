@@ -563,7 +563,7 @@ extension ZTextEditor {
 extension ZoneWidget {
 
     func lineRect(to rightFrame: CGRect, kind: ZLineKind?) -> CGRect {
-        var frame = CGRect ()
+		var frame = CGRect.zero
 
         if  let       leftDot = revealDot.innerDot, kind != nil {
             let     leftFrame = leftDot.convert( leftDot.bounds, to: self)

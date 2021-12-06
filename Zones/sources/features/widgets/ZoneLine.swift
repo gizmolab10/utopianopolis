@@ -82,13 +82,20 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawLine() {
-		if  let child = childWidget {
-			let  kind = lineKind
-			let  rect = lineRect(to: child, kind: kind)
+		if  let      child = childWidget {
+			let       kind = lineKind
+			let       rect = lineRect(to: child, kind: kind)
+			let       path = linePath(in:  rect, kind: kind)
+			path.lineWidth = CGFloat(gLineThickness)
+			if  let  color = child.widgetZone?.color {
 
-			if  let      color = child.widgetZone?.color, !rect.isEmpty {
-				let       path = linePath(in:  rect, kind: kind)
-				path.lineWidth = CGFloat(gLineThickness)
+				if  isCircularMode {
+					ZBezierPath(rect: gMapView!.bounds).setClip()
+
+					if  gDebugDraw {
+						rect.drawColoredRect(color)
+					}
+				}
 
 				color.setStroke()
 				path.stroke()

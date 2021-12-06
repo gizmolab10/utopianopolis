@@ -732,7 +732,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				let   filled = selected && !hasGrabbedNote
 				let    color = dot.color
 
-				drawColoredOval(dot.dragRect, color, filled: filled || grabbed)
+				dot.dragRect.drawColoredOval(color, filled: filled || grabbed)
 
 				if  let lineRect = dot.lineRect {
 					drawColoredRect(lineRect, color, thickness: 0.5)

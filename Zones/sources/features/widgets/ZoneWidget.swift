@@ -282,24 +282,24 @@ class ZoneWidget: ZPseudoView {
 		return line
 	}
 
+	private func addLine(for child: ZoneWidget?) {
+		let           dot = isLinearMode ? sharedRevealDot : nil
+		let          line = addLineFor(child)
+		line.parentWidget = self
+
+		line.addDots(sharedRevealDot: dot)
+		childrenLines.append(line)
+
+		if  isLinearMode {
+			linesView?.addSubpseudoview(line)
+		}
+	}
+
 	func addLines() {
+		let expanded = widgetZone?.hasVisibleChildren ?? false
+
 		childrenLines.removeAll()
 		linesView?.removeAllSubpseudoviews()
-
-		let   expanded = widgetZone?.hasVisibleChildren ?? false
-
-		func addLine(for child: ZoneWidget?) {
-			let           dot = isLinearMode ? sharedRevealDot : nil
-			let          line = addLineFor(child)
-			line.parentWidget = self
-
-			line.addDots(sharedRevealDot: dot)
-			childrenLines.append(line)
-
-			if  isLinearMode {
-				linesView?.addSubpseudoview(line)
-			}
-		}
 
 		if  isCircularMode || expanded {
 			for child in childrenWidgets {
@@ -436,6 +436,8 @@ class ZoneWidget: ZPseudoView {
     override func draw(_ phase: ZDrawPhase) {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let zone = widgetZone {
+
+			ZBezierPath(rect: absoluteView!.bounds).setClip()
 
 			for line in childrenLines {   // this is after child dots have been autolayed out
 				line.draw(phase)

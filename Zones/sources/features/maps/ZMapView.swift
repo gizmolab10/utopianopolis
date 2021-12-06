@@ -9,7 +9,6 @@
 import Foundation
 
 enum ZMapID: String {
-	case mDebugAngles  = "a"
 	case mDotsAndLines = "d"
 	case mHighlight    = "h"
 	case mText         = "t"
@@ -54,6 +53,19 @@ class ZMapView: ZView {
 		}
 	}
 
+	func resize() {
+		if  let view = gMapController?.view {
+			frame    = view.bounds
+
+			switch mapID {
+				case .mText:         frame = view.frame
+				case .mHighlight:    highlightMapView?.resize()
+				case .mDotsAndLines: dotsAndLinesView?.resize()
+				default: break
+			}
+		}
+	}
+
 	func removeAllTextViews(forSmallMap: Bool) {
 		for subview in subviews {
 			if  let textView = subview as? ZoneTextWidget,
@@ -80,14 +92,8 @@ class ZMapView: ZView {
 			return
 		}
 
-		let debugAngles = false // gDebugAngles
-
 		switch mapID {
 			case .mText:
-				if  debugAngles {
-					removeAllTextViews(forSmallMap: false)
-				}
-
 				super            .draw(iDirtyRect) // text fields are drawn by OS
 				dotsAndLinesView?.draw(iDirtyRect)
 				highlightMapView?.draw(iDirtyRect)

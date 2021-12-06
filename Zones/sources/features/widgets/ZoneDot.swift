@@ -315,7 +315,7 @@ class ZoneDot: ZPseudoView {
 		if  !rect.isEmpty, dotIsVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
 
-			if  gDebugDraw {
+			if  gDebugDraw, isCircularMode {
 				rect.drawColoredRect(.red)
 			}
 

@@ -228,18 +228,17 @@ extension ZoneLine {
 	}
 
 	func circularModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let       path = ZBezierPath()
-		if  !iRect.isEmpty {
-			let radius = iRect.size.hypotenuse
-			let  start = angle.upward ? iRect.origin : iRect.topLeft
-			let    end = CGPoint(x: radius, y: .zero).rotate(by: Double(angle)).offsetBy(start)
+		let   path = ZBezierPath()
+		let radius = iRect.size.hypotenuse
+		let  start = angle.upward ? iRect.origin : iRect.topLeft
+		let    end = CGPoint(x: radius, y: .zero).rotate(by: Double(angle)).offsetBy(start)
+		let   clip = CGRect(start: start, extent: end).expandedEquallyBy(10.0)
 
-			if  gDebugDraw {
-				iRect.drawColoredRect(.green)
-			}
+		path.move(to: start)
+		path.line(to: end)
 
-			path.move(to: start)
-			path.line(to: end)
+		if  gDebugDraw {
+			clip.drawColoredRect(.green)
 		}
 
 		return path

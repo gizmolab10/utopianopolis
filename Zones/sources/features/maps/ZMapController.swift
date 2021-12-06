@@ -175,6 +175,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			}
 		}
 	}
+
+	func resize() {
+		mapPseudoView?.frame = view.frame
+
+		gMapView?.resize()
+	}
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
 		return gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture
