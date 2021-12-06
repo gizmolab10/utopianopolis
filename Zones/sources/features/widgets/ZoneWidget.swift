@@ -251,33 +251,25 @@ class ZoneWidget: ZPseudoView {
 
 	func addChildrenWidgets() {
 		if  let zone = widgetZone {
-			if !zone.isExpanded, let v = childrenView {
-				childrenWidgets.removeAll()
-
-				for view in v.subpseudoviews {
-					view.removeFromSuperpseudoview()
-					if  let w = view as? ZoneWidget,
-						let t = w.textWidget {
-
-						t.removeFromSuperview()
-					}
+			for widget in childrenWidgets {
+				widget.removeFromSuperpseudoview()
+				if  let t = widget.textWidget {
+					t.removeFromSuperview()
 				}
-			} else {
-				var count = zone.count
+			}
 
-				if  count > 60 {
-					count = 60     // shrink count to what will reasonably fit vertically
-				}
+			childrenWidgets.removeAll()
 
-				while childrenWidgets.count > count {         // shrink all beyond count
-					let widget = childrenWidgets.removeLast()
+			var count = zone.count
 
-					widget.removeFromSuperpseudoview()
-				}
+			if  count > 60 {
+				count = 60     // shrink count to what will reasonably fit vertically
+			}
 
-				while childrenWidgets.count < count {
-					childrenWidgets.append(ZoneWidget(view: absoluteView))      // add missing
-				}
+			while childrenWidgets.count < count {
+				let child = ZoneWidget(view: absoluteView)
+
+				childrenWidgets.append(child)      // add missing
 			}
 		}
 	}
