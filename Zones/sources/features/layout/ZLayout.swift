@@ -46,24 +46,10 @@ extension ZoneWidget {
 		}
 	}
 
-	func updateAllChildrenVectors(_ absolute: Bool = false) {
-		if  isCircularMode {
-			traverseAllWidgetProgeny { widget in
-				widget.circularModeUpdateChildrenVectors(absolute)
-			}
-		}
-	}
-
-	func updateChildrenVectors(_ absolute: Bool = false) {
-		if  isCircularMode {
-			circularModeUpdateChildrenVectors(absolute)
-		}
-	}
-
-	func updateAllFrames(_ absolute: Bool = false) {
+	func grandUpdate() {
 		switch mode {
-			case .linearMode:     linearModeUpdateAllFrames(absolute)
-			case .circularMode: circularModeUpdateAllFrames(absolute)
+			case .linearMode:     linearModeGrandUpdate()
+			case .circularMode: circularModeGrandUpdate()
 		}
 	}
 

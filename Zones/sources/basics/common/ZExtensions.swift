@@ -360,6 +360,24 @@ extension Int {
 		return next
 	}
 
+	func anglesArray(startAngle: Double, spreadAngle: Double = Double.pi * 2.0, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
+		var angles             = [Double]()
+		if  self              > 0 {
+			let         isEven = self % 2 == 0
+			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
+			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-self) // negative means clockwise in osx (counterclockwise in ios)
+
+			for index in 0 ... self - 1 {
+				let increments = Double(index) + extra
+				let      angle = startAngle + incrementAngle * increments
+
+				angles.append(angle)
+			}
+		}
+
+		return angles
+	}
+
 }
 
 extension Dictionary {
@@ -2780,24 +2798,6 @@ extension ZView {
 
 extension ZPseudoView {
 
-	func anglesArray(_ count: Int, startAngle: Double, spreadAngle: Double = Double.pi * 2.0, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
-		var angles             = [Double]()
-		if  count              > 0 {
-			let         isEven = count % 2 == 0
-			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
-			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-count) // negative means clockwise in osx (counterclockwise in ios)
-
-			for index in 0 ... count - 1 {
-				let increments = Double(index) + extra
-				let      angle = startAngle + incrementAngle * increments
-
-				angles.append(angle)
-			}
-		}
-
-		return angles
-	}
-
 	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {
 		if  var       dotCount = count {
 			var      fatHollow = false
@@ -2829,7 +2829,7 @@ extension ZPseudoView {
 						let isEven = iCount % 2 == 0
 						let fullCircle = Double.pi * 2.0
 						let startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : Double.pi)
-						let angles = self.anglesArray(iCount, startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
+						let angles = iCount.anglesArray(startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
 
 						for (index, angle) in angles.enumerated() {
 							let (ideaFocus, asIdea, asEssay) = (false, true, false)

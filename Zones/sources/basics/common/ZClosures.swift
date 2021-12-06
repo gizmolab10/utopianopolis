@@ -70,6 +70,7 @@ typealias ZoneToStatusClosure             = (Zone)                     -> (ZTrav
 typealias ZonesToZonesClosure             = (ZoneArray)                -> (ZoneArray)
 typealias URLToBooleanClosure             = (URL)                      -> (Bool)
 typealias ZoneToBooleanClosure            = (Zone)                     -> (Bool)
+typealias IntZoneWidgetsClosure           = (Int, ZoneWidgetArray)     -> (Void)
 typealias ObjectToObjectClosure           = (NSObject)                 -> (NSObject)
 typealias ObjectToStringClosure           = (NSObject)                 -> (String)
 typealias StringToBooleanClosure          = (String?)                  -> (Bool)

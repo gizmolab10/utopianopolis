@@ -175,7 +175,7 @@ extension ZoneWidget {
 	// this is called twice in grand update
 	// first with absolute false, then with true
 
-	func linearModeUpdateAllFrames(_ absolute: Bool) {
+	func linearModeUpdateAllFrames(_ absolute: Bool = false) {
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.linearModeUpdateSubframes(absolute)
 		}
@@ -187,6 +187,13 @@ extension ZoneWidget {
 		linearModeUpdateDotFrames           (absolute)
 		linearModeUpdateChildrenViewFrame   (absolute)
 		linearModeUpdateLinesViewFrame      (absolute)
+	}
+
+	func linearModeGrandUpdate() {
+		linearModeUpdateAllFrames()
+		updateFrameSize()
+		linearModeUpdateAllFrames(true)
+		updateAbsoluteFrame(toController: controller)
 	}
 
 }

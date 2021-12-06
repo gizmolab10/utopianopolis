@@ -359,13 +359,6 @@ class ZoneWidget: ZPseudoView {
 		setFrameSize(drawnSize)
 	}
 
-	func grandUpdate() {
-		updateAllFrames()
-		updateFrameSize()
-		updateAllFrames(true)
-		updateAbsoluteFrame(toController: controller)
-	}
-
     func dot(at iIndex: Int) -> ZoneDot? {
         if  let zone = widgetZone {
             if  zone.count == 0 || iIndex < 0 {
