@@ -15,8 +15,8 @@ class ZoneLine: ZPseudoView {
 	var         childWidget : ZoneWidget?
 	var        parentWidget : ZoneWidget?
 	override var controller : ZMapController? { return (parentWidget ?? childWidget)?.controller }
-	var         centerAngle = CGFloat.zero
-	var          outerAngle = CGFloat.zero
+	var        centralAngle = CGFloat.zero
+	var           ringAngle = CGFloat.zero
 	var              length = CGFloat(25)
 
 	func addDots(sharedRevealDot: ZoneDot?) {

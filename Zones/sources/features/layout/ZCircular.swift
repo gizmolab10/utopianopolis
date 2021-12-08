@@ -13,6 +13,18 @@ import Foundation
 
 extension ZoneWidget {
 
+	var circularModeHighlightFrame : CGRect {
+		let center = absoluteFrame.center
+		let radius = kDefaultCircularModeCirclesRadius + 3.0
+		let   rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
+
+		return rect
+	}
+
+	var circularModeSelectionHighlightPath: ZBezierPath {
+		return ZBezierPath(ovalIn: highlightFrame)
+	}
+
 	func circularModeUpdateWidgetDrawnSize() {
 		if  let  size = textWidget?.frame.size {
 			drawnSize = size.insetBy(gDotHeight, gDotHeight)
@@ -34,18 +46,6 @@ extension ZoneWidget {
 		}
 	}
 
-	var circularModeHighlightFrame : CGRect {
-		let center = absoluteFrame.center
-		let radius = kDefaultCircularModeRadius + 3.0
-		let   rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
-
-		return rect
-	}
-
-	var circularModeSelectionHighlightPath: ZBezierPath {
-		return ZBezierPath(ovalIn: highlightFrame)
-	}
-
 	func circularModeUpdateDotFrames(_ absolute: Bool) {
 		if  absolute {
 			for line in childrenLines {
@@ -54,10 +54,20 @@ extension ZoneWidget {
 		}
 	}
 
-	static func circularModeRingRadius(at level: Int) -> CGFloat {
-		let increment = kDefaultCircularModeRadius + gDotWidth + gDotHeight
+	// MARK:- static methods
+	// MARK:-
 
-		return CGFloat(level) * increment
+	static func circularModeMaxVisibleSiblings(at level: Int, children: ZoneWidgetArray) -> Int {
+		var maxVisible = 0
+
+		for child in children {
+			if  let  count = child.widgetZone?.count,
+				maxVisible < count {
+				maxVisible = count
+			}
+		}
+
+		return 1
 	}
 
 	static func circularModeVisibleChildren(at level: Int) -> ZoneWidgetArray {
@@ -72,37 +82,58 @@ extension ZoneWidget {
 		return widgets
 	}
 
-	// MARK:- traverse
-	// MARK:-
+	static func circularModeRingRadius(at level: Int) -> CGFloat {
+		let      half = kDefaultCircularModeCirclesRadius
+		let    thrice = half * 3.0
+		let increment = gDotWidth + thrice + gDotHeight
+		let     start = gDotWidth / 2.0
+
+		return  start + (CGFloat(level) * increment)
+	}
+
+	static func circularModePlaceholderCount(at level: Int) -> Int {
+		let children = circularModeVisibleChildren(at: level)
+		let    count = children.count
+
+		if  level == 0 {
+			return count
+		}
+
+		let    siblings = circularModeMaxVisibleSiblings(at: level, children: children)
+
+		return siblings * count
+	}
 
 	static func traverseWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
 		var   level = 0
-		var widgets = ZoneWidget.circularModeVisibleChildren(at: level)
+		var widgets = circularModeVisibleChildren(at: level)
 
 		while widgets.count != 0 {
 			block(level, widgets)
 
 			level  += 1
-			widgets = ZoneWidget.circularModeVisibleChildren(at: level)
+			widgets = circularModeVisibleChildren(at: level)
 		}
 	}
 
-	// this is called twice in grand update
-	// first with absolute false, then with true
+	// MARK:- traverse
+	// MARK:-
+
+	func circularModeUpdateFrames(_ absolute: Bool = false) {
+		circularModeUpdateTextViewFrame(absolute)
+		circularModeUpdateDotFrames    (absolute)
+	}
 
 	func circularModeUpdateAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
-		ZoneWidget.traverseWidgetsByLevel     { (level, widgets) in
-			widgets.circularModeUpdateFrames(at: level, in: controller, absolute)   // needed for updating text view frames
+		ZoneWidget.traverseWidgetsByLevel     { (level, widgets) in   // needed for updating text view frames
+			let pCount = ZoneWidget.circularModePlaceholderCount(at: level)
+
+			widgets.circularModeUpdateFrames(at: level, placeholderCount: pCount, in: controller, absolute)
 		}
 
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.circularModeUpdateFrames(absolute)
 		}
-	}
-
-	func circularModeUpdateFrames(_ absolute: Bool = false) {
-		circularModeUpdateTextViewFrame(absolute)
-		circularModeUpdateDotFrames    (absolute)
 	}
 
 	func circularModeGrandUpdate() {
@@ -119,23 +150,24 @@ extension ZoneWidget {
 
 extension ZoneWidgetArray {
 
-	func circularModeUpdateFrames(at level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
-		circularModeUpdateVectors(at: level, absolute)   // needed for updating text view frames
-		circularModeUpdateWidgetFrames(in: controller, absolute)
+	var circularModeScrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
+
+	func circularModeUpdateFrames(at level: Int, placeholderCount: Int, in controller: ZMapController?, _ absolute: Bool = false) {
+		circularModeUpdateCentralAngles(at: level, placeholderCount: placeholderCount, absolute)   // needed for updating text view frames
+		circularModeUpdateWidgetFrames(at: level, in: controller, absolute)
 	}
 
-	func circularModeUpdateWidgetFrames(in controller: ZMapController?, _ absolute: Bool = false) {
+	func circularModeUpdateWidgetFrames(at level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
 		if  let center = controller?.mapPseudoView?.frame.center {
-			let   half = kDefaultCircularModeRadius
-			let length = gDotHeight + (2.0 * (half + gDotWidth))
-			let offset = CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21)
+			let   half = kDefaultCircularModeCirclesRadius
+			let offset = circularModeScrollOffset
+			let radius = ZoneWidget.circularModeRingRadius(at: level)
 
 			for widget in self {
 				if  absolute {
 					widget.updateAbsoluteFrame(relativeTo: controller)
 				} else if let line = widget.parentLine, widget.linesLevel > 0 {
-					let     radius = length + line.length
-					let      angle = Double(line.centerAngle)
+					let      angle = Double(line.centralAngle)
 					let    rotated = CGPoint(x: radius, y: .zero).rotate(by: angle)
 					let     origin = center + rotated - offset
 					let       rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
@@ -146,31 +178,23 @@ extension ZoneWidgetArray {
 		}
 	}
 
-	func circularModeSpecificAngles(at level: Int, for count: Int) -> (Double, Double, Double) {
-		let         pi = Double.pi
-		var      start = pi / 2.0
-		var     offset = 1.0
-		var     spread = pi * 2.0
-		let  increment = pi / 6.0
-		let   isCenter = level == 0
+	func circularModeSpecificAngles(at level: Int, for count: Int) -> [Double] {
+		let   offset = level == 0 ? 1.0 : 1.5
+		let       pi = Double.pi
+		let    start = pi / 2.0
+		let   spread = pi * 2.0
+		let   angles = count.anglesArray(startAngle: start, spreadAngle: spread, offset: offset, clockwise: true)
 
-		if !isCenter {
-			offset = 1.5
-			spread = increment * Double(count)
-			start += increment - spread / 2.0
-		}
-
-		return (start, spread, offset)
+		return angles
 	}
 
-	func circularModeUpdateVectors(at level: Int, _ absolute: Bool = false) {
-		if  level != 0 {
-			let (start, spread, offset) = circularModeSpecificAngles(at: level - 1, for: count)
-			let                  angles = count.anglesArray(startAngle: start, spreadAngle: spread, offset: offset, clockwise: true)
+	func circularModeUpdateCentralAngles(at level: Int, placeholderCount: Int, _ absolute: Bool = false) {
+		if  level     != 0 {
+			let angles = circularModeSpecificAngles(at: level - 1, for: placeholderCount)
 
 			if  angles.count > 0 {
 				for (index, child) in enumerated() {
-					child.parentLine?.centerAngle = CGFloat(angles[index])
+					child.parentLine?.centralAngle = CGFloat(angles[index])
 				}
 			}
 		}
@@ -246,8 +270,8 @@ extension ZoneLine {
 	func circularModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
 		let   path = ZBezierPath()
 		let radius = iRect.size.hypotenuse
-		let  start = centerAngle.upward ? iRect.origin : iRect.topLeft
-		let    end = CGPoint(x: radius, y: .zero).rotate(by: Double(centerAngle)).offsetBy(start)
+		let  start = centralAngle.upward ? iRect.origin : iRect.topLeft
+		let    end = CGPoint(x: radius, y: .zero).rotate(by: Double(centralAngle)).offsetBy(start)
 		let   clip = CGRect(start: start, extent: end).expandedEquallyBy(10.0)
 
 		path.move(to: start)
@@ -285,12 +309,12 @@ extension ZoneDot {
 
 		if  let         l = line,
 			let    center = l.parentWidget?.absoluteFrame.center {
-			let     angle = Double(l.centerAngle)
+			let     angle = Double(l.centralAngle)
 			let    height = gDotWidth
-			let     width = isReveal ? gDotHeight :      height
-			let     extra = isReveal ? 0.0 : kDefaultCircularModeRadius +  height
-			let      size = CGSize(width: width, height: height)
-			let    radius = kDefaultCircularModeRadius + gDotWidth + extra
+			let     extra = isReveal ? 0.0 : kDefaultCircularModeCirclesRadius + height
+			let     width = isReveal ? gDotHeight :                              height
+			let      size = CGSize(width: width,                         height: height)
+			let    radius = kDefaultCircularModeCirclesRadius + gDotWidth + extra
 			let   rotated = CGPoint(x: radius, y: 0.0).rotate(by: angle)
 			let    origin = center + rotated - size
 			absoluteFrame = CGRect(origin: origin, size: drawnSize)
@@ -300,7 +324,7 @@ extension ZoneDot {
 	}
 
 	func circularModeDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		let     angle = line?.centerAngle ?? 0.0
+		let     angle = line?.centralAngle ?? 0.0
 		let thickness = CGFloat(gLineThickness * 2.0)
 		let      rect = iDirtyRect.insetEquallyBy(thickness)
 		var      path = ZBezierPath()
