@@ -86,7 +86,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		widgetZone?.traverseAncestors { ancestor in
 			if  let widget = ancestor.widget {
 				widget.updateChildrenLinesDrawnSize()
-				widget.updateWidgetSize()
+				widget.updateWidgetDrawnSize()
 
 				return .eContinue
 			}

@@ -497,7 +497,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let       widgetM = rootWidget?.widgetNearestTo(locationM, in: mapPseudoView, hereZone) {
 			let     alternate = isBigMap ? gSmallMapController : gMapController
 			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
-				let locationA = mapPseudoView?.convert(locationM, toContaining: mapViewA),
+				let locationA = mapPseudoView?.convertPoint(locationM, toRootPseudoView: mapViewA),
 				let   widgetA = alternate?.rootWidget?.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone),
 				let  dragDotM = widgetM.parentLine?.dragDot,
 				let  dragDotA = widgetA.parentLine?.dragDot {

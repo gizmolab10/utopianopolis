@@ -73,8 +73,8 @@ public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
 public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
-let        kVerticalWeight = CGFloat( 1.0)
-let kHighlightHeightOffset = CGFloat(-3.0)
+let        kVerticalWeight = CGFloat( 1)
+let kHighlightHeightOffset = CGFloat(-3)
 
 var gIsPrinting: Bool {
     return NSPrintOperation.current != nil
@@ -275,7 +275,7 @@ extension ZColor {
 			if  items.count > 1 {
 				let key = items[0]
 				let value = items[1]
-				let f = CGFloat(Double(value) ?? 1.0)
+				let f = CGFloat(Double(value) ?? 1)
 				switch key {
 					case "red":   r = f
 					case "blue":  b = f
@@ -302,11 +302,11 @@ extension ZColor {
 	}
 
     func darker(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2.0), brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2), brightness: brightnessComponent / (by / 3), alpha: alphaComponent)
     }
 
     func lighter(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2.0), brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2), brightness: brightnessComponent * (by / 3), alpha: alphaComponent)
     }
     
     func lightish(by: CGFloat) -> NSColor {
@@ -512,7 +512,7 @@ extension ZView {
 		}
 	}
 
-	func drawBox(in view: ZView, inset: CGFloat = 0.0, with color: ZColor) {
+	func drawBox(in view: ZView, inset: CGFloat = 0, with color: ZColor) {
 		convert(bounds, to: view).insetEquallyBy(inset).drawColoredRect(color)
 	}
 
@@ -1185,19 +1185,19 @@ extension ZoneLine {
 			let      sourceFrame = sourceDot?.absoluteFrame {
             rect.origin       .x = sourceFrame    .midX
 			rect.size     .width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
-			let            delta = CGFloat(4.0)
-			let       smallDelta = CGFloat(1.0)
+			let            delta = CGFloat(4)
+			let       smallDelta = CGFloat(1)
 			let        thickness = CGFloat(gLineThickness)
 
             switch kind! {
             case .above:
-				rect.origin   .y =     sourceFrame.midY                - delta
+				rect.origin   .y =     sourceFrame.midY              - delta
 				rect.size.height = abs(targetFrame.midY - rect.minY)
             case .below:
-				rect.origin   .y =     targetFrame.midY                - smallDelta
-				rect.size.height = abs(sourceFrame.midY - rect.minY)   - delta
+				rect.origin   .y =     targetFrame.midY              - smallDelta
+				rect.size.height = abs(sourceFrame.midY - rect.minY) - delta
             case .straight:
-				rect.origin   .y =     sourceFrame.midY + CGFloat(1.0) - delta
+				rect.origin   .y =     sourceFrame.midY + CGFloat(1) - delta
                 rect.size.height = thickness
             }
         }
@@ -1209,8 +1209,8 @@ extension ZoneLine {
         ZBezierPath(rect: iRect).setClip()
 
         let      dotHeight = CGFloat(gDotHeight)
-        let   halfDotWidth = CGFloat(gDotWidth) / 2.0
-        let  halfDotHeight = dotHeight / 2.0
+        let   halfDotWidth = CGFloat(gDotWidth) / 2
+        let  halfDotHeight = dotHeight / 2
         let        isAbove = kind == .above
         var           rect = iRect
 
@@ -1218,8 +1218,8 @@ extension ZoneLine {
             rect.origin.y -= rect.height + halfDotHeight
         }
 
-        rect.size   .width = rect.width  * 2.0 + halfDotWidth
-        rect.size  .height = rect.height * 2.0 + (isAbove ? halfDotHeight : dotHeight)
+        rect.size   .width = rect.width  * 2 + halfDotWidth
+        rect.size  .height = rect.height * 2 + (isAbove ? halfDotHeight : dotHeight)
 
         return ZBezierPath(ovalIn: rect)
     }

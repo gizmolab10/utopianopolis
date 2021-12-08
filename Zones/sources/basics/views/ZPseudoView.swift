@@ -57,18 +57,18 @@ class ZPseudoView: NSObject {
 		setupDrawnView()
 	}
 
-	func convert(_ point: NSPoint, toContaining view: ZPseudoView?) -> NSPoint {
+	func convertPoint(_ point: NSPoint, toRootPseudoView view: ZPseudoView?) -> NSPoint {
 		if	let s = superpseudoview, s != self, view != self {
-			let o = s.frame.origin.offsetBy(point)
+			let p = point + s.frame.origin
 
-			return s.convert(o, toContaining: view) // recurse
+			return s.convertPoint(p, toRootPseudoView: view) // recurse
 		}
 
 		return point
 	}
 
-	func convert(_ rect: NSRect, toContaining view: ZPseudoView?) -> NSRect  {
-		let o = convert(rect.origin, toContaining: view)
+	func convertRect(_ rect: NSRect, toRootPseudoView pseudoView: ZPseudoView?) -> NSRect  {
+		let o = convertPoint(rect.origin, toRootPseudoView: pseudoView)
 
 		return CGRect(origin: o, size: rect.size)
 	}
@@ -82,9 +82,9 @@ class ZPseudoView: NSObject {
 		}
 	}
 
-	func updateAbsoluteFrame(toController controller: ZMapController?) {
+	func updateAbsoluteFrame(relativeTo controller: ZMapController?) {
 		if  let      root = controller?.mapPseudoView {
-			absoluteFrame = convert(frame, toContaining: root)
+			absoluteFrame = convertRect(frame, toRootPseudoView: root)
 		}
 	}
 

@@ -58,7 +58,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 	
 
     func update() {
-        let               selectorHeight = CGFloat(48.0)
+        let               selectorHeight = CGFloat(48)
         let                    hereTitle = gHereMaybe?.zoneName ?? kEmpty
         editorBottomConstraint?.constant = gKeyboardIsVisible ? keyboardHeight : selectorHeight
         editorTopConstraint?   .constant = gSmallMapIsVisible ? selectorHeight : 2.0

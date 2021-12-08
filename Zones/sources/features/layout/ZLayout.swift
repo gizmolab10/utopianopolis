@@ -13,10 +13,10 @@ import Foundation
 
 extension ZoneWidget {
 
-	func updateWidgetSize() {
+	func updateWidgetDrawnSize() {
 		switch mode {
-			case .linearMode:     linearModeUpdateWidgetSize()
-			case .circularMode: circularModeUpdateWidgetSize()
+			case .linearMode:     linearModeUpdateWidgetDrawnSize()
+			case .circularMode: circularModeUpdateWidgetDrawnSize()
 		}
 	}
 

@@ -187,7 +187,7 @@ class ZoneWidget: ZPseudoView {
 				index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
 				let child         = childrenWidgets[index]
 				child .widgetZone =            zone[index]
-				let    parentView = isLinearMode ? childrenView : self
+				let    parentView = isLinearMode ? childrenView : parentPseudoView
 				count            += child.layoutAllPseudoViews(parentPseudoView: parentView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
 			}
 		}
@@ -199,7 +199,7 @@ class ZoneWidget: ZPseudoView {
 			updateChildrenLinesDrawnSize()
 		}
 
-		updateWidgetSize()
+		updateWidgetDrawnSize()
 
 		return count
 	}

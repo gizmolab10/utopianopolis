@@ -13,7 +13,7 @@ import Foundation
 
 extension ZoneWidget {
 
-	func linearModeUpdateWidgetSize() {
+	func linearModeUpdateWidgetDrawnSize() {
 		if  let       t = textWidget,
 			let   lSize = linesView?   .drawnSize {
 			let   cSize = childrenView?.drawnSize
@@ -87,7 +87,7 @@ extension ZoneWidget {
 				let child = childrenWidgets[index]
 
 				if  absolute {
-					child.updateAbsoluteFrame(toController: controller)
+					child.updateAbsoluteFrame(relativeTo: controller)
 				} else {
 					let    size = child.drawnSize
 					let  origin = CGPoint(x: .zero, y: height)
@@ -102,7 +102,7 @@ extension ZoneWidget {
 	func linearModeUpdateTextViewFrame(_ absolute: Bool = false) {
 		if  let                 t = pseudoTextWidget {
 			if  absolute {
-				t.updateAbsoluteFrame(toController: controller)
+				t.updateAbsoluteFrame(relativeTo: controller)
 
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
@@ -117,7 +117,7 @@ extension ZoneWidget {
 	func linearModeUpdateChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren, let c = childrenView {
 			if  absolute {
-				c.updateAbsoluteFrame(toController: controller)
+				c.updateAbsoluteFrame(relativeTo: controller)
 			} else if let textFrame = pseudoTextWidget?.frame {
 				let           ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
 				let               x = textFrame.maxX + (CGFloat(gChildrenViewOffset) * ratio)
@@ -193,7 +193,7 @@ extension ZoneWidget {
 		linearModeUpdateAllFrames()
 		updateFrameSize()
 		linearModeUpdateAllFrames(true)
-		updateAbsoluteFrame(toController: controller)
+		updateAbsoluteFrame(relativeTo: controller)
 	}
 
 }

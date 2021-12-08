@@ -60,8 +60,8 @@ public typealias ZEdgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer
 
 public protocol ZNullProtocol {}
 
-let      kHighlightHeightOffset = CGFloat(-3.0)
-let             kVerticalWeight = CGFloat(-1.0)
+let      kHighlightHeightOffset = CGFloat(-3)
+let             kVerticalWeight = CGFloat(-1)
 var                  windowKeys : [UIKeyCommand]?
 var                 gIsPrinting : Bool                                                { return false }
 func           NSStringFromSize                    (_ size:        CGSize) -> String  { return NSCoder.string(for: size) }
@@ -598,7 +598,7 @@ extension ZoneWidget {
         let    isBelow = kind == .below
         let startAngle = CGFloat(Double.pi)
         let deltaAngle = CGFloat(Double.pi / 2.0)
-        let multiplier = CGFloat(isBelow ? -1.0 : 1.0)
+        let multiplier = CGFloat(isBelow ? -1 : 1)
         let   endAngle = startAngle + (multiplier * deltaAngle)
         let     scaleY = iRect.height / iRect.width
         let    centerY = isBelow ? iRect.minY : iRect.maxY

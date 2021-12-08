@@ -10,12 +10,12 @@ import Foundation
 
 #if os(OSX)
 import Cocoa
-let kFontDelta = CGFloat(15.0)
+let kFontDelta = CGFloat(15)
 let kDotFactor = CGFloat(2.5)
 var gTextOffset: CGFloat?
 #elseif os(iOS)
 import UIKit
-let kFontDelta = CGFloat(17.0)
+let kFontDelta = CGFloat(17)
 let kDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif

@@ -786,7 +786,7 @@ extension CGSize {
 	}
 
 	func fractionalScaleToFit(size: CGSize) -> CGFloat {
-		var fraction = CGFloat(1.0)
+		var fraction = CGFloat(1)
 
 		if  width < size.width {
 			fraction = width / size.width
@@ -1481,7 +1481,7 @@ extension NSRange {
 extension NSCursor {
 
 	class func fourArrows() -> NSCursor? {
-		let     length = CGFloat(20.0)
+		let     length = CGFloat(20)
 		let halfLength = length / 2.0
 		let       size = CGSize.squared(length)
 		let    hotSpot = CGPoint(x: halfLength, y: halfLength)
@@ -2236,7 +2236,7 @@ extension String {
 
     func location(of offset: CGFloat, using font: ZFont) -> Int {
         var location = 0
-        var total = CGFloat(0.0)
+        var    total = CGFloat(0)
         
         for (index, character) in enumerated() {
             let width = String(character).sizeWithFont(font).width
