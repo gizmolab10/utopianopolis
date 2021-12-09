@@ -49,8 +49,8 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	// MARK:- display
-	// MARK:-
+	// MARK: - display
+	// MARK: -
 
 	func update() {
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
@@ -141,8 +141,8 @@ class ZHelpController: ZGenericTableController {
 		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
 	}
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
@@ -183,8 +183,8 @@ class ZHelpController: ZGenericTableController {
 		return nil
 	}
 
-	// MARK:- grid
-	// MARK:-
+	// MARK: - grid
+	// MARK: -
 
 	func setupGridViews() {
 		if  let c = clipView {
@@ -230,8 +230,8 @@ class ZHelpController: ZGenericTableController {
 		gridView?.setNeedsDisplay()
 	}
 
-	// MARK:- help table
-    // MARK:-
+	// MARK: - help table
+    // MARK: -
 
 	var clickCoordinates: (Int, Int)? {
 

@@ -27,8 +27,8 @@ class ZOnboarding : ZOperations {
 	var    macAddress : String?
 	var hasFullAccess : Bool { return !gDebugAccess && (user?.access ?? .eNormal) == .eFull }
 
-    // MARK:- internals
-    // MARK:-
+    // MARK: - internals
+    // MARK: -
 
 	@objc func completeOnboarding(_ notification: Notification) {
 		gBatches.batch(.bNewAppleID) { iResult in
@@ -37,8 +37,8 @@ class ZOnboarding : ZOperations {
 		}
 	}
 
-    // MARK:- operations
-    // MARK:-
+    // MARK: - operations
+    // MARK: -
 
 	override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
         onCloudResponse = { flag in onCompletion(false) }

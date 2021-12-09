@@ -94,6 +94,7 @@ class ZWidgetObject: NSObject {
 class ZoneWidget: ZPseudoView {
 
 	var         circularSkip =               0
+	var    circularModeRange =         NSRange()
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
 	let         widgetObject =   ZWidgetObject()
@@ -152,8 +153,8 @@ class ZoneWidget: ZPseudoView {
         childrenWidgets.removeAll()
     }
 
-	// MARK:- view hierarchy
-	// MARK:-
+	// MARK: - view hierarchy
+	// MARK: -
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		sharedRevealDot = isLinearMode ? ZoneDot(view: absoluteView) : nil
@@ -354,8 +355,8 @@ class ZoneWidget: ZPseudoView {
 		return status
 	}
 
-	// MARK:- compute sizes and frames
-	// MARK:-
+	// MARK: - compute sizes and frames
+	// MARK: -
 
 	func updateFrameSize() {
 		setFrameSize(drawnSize)
@@ -403,8 +404,8 @@ class ZoneWidget: ZPseudoView {
         return nil
     }
 
-	// MARK:- draw
-	// MARK:-
+	// MARK: - draw
+	// MARK: -
 
 	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
 		if  highlightFrame.isEmpty {

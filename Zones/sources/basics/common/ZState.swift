@@ -721,8 +721,8 @@ var gAdjustedEssayTitleMode: ZEssayTitleMode {
 	return mode
 }
 
-// MARK:- actions
-// MARK:-
+// MARK: - actions
+// MARK: -
 
 enum ZActiveWindowID : Int {
 	case main
@@ -815,8 +815,8 @@ func recordEmailSent(for type: ZSentEmailType) {
     }
 }
 
-// MARK:- internals
-// MARK:-
+// MARK: - internals
+// MARK: -
 
 func getPreferencesFloat(for key: String, defaultFloat: CGFloat = 0.0) -> CGFloat {
 	return getPreferenceString(for: key) { return "\(defaultFloat)" }?.floatValue ?? defaultFloat

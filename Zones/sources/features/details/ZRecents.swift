@@ -71,8 +71,8 @@ class ZRecents : ZSmallMapRecords {
 		return nil
 	}
 
-	// MARK:- focus
-	// MARK:-
+	// MARK: - focus
+	// MARK: -
 
 	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
 		if  let    current = currentBookmark {

@@ -35,8 +35,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 	}
 	
 
-    // MARK:- hide and show
-    // MARK:-
+    // MARK: - hide and show
+    // MARK: -
 	
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
@@ -73,8 +73,8 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     }
 
 
-    // MARK:- keyboard
-    // MARK:-
+    // MARK: - keyboard
+    // MARK: -
 
 
     override func viewDidLoad() {

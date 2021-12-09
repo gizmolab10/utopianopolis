@@ -27,8 +27,8 @@ class ZTraitAssets : ZRecord {
 			super.optionalCloudProperties
 	}
 
-	// MARK:- attachment
-	// MARK:-
+	// MARK: - attachment
+	// MARK: -
 
 	func extractAssets(from attributed: NSMutableAttributedString) {
 		assets = attributed.assets(for: self)
@@ -101,8 +101,8 @@ class ZTraitAssets : ZRecord {
 		return NSTextAttachment(fileWrapper: wrapper)
 	}
 
-	// MARK:- persistence
-	// MARK:-
+	// MARK: - persistence
+	// MARK: -
 
 	// called during save note (in set note text)
 	// and in read file (extract from storage dictionary)

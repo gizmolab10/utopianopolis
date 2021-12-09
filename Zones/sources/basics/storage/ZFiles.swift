@@ -74,8 +74,8 @@ class ZFiles: NSObject {
 		return result
 	}
 
-    // MARK:- API
-    // MARK:-
+    // MARK: - API
+    // MARK: -
 
 	func fileExistsFor(_ dbIndex: ZDatabaseIndex) -> Bool {
 		if  let  gName = fileName(for: dbIndex),
@@ -216,8 +216,8 @@ class ZFiles: NSObject {
 		return nil
 	}
 
-    // MARK:- heavy lifting
-    // MARK:-
+    // MARK: - heavy lifting
+    // MARK: -
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  gHasFinishedStartup, // guarantee that file read finishes before this code runs
@@ -441,8 +441,8 @@ class ZFiles: NSObject {
         return path!
     }
 
-    // MARK:- internals
-    // MARK:-
+    // MARK: - internals
+    // MARK: -
 
     func createDataDirectory() -> URL {
         do {

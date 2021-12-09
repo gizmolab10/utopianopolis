@@ -46,8 +46,8 @@ struct  ZDotParameters {
 
 class ZoneDot: ZPseudoView {
 
-    // MARK:- properties
-    // MARK:-
+    // MARK: - properties
+    // MARK: -
 
 	var                line : ZoneLine?
 	weak var         widget : ZoneWidget?
@@ -96,8 +96,8 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
-    // MARK:- initialization
-    // MARK:-
+    // MARK: - initialization
+    // MARK: -
 
 	@discardableResult func updateSize() -> CGSize {
 		let isBigMap = widget?.type.isBigMap ?? true
@@ -113,8 +113,8 @@ class ZoneDot: ZPseudoView {
 		updateSize()
 	}
 
-    // MARK:- draw
-    // MARK:-
+    // MARK: - draw
+    // MARK: -
 
 	func drawSmallMapSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let       radius = parameters.sideDotRadius

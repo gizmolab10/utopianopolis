@@ -25,8 +25,8 @@ class ZMapEditor: ZBaseEditor {
 	var             moveables : ZoneArray? { return (gIsEssayMode && !gMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
 	func          forceRedraw()            { gMapView?.setNeedsDisplay() }
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
     class ZStalledEvent: NSObject {
         var event: ZEvent?
@@ -246,8 +246,8 @@ class ZMapEditor: ZBaseEditor {
         return valid
     }
 
-	// MARK:- handlers
-	// MARK:-
+	// MARK: - handlers
+	// MARK: -
 
 	@objc func handleTraitsPopupMenu(_ iItem: ZMenuItem) {
 		handleTraitsKey(iItem.keyEquivalent)
@@ -331,8 +331,8 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	// MARK:- focus
-	// MARK:-
+	// MARK: - focus
+	// MARK: -
 
 	func focusOnTrash() {
 		gTrash?.focusOn() {
@@ -350,8 +350,8 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	// MARK:- features
-	// MARK:-
+	// MARK: - features
+	// MARK: -
 
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
@@ -630,8 +630,8 @@ class ZMapEditor: ZBaseEditor {
 		print(" total: \(count)")
 	}
 
-	// MARK:- edit text
-	// MARK:-
+	// MARK: - edit text
+	// MARK: -
 
 	func editIdea(_  OPTION: Bool) {
 		gSelecting.currentMoveable.edit()
@@ -657,8 +657,8 @@ class ZMapEditor: ZBaseEditor {
 		gControllers.swapMapAndEssay()
 	}
 
-    // MARK:- lines
-    // MARK:-
+    // MARK: - lines
+    // MARK: -
     
     func convertToTitledLineAndRearrangeChildren() {
         delete(preserveChildren: true, convertToTitledLine: true)
@@ -696,8 +696,8 @@ class ZMapEditor: ZBaseEditor {
         }
     }
     
-    // MARK:- cut and paste
-    // MARK:-
+    // MARK: - cut and paste
+    // MARK: -
 
 	func prepareUndoForDelete() {
 		gSelecting.clearPaste()
@@ -875,8 +875,8 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    // MARK:- move vertically
-    // MARK:-
+    // MARK: - move vertically
+    // MARK: -
 
 	func moveToDone() -> Bool {
 		if  let   zone = gSelecting.rootMostMoveable,
@@ -1161,8 +1161,8 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	// MARK:- move horizontally
-	// MARK:-
+	// MARK: - move horizontally
+	// MARK: -
 
 	func moveLeft(_ isLeft: Bool, flags: ZEventFlags, onCompletion: Closure? = nil) {
 		if  let moveable = gSelecting.rootMostMoveable {

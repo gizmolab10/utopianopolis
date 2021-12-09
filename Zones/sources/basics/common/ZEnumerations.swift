@@ -531,8 +531,8 @@ enum ZEssayLinkType: String {
 
 }
 
-// MARK:- option sets
-// MARK:-
+// MARK: - option sets
+// MARK: -
 
 struct ZoneType: OptionSet {
 	let rawValue: Int

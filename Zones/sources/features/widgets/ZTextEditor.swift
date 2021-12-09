@@ -105,8 +105,8 @@ class ZTextPack: NSObject {
         return result
     }
 
-    // MARK:- internals: editing zones and traits
-    // MARK:-
+    // MARK: - internals: editing zones and traits
+    // MARK: -
 
 	convenience init(_ iZRecord: ZRecord) {
         self.init()
@@ -269,8 +269,8 @@ class ZTextEditor: ZTextView {
 	var atEnd 	            : Bool            { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
 	var atStart  	        : Bool            { return selectedRange.upperBound == 0 }
 
-    // MARK:- editing
-    // MARK:-
+    // MARK: - editing
+    // MARK: -
 
     func clearOffset() { currentOffset = nil }
 
@@ -404,8 +404,8 @@ class ZTextEditor: ZTextView {
         currentEdit?.prepareUndoForTextChange(manager, onUndo)
     }
 	
-	// MARK:- selecting
-	// MARK:-
+	// MARK: - selecting
+	// MARK: -
 
 	func selectAllText() {
 		let range = NSRange(location: 0, length: currentTextWidget?.text?.length ?? 0)
@@ -423,8 +423,8 @@ class ZTextEditor: ZTextView {
 		}
 	}
 	
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 

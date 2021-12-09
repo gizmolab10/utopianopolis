@@ -64,8 +64,8 @@ class ZSearchResultsController: ZGenericTableController {
         return count
     }
 
-    // MARK:- content
-    // MARK:-
+    // MARK: - content
+    // MARK: -
 
     func sortRecords() {
         for (mode, records) in filteredResults {
@@ -98,8 +98,8 @@ class ZSearchResultsController: ZGenericTableController {
 		return zone
 	}
 
-    // MARK:- delegate
-    // MARK:-
+    // MARK: - delegate
+    // MARK: -
 
     #if os(OSX)
 
@@ -156,8 +156,8 @@ class ZSearchResultsController: ZGenericTableController {
 
     #endif
 
-    // MARK:- user feel
-    // MARK:-
+    // MARK: - user feel
+    // MARK: -
 
     func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, ZRecord)? {
         var index = iIndex
@@ -254,8 +254,8 @@ class ZSearchResultsController: ZGenericTableController {
         }
     }
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
     func moveSelection(up: Bool, extreme: Bool) {
         if  let             t = genericTableView {

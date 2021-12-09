@@ -234,8 +234,8 @@ extension NSObject {
 //		service?.perform(withItems: ["Something happened"])
 	}
 
-    // MARK:- JSON
-    // MARK:-
+    // MARK: - JSON
+    // MARK: -
 
     func dictFromJSON(_ dict: ZStringObjectDictionary) -> ZStorageDictionary {
         var                   result = ZStorageDictionary ()
@@ -657,10 +657,10 @@ infix operator -- : AdditionPrecedence
 
 extension CGPoint {
 
-	var containsNAN: Bool { return x.isNaN || y.isNaN }
-	var descriptionToTwoDecimals: String { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
-	var length: CGFloat { return sqrt(x * x + y * y) }
-	var angle: CGFloat { return atan2(y, x) }
+	var containsNAN              : Bool    { return x.isNaN || y.isNaN }
+	var descriptionToTwoDecimals : String  { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
+	var length                   : CGFloat { return sqrt(x * x + y * y) }
+	var angle                    : CGFloat { return atan2(y, x) }
 
 	public static func equaled(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 
@@ -2015,8 +2015,8 @@ extension String {
 		return newString.lowercased()
 	}
 
-	// MARK:- bookmarks
-	// MARK:-
+	// MARK: - bookmarks
+	// MARK: -
 
 	var maybeRecordName: String? {
 		if  let   parts  = components, parts.count > 1 {

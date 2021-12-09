@@ -8,8 +8,8 @@
 
 import Foundation
 
-// MARK:- widget
-// MARK:-
+// MARK: - widget
+// MARK: -
 
 extension ZoneWidget {
 
@@ -55,8 +55,8 @@ extension ZoneWidget {
 
 }
 
-// MARK:- line
-// MARK:-
+// MARK: - line
+// MARK: -
 
 extension ZoneLine {
 
@@ -97,8 +97,8 @@ extension ZoneLine {
 
 }
 
-// MARK:- dot
-// MARK:-
+// MARK: - dot
+// MARK: -
 
 extension ZoneDot {
 

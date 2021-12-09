@@ -38,8 +38,8 @@ class ZTogglingView: ZView {
     @IBOutlet var hideableView : ZView?
 	@IBOutlet var   bannerView : ZView?
 
-    // MARK:- identity
-    // MARK:-
+    // MARK: - identity
+    // MARK: -
 
 	var kind: String? {
 		return gConvertFromOptionalUserInterfaceItemIdentifier(identifier)
@@ -91,8 +91,8 @@ class ZTogglingView: ZView {
 		hideHideable = !hideHideable
 	}
 
-    // MARK:- update UI
-    // MARK:-
+    // MARK: - update UI
+    // MARK: -
 
 	@IBAction func toggleAction(_ sender: Any) {
 		toggleHideableVisibility()

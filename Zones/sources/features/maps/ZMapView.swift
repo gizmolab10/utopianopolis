@@ -24,13 +24,13 @@ class ZMapView: ZView {
 	var highlightMapView        : ZMapView?
 	override func menu(for event: ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
-	// MARK:- hover
-	// MARK:-
+	// MARK: - hover
+	// MARK: -
 
 	func updateTracking() { addTracking(for: frame) }
 
-	// MARK:- initialize
-	// MARK:-
+	// MARK: - initialize
+	// MARK: -
 
 	func setup(_ id: ZMapID = .mText) {
 		identifier = id.identifier
@@ -77,8 +77,8 @@ class ZMapView: ZView {
 		}
 	}
 
-	// MARK:- draw
-	// MARK:-
+	// MARK: - draw
+	// MARK: -
 
 	func debugDraw() {
 		bounds                 .insetEquallyBy(1.5).drawColoredRect(.blue)

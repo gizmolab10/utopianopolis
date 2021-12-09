@@ -47,8 +47,8 @@ class ZPreferencesController: ZGenericController {
         }
     }
 
-    // MARK:- actions
-    // MARK:-
+    // MARK: - actions
+    // MARK: -
 
 	@IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)

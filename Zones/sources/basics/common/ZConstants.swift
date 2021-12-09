@@ -82,8 +82,8 @@ let                  kExitKeys = [kReturn, "f", kEscape]
 
 let kAllDatabaseIDs: [ZDatabaseID] = [.mineID, .everyoneID]
 
-// MARK:- property names
-// MARK:-
+// MARK: - property names
+// MARK: -
 
 let                     kpDBID = "dbid"
 let                    kpEssay = "essay"
@@ -99,8 +99,8 @@ let             kpRecordPrefix = "record"
 let           kpZoneParentLink = "parentLink"
 let         kpModificationDate = "modificationDate"
 
-// MARK:- strings and dictionary keys
-// MARK:-
+// MARK: - strings and dictionary keys
+// MARK: -
 
 let                       kDot = "\u{25CF}" // 233E, 25C9, 2605, 273A, 274A
 let                       kTab = "\t"

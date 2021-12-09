@@ -75,8 +75,8 @@ class ZTrait: ZTraitAssets {
 			super.optionalCloudProperties
 	}
 
-	// MARK:- initialize
-	// MARK:-
+	// MARK: - initialize
+	// MARK: -
 
 	static func uniqueTrait(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZTrait {
 		let result = uniqueTrait(recordName: dict.recordName, in: dbID)
@@ -104,8 +104,8 @@ class ZTrait: ZTraitAssets {
 		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
 	}
 
-	// MARK:- owner
-	// MARK:-
+	// MARK: - owner
+	// MARK: -
 
 	var ownerZone: Zone? {
 		if  _ownerZone == nil {
@@ -133,8 +133,8 @@ class ZTrait: ZTraitAssets {
 		}
 	}
 
-	// MARK:- text
-	// MARK:-
+	// MARK: - text
+	// MARK: -
 
 	var noteText: NSMutableAttributedString? {
 		get {

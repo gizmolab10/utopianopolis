@@ -20,8 +20,8 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
     var window: UIWindow?
 
 
-    // MARK:- delegation
-    // MARK:-
+    // MARK: - delegation
+    // MARK: -
 
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

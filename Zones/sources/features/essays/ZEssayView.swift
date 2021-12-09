@@ -79,8 +79,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return 0
 	}
 
-	// MARK:- output
-	// MARK:-
+	// MARK: - output
+	// MARK: -
 
 	override func draw(_ dirtyRect: NSRect) {
 		let attach = imageAttachment ?? eraseAttachment
@@ -103,8 +103,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- input
-	// MARK:-
+	// MARK: - input
+	// MARK: -
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard var key = iKey else {
@@ -424,8 +424,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- setup
-	// MARK:-
+	// MARK: - setup
+	// MARK: -
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -541,8 +541,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return delta
 	}
 
-	// MARK:- clean up
-	// MARK:-
+	// MARK: - clean up
+	// MARK: -
 
 	func done() {
 		save()
@@ -591,8 +591,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		done()
 	}
 
-	// MARK:- locked ranges
-	// MARK:-
+	// MARK: - locked ranges
+	// MARK: -
 
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
 		let     noKeys = gCurrentKeyPressed == nil
@@ -622,8 +622,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return true // yes, change text
 	}
 
-	// MARK:- grab / drag
-	// MARK:-
+	// MARK: - grab / drag
+	// MARK: -
 
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
 
@@ -867,8 +867,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		gSignal([.spCrumbs, .sDetails])
 	}
 
-	// MARK:- buttons
-	// MARK:-
+	// MARK: - buttons
+	// MARK: -
 
 	func enableEssayControls(_      enabled: Bool) {
 		let      hasMultipleNotes = gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
@@ -990,8 +990,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- titles control
-	// MARK:-
+	// MARK: - titles control
+	// MARK: -
 
 	func addTitlesControl() {
 		if  let  inspectorBar = gMainWindow?.inspectorBar,
@@ -1087,8 +1087,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return delta
 	}
 
-	// MARK:- images
-	// MARK:-
+	// MARK: - images
+	// MARK: -
 
 	func clearImageResizeRubberband() {
 		if  resizeDragRect == nil {
@@ -1302,8 +1302,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return nil
 	}
 
-	// MARK:- search
-	// MARK:-
+	// MARK: - search
+	// MARK: -
 
 	func grabSelectedTextForSearch() {
 		gSearching.essaySearchText = selectionString
@@ -1335,8 +1335,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- special characters
-	// MARK:-
+	// MARK: - special characters
+	// MARK: -
 
 	private func showSpecialCharactersPopup() {
 		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:)))
@@ -1354,8 +1354,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	// MARK:- hyperlinks
-	// MARK:-
+	// MARK: - hyperlinks
+	// MARK: -
 
 	var currentLink: Any? {
 		var found: Any?
@@ -1561,8 +1561,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return followLinkInSelection()
 	}
 
-	// MARK:- more
-	// MARK:-
+	// MARK: - more
+	// MARK: -
 
 	func swapBetweenNoteAndEssay() {
 		if  let current = gCurrentEssay,

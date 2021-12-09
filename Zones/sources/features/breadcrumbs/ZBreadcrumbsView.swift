@@ -102,8 +102,8 @@ class ZBreadcrumbsView : ZButtonsView {
 		}
 	}
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
 	@IBAction func handleClipper(_ sender: Any?) {
 		gClipBreadcrumbs = !gClipBreadcrumbs

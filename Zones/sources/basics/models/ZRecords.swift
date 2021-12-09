@@ -309,8 +309,8 @@ class ZRecords: NSObject {
 		return []
     }
 
-    // MARK:- registries
-    // MARK:-
+    // MARK: - registries
+    // MARK: -
 
 	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
 		let names = iName.components(separatedBy: kSpace).filter { $0 != kEmpty }
@@ -429,8 +429,8 @@ class ZRecords: NSObject {
         duplicates.removeAll()
     }
 
-    // MARK:- record state
-    // MARK:-
+    // MARK: - record state
+    // MARK: -
 
     var allStates: [ZRecordState] { return recordNamesByState.map { $0.key } }
 
@@ -576,8 +576,8 @@ class ZRecords: NSObject {
 		return found
 	}
 
-    // MARK:- set state
-    // MARK:-
+    // MARK: - set state
+    // MARK: -
 
 	var ignoreNone = false
     var ignoredRecordName: String?
@@ -627,8 +627,8 @@ class ZRecords: NSObject {
         }
     }
 
-	// MARK:- clear state
-	// MARK:-
+	// MARK: - clear state
+	// MARK: -
 
 	func remove(states: [ZRecordState], from iReferences: CKReferencesArray) {
 		for reference in iReferences {
@@ -690,8 +690,8 @@ class ZRecords: NSObject {
         }
     }
 
-	// MARK:- batch lookup
-    // MARK:-
+	// MARK: - batch lookup
+    // MARK: -
 
 	func fullUpdate(for states: [ZRecordState], _ onEach: StateRecordClosure) {
         var names = StringsArray ()
@@ -801,8 +801,8 @@ class ZRecords: NSObject {
 		}
 	}
 
-	// MARK:- lookups
-    // MARK:-
+	// MARK: - lookups
+    // MARK: -
 
 	func     maybeZoneForRecordName (_ iRecordName:   String?, trackMissing: Bool = true) ->     Zone? { return maybeZRecordForRecordName (iRecordName, trackMissing: trackMissing) as? Zone }
 	func    maybeZRecordForRecordID (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }

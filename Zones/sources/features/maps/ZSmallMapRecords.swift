@@ -29,8 +29,8 @@ class ZSmallMapRecords: ZRecords {
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
 	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
 
-	// MARK:- cycle
-	// MARK:-
+	// MARK: - cycle
+	// MARK: -
 
 	func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
@@ -121,8 +121,8 @@ class ZSmallMapRecords: ZRecords {
 		return whichBookmarkTargets(target, orSpawnsIt: false)
 	}
 
-	// MARK:- pop and push
-	// MARK:-
+	// MARK: - pop and push
+	// MARK: -
 
 	func push(_ zone: Zone? = gHere) {}
 
@@ -181,8 +181,8 @@ class ZSmallMapRecords: ZRecords {
 		workingBookmark(for: zone)?.deleteSelf(permanently: true) {}
 	}
 
-	// MARK:- focus
-	// MARK:-
+	// MARK: - focus
+	// MARK: -
 
 	func revealBookmark(of target: Zone) {
 

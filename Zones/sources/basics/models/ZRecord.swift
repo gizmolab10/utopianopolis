@@ -50,8 +50,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		return kRootNames.contains(recordName!)
 	}
 
-	// MARK:- overrides
-	// MARK:-
+	// MARK: - overrides
+	// MARK: -
 
 	var isAdoptable: Bool { return false }
 	var matchesFilterOptions: Bool { return true }
@@ -79,8 +79,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		}
 	}
 
-	// MARK:- core data
-	// MARK:-
+	// MARK: - core data
+	// MARK: -
 
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 
@@ -101,8 +101,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		return converted
 	}
 
-	// MARK:- initialize
-	// MARK:-
+	// MARK: - initialize
+	// MARK: -
 
 	static func uniqueFactoryObject(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
 		switch entityName {
@@ -146,8 +146,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		cloud?.ignoreNone = saved
 	}
 
-	// MARK:- needs
-	// MARK:-
+	// MARK: - needs
+	// MARK: -
 
 	func temporarilyMarkNeeds(_ closure: Closure) {
 		cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
@@ -192,8 +192,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		}
 	}
 
-    // MARK:- states
-    // MARK:-
+    // MARK: - states
+    // MARK: -
 
     func    hasState(_ state: ZRecordState) -> Bool { return zRecords?.isRegistered(self, forAnyOf:[state]) ?? false }
     func    addState(_ state: ZRecordState)         {        zRecords?.addZRecord  (self, for:     [state]) }
@@ -208,8 +208,8 @@ class ZRecord: ZManagedObject { // NSObject {
 		setupLinks()
 	}
 
-    // MARK:- files
-    // MARK:-
+    // MARK: - files
+    // MARK: -
 
     func type(from keyPath: String) -> ZStorageType? {
         func extractType(_ ignored: String) -> (ZStorageType?) {

@@ -111,8 +111,8 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		}
 	}
 
-	// MARK:- delegation
-	// MARK:-
+	// MARK: - delegation
+	// MARK: -
 
 	func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
 		products = response.products
@@ -184,8 +184,8 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		print("purchaseFailed" + suffix)
 	}
 
-	// MARK:- internals
-	// MARK:-
+	// MARK: - internals
+	// MARK: -
 
 	func productAt(_ index: Int) -> SKProduct? {
 		if index >= products.count { return nil }
@@ -205,8 +205,8 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 
 }
 
-// MARK:- state and tokens
-// MARK:-
+// MARK: - state and tokens
+// MARK: -
 
 extension SKProduct {
 

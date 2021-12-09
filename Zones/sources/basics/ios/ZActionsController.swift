@@ -46,8 +46,8 @@ class ZActionsController : ZGenericController {
 	var                     isTop : Bool { return gCurrentFunction == .eTop }
 
 
-    // MARK:- events
-    // MARK:-
+    // MARK: - events
+    // MARK: -
 
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
@@ -130,8 +130,8 @@ class ZActionsController : ZGenericController {
 	}
 	
 	
-	// MARK:- functions
-	// MARK:-
+	// MARK: - functions
+	// MARK: -
 	
 	
 	func alignView() {

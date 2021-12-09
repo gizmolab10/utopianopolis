@@ -130,8 +130,8 @@ class ZBatches: ZOnboarding {
 	var              isLate :   Bool  { return lastOpStart != nil && lastOpStart!.timeIntervalSinceNow < -30.0 }
 	var          totalCount :    Int  { return currentBatches.count + deferredBatches.count }
 
-    // MARK:- API
-    // MARK:-
+    // MARK: - API
+    // MARK: -
 
     func      root(_ onCompletion: @escaping BooleanClosure) { batch(.bRoot,        onCompletion) }
     func      sync(_ onCompletion: @escaping BooleanClosure) { batch(.bSync,        onCompletion) }
@@ -209,8 +209,8 @@ class ZBatches: ZOnboarding {
         }
     }
 
-    // MARK:- internals
-    // MARK:-
+    // MARK: - internals
+    // MARK: -
 
     func getBatch(_ iID: ZBatchID, from iList: [ZBatch]) -> ZBatch? {
         for batch in iList {

@@ -21,8 +21,8 @@ var gFavoritesHereMaybe: Zone? {
 
 class ZFavorites: ZSmallMapRecords {
 
-    // MARK:- initialization
-    // MARK:-
+    // MARK: - initialization
+    // MARK: -
 
 	var hasTrash: Bool {
 		for favorite in workingBookmarks {
@@ -53,8 +53,8 @@ class ZFavorites: ZSmallMapRecords {
 
 	}
 
-    // MARK:- update
-    // MARK:-
+    // MARK: - update
+    // MARK: -
 
 	override func push(_ zone: Zone? = gHere) {
 		if  let pushMe = zone,
@@ -235,8 +235,8 @@ class ZFavorites: ZSmallMapRecords {
 		return rootsGroup
 	}
 
-    // MARK:- toggle
-    // MARK:-
+    // MARK: - toggle
+    // MARK: -
 
     func delete(_ favorite: Zone) {
         favorite.moveZone(to: favorite.trashZone)

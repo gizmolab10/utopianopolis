@@ -8,8 +8,8 @@
 
 import Foundation
 
-// MARK:- widget
-// MARK:-
+// MARK: - widget
+// MARK: -
 
 extension ZoneWidget {
 
@@ -54,8 +54,12 @@ extension ZoneWidget {
 		}
 	}
 
-	// MARK:- static methods
-	// MARK:-
+	func circularModeUpdateRange() {
+
+	}
+
+	// MARK: - static methods
+	// MARK: -
 
 	static func circularModeMaxVisibleSiblings(at level: Int, children: ZoneWidgetArray) -> Int {
 		var maxVisible = 0
@@ -115,8 +119,8 @@ extension ZoneWidget {
 		}
 	}
 
-	// MARK:- traverse
-	// MARK:-
+	// MARK: - traverse
+	// MARK: -
 
 	func circularModeUpdateFrames(_ absolute: Bool = false) {
 		circularModeUpdateTextViewFrame(absolute)
@@ -144,16 +148,25 @@ extension ZoneWidget {
 
 }
 
-// MARK:- widgets array
-// MARK:-
+// MARK: - widgets array
+// MARK: -
 
 extension ZoneWidgetArray {
 
 	var circularModeScrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
 
 	func circularModeUpdateFrames(at level: Int, placeholderCount: Int, in controller: ZMapController?, _ absolute: Bool = false) {
+		circularModeUpdateRanges(absolute)
 		circularModeUpdateCentralAngles(at: level, placeholderCount: placeholderCount, absolute)   // needed for updating text view frames
 		circularModeUpdateWidgetFrames (at: level, in: controller, absolute)
+	}
+
+	func circularModeUpdateRanges(_ absolute: Bool = false) {
+		if !absolute {
+			for widget in self {
+				widget.circularModeUpdateRange()
+			}
+		}
 	}
 
 	func circularModeUpdateWidgetFrames(at level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
@@ -203,8 +216,8 @@ extension ZoneWidgetArray {
 
 }
 
-// MARK:- line
-// MARK:-
+// MARK: - line
+// MARK: -
 
 extension ZoneLine {
 
@@ -293,8 +306,8 @@ extension ZoneLine {
 
 }
 
-// MARK:- dot
-// MARK:-
+// MARK: - dot
+// MARK: -
 
 extension ZoneDot {
 

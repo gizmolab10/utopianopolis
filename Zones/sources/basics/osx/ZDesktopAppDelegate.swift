@@ -17,8 +17,8 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 
     var needsSetup = true
 
-    // MARK:- delegation
-    // MARK:-
+    // MARK: - delegation
+    // MARK: -
 
     func applicationDidBecomeActive(_ notification: Notification) {
         if  needsSetup {

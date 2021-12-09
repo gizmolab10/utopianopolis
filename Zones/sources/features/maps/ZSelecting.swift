@@ -230,8 +230,8 @@ class ZSelecting: NSObject {
 		return nil
 	}
 
-    // MARK:- convenience
-    // MARK:-
+    // MARK: - convenience
+    // MARK: -
 
     func isSelected(_ zone: Zone) -> Bool { return isGrabbed(zone) || gTextEditor.currentlyEditedZone == zone }
     func isGrabbed (_ zone: Zone) -> Bool { return currentMapGrabs.contains(zone) }
@@ -270,8 +270,8 @@ class ZSelecting: NSObject {
 		}
 	}
 
-	// MARK:- selection
-	// MARK:-
+	// MARK: - selection
+	// MARK: -
 
     func ungrabAll(retaining: ZoneArray? = nil) {
         let        more = retaining ?? []
@@ -403,8 +403,8 @@ class ZSelecting: NSObject {
 		}
 	}
 
-    // MARK:- internals
-    // MARK:-
+    // MARK: - internals
+    // MARK: -
 
     
     func maybeNewGrabUpdate() {

@@ -163,8 +163,8 @@ class ZCoreDataStack: NSObject {
 		return false
 	}
 
-	// MARK:- save
-	// MARK:-
+	// MARK: - save
+	// MARK: -
 
 	func saveContext() {
 		if  gCanSave, gIsReadyToShowUI {
@@ -187,8 +187,8 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	// MARK:- load
-	// MARK:-
+	// MARK: - load
+	// MARK: -
 
 	func loadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if !gCanLoad {
@@ -282,8 +282,8 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
-	// MARK:- registry
-	// MARK:-
+	// MARK: - registry
+	// MARK: -
 
 	func registerObject(_ object: ZManagedObject, recordName: String, dbID: ZDatabaseID) {
 		var dict  = fetchedRegistry[dbID]
@@ -390,8 +390,8 @@ class ZCoreDataStack: NSObject {
 		return objects
 	}
 
-	// MARK:- search
-	// MARK:-
+	// MARK: - search
+	// MARK: -
 
 	func searchZRecordsForNames(_ names: StringsArray, within dbID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
 		var result = StringZRecordsDictionary()
@@ -458,8 +458,8 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	// MARK:- internals
-	// MARK:-
+	// MARK: - internals
+	// MARK: -
 
 	func persistentStore(for url: URL) -> NSPersistentStore? {
 		return persistentContainer.persistentStoreCoordinator.persistentStore(for: url)
@@ -532,8 +532,8 @@ class ZCoreDataStack: NSObject {
 		return container
 	}()
 
-	// MARK:- core data prefers one operation at a time
-	// MARK:-
+	// MARK: - core data prefers one operation at a time
+	// MARK: -
 
 	func isAvailable(for opID: ZCDOperationID) -> Bool { return currentOpID == nil || currentOpID == opID }
 	func makeAvailable()                               {        currentOpID  = nil }
@@ -570,8 +570,8 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	// MARK:- internal
-	// MARK:-
+	// MARK: - internal
+	// MARK: -
 
 	func   zoneNamePredicate(from string:          String) -> NSPredicate { return NSPredicate(format: "zoneName contains[cd] %@",   string.lowercased()) }
 	func      traitPredicate(from string:          String) -> NSPredicate { return NSPredicate(format:     "text contains[cd] %@",   string.lowercased()) }
@@ -646,8 +646,8 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	// MARK:- existence closures
-	// MARK:-
+	// MARK: - existence closures
+	// MARK: -
 
 	func setClosures(_ closures: ZExistenceArray, for entityName: String, dbID: ZDatabaseID) {
 		var dict  = existenceClosures[dbID]
@@ -739,8 +739,8 @@ class ZCoreDataStack: NSObject {
 		processForEntityName(at: firstIndex)
 	}
 
-	// MARK:- vaccuum
-	// MARK:-
+	// MARK: - vaccuum
+	// MARK: -
 
 	func emptyZones(within dbID: ZDatabaseID, onCompletion: ZRecordsClosure? = nil) {
 		let predicate = zoneNamePredicate(from: "NULL")

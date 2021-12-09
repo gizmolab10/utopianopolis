@@ -89,8 +89,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	#endif
 
-	// MARK:- operations
-	// MARK:-
+	// MARK: - operations
+	// MARK: -
 
 	func toggleMaps() {
 		gToggleDatabaseID()
@@ -162,8 +162,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
     }
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
     override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  !gDeferringRedraw {
@@ -365,8 +365,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         priorScrollLocation = location
     }
 
-	// MARK:- drop
-	// MARK:-
+	// MARK: - drop
+	// MARK: -
 
 	func dropOnto(_ zone: Zone, at dropAt: Int? = nil, _ iGesture: ZGestureRecognizer?) {
 		if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
@@ -488,8 +488,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         return false
     }
 
-    // MARK:- internals
-    // MARK:-
+    // MARK: - internals
+    // MARK: -
 
 	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, Zone?, CGPoint)? {
 		if  let         viewG = gesture?.view,
@@ -567,8 +567,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         return relation
     }
 
-    // MARK:- detect
-    // MARK:-
+    // MARK: - detect
+    // MARK: -
 
     func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
 		if  isBigMap,

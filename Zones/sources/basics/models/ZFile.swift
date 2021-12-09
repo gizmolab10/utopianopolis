@@ -32,8 +32,8 @@ class ZFile : ZRecord {
 
 	func activate() { gFiles.unqiueAssetPath(for: self)?.openAsURL() }
 
-	// MARK:- create
-	// MARK:-
+	// MARK: - create
+	// MARK: -
 
 	static func uniqueFile(recordName: String?, in dbID: ZDatabaseID) -> ZFile {
 		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: dbID) as! ZFile
@@ -69,8 +69,8 @@ class ZFile : ZRecord {
 		return nil
 	}
 
-	// MARK:- properties
-	// MARK:-
+	// MARK: - properties
+	// MARK: -
 
 	override var        cloudProperties : StringsArray { return Zone.cloudProperties }
 	override var optionalCloudProperties: StringsArray { return Zone.optionalCloudProperties }

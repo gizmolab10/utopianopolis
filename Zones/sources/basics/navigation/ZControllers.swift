@@ -68,8 +68,8 @@ class ZControllers: NSObject {
 	var currentController: ZGenericController?
     var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
 
-	// MARK:- hide / reveal
-	// MARK:-
+	// MARK: - hide / reveal
+	// MARK: -
 
 	func showEssay(forGuide: Bool) {
 		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "42F338C4-9055-4921-BBD8-1984DF406052"
@@ -98,8 +98,8 @@ class ZControllers: NSObject {
 		}
 	}
 
-	// MARK:- registry
-	// MARK:-
+	// MARK: - registry
+	// MARK: -
 
 	func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
 		if  let identifier = iID,
@@ -133,8 +133,8 @@ class ZControllers: NSObject {
 		return gAccentColor
 	}
 
-	// MARK:- signals
-    // MARK:-
+	// MARK: - signals
+    // MARK: -
 
 	class ZSignalObject {
 		let    closure : SignalClosure!

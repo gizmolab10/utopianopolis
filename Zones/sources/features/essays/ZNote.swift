@@ -68,8 +68,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return !unequal
 	}
 
-	// MARK:- persistency
-	// MARK:-
+	// MARK: - persistency
+	// MARK: -
 
 	func saveInNote(_ attributedString: NSAttributedString?) {
 		if  let            trait  = maybeNoteTrait,
@@ -109,8 +109,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return object
 	}
 
-	// MARK:- properties
-	// MARK:-
+	// MARK: - properties
+	// MARK: -
 
 	func toolName()  -> String? { return zone?.toolName() }
 	func toolColor() -> ZColor? { return zone?.toolColor() }
@@ -268,8 +268,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return note.noteRange.upperBound + note.noteOffset
 	}
 
-	// MARK:- mutate
-	// MARK:-
+	// MARK: - mutate
+	// MARK: -
 
 	func isLocked(within range: NSRange) -> Bool {
 		let   titStart = titleRange.lowerBound

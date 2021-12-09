@@ -273,8 +273,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return .tBigMap
 	}
 
-	// MARK:- bookmarks
-	// MARK:-
+	// MARK: - bookmarks
+	// MARK: -
 
 	var bookmarksTargetingSelf: ZoneArray {
 		if  let  name = recordName,
@@ -342,8 +342,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- setup
-	// MARK:-
+	// MARK: - setup
+	// MARK: -
 
 	func updateInstanceProperties() {
 		if  gIsUsingCoreData {
@@ -353,8 +353,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- properties
-	// MARK:-
+	// MARK: - properties
+	// MARK: -
 
 	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties +
@@ -832,8 +832,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			|| gCurrentMouseDownZone     == self
 	}
 
-	// MARK:- core data
-	// MARK:-
+	// MARK: - core data
+	// MARK: -
 
 	@discardableResult override func convertFromCoreData(visited: StringsArray?) -> StringsArray {
 		alterAttribute(ZoneAttributeType.validCoreData)
@@ -932,8 +932,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- write access
-	// MARK:-
+	// MARK: - write access
+	// MARK: -
 
 	var userHasDirectOwnership: Bool {
 		if  let    t = bookmarkTarget {
@@ -1057,8 +1057,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- edit map
-	// MARK:-
+	// MARK: - edit map
+	// MARK: -
 
 	func duplicate() {
 		var array = [self]
@@ -1414,8 +1414,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- import
-	// MARK:-
+	// MARK: - import
+	// MARK: -
 
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
 		ZFiles.presentOpenPanel() { (iAny) in
@@ -1492,8 +1492,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 	}
 
-	// MARK:- convenience
-	// MARK:-
+	// MARK: - convenience
+	// MARK: -
 
 	func        addToPaste() { gSelecting   .pasteableZones[self] = (parentZone, siblingIndex) }
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
@@ -1613,8 +1613,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- traits
-	// MARK:-
+	// MARK: - traits
+	// MARK: -
 
 	func extractTraits(from: Zone) {
 		for trait in Array(from.traits.values) {
@@ -1725,8 +1725,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- notes / essays
-	// MARK:-
+	// MARK: - notes / essays
+	// MARK: -
 
 	var currentNote: ZNote? {
 		if  isBookmark {
@@ -1796,8 +1796,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gControllers.swapMapAndEssay(force: .wEssayMode)
 	}
 
-	// MARK:- groupOwner
-	// MARK:-
+	// MARK: - groupOwner
+	// MARK: -
 
 	var parentOwnsAGroup : Zone? {
 		if  isInAnyMap,
@@ -1908,8 +1908,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- travel / focus / move / bookmarks
-	// MARK:-
+	// MARK: - travel / focus / move / bookmarks
+	// MARK: -
 
 	@discardableResult func focusThrough(_ atArrival: @escaping Closure) -> Bool {
 		if  isBookmark {
@@ -2386,8 +2386,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- traverse ancestors
-	// MARK:-
+	// MARK: - traverse ancestors
+	// MARK: -
 
 	func isABookmark(spawnedBy: Zone) -> Bool {
 		if  let          link = crossLink {
@@ -2492,8 +2492,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- traverse progeny
-	// MARK:-
+	// MARK: - traverse progeny
+	// MARK: -
 
 	var visibleWidgets: ZoneWidgetArray {
 		var visible = ZoneWidgetArray()
@@ -2616,8 +2616,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return level
 	}
 
-	// MARK:- siblings
-	// MARK:-
+	// MARK: - siblings
+	// MARK: -
 
 	private func hasAnyZonesAbove(_ iAbove: Bool) -> Bool {
 		return safeHasAnyZonesAbove(iAbove, [])
@@ -2665,8 +2665,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return common
 	}
 
-	// MARK:- children visibility
-	// MARK:-
+	// MARK: - children visibility
+	// MARK: -
 
 	var isExpanded: Bool {
 		if  let name = recordName,
@@ -2709,16 +2709,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- state
-	// MARK:-
+	// MARK: - state
+	// MARK: -
 
 	func prepareForArrival() {
 		expand()
 		grab()
 	}
 
-	// MARK:- children
-	// MARK:-
+	// MARK: - children
+	// MARK: -
 
 	override func hasMissingChildren() -> Bool { return count < fetchableCount }
 
@@ -3215,8 +3215,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRemoteStorage.zRecords(for: databaseID)?.updateMaxLevel(with: level)
 	}
 
-	// MARK:- dots
-	// MARK:-
+	// MARK: - dots
+	// MARK: -
 
 	func ungrabProgeny() {
 		for     grabbed in gSelecting.currentMapGrabs {
@@ -3332,8 +3332,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return p
 	}
 
-	// MARK:- lines and titles
-	// MARK:-
+	// MARK: - lines and titles
+	// MARK: -
 
 	func convertToTitledLine() {
 		zoneName  = kHalfLineOfDashes + kSpace + unwrappedName + kSpace + kHalfLineOfDashes
@@ -3408,8 +3408,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- progeny counts
-	// MARK:-
+	// MARK: - progeny counts
+	// MARK: -
 
 	func updateAllProgenyCounts(_ iVisited: ZoneArray = []) {
 		if !iVisited.contains(self) {
@@ -3438,8 +3438,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return
 	}
 
-	// MARK:- receive from cloud
-	// MARK:-
+	// MARK: - receive from cloud
+	// MARK: -
 
 	// add to map
 
@@ -3463,8 +3463,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- contextual menu
-	// MARK:-
+	// MARK: - contextual menu
+	// MARK: -
 
 	func handleContextualMenuKey(_ key: String){
 		gTemporarilySetMouseZone(self)
@@ -3497,8 +3497,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	// MARK:- initialization
-	// MARK:-
+	// MARK: - initialization
+	// MARK: -
 
 	func childWithName(_ name: String) -> Zone {
 		for child in children {

@@ -17,8 +17,8 @@ import Foundation
 
 let gBookmarks = ZBookmarks()
 
-// MARK:- designated bookmark creator
-// MARK:-
+// MARK: - designated bookmark creator
+// MARK: -
 
 @discardableResult func gNewOrExistingBookmark(targeting target: Zone, addTo parent: Zone?) -> Zone {
 	if  let    match = parent?.children.intersection(target.bookmarksTargetingSelf), match.count > 0 {
@@ -63,8 +63,8 @@ class ZBookmarks: NSObject {
         return bookmarks
     }
 
-	// MARK:- forget
-	// MARK:-
+	// MARK: - forget
+	// MARK: -
 
     func forget(_ iBookmark: Zone?) {
         if  let       bookmark = iBookmark,
@@ -80,8 +80,8 @@ class ZBookmarks: NSObject {
         }
     }
 
-	// MARK:- persist
-	// MARK:-
+	// MARK: - persist
+	// MARK: -
 
 	func addToReverseLookup(_  iBookmark : Zone?) {
 		if  let       bookmark = iBookmark,
