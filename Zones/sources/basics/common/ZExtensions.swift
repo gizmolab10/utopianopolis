@@ -659,6 +659,9 @@ extension CGPoint {
 
 	var containsNAN: Bool { return x.isNaN || y.isNaN }
 	var descriptionToTwoDecimals: String { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
+	var length: CGFloat { return sqrt(x * x + y * y) }
+	var angle: CGFloat { return atan2(y, x) }
+
 	public static func equaled(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 
     public init(_ size: CGSize) {
@@ -691,6 +694,10 @@ extension CGPoint {
         return CGFloat(sqrt(width * width + height * height))
     }
 
+	static func * (left: CGPoint, multiplier: CGFloat) -> CGPoint {
+		return CGPoint(x: left.x * multiplier, y: left.y * multiplier)
+	}
+
 	func offsetBy(_ delta: CGPoint) -> CGPoint {
 		return CGPoint(x: x + delta.x, y: y + delta.y)
 	}
@@ -719,10 +726,6 @@ extension CGPoint {
 		let (path, _) = ZBezierPath.circlesPath(orientedUp: orientedUp, in: iRect)
 
 		return path.contains(self)
-	}
-
-	var length: CGFloat {
-		return sqrt(x * x + y * y)
 	}
 
 	func rotate(by angle: Double, around center: CGPoint = .zero) -> CGPoint {

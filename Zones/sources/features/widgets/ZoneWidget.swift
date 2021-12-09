@@ -93,9 +93,10 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
-	let         widgetObject =   ZWidgetObject()
+	var         circularSkip =               0
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
+	let         widgetObject =   ZWidgetObject()
 	var         childrenView :     ZPseudoView?
 	var            linesView :     ZPseudoView?
 	var      sharedRevealDot :         ZoneDot?
@@ -108,6 +109,7 @@ class ZoneWidget: ZPseudoView {
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot  ?? false }
 	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
+	var             isCenter :            Bool  { return linesLevel == 0 }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
 
 	var type : ZWidgetType {

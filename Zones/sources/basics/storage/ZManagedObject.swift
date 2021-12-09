@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CloudKit
 
 let   gReferenceTransformerName = NSValueTransformerName(rawValue: "ZReferenceTransformer")
 let  gAssetArrayTransformerName = NSValueTransformerName(rawValue: "ZAssetArrayTransformer")

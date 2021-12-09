@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CloudKit
 
 func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                        { gCoreDataStack.saveContext() }
