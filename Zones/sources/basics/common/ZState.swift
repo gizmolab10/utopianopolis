@@ -46,7 +46,7 @@ var        gCurrentKeyPressed:            String?
 
 var                   gIsDark:               Bool { return gDarkMode == .Dark }
 var                   gIsLate:               Bool { return gBatches.isLate }
-var                   gIsHere:               Bool { return gSelecting.currentMoveableMaybe == gHere }
+var                   gIsHere:               Bool { return gHere == gSelecting.currentMoveableMaybe }
 var                   gIsMine:               Bool { return gDatabaseID == .mineID }
 var                gIsEditing:               Bool { return gIsEditIdeaMode || gIsEssayMode }
 var               gIsDragging:               Bool { return !gDraggedZones.isEmpty }

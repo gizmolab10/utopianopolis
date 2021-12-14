@@ -156,8 +156,6 @@
 		A714854E22552CA300F54C0C /* ZMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZMapController.swift */; };
 		A71485B62256D1A200F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
 		A71485B72256D1A200F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = A717BF472251332D004F7993 /* NSPanel+ZPanel.m */; };
-		A717BF4B2251581D004F7993 /* NSURL+ZURL.m in Sources */ = {isa = PBXBuildFile; fileRef = A717BF4A2251581D004F7993 /* NSURL+ZURL.m */; };
 		A7221CA6263519190022902D /* ZFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7221CA5263519190022902D /* ZFile.swift */; };
 		A7221CA7263519190022902D /* ZFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7221CA5263519190022902D /* ZFile.swift */; };
 		A7221CA8263519190022902D /* ZFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7221CA5263519190022902D /* ZFile.swift */; };
@@ -1687,7 +1685,6 @@
 				A7245E0921729FFE003D4BDA /* ZHelpController.swift in Sources */,
 				0C63DA6F1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				0C39B2A01F182EBB0091F4D1 /* ZDataController.swift in Sources */,
-				A717BF482251332D004F7993 /* NSPanel+ZPanel.m in Sources */,
 				A7D2D65124902EDF00F652B0 /* ZHelpData.swift in Sources */,
 				0C43EFC021010F17000976CE /* ZFiles.swift in Sources */,
 				A7E096CC23EB98FA0017EC32 /* ZLinkDialogController.swift in Sources */,
@@ -1705,7 +1702,6 @@
 				0C43EFD921010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C43EFD621010F62000976CE /* ZRecords.swift in Sources */,
-				A717BF4B2251581D004F7993 /* NSURL+ZURL.m in Sources */,
 				A72808B424A8688C00238889 /* ZDebug.swift in Sources */,
 				0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */,
 				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
@@ -2007,8 +2003,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -2051,7 +2047,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -2066,8 +2062,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "compiler-default";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
@@ -2104,7 +2100,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INSTALL_PATH = /Applications;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.2;
-				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

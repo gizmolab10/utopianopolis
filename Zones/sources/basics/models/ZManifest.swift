@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 var gManifest: ZManifest? { return gRecords?.manifest }
 

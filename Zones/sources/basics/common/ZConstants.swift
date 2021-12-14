@@ -27,10 +27,13 @@ let kUnselectBrightness: CGFloat = 0.98
 
 #endif
 
-let                    kOneDay = kOneHour * 24
-let                   kOneHour = kOneMinute * 60
-let                   kOneYear = kOneDay * 365
-let                  kOneMonth = kOneDay * 30
+let                        kPI = Double.pi
+let                       k2PI = kPI * 2.0
+let                    kHalfPI = kPI / 2.0
+let                    kOneDay = kOneHour   *  24
+let                   kOneHour = kOneMinute *  60
+let                   kOneYear = kOneDay    * 365
+let                  kOneMonth = kOneDay    *  30
 let                 kRingWidth = 130.0
 let                 kBatchSize = 250
 let                 kOneMinute = 60

@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 enum ZTraitType: String { // stored in database: do not change
 	case tDuration  = "!" // accumulative
@@ -44,7 +45,7 @@ enum ZTraitType: String { // stored in database: do not change
 
 }
 
-@objc(ZTrait)
+//@objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
 	@NSManaged    var  strings : StringsArray?

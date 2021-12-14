@@ -44,7 +44,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
 	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var selectedNotes   : [ZNote]            { return (gCurrentEssay?.zone?.zonesWithNotes.filter { $0.note?.noteRange != nil && selectedRange.intersects($0.note!.noteRange.extendedBy(1)) } .map { $0.note! })! }
 	var backwardButton  : ZButton?
 	var forwardButton   : ZButton?
 	var cancelButton    : ZButton?
@@ -57,6 +56,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var essayRecordName : String?
 
 	@IBOutlet var titlesControl : ZSegmentedControl?
+	var selectedNotes : [ZNote] {
+		return (gCurrentEssay?.zone?.zonesWithNotes.filter {
+			$0.note?.noteRange != nil &&
+			selectedRange.intersects($0.note!.noteRange.extendedBy(1))
+		}.map {
+			$0.note!
+		})!
+	}
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,

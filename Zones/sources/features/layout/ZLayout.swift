@@ -81,7 +81,7 @@ extension ZoneLine {
 		}
 	}
 
-	func lineKind(to dragRect: CGRect) -> ZLineKind? {
+	func lineKind(to dragRect: CGRect) -> ZLineCurve? {
 		switch mode {
 			case .linearMode:   return linearModeLineKind(to: dragRect)
 			case .circularMode: return .straight

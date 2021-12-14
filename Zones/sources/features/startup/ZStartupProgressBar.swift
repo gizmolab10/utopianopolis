@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 class ZStartupProgressBar: NSProgressIndicator {
 
@@ -18,7 +19,7 @@ class ZStartupProgressBar: NSProgressIndicator {
 			let      value = multiplier * gStartup.elapsedStartupTime / totalTime
 			doubleValue    = value + minValue
 
-			printDebug(.dTime, "\(doubleValue.stringToTwoDecimals)      \(gCurrentOp)")
+			printDebug(.dTime, "\(doubleValue.stringTo(precision: 2))      \(gCurrentOp)")
 		}
 	}
 

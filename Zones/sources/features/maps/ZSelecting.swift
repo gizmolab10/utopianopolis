@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 #if os(OSX)
     import Cocoa

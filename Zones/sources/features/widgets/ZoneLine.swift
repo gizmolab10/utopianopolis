@@ -8,16 +8,23 @@
 
 import Foundation
 
+enum ZLineCurve: Int {
+	case below    = -1
+	case straight =  0
+	case above    =  1
+}
+
 class ZoneLine: ZPseudoView {
 
 	var             dragDot : ZoneDot?
 	var           revealDot : ZoneDot?
 	var         childWidget : ZoneWidget?
 	var        parentWidget : ZoneWidget?
+	var            isCenter : Bool            { return  parentWidget?.isCenter ?? true }
 	override var controller : ZMapController? { return (parentWidget ?? childWidget)?.controller }
-	var           lineAngle : CGFloat         { return (parentWidget?.isCenter ?? true) ? centralAngle : ringAngle }
-	var        centralAngle = CGFloat.zero
-	var           ringAngle = CGFloat.zero
+	var       relevantAngle : CGFloat         { return  isCenter ? placeAngle : lineAngle }
+	var          placeAngle = CGFloat.zero
+	var           lineAngle = CGFloat.zero
 	var              length = CGFloat(25)
 
 	func addDots(sharedRevealDot: ZoneDot?) {
@@ -41,7 +48,7 @@ class ZoneLine: ZPseudoView {
 		}
 	}
 
-	var lineKind : ZLineKind {
+	var lineKind : ZLineCurve {
 		if  isLinearMode,
 			let     dot = dragDot,
 			let    zone = parentWidget?.widgetZone, zone.count > 1,
@@ -62,7 +69,7 @@ class ZoneLine: ZPseudoView {
 		return rect
 	}
 
-	func lineRect(to widget: ZoneWidget?, kind: ZLineKind) -> CGRect {
+	func lineRect(to widget: ZoneWidget?, kind: ZLineCurve) -> CGRect {
 		if  let    dot = widget?.parentLine?.dragDot {
 			let dFrame = dot.absoluteActualFrame
 
@@ -72,7 +79,7 @@ class ZoneLine: ZPseudoView {
 		return CGRect.zero
 	}
 
-	func linePath(in iRect: CGRect, kind: ZLineKind?, isDragLine: Bool = false) -> ZBezierPath {
+	func linePath(in iRect: CGRect, kind: ZLineCurve?, isDragLine: Bool = false) -> ZBezierPath {
 		if  let    k = kind {
 			switch k {
 				case .straight: return straightLinePath(in: iRect, isDragLine)

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 enum ZModeButtonType: String {
 	case tConfine = "browse"

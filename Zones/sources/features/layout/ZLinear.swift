@@ -267,7 +267,7 @@ extension ZoneLine {
 		return path
 	}
 
-	func linearModeLineKind(for delta: CGFloat) -> ZLineKind {
+	func linearModeLineKind(for delta: CGFloat) -> ZLineCurve {
 		let   threshold =  CGFloat(2.0)
 		if        delta >  threshold {
 			return .above
@@ -278,7 +278,7 @@ extension ZoneLine {
 		return .straight
 	}
 
-	func linearModeLineKind(to targetRect: CGRect) -> ZLineKind? {
+	func linearModeLineKind(to targetRect: CGRect) -> ZLineCurve? {
 		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
 		let      delta = targetRect.midY - toggleRect.midY
 

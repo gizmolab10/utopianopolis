@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 enum ZoneAccess: Int, CaseIterable {
 	case eInherit
@@ -35,7 +36,7 @@ struct ZWorkingListType: OptionSet {
 	static let       wAll = ZWorkingListType(rawValue: 0x0008)
 }
 
-@objc(Zone)
+@objc (Zone)
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@NSManaged    var          zoneOrder :           NSNumber?
@@ -125,6 +126,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var        allNotemarkProgeny        :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
 	var        allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
 	var        all                       :          ZoneArray  { return zones(of:  .wAll) }
+	var                  visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
 	var                   duplicateZones =          ZoneArray  ()
 	var                         children =          ZoneArray  ()
 	var                           traits =   ZTraitDictionary  ()
@@ -1418,15 +1420,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
-		ZFiles.presentOpenPanel() { (iAny) in
-			if  let url = iAny as? URL {
-				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
-			} else if let panel = iAny as? NSPanel {
-				let  suffix = type.rawValue
-				panel.title = "Import as \(suffix)"
-				panel.setAllowedFileType(suffix)
-			}
-		}
+//		ZFiles.presentOpenPanel() { (iAny) in
+//			if  let url = iAny as? URL {
+//				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
+//			} else if let panel = iAny as? NSPanel {
+//				let  suffix = type.rawValue
+//				panel.title = "Import as \(suffix)"
+//				panel.setAllowedFileType(suffix)
+//			}
+//		}
 	}
 
 	func importSeriously(from data: Data) -> Zone? {

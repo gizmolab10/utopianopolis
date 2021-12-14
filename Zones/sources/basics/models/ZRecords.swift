@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 enum ZRecordState: String {
 	case needsAdoption  = "adopt"
@@ -102,7 +103,7 @@ class ZRecords: NSObject {
     var hereRecordName: String? {
 		set {
 			var        references  = completeHereRecordNames
-			if  let         index  = databaseID.index,
+			if  let         index  = databaseID.index, index < references.count,
 				let         value  = newValue,
 				references[index] != value {
 				references[index]  = value
@@ -111,8 +112,8 @@ class ZRecords: NSObject {
 		}
 
 		get {
-			if  let          index = databaseID.index {
-				let     references = completeHereRecordNames
+			let references = completeHereRecordNames
+			if  let  index = databaseID.index, index < references.count {
 				return  references[index]
 			}
 			
@@ -141,17 +142,21 @@ class ZRecords: NSObject {
 				let name = root.recordName {
 				changed  = true
 				references.append(name)
+			} else {
+				break
 			}
 		}
 
 		// detect and fix bad values
 
 		for index in 2...3 {
-			let              name = references[index]
-			if  let          root = rootFor(index),
-				!root.allProgeny.containsAnyOf(name) {
-				references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
-				changed           = true
+			if  references.count      > index {
+				let              name = references[index]
+				if  let          root = rootFor(index),
+					!root.allProgeny.containsAnyOf(name) {
+					references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
+					changed           = true
+				}
 			}
 		}
 

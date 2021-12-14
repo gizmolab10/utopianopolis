@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gIsUsingCoreData }
@@ -164,7 +165,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 
 extension ZMainController {
 
-	@IBAction func debugInfoButtonAction(_ button: NSButton) {
+	@IBAction func debugInfoButtonAction(_ button: ZButton) {
 		gToggleDebugMode(.dDebugInfo)
 		gSignal([.spDebug, .spMain])
 	}

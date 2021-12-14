@@ -19,6 +19,8 @@ var gMapView:       ZMapView?       { return gDragView?.mapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
+	var                   placeAngles = [Int : [Double]]()
+	var           priorScrollLocation = CGPoint.zero
 	var                 mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	override  var        controllerID : ZControllerID  { return .idBigMap }
 	var                    widgetType : ZWidgetType    { return .tBigMap }
@@ -30,7 +32,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                      rootLine : ZoneLine?
 	@IBOutlet var   mapContextualMenu : ZContextualMenu?
 	@IBOutlet var  ideaContextualMenu : ZoneContextualMenu?
-	var           priorScrollLocation = CGPoint.zero
 
 	override func setup() {
 		if  let                          map = gMapView {
@@ -166,18 +167,20 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	// MARK: -
 
     override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
-		if  !gDeferringRedraw {
+		if  !gDeferringRedraw, gIsReadyToShowUI {
 			if  kind == .sResize {
+				resize()
 				layoutForCurrentScrollOffset()
 			} else {
 				layoutWidgets(for: iSignalObject, kind)
-				gDragView?.setAllSubviewsNeedDisplay()
 			}
+
+			gDragView?.setAllSubviewsNeedDisplay()
 		}
 	}
 
 	func resize() {
-		mapPseudoView?.frame = view.frame
+		mapPseudoView?.frame = view.bounds
 
 		gMapView?.resize()
 	}

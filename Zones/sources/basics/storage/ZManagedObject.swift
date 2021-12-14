@@ -8,12 +8,15 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 let   gReferenceTransformerName = NSValueTransformerName(rawValue: "ZReferenceTransformer")
 let  gAssetArrayTransformerName = NSValueTransformerName(rawValue: "ZAssetArrayTransformer")
 let gStringArrayTransformerName = NSValueTransformerName(rawValue: "ZStringArrayTransformer")
 
-class ZManagedObject: NSManagedObject {
+typealias ZManagedObject = NSManagedObject
+
+extension ZManagedObject {
 
 	convenience init(entityName: String?, databaseID: ZDatabaseID) {
 		let     context = gCoreDataStack.context

@@ -9,6 +9,7 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 enum ZUserAccess: Int {
     case eNormal

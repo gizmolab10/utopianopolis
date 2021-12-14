@@ -45,7 +45,7 @@ class ZSmallMapRecords: ZRecords {
 		var    toIndex = down ? 0 : maxIndex
 		if  let target = currentBookmark?.bookmarkTarget {
 			for (index, bookmark) in working.enumerated() {
-				if  bookmark.bookmarkTarget == target {
+				if  let b = bookmark.bookmarkTarget, b == target {
 					if         down, index < maxIndex {
 						toIndex = index + 1         // go down
 					} else if !down, index > 0 {
@@ -56,7 +56,7 @@ class ZSmallMapRecords: ZRecords {
 				}
 			}
 
-			if  toIndex.within(0 ... maxIndex) {
+			if  toIndex.isWithin(0 ... maxIndex) {
 				let newCurrent = working[toIndex]
 
 				if  moveCurrent {
@@ -72,7 +72,7 @@ class ZSmallMapRecords: ZRecords {
 
 	func moveCurrentTo(_ iZone: Zone) {
 		if  let parent = iZone.parentZone,
-			parent    == currentBookmark?.parentZone,
+			let      p = currentBookmark?.parentZone, p == parent,
 			let   from = currentBookmark?.siblingIndex,
 			let     to = iZone.siblingIndex {
 			parent.moveChildIndex(from: from, to: to)

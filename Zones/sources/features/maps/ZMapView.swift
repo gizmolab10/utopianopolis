@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 enum ZMapID: String {
 	case mDotsAndLines = "d"
@@ -58,7 +59,7 @@ class ZMapView: ZView {
 			frame    = view.bounds
 
 			switch mapID {
-				case .mText:         frame = view.frame
+				case .mText:         break
 				case .mHighlight:    highlightMapView?.resize()
 				case .mDotsAndLines: dotsAndLinesView?.resize()
 				default: break

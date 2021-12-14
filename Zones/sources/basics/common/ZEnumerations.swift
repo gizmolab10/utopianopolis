@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 enum InterfaceStyle : String {
     case Dark, Light

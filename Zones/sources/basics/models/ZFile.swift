@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
 struct ZFileDescriptor {
 	let name: String?
@@ -15,7 +16,7 @@ struct ZFileDescriptor {
 	let dbID: ZDatabaseID?
 }
 
-@objc(ZFile)
+//@objc(ZFile)
 class ZFile : ZRecord {
 
 	@NSManaged var asset : Data?

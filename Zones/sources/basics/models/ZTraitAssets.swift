@@ -8,8 +8,9 @@
 
 import Foundation
 import CloudKit
+import Cocoa
 
-@objc(ZTraitAssets)
+//@objc(ZTraitAssets)
 class ZTraitAssets : ZRecord {
 
 	@NSManaged    var     assets : [CKAsset]?

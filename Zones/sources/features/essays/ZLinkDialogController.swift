@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 enum ZLinkButtonType: String {
 	case tCancel = "cancel"

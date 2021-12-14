@@ -7,9 +7,9 @@
 //
 
 import Foundation
+import CloudKit
 import AppKit
 import Cocoa
-import CloudKit
 
 enum ZArrowKey: Int8 {
     case up    = -128
@@ -193,19 +193,19 @@ extension NSURL {
     }
 
     func openAsFile() {
-        if !self.openSecurely() {
-            ZFiles.presentOpenPanel() { (iAny) in
-                if  let url = iAny as? NSURL {
-                    url.open()
-                } else if let panel = iAny as? NSPanel {
-                    if    let  name = self.lastPathComponent {
-                        panel.title = "Open \(name)"
-                    }
-                    
-                    panel.setDirectoryAndExtensionFor(self as URL)
-                }
-            }
-        }
+//        if !openSecurely() {
+//            ZFiles.presentOpenPanel() { (iAny) in
+//                if  let url = iAny as? NSURL {
+//                    url.open()
+//                } else if let panel = iAny as? NSPanel {
+//                    if    let  name = self.lastPathComponent {
+//                        panel.title = "Open \(name)"
+//                    }
+//                    
+//                    panel.setDirectoryAndExtensionFor(self as URL)
+//                }
+//            }
+//        }
     }
 
 }
@@ -1158,7 +1158,7 @@ extension ZoneWidget {
 
 extension ZoneLine {
 
-	func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+	func lineRect(to targetFrame: CGRect, kind: ZLineCurve?) -> CGRect {
 		var    rect = CGRect.zero
 		if  let dot = revealDot {
 			switch mode {
@@ -1170,7 +1170,7 @@ extension ZoneLine {
 		return rect
 	}
 
-	func circularModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+	func circularModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineCurve?) -> CGRect {
 		if  let origin = sourceDot?.absoluteActualFrame.center {
 			let   size = CGSize(targetFrame.center - origin).absSize
 			return CGRect(origin: origin, size: size)
@@ -1179,7 +1179,7 @@ extension ZoneLine {
 		return .zero
 	}
 
-    func linearModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
+    func linearModeLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineCurve?) -> CGRect {
 		var                 rect = CGRect.zero
         if  kind                != nil,
 			let      sourceFrame = sourceDot?.absoluteFrame {
@@ -1205,7 +1205,7 @@ extension ZoneLine {
         return rect
     }
 
-    func curvedLinePath(in iRect: CGRect, kind: ZLineKind) -> ZBezierPath {
+    func curvedLinePath(in iRect: CGRect, kind: ZLineCurve) -> ZBezierPath {
         ZBezierPath(rect: iRect).setClip()
 
         let      dotHeight = CGFloat(gDotHeight)

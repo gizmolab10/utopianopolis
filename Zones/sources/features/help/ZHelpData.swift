@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 enum ZHelpDotType: String {
 	case one        = "single"

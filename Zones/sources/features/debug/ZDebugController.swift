@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 enum ZDebugID: Int {
 	case dRegistry

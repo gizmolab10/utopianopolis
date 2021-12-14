@@ -104,7 +104,7 @@ class ZBaseEditor : NSObject {
 	func toggleColorfulMode() {
 		gColorfulMode = !gColorfulMode
 
-		gSignal([.spRelayout, .spPreferences])
+		gSignal([.spRelayout, .spPreferences, .sDetails])
 	}
 
 }

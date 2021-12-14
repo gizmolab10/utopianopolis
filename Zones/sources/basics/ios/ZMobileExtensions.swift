@@ -562,7 +562,7 @@ extension ZTextEditor {
 
 extension ZoneWidget {
 
-    func lineRect(to rightFrame: CGRect, kind: ZLineKind?) -> CGRect {
+    func lineRect(to rightFrame: CGRect, kind: ZLineCurve?) -> CGRect {
 		var frame = CGRect.zero
 
         if  let       leftDot = revealDot.innerDot, kind != nil {
@@ -594,10 +594,10 @@ extension ZoneWidget {
         return frame
     }
 
-    func curvedLinePath(in iRect: CGRect, kind: ZLineKind) -> ZBezierPath {
+    func curvedLinePath(in iRect: CGRect, kind: ZLineCurve) -> ZBezierPath {
         let    isBelow = kind == .below
-        let startAngle = CGFloat(Double.pi)
-        let deltaAngle = CGFloat(Double.pi / 2.0)
+        let startAngle = CGFloat(kPI)
+        let deltaAngle = CGFloat(kHalfPI)
         let multiplier = CGFloat(isBelow ? -1 : 1)
         let   endAngle = startAngle + (multiplier * deltaAngle)
         let     scaleY = iRect.height / iRect.width

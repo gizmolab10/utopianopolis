@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Cocoa
 
 enum ZDrawPhase: String {
 	case pLines            = "l"

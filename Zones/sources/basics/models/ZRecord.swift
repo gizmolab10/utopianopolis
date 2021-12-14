@@ -7,8 +7,11 @@
 
 import Foundation
 import CloudKit
+import CoreData
+import Cocoa
 
-class ZRecord: ZManagedObject { // NSObject {
+@objc (ZRecord)
+class ZRecord: ZManagedObject {
 
 	@NSManaged var             dbid: String?
 	@NSManaged var       recordName: String?
@@ -114,8 +117,9 @@ class ZRecord: ZManagedObject { // NSObject {
 		}
 	}
 
-	static func uniqueZRecord(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZRecord {
-		let        zRecord = uniqueObject(entityName: entityName, recordName: recordName, in: dbID) as! ZRecord
+	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZRecord {
+		let         object = uniqueObject(entityName: entityName, recordName: recordName, in: dbID)
+		let        zRecord = object as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 		zRecord      .dbid = dbID.identifier
 

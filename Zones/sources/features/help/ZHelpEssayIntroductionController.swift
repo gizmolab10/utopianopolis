@@ -9,6 +9,7 @@
 import Foundation
 import CloudKit
 import CoreData
+import Cocoa
 
 class ZHelpEssayIntroductionController : ZGenericController {
 

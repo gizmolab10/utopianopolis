@@ -164,7 +164,7 @@ extension NSObject {
 
 		let duration = Date().timeIntervalSince(start)
 
-		printDebug(.dTime, duration.stringToTwoDecimals + kSpace + message)
+		printDebug(.dTime, duration.stringTo(precision: 2) + kSpace + message)
 	}
 
     func time(of title: String, _ closure: Closure) {
@@ -346,9 +346,8 @@ extension ZStorageDictionary {
 
 extension Int {
 
-	func within(_ range: ClosedRange<Int>) -> Bool {
-		return range.contains(self)
-	}
+	func isWithin(_ range: ClosedRange<Int>) -> Bool { return range.contains(self) }
+	func confine(within: Int)                -> Int  { return Int(Double(self).confine(within: Double(within))) }
 
 	func next(forward: Bool, max: Int) -> Int? {
 		if  max <= 0                  { return nil }
@@ -360,7 +359,7 @@ extension Int {
 		return next
 	}
 
-	func anglesArray(startAngle: Double, spreadAngle: Double = Double.pi * 2.0, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
+	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
 		var angles             = [Double]()
 		if  self              > 0 {
 			let         isEven = self % 2 == 0
@@ -371,7 +370,7 @@ extension Int {
 				let increments = Double(index) + extra
 				let      angle = startAngle + incrementAngle * increments
 
-				angles.append(angle)
+				angles.append(angle.confine(within: k2PI))
 			}
 		}
 
@@ -641,15 +640,33 @@ infix operator ** : MultiplicationPrecedence
 extension Double {
 
 	static func ** (base: Double, power: Double) -> Double { return pow(base, power) }
-	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
-	var    upward                                 : Bool   { return self < Double.pi }
+	func   confine(within: Double)               -> Double { return Double(CGFloat(self).confine(within: CGFloat(within))) }
+	func   stringTo(precision: Int)              -> String { return        CGFloat(self).stringTo(precision: precision) }
+	var    roundedToNearestInt                    : Int    { return        CGFloat(self).roundedToNearestInt }
+	var    upward                                 : Bool   { return self < kPI }
 
 }
 
 extension CGFloat {
 
-	var stringToTwoDecimals : String { return String(format: "%.02f", self) }
-	var upward              : Bool   { return self < CGFloat(Double.pi) }
+	func stringTo(precision: Int) -> String { return String(format: "%.0\(precision)f", self) }
+	var  upward                    : Bool   { return self < CGFloat(kPI) }
+	var  roundedToNearestInt       : Int    { return Int(self + 0.5) }
+
+	func confine(within: CGFloat) -> CGFloat {
+		var       i  = self
+		if   within != .zero {
+			while i  < .zero {
+				i   += within
+			}
+
+			while i >= within {
+				i   -= within
+			}
+		}
+
+		return i
+	}
 
 }
 
@@ -658,7 +675,7 @@ infix operator -- : AdditionPrecedence
 extension CGPoint {
 
 	var containsNAN              : Bool    { return x.isNaN || y.isNaN }
-	var descriptionToTwoDecimals : String  { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
+	var descriptionToTwoDecimals : String  { return "(\(x.stringTo(precision: 2)), \(y.stringTo(precision: 2)))"}
 	var length                   : CGFloat { return sqrt(x * x + y * y) }
 	var angle                    : CGFloat { return atan2(y, x) }
 
@@ -1162,15 +1179,15 @@ extension ZBezierPath {
 	}
 
 	func appendBloatedTriangle(in iRect: CGRect, aimedRight: Bool) {
-		appendBloatedTriangle(in: iRect, startAngle: aimedRight ? 0.0 : Double.pi)
+		appendBloatedTriangle(in: iRect, startAngle: aimedRight ? 0.0 : kPI)
 	}
 
 	func appendBloatedTriangle(in iRect: CGRect, startAngle: Double) {
 		let      center = iRect.center
 		let  insetRatio = 0.35
 		let      radius = Double(iRect.width) * insetRatio
-		let    bigAngle = Double.pi /  3.0 // one sixth of a circle
-		let  smallAngle = Double.pi / 15.0 // one thirtieth
+		let    bigAngle = k2PI /  6.0 // one sixth of a circle
+		let  smallAngle = k2PI / 30.0 // one thirtieth
 		let innerVector = CGPoint(x: radius,       y: 0.0)
 		let outerVector = CGPoint(x: radius * 1.5, y: 0.0)
 		var  controlOne = CGPoint.zero
@@ -2830,8 +2847,8 @@ extension ZPseudoView {
 
 					if  iCount     > 0 {
 						let isEven = iCount % 2 == 0
-						let fullCircle = Double.pi * 2.0
-						let startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : Double.pi)
+						let fullCircle = k2PI
+						let startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : kPI)
 						let angles = iCount.anglesArray(startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
 
 						for (index, angle) in angles.enumerated() {
