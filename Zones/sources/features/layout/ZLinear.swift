@@ -13,7 +13,7 @@ import Foundation
 
 extension ZoneWidget {
 
-	func linearModeUpdateWidgetDrawnSize() {
+	func linesUpdateWidgetDrawnSize() {
 		if  let       t = textWidget,
 			let   lSize = linesView?   .drawnSize {
 			let   cSize = childrenView?.drawnSize
@@ -33,7 +33,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearModeUpdateChildrenViewDrawnSize() {
+	func linesUpdateChildrenViewDrawnSize() {
 		var  childrenSize = CGSize.zero
 
 		if  hasVisibleChildren {
@@ -61,7 +61,7 @@ extension ZoneWidget {
 		linesView?           .frame = .zero
 	}
 
-	func linearModeUpdateChildrenLinesDrawnSize() {
+	func linesUpdateChildrenLinesDrawnSize() {
 		var     width = CGFloat(0.0)
 		var    height = CGFloat(0.0)
 
@@ -78,7 +78,7 @@ extension ZoneWidget {
 		linesView?.drawnSize = CGSize(width: width, height: height)
 	}
 
-	func linearModeUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
+	func linesUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var    height = CGFloat.zero
 			var     index = childrenWidgets.count
@@ -99,7 +99,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearModeUpdateTextViewFrame(_ absolute: Bool = false) {
+	func linesUpdateTextViewFrame(_ absolute: Bool = false) {
 		if  let                 t = pseudoTextWidget {
 			if  absolute {
 				t.updateAbsoluteFrame(relativeTo: controller)
@@ -114,7 +114,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearModeUpdateChildrenViewFrame(_ absolute: Bool = false) {
+	func linesUpdateChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren, let c = childrenView {
 			if  absolute {
 				c.updateAbsoluteFrame(relativeTo: controller)
@@ -128,11 +128,11 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearModeUpdateLinesViewFrame(_ absolute: Bool = false) {
+	func linesUpdateLinesViewFrame(_ absolute: Bool = false) {
 
 	}
 
-	var linearModeHighlightFrame : CGRect {
+	var linesHighlightFrame : CGRect {
 		if  let              t = textWidget,
 			let            dot = childrenLines.first?.revealDot {
 			let revealDotDelta = dot.dotIsVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
@@ -150,7 +150,7 @@ extension ZoneWidget {
 		return .zero
 	}
 
-	var linearModeSelectionHighlightPath: ZBezierPath {
+	var linesSelectionHighlightPath: ZBezierPath {
 		let   rect = highlightFrame
 		let radius = rect.minimumDimension / 2.08 - 1.0
 		let   path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
@@ -158,16 +158,16 @@ extension ZoneWidget {
 		return path
 	}
 
-	func linearModeUpdateDotFrames(_ absolute: Bool) {
+	func linesUpdateDotFrames(_ absolute: Bool) {
 		if  absolute,
 			let textFrame = pseudoTextWidget?.absoluteFrame {
 
 			if !hideDragDot {
-				parentLine?.dragDot?.linearModeUpdateAbsoluteFrame(relativeTo: textFrame)
+				parentLine?.dragDot?.linesUpdateAbsoluteFrame(relativeTo: textFrame)
 			}
 
 			for line in childrenLines {
-				line     .revealDot?.linearModeUpdateAbsoluteFrame(relativeTo: textFrame)
+				line     .revealDot?.linesUpdateAbsoluteFrame(relativeTo: textFrame)
 			}
 		}
 	}
@@ -175,24 +175,24 @@ extension ZoneWidget {
 	// this is called twice in grand update
 	// first with absolute false, then with true
 
-	func linearModeUpdateAllFrames(_ absolute: Bool = false) {
+	func linesUpdateAllFrames(_ absolute: Bool = false) {
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			iWidget.linearModeUpdateSubframes(absolute)
+			iWidget.linesUpdateSubframes(absolute)
 		}
 	}
 
-	func linearModeUpdateSubframes(_ absolute: Bool = false) {
-		linearModeUpdateTextViewFrame       (absolute)
-		linearModeUpdateChildrenWidgetFrames(absolute)
-		linearModeUpdateDotFrames           (absolute)
-		linearModeUpdateChildrenViewFrame   (absolute)
-		linearModeUpdateLinesViewFrame      (absolute)
+	func linesUpdateSubframes(_ absolute: Bool = false) {
+		linesUpdateTextViewFrame       (absolute)
+		linesUpdateChildrenWidgetFrames(absolute)
+		linesUpdateDotFrames           (absolute)
+		linesUpdateChildrenViewFrame   (absolute)
+		linesUpdateLinesViewFrame      (absolute)
 	}
 
-	func linearModeGrandUpdate() {
-		linearModeUpdateAllFrames()
+	func linesGrandUpdate() {
+		linesUpdateAllFrames()
 		updateFrameSize()
-		linearModeUpdateAllFrames(true)
+		linesUpdateAllFrames(true)
 		updateAbsoluteFrame(relativeTo: controller)
 	}
 
@@ -203,11 +203,11 @@ extension ZoneWidget {
 
 extension ZoneLine {
 
-	var linearModeLineRect : CGRect {
+	var linesLineRect : CGRect {
 		return .zero
 	}
 
-	var linearModeAbsoluteDropDotRect: CGRect {
+	var linesAbsoluteDropDotRect: CGRect {
 		var rect = CGRect()
 
 		if  let zone = parentWidget?.widgetZone {
@@ -258,7 +258,7 @@ extension ZoneLine {
 		return rect
 	}
 
-	func linearModeStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
+	func linesStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
 		let rect = iRect.centeredHorizontalLine(thick: CGFloat(gLineThickness))
 		let path = ZBezierPath(rect: rect)
 
@@ -267,7 +267,7 @@ extension ZoneLine {
 		return path
 	}
 
-	func linearModeLineKind(for delta: CGFloat) -> ZLineCurve {
+	func linesLineKind(for delta: CGFloat) -> ZLineCurve {
 		let   threshold =  CGFloat(2.0)
 		if        delta >  threshold {
 			return .above
@@ -278,14 +278,14 @@ extension ZoneLine {
 		return .straight
 	}
 
-	func linearModeLineKind(to targetRect: CGRect) -> ZLineCurve? {
+	func linesLineKind(to targetRect: CGRect) -> ZLineCurve? {
 		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
 		let      delta = targetRect.midY - toggleRect.midY
 
-		return linearModeLineKind(for: delta)
+		return linesLineKind(for: delta)
 	}
 
-	func linearModeUpdateLineSize() {
+	func linesUpdateLineSize() {
 		// all lines have at least a reveal dot
 		drawnSize = revealDot?.updateSize() ?? .zero
 	}
@@ -297,7 +297,7 @@ extension ZoneLine {
 
 extension ZoneDot {
 
-	func linearModeUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
+	func linesUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		let         x = CGPoint(drawnSize).x
 		let    origin = isReveal ? absoluteTextFrame.bottomRight : absoluteTextFrame.origin.offsetBy(-x, 0.0)
 		absoluteFrame = CGRect(origin: origin, size: drawnSize)
@@ -305,7 +305,7 @@ extension ZoneDot {
 		updateTooltips()
 	}
 
-	func linearModeDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
+	func linesDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		let  thickness = CGFloat(gLineThickness) * 2.0
 		var       path = ZBezierPath()
 

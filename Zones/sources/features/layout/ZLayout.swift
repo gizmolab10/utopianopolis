@@ -15,41 +15,41 @@ extension ZoneWidget {
 
 	func updateWidgetDrawnSize() {
 		switch mode {
-			case .linearMode:     linearModeUpdateWidgetDrawnSize()
-			case .circularMode: circularModeUpdateWidgetDrawnSize()
+			case .linearMode:     linesUpdateWidgetDrawnSize()
+			case .circularMode: circlesUpdateWidgetDrawnSize()
 		}
 	}
 
 	func updateChildrenViewDrawnSize() {
 		if  isLinearMode {
-			linearModeUpdateChildrenViewDrawnSize()
+			linesUpdateChildrenViewDrawnSize()
 		}
 	}
 
 	func updateChildrenLinesDrawnSize() {
 		if  isLinearMode {
-			linearModeUpdateChildrenLinesDrawnSize()
+			linesUpdateChildrenLinesDrawnSize()
 		}
 	}
 
 	var selectionHighlightPath: ZBezierPath {
 		switch mode {
-			case .linearMode:   return   linearModeSelectionHighlightPath
-			case .circularMode: return circularModeSelectionHighlightPath
+			case .linearMode:   return   linesSelectionHighlightPath
+			case .circularMode: return circlesSelectionHighlightPath
 		}
 	}
 
 	var highlightFrame : CGRect {
 		switch mode {
-			case .linearMode:   return   linearModeHighlightFrame
-			case .circularMode: return circularModeHighlightFrame
+			case .linearMode:   return   linesHighlightFrame
+			case .circularMode: return circlesHighlightFrame
 		}
 	}
 
 	func grandUpdate() {
 		switch mode {
-			case .linearMode:     linearModeGrandUpdate()
-			case .circularMode: circularModeGrandUpdate()
+			case .linearMode:     linesGrandUpdate()
+			case .circularMode: circlesGrandUpdate()
 		}
 	}
 
@@ -62,36 +62,36 @@ extension ZoneLine {
 
 	var absoluteDropDotRect: CGRect {
 		switch mode {
-			case .linearMode:   return   linearModeAbsoluteDropDotRect
-			case .circularMode: return circularModeAbsoluteDropDotRect
+			case .linearMode:   return   linesAbsoluteDropDotRect
+			case .circularMode: return circlesAbsoluteDropDotRect
 		}
 	}
 
 	var lineRect : CGRect {
 		switch mode {
-			case .linearMode:   return   linearModeLineRect
-			case .circularMode: return circularModeLineRect
+			case .linearMode:   return   linesLineRect
+			case .circularMode: return circlesLineRect
 		}
 	}
 
 	func straightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
 		switch mode {
-			case .linearMode:   return   linearModeStraightLinePath(in: iRect, isDragLine)
-			case .circularMode: return circularModeStraightLinePath(in: iRect, isDragLine)
+			case .linearMode:   return   linesStraightLinePath(in: iRect, isDragLine)
+			case .circularMode: return circlesStraightLinePath(in: iRect, isDragLine)
 		}
 	}
 
 	func lineKind(to dragRect: CGRect) -> ZLineCurve? {
 		switch mode {
-			case .linearMode:   return linearModeLineKind(to: dragRect)
+			case .linearMode:   return   linesLineKind(to: dragRect)
 			case .circularMode: return .straight
 		}
 	}
 
 	func updateLineSize() {
 		switch mode {
-			case .linearMode:     linearModeUpdateLineSize()
-			case .circularMode: circularModeUpdateLineSize()
+			case .linearMode:     linesUpdateLineSize()
+			case .circularMode: circlesUpdateLineSize()
 		}
 	}
 
@@ -104,8 +104,8 @@ extension ZoneDot {
 
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		switch mode {
-			case .linearMode:     linearModeDrawMainDot(in: iDirtyRect, using: parameters)
-			case .circularMode: circularModeDrawMainDot(in: iDirtyRect, using: parameters)
+			case .linearMode:     linesDrawMainDot(in: iDirtyRect, using: parameters)
+			case .circularMode: circlesDrawMainDot(in: iDirtyRect, using: parameters)
 		}
 	}
 

@@ -22,10 +22,39 @@ class ZoneLine: ZPseudoView {
 	var        parentWidget : ZoneWidget?
 	var            isCenter : Bool            { return  parentWidget?.isCenter ?? true }
 	override var controller : ZMapController? { return (parentWidget ?? childWidget)?.controller }
-	var       relevantAngle : CGFloat         { return  isCenter ? placeAngle : lineAngle }
-	var          placeAngle = CGFloat.zero
-	var           lineAngle = CGFloat.zero
 	var              length = CGFloat(25)
+
+	var parentToChildLine : CGPoint? {
+		if  let   pCenter = parentWidget?.frame.center,
+			let   cCenter =  childWidget?.frame.center {
+			let      cToC = cCenter - pCenter
+
+			return cToC
+		}
+
+		return nil
+	}
+
+	var placeAngle : CGFloat {
+		if  let p = parentWidget,
+			let l = p.parentLine {
+			return l.placeAngle + p.offsetAngle
+		}
+
+		return .zero
+	}
+
+	var lineAngle : CGFloat {
+		if  isCenter {
+			return placeAngle
+		}
+
+		if  let angle = parentWidget?.parentLine?.parentToChildLine?.angle {
+			return angle
+		}
+
+		return .zero
+	}
 
 	func addDots(sharedRevealDot: ZoneDot?) {
 		if  let p               = parentWidget {

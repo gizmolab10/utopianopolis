@@ -87,7 +87,6 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
-	var          placeOffset =               0
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
 	let         widgetObject =   ZWidgetObject()
@@ -105,7 +104,6 @@ class ZoneWidget: ZPseudoView {
 	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
 	var             isCenter :            Bool  { return linesLevel == 0 }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
-	var         placeCadence :             Int  { return 1 } // isCenter ? 1 : 2 }
 
 	var type : ZWidgetType {
 		var result    = widgetZone?.widgetType
@@ -426,29 +424,8 @@ class ZoneWidget: ZPseudoView {
 			}
 		}
 
-		debug()
-
 		color?.setStroke()
 		path.stroke()
-	}
-
-	func angles(at level: Int) -> [Double]? { return controller?.placeAngles[level] }
-
-	func debug() {
-		if  let zone = widgetZone, zone.isGrabbed {
-			var string = kEmpty
-			traverseAllWidgetAncestors { widget in
-				if  let l = widget.parentLine,
-					let c = angles(at: widget.linesLevel + 1)?.count {
-					let a = (l.relevantAngle / k2PI * Double(c)).roundedToNearestInt.confine(within: c)
-					string.append("(\(a) of \(c)) ")
-				}
-			}
-
-			string.append("\(zone)")
-
-			print(string)
-		}
 	}
 
     override func draw(_ phase: ZDrawPhase) {

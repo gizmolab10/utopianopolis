@@ -507,8 +507,8 @@ var gMapLayoutMode: ZMapLayoutMode {
 		let value  = UserDefaults.standard.object(forKey: kMapLayoutMode) as? Int
 		var mode   = ZMapLayoutMode.linearMode
 
-		if  value != nil {
-			mode   = ZMapLayoutMode(rawValue: value!)!
+		if  let  v = value {
+			mode   = ZMapLayoutMode(rawValue: v)!
 		} else {
 			UserDefaults.standard.set(mode.rawValue, forKey:kMapLayoutMode)
 			UserDefaults.standard.synchronize()
