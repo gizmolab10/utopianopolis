@@ -74,18 +74,9 @@ class ZPseudoView: NSObject {
 		return CGRect(origin: o, size: rect.size)
 	}
 
-	func removeFromSuperpseudoview() {
-		if  var siblings = superpseudoview?.subpseudoviews,
-			let    index = siblings.firstIndex(of: self) {
-			siblings.remove(at: index)
-
-			superpseudoview?.subpseudoviews = siblings
-		}
-	}
-
 	func updateAbsoluteFrame(relativeTo controller: ZMapController?) {
-		if  let      root = controller?.mapPseudoView {
-			absoluteFrame = convertRect(frame, toRootPseudoView: root)
+		if  let       map = controller?.mapPseudoView {
+			absoluteFrame = convertRect(frame, toRootPseudoView: map)
 		}
 	}
 
@@ -103,6 +94,15 @@ class ZPseudoView: NSObject {
 			index  -= 1
 
 			subpseudoviews.remove(at: index)
+		}
+	}
+
+	func removeFromSuperpseudoview() {
+		if  var siblings = superpseudoview?.subpseudoviews,
+			let    index = siblings.firstIndex(of: self) {
+			siblings.remove(at: index)
+
+			superpseudoview?.subpseudoviews = siblings
 		}
 	}
 

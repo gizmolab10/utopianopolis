@@ -13,21 +13,32 @@ import Foundation
 
 extension ZoneWidget {
 
-	var              placesCount :         Int { return ZoneWidget.placesCount(at: linesLevel) }
+	var                   placesCount :         Int { return ZoneWidget.placesCount(at: linesLevel) }
 	var circlesSelectionHighlightPath : ZBezierPath { return ZBezierPath(ovalIn: highlightFrame) }
-	var           incrementAngle :     CGFloat { return 1.0 / CGFloat(placesCount) }
+	var                incrementAngle :     CGFloat { return k2PI / CGFloat(placesCount) }
 
-	var offsetAngle : CGFloat {
-		if  let  zone = widgetZone,
-			let index = zone.siblingIndex {
-			let count = CGFloat(zone.count)
-			let     i = CGFloat(index)
-			let delta = i - (count / 2.0)
-
-			return delta * incrementAngle
+	var placeAngle : CGFloat {
+		var angle  = offsetAngle
+		if  let p  = parentWidget, !isCenter {
+			let o  = p.placeAngle
+			angle += o
 		}
 
-		return .zero
+		return angle
+	}
+
+	var offsetAngle : CGFloat {
+		if  let  zone = widgetZone, !isCenter,
+			let index = zone.siblingIndex,
+			let     c = zone.parentZone?.count {
+			let count = CGFloat(max(0, c - 1))
+			let delta = CGFloat(index) - (count / 2.0)
+			let     o = delta * incrementAngle
+
+			return  o
+		}
+
+		return k2PI
 	}
 
 	var circlesHighlightFrame : CGRect {
@@ -41,20 +52,29 @@ extension ZoneWidget {
 	// MARK: - static methods
 	// MARK: -
 
-	static func traverseAllWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
-		var   level = 0
-		var widgets = visibleChildren(at: level)
+	static func placesCount(at iLevel: Int) -> Int {
+		let factor = iLevel == 2 ? 2 : 1
+		var  level = iLevel
+		var  total = 1
 
-		while widgets.count != 0 {
-			block(level, widgets)
+		while true {
+			let cCount = maxVisibleChildren(at: level)
+			level     -= 1
 
-			level  += 1
-			widgets = visibleChildren(at: level)
+			if  cCount > 0 {
+				total *= cCount
+			}
+
+			if  level  < 0 {
+				total *= factor
+
+				return total
+			}
 		}
 	}
 
 	static func maxVisibleChildren(at level: Int) -> Int {
-		let   children = visibleChildren(at: level)
+		let   children = visibleChildren(at: level - 1)
 		var maxVisible = 0
 
 		for child in children {
@@ -65,6 +85,18 @@ extension ZoneWidget {
 		}
 
 		return maxVisible
+	}
+
+	static func traverseAllVisibleWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
+		var   level = 0
+		var widgets = visibleChildren(at: level)
+
+		while widgets.count != 0 {
+			block(level, widgets)
+
+			level  += 1
+			widgets = visibleChildren(at: level)
+		}
 	}
 
 	static func visibleChildren(at level: Int) -> ZoneWidgetArray {
@@ -85,21 +117,6 @@ extension ZoneWidget {
 		let     start = gDotWidth / 2.0
 
 		return  start + (CGFloat(level) * increment)
-	}
-
-	static func placesCount(at iLevel: Int) -> Int {
-		var level = iLevel
-		var total = 1
-
-		while true {
-			let cCount = maxVisibleChildren(at: level)
-			total     *= cCount
-			level     -= 1
-
-			if  level  < 0 {
-				return total
-			}
-		}
 	}
 
 	// MARK: - update
@@ -143,9 +160,8 @@ extension ZoneWidget {
 	}
 
 	func updateByLevelAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
-		ZoneWidget.traverseAllWidgetsByLevel {      (    level, widgets) in
-			let placesCount = ZoneWidget.placesCount(at: level - 1)
-			widgets.updateAllWidgetFrames           (at: level, placesCount: placesCount, in: controller, absolute)
+		ZoneWidget.traverseAllVisibleWidgetsByLevel { (    level, widgets) in
+			widgets.updateAllWidgetFrames             (at: level, in: controller, absolute)
 		}
 
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
@@ -169,26 +185,22 @@ extension ZoneWidgetArray {
 
 	var scrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
 
-	func updateAllWidgetFrames(at  level: Int, placesCount: Int, in controller: ZMapController?, _ absolute: Bool = false) {
-		updateWidgetFrames    (at: level, in: controller, absolute)   // needs placeAngle
-	}
-
-	func updateWidgetFrames(at level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
+	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
 		if  let center = controller?.mapPseudoView?.frame.center {
 			let   half = gCircularModeRadius
 			let offset = scrollOffset
 			let radius = ZoneWidget.ringRadius(at: level)
 
-			for widget in self {
+			for w in self {
 				if  absolute {
-					widget.updateAbsoluteFrame(relativeTo: controller)
-				} else if let line = widget.parentLine, widget.linesLevel > 0 {
-					let      angle = Double(line.placeAngle)
-					let    rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
-					let     origin = center + rotated - offset
-					let       rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
-					widget .bounds = CGRect(origin:  .zero, size: rect.size)
-					widget  .frame = rect
+					w.updateAbsoluteFrame(relativeTo: controller)
+				} else if w.linesLevel > 0 {
+					let   angle = Double(w.placeAngle)
+					let rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
+					let  origin = center + rotated - offset
+					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
+					w   .bounds = CGRect(origin:  .zero, size: rect.size)
+					w    .frame = rect
 
 //					print(" w \(widget.linesLevel) \(angle.stringTo(precision: 1)) \(widget)")
 				}
@@ -202,6 +214,25 @@ extension ZoneWidgetArray {
 // MARK: -
 
 extension ZoneLine {
+
+	var lineAngle : CGFloat {
+		if  let angle = parentToChildLine?.angle {
+			return angle
+		}
+
+		return .zero
+	}
+
+	var parentToChildLine : CGPoint? {
+		if  let pCenter = parentWidget?.frame.center,
+			let cCenter =  childWidget?.frame.center {
+			let    cToC = cCenter - pCenter
+
+			return cToC
+		}
+
+		return nil
+	}
 
 	var circlesLineRect : CGRect {
 		return .zero // TODO: compute this

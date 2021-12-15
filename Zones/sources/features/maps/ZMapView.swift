@@ -70,7 +70,7 @@ class ZMapView: ZView {
 	func removeAllTextViews(forSmallMap: Bool) {
 		for subview in subviews {
 			if  let textView = subview as? ZoneTextWidget,
-				let inBig = textView.widgetZone?.isInBigMap {
+				let inBig = textView.widgetZone?.widget?.isBigMap {
 				if  forSmallMap != inBig {
 					textView.removeFromSuperview()
 				}

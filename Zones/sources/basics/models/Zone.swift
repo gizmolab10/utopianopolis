@@ -792,7 +792,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return index
 			} else {
 				for (index, sibling) in siblings.enumerated() {
-					if sibling.order > order {
+					if  sibling.order > order {
 						return index == 0 ? 0 : index - 1
 					}
 				}

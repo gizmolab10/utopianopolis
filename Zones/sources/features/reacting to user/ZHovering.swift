@@ -71,7 +71,7 @@ extension ZoneWidget {
 
 			return true
 		} else if let t = pseudoTextWidget, t.absoluteFrame.contains(location) {
-			gHovering.declareHover(t.actualTextWidget)
+			gHovering.declareHover(textWidget)
 
 			return true
 		}

@@ -147,6 +147,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             recursing              = [.sData, .spRelayout].contains(kind)
         }
 
+		if  specificWidget?.isCircularMode ?? false {
+			gMapView?.removeAllTextViews(forSmallMap: !isBigMap)
+		}
+
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
 		if  let    r = rootWidget {

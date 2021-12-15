@@ -87,18 +87,18 @@ class ZWidgetObject: NSObject {
 
 class ZoneWidget: ZPseudoView {
 
+	let         widgetObject =   ZWidgetObject()
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
-	let         widgetObject =   ZWidgetObject()
 	var         childrenView :     ZPseudoView?
 	var            linesView :     ZPseudoView?
+	var     pseudoTextWidget :     ZPseudoView?
+	var           textWidget :  ZoneTextWidget?
 	var      sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
-	var     pseudoTextWidget : ZPseudoTextView?
-	var           textWidget :  ZoneTextWidget? { return pseudoTextWidget?.actualTextWidget }
-	var         parentWidget :      ZoneWidget? { return widgetZone?.parentZone?.widget }
-	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
+	var         parentWidget :      ZoneWidget?
 	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
+	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot  ?? false }
 	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
@@ -201,15 +201,18 @@ class ZoneWidget: ZPseudoView {
 
 	func addTextView() {
 		if  pseudoTextWidget == nil {
-			pseudoTextWidget  = ZPseudoTextView(view: absoluteView)
+			pseudoTextWidget  = ZPseudoView(view: absoluteView)
+
+			addSubpseudoview(pseudoTextWidget)
+		}
+
+		if  textWidget == nil {
+			textWidget  = ZoneTextWidget()
 		}
 
 		if  let         t = textWidget {
 			if  t.widget == nil {
 				t.widget  = self
-
-				gMapView?.addSubview(t)
-				addSubpseudoview(pseudoTextWidget)
 			}
 
 			if  t.superview == nil {
@@ -263,6 +266,7 @@ class ZoneWidget: ZPseudoView {
 
 			while childrenWidgets.count < count {
 				let child = ZoneWidget(view: absoluteView)
+				child.parentWidget = self
 
 				childrenWidgets.append(child)      // add missing
 			}
