@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -139,170 +139,6 @@
             </objects>
             <point key="canvasLocation" x="-95" y="1528"/>
         </scene>
-        <!--Small Map-->
-        <scene sceneID="6c8-8d-0Jq">
-            <objects>
-                <viewController title="favorites" id="bl3-7n-UyN" userLabel="Small Map" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="sgs-hY-cUq">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="1"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                    <connections>
-                        <outlet property="ideaContextualMenu" destination="VWK-W7-ztK" id="Da8-5x-01f"/>
-                    </connections>
-                </viewController>
-                <menu title="Actions" id="VWK-W7-ztK" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
-                    <items>
-                        <menuItem title="Focus" keyEquivalent="/" id="njY-EL-JRk">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="genericMenuHandler:" target="834-xy-QTs" id="R4g-3i-EQk"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem title="Delete" id="i51-zM-ljf">
-                            <string key="keyEquivalent" base64-UTF8="YES">
-CA
-</string>
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="6cD-Yi-dxJ"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem title="Bookmark" keyEquivalent="b" id="l3i-vQ-Lxd">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="eoy-Ka-Gvs"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem title="Duplicate" keyEquivalent="d" id="cxP-Ev-xfj">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="Aee-cp-GVR"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem title="Note" keyEquivalent="n" id="JRw-T4-FrU">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="WMD-3i-nAD"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem title="Swap with Parent" keyEquivalent="t" id="aVn-5v-Uso">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <connections>
-                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="xrF-2m-Jl7"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem isSeparatorItem="YES" id="MY9-B0-bCO">
-                            <connections>
-                                <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="9uf-NN-BUR"/>
-                            </connections>
-                        </menuItem>
-                        <menuItem title="Children" id="Iou-jl-B90">
-                            <menu key="submenu" title="Children" id="gXS-DD-Itc">
-                                <items>
-                                    <menuItem title="Show" keyEquivalent="" id="pAC-6G-gxm">
-                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="TKC-b6-Q6j"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Hide" keyEquivalent="" id="NEe-m8-mwv">
-                                        <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="I7O-c1-kAV"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem isSeparatorItem="YES" id="cVu-Nz-Vt9">
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="kQZ-Iw-bUz"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Add Child Idea" keyEquivalent=" " id="X9t-5U-OI6">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="pEZ-5M-zkX"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Alphabetize" keyEquivalent="a" id="JNh-bQ-YvU">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="jC0-gV-3SK"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Sort by Length" keyEquivalent="m" id="fPQ-iS-ux4">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="Ezu-zs-LP2"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Reverse Order" keyEquivalent="r" id="ols-Pa-5sD">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="8Ov-NO-qLO"/>
-                                        </connections>
-                                    </menuItem>
-                                </items>
-                            </menu>
-                        </menuItem>
-                        <menuItem title="Attachment" id="zvp-Vj-nFc">
-                            <modifierMask key="keyEquivalentModifierMask"/>
-                            <menu key="submenu" title="Attachment" id="eKj-w0-ZEf">
-                                <items>
-                                    <menuItem title="Email" keyEquivalent="e" id="qGT-Dx-ASX">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="f0g-RU-B7A"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Hyperlink" keyEquivalent="h" id="ytN-zB-GxU">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="3l3-i8-vCB"/>
-                                        </connections>
-                                    </menuItem>
-                                </items>
-                            </menu>
-                        </menuItem>
-                        <menuItem title="Case" id="y0z-ev-uZD">
-                            <menu key="submenu" title="Case" id="Jmn-XU-uRL">
-                                <items>
-                                    <menuItem title="Lower" keyEquivalent="l" id="EWC-Rv-wGe">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="hDx-6W-xRm"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Upper" keyEquivalent="u" id="Cot-Aa-7FL">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="CPE-z5-bax"/>
-                                        </connections>
-                                    </menuItem>
-                                </items>
-                            </menu>
-                        </menuItem>
-                        <menuItem title="File" id="gxn-Xc-G5C">
-                            <menu key="submenu" title="File" id="snl-s9-ASJ">
-                                <items>
-                                    <menuItem title="Import" keyEquivalent="o" id="re2-kz-asB">
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="9Fi-r3-HUW"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Export" keyEquivalent="s" id="vQ8-rW-J0s">
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="VWK-W7-ztK" id="sGM-Wt-ZBc"/>
-                                        </connections>
-                                    </menuItem>
-                                </items>
-                            </menu>
-                        </menuItem>
-                    </items>
-                </menu>
-                <customObject id="834-xy-QTs" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-95" y="2058"/>
-        </scene>
         <!--Details Controller-->
         <scene sceneID="Tae-az-4mZ">
             <objects>
@@ -319,8 +155,8 @@ CA
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
                                                 <rect key="frame" x="0.0" y="40" width="226" height="19"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" misplaced="YES" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ay8-Kf-2wF" userLabel="Subscription Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="1" y="-1" width="148" height="19"/>
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ay8-Kf-2wF" userLabel="Subscription Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
+                                                        <rect key="frame" x="1" y="-1" width="163" height="19"/>
                                                         <buttonCell key="cell" type="roundRect" title="Subscribe" bezelStyle="roundedRect" alignment="left" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4Dz-Zl-Ruw" userLabel="Subscription">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
@@ -331,9 +167,9 @@ CA
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F7N-nT-7sJ" userLabel="Subscription Switch">
-                                                        <rect key="frame" x="170" y="-1" width="55" height="19"/>
+                                                        <rect key="frame" x="165" y="-1" width="60" height="19"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="55" id="8kL-HJ-A4d"/>
+                                                            <constraint firstAttribute="width" constant="60" id="8kL-HJ-A4d"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QzM-as-gcE">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -383,8 +219,8 @@ CA
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Simple Tools Banner">
                                                 <rect key="frame" x="0.0" y="611" width="226" height="21"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" misplaced="YES" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Simple Tools Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="1" y="-1" width="226" height="19"/>
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Simple Tools Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
+                                                        <rect key="frame" x="1" y="-1" width="224" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="oFz-pg-brp"/>
                                                         </constraints>
@@ -433,7 +269,7 @@ CA
                                                 <rect key="frame" x="0.0" y="77" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fsz-8k-F3y" userLabel="Data Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="1" y="-1" width="168" height="19"/>
+                                                        <rect key="frame" x="1" y="-1" width="163" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="ALV-dt-Nu6"/>
                                                         </constraints>
@@ -450,9 +286,9 @@ CA
                                                         <rect key="frame" x="214" y="1" width="16" height="16"/>
                                                     </progressIndicator>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEF-16-Rho" userLabel="Data Switch">
-                                                        <rect key="frame" x="170" y="-1" width="55" height="19"/>
+                                                        <rect key="frame" x="165" y="-1" width="60" height="19"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="55" id="qFc-7U-zYr"/>
+                                                            <constraint firstAttribute="width" constant="60" id="qFc-7U-zYr"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YF9-6k-EhW">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -554,7 +390,7 @@ CA
                                                 <rect key="frame" x="0.0" y="32" width="226" height="18"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3bx-6i-bTg" userLabel="Small Map Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="1" y="-1" width="168" height="19"/>
+                                                        <rect key="frame" x="1" y="-1" width="163" height="19"/>
                                                         <buttonCell key="cell" type="roundRect" title="Favorites" bezelStyle="roundedRect" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XJD-P5-eSB" userLabel="Small Map">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
@@ -565,9 +401,9 @@ CA
                                                         </connections>
                                                     </button>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Small Map Switch">
-                                                        <rect key="frame" x="170" y="-1" width="55" height="19"/>
+                                                        <rect key="frame" x="165" y="-1" width="60" height="19"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="55" id="ilj-a1-1mc"/>
+                                                            <constraint firstAttribute="width" constant="60" id="ilj-a1-1mc"/>
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -971,24 +807,12 @@ CA
                                     </constraints>
                                 </view>
                             </box>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DLH-oP-g02">
-                                <rect key="frame" x="18" y="-135" width="61" height="18"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="59" id="eoO-i2-72y"/>
-                                </constraints>
-                                <buttonCell key="cell" type="check" title="Check" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="EGg-v1-scw">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="Jes-2S-tC8"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="K7u-1l-PFu"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
-                            <constraint firstItem="DLH-oP-g02" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="397" id="QLm-Xz-HIf"/>
-                            <constraint firstItem="DLH-oP-g02" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="20" symbolic="YES" id="Zxs-0c-rBd"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
                             <constraint firstAttribute="trailing" secondItem="EBA-0Z-ZoM" secondAttribute="trailing" constant="8" id="e5O-Pm-TJ2"/>

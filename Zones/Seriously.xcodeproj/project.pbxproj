@@ -199,7 +199,6 @@
 		A745ED0C26AF4E7D0013D1A4 /* ZHovering.swift in Sources */ = {isa = PBXBuildFile; fileRef = A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */; };
 		A745ED0D26AF4E7D0013D1A4 /* ZHovering.swift in Sources */ = {isa = PBXBuildFile; fileRef = A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */; };
 		A746D465219F613D00123A0A /* Help.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Help.storyboard */; };
-		A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */ = {isa = PBXBuildFile; fileRef = A74D1BA522222FC900E69E44 /* eye.con-512.png */; };
 		A74DBDEB244E004000DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
 		A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
 		A74DBDED244E179700DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
@@ -561,7 +560,6 @@
 		A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHovering.swift; sourceTree = "<group>"; };
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Help.storyboard; sourceTree = "<group>"; };
 		A746D466219F637A00123A0A /* Seriously.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seriously.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A74D1BA522222FC900E69E44 /* eye.con-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "eye.con-512.png"; sourceTree = "<group>"; };
 		A74DBDEA244E004000DF751A /* ZContextualMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContextualMenu.swift; sourceTree = "<group>"; };
 		A752FC2B24512D7700603A54 /* ZoneArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneArray.swift; sourceTree = "<group>"; };
 		A752FC31245222D100603A54 /* ZoneContextualMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneContextualMenu.swift; sourceTree = "<group>"; };
@@ -922,7 +920,6 @@
 		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
-				A74D1BA522222FC900E69E44 /* eye.con-512.png */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0C50FD2D2053467600E1D9A9 /* data */,
 				A7F5D690227E6AEE009FB225 /* documentation */,
@@ -1418,7 +1415,6 @@
 			files = (
 				A734EB7221E26EE500B9475F /* Credits.rtfd in Resources */,
 				A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */,
-				A74D1BA622222FC900E69E44 /* eye.con-512.png in Resources */,
 				A7B78D3B2448EF6400DB2C14 /* everyone.seriously in Resources */,
 				A7738FE12628C3390040B9CD /* tutorial.idea.and.list.mov in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,

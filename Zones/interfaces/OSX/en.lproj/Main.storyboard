@@ -2221,6 +2221,7 @@ DQ
                         <outlet property="ideaContextualMenu" destination="GDQ-ws-BTH" id="tdv-6e-F2S"/>
                     </connections>
                 </viewController>
+                <customObject id="2rw-Jo-HIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <menu title="Actions" id="GDQ-ws-BTH" userLabel="Idea Contextual Menu" customClass="ZoneContextualMenu" customModule="Seriously" customModuleProvider="target">
                     <items>
                         <menuItem title="Focus" keyEquivalent="/" id="X4M-FO-fpj">
@@ -2369,7 +2370,6 @@ CA
                         </menuItem>
                     </items>
                 </menu>
-                <customObject id="2rw-Jo-HIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="126" y="982"/>
         </scene>
