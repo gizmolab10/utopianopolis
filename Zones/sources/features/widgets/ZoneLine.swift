@@ -66,11 +66,9 @@ class ZoneLine: ZPseudoView {
 
 		return rect
 	}
-
-	func lineRect(to widget: ZoneWidget?, kind: ZLineCurve) -> CGRect {
-		if  let    dot = widget?.parentLine?.dragDot {
-			let dFrame = dot.absoluteActualFrame
-
+	
+	func lineRect(for kind: ZLineCurve) -> CGRect {
+		if  let dFrame = dragDot?.absoluteActualFrame, !dFrame.isInfinite {
 			return lineRect(to: dFrame, kind: kind)
 		}
 
@@ -91,7 +89,7 @@ class ZoneLine: ZPseudoView {
 	func drawLine() {
 		if  let      child = childWidget {
 			let       kind = lineKind
-			let       rect = lineRect(to: child, kind: kind)
+			let       rect = lineRect(            for: kind)
 			let       path = linePath(in:  rect, kind: kind)
 			path.lineWidth = CGFloat(gLineThickness)
 			if  let  color = child.widgetZone?.color {

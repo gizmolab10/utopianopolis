@@ -15,31 +15,33 @@ extension ZoneWidget {
 
 	var                   placesCount :         Int { return ZoneWidget.placesCount(at: linesLevel) }
 	var circlesSelectionHighlightPath : ZBezierPath { return ZBezierPath(ovalIn: highlightFrame) }
-	var                   spreadAngle :     CGFloat { return parentWidget?.incrementAngle ?? k2PI }
-	var                incrementAngle :     CGFloat { return spreadAngle / Double(widgetZone?.count ?? 1) }
+	var                   spreadAngle :     CGFloat { return parentWidget?.incrementAngle ?? CGFloat(k2PI) }
+	var                incrementAngle :     CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
 
 	var placeAngle : CGFloat {
 		var angle  = offsetAngle
 		if  let p  = parentWidget, !isCenter {
 			let o  = p.placeAngle
 			angle += o
+			angle  = angle.confine(within: CGFloat(k2PI))
 		}
 
 		return angle
 	}
 
 	var offsetAngle : CGFloat {
-		if  let  zone = widgetZone, !isCenter,
+		if  let angle = parentWidget?.incrementAngle,
+			let  zone = widgetZone, !isCenter,
 			let index = zone.siblingIndex,
 			let     c = zone.parentZone?.count {
 			let count = CGFloat(max(0, c - 1))
 			let delta = CGFloat(index) - (count / 2.0)
-			let     o = delta * incrementAngle
+			let     o = (delta * angle).confine(within: CGFloat(k2PI))
 
 			return  o
 		}
 
-		return k2PI
+		return CGFloat(k2PI)
 	}
 
 	var circlesHighlightFrame : CGRect {

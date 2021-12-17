@@ -502,9 +502,9 @@ class ZCoreDataStack: NSObject {
 		let                          desc = NSPersistentStoreDescription(url: publicURL)
 		desc.configuration                = "Cloud"
 		if  gIsUsingCloudKit {
-			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
-			options.databaseScope         = CKDatabase.Scope.public // default is private
-			desc.cloudKitContainerOptions = options
+//			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
+//			options.databaseScope         = CKDatabase.Scope.public // default is private
+//			desc.cloudKitContainerOptions = options
 
 			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 		}

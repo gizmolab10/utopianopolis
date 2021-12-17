@@ -128,6 +128,7 @@ class ZTogglingView: ZView {
 		}
 
 		gRelayoutMaps()
+		gSignal([.sDetails])
 	}
 
 	fileprivate func updateTitleButton() {

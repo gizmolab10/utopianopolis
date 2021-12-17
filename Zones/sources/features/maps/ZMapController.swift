@@ -52,7 +52,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func drawWidgets(for phase: ZDrawPhase) {
 		if  isBigMap || gDetailsViewIsVisible(for: .vSmallMap) {
-			rootLine?.draw(phase)
+			rootLine?.draw(phase) // for here's drag dot
 			rootWidget?.traverseAllWidgetProgeny(inReverse: false) { widget in
 				widget.draw(phase)
 			}
