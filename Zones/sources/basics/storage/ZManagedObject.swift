@@ -6,9 +6,14 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import Foundation
 import CloudKit
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 let   gReferenceTransformerName = NSValueTransformerName(rawValue: "ZReferenceTransformer")
 let  gAssetArrayTransformerName = NSValueTransformerName(rawValue: "ZAssetArrayTransformer")

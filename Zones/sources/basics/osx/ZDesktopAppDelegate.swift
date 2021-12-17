@@ -6,8 +6,15 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-import Cocoa
 import CloudKit
+import Foundation
+
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 
 var gAppDelegate: ZDesktopAppDelegate?
 

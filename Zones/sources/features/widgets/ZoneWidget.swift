@@ -85,6 +85,7 @@ class ZWidgetObject: NSObject {
 	}
 }
 
+@objc (ZoneWidget)
 class ZoneWidget: ZPseudoView {
 
 	let         widgetObject =   ZWidgetObject()

@@ -14,6 +14,7 @@ enum ZLineCurve: Int {
 	case above    =  1
 }
 
+@objc (ZoneLine)
 class ZoneLine: ZPseudoView {
 
 	var             dragDot : ZoneDot?

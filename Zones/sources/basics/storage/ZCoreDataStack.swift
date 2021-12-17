@@ -6,9 +6,14 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import Foundation
 import CloudKit
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                        { gCoreDataStack.saveContext() }
@@ -215,7 +220,7 @@ class ZCoreDataStack: NSObject {
 					FOREGROUND {
 						gRemoteStorage.updateManifestCount(for: dbID)
 						gRemoteStorage.recount()
-						gHere.grab()
+						gHereMaybe?.grab()
 						gSignal([.spRelayout, .spData, .spCrumbs])
 						self.makeAvailable()
 						onCompletion?(0)

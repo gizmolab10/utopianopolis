@@ -6,9 +6,14 @@
 //  Copyright © 2021 Zones. All rights reserved.
 //
 
-import Foundation
 import CloudKit
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 struct ZFileDescriptor {
 	let name: String?
@@ -16,7 +21,7 @@ struct ZFileDescriptor {
 	let dbID: ZDatabaseID?
 }
 
-//@objc(ZFile)
+@objc(ZFile)
 class ZFile : ZRecord {
 
 	@NSManaged var asset : Data?

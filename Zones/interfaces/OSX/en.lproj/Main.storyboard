@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="18122"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -872,7 +872,7 @@ CA
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="127" y="1173"/>
+            <point key="canvasLocation" x="595" y="1173"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -1201,7 +1201,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1216" y="1173"/>
+            <point key="canvasLocation" x="913" y="1173"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -1281,7 +1281,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="901" y="1173"/>
+            <point key="canvasLocation" x="1224" y="1173"/>
         </scene>
         <!--Create a Link-->
         <scene sceneID="yhj-YB-Xij">
@@ -1704,7 +1704,7 @@ DQ
                 </viewController>
                 <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="514" y="1259"/>
+            <point key="canvasLocation" x="204" y="1259"/>
         </scene>
         <!--Debug Angles Controls-->
         <scene sceneID="nGL-an-oE5">
@@ -1996,7 +1996,7 @@ DQ
                 <customObject id="T49-Ar-q9j" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="CX0-7s-ZzA"/>
             </objects>
-            <point key="canvasLocation" x="1562" y="1128"/>
+            <point key="canvasLocation" x="1545" y="1128"/>
         </scene>
         <!--Debug Controller-->
         <scene sceneID="xPN-n7-b66">
@@ -2371,20 +2371,7 @@ CA
                 </menu>
                 <customObject id="2rw-Jo-HIE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="617" y="970"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="2zR-EK-bAQ">
-            <objects>
-                <viewController id="neP-aE-BOB" sceneMemberID="viewController">
-                    <view key="view" id="9ig-jW-s4B">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </view>
-                </viewController>
-                <customObject id="C2Q-kP-fVu" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-10" y="546"/>
+            <point key="canvasLocation" x="126" y="982"/>
         </scene>
     </scenes>
     <resources>

@@ -6,9 +6,14 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-import Foundation
 import CloudKit
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum ZTraitType: String { // stored in database: do not change
 	case tDuration  = "!" // accumulative
@@ -45,7 +50,7 @@ enum ZTraitType: String { // stored in database: do not change
 
 }
 
-//@objc(ZTrait)
+@objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
 	@NSManaged    var  strings : StringsArray?

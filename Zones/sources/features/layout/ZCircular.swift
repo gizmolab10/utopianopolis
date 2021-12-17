@@ -15,7 +15,8 @@ extension ZoneWidget {
 
 	var                   placesCount :         Int { return ZoneWidget.placesCount(at: linesLevel) }
 	var circlesSelectionHighlightPath : ZBezierPath { return ZBezierPath(ovalIn: highlightFrame) }
-	var                incrementAngle :     CGFloat { return k2PI / CGFloat(placesCount) }
+	var                   spreadAngle :     CGFloat { return parentWidget?.incrementAngle ?? k2PI }
+	var                incrementAngle :     CGFloat { return spreadAngle / Double(widgetZone?.count ?? 1) }
 
 	var placeAngle : CGFloat {
 		var angle  = offsetAngle
@@ -53,7 +54,6 @@ extension ZoneWidget {
 	// MARK: -
 
 	static func placesCount(at iLevel: Int) -> Int {
-		let factor = iLevel == 2 ? 2 : 1
 		var  level = iLevel
 		var  total = 1
 
@@ -66,8 +66,6 @@ extension ZoneWidget {
 			}
 
 			if  level  < 0 {
-				total *= factor
-
 				return total
 			}
 		}

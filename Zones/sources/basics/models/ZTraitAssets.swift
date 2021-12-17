@@ -6,11 +6,16 @@
 //  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
-import Foundation
 import CloudKit
-import Cocoa
+import Foundation
 
-//@objc(ZTraitAssets)
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
+@objc(ZTraitAssets)
 class ZTraitAssets : ZRecord {
 
 	@NSManaged    var     assets : [CKAsset]?

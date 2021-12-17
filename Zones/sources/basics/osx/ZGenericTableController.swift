@@ -7,8 +7,14 @@
 //
 
 
+import CloudKit
 import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableViewDataSource {
     

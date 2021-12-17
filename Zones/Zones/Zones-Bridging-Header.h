@@ -4,3 +4,5 @@
 
 //#import "NSPanel+ZPanel.h"
 //#import "NSURL+ZURL.h"
+//#import <Foundation/Foundation.h>
+//#import <Cocoa/Cocoa.h>

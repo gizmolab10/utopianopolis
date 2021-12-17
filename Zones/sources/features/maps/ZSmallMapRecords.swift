@@ -41,28 +41,31 @@ class ZSmallMapRecords: ZRecords {
 			gRecents.push()
 		}
 
-		let   maxIndex = working.count - 1
-		var    toIndex = down ? 0 : maxIndex
-		if  let target = currentBookmark?.bookmarkTarget {
-			for (index, bookmark) in working.enumerated() {
-				if  let b = bookmark.bookmarkTarget, b == target {
-					if         down, index < maxIndex {
-						toIndex = index + 1         // go down
-					} else if !down, index > 0 {
-						toIndex = index - 1         // go up
+		let          count = working.count
+		if  count          > 1 {            // there is no next for count == 0 or 1
+			let   maxIndex = count - 1
+			var    toIndex = down ? 0 : maxIndex
+			if  let target = currentBookmark?.bookmarkTarget {
+				for (index, bookmark) in working.enumerated() {
+					if  let b = bookmark.bookmarkTarget, b == target {
+						if         down, index < maxIndex {
+							toIndex = index + 1         // go down
+						} else if !down, index > 0 {
+							toIndex = index - 1         // go up
+						}
+
+						break
 					}
-
-					break
 				}
-			}
 
-			if  toIndex.isWithin(0 ... maxIndex) {
-				let newCurrent = working[toIndex]
+				if  toIndex.isWithin(0 ... maxIndex) {
+					let newCurrent = working[toIndex]
 
-				if  moveCurrent {
-					moveCurrentTo(newCurrent)
-				} else {
-					setAsCurrent(newCurrent, alterHere: true)
+					if  moveCurrent {
+						moveCurrentTo(newCurrent)
+					} else {
+						setAsCurrent(newCurrent, alterHere: true)
+					}
 				}
 			}
 		}

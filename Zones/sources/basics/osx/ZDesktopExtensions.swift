@@ -9,7 +9,13 @@
 import Foundation
 import CloudKit
 import AppKit
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 
 enum ZArrowKey: Int8 {
     case up    = -128

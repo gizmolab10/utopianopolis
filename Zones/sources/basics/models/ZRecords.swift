@@ -6,9 +6,14 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-import Foundation
 import CloudKit
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum ZRecordState: String {
 	case needsAdoption  = "adopt"
@@ -97,8 +102,6 @@ class ZRecords: NSObject {
 
 		return count > 1 ? count : 100
 	}
-
-
 
     var hereRecordName: String? {
 		set {

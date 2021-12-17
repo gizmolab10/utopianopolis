@@ -44,6 +44,7 @@ struct  ZDotParameters {
 
 }
 
+@objc (ZoneDot)
 class ZoneDot: ZPseudoView {
 
     // MARK: - properties
@@ -74,9 +75,9 @@ class ZoneDot: ZPseudoView {
 		if !isReveal {
 			return !zone.isSmallMapHere
 		}   else {
-			return isDragDrop               ||
-				((  zone.isTraveller        ||
-					zone.count > 0)         &&
+			return isDragDrop        ||
+				((  zone.isTraveller ||
+					zone.count > 0)  &&
 					(   isLinearMode ||
 						zone.hasVisibleChildren))
 		}

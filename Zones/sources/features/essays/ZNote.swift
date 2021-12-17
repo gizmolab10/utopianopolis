@@ -6,8 +6,14 @@
 //  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
+import CloudKit
 import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum ZAlterationType: Int {
 	case eDelete

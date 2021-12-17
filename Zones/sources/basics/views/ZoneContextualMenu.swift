@@ -6,8 +6,16 @@
 //  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
+import CloudKit
 import Foundation
 
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
+@objc (ZoneContextualMenu)
 class ZoneContextualMenu: ZContextualMenu {
 
 	var textWidget: ZoneTextWidget?

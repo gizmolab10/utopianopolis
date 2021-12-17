@@ -6,8 +6,8 @@
 //  Copyright © 2019 Jonathan Sand. All rights reserved.
 //
 
-import Foundation
 import CloudKit
+import Foundation
 
 #if os(OSX)
 import Cocoa
@@ -26,6 +26,7 @@ struct ZEssayDragDot {
 	var      note : ZNote?
 }
 
+@objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate {
 	let margin          = CGFloat(20.0)
 	let dotInset        = CGFloat(-5.0)

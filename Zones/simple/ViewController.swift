@@ -6,7 +6,13 @@
 //  Copyright © 2021 Zones. All rights reserved.
 //
 
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 class ViewController: NSViewController {
 

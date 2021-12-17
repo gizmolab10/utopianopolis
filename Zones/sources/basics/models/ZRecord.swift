@@ -5,10 +5,15 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-import Foundation
-import CloudKit
 import CoreData
+import CloudKit
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 @objc (ZRecord)
 class ZRecord: ZManagedObject {

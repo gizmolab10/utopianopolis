@@ -6,10 +6,16 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import Foundation
-import CloudKit
 import CoreData
+import CloudKit
+import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 
 class ZHelpEssayIntroductionController : ZGenericController {
 

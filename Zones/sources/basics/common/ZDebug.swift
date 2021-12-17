@@ -7,7 +7,12 @@
 //
 
 import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gIsUsingCoreData }

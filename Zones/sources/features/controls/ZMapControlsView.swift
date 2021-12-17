@@ -6,8 +6,14 @@
 //  Copyright © 2020 Jonathan Sand. All rights reserved.
 //
 
+import CloudKit
 import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum ZModeButtonType: String {
 	case tConfine = "browse"

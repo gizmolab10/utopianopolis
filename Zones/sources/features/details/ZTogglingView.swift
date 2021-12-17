@@ -6,6 +6,8 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
+import Foundation
+
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)

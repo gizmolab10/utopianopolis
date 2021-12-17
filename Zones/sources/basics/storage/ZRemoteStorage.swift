@@ -209,11 +209,10 @@ class ZRemoteStorage: NSObject {
 	}
 
     func zRecords(for iDatabaseID: ZDatabaseID?) -> ZRecords? {
-		var  zRecords : ZRecords?
-        let      dbID =  iDatabaseID ?? gDatabaseID
-		zRecords      = records[dbID]
-		if  zRecords == nil {
-			zRecords = ZCloud(dbID)
+		let dbID          = iDatabaseID ?? gDatabaseID
+		var zRecords      = records[dbID]
+		if  zRecords     == nil {
+			zRecords      = ZCloud(dbID)
 			records[dbID] = zRecords
 		}
 
