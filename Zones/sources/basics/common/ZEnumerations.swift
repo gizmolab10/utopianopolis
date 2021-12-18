@@ -25,6 +25,12 @@ enum InterfaceStyle : String {
     }
 }
 
+enum ZRelayoutMapType: Int {
+    case small
+    case both
+    case big
+}
+
 enum ZCloudAccountStatus: Int {
     case none
     case begin

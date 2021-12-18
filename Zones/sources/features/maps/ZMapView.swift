@@ -73,11 +73,12 @@ class ZMapView: ZView {
 		}
 	}
 
-	func removeAllTextViews(forSmallMap: Bool) {
+	func removeAllTextViews(ofType: ZRelayoutMapType = .both) {
 		for subview in subviews {
 			if  let textView = subview as? ZoneTextWidget,
 				let inBig = textView.widgetZone?.widget?.isBigMap {
-				if  forSmallMap != inBig {
+				let shouldRemove = inBig ? (ofType != .small) : (ofType != .big)
+				if  shouldRemove {
 					textView.removeFromSuperview()
 				}
 			}
@@ -135,12 +136,12 @@ class ZMapView: ZView {
 		ZBezierPath(rect: iDirtyRect).fill()
 	}
 
-	func clear(forSmallMapOnly: Bool = false) {
+	func clear(ofType: ZRelayoutMapType = .both) {
 		if  mapID == .mText {
 			highlightMapView?.clear()
 			dotsAndLinesView?.clear()
 
-			removeAllTextViews(forSmallMap: forSmallMapOnly)
+			removeAllTextViews(ofType: ofType)
 		}
 	}
 

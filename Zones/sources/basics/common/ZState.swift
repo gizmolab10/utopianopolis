@@ -99,7 +99,7 @@ func           gSetBigMapMode()                   { gWorkMode     = .wMapMode }
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next
 
-	gRelayoutMaps()
+	gRelayoutMaps(ofType: .big)
 }
 
 func gToggleShowTooltips() {
