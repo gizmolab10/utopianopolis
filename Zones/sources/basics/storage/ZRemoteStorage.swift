@@ -12,8 +12,8 @@ import CloudKit
 
 
 let gRemoteStorage = ZRemoteStorage()
-var gEveryoneCloud : ZCloud?     { return gRemoteStorage.cloud(for: .everyoneID) }
-var     gMineCloud : ZCloud?     { return gRemoteStorage.cloud(for: .mineID) }
+var gEveryoneCloud : ZCloud?     { return gRemoteStorage.zRecords(for: .everyoneID) as? ZCloud }
+var     gMineCloud : ZCloud?     { return gRemoteStorage.zRecords(for:     .mineID) as? ZCloud }
 var         gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
 var     gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
 var  gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
@@ -27,7 +27,7 @@ class ZRemoteStorage: NSObject {
     var  databaseIDStack = [ZDatabaseID] ()
     var          records = [ZDatabaseID : ZRecords]()
     var   currentRecords : ZRecords    { return zRecords(for: gDatabaseID)! }
-    var     currentCloud : ZCloud?     { return cloud   (for: gDatabaseID) }
+    var     currentCloud : ZCloud?     { return currentRecords as? ZCloud }
     var rootProgenyCount : Int         { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
 	var     dataLoadTime : Int         { return totalLoadableRecordsCount / gTimePerRecord }
 	var         manifest : ZManifest?  { return currentRecords.manifest }
@@ -50,8 +50,8 @@ class ZRemoteStorage: NSObject {
 	var count: Int {
 		var sum = 0
 		for dbID in kAllDatabaseIDs {
-			if let cloud = cloud(for: dbID) {
-				sum += cloud.zRecordsLookup.count
+			if let zRecords = zRecords(for: dbID) {
+				sum += zRecords.zRecordsLookup.count
 			}
 		}
 
@@ -97,7 +97,7 @@ class ZRemoteStorage: NSObject {
         var clouds = [ZCloud] ()
         
         for dbID in kAllDatabaseIDs {
-            if let cloud = cloud(for: dbID) {
+            if  let cloud = zRecords(for: dbID) as? ZCloud {
                 clouds.append(cloud)
             }
         }
@@ -212,7 +212,12 @@ class ZRemoteStorage: NSObject {
 		let dbID          = iDatabaseID ?? gDatabaseID
 		var zRecords      = records[dbID]
 		if  zRecords     == nil {
-			zRecords      = ZCloud(dbID)
+			switch dbID {
+			case .favoritesID: zRecords = gFavorites
+			case .recentsID:   zRecords = gRecents
+			default:           zRecords = ZCloud(dbID)
+			}
+			
 			records[dbID] = zRecords
 		}
 

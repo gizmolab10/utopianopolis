@@ -224,7 +224,7 @@ class ZFiles: NSObject {
 			let           dbID = databaseID,
 			dbID              != .recentsID,
 			dbID              != .favoritesID,
-			let          cloud = gRemoteStorage.cloud(for: dbID) {
+			let          cloud = gRemoteStorage.zRecords(for: dbID) {
 			var           dict = ZStorageDictionary ()
 
 			do {
@@ -290,7 +290,7 @@ class ZFiles: NSObject {
 	}
 
 	private func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  let       cloud  = gRemoteStorage.cloud(for: databaseID),
+		if  let       cloud  = gRemoteStorage.zRecords(for: databaseID),
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]

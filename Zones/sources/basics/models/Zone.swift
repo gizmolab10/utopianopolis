@@ -2438,7 +2438,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func asssureIsVisible() {
-		if  let goal = gRemoteStorage.cloud(for: databaseID)?.currentHere {
+		if  let goal = gRemoteStorage.zRecords(for: databaseID)?.currentHere {
 
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self {

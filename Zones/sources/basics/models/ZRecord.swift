@@ -173,7 +173,7 @@ class ZRecord: ZManagedObject {
 
 	func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
 		if  let       r = recordName,
-			let manager = gRemoteStorage.cloud(for: iDatabaseID) {
+			let manager = gRemoteStorage.zRecords(for: iDatabaseID) {
 			let  states = manager.states(for: r)
 			var   marks = StringsArray ()
 

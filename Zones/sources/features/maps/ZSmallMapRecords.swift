@@ -9,11 +9,11 @@
 import Foundation
 
 func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
-	gRemoteStorage.cloud(for: dbID)?.hereZoneMaybe = here
+	gRemoteStorage.zRecords(for: dbID)?.hereZoneMaybe = here
 }
 
 func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
-	if  let    cloud = gRemoteStorage.cloud(for: dbID) {
+	if  let    cloud = gRemoteStorage.zRecords(for: dbID) {
 		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
 	}
 

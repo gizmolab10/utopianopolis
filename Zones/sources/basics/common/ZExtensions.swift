@@ -584,7 +584,7 @@ extension CKRecord {
     }
 
     func isDeleted(dbID: ZDatabaseID) -> Bool {
-        return gRemoteStorage.cloud(for: dbID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
+        return gRemoteStorage.zRecords(for: dbID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
     }
 
     @discardableResult func copy(to iCopy: CKRecord?, properties: StringsArray) -> Bool {

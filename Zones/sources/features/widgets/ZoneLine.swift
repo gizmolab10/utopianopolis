@@ -68,7 +68,10 @@ class ZoneLine: ZPseudoView {
 	}
 	
 	func lineRect(for kind: ZLineCurve) -> CGRect {
-		if  let dFrame = dragDot?.absoluteActualFrame, !dFrame.isInfinite {
+		if  let dFrame = dragDot?.absoluteActualFrame {
+			if  dFrame.isInfinite {
+				print("ack!")
+			}
 			return lineRect(to: dFrame, kind: kind)
 		}
 
