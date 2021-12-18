@@ -100,9 +100,9 @@ class ZoneDot: ZPseudoView {
     // MARK: - initialization
     // MARK: -
 
-	@discardableResult func updateSize() -> CGSize {
-		let isBigMap = widget?.type.isBigMap ?? true
-		drawnSize    = gDotSize(forReveal: isReveal, forBigMap: isBigMap)
+	@discardableResult func updateDotDrawnSize() -> CGSize {
+		let inBig = widget?.type.isBigMap ?? true
+		drawnSize = gDotSize(forReveal: isReveal, forBigMap: inBig)
 
 		return drawnSize
 	}
@@ -111,7 +111,15 @@ class ZoneDot: ZPseudoView {
         isReveal = asReveal
         widget   = iWidget
 
-		updateSize()
+		updateDotDrawnSize()
+	}
+	
+	override func setupDrawnView() {
+		super.setupDrawnView()
+
+		if  let     m = absoluteView as? ZMapView {
+			drawnView = m.dotsAndLinesView
+		}
 	}
 
     // MARK: - draw
@@ -300,14 +308,6 @@ class ZoneDot: ZPseudoView {
 			// //////////////////
 
 			drawTinyCountDots(iDirtyRect, parameters: parameters)
-		}
-	}
-
-	override func setupDrawnView() {
-		super.setupDrawnView()
-
-		if  let     m = absoluteView as? ZMapView {
-			drawnView = m.dotsAndLinesView
 		}
 	}
 

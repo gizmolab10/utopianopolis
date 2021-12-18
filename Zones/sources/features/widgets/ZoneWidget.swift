@@ -266,8 +266,9 @@ class ZoneWidget: ZPseudoView {
 			}
 
 			while childrenWidgets.count < count {
-				let child = ZoneWidget(view: absoluteView)
+				let          child = ZoneWidget(view: absoluteView)
 				child.parentWidget = self
+				child.widgetZone   = zone.children[childrenWidgets.count]
 
 				childrenWidgets.append(child)      // add missing
 			}

@@ -287,7 +287,7 @@ extension ZoneLine {
 
 	func linesUpdateLineSize() {
 		// all lines have at least a reveal dot
-		drawnSize = revealDot?.updateSize() ?? .zero
+		drawnSize = revealDot?.updateDotDrawnSize() ?? .zero
 	}
 
 }

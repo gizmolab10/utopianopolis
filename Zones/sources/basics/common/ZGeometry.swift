@@ -27,5 +27,5 @@ var          gDotHeight : CGFloat { return (gGenericOffset.height / kDotFactor) 
 var gChildrenViewOffset : CGFloat { return gDotWidth + (gGenericOffset.height) * 1.2 }
 var gCircularModeRadius : CGFloat { return gDotHeight * 2.0 }
 
-func gDotSize       (forReveal: Bool)                  -> CGSize  { return CGSize(width: forReveal ? gDotHeight : gDotWidth, height: gDotHeight).multiplyBy(1.9) }
-func gDotSize       (forReveal: Bool, forBigMap: Bool) -> CGSize  { return gDotSize(forReveal: forReveal).multiplyBy(forBigMap ? 1.0 : kSmallMapReduction) }
+func gDotSize(forReveal: Bool)                  -> CGSize  { return CGSize(width: forReveal ? gDotHeight : gDotWidth, height: gDotHeight).multiplyBy(1.9) }
+func gDotSize(forReveal: Bool, forBigMap: Bool) -> CGSize  { return gDotSize(forReveal: forReveal).multiplyBy(forBigMap ? 1.0 : kSmallMapReduction) }
