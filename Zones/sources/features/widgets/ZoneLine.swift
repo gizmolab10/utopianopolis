@@ -90,9 +90,9 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawLine() {
-		if  let      child = childWidget {
-			let       kind = lineKind
-			let       rect = lineRect(            for: kind)
+		let           kind = lineKind
+		let           rect = lineRect(            for: kind)
+		if  let      child = childWidget, !rect.isEmpty {
 			let       path = linePath(in:  rect, kind: kind)
 			path.lineWidth = CGFloat(gLineThickness)
 			if  let  color = child.widgetZone?.color {

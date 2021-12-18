@@ -195,7 +195,7 @@ extension ZoneWidgetArray {
 				if  absolute {
 					w.updateAbsoluteFrame(relativeTo: controller)
 				} else if w.linesLevel > 0 {
-					let   angle = Double(w.placeAngle)
+					let   angle = Double(w.placeAngle) - kHalfPI
 					let rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
 					let  origin = center + rotated - offset
 					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)

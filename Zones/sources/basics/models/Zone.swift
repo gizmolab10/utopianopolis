@@ -345,7 +345,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			gNewOrExistingBookmark(targeting: self, addTo: parentZone).grab()
-			gRelayoutMaps(ofType: .both)
+			gRelayoutMaps()
 		}
 	}
 
@@ -1128,7 +1128,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						child.acquireZones(zones.reversed())
 					}
 
-					gRelayoutMaps(ofType: .both, for: parent) {
+					gRelayoutMaps(for: parent) {
 						completion(child)
 					}
 				}
@@ -1288,7 +1288,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			addNext(containing: containing) { iChild in
 				gDeferringRedraw = false
 
-				gRelayoutMaps(ofType: .both, for: self) {
+				gRelayoutMaps(for: self) {
 					onCompletion?(iChild)
 					iChild.edit()
 				}
@@ -1506,7 +1506,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func       focusRecent() { focusOn() { gRelayoutMaps(ofType: .big) } }
+	func       focusRecent() { focusOn() { gRelayoutMaps() } }
 	func editTraitForType(_ type: ZTraitType) { gTextEditor.edit(traitFor(type)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
@@ -2929,7 +2929,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 							if  let child = iChild {
 								self.expand()
-								gRelayoutMaps(ofType: .both, for: self) {
+								gRelayoutMaps(for: self) {
 									child.editAndSelect()
 								}
 							}
@@ -2956,7 +2956,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				gDeferringRedraw = false
 
-				gRelayoutMaps(ofType: .both, for: parent) {
+				gRelayoutMaps(for: parent) {
 					parent.editAndSelect(range: range)
 				}
 			}
@@ -2975,7 +2975,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		generationalUpdate(show: show, to: goal) {
-			gRelayoutMaps(ofType: .both, for: self)
+			gRelayoutMaps(for: self)
 		}
 	}
 
@@ -3121,7 +3121,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func reverseChildren() {
 		children.reverse()
 		respectOrder()
-		gRelayoutMaps(ofType: .both)
+		gRelayoutMaps()
 	}
 
 	func respectOrder() {
@@ -3215,7 +3215,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		gRelayoutMaps(ofType: .both, for: self)
+		gRelayoutMaps(for: self)
 	}
 
 	func updateMaxLevel() {
@@ -3239,7 +3239,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  self != gHere {
 				gRecents.focusOnGrab(.eSelected) {
-					gRelayoutMaps(ofType: .both)
+					gRelayoutMaps()
 				}
 			}
 		} else if isGrabbed && gCurrentlyEditingWidget == nil {
@@ -3250,7 +3250,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			grab()
 		}
 
-		gRelayoutMaps(ofType: .both, for: self)
+		gRelayoutMaps(for: self)
 	}
 
 	func revealDotClicked(_ flags: ZEventFlags) {
@@ -3264,16 +3264,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  isInSmallMap {
 				updateVisibilityInSmallMap(show)
-				gRelayoutMaps(ofType: .both)
+				gRelayoutMaps()
 			} else {
 				let goal = (COMMAND && show) ? Int.max : nil
 				generationalUpdate(show: show, to: goal) {
-					gRelayoutMaps(ofType: .both, for: self)
+					gRelayoutMaps(for: self)
 				}
 			}
 		} else if isTraveller {
 			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
-				gRelayoutMaps(ofType: .both)
+				gRelayoutMaps()
 			}
 		}
 	}
@@ -3492,13 +3492,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "i":      children.sortByCount()
 				case "m":      children.sortByLength()
 				case "n":      showNote()
-				case "o":      importFromFile(.eSeriously) { gRelayoutMaps(ofType: .both, for: self) }
+				case "o":      importFromFile(.eSeriously) { gRelayoutMaps(for: self) }
 				case "r":      reverseChildren()
 				case "s":      gFiles.export(self, toFileAs: .eSeriously)
-				case "t":      swapWithParent { gRelayoutMaps(ofType: .both, for: self) }
+				case "t":      swapWithParent { gRelayoutMaps(for: self) }
 				case "/":      focusRecent()
 				case kSpace:   addIdea()
-				case "\u{08}", kDelete: deleteSelf { gRelayoutMaps(ofType: .both) }
+				case "\u{08}", kDelete: deleteSelf { gRelayoutMaps() }
 				default:       break
 			}
 		}

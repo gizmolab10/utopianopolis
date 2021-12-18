@@ -297,17 +297,17 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func addLines() {
-		let expanded = widgetZone?.hasVisibleChildren ?? false
-
 		childrenLines.removeAll()
 		linesView?.removeAllSubpseudoviews()
 
-		if  isCircularMode || expanded {
-			for child in childrenWidgets {
-				addLine(for: child)
+		if  let zone = widgetZone {
+			if !zone.hasVisibleChildren {
+				addLine(for: nil)
+			} else {
+				for child in childrenWidgets {
+					addLine(for: child)
+				}
 			}
-		} else if !expanded {
-			addLine(for: nil)
 		}
 	}
 

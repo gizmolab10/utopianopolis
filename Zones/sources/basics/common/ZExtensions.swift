@@ -72,8 +72,7 @@ func gSignal(for object: Any? = nil, _ multiple: ZSignalKindArray, _ onCompletio
 
 private var canUpdate = true
 
-func gRelayoutMaps(ofType: ZRelayoutMapType = .both, for object: Any? = nil, _ onCompletion: Closure? = nil) {
-	gMapView?.clear(ofType: ofType)
+func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 	gSignal(for: object, [.spRelayout], onCompletion)
 }
 

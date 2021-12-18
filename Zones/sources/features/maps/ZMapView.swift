@@ -76,9 +76,8 @@ class ZMapView: ZView {
 	func removeAllTextViews(ofType: ZRelayoutMapType = .both) {
 		for subview in subviews {
 			if  let textView = subview as? ZoneTextWidget,
-				let inBig = textView.widgetZone?.widget?.isBigMap {
-				let shouldRemove = inBig ? (ofType != .small) : (ofType != .big)
-				if  shouldRemove {
+				let   widget = textView.widget {
+				if widget.isBigMap ? (ofType != .small) : (ofType != .big) {
 					textView.removeFromSuperview()
 				}
 			}
