@@ -78,7 +78,7 @@ class ZoneDot: ZPseudoView {
 			return isDragDrop        ||
 				((  zone.isTraveller ||
 					zone.count > 0)  &&
-					(   isLinearMode ||
+					(   isCircularMode ||
 						zone.hasVisibleChildren))
 		}
     }
@@ -298,10 +298,11 @@ class ZoneDot: ZPseudoView {
 			color.setFill()
 			color.setStroke()
 			drawSmallMapSideDot(in: iDirtyRect, parameters)
-		} else if  parameters.isReveal,
-				   !parameters.hasTarget,
-				   !parameters.showList,
-				   gCountsMode == .dots {
+		} else if  isLinearMode,
+			gCountsMode == .dots,
+			parameters.isReveal,
+			!parameters.hasTarget,
+			!parameters.showList {
 
 			// //////////////////
 			// TINY COUNT DOTS //

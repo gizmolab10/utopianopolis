@@ -25,6 +25,14 @@ enum InterfaceStyle : String {
     }
 }
 
+enum ZHighlightStyle: Int {
+	case ultraThin
+	case dashed
+	case thick
+	case thin
+	case none
+}
+
 enum ZRelayoutMapType: Int {
     case small
     case both

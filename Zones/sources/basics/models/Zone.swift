@@ -838,6 +838,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			|| gCurrentKeyPressed?.arrow != nil
 			|| gCurrentMouseDownZone     == self
 	}
+	
+	var isShowing: Bool {
+		if  let p = parentZone, p.isExpanded {
+			if  let w = widget, w.isLinearMode {
+				return true
+			}
+			
+			if  let name = recordName,
+				!gHiddenZones.contains(name) {
+				return true
+			}
+		}
+		
+		return false
+	}
 
 	// MARK: - core data
 	// MARK: -
@@ -2683,30 +2698,25 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		return false
 	}
-
-	func expand() {
-		var expansionSet = gExpandedZones
-
-		if  let name = recordName, !isBookmark, !expansionSet.contains(name) {
-			expansionSet.append(name)
-
-			gExpandedZones = expansionSet
+	
+	func add(to array: inout StringsArray) {
+		if  let name = recordName, !array.contains(name), !isBookmark {
+			array.append(name)
 		}
 	}
 
-	func collapse() {
-		var expansionSet = gExpandedZones
-
+	func remove(from array: inout StringsArray) {
 		if  let name = recordName {
-			while let index = expansionSet.firstIndex(of: name) {
-				expansionSet.remove(at: index)
+			while let index = array.firstIndex(of: name) {
+				array.remove(at: index)
 			}
 		}
-
-		if  gExpandedZones.count != expansionSet.count {
-			gExpandedZones        = expansionSet
-		}
 	}
+	
+	func     show() {    add(to:   &gHiddenZones) }
+	func   expand() {    add(to:   &gExpandedZones) }
+	func collapse() { remove(from: &gExpandedZones) }
+	func     hide() { remove(from: &gHiddenZones) }
 
 	func toggleChildrenVisibility() {
 		if  isExpanded {

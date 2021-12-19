@@ -45,7 +45,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			path.stroke()
         }
 
-		// draw dragged dot and line in active color
+		// draw dragging (dot and line) in active color
 
 		if  let      line = gDropLine {
 			let floatRect = line.absoluteDropDotRect

@@ -919,7 +919,6 @@ class ZMapEditor: ZBaseEditor {
 
 		if  let grabs = moveables {
 			moveUp(iMoveUp, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
-				gMapView?.clear(ofType: .both)
 				gSignal(kinds)
 			}
 		}

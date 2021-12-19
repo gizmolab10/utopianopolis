@@ -37,6 +37,7 @@ class ZoneLine: ZPseudoView {
 		}
 
 		if  let c         = childWidget, !c.hideDragDot,
+			let z         = c.widgetZone, z.isShowing,
 			dragDot      == nil {
 			dragDot       = ZoneDot(view: absoluteView)
 			dragDot?.line = self
@@ -92,7 +93,8 @@ class ZoneLine: ZPseudoView {
 	func drawLine() {
 		let           kind = lineKind
 		let           rect = lineRect(            for: kind)
-		if  let      child = childWidget, !rect.isEmpty {
+		if  let     parent = parentWidget?.widgetZone, parent.isExpanded,
+			let      child = childWidget, !rect.isEmpty {
 			let       path = linePath(in:  rect, kind: kind)
 			path.lineWidth = CGFloat(gLineThickness)
 			if  let  color = child.widgetZone?.color {

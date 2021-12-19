@@ -180,7 +180,7 @@ class ZoneWidget: ZPseudoView {
 			let vplus = visited + [zone]
 
 			while index           > 0 {
-				index            -= 1 // go backwards down the children arrays, bottom and top constraints expect it
+				index            -= 1 // go backwards down the children arrays, linear mode bottom and top constraints expect it
 				let child         = childrenWidgets[index]
 				child .widgetZone =            zone[index]
 				let    parentView = isLinearMode ? childrenView : parentPseudoView
@@ -201,6 +201,8 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func addTextView() {
+		if  isCircularMode, !(widgetZone?.isShowing ?? true) { return }
+
 		if  pseudoTextWidget == nil {
 			pseudoTextWidget  = ZPseudoView(view: absoluteView)
 
@@ -300,8 +302,8 @@ class ZoneWidget: ZPseudoView {
 		childrenLines.removeAll()
 		linesView?.removeAllSubpseudoviews()
 
-		if  let zone = widgetZone {
-			if !zone.hasVisibleChildren {
+		if  let zone = widgetZone, zone.isShowing {
+			if !zone.hasVisibleChildren, isLinearMode {
 				addLine(for: nil)
 			} else {
 				for child in childrenWidgets {
@@ -412,8 +414,8 @@ class ZoneWidget: ZPseudoView {
 	// MARK: - draw
 	// MARK: -
 
-	func drawSelectionHighlight(_ dashes: Bool, _ thin: Bool) {
-		if  highlightFrame.isEmpty {
+	func drawSelectionHighlight(_ style: ZHighlightStyle) {
+		if  highlightFrame.isEmpty || style == .none {
 			return
 		}
 
@@ -422,12 +424,15 @@ class ZoneWidget: ZPseudoView {
 		path.lineWidth = CGFloat(gDotWidth) / 3.5
 		path .flatness = 0.0001
 
-		if  dashes || thin {
-			path.addDashes()
-
-			if  thin {
-				path.lineWidth = CGFloat(1.5)
-			}
+		if  style == .dashed {
+			
+		}
+		
+		switch style {
+		case .dashed:    path.addDashes()
+		case .thin:      path.lineWidth = CGFloat(1.5)
+		case .ultraThin: path.lineWidth = CGFloat(0.5)
+		default:         break
 		}
 
 		color?.setStroke()
@@ -438,7 +443,7 @@ class ZoneWidget: ZPseudoView {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let zone = widgetZone {
 
-			ZBezierPath(rect: absoluteView!.bounds).setClip()
+//			ZBezierPath(rect: absoluteView!.bounds).setClip()
 
 			for line in childrenLines {   // this is after child dots have been autolayed out
 				line.draw(phase)
@@ -451,8 +456,9 @@ class ZoneWidget: ZPseudoView {
 						let  isEditing = t.isFirstResponder
 						let isHovering = t.isHovering
 
-						if  (isGrabbed || isEditing || isHovering || isCircularMode) && !gIsPrinting {
-							drawSelectionHighlight(isEditing, !isGrabbed && (isHovering || isCircularMode))
+						if  isGrabbed || isEditing || isHovering || isCircularMode {
+							let style: ZHighlightStyle = isEditing ? .dashed : isGrabbed ? .thick : isHovering ? .thin : isCircularMode ? .ultraThin : .none
+							drawSelectionHighlight(style)
 						}
 
 						debugDraw()

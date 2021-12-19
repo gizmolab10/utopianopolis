@@ -119,7 +119,7 @@ class ZTextPack: NSObject {
 		if !isEditing,
 			let         w = widget {
 			let  isLinear = w.isLinearMode
-			let threshold = isLinear ? 18 : 6
+			let threshold = isLinear ? 18 : 8
 			let      type = w.type
 			if  threshold < text.length,
 				!type.contains(.tExemplar),

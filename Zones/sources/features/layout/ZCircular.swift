@@ -153,27 +153,45 @@ extension ZoneWidget {
 
 	// MARK: - traverse
 	// MARK: -
-
-	func updateTextAndDotFrames(_ absolute: Bool = false) {
-		updateTextViewFrame(absolute)
-		updateAllDotFrames (absolute)
-	}
-
-	func updateByLevelAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
-		ZoneWidget.traverseAllVisibleWidgetsByLevel { (    level, widgets) in
-			widgets.updateAllWidgetFrames             (at: level, in: controller, absolute)
-		}
-
-		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			iWidget.updateTextAndDotFrames  (absolute)  // sets lineAngle
-		}
-	}
-
+	
 	func circlesGrandUpdate() {
 		updateByLevelAllFrames(in: controller)
 		updateFrameSize()
 		updateByLevelAllFrames(in: controller, true)
 		updateAbsoluteFrame(relativeTo: controller)
+	}
+
+	func updateByLevelAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
+		traverseAllWidgetsByLevel {          (level, widgets) in
+			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)
+		}
+		
+		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
+			iWidget.updateTextAndDotFrames  (absolute)  // sets lineAngle
+		}
+	}
+
+	func traverseAllWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
+		var    level = 1
+		var  widgets = childrenWidgets
+		
+		while widgets.count != 0 {
+			block(level, widgets)
+			
+			level   += 1
+			var next = ZoneWidgetArray()
+			
+			for widget in widgets {
+				next.append(contentsOf: widget.childrenWidgets)
+			}
+			
+			widgets  = next
+		}
+	}
+
+	func updateTextAndDotFrames(_ absolute: Bool = false) {
+		updateTextViewFrame(absolute)
+		updateAllDotFrames (absolute)
 	}
 
 }
@@ -186,10 +204,10 @@ extension ZoneWidgetArray {
 	var scrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
 
 	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
-		if  let center = controller?.mapPseudoView?.frame.center {
-			let   half = gCircularModeRadius
-			let offset = scrollOffset
+		if  let  frame = controller?.mapPseudoView?.frame {
 			let radius = ZoneWidget.ringRadius(at: level)
+			let center = frame.center - scrollOffset
+			let   half = gCircularModeRadius
 
 			for w in self {
 				if  absolute {
@@ -197,12 +215,10 @@ extension ZoneWidgetArray {
 				} else if w.linesLevel > 0 {
 					let   angle = Double(w.placeAngle) - kHalfPI
 					let rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
-					let  origin = center + rotated - offset
+					let  origin = center + rotated
 					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
 					w   .bounds = CGRect(origin:  .zero, size: rect.size)
 					w    .frame = rect
-
-//					print(" w \(widget.linesLevel) \(angle.stringTo(precision: 1)) \(widget)")
 				}
 			}
 		}
@@ -336,7 +352,7 @@ extension ZoneDot {
 			let    length = cToC.length
 			let     width = isReveal ? gDotHeight : gDotWidth
 			let      size = CGSize(width: width, height: gDotWidth)
-			let    radius = gCircularModeRadius + (width / 1.5) + 1.5
+			let    radius = gCircularModeRadius + 1.5 + (width / 4.0)
 			let   divisor = isReveal ? radius : (length - radius)
 			let     ratio = divisor / length
 			let    offset = cToC * ratio
@@ -349,26 +365,30 @@ extension ZoneDot {
 	}
 
 	func circlesDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		let     angle = line?.lineAngle ?? 0.0
-		let thickness = CGFloat(gLineThickness * 2.0)
-		let      rect = iDirtyRect.insetEquallyBy(thickness)
-		var      path = ZBezierPath()
-
-		if  parameters.isReveal {
-			path      = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
-		} else {
-			path      = ZBezierPath           .ovalPath(in: rect, at: angle)
+		if  let         l = line,
+			let         p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
+			let         c = l .childWidget?.widgetZone {
+			let     angle = l.lineAngle + CGFloat(c.isShowing ? .zero : kPI)
+			let thickness = CGFloat(gLineThickness * 2.0)
+			let      rect = iDirtyRect.insetEquallyBy(thickness)
+			var      path = ZBezierPath()
+			
+			if  parameters.isReveal {
+				path      = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
+			} else {
+				path      = ZBezierPath           .ovalPath(in: rect, at: angle)
+			}
+			
+			path.lineWidth = thickness
+			path .flatness = 0.0001
+			
+			path.stroke()
+			path.fill()
+			
+//			if  let z = widgetZone, gDebugDraw { // for debugging hover
+//				print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
+//			}
 		}
-
-		path.lineWidth = thickness
-		path .flatness = 0.0001
-
-		path.stroke()
-		path.fill()
-
-//		if  let z = widgetZone, gDebugDraw { // for debugging hover
-//			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
-//		}
 	}
 
 }

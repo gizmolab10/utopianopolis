@@ -38,7 +38,6 @@ var               gDropWidget:        ZoneWidget?
 var                gDropCrumb: ZBreadcrumbButton?
 var                gDragPoint:           CGPoint?
 var                 gDropLine:          ZoneLine?
-var                 gExpanded:      StringsArray?
 var     gCurrentMouseDownZone:              Zone?
 var gCurrentMouseDownLocation:           CGFloat?
 var       gCurrentBrowseLevel:               Int?
@@ -229,6 +228,27 @@ var gCoreDataMode : ZCoreDataMode {
 	get { return ZCoreDataMode(      rawValue: getPreferencesInt(for: kCoreDataMode, defaultInt: 0)) }
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
+
+fileprivate var gHidden: StringsArray?
+
+var gHiddenZones : StringsArray {
+	get {
+		if  gHidden == nil {
+			let  value = getPreferencesString(for: kHiddenZones, defaultString: kEmpty)
+			gHidden  = value?.components(separatedBy: kColonSeparator)
+		}
+		
+		return gHidden!
+	}
+	
+	set {
+		gHidden = newValue
+		
+		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kHiddenZones)
+	}
+}
+
+fileprivate var gExpanded: StringsArray?
 
 var gExpandedZones : StringsArray {
     get {

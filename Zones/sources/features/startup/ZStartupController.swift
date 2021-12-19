@@ -89,7 +89,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			let remains = 54 - count
 
 			if  remains > 0, count > 0 {
-				let    text = kSpace.repeatOf(count) + "-".repeatOf(remains)
+				let    text = kSpace.repeatedFor(count) + "-".repeatedFor(remains)
 				return text
 			}
 		}

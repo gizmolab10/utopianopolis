@@ -1148,20 +1148,6 @@ extension Zone {
 
 }
 
-extension ZoneWidget {
-
-	@objc func printView() { // ZoneWidget
-		let  view = ZMapView(frame: bounds)
-		let pView = ZoneWidget(view: absoluteView)
-
-		layoutAllPseudoViews(parentPseudoView: pView, for: .tBigMap, atIndex: nil, recursing: true, .spRelayout, visited: [])
-		view.setNeedsDisplay()
-		FOREGROUND {
-			view.printView()
-		}
-	}
-}
-
 extension ZoneLine {
 
 	func lineRect(to targetFrame: CGRect, kind: ZLineCurve?) -> CGRect {

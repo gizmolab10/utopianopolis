@@ -55,8 +55,11 @@ class ZMapView: ZView {
 				highlightMapView?.setup(.mHighlight)
 				fallthrough
 			default:
-				frame                  = superview!.bounds
 				zlayer.backgroundColor = CGColor.clear
+				
+				if  let s = superview {
+					frame = s.bounds
+				}
 		}
 	}
 
@@ -122,10 +125,6 @@ class ZMapView: ZView {
 		}
 	}
 
-	func drawDebug(for phase: ZDrawPhase) {
-
-	}
-
 	func clearRect(_ iDirtyRect: CGRect) {
 		if  iDirtyRect.isEmpty {
 			return
@@ -142,6 +141,15 @@ class ZMapView: ZView {
 
 			removeAllTextViews(ofType: ofType)
 		}
+	}
+
+	@objc override func printView() {
+		gDetailsController?.temporarilyHideView(for: .vSmallMap) {
+			clear(ofType: .small)
+			super.printView()
+		}
+		
+		gRelayoutMaps()
 	}
 
 }

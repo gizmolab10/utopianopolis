@@ -123,11 +123,11 @@ func ^^(lhs: Bool, rhs: Bool) -> Bool {
 
 extension NSObject {
 
-	func                  noop()                                {}
-    func           performance(_ iMessage: Any?)                { log(iMessage) }
-    func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? kEmpty)) }
-	func     printCurrentFocus()                                { gHere.widget?.printView() }
-	func     printCurrentEssay()                                { gEssayView?.printView() }
+	func              noop()                 {}
+    func       performance(_ iMessage: Any?) { log(iMessage) }
+	func               bam(_ iMessage: Any?) { log("\("-".repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
+	func printCurrentFocus()                 {   gMapView?.printView() }
+	func printCurrentEssay()                 { gEssayView?.printView() }
 
 	var zClassName: String {
 		var parts = className.components(separatedBy: ".")
@@ -2430,7 +2430,7 @@ extension String {
 		return nil
 	}
 
-	func repeatOf(_ length: Int) -> String {
+	func repeatedFor(_ length: Int) -> String {
 		var  count = length
 		var result = kEmpty
 
@@ -2445,7 +2445,7 @@ extension String {
 
 	func surround(with repeater: String) -> String {
 		let inner = smallSurround(with: kSpace).smallSurround(with: repeater)
-		let outer = repeater.repeatOf(count + 8)
+		let outer = repeater.repeatedFor(count + 8)
 
 		if  repeater == kEmpty {
 			return "\n\(inner)\n"
@@ -2455,7 +2455,7 @@ extension String {
 	}
 
 	func smallSurround(with repeater: String, repeating: Int = 2) -> String {
-		let small = repeater.repeatOf(repeating)
+		let small = repeater.repeatedFor(repeating)
 
 		return "\(small)\(self)\(small)"
 	}

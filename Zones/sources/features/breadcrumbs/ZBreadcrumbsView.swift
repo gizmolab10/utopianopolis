@@ -57,30 +57,31 @@ class ZBreadcrumbsView : ZButtonsView {
 		buttons = [ZBreadcrumbButton]()
 
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
-			let        button = ZBreadcrumbButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
-			button.font       = gSmallFont
+			let          name = zone.unwrappedName
+			let        button = ZBreadcrumbButton(title: name, target: self, action: #selector(crumbButtonAction(_:)))
+//			button.font       = gSmallFont
 			button.tag        = index
 			button.zone       = zone
 			button.isBordered = true
-			let         title = NSMutableAttributedString(string: zone.unwrappedName)
-			let         range = NSRange(location:0, length: title.length)
 			var    attributes = ZAttributesDictionary()
+			let    attributed = NSMutableAttributedString(string: name)
+			let         range = NSRange(location:0, length: name.length)
 			attributes[.font] = gSmallFont
 
 			if  zone.hasNote {
 				attributes[.underlineStyle] = 1
 			}
 
-			title.addAttributes(attributes, range: range)
+			attributed.addAttributes(attributes, range: range)
 			button.showsBorderOnlyWhileMouseInside = true
 			button.setButtonType(.momentaryPushIn)
 			button.updateTracking()
 
 			if  let color = zone.color {
-				title.addAttributes([.foregroundColor : color], range: range)
+				attributed.addAttributes([.foregroundColor : color], range: range)
 			}
 
-			button.attributedTitle = title
+			button.attributedTitle = attributed
 
 			button.updateTooltips()
 			buttons.append(button)
