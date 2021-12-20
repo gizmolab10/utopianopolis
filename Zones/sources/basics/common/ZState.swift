@@ -233,9 +233,9 @@ fileprivate var gHidden: StringsArray?
 
 var gHiddenZones : StringsArray {
 	get {
-		if  gHidden == nil {
-			let  value = getPreferencesString(for: kHiddenZones, defaultString: kEmpty)
-			gHidden  = value?.components(separatedBy: kColonSeparator)
+		if  gHidden  == nil {
+			let value = getPreferencesString(for: kHiddenZones, defaultString: kEmpty)
+			gHidden   = value?.components(separatedBy: kColonSeparator)
 		}
 		
 		return gHidden!

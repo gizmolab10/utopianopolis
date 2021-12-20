@@ -138,6 +138,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                   identifier() ->             String? { return isARoot ? databaseID.rawValue : recordName }
 	func                     toolName() ->             String? { return clippedName }
 	func                    toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
+	func                toggleShowing()                        { isShowing ? hide() : show() }
 	func                      recount()                        { updateAllProgenyCounts() }
 	class  func randomZone(in dbID: ZDatabaseID) ->      Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
@@ -840,15 +841,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 	
 	var isShowing: Bool {
-		if  let p = parentZone, p.isExpanded {
-			if  let w = widget, w.isLinearMode {
-				return true
-			}
-			
-			if  let name = recordName,
-				!gHiddenZones.contains(name) {
-				return true
-			}
+		if  let w = widget, w.isLinearMode {
+			return true
+		}
+		
+		if  let name = recordName,
+			!gHiddenZones.contains(name) {
+			return true
 		}
 		
 		return false
@@ -2699,6 +2698,47 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 	
+	enum ZVisibilityType : Int {
+		case expanded
+		case hidden
+		
+		var array : StringsArray {
+			switch self {
+			case .expanded: return gExpandedZones
+			case .hidden:   return gHiddenZones
+			}
+		}
+		
+		func setArray(_ array: StringsArray) {
+			switch self {
+			case .expanded: gExpandedZones = array
+			case .hidden:     gHiddenZones = array
+			}
+		}
+	}
+	
+	func add(to type: ZVisibilityType) {
+		var a = type.array
+
+		add(to: &a)
+		
+		if  type == .expanded {
+			for child in children {
+				child.remove(from: .hidden)
+			}
+		}
+		
+		type.setArray(a)
+	}
+	
+	func remove(from type: ZVisibilityType) {
+		var a = type.array
+
+		remove(from: &a)
+		
+		type.setArray(a)
+	}
+	
 	func add(to array: inout StringsArray) {
 		if  let name = recordName, !array.contains(name), !isBookmark {
 			array.append(name)
@@ -2713,10 +2753,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 	
-	func     show() {    add(to:   &gHiddenZones) }
-	func   expand() {    add(to:   &gExpandedZones) }
-	func collapse() { remove(from: &gExpandedZones) }
-	func     hide() { remove(from: &gHiddenZones) }
+	func     hide() {    add(  to: .hidden) }
+	func   expand() {    add(  to: .expanded) }
+	func collapse() { remove(from: .expanded) }
+	func     show() { remove(from: .hidden) }
 
 	func toggleChildrenVisibility() {
 		if  isExpanded {
@@ -3263,13 +3303,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRelayoutMaps(for: self)
 	}
 
-	func revealDotClicked(_ flags: ZEventFlags) {
+	func revealDotClicked(_ flags: ZEventFlags, isCircularMode: Bool = false) {
 		ungrabProgeny()
 
 		let COMMAND = flags.isCommand
 		let  OPTION = flags.isOption
 
-		if  count > 0, !OPTION, !isBookmark {
+		if  isCircularMode {
+			toggleShowing()
+			
+			if  isShowing {
+				parentZone?.expand()
+			}
+			
+			gRelayoutMaps()
+		} else if count > 0, !OPTION, !isBookmark {
 			let show = !isExpanded
 
 			if  isInSmallMap {

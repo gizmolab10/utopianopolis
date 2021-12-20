@@ -27,6 +27,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                    isExemplar : Bool           { return false }
 	var                      isBigMap : Bool           { return true }
 	var                      hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
+	var                          mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
 	var                 mapPseudoView : ZPseudoView?
 	var                    rootWidget : ZoneWidget?
 	var                      rootLine : ZoneLine?
@@ -292,7 +293,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				gTextEditor.stopCurrentEdit()
 
 				if  let   widget = detectWidget(gesture) {
-					if  let zone = widget.widgetZone {
+					if  var zone = widget.widgetZone {
 						gTemporarilySetMouseZone(zone)
 
 						if  let dot = detectDotIn(widget, gesture) {
@@ -305,12 +306,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 							// click in dot //
 							// ///////////////
 
-							if  dot.isReveal {
-								zone.revealDotClicked(flags)
-							} else { // else it is a drag dot
+							if !dot.isReveal {
 								multiple = [.spCrumbs] // update selection level and breadcrumbs
-
+								
 								zone.dragDotClicked(COMMAND, SHIFT)
+							} else {
+								if  dot.isLinearMode {
+									zone.revealDotClicked(flags)
+								} else if  let child = dot.line?.childWidget?.widgetZone {
+									child.revealDotClicked(flags, isCircularMode: true)
+								}
 							}
 						}
 					}
@@ -592,18 +597,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
         return nil
     }
-
-	func detectWidget(at location: CGPoint) -> ZoneWidget? {
-		if  let widgets = gWidgets.allWidgets(for: widgetType) {
-			for widget in widgets.reversed() {
-				if  widget.highlightFrame.contains(location) {
-					return widget
-				}
-			}
-		}
-
-		return nil
-	}
 
     func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
         var hit: ZoneDot?

@@ -327,3 +327,19 @@ extension ZoneDot {
 	}
 
 }
+
+extension ZMapController {
+	
+	func linesDetectWidget(at location: CGPoint) -> ZoneWidget? {
+		if  let widgets = gWidgets.allWidgets(for: widgetType) {
+			for widget in widgets.reversed() {
+				if  widget.highlightFrame.contains(location) {
+					return widget
+				}
+			}
+		}
+		
+		return nil
+	}
+	
+}

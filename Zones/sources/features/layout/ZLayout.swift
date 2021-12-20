@@ -110,3 +110,14 @@ extension ZoneDot {
 	}
 
 }
+
+extension ZMapController {
+	
+	func detectWidget(at location: CGPoint) -> ZoneWidget? {
+		switch mode {
+		case .linearMode:   return   linesDetectWidget(at: location)
+		case .circularMode: return circlesDetectWidget(at: location)
+		}
+	}
+	
+}

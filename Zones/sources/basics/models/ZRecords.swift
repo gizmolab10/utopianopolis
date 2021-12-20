@@ -145,8 +145,6 @@ class ZRecords: NSObject {
 				let name = root.recordName {
 				changed  = true
 				references.append(name)
-			} else {
-				break
 			}
 		}
 

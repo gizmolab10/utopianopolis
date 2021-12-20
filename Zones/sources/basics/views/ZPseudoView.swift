@@ -31,14 +31,15 @@ class ZPseudoView: NSObject {
 	var      identifier = NSUserInterfaceItemIdentifier("")
 	var  subpseudoviews = [ZPseudoView] ()
 	var superpseudoview : ZPseudoView?
-	var      controller : ZMapController? { return nil }
 	var      toolTipTag : NSView.ToolTipTag?
 	var    absoluteView : ZView?
 	var       drawnView : ZView?
-	var            mode : ZMapLayoutMode { return controller?.mapLayoutMode ?? .linearMode }
-	var    isLinearMode : Bool { return mode == .linearMode }
-	var  isCircularMode : Bool { return mode == .circularMode }
-
+	var      controller : ZMapController? { return nil }
+	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
+	var    isLinearMode : Bool            { return mode == .linearMode }
+	var  isCircularMode : Bool            { return mode == .circularMode }
+	var  detectionFrame : CGRect          { return isLinearMode ? absoluteFrame : absoluteFrame.expandedEquallyBy(4.0) }
+	
 	override var description: String { return toolTip ?? super.description }
 	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses
 	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }

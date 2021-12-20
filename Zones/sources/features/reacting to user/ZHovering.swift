@@ -59,14 +59,14 @@ extension ZoneWidget {
 
 	func detectHover(at location: CGPoint) -> Bool {
 		for line in childrenLines {
-			if  let r = line.revealDot, r.absoluteFrame.contains(location) {
+			if  let r = line.revealDot, r.detectionFrame.contains(location) {
 				gHovering.declareHover(r)
 
 				return true
 			}
 		}
 
-		if  let       d = parentLine?.dragDot,   d.absoluteFrame.contains(location) {
+		if  let       d = parentLine?.dragDot, d.detectionFrame.contains(location) {
 			gHovering.declareHover(d)
 
 			return true
@@ -88,9 +88,9 @@ extension ZMapController {
 			let       location = gMapView?.convert(w, from: gMapView?.window?.contentView) {
 			if  let     widget = detectWidget(at: location),
 				widget.detectHover(at: location) {
-				return   gMapView
+				return gMapView
 			} else if gHovering.clear() != nil {
-				return   gMapView
+				return gMapView
 			}
 		}
 

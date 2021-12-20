@@ -445,10 +445,6 @@ class ZoneWidget: ZPseudoView {
 
 //			ZBezierPath(rect: absoluteView!.bounds).setClip()
 
-			for line in childrenLines {   // this is after child dots have been autolayed out
-				line.draw(phase)
-			}
-
 			switch phase {
 				case .pDotsAndHighlight:
 					if  let          t = textWidget {
@@ -460,20 +456,20 @@ class ZoneWidget: ZPseudoView {
 							let style: ZHighlightStyle = isEditing ? .dashed : isGrabbed ? .thick : isHovering ? .thin : isCircularMode ? .ultraThin : .none
 							drawSelectionHighlight(style)
 						}
-
-						debugDraw()
 					}
 				default: break
+			}
+
+			for line in childrenLines {   // this is after child dots have been autolayed out
+				line.draw(phase)
 			}
 		}
     }
 
 	func debugDraw() {
 		if  gDebugDraw, isCircularMode, linesLevel != 0 {
-			highlightFrame             .drawColoredRect  (.red,   radius: 0.0)
-			absoluteFrame              .drawColoredRect  (.blue,  radius: 0.0)
-//			linesView?   .absoluteFrame.drawColoredRect  (.green)
-//			childrenView?.absoluteFrame.drawColoredRect  (.orange)
+			highlightFrame.drawColoredRect(.red,  radius: 0.0)
+			absoluteFrame .drawColoredRect(.blue, radius: 0.0)
 		}
 	}
 

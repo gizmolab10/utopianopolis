@@ -315,14 +315,9 @@ extension ZoneLine {
 		let  start = iRect.origin
 		let radius = iRect.size.hypotenuse
 		let    end = CGPoint(x: .zero, y: radius).rotate(by: Double(lineAngle)).offsetBy(start)
-		let   clip = CGRect(start: start, extent: end).expandedEquallyBy(10.0)
 
 		path.move(to: start)
 		path.line(to: end)
-
-		if  gDebugDraw {
-			clip.drawColoredRect(.green)
-		}
 
 		return path
 	}
@@ -368,7 +363,7 @@ extension ZoneDot {
 		if  let         l = line,
 			let         p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
 			let         c = l .childWidget?.widgetZone {
-			let     angle = l.lineAngle + CGFloat(c.isShowing ? .zero : kPI)
+			let     angle = l.lineAngle + CGFloat((c.isShowing && p.isExpanded) ? .zero : kPI)
 			let thickness = CGFloat(gLineThickness * 2.0)
 			let      rect = iDirtyRect.insetEquallyBy(thickness)
 			var      path = ZBezierPath()
@@ -384,11 +379,26 @@ extension ZoneDot {
 			
 			path.stroke()
 			path.fill()
-			
-//			if  let z = widgetZone, gDebugDraw { // for debugging hover
-//				print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
-//			}
 		}
 	}
 
+}
+
+extension ZMapController {
+	
+	func circlesDetectWidget(at location: CGPoint) -> ZoneWidget? {
+		var found : ZoneWidget?
+		rootWidget?.traverseWidgetProgeny(inReverse: true) { widget in
+			if  widget.highlightFrame.contains(location) {
+				found = widget
+				
+				return .eStop
+			}
+			
+			return .eContinue
+		}
+		
+		return found
+	}
+	
 }
