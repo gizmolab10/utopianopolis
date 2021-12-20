@@ -26,22 +26,24 @@ class ZoneLine: ZPseudoView {
 	var              length = CGFloat(25)
 
 	func addDots(sharedRevealDot: ZoneDot?) {
-		if  let p               = parentWidget {
-			if  revealDot      == nil {
-				revealDot       = sharedRevealDot ?? ZoneDot(view: absoluteView)
-				revealDot?.line = self
-
-				addSubpseudoview(revealDot)
-				revealDot?.setupForWidget(p, asReveal: true)
+		if  let p                    = parentWidget {
+			if  revealDot           == nil {
+				revealDot            = sharedRevealDot ?? ZoneDot(view: absoluteView)
+				if  revealDot?.line == nil {
+					revealDot?.line  = self
+					
+					addSubpseudoview(revealDot)
+					revealDot?.setupForWidget(p, asReveal: true)
+				}
 			}
 		}
-
+		
 		if  let c         = childWidget, !c.hideDragDot,
 			let z         = c.widgetZone, z.isShowing,
 			dragDot      == nil {
 			dragDot       = ZoneDot(view: absoluteView)
 			dragDot?.line = self
-
+			
 			addSubpseudoview(dragDot)
 			dragDot?.setupForWidget(c, asReveal: false)
 		}

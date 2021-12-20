@@ -76,10 +76,8 @@ class ZoneDot: ZPseudoView {
 			return !zone.isSmallMapHere
 		}   else {
 			return isDragDrop        ||
-				((  zone.isTraveller ||
-					zone.count > 0)  &&
-					(   isCircularMode ||
-						zone.hasVisibleChildren))
+				(   zone.isTraveller ||
+					zone.count > 0)
 		}
     }
 
