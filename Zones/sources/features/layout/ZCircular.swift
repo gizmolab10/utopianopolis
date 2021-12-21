@@ -46,18 +46,10 @@ extension ZoneWidget {
 
 	var circlesHighlightFrame : CGRect {
 		let center = absoluteFrame.center
-		let radius = gCircularModeRadius + 3.0
+		let radius = gCircleIdeaRadius + 3.0
 		let   rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
 
 		return rect
-	}
-
-	static func ringRadius(at level: Int) -> CGFloat {
-		let    thrice = gCircularModeRadius * 2.5
-		let increment = gDotWidth + thrice + gDotHeight
-		let     start = gDotWidth / 2.0
-
-		return  start + (CGFloat(level) * increment)
 	}
 
 	// MARK: - update
@@ -146,9 +138,9 @@ extension ZoneWidgetArray {
 
 	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
 		if  let  frame = controller?.mapPseudoView?.frame {
-			let radius = ZoneWidget.ringRadius(at: level)
+			let radius = ZWidgets.ringRadius(at: level)
 			let center = frame.center - scrollOffset
-			let   half = gCircularModeRadius
+			let   half = gCircleIdeaRadius
 
 			for w in self {
 				if  absolute {
@@ -288,7 +280,7 @@ extension ZoneDot {
 			let    length = cToC.length
 			let     width = isReveal ? gDotHeight : gDotWidth
 			let      size = CGSize(width: width, height: gDotWidth)
-			let    radius = gCircularModeRadius + 1.5 + (width / 4.0)
+			let    radius = gCircleIdeaRadius + 1.5 + (width / 4.0)
 			let   divisor = isReveal ? radius : (length - radius)
 			let     ratio = divisor / length
 			let    offset = cToC * ratio

@@ -57,6 +57,21 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}
+			
+			// now, draw children ring
+			
+			if  phase     == .pLines,
+				let center = rootWidget?.absoluteFrame.center {
+				ZWidgets.traverseAllVisibleWidgetsByLevel { (level, _) in
+					if  level     == 1 {
+						let radius = ZWidgets.ringRadius(at: level) + gCircleIdeaRadius + 5.0
+						let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
+						let  color = gAccentColor
+						
+						rect.drawColoredCircle(color, thickness: 0.8)
+					}
+				}
+			}
 		}
 	}
 
