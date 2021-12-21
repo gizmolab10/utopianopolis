@@ -2699,20 +2699,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 	
 	enum ZVisibilityType : Int {
-		case expanded
-		case hidden
+		case expand
+		case hide
 		
 		var array : StringsArray {
 			switch self {
-			case .expanded: return gExpandedZones
-			case .hidden:   return gHiddenZones
+			case .expand: return gExpandedZones
+			case .hide:   return gHiddenZones
 			}
 		}
 		
 		func setArray(_ array: StringsArray) {
 			switch self {
-			case .expanded: gExpandedZones = array
-			case .hidden:     gHiddenZones = array
+			case .expand: gExpandedZones = array
+			case .hide:     gHiddenZones = array
 			}
 		}
 	}
@@ -2722,9 +2722,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		add(to: &a)
 		
-		if  type == .expanded {
+		if  type == .expand {
 			for child in children {
-				child.remove(from: .hidden)
+				child.remove(from: .hide)
 			}
 		}
 		
@@ -2753,10 +2753,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 	
-	func     hide() {    add(  to: .hidden) }
-	func   expand() {    add(  to: .expanded) }
-	func collapse() { remove(from: .expanded) }
-	func     show() { remove(from: .hidden) }
+	func     hide() {    add(  to: .hide) }
+	func   expand() {    add(  to: .expand) }
+	func collapse() { remove(from: .expand) }
+	func     show() { remove(from: .hide) }
 
 	func toggleChildrenVisibility() {
 		if  isExpanded {

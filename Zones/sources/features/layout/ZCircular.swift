@@ -13,7 +13,7 @@ import Foundation
 
 extension ZoneWidget {
 
-	var                   placesCount :         Int { return ZoneWidget.placesCount(at: linesLevel) }
+	var                   placesCount :         Int { return ZWidgets.placesCount(at: linesLevel) }
 	var circlesSelectionHighlightPath : ZBezierPath { return ZBezierPath(ovalIn: highlightFrame) }
 	var                   spreadAngle :     CGFloat { return parentWidget?.incrementAngle ?? CGFloat(k2PI) }
 	var                incrementAngle :     CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
@@ -50,65 +50,6 @@ extension ZoneWidget {
 		let   rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
 
 		return rect
-	}
-
-	// MARK: - static methods
-	// MARK: -
-
-	static func placesCount(at iLevel: Int) -> Int {
-		var  level = iLevel
-		var  total = 1
-
-		while true {
-			let cCount = maxVisibleChildren(at: level)
-			level     -= 1
-
-			if  cCount > 0 {
-				total *= cCount
-			}
-
-			if  level  < 0 {
-				return total
-			}
-		}
-	}
-
-	static func maxVisibleChildren(at level: Int) -> Int {
-		let   children = visibleChildren(at: level - 1)
-		var maxVisible = 0
-
-		for child in children {
-			if  let  count = child.widgetZone?.visibleChildren.count,
-				maxVisible < count {
-				maxVisible = count
-			}
-		}
-
-		return maxVisible
-	}
-
-	static func traverseAllVisibleWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
-		var   level = 0
-		var widgets = visibleChildren(at: level)
-
-		while widgets.count != 0 {
-			block(level, widgets)
-
-			level  += 1
-			widgets = visibleChildren(at: level)
-		}
-	}
-
-	static func visibleChildren(at level: Int) -> ZoneWidgetArray {
-		var widgets = ZoneWidgetArray()
-
-		for widget in gHere.visibleWidgets {
-			if  widget.linesLevel == level {
-				widgets.append(widget)
-			}
-		}
-
-		return widgets
 	}
 
 	static func ringRadius(at level: Int) -> CGFloat {

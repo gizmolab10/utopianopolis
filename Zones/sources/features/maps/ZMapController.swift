@@ -54,7 +54,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func drawWidgets(for phase: ZDrawPhase) {
 		if  isBigMap || gDetailsViewIsVisible(for: .vSmallMap) {
 			rootLine?.draw(phase) // for here's drag dot
-			rootWidget?.traverseAllWidgetProgeny(inReverse: false) { widget in
+			rootWidget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}
 		}
@@ -293,7 +293,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				gTextEditor.stopCurrentEdit()
 
 				if  let   widget = detectWidget(gesture) {
-					if  var zone = widget.widgetZone {
+					if  let zone = widget.widgetZone {
 						gTemporarilySetMouseZone(zone)
 
 						if  let dot = detectDotIn(widget, gesture) {

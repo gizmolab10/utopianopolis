@@ -175,7 +175,7 @@ class ZoneWidget: ZPseudoView {
 		addLines()
 
 		if  recursing,
-			let  zone = widgetZone, !visited.contains(zone), zone.hasVisibleChildren {
+			let  zone = widgetZone, !visited.contains(zone), zone.hasVisibleChildren, zone.isShowing {
 			var index = childrenWidgets.count
 			let vplus = visited + [zone]
 
