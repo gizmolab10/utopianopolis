@@ -58,7 +58,6 @@ class ZoneDot: ZPseudoView {
     var          widgetZone : Zone?           { return widget?.widgetZone }
 	var               ratio : CGFloat         { return widget?.ratio ?? 1.0 }
 	var            isReveal = true
-	var          isHovering = false
 
 	var absoluteActualFrame: CGRect {
 		let offset = absoluteFrame.height / -9.0

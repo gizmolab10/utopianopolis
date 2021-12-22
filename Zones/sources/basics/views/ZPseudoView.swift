@@ -24,6 +24,7 @@ enum ZDrawPhase: String {
 
 class ZPseudoView: NSObject {
 
+	var      isHovering = false
 	var   absoluteFrame = CGRect .zero
 	var          bounds = CGRect .zero
 	var           frame = CGRect .zero
@@ -38,7 +39,7 @@ class ZPseudoView: NSObject {
 	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
 	var    isLinearMode : Bool            { return mode == .linearMode }
 	var  isCircularMode : Bool            { return mode == .circularMode }
-	var  detectionFrame : CGRect          { return isLinearMode ? absoluteFrame : absoluteFrame.expandedEquallyBy(4.0) }
+	var  detectionFrame : CGRect          { return isLinearMode ? absoluteFrame : absoluteFrame.expandedEquallyBy(gDotWidth / 3.0) }
 	
 	override var description: String { return toolTip ?? super.description }
 	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses

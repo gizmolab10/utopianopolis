@@ -982,13 +982,16 @@
 			path = layout;
 			sourceTree = "<group>";
 		};
-		A745ED0826AF4DE10013D1A4 /* reacting to user */ = {
+		A745ED0826AF4DE10013D1A4 /* ui */ = {
 			isa = PBXGroup;
 			children = (
 				A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */,
+				A7395BAE21B877B600F5759F /* ZMapEditor.swift */,
+				A7DF7DBB247AFE2800F03060 /* ZRubberband.swift */,
+				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
 				A706442D246E182400F90B86 /* ZTooltips.swift */,
 			);
-			path = "reacting to user";
+			path = ui;
 			sourceTree = "<group>";
 		};
 		A769977E24983C2C00DF289D /* breadcrumbs */ = {
@@ -1090,12 +1093,9 @@
 			children = (
 				A7B48A8023E0E80C00654DBD /* ZDragView.swift */,
 				0CB619951FB3C4660087B066 /* ZMapController.swift */,
-				A7395BAE21B877B600F5759F /* ZMapEditor.swift */,
 				A777A7AE260FAC0300361265 /* ZMapView.swift */,
-				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
 				A70644212461EC3600F90B86 /* ZSmallMapController.swift */,
 				A711059C25BB95E400D051E9 /* ZSmallMapRecords.swift */,
-				A7DF7DBB247AFE2800F03060 /* ZRubberband.swift */,
 			);
 			path = maps;
 			sourceTree = "<group>";
@@ -1146,7 +1146,7 @@
 				A7D2D65224902F8F00F652B0 /* help */,
 				A73A601C273DA36500703459 /* layout */,
 				A7DF4865249B1860008B35AC /* maps */,
-				A745ED0826AF4DE10013D1A4 /* reacting to user */,
+				A745ED0826AF4DE10013D1A4 /* ui */,
 				A7DF4868249B1A3E008B35AC /* search */,
 				A7DF4867249B19C6008B35AC /* startup */,
 				A796A7BC2686715A00B36F5D /* subscribe */,

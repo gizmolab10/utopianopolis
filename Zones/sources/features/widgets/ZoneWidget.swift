@@ -389,7 +389,7 @@ class ZoneWidget: ZPseudoView {
 			return view.frame
 		}
 
-		return absoluteFrame
+		return detectionFrame
 	}
 
     func widgetNearestTo(_ point: CGPoint, in iView: ZPseudoView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
@@ -423,10 +423,6 @@ class ZoneWidget: ZPseudoView {
 		let       path = selectionHighlightPath
 		path.lineWidth = CGFloat(gDotWidth) / 3.5
 		path .flatness = 0.0001
-
-		if  style == .dashed {
-			
-		}
 		
 		switch style {
 		case .dashed:    path.addDashes()
@@ -443,17 +439,30 @@ class ZoneWidget: ZPseudoView {
 		if (gIsMapOrEditIdeaMode || !type.isBigMap),
 			let zone = widgetZone {
 
-//			ZBezierPath(rect: absoluteView!.bounds).setClip()
-
 			switch phase {
 				case .pDotsAndHighlight:
-					if  let          t = textWidget {
-						let  isGrabbed = zone.isGrabbed
-						let  isEditing = t.isFirstResponder
-						let isHovering = t.isHovering
+					if  let         t = textWidget {
+						let isGrabbed = zone.isGrabbed
+						let isEditing = t.isFirstResponder
+						let tHovering = t.isHovering
 
-						if  isGrabbed || isEditing || isHovering || isCircularMode {
-							let style: ZHighlightStyle = isEditing ? .dashed : isGrabbed ? .thick : isHovering ? .thin : isCircularMode ? .ultraThin : .none
+						if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
+							var style = ZHighlightStyle.none
+
+							if  isEditing {
+								style = .dashed
+							} else if isHovering || isGrabbed {
+								style = .thick
+							} else if tHovering {
+								if  isCircularMode {
+									style = .dashed
+								} else {
+									style = .thin
+								}
+							} else if isCircularMode {
+								style = .ultraThin
+							}
+
 							drawSelectionHighlight(style)
 						}
 					}

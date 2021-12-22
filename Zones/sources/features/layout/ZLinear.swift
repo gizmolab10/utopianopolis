@@ -342,4 +342,53 @@ extension ZMapController {
 		return nil
 	}
 	
+	func linesHandleDetection(for gesture: ZKeyClickGestureRecognizer) -> Bool {
+		if  let   widget = detectWidget(gesture) {
+			var multiple = [ZSignalKind.sData]
+			if  let zone = widget.widgetZone {
+				gTemporarilySetMouseZone(zone)
+				
+				if  let   flags = gesture.modifiers,
+					let     dot = detectDotIn(widget, gesture) {
+					let COMMAND = flags.isCommand
+					let   SHIFT = flags.isShift
+					
+					if  gIsEssayMode {
+						gMainWindow?.makeFirstResponder(gMapView)
+					}
+					
+					// ///////////////
+					// click in dot //
+					// ///////////////
+					
+					if !dot.isReveal {
+						multiple = [.spCrumbs] // update selection level and breadcrumbs
+						
+						zone.dragDotClicked(COMMAND, SHIFT)
+					} else {
+						if  dot.isLinearMode {
+							zone.revealDotClicked(flags)
+						} else if  let child = dot.line?.childWidget?.widgetZone {
+							child.revealDotClicked(flags, isCircularMode: true)
+						}
+					}
+				}
+			}
+			
+			gSignal(multiple)
+			
+			return true
+		}
+		
+		return false
+	}
+	
+	func linesDetectDot(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
+		if  let widget = detectWidget (iGesture) {
+			return detectDotIn(widget, iGesture)
+		}
+		
+		return nil
+	}
+
 }

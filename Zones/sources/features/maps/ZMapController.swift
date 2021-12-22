@@ -63,8 +63,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			if  phase     == .pLines,
 				let center = rootWidget?.absoluteFrame.center {
 				ZWidgets.traverseAllVisibleWidgetsByLevel { (level, _) in
-					if  level     == 1 {
-						let radius = ZWidgets.ringRadius(at: level) + gCircleIdeaRadius + 5.0
+					if  level     >= 1 {
+						let radius = ZWidgets.ringRadius(at: level) // + gCircleIdeaRadius + 5.0
 						let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
 						let  color = gAccentColor
 						
@@ -250,7 +250,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					cleanupAfterDrag()
 					restartGestureRecognition()
 					gSignal([.spPreferences, .sDatum])                            // so color well and indicators get updated
-				} else if let  dot = detectDot(iGesture),
+				} else if let  dot = detectDot(gesture),
 						  let zone = dot.widgetZone {
 					if  dot.isReveal {
 						cleanupAfterDrag()                        // no dragging
@@ -278,12 +278,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
-		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer,
-		    let      flags  = gesture.modifiers {
-            let    COMMAND  = flags.isCommand
-			let      SHIFT  = flags.isShift
+		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer {
             let editWidget  = gCurrentlyEditingWidget
-            var   multiple  = [ZSignalKind.sData]
             var  notInEdit  = true
 
 			printDebug(.dClick, "only")
@@ -307,34 +303,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 				gTextEditor.stopCurrentEdit()
 
-				if  let   widget = detectWidget(gesture) {
-					if  let zone = widget.widgetZone {
-						gTemporarilySetMouseZone(zone)
-
-						if  let dot = detectDotIn(widget, gesture) {
-
-							if  gIsEssayMode {
-								gMainWindow?.makeFirstResponder(gMapView)
-							}
-
-							// ///////////////
-							// click in dot //
-							// ///////////////
-
-							if !dot.isReveal {
-								multiple = [.spCrumbs] // update selection level and breadcrumbs
-								
-								zone.dragDotClicked(COMMAND, SHIFT)
-							} else {
-								if  dot.isLinearMode {
-									zone.revealDotClicked(flags)
-								} else if  let child = dot.line?.childWidget?.widgetZone {
-									child.revealDotClicked(flags, isCircularMode: true)
-								}
-							}
-						}
-					}
-				} else if gIsMapMode {
+				if  !handleDetection(for: gesture), gIsMapMode {
 
 					// //////////////////////
 					// click in background //
@@ -348,8 +317,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					gControllers.swapMapAndEssay(force: .wMapMode)
 				}
 
-
-                gSignal(multiple)
+                gSignal([ZSignalKind.sData])
             }
 
             restartGestureRecognition()
@@ -619,7 +587,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         if  let                d = gMapView,
             let         location = iGesture?.location(in: d) {
             let test: DotClosure = { iDot in
-                if  iDot?.absoluteFrame.contains(location) ?? false {
+                if  iDot?.detectionFrame.contains(location) ?? false {
                     hit = iDot
                 }
             }
@@ -632,14 +600,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
         return hit
-    }
-
-    func detectDot(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        if  let widget = detectWidget (iGesture) {
-            return detectDotIn(widget, iGesture)
-        }
-
-        return nil
     }
 
 }

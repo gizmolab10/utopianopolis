@@ -120,4 +120,18 @@ extension ZMapController {
 		}
 	}
 	
+	func handleDetection(for gesture: ZKeyClickGestureRecognizer) -> Bool {
+		switch mode {
+		case .linearMode:   return   linesHandleDetection(for: gesture)
+		case .circularMode: return circlesHandleDetection(for: gesture)
+		}
+	}
+
+	func detectDot(_ gesture: ZGestureRecognizer) -> ZoneDot? {
+		switch mode {
+		case .linearMode:   return   linesDetectDot(gesture)
+		case .circularMode: return circlesDetectDot(gesture)
+		}
+	}
+
 }

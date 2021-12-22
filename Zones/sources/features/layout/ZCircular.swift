@@ -322,7 +322,7 @@ extension ZMapController {
 	func circlesDetectWidget(at location: CGPoint) -> ZoneWidget? {
 		var found : ZoneWidget?
 		rootWidget?.traverseWidgetProgeny(inReverse: true) { widget in
-			if  widget.highlightFrame.contains(location) {
+			if  widget.detectionFrame.contains(location) {
 				found = widget
 				
 				return .eStop
@@ -334,4 +334,64 @@ extension ZMapController {
 		return found
 	}
 	
+	func circlesHandleDetection(for gesture: ZKeyClickGestureRecognizer) -> Bool {
+		let   location = gesture.location(in: gMapView)
+		if  let widget = circlesDetectWidget(at: location),
+			let   zone = widget.widgetZone {
+			gTemporarilySetMouseZone(zone)
+			zone.grab()
+			
+			return true
+		} else if let flags = gesture.modifiers,
+			let         dot = circlesDetectDot(gesture),
+			let        zone = dot.widgetZone {
+			let     COMMAND = flags.isCommand
+			let       SHIFT = flags.isShift
+			var    multiple = [ZSignalKind.sData]
+			
+			if  gIsEssayMode {
+				gMainWindow?.makeFirstResponder(gMapView)
+			}
+			
+			// ///////////////
+			// click in dot //
+			// ///////////////
+			
+			if !dot.isReveal {
+				multiple = [.spCrumbs] // update selection level and breadcrumbs
+				
+				zone.dragDotClicked(COMMAND, SHIFT)
+			} else {
+				if  dot.isLinearMode {
+					zone.revealDotClicked(flags)
+				} else if  let child = dot.line?.childWidget?.widgetZone {
+					child.revealDotClicked(flags, isCircularMode: true)
+				}
+			}
+			
+			gTemporarilySetMouseZone(zone)
+			gSignal(multiple)
+			
+			return true
+		}
+		
+		return false
+	}
+
+func circlesDetectDot(_ iGesture: ZGestureRecognizer?) -> ZoneDot? {
+	var dot : ZoneDot?
+
+	rootWidget?.traverseWidgetProgeny { widget in
+		dot = detectDotIn(widget, iGesture)
+
+		if  dot != nil {
+			return .eStop
+		}
+		
+		return .eContinue
+	}
+	
+	return dot
+}
+
 }

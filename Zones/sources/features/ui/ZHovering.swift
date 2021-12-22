@@ -13,6 +13,7 @@ let gHovering = ZHovering()
 class ZHovering: NSObject {
 
 	var dot          : ZoneDot?
+	var widget       : ZoneWidget?
 	var textWidget   : ZoneTextWidget?
 
 	var absoluteView : ZView? {
@@ -20,6 +21,8 @@ class ZHovering: NSObject {
 			return t
 		} else if let m = dot?.absoluteView as? ZMapView {
 			return    m.dotsAndLinesView
+		} else if let w = widget?.absoluteView as? ZMapView {
+			return    w
 		}
 
 		return nil
@@ -28,29 +31,42 @@ class ZHovering: NSObject {
 	@discardableResult func clear() -> ZView? {
 		let            cleared = absoluteView
 		dot?       .isHovering = false
+		widget?    .isHovering = false
 		textWidget?.isHovering = false
 		dot                    = nil
+		widget                 = nil
 		textWidget             = nil
 
 		return cleared
 	}
-
-	func declareHover(_ iDot: ZoneDot?) {
+	
+	func setHover(on pseudoView: ZPseudoView) {
 		clear()
 
-		if  let           d = iDot {
-			dot             = d
-			dot?.isHovering = true
+		if  let       d = pseudoView as? ZoneDot {
+			dot         = d
+		} else if let w = pseudoView as? ZoneWidget {
+			widget      = w
 		}
 	}
 
-	func declareHover(_ iTextWidget: ZoneTextWidget?) {
+	func declareHover(_ iTextWidget: ZoneTextWidget?) -> Bool {
 		clear()
-
-		if  let                  t = iTextWidget {
-			textWidget             = t
-			textWidget?.isHovering = true
+		
+		if  let        t = iTextWidget {
+			textWidget   = t
+			t.isHovering = true
 		}
+
+		return true
+	}
+
+	func declareHover(_ view: ZPseudoView) -> Bool {
+		setHover(on: view)
+
+		view.isHovering = true
+
+		return true
 	}
 
 }
@@ -58,22 +74,19 @@ class ZHovering: NSObject {
 extension ZoneWidget {
 
 	func detectHover(at location: CGPoint) -> Bool {
-		for line in childrenLines {
-			if  let r = line.revealDot, r.detectionFrame.contains(location) {
-				gHovering.declareHover(r)
-
-				return true
+		if  let           z = widgetZone, z.isShowing {
+			for line in childrenLines {
+				if  let   r = line.revealDot,      r.detectionFrame.contains(location) {
+					return gHovering.declareHover(r)
+				}
 			}
-		}
-
-		if  let       d = parentLine?.dragDot, d.detectionFrame.contains(location) {
-			gHovering.declareHover(d)
-
-			return true
-		} else if let t = pseudoTextWidget, t.absoluteFrame.contains(location) {
-			gHovering.declareHover(textWidget)
-
-			return true
+			if  let       d = parentLine?.dragDot, d.detectionFrame.contains(location) {
+				return gHovering.declareHover(d)
+			} else if let t = pseudoTextWidget,    t.detectionFrame.contains(location) {
+				return gHovering.declareHover(textWidget)
+			} else if isCircularMode,                detectionFrame.contains(location) {
+				return gHovering.declareHover(self)
+			}
 		}
 
 		return false
