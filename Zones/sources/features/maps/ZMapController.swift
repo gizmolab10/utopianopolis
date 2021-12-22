@@ -250,11 +250,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					cleanupAfterDrag()
 					restartGestureRecognition()
 					gSignal([.spPreferences, .sDatum])                            // so color well and indicators get updated
-				} else if let  dot = detectDot(gesture),
-						  let zone = dot.widgetZone {
+				} else if let any = detect(at: location),
+					let       dot = any as? ZoneDot {
 					if  dot.isReveal {
 						cleanupAfterDrag()                        // no dragging
-						zone.revealDotClicked(flags)
+						dot.widgetZone?.revealDotClicked(flags)
 					} else {
 						dragStartEvent(dot, iGesture)             // start dragging a drag dot
 					}
@@ -279,6 +279,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
 		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer {
+			let   location  = gesture.location(in: gMapView)
             let editWidget  = gCurrentlyEditingWidget
             var  notInEdit  = true
 
@@ -290,7 +291,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				// detect click inside text being edited //
 				// ////////////////////////////////////////
 
-                let location = gesture.location(in: gMapView)
                 let textRect = editWidget!.convert(editWidget!.bounds, to: gMapView)
                 notInEdit    = !textRect.contains(location)
             }
@@ -302,8 +302,20 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				}
 
 				gTextEditor.stopCurrentEdit()
-
-				if  !handleDetection(for: gesture), gIsMapMode {
+				
+				if  let any = detect(at: location) {
+					if  let w = any as? ZoneWidget,
+						let z = w.widgetZone {
+						z.grab()
+					} else if let d = any as? ZoneDot,
+						let z = d.widgetZone {
+						if  d.isReveal {
+							z.toggleShowing()
+						} else {
+							z.grab()
+						}
+					}
+				} else if gIsMapMode {
 
 					// //////////////////////
 					// click in background //
@@ -565,42 +577,26 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // MARK: - detect
     // MARK: -
 
-    func detectWidget(_ iGesture: ZGestureRecognizer?) -> ZoneWidget? {
+	func detect(at location: CGPoint) -> Any? {
+		var any : Any?
+		
 		if  isBigMap,
-			let    widget = gSmallMapController?.detectWidget(iGesture) {
-			return widget
+			let    any = gSmallMapController?.detect(at: location) {
+			return any
 		}
 
-		if  let        v = gMapView,
-            let location = iGesture?.location(in: v),
-			v.bounds.contains(location) {
-
-			return detectWidget(at: location)
-        }
-
-        return nil
-    }
-
-    func detectDotIn(_ widget: ZoneWidget, _ iGesture: ZGestureRecognizer?) -> ZoneDot? {
-        var hit: ZoneDot?
-
-        if  let                d = gMapView,
-            let         location = iGesture?.location(in: d) {
-            let test: DotClosure = { iDot in
-                if  iDot?.detectionFrame.contains(location) ?? false {
-                    hit = iDot
-                }
-            }
-
-            test(widget.parentLine?.dragDot)
-
-			for childLine in widget.childrenLines {
-				test(childLine.revealDot)
+		rootWidget?.traverseWidgetProgeny(inReverse: true) { (widget) -> (ZTraverseStatus) in
+			if  let a = widget.detect(at: location) {
+				any   = a
+				
+				return .eStop
 			}
-        }
 
-        return hit
-    }
+			return .eContinue
+		}
+
+		return any
+	}
 
 }
 

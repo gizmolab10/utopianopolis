@@ -49,46 +49,23 @@ class ZHovering: NSObject {
 			widget      = w
 		}
 	}
-
-	func declareHover(_ iTextWidget: ZoneTextWidget?) -> Bool {
-		clear()
-		
-		if  let        t = iTextWidget {
+	
+	func declareHover(_ any: Any?) -> Bool {
+		if  let p = any as? ZPseudoView {
+			setHover(on: p)
+			
+			p.isHovering = true
+			
+			return true
+		} else if let t = any as? ZoneTextWidget {
+			clear()
+			
 			textWidget   = t
 			t.isHovering = true
+
+			return true
 		}
-
-		return true
-	}
-
-	func declareHover(_ view: ZPseudoView) -> Bool {
-		setHover(on: view)
-
-		view.isHovering = true
-
-		return true
-	}
-
-}
-
-extension ZoneWidget {
-
-	func detectHover(at location: CGPoint) -> Bool {
-		if  let           z = widgetZone, z.isShowing {
-			for line in childrenLines {
-				if  let   r = line.revealDot,      r.detectionFrame.contains(location) {
-					return gHovering.declareHover(r)
-				}
-			}
-			if  let       d = parentLine?.dragDot, d.detectionFrame.contains(location) {
-				return gHovering.declareHover(d)
-			} else if let t = pseudoTextWidget,    t.detectionFrame.contains(location) {
-				return gHovering.declareHover(textWidget)
-			} else if isCircularMode,                detectionFrame.contains(location) {
-				return gHovering.declareHover(self)
-			}
-		}
-
+		
 		return false
 	}
 
@@ -97,12 +74,12 @@ extension ZoneWidget {
 extension ZMapController {
 
 	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
-		if  let              w = locationInWindow,
-			let       location = gMapView?.convert(w, from: gMapView?.window?.contentView) {
-			if  let     widget = detectWidget(at: location),
-				widget.detectHover(at: location) {
-				return gMapView
-			} else if gHovering.clear() != nil {
+		if  let location = locationInWindow {
+			if  let  any = detect(at: location) {
+				if  gHovering.declareHover(any) {
+					return gMapView
+				}
+			} else if  gHovering.clear() != nil {
 				return gMapView
 			}
 		}

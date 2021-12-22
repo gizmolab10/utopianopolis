@@ -845,7 +845,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return true
 		}
 		
-		if  let name = recordName,
+		if  let p = parentZone, p.isExpanded,
+			let name = recordName,
 			!gHiddenZones.contains(name) {
 			return true
 		}

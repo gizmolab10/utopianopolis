@@ -313,6 +313,25 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
+	func detect(at location: CGPoint) -> Any? {
+		if  let            z = widgetZone, z.isShowing {
+			for line in childrenLines {
+				if  let    r = line.revealDot,      r.detectionFrame.contains(location) {
+					return r
+				}
+			}
+			if  let        d = parentLine?.dragDot, d.detectionFrame.contains(location) {
+				return     d
+			} else if let  t = pseudoTextWidget,    t.detectionFrame.contains(location) {
+				return     textWidget
+			} else if isCircularMode,                 detectionFrame.contains(location) {
+				return     self
+			}
+		}
+		
+		return nil
+	}
+
 	func traverseAllWidgetAncestors(visited: ZoneWidgetArray = [], _ block: ZoneWidgetClosure) {
 		if !visited.contains(self) {
 			block(self)
