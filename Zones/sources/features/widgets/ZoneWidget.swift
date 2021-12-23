@@ -440,13 +440,13 @@ class ZoneWidget: ZPseudoView {
 
 		let      color = widgetZone?.color?.withAlphaComponent(0.30)
 		let       path = selectionHighlightPath
-		path.lineWidth = CGFloat(gDotWidth) / 3.5
+		path.lineWidth = CGFloat(gLineThickness * 3.5)
 		path .flatness = 0.0001
 		
 		switch style {
 		case .dashed:    path.addDashes()
-		case .thin:      path.lineWidth = CGFloat(1.5)
-		case .ultraThin: path.lineWidth = CGFloat(0.5)
+		case .thin:      path.lineWidth *= 0.5
+		case .ultraThin: path.lineWidth *= 0.2
 		default:         break
 		}
 

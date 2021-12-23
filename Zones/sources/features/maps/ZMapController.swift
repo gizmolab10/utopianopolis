@@ -304,16 +304,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				gTextEditor.stopCurrentEdit()
 				
 				if  let any = detect(at: location) {
-					if  let w = any as? ZoneWidget,
-						let z = w.widgetZone {
-						z.grab()
+					if  let w = any as? ZoneWidget {
+						w.widgetZone?.grab()
 					} else if let d = any as? ZoneDot,
-						let z = d.widgetZone {
-						if  d.isReveal {
-							z.toggleShowing()
-						} else {
-							z.grab()
-						}
+						let   flags = gesture.modifiers {
+						d.widgetZone?.dotClicked(flags, isReveal: d.isReveal)
 					}
 				} else if gIsMapMode {
 

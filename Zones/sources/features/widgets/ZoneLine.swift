@@ -75,6 +75,10 @@ class ZoneLine: ZPseudoView {
 			if  dFrame.isInfinite {
 				print("ack!")
 			}
+//			if  dFrame.isEmpty,
+//				let zone = childWidget?.widgetZone {
+//				print("empty \(zone) drag dot rect")
+//			}
 			return lineRect(to: dFrame, kind: kind)
 		}
 
@@ -95,7 +99,7 @@ class ZoneLine: ZPseudoView {
 	func drawLine() {
 		let           kind = lineKind
 		let           rect = lineRect(for: kind)
-		if  let      child = childWidget, !rect.isEmpty,
+		if  let      child = childWidget,
 			let      color = child.widgetZone?.color {
 			let       path = linePath(in:  rect, kind: kind)
 			path.lineWidth = CGFloat(gLineThickness)
@@ -104,6 +108,12 @@ class ZoneLine: ZPseudoView {
 				ZBezierPath(rect: gMapView!.bounds).setClip()
 				
 				if  let  p = parentWidget?.widgetZone, !p.isExpanded {
+					return
+				}
+				
+				if  rect.isEmpty,
+					let zone = childWidget?.widgetZone {
+					print("empty \(zone) line rect")
 					return
 				}
 			}

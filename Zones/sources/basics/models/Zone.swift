@@ -3284,7 +3284,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func dragDotClicked(_ COMMAND: Bool, _ SHIFT: Bool) {
+	func dragDotClicked(_ flags: ZEventFlags) {
+		let COMMAND = flags.isCommand
+		let   SHIFT = flags.isShift
+
 		if  COMMAND {
 			grab() // narrow selection to just this one zone
 
@@ -3335,6 +3338,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				gRelayoutMaps()
 			}
 		}
+	}
+	
+	func dotClicked(_ flags: ZEventFlags, isReveal: Bool, isCircularMode: Bool = false) {
+		if  isReveal {
+			revealDotClicked(flags, isCircularMode: isCircularMode)
+		} else {
+			dragDotClicked  (flags)
+		}
+
 	}
 
 	func updateVisibilityInSmallMap(_ show: Bool) {
