@@ -12,16 +12,16 @@ let gHovering = ZHovering()
 
 class ZHovering: NSObject {
 
-	var dot          : ZoneDot?
-	var widget       : ZoneWidget?
-	var textWidget   : ZoneTextWidget?
+	var dot           : ZoneDot?
+	var widget        : ZoneWidget?
+	var textWidget    : ZoneTextWidget?
 
-	var absoluteView : ZView? {
-		if  let    t = textWidget?.widget?.absoluteView as? ZMapView {
-			return t
-		} else if let m = dot?.absoluteView as? ZMapView {
+	var absoluteView  : ZView? {
+		if  let     t = textWidget?.widget?.absoluteView as? ZMapView {
+			return  t
+		} else if let m = dot?             .absoluteView as? ZMapView {
 			return    m.dotsAndLinesView
-		} else if let w = widget?.absoluteView as? ZMapView {
+		} else if let w = widget?          .absoluteView as? ZMapView {
 			return    w
 		}
 
@@ -29,7 +29,7 @@ class ZHovering: NSObject {
 	}
 
 	@discardableResult func clear() -> ZView? {
-		let            cleared = absoluteView
+		let            cleared = absoluteView // do this before setting to nil (below)
 		dot?       .isHovering = false
 		widget?    .isHovering = false
 		textWidget?.isHovering = false
@@ -50,23 +50,23 @@ class ZHovering: NSObject {
 		}
 	}
 	
-	func declareHover(_ any: Any?) -> Bool {
+	@discardableResult func declareHover(_ any: Any?) -> ZView? {
 		if  let p = any as? ZPseudoView {
 			setHover(on: p)
 			
 			p.isHovering = true
 			
-			return true
+			return p.absoluteView
 		} else if let t = any as? ZoneTextWidget {
 			clear()
 			
 			textWidget   = t
 			t.isHovering = true
 
-			return true
+			return t.widget?.pseudoTextWidget?.absoluteView
 		}
 		
-		return false
+		return nil
 	}
 
 }
@@ -74,13 +74,13 @@ class ZHovering: NSObject {
 extension ZMapController {
 
 	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
-		if  let location = locationInWindow {
-			if  let  any = detect(at: location) {
-				if  gHovering.declareHover(any) {
-					return gMapView
+		if  let     location = locationInWindow {
+			if  let      any = detect(at: location) {
+				if  let    v = gHovering.declareHover(any) {
+					return v
 				}
-			} else if  gHovering.clear() != nil {
-				return gMapView
+			} else if let  v = gHovering.clear() {
+				return     v
 			}
 		}
 

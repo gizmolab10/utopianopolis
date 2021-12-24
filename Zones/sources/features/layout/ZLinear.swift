@@ -207,7 +207,7 @@ extension ZoneLine {
 		return .zero
 	}
 
-	var linesAbsoluteDropDotRect: CGRect {
+	var linesAbsoluteDropDragDotRect: CGRect {
 		var rect = CGRect()
 
 		if  let zone = parentWidget?.widgetZone {
@@ -243,9 +243,9 @@ extension ZoneLine {
 
 					} else if lastIndex < zone.count, let secondDot = parentWidget?.dot(at: lastIndex) {
 
-						// ///////////////
-						// DOT IS TWEEN //
-						// ///////////////
+						// /////////////// //
+						// DOT IS STRAIGHT //
+						// /////////////// //
 
 						let secondRect = secondDot.absoluteActualFrame
 						let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)

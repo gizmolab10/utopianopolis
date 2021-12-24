@@ -29,32 +29,10 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 	}
 
     override func draw(_ dirtyRect: CGRect) {
-        super.draw(dirtyRect)
-
         kClearColor.setFill()
-		kClearColor.setStroke()
         ZBezierPath(rect: bounds).fill() // transparent background
-
-		// draw dashed rectangle in active color for rubberband
-
-		if  let rect = gRubberband.rubberbandRect {
-			gActiveColor.accountingForDarkMode.lighter(by: 2.0).setStroke()
-			let path = ZBezierPath(rect: rect)
-			path.lineWidth = gIsDark ? 3.0 : 2.0
-			path.addDashes()
-			path.stroke()
-        }
-
-		// draw dragging (dot and line) in active color
-
-		if  let      line = gDropLine {
-			let floatRect = line.absoluteDropDotRect
-
-			gActiveColor.setFill()
-            gActiveColor.setStroke()
-			ZBezierPath(ovalIn: floatRect).fill()  // target [floater] dot
-			line.drawDragLine(to: floatRect)
-        }
+		gRubberband.draw()
+		gDropLine?.drawDraggingLineAndDot()
 	}
 
 	override func mouseExited(with event: ZEvent) {

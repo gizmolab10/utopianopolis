@@ -109,7 +109,9 @@ class ZMapView: ZView {
 				highlightMapView?.draw(iDirtyRect)
 			default:
 				for phase in ZDrawPhase.allInOrder {
-					if  (phase == .pDotsAndHighlight) != (mapID == .mDotsAndLines) {
+					let isDotsAndLinesMap = mapID == .mDotsAndLines
+					let isHighlightsPhase = phase == .pHighlights
+					if  isHighlightsPhase != isDotsAndLinesMap {
 						ZBezierPath(rect: iDirtyRect).setClip()
 
 						switch mapID {

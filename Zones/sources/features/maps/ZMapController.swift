@@ -19,7 +19,6 @@ var gMapView:       ZMapView?       { return gDragView?.mapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
-	var                   placeAngles = [Int : [Double]]()
 	var           priorScrollLocation = CGPoint.zero
 	var                 mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	override  var        controllerID : ZControllerID  { return .idBigMap }
@@ -64,7 +63,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				let center = rootWidget?.absoluteFrame.center {
 				ZWidgets.traverseAllVisibleWidgetsByLevel { (level, _) in
 					if  level     >= 1 {
-						let radius = ZWidgets.ringRadius(at: level) // + gCircleIdeaRadius + 5.0
+						let radius = ZWidgets.ringRadius(at: level)
 						let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
 						let  color = gAccentColor
 						
@@ -169,11 +168,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
-		if  let    r = rootWidget {
-			let line = r.addLineFor(r)
+		if  let    r = rootWidget, (!isBigMap || gMapLayoutMode == .linearMode) {
+			let line = r.createLineFor(child: r)
 			rootLine = line
 
-			line.addDots(sharedRevealDot: ZoneDot(view: gMapView))
+			line.addDots(reveal: ZoneDot(view: r.absoluteView))
 		}
 
 		layoutForCurrentScrollOffset()
@@ -456,13 +455,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				gDropWidget        = forgetAll ? nil : dropWidget
                 gDragRelation      = forgetAll ? nil : relation
                 gDragPoint         = forgetAll ? nil : location
-				gDropLine          = forgetAll ? nil : gDropWidget?.addLineFor(nil)
+				gDropLine          = forgetAll ? nil : gDropWidget?.createDragLine()
 
-				gDropLine?.parentWidget = gDropWidget
-
-				gDropLine?.addDots(sharedRevealDot: dropWidget.sharedRevealDot)
-
-                if !forgetAll && notDropHere && index > 0 {
+				if !forgetAll && notDropHere && index > 0 {
                     gDropIndices?.add(index - 1)
                 }
 

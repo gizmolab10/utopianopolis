@@ -560,58 +560,6 @@ extension ZTextEditor {
 	
 }
 
-extension ZoneWidget {
-
-    func lineRect(to rightFrame: CGRect, kind: ZLineCurve?) -> CGRect {
-		var frame = CGRect.zero
-
-        if  let       leftDot = revealDot.innerDot, kind != nil {
-            let     leftFrame = leftDot.convert( leftDot.bounds, to: self)
-            let     thickness = CGFloat(gLineThickness)
-            let     dotHeight = CGFloat(gDotHeight)
-            let halfDotHeight = dotHeight / 2.0
-            let thinThickness = thickness / 2.0
-            let     rightMidY = rightFrame.midY
-            let      leftMidY = leftFrame .midY
-            frame.origin   .x = leftFrame .midX
-
-			switch kind! {
-				case .below:
-					frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
-					frame.size.height = abs(  rightMidY + thinThickness - frame.minY)
-				case .above:
-					frame.origin   .y = rightFrame.maxY + halfDotHeight / 2.0
-					frame.size.height = abs(   leftMidY - thinThickness - frame.minY)
-				case .straight:
-					frame.origin   .y =       rightMidY - thinThickness / 8.0
-					frame.origin   .x = leftFrame .maxX
-					frame.size.height =                   thinThickness / 4.0
-			}
-
-            frame.size         .width = abs(rightFrame.midX - frame.minX)
-        }
-
-        return frame
-    }
-
-    func curvedLinePath(in iRect: CGRect, kind: ZLineCurve) -> ZBezierPath {
-        let    isBelow = kind == .below
-        let startAngle = CGFloat(kPI)
-        let deltaAngle = CGFloat(kHalfPI)
-        let multiplier = CGFloat(isBelow ? -1 : 1)
-        let   endAngle = startAngle + (multiplier * deltaAngle)
-        let     scaleY = iRect.height / iRect.width
-        let    centerY = isBelow ? iRect.minY : iRect.maxY
-        let     center = CGPoint(x: iRect.maxX, y: centerY / scaleY)
-        let       path = ZBezierPath(arcCenter: center, radius: iRect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
-
-        path.apply(CGAffineTransform(scaleX: 1.0, y: scaleY))
-
-        return path
-    }
-
-}
-
 extension ZMapController {
     
     @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(up: true) }

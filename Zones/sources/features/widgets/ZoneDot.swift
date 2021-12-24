@@ -93,6 +93,11 @@ class ZoneDot: ZPseudoView {
 			return !zone.isExpanded || childlessTraveller
 		}
 	}
+	
+	init(view: ZView?, isDraggingDot: Bool = false) {
+		super.init(view: view)
+		
+}
 
     // MARK: - initialization
     // MARK: -
@@ -310,11 +315,12 @@ class ZoneDot: ZPseudoView {
 	}
 
     func draw() {
-		let  rect = absoluteActualFrame
+		let   rect = absoluteActualFrame
+		let isDrop = isCircularMode && isDragDrop && line == gDropLine
 		if  !rect.isEmpty, dotIsVisible,
-			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal) {
+			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal, isDrop) {
 
-//			if  isCircularMode {
+//			if  isCircularMode, gdebugdraw {
 //				detectionFrame.drawColoredRect(.red, radius: 2.0, thickness: 1.0)
 //			}
 			

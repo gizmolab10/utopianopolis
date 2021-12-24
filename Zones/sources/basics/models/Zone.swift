@@ -29,16 +29,17 @@ enum ZoneAccess: Int, CaseIterable {
 }
 
 struct ZWorkingListType: OptionSet {
-	let rawValue: Int
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+	
+	init() { rawValue = ZFilterOption.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
 
-	init(rawValue: Int) {
-		self.rawValue = rawValue
-	}
-
-	static let wBookmarks = ZWorkingListType(rawValue: 0x0001)
-	static let wNotemarks = ZWorkingListType(rawValue: 0x0002)
-	static let   wProgeny = ZWorkingListType(rawValue: 0x0004)
-	static let       wAll = ZWorkingListType(rawValue: 0x0008)
+	static let wBookmarks = ZWorkingListType()
+	static let wNotemarks = ZWorkingListType()
+	static let   wProgeny = ZWorkingListType()
+	static let       wAll = ZWorkingListType()
 }
 
 @objc (Zone)
@@ -3375,7 +3376,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool) -> ZDotParameters {
+	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool, _ isDrop: Bool = false) -> ZDotParameters {
 		let            c = widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		var            p = ZDotParameters()
 		let            t = bookmarkTarget
@@ -3392,7 +3393,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isGroupOwner   = g == self || g == t
 		p.showSideDot    = isCurrentSmallMapBookmark
 		p.isDragged      = gDraggedZones.contains(self)
-		p.isDrop         = self == gDropWidget?.widgetZone
+		p.isDrop         = isDrop
 		p.filled         = isFilled || (!isReveal && isGrabbed)
 		p.fill           = p.filled ? c.lighter(by: 2.5) : gBackgroundColor
 		p.verticleOffset = offsetFromMiddle / (Double(gGenericOffset.width) - 27.0) * 3.0

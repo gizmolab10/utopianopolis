@@ -1150,31 +1150,28 @@ extension Zone {
 
 extension ZoneLine {
 
-	func lineRect(to targetFrame: CGRect, kind: ZLineCurve?) -> CGRect {
-		var    rect = CGRect.zero
-		if  let dot = revealDot {
-			switch mode {
-				case .linearMode:   rect =   linesLineRect(from: dot, to: targetFrame, kind: kind)
-				case .circularMode: rect = circlesLineRect(from: dot, to: targetFrame, kind: kind)
-			}
+	func lineRect(for kind: ZLineCurve?) -> CGRect {
+		switch mode {
+		case .linearMode:   return   linesLineRect(for: kind)
+		case .circularMode: return circlesLineRect()
 		}
-
-		return rect
 	}
 
-	func circlesLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineCurve?) -> CGRect {
-		if  let origin = sourceDot?.absoluteActualFrame.center {
-			let   size = CGSize(targetFrame.center - origin).absSize
+	func circlesLineRect() -> CGRect {
+		if  let origin = revealDot?.absoluteActualFrame.center,
+			let center = dragDot?.absoluteActualFrame.center {
+			let   size = CGSize(center - origin).absSize
 			return CGRect(origin: origin, size: size)
 		}
 
 		return .zero
 	}
 
-    func linesLineRect(from sourceDot: ZoneDot?, to targetFrame: CGRect, kind: ZLineCurve?) -> CGRect {
+    func linesLineRect(for kind: ZLineCurve?) -> CGRect {
 		var                 rect = CGRect.zero
         if  kind                != nil,
-			let      sourceFrame = sourceDot?.absoluteFrame {
+			let      sourceFrame = revealDot?.absoluteActualFrame,
+			let      targetFrame = dragDot?.absoluteActualFrame {
             rect.origin       .x = sourceFrame    .midX
 			rect.size     .width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
 			let            delta = CGFloat(4)
@@ -1221,14 +1218,13 @@ extension ZoneLine {
 extension ZOnboarding {
     
     func getMAC() {
-        if let intfIterator = findEthernetInterfaces() {
-            if  let macAddressAsArray = getMACAddress(intfIterator) {
-                let macAddressAsString = macAddressAsArray.map( { String(format:"%02x", $0) } )
-                    .joined(separator: kColonSeparator)
-                macAddress = macAddressAsString
+        if  let   iterator = findEthernetInterfaces() {
+            if  let  array = getMACAddress(iterator) {
+                let string = array.map( { String(format:"%02x", $0) } ).joined(separator: kColonSeparator)
+                macAddress = string
             }
             
-            IOObjectRelease(intfIterator)
+            IOObjectRelease(iterator)
         }
     }
 
@@ -1245,29 +1241,33 @@ extension ZOnboarding {
         return matchingServices
     }
 
-    func getMACAddress(_ intfIterator : io_iterator_t) -> [UInt8]? {
-        
-        var macAddress : [UInt8]?
-        
-        var intfService = IOIteratorNext(intfIterator)
-        while intfService != 0 {
+    func getMACAddress(_ iterator : io_iterator_t) -> [UInt8]? {
+        var     address  : [UInt8]?
+        while true {
+			var service  : io_object_t = 0
+			let next     = IOIteratorNext(iterator)
+			if  next    != 0,
+				IORegistryEntryGetParentEntry(next, "IOService", &service) == KERN_SUCCESS {
+                let  ioData = IORegistryEntryCreateCFProperty(service, "IOMACAddress" as CFString, kCFAllocatorDefault, 0)
+
+				IOObjectRelease(service)
+
+				if  let data = ioData?.takeRetainedValue() as? NSData {
+					address  = [0, 0, 0, 0, 0, 0]
+					data.getBytes(&address!, length: address!.count)
+				}
+
+				break
+			}
             
-            var controllerService : io_object_t = 0
-            if IORegistryEntryGetParentEntry(intfService, "IOService", &controllerService) == KERN_SUCCESS {
-                
-                let dataUM = IORegistryEntryCreateCFProperty(controllerService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0)
-                if let data = dataUM?.takeRetainedValue() as? NSData {
-                    macAddress = [0, 0, 0, 0, 0, 0]
-                    data.getBytes(&macAddress!, length: macAddress!.count)
-                }
-                IOObjectRelease(controllerService)
-            }
-            
-            IOObjectRelease(intfService)
-            intfService = IOIteratorNext(intfIterator)
+            IOObjectRelease(next)
+
+			if  next == 0 {
+				break
+			}
         }
         
-        return macAddress
+        return address
     }
 
 }

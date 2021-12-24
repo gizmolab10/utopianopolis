@@ -60,17 +60,10 @@ extension ZoneWidget {
 
 extension ZoneLine {
 
-	var absoluteDropDotRect: CGRect {
+	var absoluteDropDragDotRect: CGRect {
 		switch mode {
-			case .linearMode:   return   linesAbsoluteDropDotRect
-			case .circularMode: return circlesAbsoluteDropDotRect
-		}
-	}
-
-	var lineRect : CGRect {
-		switch mode {
-			case .linearMode:   return   linesLineRect
-			case .circularMode: return circlesLineRect
+			case .linearMode:   return   linesAbsoluteDropDragDotRect
+			case .circularMode: return circlesAbsoluteDropDragDotRect
 		}
 	}
 
@@ -83,7 +76,7 @@ extension ZoneLine {
 
 	func lineKind(to dragRect: CGRect) -> ZLineCurve? {
 		switch mode {
-			case .linearMode:   return   linesLineKind(to: dragRect)
+			case .linearMode:   return linesLineKind(to: dragRect)
 			case .circularMode: return .straight
 		}
 	}

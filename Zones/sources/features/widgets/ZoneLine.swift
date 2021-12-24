@@ -17,18 +17,18 @@ enum ZLineCurve: Int {
 @objc (ZoneLine)
 class ZoneLine: ZPseudoView {
 
+	var              length = CGFloat(25)
 	var             dragDot : ZoneDot?
 	var           revealDot : ZoneDot?
 	var         childWidget : ZoneWidget?
 	var        parentWidget : ZoneWidget?
 	var            isCenter : Bool            { return  parentWidget?.isCenter ?? true }
 	override var controller : ZMapController? { return (parentWidget ?? childWidget)?.controller }
-	var              length = CGFloat(25)
 
-	func addDots(sharedRevealDot: ZoneDot?) {
+	func addDots(reveal: ZoneDot? = nil, drag: ZoneDot? = nil) {
 		if  let p                    = parentWidget {
 			if  revealDot           == nil {
-				revealDot            = sharedRevealDot ?? ZoneDot(view: absoluteView)
+				revealDot            = reveal ?? ZoneDot(view: absoluteView)
 				if  revealDot?.line == nil {
 					revealDot?.line  = self
 					
@@ -41,7 +41,7 @@ class ZoneLine: ZPseudoView {
 		if  let c         = childWidget, !c.hideDragDot,
 			let z         = c.widgetZone, z.isShowing,
 			dragDot      == nil {
-			dragDot       = ZoneDot(view: absoluteView)
+			dragDot       = drag ?? ZoneDot(view: absoluteView)
 			dragDot?.line = self
 			
 			addSubpseudoview(dragDot)
@@ -59,32 +59,7 @@ class ZoneLine: ZPseudoView {
 
 		return .straight
 	}
-
-	func lineRect(to dragRect: CGRect) -> CGRect? {
-		var rect: CGRect?
-
-		if  let kind = lineKind(to: dragRect) {
-			rect     = lineRect(to: dragRect, kind: kind)
-		}
-
-		return rect
-	}
 	
-	func lineRect(for kind: ZLineCurve) -> CGRect {
-		if  let dFrame = dragDot?.absoluteActualFrame {
-			if  dFrame.isInfinite {
-				print("ack!")
-			}
-//			if  dFrame.isEmpty,
-//				let zone = childWidget?.widgetZone {
-//				print("empty \(zone) drag dot rect")
-//			}
-			return lineRect(to: dFrame, kind: kind)
-		}
-
-		return CGRect.zero
-	}
-
 	func linePath(in iRect: CGRect, kind: ZLineCurve?, isDragLine: Bool = false) -> ZBezierPath {
 		if  let    k = kind {
 			switch k {
@@ -99,8 +74,8 @@ class ZoneLine: ZPseudoView {
 	func drawLine() {
 		let           kind = lineKind
 		let           rect = lineRect(for: kind)
-		if  let      child = childWidget,
-			let      color = child.widgetZone?.color {
+		if  let      other = childWidget ?? parentWidget,
+			let      color = other.widgetZone?.color {
 			let       path = linePath(in:  rect, kind: kind)
 			path.lineWidth = CGFloat(gLineThickness)
 
@@ -122,24 +97,26 @@ class ZoneLine: ZPseudoView {
 			path.stroke()
 		}
 	}
+	
+	func drawDraggingLineAndDot() {
+		let               rect = absoluteDropDragDotRect
+		dragDot?.absoluteFrame = rect
 
-	func drawDragLine(to dotRect: CGRect) {
-		if  let       rect = lineRect(to: dotRect),
-			let       kind = lineKind(to: dotRect) {
-			let       path = linePath(in: rect, kind: kind, isDragLine: true)
-			path.lineWidth = CGFloat(gLineThickness)
-
-			path.stroke()
-		}
+		gActiveColor.setFill()
+		gActiveColor.setStroke()
+		ZBezierPath(ovalIn: rect).fill()
+		drawLine()
 	}
 
 	override func draw(_ phase: ZDrawPhase) {
 		switch phase {
 			case .pLines:
 				drawLine()
-			case .pDotsAndHighlight:
+			case .pDots:
 				revealDot?.draw()
 				dragDot?  .draw()
+			default:
+				break
 		}
 	}
 

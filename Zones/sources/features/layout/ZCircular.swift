@@ -19,7 +19,7 @@ extension ZoneWidget {
 	var                incrementAngle :     CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
 
 	var placeAngle : CGFloat {
-		var angle  = offsetAngle
+		var angle  = siblingAngle
 		if  let p  = parentWidget, !isCenter {
 			let o  = p.placeAngle
 			angle += o
@@ -29,13 +29,14 @@ extension ZoneWidget {
 		return angle
 	}
 
-	var offsetAngle : CGFloat {
+	var siblingAngle : CGFloat {
 		if  let angle = parentWidget?.incrementAngle,
 			let  zone = widgetZone, !isCenter,
 			let index = zone.siblingIndex,
 			let     c = zone.parentZone?.count {
 			let count = CGFloat(max(0, c - 1))
-			let delta = CGFloat(index) - (count / 2.0)
+			let extra = CGFloat(linesLevel != 1 ? 0.0 : -0.5)
+			let delta = CGFloat(index) - (count / 2.0) + extra
 			let     o = (delta * angle).confine(within: CGFloat(k2PI))
 
 			return  o
@@ -46,7 +47,7 @@ extension ZoneWidget {
 
 	var circlesHighlightFrame : CGRect {
 		let center = absoluteFrame.center
-		let radius = gCircleIdeaRadius + 3.0
+		let radius = gCircleIdeaRadius + (gDotWidth / 2.0)
 		let   rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
 
 		return rect
@@ -96,11 +97,11 @@ extension ZoneWidget {
 
 	func updateByLevelAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
 		traverseAllWidgetsByLevel {          (level, widgets) in
-			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)
+			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // sets lineAngle
 		}
 		
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			iWidget.updateTextAndDotFrames  (absolute)  // sets lineAngle
+			iWidget.updateTextAndDotFrames  (absolute)
 		}
 	}
 
@@ -146,7 +147,7 @@ extension ZoneWidgetArray {
 				if  absolute {
 					w.updateAbsoluteFrame(relativeTo: controller)
 				} else if w.linesLevel > 0 {
-					let   angle = Double(w.placeAngle) - kHalfPI
+					let   angle = Double(-w.placeAngle) - kHalfPI
 					let rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
 					let  origin = center + rotated
 					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
@@ -183,11 +184,7 @@ extension ZoneLine {
 		return nil
 	}
 
-	var circlesLineRect : CGRect {
-		return .zero // TODO: compute this
-	}
-
-	var circlesAbsoluteDropDotRect: CGRect {
+	var circlesAbsoluteDropDragDotRect: CGRect {
 		var rect = CGRect()
 
 		if  let zone = parentWidget?.widgetZone {
@@ -295,8 +292,8 @@ extension ZoneDot {
 	func circlesDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		if  let         l = line,
 			let         p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
-			let         c = l .childWidget?.widgetZone {
-			let     angle = l.lineAngle + CGFloat((c.isShowing && p.isExpanded) ? .zero : kPI)
+			let         z = l .childWidget?.widgetZone {
+			let     angle = l.lineAngle + CGFloat((z.isShowing && p.isExpanded) ? .zero : kPI)
 			let thickness = CGFloat(gLineThickness * 2.0)
 			let      rect = iDirtyRect.insetEquallyBy(thickness)
 			var      path = ZBezierPath()

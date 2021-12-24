@@ -35,22 +35,16 @@ class ZUser : ZRecord {
 	var                 isExempt: Bool { return authorID == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" }
 
 	var access: ZUserAccess {
-        get {
-			if  isExempt {
-				writeAccess  = NSNumber(value: ZUserAccess.eFull.rawValue)
-			}
-
-            if  writeAccess == nil {
-                writeAccess  = NSNumber(value: ZUserAccess.eNormal.rawValue)
-            }
-
-            return ZUserAccess(rawValue: writeAccess!.intValue)!
-        }
-
-        set {
-			writeAccess = NSNumber(value: newValue.rawValue)
-        }
-    }
+		if  isExempt {
+			writeAccess  = NSNumber(value: ZUserAccess.eFull.rawValue)
+		}
+		
+		if  writeAccess == nil {
+			writeAccess  = NSNumber(value: ZUserAccess.eNormal.rawValue)
+		}
+		
+		return ZUserAccess(rawValue: writeAccess!.intValue)!
+	}
 
 	static func uniqueUser(recordName: String?, in dbID: ZDatabaseID) -> ZUser {
 		return uniqueZRecord(entityName: kUserType, recordName: recordName, in: dbID) as! ZUser

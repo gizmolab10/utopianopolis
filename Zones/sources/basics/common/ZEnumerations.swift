@@ -25,12 +25,20 @@ enum InterfaceStyle : String {
     }
 }
 
-enum ZHighlightStyle: Int {
-	case ultraThin
-	case dashed
-	case thick
-	case thin
-	case none
+struct ZHighlightStyle: OptionSet {
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+	
+	init() { rawValue = ZCoreDataMode.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+	
+	static let sUltraThin = ZHighlightStyle()
+	static let sDashed    = ZHighlightStyle()
+	static let sMedium    = ZHighlightStyle()
+	static let sThick     = ZHighlightStyle()
+	static let sThin      = ZHighlightStyle()
+	static let sNone      = ZHighlightStyle([])
 }
 
 enum ZRelayoutMapType: Int {
@@ -555,11 +563,12 @@ enum ZEssayLinkType: String {
 // MARK: -
 
 struct ZoneType: OptionSet {
-	let rawValue: Int
-
-	init(rawValue: Int) {
-		self.rawValue = rawValue
-	}
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+	
+	init() { rawValue = ZCoreDataMode.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let zChildless = ZoneType(rawValue: 0x0001)
 	static let zTrait     = ZoneType(rawValue: 0x0002)
@@ -569,38 +578,24 @@ struct ZoneType: OptionSet {
 }
 
 struct ZTinyDotType: OptionSet {
-	let rawValue: Int
-
-	init(rawValue: Int) {
-		self.rawValue = rawValue
-	}
-
-	static let eIdea  = ZTinyDotType(rawValue: 0x0001)
-	static let eEssay = ZTinyDotType(rawValue: 0x0002)
-}
-
-struct ZFilterOption: OptionSet {
 	static var structValue = 0
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
-
-	init() { rawValue = ZFilterOption.nextValue }
+	
+	init() { rawValue = ZCoreDataMode.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let fBookmarks = ZFilterOption()
-	static let     fNotes = ZFilterOption()
-	static let     fIdeas = ZFilterOption()
-	static let      fNone = ZFilterOption([])
-	static let       fAll = ZFilterOption(rawValue: 7)
+	static let eIdea  = ZTinyDotType()
+	static let eEssay = ZTinyDotType()
 }
 
 struct ZDetailsViewID: OptionSet {
-
-	let rawValue: Int
-
-	init(rawValue: Int) {
-		self.rawValue = rawValue
-	}
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+	
+	init() { rawValue = ZCoreDataMode.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let vPreferences = ZDetailsViewID(rawValue: 0x0001)
 	static let        vData = ZDetailsViewID(rawValue: 0x0002)
@@ -610,4 +605,19 @@ struct ZDetailsViewID: OptionSet {
 	static let         vAll = ZDetailsViewID(rawValue: 0x001F)
 
 	static let        vLast = vSmallMap
+}
+
+struct ZFilterOption: OptionSet {
+	static var structValue = 0
+	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
+	let           rawValue : Int
+	
+	init() { rawValue = ZFilterOption.nextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+	
+	static let fBookmarks = ZFilterOption()
+	static let     fNotes = ZFilterOption()
+	static let     fIdeas = ZFilterOption()
+	static let      fNone = ZFilterOption([])
+	static let       fAll = ZFilterOption(rawValue: 7)
 }

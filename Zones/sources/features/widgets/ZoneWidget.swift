@@ -276,8 +276,18 @@ class ZoneWidget: ZPseudoView {
 			}
 		}
 	}
+	
+	func createDragLine() -> ZoneLine {
+		let          line = createLineFor(child: nil)
+		line.parentWidget = gDropWidget
+		let        reveal = isCircularMode ? ZoneDot(view: absoluteView) : gDropWidget?.sharedRevealDot
 
-	func addLineFor(_ child: ZoneWidget?) -> ZoneLine {
+		line.addDots(reveal: reveal, drag:   ZoneDot(view: absoluteView))
+
+		return line
+	}
+
+	func createLineFor(child: ZoneWidget?) -> ZoneLine {
 		let          line = ZoneLine(view: absoluteView)
 		line .childWidget = child
 		child?.parentLine = line
@@ -285,12 +295,12 @@ class ZoneWidget: ZPseudoView {
 		return line
 	}
 
-	private func addLine(for child: ZoneWidget?) {
-		let           dot = isLinearMode ? sharedRevealDot : nil
-		let          line = addLineFor(child)
+	private func addLine(to child: ZoneWidget?) {
+		let        reveal = isLinearMode ? sharedRevealDot : nil
+		let          line = createLineFor(child: child)
 		line.parentWidget = self
 
-		line.addDots(sharedRevealDot: dot)
+		line.addDots(reveal: reveal)
 		childrenLines.append(line)
 
 		if  isLinearMode {
@@ -304,10 +314,10 @@ class ZoneWidget: ZPseudoView {
 
 		if  let zone = widgetZone, zone.isShowing {
 			if !zone.hasVisibleChildren, isLinearMode {
-				addLine(for: nil)
+				addLine(to: nil)
 			} else {
 				for child in childrenWidgets {
-					addLine(for: child)
+					addLine(to: child)
 				}
 			}
 		}
@@ -316,15 +326,15 @@ class ZoneWidget: ZPseudoView {
 	func detect(at location: CGPoint) -> Any? {
 		if  let            z = widgetZone, z.isShowing {
 			for line in childrenLines {
-				if  let    r = line.revealDot,      r.detectionFrame.contains(location) {
+				if  let    r = line.revealDot,      r.absoluteFrame.contains(location) {
 					return r
 				}
 			}
-			if  let        d = parentLine?.dragDot, d.detectionFrame.contains(location) {
+			if  let        d = parentLine?.dragDot, d.absoluteFrame.contains(location) {
 				return     d
-			} else if let  t = pseudoTextWidget,    t.detectionFrame.contains(location) {
+			} else if let  t = pseudoTextWidget,    t.absoluteFrame.contains(location) {
 				return     textWidget
-			} else if isCircularMode,                 detectionFrame.contains(location) {
+			} else if isCircularMode,                 absoluteFrame.contains(location) {
 				return     self
 			}
 		}
@@ -408,7 +418,7 @@ class ZoneWidget: ZPseudoView {
 			return view.frame
 		}
 
-		return detectionFrame
+		return absoluteFrame
 	}
 
     func widgetNearestTo(_ point: CGPoint, in iView: ZPseudoView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
@@ -444,10 +454,11 @@ class ZoneWidget: ZPseudoView {
 		path .flatness = 0.0001
 		
 		switch style {
-		case .dashed:    path.addDashes()
-		case .thin:      path.lineWidth *= 0.5
-		case .ultraThin: path.lineWidth *= 0.2
-		default:         break
+		case .sDashed:    path.addDashes()
+		case .sMedium:    path.lineWidth *= 0.7
+		case .sThin:      path.lineWidth *= 0.5
+		case .sUltraThin: path.lineWidth *= 0.2
+		default:          break
 		}
 
 		color?.setStroke()
@@ -459,27 +470,23 @@ class ZoneWidget: ZPseudoView {
 			let zone = widgetZone {
 
 			switch phase {
-				case .pDotsAndHighlight:
+				case .pHighlights:
 					if  let         t = textWidget {
 						let isGrabbed = zone.isGrabbed
 						let isEditing = t.isFirstResponder
 						let tHovering = t.isHovering
 
 						if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
-							var style = ZHighlightStyle.none
+							var style = ZHighlightStyle.sNone
 
-							if  isEditing {
-								style = .dashed
-							} else if isHovering || isGrabbed {
-								style = .thick
+							if  isEditing {            style = .sDashed
+							} else if isGrabbed { 	   style = .sThick
+							} else if isHovering {     style = .sMedium
 							} else if tHovering {
-								if  isCircularMode {
-									style = .dashed
-								} else {
-									style = .thin
+								if    isCircularMode { style = .sDashed
+								} else {               style = .sThin
 								}
-							} else if isCircularMode {
-								style = .ultraThin
+							} else if isCircularMode { style = .sUltraThin
 							}
 
 							drawSelectionHighlight(style)

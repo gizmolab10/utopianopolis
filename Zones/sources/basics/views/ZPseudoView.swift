@@ -16,10 +16,11 @@ import UIKit
 #endif
 
 enum ZDrawPhase: String {
-	case pLines            = "l"
-	case pDotsAndHighlight = "d"
+	case pLines      = "l"
+	case pDots       = "d"
+	case pHighlights = "h"
 
-	static let allInOrder: [ZDrawPhase] = [.pLines, .pDotsAndHighlight]
+	static let allInOrder: [ZDrawPhase] = [.pLines, .pHighlights, .pDots]
 }
 
 class ZPseudoView: NSObject {

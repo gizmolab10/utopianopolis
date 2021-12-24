@@ -39,14 +39,10 @@ class ZRubberband: NSObject {
 		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 		gHere.ungrab()
 
-		if  let    rect = rubberbandRect {
+		if  let rect = rubberbandRect {
 			for widget in gWidgets.visibleWidgets {
-				let hitRect = widget.highlightFrame
-
-				if  let   zone = widget.widgetZone,
-					!zone.isFavoritesRoot,
-					!zone.isRecentsRoot,
-					hitRect.intersects(rect) {
+				if  let zone = widget.widgetZone, !zone.isSmallMapRoot,
+					widget.highlightFrame.intersects(rect) {
 					gSelecting.addOneGrab(zone)
 				}
 			}
@@ -72,4 +68,15 @@ class ZRubberband: NSObject {
 		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 	}
 
+	func draw() {
+		if  let       rect = rubberbandRect {
+			let       path = ZBezierPath(rect: rect)
+			path.lineWidth = gIsDark ? 3.0 : 2.0
+
+			gActiveColor.accountingForDarkMode.lighter(by: 2.0).setStroke()
+			path.addDashes()
+			path.stroke()           // draw dashed rectangle in active color for rubberband
+		}
+	}
+	
 }
