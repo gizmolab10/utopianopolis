@@ -966,9 +966,11 @@ extension CGRect {
 		return insetBy(dx: dX, dy: dY)
 	}
 
-	func expandedEquallyBy(_ expansion: CGFloat) -> CGRect {
-		return insetBy(dx: -expansion, dy: -expansion)
-	}
+	func expandedEquallyBy(_ expansion: CGFloat) -> CGRect { return insetEquallyBy(-expansion) }
+	func    insetEquallyBy(   fraction: CGFloat) -> CGRect { return insetBy(fractionX: fraction, fractionY: fraction) }
+	func    insetEquallyBy(_     inset: CGFloat) -> CGRect { return insetBy(dx: inset, dy: inset) }
+	func   offsetEquallyBy(_    offset: CGFloat) -> CGRect { return offsetBy(dx: offset, dy: offset) }
+	func      centeredRect(   diameter: CGFloat) -> CGRect { return centeredEquallyAround(center, diameter: diameter) }
 
 	func insetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
         let dX = size.width  * fractionX
@@ -977,24 +979,8 @@ extension CGRect {
         return insetBy(dx: dX, dy: dY)
     }
 
-	func insetEquallyBy(fraction: CGFloat) -> CGRect {
-		return insetBy(fractionX: fraction, fractionY: fraction)
-	}
-
-	func insetEquallyBy(_ inset: CGFloat) -> CGRect {
-		return insetBy(dx: inset, dy: inset)
-	}
-
-	func offsetEquallyBy(_ offset: CGFloat) -> CGRect {
-		return offsetBy(dx: offset, dy: offset)
-	}
-
 	func centeredEquallyAround(_ center: CGPoint, diameter: CGFloat) -> CGRect {
-		return CGRect(origin: center, size: CGSize.zero).insetEquallyBy(-diameter / 2.0)
-	}
-
-	func centeredRect(diameter: CGFloat) -> CGRect {
-		return centeredEquallyAround(center, diameter: diameter)
+		return CGRect(origin: center, size: CGSize.zero).expandedEquallyBy(diameter / 2.0)
 	}
 
 	func twoDotsVertically(fractionalDiameter: CGFloat) -> (CGRect, CGRect) {
@@ -1042,7 +1028,7 @@ extension CGRect {
 		return delta > 0
 	}
 
-	func drawColoredRect(_ color: ZColor, radius: CGFloat = 8.0, thickness: CGFloat = 0.5) {
+	func drawColoredRect(_ color: ZColor, radius: CGFloat = 0.0, thickness: CGFloat = 0.5) {
 		let       path = ZBezierPath(roundedRect: self, xRadius: radius, yRadius: radius)
 		path.lineWidth = thickness
 

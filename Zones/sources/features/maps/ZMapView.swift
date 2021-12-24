@@ -50,7 +50,7 @@ class ZMapView: ZView {
 
 				updateTracking()
 				addSubview(dotsAndLinesView!)
-				addSubview(highlightMapView!, positioned: .below, relativeTo: dotsAndLinesView)
+				addSubview(highlightMapView!)
 				dotsAndLinesView?.setup(.mDotsAndLines)
 				highlightMapView?.setup(.mHighlight)
 				fallthrough
@@ -64,14 +64,11 @@ class ZMapView: ZView {
 	}
 
 	func resize() {
-		if  let view = gMapController?.view {
-			frame    = view.bounds
-
-			switch mapID {
-				case .mText:         break
-				case .mHighlight:    highlightMapView?.resize()
-				case .mDotsAndLines: dotsAndLinesView?.resize()
-				default: break
+		if  let   view = gMapController?.view {
+			frame      = view.bounds
+			if  mapID == .mText {
+				highlightMapView?.resize()
+				dotsAndLinesView?.resize()
 			}
 		}
 	}
@@ -96,6 +93,15 @@ class ZMapView: ZView {
 		highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(.purple)
 		superview?.drawBox(in: self, with:                          .orange)
 	}
+	
+	func mustDrawFor(_ phase: ZDrawPhase) -> Bool {
+		switch mapID {
+		case .mDotsAndLines: return phase == .pLines || phase == .pDots
+		case .mText:         return phase == .pLines
+		case .mHighlight:    return phase == .pHighlights
+		default:             return false
+		}
+	}
 
 	override func draw(_ iDirtyRect: CGRect) {
 		if  iDirtyRect.isEmpty {
@@ -109,9 +115,7 @@ class ZMapView: ZView {
 				highlightMapView?.draw(iDirtyRect)
 			default:
 				for phase in ZDrawPhase.allInOrder {
-					let isDotsAndLinesMap = mapID == .mDotsAndLines
-					let isHighlightsPhase = phase == .pHighlights
-					if  isHighlightsPhase != isDotsAndLinesMap {
+					if  mustDrawFor(phase) {
 						ZBezierPath(rect: iDirtyRect).setClip()
 
 						switch mapID {

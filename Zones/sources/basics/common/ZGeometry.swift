@@ -22,7 +22,7 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 
 var        gBigFontSize : CGFloat { return gGenericOffset.height + kFontDelta } // height 2 .. 20
 var      gSmallFontSize : CGFloat { return gBigFontSize  * kSmallMapReduction }
-var   gCircleIdeaRadius : CGFloat { return gDotHeight * 3.0 }
+var   gCircleIdeaRadius : CGFloat { return gDotHeight * 2.2 }
 var           gDotWidth : CGFloat { return gDotHeight * kDragDotReduction }
 var          gDotHeight : CGFloat { return (gGenericOffset.height / kDotFactor) + 13.0 }
 var gChildrenViewOffset : CGFloat { return gDotWidth + (gGenericOffset.height) * 1.2 }

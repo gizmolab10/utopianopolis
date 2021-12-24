@@ -33,7 +33,7 @@ struct ZWorkingListType: OptionSet {
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
 	
-	init() { rawValue = ZFilterOption.nextValue }
+	init() { rawValue = ZWorkingListType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let wBookmarks = ZWorkingListType()

@@ -105,11 +105,6 @@ class ZTogglingView: ZView {
         super.awakeFromNib()
 		titleButton?.setup()
 
-		zlayer              .backgroundColor =      kClearColor.cgColor
-		hideableView?.zlayer.backgroundColor =      kClearColor.cgColor
-		titleButton? .zlayer.backgroundColor =     gAccentColor.cgColor
-		extraButton? .zlayer.backgroundColor = gDarkAccentColor.cgColor
-
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
         }) {
@@ -145,10 +140,18 @@ class ZTogglingView: ZView {
 	}
 
 	func update() {
+		updateColors()
 		updateSpinner()
 		updateTitleButton()
 		updateHideableView()
-    }
+	}
+
+	func updateColors() {
+		zlayer              .backgroundColor =      kClearColor.cgColor
+		hideableView?.zlayer.backgroundColor =      kClearColor.cgColor
+		titleButton? .zlayer.backgroundColor =     gAccentColor.cgColor
+		extraButton? .zlayer.backgroundColor = gDarkAccentColor.cgColor
+	}
 
 	func updateSpinner() {
 		if  let      s = spinner {

@@ -30,7 +30,7 @@ struct ZHighlightStyle: OptionSet {
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
 	
-	init() { rawValue = ZCoreDataMode.nextValue }
+	init() { rawValue = ZHighlightStyle.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 	
 	static let sUltraThin = ZHighlightStyle()
@@ -567,7 +567,7 @@ struct ZoneType: OptionSet {
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
 	
-	init() { rawValue = ZCoreDataMode.nextValue }
+	init() { rawValue = ZoneType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let zChildless = ZoneType(rawValue: 0x0001)
@@ -582,7 +582,7 @@ struct ZTinyDotType: OptionSet {
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
 	
-	init() { rawValue = ZCoreDataMode.nextValue }
+	init() { rawValue = ZTinyDotType.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let eIdea  = ZTinyDotType()
@@ -594,7 +594,7 @@ struct ZDetailsViewID: OptionSet {
 	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
 	let           rawValue : Int
 	
-	init() { rawValue = ZCoreDataMode.nextValue }
+	init() { rawValue = ZDetailsViewID.nextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let vPreferences = ZDetailsViewID(rawValue: 0x0001)

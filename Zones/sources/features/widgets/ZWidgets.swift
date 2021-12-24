@@ -142,6 +142,16 @@ class ZWidgets: NSObject {
 			widgets = visibleChildren(at: level)
 		}
 	}
+
+	static func hasVisibleChildren(at level: Int) -> Bool {
+		for widget in gHere.visibleWidgets {
+			if  widget.linesLevel == level {
+				return true
+			}
+		}
+
+		return false
+	}
 	
 	static func visibleChildren(at level: Int) -> ZoneWidgetArray {
 		var widgets = ZoneWidgetArray()

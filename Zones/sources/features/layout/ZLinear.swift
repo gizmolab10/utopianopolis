@@ -132,6 +132,14 @@ extension ZoneWidget {
 
 	}
 
+	func linesUpdateDetectionFrame() {
+		var rect       = absoluteFrame
+		if let   child = childrenView?.absoluteFrame {
+			rect       = rect.union(child)
+		}
+		detectionFrame = rect
+	}
+
 	var linesHighlightFrame : CGRect {
 		if  let              t = textWidget,
 			let            dot = childrenLines.first?.revealDot {
@@ -178,6 +186,12 @@ extension ZoneWidget {
 	func linesUpdateAllFrames(_ absolute: Bool = false) {
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.linesUpdateSubframes(absolute)
+		}
+
+		if  absolute  {
+			traverseAllWidgetProgeny(inReverse: true) { iWidget in
+				iWidget.linesUpdateDetectionFrame()
+			}
 		}
 	}
 
@@ -322,6 +336,7 @@ extension ZoneDot {
 		path.lineWidth = thickness
 		path .flatness = 0.0001
 
+//		absoluteFrame.drawColoredRect(.brown)
 		path.stroke()
 		path.fill()
 	}

@@ -712,7 +712,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2     // first and last note have altered offset (thus, altered range)
 					let  noteRange = note.noteRange.offsetBy(offset)
 					let      inset = CGFloat(2.0)
-					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).insetEquallyBy(-inset)
+					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).expandedEquallyBy(inset)
 					let     indent = zone.level - level
 					let     noLine = indent == 0
 					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: dragHeight))

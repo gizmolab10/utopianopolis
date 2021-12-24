@@ -48,7 +48,7 @@ extension ZoneWidget {
 	var circlesHighlightFrame : CGRect {
 		let center = absoluteFrame.center
 		let radius = gCircleIdeaRadius + (gDotWidth / 2.0)
-		let   rect = CGRect(origin: center, size: .zero).insetEquallyBy(-radius)
+		let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
 
 		return rect
 	}
@@ -84,6 +84,28 @@ extension ZoneWidget {
 			}
 		}
 	}
+	
+	func circlesUpdateDetectionFrame() {
+		var rect               = highlightFrame
+
+		for zone in childrenWidgets {
+			let zRect          = zone.detectionFrame
+			if !zRect.isEmpty {
+				rect           = rect.union(zRect)
+			}
+		}
+
+		for line in childrenLines {
+			if  let  drag = line.dragDot {
+				let lRect = drag.absoluteActualFrame
+				if !lRect.isEmpty {
+					rect  = rect.union(lRect)
+				}
+			}
+		}
+
+		detectionFrame = rect
+	}
 
 	// MARK: - traverse
 	// MARK: -
@@ -98,6 +120,12 @@ extension ZoneWidget {
 	func updateByLevelAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
 		traverseAllWidgetsByLevel {          (level, widgets) in
 			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // sets lineAngle
+		}
+		
+		if  absolute  {
+			traverseAllWidgetProgeny(inReverse: true) { iWidget in
+				iWidget.circlesUpdateDetectionFrame()
+			}
 		}
 		
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
@@ -297,6 +325,8 @@ extension ZoneDot {
 			let thickness = CGFloat(gLineThickness * 2.0)
 			let      rect = iDirtyRect.insetEquallyBy(thickness)
 			var      path = ZBezierPath()
+
+//			rect.drawColoredRect(.brown)
 			
 			if  parameters.isReveal {
 				path      = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)

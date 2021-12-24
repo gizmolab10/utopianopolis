@@ -323,25 +323,6 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
-	func detect(at location: CGPoint) -> Any? {
-		if  let            z = widgetZone, z.isShowing {
-			for line in childrenLines {
-				if  let    r = line.revealDot,      r.absoluteFrame.contains(location) {
-					return r
-				}
-			}
-			if  let        d = parentLine?.dragDot, d.absoluteFrame.contains(location) {
-				return     d
-			} else if let  t = pseudoTextWidget,    t.absoluteFrame.contains(location) {
-				return     textWidget
-			} else if isCircularMode,                 absoluteFrame.contains(location) {
-				return     self
-			}
-		}
-		
-		return nil
-	}
-
 	func traverseAllWidgetAncestors(visited: ZoneWidgetArray = [], _ block: ZoneWidgetClosure) {
 		if !visited.contains(self) {
 			block(self)
@@ -440,6 +421,34 @@ class ZoneWidget: ZPseudoView {
         return nil
     }
 
+	func detect(at location: CGPoint, recursive: Bool = true) -> Any? {
+		if  let               z = widgetZone, z.isShowing, detectionFrame.contains(location) {
+			for line in childrenLines {
+				if  let       d = line.dragDot,           d.absoluteFrame.contains(location) {
+					return    d
+				}
+				if  let       r = line.revealDot,         r.absoluteFrame.contains(location) {
+					return    r
+				}
+			}
+			if  let           t = pseudoTextWidget,       t.absoluteFrame.contains(location) {
+				return        textWidget
+			}
+			if  isCircularMode,                            highlightFrame.contains(location) {
+				return        self
+			}
+			if  recursive {
+				for child in childrenWidgets {
+					if  let    c = child.detect(at: location) {
+						return c
+					}
+				}
+			}
+		}
+
+		return nil
+	}
+
 	// MARK: - draw
 	// MARK: -
 
@@ -470,42 +479,44 @@ class ZoneWidget: ZPseudoView {
 			let zone = widgetZone {
 
 			switch phase {
-				case .pHighlights:
-					if  let         t = textWidget {
-						let isGrabbed = zone.isGrabbed
-						let isEditing = t.isFirstResponder
-						let tHovering = t.isHovering
-
-						if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
-							var style = ZHighlightStyle.sNone
-
-							if  isEditing {            style = .sDashed
-							} else if isGrabbed { 	   style = .sThick
-							} else if isHovering {     style = .sMedium
-							} else if tHovering {
-								if    isCircularMode { style = .sDashed
-								} else {               style = .sThin
-								}
-							} else if isCircularMode { style = .sUltraThin
+			case .pLines, .pDots:
+				for line in childrenLines {
+					line.draw(phase)
+				}
+			case .pHighlights:
+				if  let         t = textWidget {
+					let isGrabbed = zone.isGrabbed
+					let isEditing = t.isFirstResponder
+					let tHovering = t.isHovering
+					
+					if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
+						var style = ZHighlightStyle.sNone
+						
+						if  isEditing {            style = .sDashed
+						} else if isGrabbed { 	   style = .sThick
+						} else if isHovering {     style = .sMedium
+						} else if tHovering {
+							if    isCircularMode { style = .sDashed
+							} else {               style = .sThin
 							}
+						} else if isCircularMode { style = .sUltraThin
+						}
 
+//						debugDraw(isHovering || tHovering)
+
+						if  style != .sNone {
 							drawSelectionHighlight(style)
 						}
 					}
-				default: break
-			}
-
-			for line in childrenLines {   // this is after child dots have been autolayed out
-				line.draw(phase)
+				}
 			}
 		}
     }
 
-	func debugDraw() {
-		if  gDebugDraw, isCircularMode, linesLevel != 0 {
-			highlightFrame.drawColoredRect(.red,  radius: 0.0)
-			absoluteFrame .drawColoredRect(.blue, radius: 0.0)
-		}
+	func debugDraw(_ extraThick: Bool = false) {
+		detectionFrame.drawColoredRect(.green, radius: 0.0, thickness: extraThick ? 5.0 : 1.0)
+//		highlightFrame.drawColoredRect(.blue,  radius: 0.0)
+//		absoluteFrame .drawColoredRect(.red,   radius: 0.0)
 	}
 
 }

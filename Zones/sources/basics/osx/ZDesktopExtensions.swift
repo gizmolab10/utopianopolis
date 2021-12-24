@@ -303,9 +303,7 @@ extension ZColor {
 		return nil
 	}
 
-	var accountingForDarkMode: NSColor {
-		return gIsDark ? inverted : self
-	}
+	var accountingForDarkMode: NSColor { return gIsDark ? inverted : self }
 
     func darker(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2), brightness: brightnessComponent / (by / 3), alpha: alphaComponent)

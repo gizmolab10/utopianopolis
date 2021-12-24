@@ -31,6 +31,13 @@ extension ZoneWidget {
 			linesUpdateChildrenLinesDrawnSize()
 		}
 	}
+	
+	func updateDetectionFrame() {
+		switch mode {
+		case .linearMode:     linesUpdateDetectionFrame()
+		case .circularMode: circlesUpdateDetectionFrame()
+		}
+	}
 
 	var selectionHighlightPath: ZBezierPath {
 		switch mode {

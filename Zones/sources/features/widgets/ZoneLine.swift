@@ -86,9 +86,7 @@ class ZoneLine: ZPseudoView {
 					return
 				}
 				
-				if  rect.isEmpty,
-					let zone = childWidget?.widgetZone {
-					print("empty \(zone) line rect")
+				if  rect.isEmpty {
 					return
 				}
 			}

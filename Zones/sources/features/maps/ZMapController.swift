@@ -61,14 +61,14 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			
 			if  phase     == .pLines,
 				let center = rootWidget?.absoluteFrame.center {
-				ZWidgets.traverseAllVisibleWidgetsByLevel { (level, _) in
-					if  level     >= 1 {
-						let radius = ZWidgets.ringRadius(at: level)
-						let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
-						let  color = gAccentColor
-						
-						rect.drawColoredCircle(color, thickness: 0.8)
-					}
+				var level  = 1
+				while ZWidgets.hasVisibleChildren   (at: level) {
+					let radius = ZWidgets.ringRadius(at: level)
+					let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
+					let  color = gAccentColor.lighter(by: 2.0)
+					level     += 1
+
+					rect.drawColoredCircle(color, thickness: 0.5)
 				}
 			}
 		}
@@ -220,10 +220,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		if  gIsDraggableMode,
-			let         gesture  = iGesture as? ZKeyPanGestureRecognizer,
-			let (_, _, location) = widgetHit(by: gesture),
-			let           flags  = gesture.modifiers {
-            let           state  = gesture.state
+			let            gesture  = iGesture as? ZKeyPanGestureRecognizer,
+			let              flags  = gesture.modifiers {
+            let              state  = gesture.state
+			let            location = gesture.location(in: gesture.view)
 
 			printDebug(.dClick, "drag")
 
@@ -568,24 +568,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     // MARK: -
 
 	func detect(at location: CGPoint) -> Any? {
-		var any : Any?
-		
 		if  isBigMap,
 			let    any = gSmallMapController?.detect(at: location) {
 			return any
 		}
-
-		rootWidget?.traverseWidgetProgeny(inReverse: true) { (widget) -> (ZTraverseStatus) in
-			if  let a = widget.detect(at: location) {
-				any   = a
-				
-				return .eStop
-			}
-
-			return .eContinue
-		}
-
-		return any
+		
+		return rootWidget?.detect(at: location)
 	}
 
 }
