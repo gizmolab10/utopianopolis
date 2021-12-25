@@ -26,11 +26,11 @@ enum InterfaceStyle : String {
 }
 
 struct ZHighlightStyle: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
-	
-	init() { rawValue = ZHighlightStyle.nextValue }
+	static var sStructValue = 0
+	static var   sNextValue : Int { if sStructValue == 0 { sStructValue = 1 } else { sStructValue *= 2 }; return sStructValue }
+	let            rawValue : Int
+
+	init() { rawValue = ZHighlightStyle.sNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 	
 	static let sUltraThin = ZHighlightStyle()
@@ -563,11 +563,11 @@ enum ZEssayLinkType: String {
 // MARK: -
 
 struct ZoneType: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
-	
-	init() { rawValue = ZoneType.nextValue }
+	static var zStructValue = 0
+	static var   zNextValue : Int { if zStructValue == 0 { zStructValue = 1 } else { zStructValue *= 2 }; return zStructValue }
+	let            rawValue : Int
+
+	init() { rawValue = ZoneType.zNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let zChildless = ZoneType(rawValue: 0x0001)
@@ -578,11 +578,11 @@ struct ZoneType: OptionSet {
 }
 
 struct ZTinyDotType: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
+	static var eStructValue = 0
+	static var   eNextValue : Int { if eStructValue == 0 { eStructValue = 1 } else { eStructValue *= 2 }; return eStructValue }
+	let            rawValue : Int
 	
-	init() { rawValue = ZTinyDotType.nextValue }
+	init() { rawValue = ZTinyDotType.eNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let eIdea  = ZTinyDotType()
@@ -590,11 +590,11 @@ struct ZTinyDotType: OptionSet {
 }
 
 struct ZDetailsViewID: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
-	
-	init() { rawValue = ZDetailsViewID.nextValue }
+	static var vStructValue = 0
+	static var   vNextValue : Int { if vStructValue == 0 { vStructValue = 1 } else { vStructValue *= 2 }; return vStructValue }
+	let            rawValue : Int
+
+	init() { rawValue = ZDetailsViewID.vNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let vPreferences = ZDetailsViewID(rawValue: 0x0001)
@@ -608,11 +608,11 @@ struct ZDetailsViewID: OptionSet {
 }
 
 struct ZFilterOption: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
-	
-	init() { rawValue = ZFilterOption.nextValue }
+	static var fStructValue = 0
+	static var   fNextValue : Int { if fStructValue == 0 { fStructValue = 1 } else { fStructValue *= 2 }; return fStructValue }
+	let            rawValue : Int
+
+	init() { rawValue = ZFilterOption.fNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 	
 	static let fBookmarks = ZFilterOption()

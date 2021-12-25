@@ -102,6 +102,13 @@ extension ZoneLine {
 
 extension ZoneDot {
 
+	var isDragDrop : Bool {
+		switch mode {
+		case .linearMode:   return   linesIsDragDrop
+		case .circularMode: return circlesIsDragDrop
+		}
+	}
+
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		switch mode {
 			case .linearMode:     linesDrawMainDot(in: iDirtyRect, using: parameters)

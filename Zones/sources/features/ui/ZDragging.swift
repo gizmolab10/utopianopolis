@@ -54,7 +54,7 @@ class ZDragging: NSObject {
 
 			if  flags.isCommand && !flags.isOption {          // shift background
 				controller.scrollEvent(move: state == .changed,  to: location)
-			} else if draggedZones.isEmpty {
+			} else if !draggedZones.isEmpty {
 				dropMaybeGesture(gesture, in: controller)     // logic for drawing the drop dot, and for dropping dragged idea
 			} else if state == .changed,                      // enlarge rubberband
 				gRubberband.setRubberbandExtent(to: location) {
@@ -125,7 +125,7 @@ class ZDragging: NSObject {
 		cleanupAfterDrag()
 
 		if  dropMaybeOntoCrumbButton(iGesture, in: controller) ||
-			dropMaybeOnto(iGesture, in: controller) {
+			dropMaybeOntoWidget(iGesture, in: controller) {
 		}
 
 		if  iGesture?.isDone ?? false {
@@ -134,7 +134,7 @@ class ZDragging: NSObject {
 		}
 	}
 
-	func dropMaybeOnto(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means done with drags
+	func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means done with drags
 		if  !draggedZones.containsARoot {
 			let         totalGrabs = draggedZones + gSelecting.currentMapGrabs
 			if  draggedZones.userCanMoveAll,

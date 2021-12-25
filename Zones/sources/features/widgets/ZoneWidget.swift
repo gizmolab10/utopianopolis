@@ -16,11 +16,11 @@ import SnapKit
 #endif
 
 struct ZWidgetType: OptionSet, CustomStringConvertible {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
+	static var tStructValue = 0
+	static var   tNextValue : Int { if tStructValue == 0 { tStructValue = 1 } else { tStructValue *= 2 }; return tStructValue }
+	let            rawValue : Int
 
-	init() { rawValue = ZWidgetType.nextValue }
+	init() { rawValue = ZWidgetType.tNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let tExemplar = ZWidgetType()
@@ -492,15 +492,13 @@ class ZoneWidget: ZPseudoView {
 					if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
 						var style = ZHighlightStyle.sNone
 						
-						if  isEditing {            style = .sDashed
-						} else if isGrabbed { 	   style = .sThick
-						} else if isHovering {     style = .sMedium
+						if        isEditing      { style = .sDashed
 						} else if tHovering {
 							if    isCircularMode { style = .sDashed
-							} else {               style = .sThin
-							}
-						} else if isCircularMode { style = .sUltraThin
-						}
+							} else               { style = .sThin      }
+						} else if isGrabbed      { style = .sThick
+						} else if isHovering     { style = .sMedium
+						} else if isCircularMode { style = .sUltraThin }
 
 //						debugDraw(isHovering || tHovering)
 

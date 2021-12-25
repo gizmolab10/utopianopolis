@@ -68,7 +68,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					let  color = gAccentColor.lighter(by: 2.0)
 					level     += 1
 
-					rect.drawColoredCircle(color, thickness: 0.5)
+					rect.drawColoredCircle(color, thickness: 0.2)
 				}
 			}
 		}

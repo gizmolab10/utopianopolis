@@ -76,31 +76,28 @@ class ZoneLine: ZPseudoView {
 		return ZBezierPath()
 	}
 
-	func drawLine() {
-		let           kind = lineKind
-		let           rect = lineRect(for: kind)
-		if  let      other = childWidget ?? parentWidget,
-			let      color = other.widgetZone?.color {
-			let       path = linePath(in: rect, kind: kind)
-			path.lineWidth = CGFloat(gLineThickness)
+	func drawLine(in color: ZColor) {
+		let       kind = lineKind
+		let       rect = lineRect(for: kind)
+		let       path = linePath(in: rect, kind: kind)
+		path.lineWidth = CGFloat(gLineThickness)
 
-			if  isCircularMode {
-				ZBezierPath(rect: gMapView!.bounds).setClip()
-				
-				if  let  p = parentWidget?.widgetZone, !p.isExpanded {
-					return
-				}
-				
-				if  rect.isEmpty {
-					return
-				}
+		if  isCircularMode {
+			ZBezierPath(rect: gMapView!.bounds).setClip()
+
+			if  let  p = parentWidget?.widgetZone, !p.isExpanded {
+				return
 			}
-			
-			color.setStroke()
-			path.stroke()
+
+			if  rect.isEmpty {
+				return
+			}
 		}
+
+		color.setStroke()
+		path.stroke()
 	}
-	
+
 	func drawDraggingLineAndDot() {
 		let               rect = absoluteDropDragDotRect
 		dragDot?.absoluteFrame = rect
@@ -108,7 +105,14 @@ class ZoneLine: ZPseudoView {
 		gActiveColor.setFill()
 		gActiveColor.setStroke()
 		ZBezierPath(ovalIn: rect).fill()
-		drawLine()
+		drawLine(in: gActiveColor)
+	}
+
+	func drawLine() {
+		if  let other = childWidget ?? parentWidget,
+			let color = other.widgetZone?.color {
+			drawLine(in: color)
+		}
 	}
 
 	override func draw(_ phase: ZDrawPhase) {

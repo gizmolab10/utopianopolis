@@ -311,6 +311,8 @@ extension ZoneLine {
 
 extension ZoneDot {
 
+	var linesIsDragDrop : Bool { return widget == gDragging.dropWidget }
+
 	func linesUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		let         x = CGPoint(drawnSize).x
 		let    origin = isReveal ? absoluteTextFrame.bottomRight : absoluteTextFrame.origin.offsetBy(-x, 0.0)

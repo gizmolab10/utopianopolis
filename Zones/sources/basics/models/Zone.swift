@@ -29,11 +29,11 @@ enum ZoneAccess: Int, CaseIterable {
 }
 
 struct ZWorkingListType: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
+	static var wStructValue = 0
+	static var   wNextValue : Int { if wStructValue == 0 { wStructValue = 1 } else { wStructValue *= 2 }; return wStructValue }
+	let            rawValue : Int
 	
-	init() { rawValue = ZWorkingListType.nextValue }
+	init() { rawValue = ZWorkingListType.wNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let wBookmarks = ZWorkingListType()
@@ -2264,6 +2264,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addZones(_ iZones: ZoneArray, at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ flags: ZEventFlags, onCompletion: Closure?) {
+
+		if  iZones.count == 0 {
+			return
+		}
 
 		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// 1. move a normal zone into another normal zone                                                            //

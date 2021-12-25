@@ -40,11 +40,11 @@ func gToggleDebugMode(_ mode: ZDebugMode) {
 }
 
 struct ZCoreDataMode: OptionSet {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
+	static var cStructValue = 0
+	static var   cNextValue : Int { if cStructValue == 0 { cStructValue = 1 } else { cStructValue *= 2 }; return cStructValue }
+	let            rawValue : Int
 
-	init() { rawValue = ZCoreDataMode.nextValue }
+	init() { rawValue = ZCoreDataMode.cNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let dDisabled = ZCoreDataMode() // cannot use core data
@@ -54,11 +54,11 @@ struct ZCoreDataMode: OptionSet {
 }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
+	static var dStructValue = 0
+	static var   dNextValue : Int { if dStructValue == 0 { dStructValue = 1 } else { dStructValue *= 2 }; return dStructValue }
+	let            rawValue : Int
 
-	init()              { rawValue      = ZDebugMode.nextValue }
+	init()              { rawValue      = ZDebugMode.dNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let dNone                = ZDebugMode()
@@ -93,11 +93,11 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 }
 
 struct ZPrintMode: OptionSet, CustomStringConvertible {
-	static var structValue = 0
-	static var   nextValue : Int { if structValue == 0 { structValue = 1 } else { structValue *= 2 }; return structValue }
-	let           rawValue : Int
+	static var pStructValue = 0
+	static var   pNextValue : Int { if pStructValue == 0 { pStructValue = 1 } else { pStructValue *= 2 }; return pStructValue }
+	let            rawValue : Int
 
-	init() { rawValue = ZPrintMode.nextValue }
+	init() { rawValue = ZPrintMode.pNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let   dNone = ZPrintMode()

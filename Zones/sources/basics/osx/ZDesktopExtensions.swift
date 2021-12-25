@@ -1184,7 +1184,7 @@ extension ZoneLine {
 				rect.origin   .y =     targetFrame.midY              - smallDelta
 				rect.size.height = abs(sourceFrame.midY - rect.minY) - delta
             case .straight:
-				rect.origin   .y =     sourceFrame.midY + CGFloat(1) - delta
+				rect.origin   .y =     sourceFrame.midY              - smallDelta
                 rect.size.height = thickness
             }
         }

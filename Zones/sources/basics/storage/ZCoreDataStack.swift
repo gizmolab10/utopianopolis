@@ -291,10 +291,11 @@ class ZCoreDataStack: NSObject {
 	// MARK: - registry
 	// MARK: -
 
-	func registerObject(_ object: ZManagedObject, recordName: String, dbID: ZDatabaseID) {
-		var dict  = fetchedRegistry[dbID]
-		if  dict == nil {
-			dict  = [String : ZManagedObject]()
+	func registerObject(_ objectID: NSManagedObjectID, recordName: String, dbID: ZDatabaseID) {
+		let object = context.object(with: objectID)
+		var dict   = fetchedRegistry[dbID]
+		if  dict  == nil {
+			dict   = [String : ZManagedObject]()
 		}
 
 		dict?[recordName]     = object
@@ -387,11 +388,15 @@ class ZCoreDataStack: NSObject {
 			registerAsMissing(recordName: recordName, dbID: dbID)
 		} else {
 			for item in items {
-				registerObject(item, recordName: recordName, dbID: dbID)
 				objects.append(item)
 			}
-		}
 
+			FOREGROUND(canBeDirect: true) {
+				for item in items {
+					self.registerObject(item.objectID, recordName: recordName, dbID: dbID)
+				}
+			}
+		}
 
 		return objects
 	}

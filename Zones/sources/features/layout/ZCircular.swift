@@ -293,6 +293,8 @@ extension ZoneLine {
 
 extension ZoneDot {
 
+	var circlesIsDragDrop : Bool { return line == gDragging.dropLine }
+
 	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
 
 	func circlesUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
