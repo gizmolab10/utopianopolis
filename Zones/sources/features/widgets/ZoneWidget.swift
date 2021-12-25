@@ -488,6 +488,7 @@ class ZoneWidget: ZPseudoView {
 					let isGrabbed = zone.isGrabbed
 					let isEditing = t.isFirstResponder
 					let tHovering = t.isHovering
+					let ringIdeas = gCirclesDisplayMode.contains(.cIdeas) && isCircularMode
 					
 					if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
 						var style = ZHighlightStyle.sNone
@@ -498,7 +499,7 @@ class ZoneWidget: ZPseudoView {
 							} else               { style = .sThin      }
 						} else if isGrabbed      { style = .sThick
 						} else if isHovering     { style = .sMedium
-						} else if isCircularMode { style = .sUltraThin }
+						} else if ringIdeas      { style = .sUltraThin }
 
 //						debugDraw(isHovering || tHovering)
 

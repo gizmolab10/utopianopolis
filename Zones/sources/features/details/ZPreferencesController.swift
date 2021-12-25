@@ -17,32 +17,34 @@ import Foundation
 
 class ZPreferencesController: ZGenericController {
 
-	@IBOutlet var     mapLayoutControl : ZSegmentedControl?
-	@IBOutlet var    countsModeControl : ZSegmentedControl?
-	@IBOutlet var  colorPreferencesBox : NSView?
-    @IBOutlet var   backgroundColorBox : ZColorWell?
-    @IBOutlet var   activeMineColorBox : ZColorWell?
-	@IBOutlet var         zoneColorBox : ZColorWell?
-    @IBOutlet var     clearColorButton : ZButton?
-    @IBOutlet var      verticalSpacing : ZSlider?
-    @IBOutlet var            thickness : ZSlider?
-    @IBOutlet var              stretch : ZSlider?
-    override  var         controllerID : ZControllerID { return .idPreferences }
+	@IBOutlet var     countsModeControl : ZSegmentedControl?
+	@IBOutlet var circlesDisplayControl : ZSegmentedControl?
+	@IBOutlet var     circlesDisplayBox : NSView?
+	@IBOutlet var   colorPreferencesBox : NSView?
+    @IBOutlet var    backgroundColorBox : ZColorWell?
+    @IBOutlet var    activeMineColorBox : ZColorWell?
+	@IBOutlet var          zoneColorBox : ZColorWell?
+	@IBOutlet var               stretch : ZSlider?
+	@IBOutlet var             thickness : ZSlider?
+	@IBOutlet var       verticalSpacing : ZSlider?
+    @IBOutlet var      clearColorButton : ZButton?
+    override  var          controllerID : ZControllerID { return .idPreferences }
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vPreferences) {
-            let                        grabbed = gSelecting.firstSortedGrab
-            countsModeControl?.selectedSegment = gCountsMode   .rawValue
-			mapLayoutControl? .selectedSegment = gMapLayoutMode.rawValue
-            thickness?            .doubleValue = gLineThickness
-            verticalSpacing?      .doubleValue = Double(gGenericOffset.height)
-            stretch?              .doubleValue = Double(gGenericOffset.width)
-			colorPreferencesBox?     .isHidden = !gColorfulMode
-            clearColorButton?        .isHidden = !(grabbed?.hasColor ?? true)
-			zoneColorBox?               .color =   grabbed?.color ?? kDefaultIdeaColor
-			activeMineColorBox?         .color = gActiveColor
-			backgroundColorBox?         .color = gAccentColor
+            let                            grabbed = gSelecting.firstSortedGrab
+            countsModeControl?    .selectedSegment = gCountsMode   .rawValue
+            thickness?                .doubleValue = gLineThickness
+            verticalSpacing?          .doubleValue = Double(gGenericOffset.height)
+            stretch?                  .doubleValue = Double(gGenericOffset.width)
+			circlesDisplayBox?           .isHidden = gMapLayoutMode == .linearMode
+			colorPreferencesBox?         .isHidden = !gColorfulMode
+            clearColorButton?            .isHidden = !(grabbed?.hasColor ?? true)
+			zoneColorBox?                   .color =   grabbed?.color ?? kDefaultIdeaColor
+			activeMineColorBox?             .color = gActiveColor
+			backgroundColorBox?             .color = gAccentColor
 
+			circlesDisplayControl?.selectSegments(from: gCirclesDisplayMode.indexSet)
             view.setAllSubviewsNeedDisplay()
         }
     }
@@ -96,12 +98,11 @@ class ZPreferencesController: ZGenericController {
     }
 
     @IBAction func segmentedControlAction(_ iControl: ZSegmentedControl) {
-        let          selection = iControl.selectedSegment
         if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iControl.identifier) {
 			switch (identifier) {
-				case "counts":    gCountsMode = ZCountsMode   (rawValue: selection)!
-				case "layout": gMapLayoutMode = ZMapLayoutMode(rawValue: selection)!
-				default:       return
+			case "counts":         gCountsMode = ZCountsMode(rawValue: iControl.selectedSegment)!
+			case "layout": gCirclesDisplayMode = ZCirclesDisplayMode.createFrom(iControl.seletedSegments)
+			default:       return
 			}
 
 			gRelayoutMaps()

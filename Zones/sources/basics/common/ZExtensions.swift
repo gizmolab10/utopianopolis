@@ -2906,3 +2906,25 @@ extension ZTextField {
     @objc func alterCase(up: Bool) {}
 
 }
+
+extension NSSegmentedControl {
+
+	var seletedSegments: IndexSet {
+		var set = IndexSet()
+
+		for segment in 0..<segmentCount {
+			if  isSelected(forSegment: segment) {
+				set.insert(segment)
+			}
+		}
+
+		return set
+	}
+
+	func selectSegments(from set: IndexSet) {
+		for segment in 0..<segmentCount {
+			setSelected(set.contains(segment), forSegment: segment)
+		}
+	}
+
+}

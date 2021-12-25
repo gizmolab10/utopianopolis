@@ -57,9 +57,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				widget.draw(phase)
 			}
 			
-			// now, draw children ring
+			// now, draw level rings
 			
-			if  phase     == .pLines,
+			if  phase     == .pLines, gCirclesDisplayMode.contains(.cRings),
 				let center = rootWidget?.absoluteFrame.center {
 				var level  = 1
 				while ZWidgets.hasVisibleChildren   (at: level) {

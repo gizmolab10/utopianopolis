@@ -16,6 +16,7 @@ import UIKit
 #endif
 
 enum ZModeButtonType: String {
+	case tLayout  = "layout```````"
 	case tConfine = "browse"
 	case tGrowth  = "grow"
 }
@@ -31,7 +32,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 		removeButtons()
 
 		buttons                   = [ZButton]()
-		let t : [ZModeButtonType] = [.tGrowth, .tConfine]
+		let t : [ZModeButtonType] = [.tLayout, .tGrowth, .tConfine]
 		for type in t {
 			let             title = type.rawValue
 			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
@@ -52,8 +53,9 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 		for button in buttons {
 			if  let    type = button.modeButtonType {
 				switch type {
-					case .tConfine: button.title = gConfinementMode.rawValue
-					case .tGrowth:  button.title = gListGrowthMode .rawValue
+				case .tLayout:  button.title = gMapLayoutMode  .title
+				case .tConfine: button.title = gConfinementMode.rawValue
+				case .tGrowth:  button.title = gListGrowthMode .rawValue
 				}
 			}
 
@@ -64,8 +66,9 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let    type = button.modeButtonType {
 			switch type {
-				case .tConfine: gConfinementMode = gBrowsingIsConfined ? .all : .list
-				case .tGrowth:  gListGrowthMode  = gListsGrowDown      ? .up  : .down
+			case .tLayout:  gMapLayoutMode   = (gMapLayoutMode == .circularMode) ? .linearMode : .circularMode
+			case .tConfine: gConfinementMode = gBrowsingIsConfined               ? .all        : .list
+			case .tGrowth:  gListGrowthMode  = gListsGrowDown                    ? .up         : .down
 			}
 		}
 

@@ -90,7 +90,7 @@ func           gSetBigMapMode()                   { gWorkMode     = .wMapMode }
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next
 
-	gRelayoutMaps()
+	gSignal([.sAll, .spRelayout, .spPreferences])
 }
 
 func gToggleShowTooltips() {
@@ -514,13 +514,25 @@ var gCountsMode: ZCountsMode {
 	}
 }
 
+var gCirclesDisplayMode: ZCirclesDisplayMode {
+	get {
+		let value = UserDefaults.standard.object(forKey: kCirclesDisplayMode) as? Int ?? 0
+
+		return ZCirclesDisplayMode(rawValue: value)
+	}
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey: kCirclesDisplayMode)
+		UserDefaults.standard.synchronize()
+	}
+}
+
 var gMapLayoutMode: ZMapLayoutMode {
 	get {
-		let value  = UserDefaults.standard.object(forKey: kMapLayoutMode) as? Int
-		var mode   = ZMapLayoutMode.linearMode
+		let value = UserDefaults.standard.object(forKey: kMapLayoutMode) as? Int
+		var mode  = ZMapLayoutMode.linearMode
 
-		if  let  v = value {
-			mode   = ZMapLayoutMode(rawValue: v)!
+		if  let v = value {
+			mode  = ZMapLayoutMode(rawValue: v)!
 		} else {
 			UserDefaults.standard.set(mode.rawValue, forKey:kMapLayoutMode)
 			UserDefaults.standard.synchronize()

@@ -191,6 +191,13 @@ enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 			default:          return .linearMode
 		}
 	}
+
+	var title: String {
+		switch self {
+		case .linearMode: return "Tree"
+		default:          return "Star"
+		}
+	}
 }
 
 enum ZToolTipsLength: Int { // do not change the order, they are persisted
@@ -562,12 +569,48 @@ enum ZEssayLinkType: String {
 // MARK: - option sets
 // MARK: -
 
-struct ZoneType: OptionSet {
-	static var zStructValue = 0
-	static var   zNextValue : Int { if zStructValue == 0 { zStructValue = 1 } else { zStructValue *= 2 }; return zStructValue }
-	let            rawValue : Int
+struct ZCirclesDisplayMode: OptionSet {
+	let rawValue : Int
 
-	init() { rawValue = ZoneType.zNextValue }
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let cNone  = ZCirclesDisplayMode(rawValue: 0x0001)
+	static let cIdeas = ZCirclesDisplayMode(rawValue: 0x0002)
+	static let cRings = ZCirclesDisplayMode(rawValue: 0x0004)
+
+	static func createFrom(_ set: IndexSet) -> ZCirclesDisplayMode {
+		var mode = ZCirclesDisplayMode.cNone
+
+		if  set.contains(0) {
+			mode.insert(.cIdeas)
+		}
+
+		if  set.contains(1) {
+			mode.insert(.cRings)
+		}
+
+		return mode
+	}
+
+	var indexSet: IndexSet {
+		var set = IndexSet()
+
+		if  contains(.cIdeas) {
+			set.insert(0)
+		}
+
+		if  contains(.cRings) {
+			set.insert(1)
+		}
+
+		return set
+	}
+
+}
+
+struct ZoneType: OptionSet {
+	let rawValue : Int
+
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let zChildless = ZoneType(rawValue: 0x0001)
@@ -590,11 +633,8 @@ struct ZTinyDotType: OptionSet {
 }
 
 struct ZDetailsViewID: OptionSet {
-	static var vStructValue = 0
-	static var   vNextValue : Int { if vStructValue == 0 { vStructValue = 1 } else { vStructValue *= 2 }; return vStructValue }
-	let            rawValue : Int
+	let rawValue : Int
 
-	init() { rawValue = ZDetailsViewID.vNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let vPreferences = ZDetailsViewID(rawValue: 0x0001)

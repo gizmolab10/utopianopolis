@@ -259,10 +259,14 @@ class ZCoreDataStack: NSObject {
 		let objects = fetch(type: type, recordName: recordName, into: dbID, onlyOne: onlyOne)
 
 		invokeUsingDatabaseID(dbID) {
-			for object in objects {
-				if let zRecord = object as? ZRecord {
-					zRecord.convertFromCoreData(visited: [])
-					zRecord.register()
+			let ids = objects.map { $0.objectID }
+			for id in ids {
+				FOREGROUND(canBeDirect: true) { () -> (Void) in
+					let      object = self.context.object(with: id)
+					if  let zRecord = object as? ZRecord {
+						zRecord.convertFromCoreData(visited: [])
+						zRecord.register()
+					}
 				}
 			}
 		}
