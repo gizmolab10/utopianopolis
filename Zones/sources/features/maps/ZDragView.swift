@@ -32,7 +32,7 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
         kClearColor.setFill()
         ZBezierPath(rect: bounds).fill() // transparent background
 		gRubberband.draw()
-		gDropLine?.drawDraggingLineAndDot()
+		gDragging.dropLine?.drawDraggingLineAndDot()
 	}
 
 	override func mouseExited(with event: ZEvent) {
@@ -42,8 +42,8 @@ class ZDragView: ZView, ZGestureRecognizerDelegate {
 			gRubberband.rubberbandRect  = nil
 		}
 
-		if  gDropWidget != nil {
-			gDropWidget  = nil
+		if  gDragging.dropWidget != nil {
+			gDragging.dropWidget  = nil
 		}
 
 		setNeedsDisplay()

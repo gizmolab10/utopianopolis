@@ -23,13 +23,7 @@ class ZGesturesController: ZGenericController, ZGestureRecognizerDelegate {
 	var    moveUpGesture :  ZGestureRecognizer?
 	var     clickGesture :  ZKeyClickGestureRecognizer?
 
-	func restartGestureRecognition() {}
 	@objc func handleClickGesture(_ iGesture: ZKeyClickGestureRecognizer?) {}
 	@objc func  handleDragGesture(_ iGesture: ZKeyClickGestureRecognizer?) -> Bool { return false } // false means not handled
-
-	override func setup() {
-		super.setup()
-		restartGestureRecognition()
-	}
 
 }

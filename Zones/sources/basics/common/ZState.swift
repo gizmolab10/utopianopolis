@@ -24,20 +24,13 @@ var           gPushIsDisabled                     = false
 var            gTextCapturing                     = false
 var             gNeedsRecount                     = false
 var               gLaunchedAt                     = Date()
-var             gDraggedZones                     = ZoneArray()
 var            gProgressTimes                     = [ZOperationID : Double]()
 var           gAnglesFraction                     = 42.0
 var              gAnglesDelta                     = 15.0
 var        gInterruptionCount                     = 0
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var           gMigrationState:    ZMigrationState = .firstTime
-var             gDragRelation:         ZRelation?
 var             gCurrentTrait:            ZTrait?
-var              gDropIndices: NSMutableIndexSet?
-var               gDropWidget:        ZoneWidget?
-var                gDropCrumb: ZBreadcrumbButton?
-var                gDragPoint:           CGPoint?
-var                 gDropLine:          ZoneLine?
 var     gCurrentMouseDownZone:              Zone?
 var gCurrentMouseDownLocation:           CGFloat?
 var       gCurrentBrowseLevel:               Int?
@@ -48,7 +41,6 @@ var                   gIsLate:               Bool { return gBatches.isLate }
 var                   gIsHere:               Bool { return gHere == gSelecting.currentMoveableMaybe }
 var                   gIsMine:               Bool { return gDatabaseID == .mineID }
 var                gIsEditing:               Bool { return gIsEditIdeaMode || gIsEssayMode }
-var               gIsDragging:               Bool { return !gDraggedZones.isEmpty }
 var          gIsHelpFrontmost:               Bool { return gHelpWindow?.isKeyWindow ?? false }
 var         gGrabbedCanTravel:               Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
 var       gBrowsingIsConfined:               Bool { return gConfinementMode == .list }

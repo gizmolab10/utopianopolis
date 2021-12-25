@@ -117,7 +117,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                   isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                   spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                       spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
-	var                        dropCycle :               Bool  { return gDraggedZones.contains(self) || spawnedByAny(of: gDraggedZones) || (bookmarkTarget?.dropCycle ?? false) }
+	var                        dropCycle :               Bool  { return gDragging.draggedZones.contains(self) || spawnedByAny(of: gDragging.draggedZones) || (bookmarkTarget?.dropCycle ?? false) }
 	var                       isInAGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
 	var                    isAGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
 	var                      userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
@@ -3392,7 +3392,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
 		p.showSideDot    = isCurrentSmallMapBookmark
-		p.isDragged      = gDraggedZones.contains(self)
+		p.isDragged      = gDragging.draggedZones.contains(self)
 		p.isDrop         = isDrop
 		p.filled         = isFilled || (!isReveal && isGrabbed)
 		p.fill           = p.filled ? c.lighter(by: 2.5) : gBackgroundColor

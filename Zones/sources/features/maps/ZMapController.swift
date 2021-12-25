@@ -208,10 +208,20 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		return gestureRecognizer == clickGesture && otherGestureRecognizer == movementGesture
 	}
 
-	override func restartGestureRecognition() {
+	func restartGestureRecognition() {
 		gestureView?.gestureHandler = self
 
-		gDraggedZones.removeAll()
+		gDragging.draggedZones.removeAll()
+	}
+
+	func scrollEvent(move: Bool, to location: CGPoint) {
+		if  move {
+			gScrollOffset = CGPoint(x: gScrollOffset.x + location.x - priorScrollLocation.x, y: gScrollOffset.y + priorScrollLocation.y - location.y)
+
+			layoutForCurrentScrollOffset()
+		}
+
+		priorScrollLocation = location
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
@@ -220,49 +230,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		if  gIsDraggableMode,
-			let            gesture  = iGesture as? ZKeyPanGestureRecognizer,
-			let              flags  = gesture.modifiers {
-            let              state  = gesture.state
-			let            location = gesture.location(in: gesture.view)
+			let gesture  = iGesture as? ZKeyPanGestureRecognizer {
+			let location = gesture.location(in: gesture.view)
 
 			printDebug(.dClick, "drag")
 
 			if  isEditingText(at: location) {
 				restartGestureRecognition()                       // let text editor consume the gesture
 			} else {
-				if  gCurrentlyEditingWidget != nil {
-					gTextEditor.stopCurrentEdit()
-				}
-
-				if  flags.isCommand && !flags.isOption {          // shift background
-					scrollEvent(move: state == .changed,  to: location)
-				} else if gIsDragging {
-					dropMaybeGesture(iGesture)                    // logic for drawing the drop dot, and for dropping dragged idea
-				} else if state == .changed,                      // enlarge rubberband
-						  gRubberband.setRubberbandExtent(to: location) {
-					gRubberband.updateGrabs()
-					gDragView?.setNeedsDisplay()
-					gMapView?.setNeedsDisplay()
-				} else if ![.began, .cancelled].contains(state) { // drag ended or failed
-					gRubberband.rubberbandRect = nil              // erase rubberband
-
-					cleanupAfterDrag()
-					restartGestureRecognition()
-					gSignal([.spPreferences, .sDatum])                            // so color well and indicators get updated
-				} else if let any = detect(at: location),
-					let       dot = any as? ZoneDot {
-					if  dot.isReveal {
-						cleanupAfterDrag()                        // no dragging
-						dot.widgetZone?.revealDotClicked(flags)
-					} else {
-						dragStartEvent(dot, iGesture)             // start dragging a drag dot
-					}
-				} else {                                          // begin drag
-					gRubberband.rubberbandStartEvent(location, iGesture)
-					gMainWindow?.makeFirstResponder(gMapView)
-				}
-
-				gDragView?.setNeedsDisplay()
+				gDragging.handleDragGesture(gesture, in: self)
 			}
 
 			return true
@@ -329,161 +305,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             restartGestureRecognition()
         }
 	}
-	
-    // //////////////////////////////////////////
-    // next four are only called by controller //
-    // //////////////////////////////////////////
-
-    func dragStartEvent(_ dot: ZoneDot, _ iGesture: ZGestureRecognizer?) {
-        if  var      zone = dot.widgetZone,              // should always be true
-			let   gesture = iGesture {
-
-            if  gesture.isOptionDown {
-				zone = zone.deepCopy(dbID: .mineID) // option means drag a copy
-            }
-
-            if  gesture.isShiftDown {
-                zone.addToGrabs()
-            } else if !zone.isGrabbed {
-                zone.grab()
-            }
-
-			gDraggedZones = gSelecting.currentMapGrabs
-
-			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(gMapView)
-			}
-        }
-    }
-
-    func scrollEvent(move: Bool, to location: CGPoint) {
-        if move {
-            gScrollOffset = CGPoint(x: gScrollOffset.x + location.x - priorScrollLocation.x, y: gScrollOffset.y + priorScrollLocation.y - location.y)
-            
-            layoutForCurrentScrollOffset()
-        }
-        
-        priorScrollLocation = location
-    }
-
-	// MARK: - drop
-	// MARK: -
-
-	func dropOnto(_ zone: Zone, at dropAt: Int? = nil, _ iGesture: ZGestureRecognizer?) {
-		if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
-			let   flags = gesture.modifiers {
-			zone.addZones(gDraggedZones, at: dropAt, undoManager: undoManager, flags) {
-				gSelecting.updateBrowsingLevel()
-				gSelecting.updateCousinList()
-				self.restartGestureRecognition()
-				gRelayoutMaps()
-			}
-		}
-	}
-
-	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?) {
-		cleanupAfterDrag()
-
-		if  gDraggedZones.isEmpty ||
-			dropMaybeOntoCrumbButton(iGesture) ||
-			dropMaybeOntoWidget(iGesture) {
-		}
-
-		if  iGesture?.isDone ?? false {
-			restartGestureRecognition()
-			gSignal([.sDatum, .spPreferences, .spCrumbs]) // so color well gets updated
-		}
-	}
-
-	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
-		if  let crumb = gBreadcrumbsView?.detectCrumb(iGesture),
-			!gDraggedZones.containsARoot,
-			!gDraggedZones.contains(crumb.zone),
-			!gDraggedZones.anyParentMatches(crumb.zone) {
-
-			if  iGesture?.isDone ?? false {
-				dropOnto(crumb.zone, iGesture)
-			} else {
-				gDropCrumb = crumb
-
-				crumb.highlight(true)
-			}
-
-			return true
-		}
-
-		return false
-	}
-
-    func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?) -> Bool { // true means done with drags
-        if  !gDraggedZones.containsARoot {
-			let         totalGrabs = gDraggedZones + gSelecting.currentMapGrabs
-            if  gDraggedZones.userCanMoveAll,
-				let (inBigMap, zone, location) = widgetHit(by: iGesture, locatedInBigMap: isBigMap),
-				var       dropZone = zone, !totalGrabs.contains(dropZone),
-				var     dropWidget = dropZone.widget {
-				let dropController = dropWidget.controller
-				let      dropIndex = dropZone.siblingIndex
-                let           here = inBigMap ? gHere : gSmallMapHere
-                let    notDropHere = dropZone != here
-				let       relation = dropController?.relationOf(location, to: dropWidget) ?? .upon
-				let      useParent = relation != .upon && notDropHere
-
-				if  useParent,
-					let dropParent = dropZone.parentZone,
-					let    pWidget = dropParent.widget {
-					dropZone       = dropParent
-					dropWidget     = pWidget
-
-					if  relation  == .below {
-						noop()
-					}
-				}
-
-				let  lastDropIndex = dropZone.count
-				var          index = (useParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
-				;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
-				let      dragIndex = gDraggedZones[0].siblingIndex
-				let      sameIndex = dragIndex == index || dragIndex == index - 1
-				let   dropIsParent = dropZone.children.intersects(gDraggedZones)
-				let     spawnCycle = dropZone.spawnCycle
-				let    isForbidden = gIsEssayMode && dropZone.isInBigMap
-				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0 || isForbidden
-				let         isDone = iGesture?.isDone ?? false
-				let      forgetAll = isNoop || isDone
-                gDropIndices       = forgetAll ? nil : NSMutableIndexSet(index: index)
-				gDropWidget        = forgetAll ? nil : dropWidget
-                gDragRelation      = forgetAll ? nil : relation
-                gDragPoint         = forgetAll ? nil : location
-				gDropLine          = forgetAll ? nil : gDropWidget?.createDragLine()
-
-				if !forgetAll && notDropHere && index > 0 {
-                    gDropIndices?.add(index - 1)
-                }
-
-				gMapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
-
-                if !isNoop, isDone {
-                    let   toBookmark = dropZone.isBookmark
-                    var dropAt: Int? = index
-
-                    if  toBookmark {
-                        dropAt       = gListsGrowDown ? nil : 0
-                    } else if dropIsParent,
-							  dragIndex  != nil,
-							  dragIndex! <= index {
-                        dropAt!     -= 1
-                    }
-
-					dropOnto(dropZone, at: dropAt, iGesture)
-
-					return true
-                }
-            }
-        }
-
-        return false
-    }
 
     // MARK: - internals
     // MARK: -
@@ -526,25 +347,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
         return false
-    }
-
-    func cleanupAfterDrag() {
-		
-		// cursor exited view, remove drag cruft
-
-		gDropCrumb?.highlight(false)
-
-		gRubberband.rubberbandStart = .zero
-
-		gDragRelation = nil
-		gDropIndices  = nil
-		gDropWidget   = nil
-		gDropCrumb    = nil
-		gDragPoint    = nil
-		gDropLine     = nil
-
-		gDragView?.setNeedsDisplay() // erase drag: line and dot
-		gMapView?  .setNeedsDisplay()
     }
 
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {

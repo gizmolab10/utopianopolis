@@ -235,7 +235,7 @@ extension ZoneLine {
 					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
 					rect               = dot.absoluteActualFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
 				}
-			} else if let      indices = gDropIndices, indices.count > 0 {
+			} else if let      indices = gDragging.dropIndices, indices.count > 0 {
 				let         firstindex = indices.firstIndex
 
 				if  let       firstDot = parentWidget?.dot(at: firstindex) {
@@ -248,7 +248,7 @@ extension ZoneLine {
 						// DOT IS ABOVE OR BELOW //
 						// ////////////////////////
 
-						let   relation = gDragRelation
+						let   relation = gDragging.dragRelation
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
 						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
 						let    gHeight = gGenericOffset.height

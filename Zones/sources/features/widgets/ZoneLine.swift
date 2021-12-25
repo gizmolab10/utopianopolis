@@ -38,10 +38,15 @@ class ZoneLine: ZPseudoView {
 			}
 		}
 		
-		if  let c         = childWidget, !c.hideDragDot,
-			let z         = c.widgetZone, z.isShowing,
-			dragDot      == nil {
-			dragDot       = drag ?? ZoneDot(view: absoluteView)
+		if  dragDot     == nil {
+			let       c  = childWidget
+			if  drag    != nil {
+				dragDot  = drag
+			} else if c != nil, !c!.hideDragDot,
+				let   z  = c!.widgetZone, z.isShowing {
+				dragDot  = ZoneDot(view: absoluteView)
+			}
+
 			dragDot?.line = self
 			
 			addSubpseudoview(dragDot)
@@ -76,7 +81,7 @@ class ZoneLine: ZPseudoView {
 		let           rect = lineRect(for: kind)
 		if  let      other = childWidget ?? parentWidget,
 			let      color = other.widgetZone?.color {
-			let       path = linePath(in:  rect, kind: kind)
+			let       path = linePath(in: rect, kind: kind)
 			path.lineWidth = CGFloat(gLineThickness)
 
 			if  isCircularMode {
