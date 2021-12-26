@@ -31,25 +31,18 @@ extension ZoneWidget {
 			linesUpdateChildrenLinesDrawnSize()
 		}
 	}
-	
-	func updateDetectionFrame() {
+
+	func updateHighlightFrame() {
 		switch mode {
-		case .linearMode:     linesUpdateDetectionFrame()
-		case .circularMode: circlesUpdateDetectionFrame()
+		case .linearMode:   return   linesUpdateHighlightFrame()
+		case .circularMode: return circlesUpdateHighlightFrame()
 		}
 	}
 
 	var selectionHighlightPath: ZBezierPath {
 		switch mode {
-			case .linearMode:   return   linesSelectionHighlightPath
-			case .circularMode: return circlesSelectionHighlightPath
-		}
-	}
-
-	var highlightFrame : CGRect {
-		switch mode {
-			case .linearMode:   return   linesHighlightFrame
-			case .circularMode: return circlesHighlightFrame
+		case .linearMode:   return   linesSelectionHighlightPath
+		case .circularMode: return circlesSelectionHighlightPath
 		}
 	}
 

@@ -261,7 +261,7 @@ class ZCoreDataStack: NSObject {
 		invokeUsingDatabaseID(dbID) {
 			let ids = objects.map { $0.objectID }
 			for id in ids {
-				FOREGROUND(canBeDirect: true) { () -> (Void) in
+				FOREGROUND(canBeDirect: true) {
 					let      object = self.context.object(with: id)
 					if  let zRecord = object as? ZRecord {
 						zRecord.convertFromCoreData(visited: [])
@@ -395,9 +395,11 @@ class ZCoreDataStack: NSObject {
 				objects.append(item)
 			}
 
+			let ids = objects.map { $0.objectID }
+
 			FOREGROUND(canBeDirect: true) {
-				for item in items {
-					self.registerObject(item.objectID, recordName: recordName, dbID: dbID)
+				for id in ids {
+					self.registerObject(id, recordName: recordName, dbID: dbID)
 				}
 			}
 		}

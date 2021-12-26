@@ -58,7 +58,7 @@ class ZoneLine: ZPseudoView {
 		if  isLinearMode,
 			let     dot = dragDot,
 			let    zone = parentWidget?.widgetZone, zone.count > 1,
-			let    kind = lineKind(to: dot.absoluteActualFrame) {
+			let    kind = lineKind(to: dot.absoluteFrame) {
 			return kind
 		}
 

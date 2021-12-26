@@ -966,11 +966,12 @@ extension CGRect {
 		return insetBy(dx: dX, dy: dY)
 	}
 
-	func expandedEquallyBy(_ expansion: CGFloat) -> CGRect { return insetEquallyBy(-expansion) }
-	func    insetEquallyBy(   fraction: CGFloat) -> CGRect { return insetBy(fractionX: fraction, fractionY: fraction) }
-	func    insetEquallyBy(_     inset: CGFloat) -> CGRect { return insetBy(dx: inset, dy: inset) }
-	func   offsetEquallyBy(_    offset: CGFloat) -> CGRect { return offsetBy(dx: offset, dy: offset) }
-	func      centeredRect(   diameter: CGFloat) -> CGRect { return centeredEquallyAround(center, diameter: diameter) }
+	func        expandedBy(dx: CGFloat, dy: CGFloat) -> CGRect { return insetBy(dx: -dx, dy: -dy) }
+	func expandedEquallyBy(_     expansion: CGFloat) -> CGRect { return insetEquallyBy(-expansion) }
+	func    insetEquallyBy(       fraction: CGFloat) -> CGRect { return insetBy(fractionX: fraction, fractionY: fraction) }
+	func    insetEquallyBy(_         inset: CGFloat) -> CGRect { return insetBy(dx: inset, dy: inset) }
+	func   offsetEquallyBy(_        offset: CGFloat) -> CGRect { return offsetBy(dx: offset, dy: offset) }
+	func      centeredRect(       diameter: CGFloat) -> CGRect { return centeredEquallyAround(center, diameter: diameter) }
 
 	func insetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
         let dX = size.width  * fractionX

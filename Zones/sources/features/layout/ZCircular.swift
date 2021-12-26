@@ -14,7 +14,6 @@ import Foundation
 extension ZoneWidget {
 
 	var                   placesCount :         Int { return ZWidgets.placesCount(at: linesLevel) }
-	var circlesSelectionHighlightPath : ZBezierPath { return ZBezierPath(ovalIn: highlightFrame) }
 	var                   spreadAngle :     CGFloat { return parentWidget?.incrementAngle ?? CGFloat(k2PI) }
 	var                incrementAngle :     CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
 
@@ -45,12 +44,12 @@ extension ZoneWidget {
 		return CGFloat(k2PI)
 	}
 
-	var circlesHighlightFrame : CGRect {
-		let center = absoluteFrame.center
-		let radius = gCircleIdeaRadius + (gDotWidth / 2.0)
-		let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
-
-		return rect
+	var circlesSelectionHighlightPath : ZBezierPath {
+		if  gCirclesDisplayMode.contains(.cIdeas) {
+			return ZBezierPath(ovalIn: highlightFrame)
+		} else {
+			return linesSelectionHighlightPath
+		}
 	}
 
 	// MARK: - update
@@ -84,22 +83,41 @@ extension ZoneWidget {
 			}
 		}
 	}
-	
-	func circlesUpdateDetectionFrame() {
-		var rect               = highlightFrame
 
-		for zone in childrenWidgets {
-			let zRect          = zone.detectionFrame
-			if !zRect.isEmpty {
-				rect           = rect.union(zRect)
-			}
+	func circlesUpdateHighlightFrame() {
+		if  gCirclesDisplayMode.contains(.cIdeas) {
+			let     center = absoluteFrame.center
+			let     radius = gCircleIdeaRadius + (gDotWidth / 2.0)
+			highlightFrame = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
+		} else if let    t = pseudoTextWidget {
+			highlightFrame = t.absoluteFrame
 		}
+	}
 
-		for line in childrenLines {
-			if  let  drag = line.dragDot {
-				let lRect = drag.absoluteActualFrame
-				if !lRect.isEmpty {
-					rect  = rect.union(lRect)
+	func circlesUpdateDetectionFrame() {
+		var rect  = absoluteFrame
+
+		if  let z = widgetZone {
+			if  z.count      != 0 {
+				for child in childrenWidgets {
+					let cRect = child.detectionFrame
+					if !cRect.isEmpty {
+						rect  = rect.union(cRect)
+					}
+				}
+
+				for line in childrenLines {
+					if  let drag  = line.dragDot {
+						let dRect = drag.absoluteFrame
+						if !dRect.isEmpty {
+							rect  = rect.union(dRect)
+						}
+					}
+				}
+			} else if let p = parentLine?.dragDot {
+				let pRect   = p.absoluteFrame
+				if !pRect.isEmpty {
+					rect    = rect.union(pRect)
 				}
 			}
 		}
@@ -121,15 +139,16 @@ extension ZoneWidget {
 		traverseAllWidgetsByLevel {          (level, widgets) in
 			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // sets lineAngle
 		}
-		
-		if  absolute  {
-			traverseAllWidgetProgeny(inReverse: true) { iWidget in
-				iWidget.circlesUpdateDetectionFrame()
-			}
-		}
-		
+
 		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
 			iWidget.updateTextAndDotFrames  (absolute)
+		}
+
+		if  absolute  {
+			traverseAllWidgetProgeny(inReverse: true) { iWidget in
+				iWidget.circlesUpdateHighlightFrame()
+				iWidget.circlesUpdateDetectionFrame()
+			}
 		}
 	}
 
@@ -224,13 +243,13 @@ extension ZoneLine {
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-					rect               = dot.absoluteActualFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
 				}
 			} else if let      indices = gDragging.dropIndices, indices.count > 0 {
 				let         firstindex = indices.firstIndex
 
 				if  let       firstDot = parentWidget?.dot(at: firstindex) {
-					rect               = firstDot.absoluteActualFrame
+					rect               = firstDot.absoluteFrame
 					let      lastIndex = indices.lastIndex
 
 					if  indices.count == 1 || lastIndex >= zone.count {
@@ -252,7 +271,7 @@ extension ZoneLine {
 						// DOT IS TWEEN //
 						// ///////////////
 
-						let secondRect = secondDot.absoluteActualFrame
+						let secondRect = secondDot.absoluteFrame
 						let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
 						rect           = rect.offsetBy(dx: 0.0, dy: -delta)
 					}
@@ -298,22 +317,21 @@ extension ZoneDot {
 	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
 
 	func circlesUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-
-		// line's length determined by parentToChildLine
-
 		if  let         l = line,
 			let    center = l.parentWidget?.frame.center,
 			let      cToC = l.parentToChildLine {
-			let    length = cToC.length
+			let    length = cToC.length               // line's length determined by parentToChildLine
 			let     width = isReveal ? gDotHeight : gDotWidth
 			let      size = CGSize(width: width, height: gDotWidth)
 			let    radius = gCircleIdeaRadius + 1.5 + (width / 4.0)
 			let   divisor = isReveal ? radius : (length - radius)
 			let     ratio = divisor / length
-			let    offset = cToC * ratio
-			let    origin = center + offset - size
+			let     delta = cToC * ratio
+			let    origin = center + delta - size
 			l     .length = radius
-			absoluteFrame = CGRect(origin: origin, size: drawnSize)
+			let      rect = CGRect(origin: origin, size: drawnSize)
+			let    offset = rect.height / -9.0
+			absoluteFrame = rect.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
 
 			updateTooltips()
 		}

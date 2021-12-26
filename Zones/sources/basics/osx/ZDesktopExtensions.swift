@@ -1156,8 +1156,8 @@ extension ZoneLine {
 	}
 
 	func circlesLineRect() -> CGRect {
-		if  let origin = revealDot?.absoluteActualFrame.center,
-			let center = dragDot?.absoluteActualFrame.center {
+		if  let origin = revealDot?.absoluteFrame.center,
+			let center = dragDot?.absoluteFrame.center {
 			let   size = CGSize(center - origin).absSize
 			return CGRect(origin: origin, size: size)
 		}
@@ -1168,8 +1168,8 @@ extension ZoneLine {
     func linesLineRect(for kind: ZLineCurve?) -> CGRect {
 		var                 rect = CGRect.zero
         if  kind                != nil,
-			let      sourceFrame = revealDot?.absoluteActualFrame,
-			let      targetFrame = dragDot?.absoluteActualFrame {
+			let      sourceFrame = revealDot?.absoluteFrame,
+			let      targetFrame = dragDot?.absoluteFrame {
             rect.origin       .x = sourceFrame    .midX
 			rect.size     .width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
 			let            delta = CGFloat(4)

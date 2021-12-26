@@ -88,6 +88,7 @@ class ZWidgetObject: NSObject {
 @objc (ZoneWidget)
 class ZoneWidget: ZPseudoView {
 
+	var       highlightFrame =     CGRect.zero
 	let         widgetObject =   ZWidgetObject()
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
@@ -495,7 +496,8 @@ class ZoneWidget: ZPseudoView {
 						
 						if        isEditing      { style = .sDashed
 						} else if tHovering {
-							if    isCircularMode { style = .sDashed
+							if    isCircularMode {
+								style = .sDashed
 							} else               { style = .sThin      }
 						} else if isGrabbed      { style = .sThick
 						} else if isHovering     { style = .sMedium

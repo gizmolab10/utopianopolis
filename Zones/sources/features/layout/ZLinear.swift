@@ -140,22 +140,20 @@ extension ZoneWidget {
 		detectionFrame = rect
 	}
 
-	var linesHighlightFrame : CGRect {
+
+	func linesUpdateHighlightFrame() {
 		if  let              t = textWidget,
 			let            dot = childrenLines.first?.revealDot {
-			let revealDotDelta = dot.dotIsVisible ? CGFloat(0.0) : dot.drawnSize.width - 6.0    // expand around reveal dot, only if it is visible
+			let revealDotDelta = dot.dotIsVisible ? CGFloat(0.0) : 6.0 - dot.drawnSize.width    // expand around reveal dot, only if visible
 			let            gap = gGenericOffset.height
-			let       gapInset =  gap         /  8.0
-			let     widthInset = (gap + 32.0) / -2.0
-			let    widthExpand = (gap + 24.0) /  6.0
-			var           rect = t.frame.insetBy(dx: (widthInset - gapInset - 2.0) * ratio, dy: -gapInset)               // get size from text widget
+			let       gapInset =  gap         / 8.0
+			let         xInset = (gap + 32.0) / 2.0
+			let        xExpand = (gap + 24.0) / 6.0
+			var           rect = t.frame.expandedBy(dx: (xInset + gapInset + 2.0) * ratio, dy: -gapInset)     // get size from text widget
 			rect.size .height += (kHighlightHeightOffset + 2.0) / ratio
-			rect.size  .width += (widthExpand - revealDotDelta) / ratio
-
-			return rect
+			rect.size  .width += (xExpand + revealDotDelta) / ratio
+			highlightFrame     = rect
 		}
-
-		return .zero
 	}
 
 	var linesSelectionHighlightPath: ZBezierPath {
@@ -190,6 +188,7 @@ extension ZoneWidget {
 
 		if  absolute  {
 			traverseAllWidgetProgeny(inReverse: true) { iWidget in
+				iWidget.linesUpdateHighlightFrame()
 				iWidget.linesUpdateDetectionFrame()
 			}
 		}
@@ -233,13 +232,13 @@ extension ZoneLine {
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-					rect               = dot.absoluteActualFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
 				}
 			} else if let      indices = gDragging.dropIndices, indices.count > 0 {
 				let         firstindex = indices.firstIndex
 
 				if  let       firstDot = parentWidget?.dot(at: firstindex) {
-					rect               = firstDot.absoluteActualFrame
+					rect               = firstDot.absoluteFrame
 					let      lastIndex = indices.lastIndex
 
 					if  indices.count == 1 || lastIndex >= zone.count {
@@ -261,7 +260,7 @@ extension ZoneLine {
 						// DOT IS STRAIGHT //
 						// /////////////// //
 
-						let secondRect = secondDot.absoluteActualFrame
+						let secondRect = secondDot.absoluteFrame
 						let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
 						rect           = rect.offsetBy(dx: 0.0, dy: -delta)
 					}
@@ -293,7 +292,7 @@ extension ZoneLine {
 	}
 
 	func linesLineKind(to targetRect: CGRect) -> ZLineCurve? {
-		let toggleRect = revealDot?.absoluteActualFrame ?? .zero
+		let toggleRect = revealDot?.absoluteFrame ?? .zero
 		let      delta = targetRect.midY - toggleRect.midY
 
 		return linesLineKind(for: delta)
@@ -316,7 +315,9 @@ extension ZoneDot {
 	func linesUpdateAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		let         x = CGPoint(drawnSize).x
 		let    origin = isReveal ? absoluteTextFrame.bottomRight : absoluteTextFrame.origin.offsetBy(-x, 0.0)
-		absoluteFrame = CGRect(origin: origin, size: drawnSize)
+		let      rect = CGRect(origin: origin, size: drawnSize)
+		let    offset = rect.height / -9.0
+		absoluteFrame = rect.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
 
 		updateTooltips()
 	}
