@@ -85,12 +85,13 @@ extension ZoneWidget {
 	}
 
 	func circlesUpdateHighlightFrame() {
+		let           half = gDotWidth / 2.0
 		if  gCirclesDisplayMode.contains(.cIdeas) {
 			let     center = absoluteFrame.center
-			let     radius = gCircleIdeaRadius + (gDotWidth / 2.0)
+			let     radius = gCircleIdeaRadius + half
 			highlightFrame = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
 		} else if let    t = pseudoTextWidget {
-			highlightFrame = t.absoluteFrame
+			highlightFrame = t.absoluteFrame.expandedBy(dx: half, dy: .zero)
 		}
 	}
 
@@ -213,14 +214,14 @@ extension ZoneWidgetArray {
 extension ZoneLine {
 
 	var lineAngle : CGFloat {
-		if  let angle = parentToChildLine?.angle {
+		if  let    angle = parentToChildVector?.angle {
 			return angle
 		}
 
 		return .zero
 	}
 
-	var parentToChildLine : CGPoint? {
+	var parentToChildVector : CGPoint? {
 		if  let pCenter = parentWidget?.frame.center,
 			let cCenter =  childWidget?.frame.center {
 			let    cToC = cCenter - pCenter
@@ -316,22 +317,36 @@ extension ZoneDot {
 
 	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
 
+	var dotToDotLength : CGFloat {
+		if  gCirclesDisplayMode.contains(.cIdeas) {
+			let width = isReveal ? gDotHeight : gDotWidth
+
+			return gCircleIdeaRadius + 1.5 + (width / 4.0)
+		} else if let l = line,
+			let    size = l.parentWidget?.pseudoTextWidget?.absoluteFrame.size {
+
+			return size.add(width: gDotHeight, height: gDotHeight).lengthAt(l.lineAngle)
+		}
+
+		return .zero
+	}
+
 	func circlesUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		if  let         l = line,
-			let    center = l.parentWidget?.frame.center,
-			let      cToC = l.parentToChildLine {
-			let    length = cToC.length               // line's length determined by parentToChildLine
-			let     width = isReveal ? gDotHeight : gDotWidth
-			let      size = CGSize(width: width, height: gDotWidth)
-			let    radius = gCircleIdeaRadius + 1.5 + (width / 4.0)
-			let   divisor = isReveal ? radius : (length - radius)
-			let     ratio = divisor / length
-			let     delta = cToC * ratio
-			let    origin = center + delta - size
-			l     .length = radius
-			let      rect = CGRect(origin: origin, size: drawnSize)
-			let    offset = rect.height / -9.0
-			absoluteFrame = rect.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
+		if  let          l = line,
+			let     center = l.parentWidget?.frame.center,
+			let lineVector = l.parentToChildVector {
+			let  newLength = dotToDotLength
+			let     length = lineVector.length               // line's length determined by parentToChildLine
+			let      width = isReveal ? gDotHeight : gDotWidth
+			let       size = CGSize(width: width, height: gDotWidth)
+			let    divisor = isReveal ? newLength : (length - newLength)
+			let      ratio = divisor / length
+			let      delta = lineVector * ratio
+			let     origin = center + delta - size
+			l      .length = newLength
+			let       rect = CGRect(origin: origin, size: drawnSize)
+			let     offset = rect.height / -9.0
+			absoluteFrame  = rect.insetEquallyBy(fraction: 0.22).offsetBy(dx: 0.0, dy: offset)
 
 			updateTooltips()
 		}

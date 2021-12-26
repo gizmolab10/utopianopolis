@@ -667,6 +667,10 @@ extension CGFloat {
 		return i
 	}
 
+	func isBetween(low: CGFloat, high: CGFloat) -> Bool {
+		return low < high && low < self && self < high
+	}
+
 }
 
 infix operator -- : AdditionPrecedence
@@ -762,19 +766,29 @@ extension CGPoint {
 
 extension CGSize {
 
+	static var big     : CGSize  { return CGSize.squared(1000000.0) }
+	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
+	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
+	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
+	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
+	func isLargerThan(_ other: CGSize)               -> Bool   { return hypotenuse > other.hypotenuse }
+	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint { return CGPoint(lhs) - rhs }
+	public static func squared(_ length: CGFloat)    -> CGSize { return CGSize(width: length, height: length) }
+	func add(width: CGFloat, height: CGFloat)        -> CGSize { return self + CGSize(width: width, height: height) }
+	func absoluteDifferenceInDiagonals(relativeTo other: CGSize) -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
+	func multiplyBy(_ fraction: CGFloat)             -> CGSize { return CGSize(width: width * fraction, height: height * fraction) }
+	func multiplyBy(_ fraction: CGSize)              -> CGSize { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
+	func fraction(_ delta: CGSize)                   -> CGSize { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
+	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
+	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize { return CGSize(width: width + x, height: height + y).absSize }
+	func offsetBy(_ delta: CGSize)                   -> CGSize { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
+
 	public init(_ point: CGPoint) {
 		self.init()
 
 		width  = point.x
 		height = point.y
 	}
-
-	static var big     : CGSize  { return CGSize.squared(1000000.0) }
-	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
-	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
-	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
-	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
-	public static func squared(_ length: CGFloat) -> CGSize { return CGSize(width: length, height: length) }
 
 	public static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
 		var    size  = lhs
@@ -790,18 +804,6 @@ extension CGSize {
 		size.width  -= rhs.width
 
 		return size.absSize
-	}
-
-	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint {
-		return CGPoint(lhs) - rhs
-	}
-
-	func add(width: CGFloat, height: CGFloat) -> CGSize {
-		return self + CGSize(width: width, height: height)
-	}
-
-	func absoluteDifferenceInDiagonals(relativeTo other: CGSize) -> CGFloat {
-		return abs(hypotenuse - other.hypotenuse)
 	}
 
 	func fractionalScaleToFit(size: CGSize) -> CGFloat {
@@ -824,38 +826,10 @@ extension CGSize {
 		return CGSize(width: width * fraction, height: height * fraction)
 	}
 
-	func isLargerThan(_ other: CGSize) -> Bool {
-		return hypotenuse > other.hypotenuse
-	}
-
-	func multiplyBy(_ fraction: CGFloat) -> CGSize {
-		return CGSize(width: width * fraction, height: height * fraction)
-	}
-
-	func multiplyBy(_ fraction: CGSize) -> CGSize {
-		return CGSize(width: width * fraction.width, height: height * fraction.height).absSize
-	}
-
-	func fraction(_ delta: CGSize) -> CGSize {
-		CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize
-	}
-
 	func fractionPreservingRatio(_ delta: CGSize) -> CGSize {
 		let ratio = (width - delta.width) / width
 
 		return CGSize.squared(ratio).absSize
-	}
-
-	func insetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
-		return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize
-	}
-
-	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
-		return CGSize(width: width + x, height: height + y).absSize
-	}
-
-	func offsetBy(_ delta: CGSize) -> CGSize {
-		return CGSize(width: width + delta.width, height: height + delta.height).absSize
 	}
 
 	func rotate(by angle: Double) -> CGSize {
@@ -872,6 +846,17 @@ extension CGSize {
 			let value = max(min(height, CGFloat(range.upperBound)), CGFloat(range.lowerBound))
 			return CGSize(width: width, height: value)
 		}
+	}
+
+	func lengthAt(_ angle: CGFloat) -> CGFloat {
+		let a = Double(angle)
+		let x = width / CGFloat(abs(cos(a)))
+
+		if  x < hypotenuse {
+			return x / 2.0
+		}
+
+		return height / CGFloat(abs(sin(a))) / 2.0
 	}
 
 }
