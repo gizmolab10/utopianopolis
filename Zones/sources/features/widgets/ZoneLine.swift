@@ -89,7 +89,7 @@ class ZoneLine: ZPseudoView {
 				return
 			}
 
-			if  rect.isEmpty {
+			if  rect.hasZeroSize {
 				return
 			}
 		}

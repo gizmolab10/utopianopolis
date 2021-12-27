@@ -25,7 +25,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="uyC-kt-DrI">
-                                                <font key="font" metaFont="menu" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -36,7 +36,7 @@
                                                 <constraint firstAttribute="height" constant="15" id="am7-ij-t8n"/>
                                             </constraints>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="jkC-rh-JZ7">
-                                                <font key="font" metaFont="menu" size="11"/>
+                                                <font key="font" metaFont="message" size="11"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
@@ -761,7 +761,17 @@
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="2bw-KX-vd8"/>
                                                     </connections>
                                                 </slider>
-                                                <slider identifier="stretch" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR">
+                                                <slider identifier="size" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl" userLabel="Font Size">
+                                                    <rect key="frame" x="-2" y="24" width="164" height="26"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
+                                                    </constraints>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="15" doubleValue="4" tickMarkPosition="below" sliderType="linear" id="qGt-br-s4B"/>
+                                                    <connections>
+                                                        <action selector="sliderAction:" target="Naq-se-Exq" id="NZr-P4-M7Y"/>
+                                                    </connections>
+                                                </slider>
+                                                <slider identifier="stretch" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR" userLabel="Horizontal Spacing">
                                                     <rect key="frame" x="-2" y="2" width="164" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
@@ -769,16 +779,6 @@
                                                     <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="30" maxValue="40" doubleValue="30" tickMarkPosition="below" sliderType="linear" id="j5S-Yr-54O"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="BHm-V9-lFh"/>
-                                                    </connections>
-                                                </slider>
-                                                <slider identifier="size" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl">
-                                                    <rect key="frame" x="-2" y="24" width="164" height="26"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
-                                                    </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="2" maxValue="9" doubleValue="4" tickMarkPosition="below" sliderType="linear" id="qGt-br-s4B"/>
-                                                    <connections>
-                                                        <action selector="sliderAction:" target="Naq-se-Exq" id="NZr-P4-M7Y"/>
                                                     </connections>
                                                 </slider>
                                             </subviews>
@@ -832,9 +832,9 @@
                         <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="colorPreferencesBox" destination="mS1-t0-150" id="EjN-WA-D0x"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
-                        <outlet property="stretch" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
-                        <outlet property="thickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
-                        <outlet property="verticalSpacing" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
+                        <outlet property="fontSize" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
+                        <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
+                        <outlet property="lineThickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>
                     </connections>
                 </viewController>

@@ -59,7 +59,7 @@ class ZBreadcrumbsView : ZButtonsView {
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
 			let          name = zone.unwrappedName
 			let        button = ZBreadcrumbButton(title: name, target: self, action: #selector(crumbButtonAction(_:)))
-//			button.font       = gSmallFont
+			button.font       = gSmallFont // needed for computing button width
 			button.tag        = index
 			button.zone       = zone
 			button.isBordered = true

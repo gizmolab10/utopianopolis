@@ -104,7 +104,7 @@ class ZMapView: ZView {
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
-		if  iDirtyRect.isEmpty {
+		if  iDirtyRect.hasZeroSize {
 			return
 		}
 
@@ -132,7 +132,7 @@ class ZMapView: ZView {
 	}
 
 	func clearRect(_ iDirtyRect: CGRect) {
-		if  iDirtyRect.isEmpty {
+		if  iDirtyRect.hasZeroSize {
 			return
 		}
 

@@ -20,16 +20,16 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let tExemplar = ZWidgetType(rawValue: 2 ^ 0)
-	static let tFavorite = ZWidgetType(rawValue: 2 ^ 1)
-	static let   tBigMap = ZWidgetType(rawValue: 2 ^ 2)
-	static let   tRecent = ZWidgetType(rawValue: 2 ^ 3)
-	static let    tTrash = ZWidgetType(rawValue: 2 ^ 4)
-	static let    tEssay = ZWidgetType(rawValue: 2 ^ 5)
-	static let     tNote = ZWidgetType(rawValue: 2 ^ 6)
-	static let     tIdea = ZWidgetType(rawValue: 2 ^ 7)
-	static let     tLost = ZWidgetType(rawValue: 2 ^ 8)
-	static let     tNone = ZWidgetType(rawValue: 2 ^ 9)
+	static let tExemplar = ZWidgetType(rawValue: 1 << 0)
+	static let tFavorite = ZWidgetType(rawValue: 1 << 1)
+	static let   tBigMap = ZWidgetType(rawValue: 1 << 2)
+	static let   tRecent = ZWidgetType(rawValue: 1 << 3)
+	static let    tTrash = ZWidgetType(rawValue: 1 << 4)
+	static let    tEssay = ZWidgetType(rawValue: 1 << 5)
+	static let     tNote = ZWidgetType(rawValue: 1 << 6)
+	static let     tIdea = ZWidgetType(rawValue: 1 << 7)
+	static let     tLost = ZWidgetType(rawValue: 1 << 8)
+	static let     tNone = ZWidgetType(rawValue: 1 << 9)
 
 	var isBigMap:   Bool { return contains(.tBigMap) }
 	var isRecent:   Bool { return contains(.tRecent) }
@@ -451,7 +451,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK: -
 
 	func drawSelectionHighlight(_ style: ZHighlightStyle) {
-		if  highlightFrame.isEmpty || style == .none {
+		if  highlightFrame.hasZeroSize || style == .none {
 			return
 		}
 
@@ -492,9 +492,8 @@ class ZoneWidget: ZPseudoView {
 						var style = ZHighlightStyle.sNone
 						
 						if        isEditing      { style = .sDashed
-						} else if tHovering {
-							if    isCircularMode {
-								style = .sDashed
+						} else if tHovering      {
+							if    isCircularMode { style = .sDashed
 							} else               { style = .sThin      }
 						} else if isGrabbed      { style = .sThick
 						} else if isHovering     { style = .sMedium

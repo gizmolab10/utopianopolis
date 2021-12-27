@@ -73,17 +73,16 @@ class ZoneDot: ZPseudoView {
     }
 
 	var isFilled: Bool {
-		guard let zone = widgetZone else {
-			return false
+		var     filled = false
+		if  let zone   = widgetZone {
+			if  isReveal {
+				filled = !zone.isExpanded || (zone.isTraveller && zone.count == 0)
+			} else {
+				filled =  zone.isGrabbed
+			}
 		}
 
-		if !isReveal {
-			return zone.isGrabbed
-		} else {
-			let childlessTraveller = zone.isTraveller && zone.count == 0
-
-			return !zone.isExpanded || childlessTraveller
-		}
+		return  filled != isHovering
 	}
 	
 	init(view: ZView?, isDraggingDot: Bool = false) {
@@ -307,10 +306,10 @@ class ZoneDot: ZPseudoView {
 	}
 
     func draw() {
-		let   rect = absoluteFrame
+		let rect   = absoluteFrame
 		let isDrop = isDragDrop && gDragging.dropLine?.parentWidget == widget
-		if  !rect.isEmpty, dotIsVisible,
-			let parameters = widgetZone?.plainDotParameters(isFilled != isHovering, isReveal, isDrop) {
+		if  rect.hasSize, dotIsVisible,
+			let parameters = widgetZone?.plainDotParameters(isFilled, isReveal, isDrop) {
 
 //			if  isCircularMode, gdebugdraw {
 //				detectionFrame.drawColoredRect(.red, radius: 2.0, thickness: 1.0)

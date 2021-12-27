@@ -17,11 +17,11 @@ class ZHovering: NSObject {
 	var textWidget    : ZoneTextWidget?
 
 	var absoluteView  : ZView? {
-		if  let     t = textWidget?.widget?.absoluteView as? ZMapView {
-			return  t
-		} else if let m = dot?             .absoluteView as? ZMapView {
+		if  let       t = textWidget?.widget?.absoluteView as? ZMapView {
+			return    t
+		} else if let m = dot?               .absoluteView as? ZMapView {
 			return    m.dotsAndLinesView
-		} else if let w = widget?          .absoluteView as? ZMapView {
+		} else if let w = widget?            .absoluteView as? ZMapView {
 			return    w
 		}
 
@@ -63,7 +63,7 @@ class ZHovering: NSObject {
 			textWidget   = t
 			t.isHovering = true
 
-			return t.widget?.pseudoTextWidget?.absoluteView
+			return t.widget?.absoluteView
 		}
 		
 		return nil

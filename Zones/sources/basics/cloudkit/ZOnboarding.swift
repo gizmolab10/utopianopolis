@@ -127,12 +127,14 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserRecord(_ onCompletion: @escaping Closure) {
-		if  let      recordName = gUserRecordName {
-			self.user           = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
-			gCloudAccountStatus = .active
-		}
+		FOREGROUND(canBeDirect: true) {
+			if  let      recordName = gUserRecordName {
+				self.user           = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
+				gCloudAccountStatus = .active
+			}
 
-		onCompletion()
+			onCompletion()
+		}
     }
 
 }

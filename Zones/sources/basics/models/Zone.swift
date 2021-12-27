@@ -33,10 +33,10 @@ struct ZWorkingListType: OptionSet {
 	
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let wBookmarks = ZWorkingListType(rawValue: 2 ^ 0)
-	static let wNotemarks = ZWorkingListType(rawValue: 2 ^ 1)
-	static let   wProgeny = ZWorkingListType(rawValue: 2 ^ 2)
-	static let       wAll = ZWorkingListType(rawValue: 2 ^ 3)
+	static let wBookmarks = ZWorkingListType(rawValue: 1 << 0)
+	static let wNotemarks = ZWorkingListType(rawValue: 1 << 1)
+	static let   wProgeny = ZWorkingListType(rawValue: 1 << 2)
+	static let       wAll = ZWorkingListType(rawValue: 1 << 3)
 }
 
 @objc (Zone)
@@ -1138,7 +1138,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parent.addIdea(at: index, with: name) { iChild in
 				if  let child = iChild {
 					if  containing {
-						child.acquireZones(zones.reversed())
+						child.acquireZones(zones)
 					}
 
 					gRelayoutMaps(for: parent) {
@@ -3377,7 +3377,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool, _ isDrop: Bool = false) -> ZDotParameters {
+	func plainDotParameters(_ showAsFilled: Bool, _ isReveal: Bool, _ isDrop: Bool = false) -> ZDotParameters {
 		let            c = widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		var            p = ZDotParameters()
 		let            t = bookmarkTarget
@@ -3395,7 +3395,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showSideDot    = isCurrentSmallMapBookmark
 		p.isDragged      = gDragging.draggedZones.contains(self)
 		p.isDrop         = isDrop
-		p.filled         = isFilled || (!isReveal && isGrabbed)
+		p.filled         = showAsFilled || (!isReveal && isGrabbed)
 		p.fill           = p.filled ? c.lighter(by: 2.5) : gBackgroundColor
 		p.verticleOffset = offsetFromMiddle / (Double(gGenericOffset.width) - 27.0) * 3.0
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount

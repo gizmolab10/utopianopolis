@@ -30,11 +30,11 @@ struct ZHighlightStyle: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 	
-	static let sUltraThin = ZHighlightStyle(rawValue: 2 ^ 0)
-	static let sDashed    = ZHighlightStyle(rawValue: 2 ^ 1)
-	static let sMedium    = ZHighlightStyle(rawValue: 2 ^ 2)
-	static let sThick     = ZHighlightStyle(rawValue: 2 ^ 3)
-	static let sThin      = ZHighlightStyle(rawValue: 2 ^ 4)
+	static let sUltraThin = ZHighlightStyle(rawValue: 1 << 0)
+	static let sDashed    = ZHighlightStyle(rawValue: 1 << 1)
+	static let sMedium    = ZHighlightStyle(rawValue: 1 << 2)
+	static let sThick     = ZHighlightStyle(rawValue: 1 << 3)
+	static let sThin      = ZHighlightStyle(rawValue: 1 << 4)
 	static let sNone      = ZHighlightStyle([])
 }
 
@@ -622,8 +622,8 @@ struct ZTinyDotType: OptionSet {
 	
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let eIdea  = ZTinyDotType(rawValue: 2 ^ 0)
-	static let eEssay = ZTinyDotType(rawValue: 2 ^ 1)
+	static let eIdea  = ZTinyDotType(rawValue: 1 << 0)
+	static let eEssay = ZTinyDotType(rawValue: 1 << 1)
 }
 
 struct ZDetailsViewID: OptionSet {
@@ -646,9 +646,9 @@ struct ZFilterOption: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 	
-	static let fBookmarks = ZFilterOption(rawValue: 2 ^ 0)
-	static let     fNotes = ZFilterOption(rawValue: 2 ^ 1)
-	static let     fIdeas = ZFilterOption(rawValue: 2 ^ 2)
+	static let fBookmarks = ZFilterOption(rawValue: 1 << 0)
+	static let     fNotes = ZFilterOption(rawValue: 1 << 1)
+	static let     fIdeas = ZFilterOption(rawValue: 1 << 2)
 	static let      fNone = ZFilterOption([])
 	static let       fAll = ZFilterOption(rawValue: 7)
 }

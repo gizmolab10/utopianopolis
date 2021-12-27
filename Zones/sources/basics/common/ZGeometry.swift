@@ -10,7 +10,7 @@ import Foundation
 
 #if os(OSX)
 import Cocoa
-let kFontDelta = CGFloat(15)
+let kFontDelta = CGFloat(11)
 let kDotFactor = CGFloat(2.5)
 var gTextOffset: CGFloat?
 #elseif os(iOS)
@@ -20,11 +20,11 @@ let kDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var        gBigFontSize : CGFloat { return gGenericOffset.height + kFontDelta } // height 2 .. 20
+var        gBigFontSize : CGFloat { return gGenericOffset.height + kFontDelta } // 13 ... 28
 var      gSmallFontSize : CGFloat { return gBigFontSize  * kSmallMapReduction }
 var   gCircleIdeaRadius : CGFloat { return gDotHeight * 2.2 }
 var           gDotWidth : CGFloat { return gDotHeight * kDragDotReduction }
-var          gDotHeight : CGFloat { return (gGenericOffset.height / kDotFactor) + 13.0 }
+var          gDotHeight : CGFloat { return (gGenericOffset.height / kDotFactor) + kFontDelta + 2.0 }
 var gChildrenViewOffset : CGFloat { return gDotWidth + (gGenericOffset.height) * 1.2 }
 
 func gDotSize(forReveal: Bool)                  -> CGSize  { return CGSize(width: forReveal ? gDotHeight : gDotWidth, height: gDotHeight).multiplyBy(1.9) }

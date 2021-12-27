@@ -24,19 +24,19 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var    backgroundColorBox : ZColorWell?
     @IBOutlet var    activeMineColorBox : ZColorWell?
 	@IBOutlet var          zoneColorBox : ZColorWell?
-	@IBOutlet var               stretch : ZSlider?
-	@IBOutlet var             thickness : ZSlider?
-	@IBOutlet var       verticalSpacing : ZSlider?
-    @IBOutlet var      clearColorButton : ZButton?
+	@IBOutlet var              fontSize : ZSlider?
+	@IBOutlet var         lineThickness : ZSlider?
+	@IBOutlet var     horizontalSpacing : ZSlider?
+	@IBOutlet var      clearColorButton : ZButton?
     override  var          controllerID : ZControllerID { return .idPreferences }
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vPreferences) {
             let                            grabbed = gSelecting.firstSortedGrab
             countsModeControl?    .selectedSegment = gCountsMode   .rawValue
-            thickness?                .doubleValue = gLineThickness
-            verticalSpacing?          .doubleValue = Double(gGenericOffset.height)
-            stretch?                  .doubleValue = Double(gGenericOffset.width)
+            lineThickness?            .doubleValue = gLineThickness
+            fontSize?                 .doubleValue = Double(gGenericOffset.height)
+            horizontalSpacing?        .doubleValue = Double(gGenericOffset.width)
 			circlesDisplayBox?           .isHidden = gMapLayoutMode == .linearMode
 			colorPreferencesBox?         .isHidden = !gColorfulMode
             clearColorButton?            .isHidden = !(grabbed?.hasColor ?? true)

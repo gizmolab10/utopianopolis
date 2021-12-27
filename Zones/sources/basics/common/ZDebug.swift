@@ -44,10 +44,10 @@ struct ZCoreDataMode: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dDisabled = ZCoreDataMode(rawValue: 2 ^ 0) // cannot use core data
-	static let dCloudKit = ZCoreDataMode(rawValue: 2 ^ 1) // store in cloud kit
-	static let dNotSave  = ZCoreDataMode(rawValue: 2 ^ 2) // save is not operational
-	static let dNotLoad  = ZCoreDataMode(rawValue: 2 ^ 3) // load is not operational
+	static let dDisabled = ZCoreDataMode(rawValue: 1 << 0) // cannot use core data
+	static let dCloudKit = ZCoreDataMode(rawValue: 1 << 1) // store in cloud kit
+	static let dNotSave  = ZCoreDataMode(rawValue: 1 << 2) // save is not operational
+	static let dNotLoad  = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
 }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
@@ -55,18 +55,18 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dNone                = ZDebugMode(rawValue: 2 ^  0)
-	static let dNewUser             = ZDebugMode(rawValue: 2 ^  1) // exercise new-user, first-time arrival code
-	static let dReadFiles           = ZDebugMode(rawValue: 2 ^  2) // read files
-	static let dDebugInfo           = ZDebugMode(rawValue: 2 ^  3) // inject debugging information into UI
-	static let dDebugDraw           = ZDebugMode(rawValue: 2 ^  4) // colorize rects
-	static let dWriteFiles          = ZDebugMode(rawValue: 2 ^  5) // write files
-	static let dDebugAngles         = ZDebugMode(rawValue: 2 ^  6) // experiment with circular angle algorithm
-	static let dDebugAccess         = ZDebugMode(rawValue: 2 ^  7) // test write access by me not having full
-	static let dShowDestroy         = ZDebugMode(rawValue: 2 ^  8) // add destroy bookmark to favorites
-	static let dShowDuplicates      = ZDebugMode(rawValue: 2 ^  9) // report duplicates
-	static let dIgnoreExemption     = ZDebugMode(rawValue: 2 ^ 10) // ignore user exemption
-	static let dSubscriptionTimeout = ZDebugMode(rawValue: 2 ^ 11) // super short timeout
+	static let dNone                = ZDebugMode(rawValue: 1 <<  0)
+	static let dNewUser             = ZDebugMode(rawValue: 1 <<  1) // exercise new-user, first-time arrival code
+	static let dReadFiles           = ZDebugMode(rawValue: 1 <<  2) // read files
+	static let dDebugInfo           = ZDebugMode(rawValue: 1 <<  3) // inject debugging information into UI
+	static let dDebugDraw           = ZDebugMode(rawValue: 1 <<  4) // colorize rects
+	static let dWriteFiles          = ZDebugMode(rawValue: 1 <<  5) // write files
+	static let dDebugAngles         = ZDebugMode(rawValue: 1 <<  6) // experiment with circular angle algorithm
+	static let dDebugAccess         = ZDebugMode(rawValue: 1 <<  7) // test write access by me not having full
+	static let dShowDestroy         = ZDebugMode(rawValue: 1 <<  8) // add destroy bookmark to favorites
+	static let dShowDuplicates      = ZDebugMode(rawValue: 1 <<  9) // report duplicates
+	static let dIgnoreExemption     = ZDebugMode(rawValue: 1 << 10) // ignore user exemption
+	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 11) // super short timeout
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 
@@ -91,32 +91,32 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let   dNone = ZPrintMode(rawValue: 2 ^  0)
-	static let    dOps = ZPrintMode(rawValue: 2 ^  1) // operations
-	static let    dFix = ZPrintMode(rawValue: 2 ^  2) // disappearing ideas
-	static let    dLog = ZPrintMode(rawValue: 2 ^  3) // miscellaneous
-	static let   dEdit = ZPrintMode(rawValue: 2 ^  4) // become first responder funny business
-	static let   dFile = ZPrintMode(rawValue: 2 ^  5) // parsing, error handling
-	static let   dUser = ZPrintMode(rawValue: 2 ^  6) // user interruption of busy loops
-	static let   dTime = ZPrintMode(rawValue: 2 ^  7) // stopwatch
-	static let   dData = ZPrintMode(rawValue: 2 ^  8) // core data
-	static let  dClick = ZPrintMode(rawValue: 2 ^  9) // mouse click
-	static let  dSpeed = ZPrintMode(rawValue: 2 ^ 10) // "
-	static let  dNames = ZPrintMode(rawValue: 2 ^ 11) // decorate idea text with record names
-	static let  dFocus = ZPrintMode(rawValue: 2 ^ 12) // push, /, bookmarks
-	static let  dError = ZPrintMode(rawValue: 2 ^ 13) // error handling
-	static let  dAdopt = ZPrintMode(rawValue: 2 ^ 14) // orphans
-	static let  dCloud = ZPrintMode(rawValue: 2 ^ 15) // cloud read
-	static let  dFetch = ZPrintMode(rawValue: 2 ^ 16) // children
-	static let  dCross = ZPrintMode(rawValue: 2 ^ 17) // core data cross store relationships
-	static let  dNotes = ZPrintMode(rawValue: 2 ^ 18) // essays
-	static let  dExist = ZPrintMode(rawValue: 2 ^ 19) // core data existence check
-	static let dImages = ZPrintMode(rawValue: 2 ^ 20) // "
-	static let dAccess = ZPrintMode(rawValue: 2 ^ 21) // write lock
-	static let dRemote = ZPrintMode(rawValue: 2 ^ 22) // arrival from cloud
-	static let dWidget = ZPrintMode(rawValue: 2 ^ 23) // lookup, hit tests
-	static let dTimers = ZPrintMode(rawValue: 2 ^ 24) // assure completion
-	static let dLevels = ZPrintMode(rawValue: 2 ^ 25) // fetching depth
+	static let   dNone = ZPrintMode(rawValue: 1 <<  0)
+	static let    dOps = ZPrintMode(rawValue: 1 <<  1) // operations
+	static let    dFix = ZPrintMode(rawValue: 1 <<  2) // disappearing ideas
+	static let    dLog = ZPrintMode(rawValue: 1 <<  3) // miscellaneous
+	static let   dEdit = ZPrintMode(rawValue: 1 <<  4) // become first responder funny business
+	static let   dFile = ZPrintMode(rawValue: 1 <<  5) // parsing, error handling
+	static let   dUser = ZPrintMode(rawValue: 1 <<  6) // user interruption of busy loops
+	static let   dTime = ZPrintMode(rawValue: 1 <<  7) // stopwatch
+	static let   dData = ZPrintMode(rawValue: 1 <<  8) // core data
+	static let  dClick = ZPrintMode(rawValue: 1 <<  9) // mouse click
+	static let  dSpeed = ZPrintMode(rawValue: 1 << 10) // "
+	static let  dNames = ZPrintMode(rawValue: 1 << 11) // decorate idea text with record names
+	static let  dFocus = ZPrintMode(rawValue: 1 << 12) // push, /, bookmarks
+	static let  dError = ZPrintMode(rawValue: 1 << 13) // error handling
+	static let  dAdopt = ZPrintMode(rawValue: 1 << 14) // orphans
+	static let  dCloud = ZPrintMode(rawValue: 1 << 15) // cloud read
+	static let  dFetch = ZPrintMode(rawValue: 1 << 16) // children
+	static let  dCross = ZPrintMode(rawValue: 1 << 17) // core data cross store relationships
+	static let  dNotes = ZPrintMode(rawValue: 1 << 18) // essays
+	static let  dExist = ZPrintMode(rawValue: 1 << 19) // core data existence check
+	static let dImages = ZPrintMode(rawValue: 1 << 20) // "
+	static let dAccess = ZPrintMode(rawValue: 1 << 21) // write lock
+	static let dRemote = ZPrintMode(rawValue: 1 << 22) // arrival from cloud
+	static let dWidget = ZPrintMode(rawValue: 1 << 23) // lookup, hit tests
+	static let dTimers = ZPrintMode(rawValue: 1 << 24) // assure completion
+	static let dLevels = ZPrintMode(rawValue: 1 << 25) // fetching depth
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 

@@ -59,8 +59,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			
 			// now, draw level rings
 			
-			if  phase     == .pLines, gCirclesDisplayMode.contains(.cRings),
-				let center = rootWidget?.absoluteFrame.center {
+			if  mode      == .circularMode,
+				phase     == .pLines, gCirclesDisplayMode.contains(.cRings),
+				let center = rootWidget?.highlightFrame.center {
 				var level  = 1
 				while ZWidgets.hasVisibleChildren   (at: level) {
 					let radius = ZWidgets.ringRadius(at: level)

@@ -102,7 +102,7 @@ extension ZoneWidget {
 			if  z.count      != 0 {
 				for child in childrenWidgets {
 					let cRect = child.detectionFrame
-					if !cRect.isEmpty {
+					if  cRect.hasSize {
 						rect  = rect.union(cRect)
 					}
 				}
@@ -110,14 +110,14 @@ extension ZoneWidget {
 				for line in childrenLines {
 					if  let drag  = line.dragDot {
 						let dRect = drag.absoluteFrame
-						if !dRect.isEmpty {
+						if  dRect.hasSize {
 							rect  = rect.union(dRect)
 						}
 					}
 				}
 			} else if let p = parentLine?.dragDot {
 				let pRect   = p.absoluteFrame
-				if !pRect.isEmpty {
+				if  pRect.hasSize {
 					rect    = rect.union(pRect)
 				}
 			}

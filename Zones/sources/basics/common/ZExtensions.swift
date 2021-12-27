@@ -873,6 +873,8 @@ extension CGRect {
 	var extent:           CGPoint { return CGPoint(x: maxX, y: maxY) }
 	var minimumDimension: CGFloat { return min(size.height, size.width) }
 	var containsNAN:         Bool { return origin.containsNAN || size.containsNAN }
+	var hasZeroSize:         Bool { return size == .zero }
+	var hasSize:             Bool { return size != .zero }
 
 	var cornerPoints: [ZDirection : CGPoint] {
 		var           result = [ZDirection : CGPoint]()
