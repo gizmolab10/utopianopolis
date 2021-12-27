@@ -29,17 +29,14 @@ enum ZoneAccess: Int, CaseIterable {
 }
 
 struct ZWorkingListType: OptionSet {
-	static var wStructValue = 0
-	static var   wNextValue : Int { if wStructValue == 0 { wStructValue = 1 } else { wStructValue *= 2 }; return wStructValue }
-	let            rawValue : Int
+	let rawValue : Int
 	
-	init() { rawValue = ZWorkingListType.wNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let wBookmarks = ZWorkingListType()
-	static let wNotemarks = ZWorkingListType()
-	static let   wProgeny = ZWorkingListType()
-	static let       wAll = ZWorkingListType()
+	static let wBookmarks = ZWorkingListType(rawValue: 2 ^ 0)
+	static let wNotemarks = ZWorkingListType(rawValue: 2 ^ 1)
+	static let   wProgeny = ZWorkingListType(rawValue: 2 ^ 2)
+	static let       wAll = ZWorkingListType(rawValue: 2 ^ 3)
 }
 
 @objc (Zone)

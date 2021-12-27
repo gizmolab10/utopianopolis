@@ -26,18 +26,15 @@ enum InterfaceStyle : String {
 }
 
 struct ZHighlightStyle: OptionSet {
-	static var sStructValue = 0
-	static var   sNextValue : Int { if sStructValue == 0 { sStructValue = 1 } else { sStructValue *= 2 }; return sStructValue }
-	let            rawValue : Int
+	let rawValue : Int
 
-	init() { rawValue = ZHighlightStyle.sNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 	
-	static let sUltraThin = ZHighlightStyle()
-	static let sDashed    = ZHighlightStyle()
-	static let sMedium    = ZHighlightStyle()
-	static let sThick     = ZHighlightStyle()
-	static let sThin      = ZHighlightStyle()
+	static let sUltraThin = ZHighlightStyle(rawValue: 2 ^ 0)
+	static let sDashed    = ZHighlightStyle(rawValue: 2 ^ 1)
+	static let sMedium    = ZHighlightStyle(rawValue: 2 ^ 2)
+	static let sThick     = ZHighlightStyle(rawValue: 2 ^ 3)
+	static let sThin      = ZHighlightStyle(rawValue: 2 ^ 4)
 	static let sNone      = ZHighlightStyle([])
 }
 
@@ -621,15 +618,12 @@ struct ZoneType: OptionSet {
 }
 
 struct ZTinyDotType: OptionSet {
-	static var eStructValue = 0
-	static var   eNextValue : Int { if eStructValue == 0 { eStructValue = 1 } else { eStructValue *= 2 }; return eStructValue }
-	let            rawValue : Int
+	let rawValue : Int
 	
-	init() { rawValue = ZTinyDotType.eNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let eIdea  = ZTinyDotType()
-	static let eEssay = ZTinyDotType()
+	static let eIdea  = ZTinyDotType(rawValue: 2 ^ 0)
+	static let eEssay = ZTinyDotType(rawValue: 2 ^ 1)
 }
 
 struct ZDetailsViewID: OptionSet {
@@ -648,16 +642,13 @@ struct ZDetailsViewID: OptionSet {
 }
 
 struct ZFilterOption: OptionSet {
-	static var fStructValue = 0
-	static var   fNextValue : Int { if fStructValue == 0 { fStructValue = 1 } else { fStructValue *= 2 }; return fStructValue }
-	let            rawValue : Int
+	let rawValue : Int
 
-	init() { rawValue = ZFilterOption.fNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 	
-	static let fBookmarks = ZFilterOption()
-	static let     fNotes = ZFilterOption()
-	static let     fIdeas = ZFilterOption()
+	static let fBookmarks = ZFilterOption(rawValue: 2 ^ 0)
+	static let     fNotes = ZFilterOption(rawValue: 2 ^ 1)
+	static let     fIdeas = ZFilterOption(rawValue: 2 ^ 2)
 	static let      fNone = ZFilterOption([])
 	static let       fAll = ZFilterOption(rawValue: 7)
 }

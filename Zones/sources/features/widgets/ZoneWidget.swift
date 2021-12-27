@@ -16,23 +16,20 @@ import SnapKit
 #endif
 
 struct ZWidgetType: OptionSet, CustomStringConvertible {
-	static var tStructValue = 0
-	static var   tNextValue : Int { if tStructValue == 0 { tStructValue = 1 } else { tStructValue *= 2 }; return tStructValue }
-	let            rawValue : Int
+	let rawValue : Int
 
-	init() { rawValue = ZWidgetType.tNextValue }
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let tExemplar = ZWidgetType()
-	static let tFavorite = ZWidgetType()
-	static let   tBigMap = ZWidgetType()
-	static let   tRecent = ZWidgetType()
-	static let    tTrash = ZWidgetType()
-	static let    tEssay = ZWidgetType()
-	static let     tNote = ZWidgetType()
-	static let     tIdea = ZWidgetType()
-	static let     tLost = ZWidgetType()
-	static let     tNone = ZWidgetType()
+	static let tExemplar = ZWidgetType(rawValue: 2 ^ 0)
+	static let tFavorite = ZWidgetType(rawValue: 2 ^ 1)
+	static let   tBigMap = ZWidgetType(rawValue: 2 ^ 2)
+	static let   tRecent = ZWidgetType(rawValue: 2 ^ 3)
+	static let    tTrash = ZWidgetType(rawValue: 2 ^ 4)
+	static let    tEssay = ZWidgetType(rawValue: 2 ^ 5)
+	static let     tNote = ZWidgetType(rawValue: 2 ^ 6)
+	static let     tIdea = ZWidgetType(rawValue: 2 ^ 7)
+	static let     tLost = ZWidgetType(rawValue: 2 ^ 8)
+	static let     tNone = ZWidgetType(rawValue: 2 ^ 9)
 
 	var isBigMap:   Bool { return contains(.tBigMap) }
 	var isRecent:   Bool { return contains(.tRecent) }
