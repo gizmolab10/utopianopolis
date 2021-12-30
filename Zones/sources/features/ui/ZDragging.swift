@@ -18,7 +18,7 @@ class ZDragging: NSObject {
 	var   dropWidget :        ZoneWidget?
 	var    dropCrumb : ZBreadcrumbButton?
 	var    dragPoint :           CGPoint?
-	var     dropLine :          ZoneLine?
+	var     dragLine :          ZoneLine?
 	var    dragIndex :               Int? { return (draggedZones.count == 0) ? nil : draggedZones[0].siblingIndex }
 
 	// MARK: - drag
@@ -41,7 +41,7 @@ class ZDragging: NSObject {
 		dropWidget   = nil
 		dropCrumb    = nil
 		dragPoint    = nil
-		dropLine     = nil
+		dragLine     = nil
 
 		gDragView?.setNeedsDisplay() // erase drag: line and dot
 		gMapView?  .setNeedsDisplay()
@@ -173,7 +173,7 @@ class ZDragging: NSObject {
 				dropIndices        = forgetAll ? nil : NSMutableIndexSet(index: index)
 				dropWidget         = forgetAll ? nil : dropZoneWidget
 				dragPoint          = forgetAll ? nil : location
-				dropLine           = forgetAll ? nil : dropZoneWidget.createDragLine()
+				dragLine           = forgetAll ? nil : dropZoneWidget.createDragLine()
 
 				if !forgetAll && notDropHere && index > 0 {
 					dropIndices?.add(index - 1)

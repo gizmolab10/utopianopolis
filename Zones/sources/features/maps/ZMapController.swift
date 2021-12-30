@@ -56,21 +56,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}
-			
-			// now, draw level rings
-			
-			if  mode      == .circularMode,
-				phase     == .pLines, gCirclesDisplayMode.contains(.cRings),
-				let center = rootWidget?.highlightFrame.center {
-				var level  = 1
-				while ZWidgets.hasVisibleChildren   (at: level) {
-					let radius = ZWidgets.ringRadius(at: level)
-					let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
-					let  color = gAccentColor.lighter(by: 2.0)
-					level     += 1
 
-					rect.drawColoredCircle(color, thickness: 0.2)
-				}
+			if  phase == .pLines,
+				mode  == .circularMode {
+				circularDrawLevelRings()      // now, draw level rings
 			}
 		}
 	}
@@ -274,7 +263,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             if  notInEdit {
 
 				if !gIsEssayMode {
-					gSetBigMapMode()
+					gSetMapWorkMode()
 				}
 
 				gTextEditor.stopCurrentEdit()

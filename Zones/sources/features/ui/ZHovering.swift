@@ -25,7 +25,7 @@ class ZHovering: NSObject {
 			return    w
 		}
 
-		return nil
+		return nil  // too often returns nil
 	}
 
 	@discardableResult func clear() -> ZView? {
@@ -40,30 +40,35 @@ class ZHovering: NSObject {
 		return cleared
 	}
 	
-	func setHover(on pseudoView: ZPseudoView) {
+	func setHover(on p: ZPseudoView) -> ZView? {
 		clear()
 
-		if  let       d = pseudoView as? ZoneDot {
+		p   .isHovering = true
+		if  let       d = p as? ZoneDot {
 			dot         = d
-		} else if let w = pseudoView as? ZoneWidget {
+		} else if let w = p as? ZoneWidget {
 			widget      = w
 		}
+
+		return p.absoluteView
+	}
+
+	func setHover(on t: ZoneTextWidget) -> ZView? {
+		clear()
+
+		t.isHovering = true
+		textWidget   = t
+
+		return t.widget?.absoluteView
 	}
 	
 	@discardableResult func declareHover(_ any: Any?) -> ZView? {
 		if  let p = any as? ZPseudoView {
-			setHover(on: p)
-			
-			p.isHovering = true
-			
-			return p.absoluteView
-		} else if let t = any as? ZoneTextWidget {
-			clear()
-			
-			textWidget   = t
-			t.isHovering = true
+			return setHover(on: p)
+		}
 
-			return t.widget?.absoluteView
+		if  let t = any as? ZoneTextWidget {
+			return setHover(on: t)
 		}
 		
 		return nil

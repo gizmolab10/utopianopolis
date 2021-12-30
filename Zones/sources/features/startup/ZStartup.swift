@@ -62,7 +62,7 @@ class ZStartup: NSObject {
 						gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 
 						if  gIsStartupMode {
-							gSetBigMapMode()
+							gSetMapWorkMode()
 						}
 
 						gRecents.push()

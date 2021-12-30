@@ -98,7 +98,7 @@ class ZoneLine: ZPseudoView {
 		path.stroke()
 	}
 
-	func drawDraggingLineAndDot() {
+	func drawDragLineAndDot() {
 		let               rect = absoluteDropDragDotRect
 		dragDot?.absoluteFrame = rect
 

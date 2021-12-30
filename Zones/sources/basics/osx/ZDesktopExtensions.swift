@@ -79,8 +79,7 @@ public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
 public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
-let        kVerticalWeight = CGFloat( 1)
-let kHighlightHeightOffset = CGFloat(-3)
+let kVerticalWeight = CGFloat( 1)
 
 var gIsPrinting: Bool {
     return NSPrintOperation.current != nil
@@ -324,6 +323,20 @@ extension ZColor {
         return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
     }
     
+}
+
+extension CGRect {
+
+	var centerTop:    CGPoint { return CGPoint(x: midX, y: minY) }
+	var centerLeft:   CGPoint { return CGPoint(x: minX, y: midY) }
+	var centerRight:  CGPoint { return CGPoint(x: maxX, y: midY) }
+	var center:       CGPoint { return CGPoint(x: midX, y: midY) }
+	var centerBottom: CGPoint { return CGPoint(x: midX, y: maxY) }
+	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: minY) }
+	var bottomLeft:   CGPoint { return CGPoint(x: minX, y: minY) } // same as origin
+	var topLeft:      CGPoint { return CGPoint(x: minX, y: maxY) }
+	var extent:       CGPoint { return CGPoint(x: maxX, y: maxY) }
+
 }
 
 extension NSBezierPath {

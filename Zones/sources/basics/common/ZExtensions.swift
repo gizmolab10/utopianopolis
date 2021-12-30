@@ -774,7 +774,7 @@ extension CGSize {
 	func isLargerThan(_ other: CGSize)               -> Bool   { return hypotenuse > other.hypotenuse }
 	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint { return CGPoint(lhs) - rhs }
 	public static func squared(_ length: CGFloat)    -> CGSize { return CGSize(width: length, height: length) }
-	func add(width: CGFloat, height: CGFloat)        -> CGSize { return self + CGSize(width: width, height: height) }
+	func tadd(width: CGFloat, height: CGFloat)        -> CGSize { return self + CGSize(width: width, height: height) }
 	func absoluteDifferenceInDiagonals(relativeTo other: CGSize) -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
 	func multiplyBy(_ fraction: CGFloat)             -> CGSize { return CGSize(width: width * fraction, height: height * fraction) }
 	func multiplyBy(_ fraction: CGSize)              -> CGSize { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
@@ -863,14 +863,6 @@ extension CGSize {
 
 extension CGRect {
 
-	var centerTop:        CGPoint { return CGPoint(x: midX, y: minY) }
-	var centerLeft:       CGPoint { return CGPoint(x: minX, y: midY) }
-	var centerRight:      CGPoint { return CGPoint(x: maxX, y: midY) }
-	var center:           CGPoint { return CGPoint(x: midX, y: midY) }
-	var centerBottom:     CGPoint { return CGPoint(x: midX, y: maxY) }
-	var bottomRight:      CGPoint { return CGPoint(x: maxX, y: minY) }
-	var topLeft:          CGPoint { return CGPoint(x: minX, y: maxY) }
-	var extent:           CGPoint { return CGPoint(x: maxX, y: maxY) }
 	var minimumDimension: CGFloat { return min(size.height, size.width) }
 	var containsNAN:         Bool { return origin.containsNAN || size.containsNAN }
 	var hasZeroSize:         Bool { return size == .zero }
@@ -938,6 +930,10 @@ extension CGRect {
 
         return set
     }
+
+	func offsetBy(_ size: CGSize) -> CGRect {
+		return offsetBy(dx: size.width, dy: size.height)
+	}
 
     func offsetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
         let dX = size.width  * fractionX

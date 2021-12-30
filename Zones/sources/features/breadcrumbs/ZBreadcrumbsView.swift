@@ -165,7 +165,7 @@ class ZBreadcrumbsView : ZButtonsView {
 						let sameNote  = (zone == gCurrentEssayZone)
 						if  sameNote || !(zone.hasNote || COMMAND) {
 							gEssayView?.enableEssayControls(false)
-							gSetBigMapMode()                                 // no note in zone so exit essay editor
+							gSetMapWorkMode()                                 // no note in zone so exit essay editor
 						} else {
 							displayEssay(!sameNote)
 						}

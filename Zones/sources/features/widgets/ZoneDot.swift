@@ -55,7 +55,7 @@ class ZoneDot: ZPseudoView {
 	override var controller : ZMapController? { return widget?.controller }
 	var     dragDotIsHidden : Bool            { return widgetZone?.dragDotIsHidden ?? true }
     var          widgetZone : Zone?           { return widget?.widgetZone }
-	var               ratio : CGFloat         { return widget?.ratio ?? 1.0 }
+	var               ratio : CGFloat         { return widget?.mapReduction ?? 1.0 }
 	var            isReveal = true
 
 	var dotIsVisible: Bool {
@@ -66,7 +66,7 @@ class ZoneDot: ZPseudoView {
 		if !isReveal {
 			return !zone.isSmallMapHere
 		}   else {
-			return isDragDrop        ||
+			return  isDragDrop       ||
 				(   zone.isTraveller ||
 					zone.count > 0)
 		}
@@ -307,7 +307,7 @@ class ZoneDot: ZPseudoView {
 
     func draw() {
 		let rect   = absoluteFrame
-		let isDrop = isDragDrop && gDragging.dropLine?.parentWidget == widget
+		let isDrop = isDragDrop && gDragging.dragLine?.parentWidget == widget
 		if  rect.hasSize, dotIsVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled, isReveal, isDrop) {
 

@@ -94,9 +94,8 @@ class ZWidgets: NSObject {
 	static func ringRadius(at level: Int) -> CGFloat {
 		let  enlarged = gCircleIdeaRadius * 1.8
 		let increment = gDotWidth + enlarged + gDotHeight
-		let     start = gDotWidth / 2.0
-		
-		return  start + (CGFloat(level) * increment)
+
+		return gDotHalfWidth + (CGFloat(level) * increment)
 	}
 
 	static func placesCount(at iLevel: Int) -> Int {

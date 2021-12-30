@@ -60,7 +60,6 @@ public typealias ZEdgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer
 
 public protocol ZNullProtocol {}
 
-let      kHighlightHeightOffset = CGFloat(-3)
 let             kVerticalWeight = CGFloat(-1)
 var                  windowKeys : [UIKeyCommand]?
 var                 gIsPrinting : Bool                                                { return false }

@@ -279,7 +279,7 @@ class ZTextEditor: ZTextView {
 
 		clearOffset()
 		fullResign()
-		gSetBigMapMode()
+		gSetMapWorkMode()
 	}
 
     func cancel() {

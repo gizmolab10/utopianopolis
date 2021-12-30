@@ -96,7 +96,7 @@ class ZoneWidget: ZPseudoView {
 	var      sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var         parentWidget :      ZoneWidget?
-	var                ratio :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
+	var         mapReduction :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
 	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot  ?? false }
@@ -190,7 +190,7 @@ class ZoneWidget: ZPseudoView {
 
 		if  isLinearMode {
 			updateChildrenViewDrawnSize()
-			updateChildrenLinesDrawnSize()
+			updateLinesViewDrawnSize()
 		}
 
 		updateWidgetDrawnSize()
@@ -420,20 +420,20 @@ class ZoneWidget: ZPseudoView {
     }
 
 	func detect(at location: CGPoint, recursive: Bool = true) -> Any? {
-		if  let               z = widgetZone, z.isShowing, detectionFrame.contains(location) {
+		if  let                z = widgetZone, z.isShowing, detectionFrame.contains(location) {
+			if  let            d = parentLine?.dragDot,    d.absoluteFrame.contains(location) {
+				return         d
+			}
 			for line in childrenLines {
-				if  let       d = line.dragDot,           d.absoluteFrame.contains(location) {
-					return    d
-				}
-				if  let       r = line.revealDot,         r.absoluteFrame.contains(location) {
-					return    r
+				if  let        r = line.revealDot,         r.absoluteFrame.contains(location) {
+					return     r
 				}
 			}
-			if  let           t = pseudoTextWidget,       t.absoluteFrame.contains(location) {
-				return        textWidget
+			if  let            t = pseudoTextWidget,       t.absoluteFrame.contains(location) {
+				return         textWidget
 			}
 			if  isCircularMode,                            highlightFrame.contains(location) {
-				return        self
+				return         self
 			}
 			if  recursive {
 				for child in childrenWidgets {
@@ -514,6 +514,7 @@ class ZoneWidget: ZPseudoView {
 		detectionFrame.drawColoredRect(.green, radius: 0.0, thickness: extraThick ? 5.0 : 1.0)
 //		highlightFrame.drawColoredRect(.blue,  radius: 0.0)
 //		absoluteFrame .drawColoredRect(.red,   radius: 0.0)
+		childrenView?.absoluteFrame.drawColoredRect(.red)
 	}
 
 }

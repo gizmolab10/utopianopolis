@@ -117,13 +117,6 @@ class ZMapView: ZView {
 				for phase in ZDrawPhase.allInOrder {
 					if  mustDrawFor(phase) {
 						ZBezierPath(rect: iDirtyRect).setClip()
-
-						switch mapID {
-							case .mDotsAndLines: dotsAndLinesView?.clearRect(iDirtyRect)
-							case .mHighlight:    highlightMapView?.clearRect(iDirtyRect)
-							default:             break
-						}
-
 						gSmallMapController?.drawWidgets(for: phase)
 						gMapController?     .drawWidgets(for: phase)
 					}

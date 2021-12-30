@@ -761,7 +761,7 @@
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="2bw-KX-vd8"/>
                                                     </connections>
                                                 </slider>
-                                                <slider identifier="size" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl" userLabel="Font Size">
+                                                <slider identifier="font size" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl" userLabel="Font Size">
                                                     <rect key="frame" x="-2" y="24" width="164" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
@@ -771,7 +771,7 @@
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="NZr-P4-M7Y"/>
                                                     </connections>
                                                 </slider>
-                                                <slider identifier="stretch" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR" userLabel="Horizontal Spacing">
+                                                <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR" userLabel="Horizontal Spacing">
                                                     <rect key="frame" x="-2" y="2" width="164" height="26"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>

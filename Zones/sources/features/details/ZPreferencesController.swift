@@ -55,16 +55,16 @@ class ZPreferencesController: ZGenericController {
 	@IBAction func sliderAction(_ iSlider: ZSlider) {
         let value = CGFloat(iSlider.doubleValue)
 
-        if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
+		if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
 			switch (identifier) {
-				case "thickness": gLineThickness = Double(value)
-				case   "stretch": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
-				case      "size": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
-				default:          break
+			case  "thickness": gLineThickness = Double(value)
+			case  "font size": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
+			case "horizontal": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
+			default:           break
 			}
 
-            gRelayoutMaps()
-        }
+			gRelayoutMaps()
+		}
     }
 
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
