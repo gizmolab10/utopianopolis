@@ -398,22 +398,6 @@ var gEmailTypesSent: String {
     }
 }
 
-var gGenericOffset: CGSize {
-	get {
-		var offset = getPreferencesSize(for: kGenericOffsetKey, defaultSize: CGSize(width: 30.0, height: 2.0))
-		
-		if  kIsPhone {
-			offset.height += 5.0
-		}
-		
-		return offset
-	}
-
-	set {
-		setPreferencesSize(newValue, for: kGenericOffsetKey)
-	}
-}
-
 var gScrollOffset: CGPoint {
 	get {
 		let  point = CGPoint.zero
@@ -551,8 +535,8 @@ var gScaling: Double {
 	get {
 		var value: Double? = UserDefaults.standard.object(forKey: kScaling) as? Double
 		
-		if value == nil {
-			value = 1.00
+		if  value == nil {
+			value  = 1.00
 			
 			UserDefaults.standard.set(value, forKey:kScaling)
 			UserDefaults.standard.synchronize()
@@ -572,7 +556,7 @@ var gLineThickness: Double {
 		var value: Double? = UserDefaults.standard.object(forKey: kThickness) as? Double
 		
 		if  value == nil {
-			value = 1.25
+			value  = 1.25
 			
 			UserDefaults.standard.set(value, forKey:kThickness)
 			UserDefaults.standard.synchronize()
@@ -583,6 +567,46 @@ var gLineThickness: Double {
 	
 	set {
 		UserDefaults.standard.set(newValue, forKey:kThickness)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+var gHorizontalGap: CGFloat {
+	get {
+		var value: CGFloat? = UserDefaults.standard.object(forKey: kHorizontalGap) as? CGFloat
+
+		if  value == nil {
+			value  = 20.0
+
+			UserDefaults.standard.set(value, forKey:kHorizontalGap)
+			UserDefaults.standard.synchronize()
+		}
+
+		return value!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue, forKey:kHorizontalGap)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+var gFontSize: CGFloat {
+	get {
+		var value: CGFloat? = UserDefaults.standard.object(forKey: kFontSize) as? CGFloat
+
+		if  value == nil {
+			value  = 4.0
+
+			UserDefaults.standard.set(value, forKey:kFontSize)
+			UserDefaults.standard.synchronize()
+		}
+
+		return value!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue, forKey:kFontSize)
 		UserDefaults.standard.synchronize()
 	}
 }

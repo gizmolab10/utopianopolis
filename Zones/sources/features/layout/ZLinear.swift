@@ -19,7 +19,7 @@ extension ZoneWidget {
 			let   cSize = childrenView?.drawnSize
 			var   width = cSize?.width  ?? 0.0
 			var  height = cSize?.height ?? 0.0
-			let   extra = width != 0.0 ? 0.0 : gGenericOffset.width / 2.0
+			let   extra = width != 0.0 ? 0.0 : gHorizontalGap / 2.0
 			width      += t.drawnSize.width
 			let lheight = lSize.height
 			let  lWidth = lSize.width * 2.0
@@ -44,7 +44,7 @@ extension ZoneWidget {
 				index    -= 1 // go backwards [up] the children array
 				let child = childrenWidgets[index]
 				let  size = child.drawnSize
-				height   += size.height + gGenericOffset.height
+				height   += size.height + ((index == 0) ? .zero : gFontSize)
 
 				if  width < size.width {
 					width = size.width
@@ -81,7 +81,7 @@ extension ZoneWidget {
 	func linearUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var         y = CGFloat.zero
-			let       gap = gGenericOffset.height
+			let       gap = gFontSize
 			var     index = childrenWidgets.count
 			while   index > 0 {
 				index    -= 1 // go backwards [up] the children array
@@ -107,7 +107,7 @@ extension ZoneWidget {
 
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
-				let             x = hideDragDot ? 20.0 : gGenericOffset.width + 4.0
+				let             x = hideDragDot ? 20.0 : gHorizontalGap + 4.0
 				let             y = (drawnSize.height - size.height) / 2.0
 				let        origin = CGPoint(x: x, y: y)
 				t          .frame = CGRect(origin: origin, size: size)
@@ -119,12 +119,13 @@ extension ZoneWidget {
 		if  hasVisibleChildren, let c = childrenView {
 			if  absolute {
 				c.updateAbsoluteFrame(relativeTo: controller)
-			} else if let textFrame = pseudoTextWidget?.frame {
-				let           ratio = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
-				let               x = textFrame.maxX + (CGFloat(gChildrenViewOffset) * ratio)
-				let          origin = CGPoint(x: x, y: .zero)
-				let   childrenFrame = CGRect(origin: origin, size: c.drawnSize)
-				c            .frame = childrenFrame
+			} else if let tFrame = pseudoTextWidget?.frame {
+				let    reduction = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
+				let       offset = gDotWidth + gFontSize * 1.2
+				let            x = tFrame.maxX + offset * reduction
+				let       origin = CGPoint(x: x, y: .zero)
+				let       cFrame = CGRect(origin: origin, size: c.drawnSize)
+				c         .frame = cFrame
 			}
 		}
 	}
@@ -227,7 +228,7 @@ extension ZoneLine {
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gGenericOffset.width, dy: 0.0)
+					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gHorizontalGap, dy: 0.0)
 				}
 			} else if let      indices = gDragging.dropIndices, indices.count > 0 {
 				let         firstindex = indices.firstIndex
@@ -245,7 +246,7 @@ extension ZoneLine {
 						let   relation = gDragging.dragRelation
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
 						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
-						let    gHeight = gGenericOffset.height
+						let    gHeight = gFontSize
 						let      delta = (gHeight + gDotWidth) * multiplier
 						rect           = rect.offsetBy(dx: 0.0, dy: delta)
 
@@ -308,8 +309,8 @@ extension ZoneDot {
 	var linearIsDragDrop : Bool { return widget == gDragging.dropWidget }
 
 	func linearUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		let    origin = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotHalfWidth, 0.0) : absoluteTextFrame.centerLeft.offsetBy(-gDotWidth, 0.0)
-		absoluteFrame = CGRect(origin: origin, size: .zero).expandedBy(drawnSize.multiplyBy(0.5))
+		let    center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotHalfWidth, 0.0) : absoluteTextFrame.centerLeft.offsetBy(-gDotWidth, 0.0)
+		absoluteFrame = CGRect(origin: center, size: .zero).expandedBy(drawnSize.multiplyBy(0.5))
 
 		updateTooltips()
 	}

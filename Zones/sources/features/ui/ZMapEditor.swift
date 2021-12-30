@@ -142,7 +142,7 @@ class ZMapEditor: ZBaseEditor {
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:       addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
-						case kEquals:    if COMMAND { updateSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRelayoutMaps() } }
+						case kEquals:    if COMMAND { updateFontSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRelayoutMaps() } }
 						case kBackSlash: mapControl(OPTION)
 						case kBackspace,
 							 kDelete:    handleDelete(flags, isWindow)
@@ -285,7 +285,7 @@ class ZMapEditor: ZBaseEditor {
 		} else if OPTION {
 			return gSelecting.currentMoveable.convertToFromLine()
 		} else if COMMAND {
-			updateSize(up: false)
+			updateFontSize(up: false)
 		} else {
 			addDashedLine()
 		}
@@ -391,11 +391,11 @@ class ZMapEditor: ZBaseEditor {
 		grabs.duplicate()
 	}
 
-	func updateSize(up: Bool) {
-		let      delta = CGFloat(up ? 1 : -1)
-		var       size = gGenericOffset.offsetBy(0, delta)
-		size           = size.force(horizotal: false, into: NSRange(location: 2, length: 7))
-		gGenericOffset = size
+	func updateFontSize(up: Bool) {
+		let delta = CGFloat(up ? 1 : -1)
+		var  size = gFontSize + delta
+		size      = size.confineBetween(low: 0.0, high: 15.0)
+		gFontSize = size
 
 		gRelayoutMaps()
 	}

@@ -514,7 +514,7 @@ class ZoneWidget: ZPseudoView {
 		detectionFrame.drawColoredRect(.green, radius: 0.0, thickness: extraThick ? 5.0 : 1.0)
 //		highlightFrame.drawColoredRect(.blue,  radius: 0.0)
 //		absoluteFrame .drawColoredRect(.red,   radius: 0.0)
-		childrenView?.absoluteFrame.drawColoredRect(.red)
+		childrenView?.absoluteFrame.drawColoredRect(.orange)
 	}
 
 }

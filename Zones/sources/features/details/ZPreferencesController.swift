@@ -35,8 +35,8 @@ class ZPreferencesController: ZGenericController {
             let                            grabbed = gSelecting.firstSortedGrab
             countsModeControl?    .selectedSegment = gCountsMode   .rawValue
             lineThickness?            .doubleValue = gLineThickness
-            fontSize?                 .doubleValue = Double(gGenericOffset.height)
-            horizontalSpacing?        .doubleValue = Double(gGenericOffset.width)
+            fontSize?                 .doubleValue = Double(gFontSize)
+            horizontalSpacing?        .doubleValue = Double(gHorizontalGap)
 			circlesDisplayBox?           .isHidden = gMapLayoutMode == .linearMode
 			colorPreferencesBox?         .isHidden = !gColorfulMode
             clearColorButton?            .isHidden = !(grabbed?.hasColor ?? true)
@@ -58,8 +58,8 @@ class ZPreferencesController: ZGenericController {
 		if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
 			switch (identifier) {
 			case  "thickness": gLineThickness = Double(value)
-			case  "font size": gGenericOffset = CGSize(width: gGenericOffset.width, height: value)
-			case "horizontal": gGenericOffset = CGSize(width: value, height: gGenericOffset.height)
+			case "horizontal": gHorizontalGap = value
+			case  "font size":      gFontSize = value
 			default:           break
 			}
 

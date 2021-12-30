@@ -651,6 +651,11 @@ extension CGFloat {
 	func stringTo(precision: Int) -> String { return String(format: "%.0\(precision)f", self) }
 	var  upward                    : Bool   { return self < CGFloat(kPI) }
 	var  roundedToNearestInt       : Int    { return Int(self + 0.5) }
+	func isBetween(low: CGFloat, high: CGFloat) -> Bool { return low < high && low < self && self < high }
+
+	func confineBetween(low: CGFloat, high: CGFloat) -> CGFloat {
+		return fmax(fmin(self, high), low)
+	}
 
 	func confine(within: CGFloat) -> CGFloat {
 		var       i  = self
@@ -665,10 +670,6 @@ extension CGFloat {
 		}
 
 		return i
-	}
-
-	func isBetween(low: CGFloat, high: CGFloat) -> Bool {
-		return low < high && low < self && self < high
 	}
 
 }

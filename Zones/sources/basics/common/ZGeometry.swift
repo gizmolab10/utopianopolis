@@ -20,13 +20,12 @@ let kDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var        gBigFontSize : CGFloat { return gGenericOffset.height + kFontDelta } // 13 ... 28
+var        gBigFontSize : CGFloat { return gFontSize + kFontDelta } // 13 ... 28
 var      gSmallFontSize : CGFloat { return gBigFontSize  * kSmallMapReduction }
 var   gCircleIdeaRadius : CGFloat { return gDotHeight * 2.2 }
 var       gDotHalfWidth : CGFloat { return gDotWidth / 2.0 }
 var           gDotWidth : CGFloat { return gDotHeight * kDragDotReduction }
-var          gDotHeight : CGFloat { return (gGenericOffset.height / kDotFactor) + kFontDelta + 2.0 }
-var gChildrenViewOffset : CGFloat { return gDotWidth + (gGenericOffset.height) * 1.2 }
+var          gDotHeight : CGFloat { return (gFontSize / kDotFactor) + kFontDelta + 2.0 }
 
 func gDotSize(forReveal: Bool)                  -> CGSize  { return CGSize(width: forReveal ? gDotHeight : gDotWidth, height: gDotHeight) }
 func gDotSize(forReveal: Bool, forBigMap: Bool) -> CGSize  { return gDotSize(forReveal: forReveal).multiplyBy(forBigMap ? 1.0 : kSmallMapReduction) }
