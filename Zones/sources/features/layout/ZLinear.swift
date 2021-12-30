@@ -44,7 +44,7 @@ extension ZoneWidget {
 				index    -= 1 // go backwards [up] the children array
 				let child = childrenWidgets[index]
 				let  size = child.drawnSize
-				height   += size.height + ((index == 0) ? .zero : gBaseFontSize)
+				height   += size.height + ((index == 0) ? .zero : gapDistance)
 				if  width < size.width {
 					width = size.width
 				}
@@ -80,7 +80,6 @@ extension ZoneWidget {
 	func linearUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var         y = CGFloat.zero
-			let       gap = gBaseFontSize
 			var     index = childrenWidgets.count
 			while   index > 0 {
 				index    -= 1 // go backwards [up] the children array
@@ -91,7 +90,7 @@ extension ZoneWidget {
 				} else {
 					let    size = child.drawnSize
 					let  origin = CGPoint(x: .zero, y: y)
-					y          += size.height + gap
+					y          += size.height + gapDistance
 					let    rect = CGRect(origin: origin, size: size)
 					child.frame = rect
 				}
@@ -120,7 +119,7 @@ extension ZoneWidget {
 				c.updateAbsoluteFrame(relativeTo: controller)
 			} else if let tFrame = pseudoTextWidget?.frame {
 				let    reduction = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
-				let       offset = gDotWidth + gBaseFontSize * 1.2
+				let       offset = dotPlusGap * 1.2
 				let            x = tFrame.maxX + offset * reduction
 				let       origin = CGPoint(x: x, y: .zero)
 				let       cFrame = CGRect(origin: origin, size: c.drawnSize)
@@ -245,7 +244,7 @@ extension ZoneLine {
 						let   relation = gDragging.dragRelation
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
 						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
-						let      delta = (gBaseFontSize + gDotWidth) * multiplier
+						let      delta = dotPlusGap * multiplier
 						rect           = rect.offsetBy(dx: 0.0, dy: delta)
 
 					} else if lastIndex < zone.count, let secondDot = parentWidget?.dot(at: lastIndex) {
@@ -336,3 +335,78 @@ extension ZoneDot {
 	}
 
 }
+
+extension ZDragging {
+
+	func linearDropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+		clearDragParticulars()
+
+		let         totalGrabs = draggedZones + gSelecting.currentMapGrabs
+		if  let (inBigMap, zone, location) = controller.widgetHit(by: iGesture, locatedInBigMap: controller.isBigMap),
+			var       dropZone = zone, !totalGrabs.contains(dropZone),
+			var dropZoneWidget = dropZone.widget {
+			let      dropIndex = dropZone.siblingIndex
+			let           here = inBigMap ? gHere : gSmallMapHere
+			let    notDropHere = dropZone != here
+			let       relation = controller.relationOf(location, to: dropZoneWidget)
+			let      useParent = relation != .upon && notDropHere
+
+			if  useParent,
+				let dropParent = dropZone.parentZone,
+				let    pWidget = dropParent.widget {
+				dropZone       = dropParent
+				dropZoneWidget = pWidget
+
+				if  relation  == .below {
+					noop()
+				}
+			}
+
+			let  lastDropIndex = dropZone.count
+			var          index = (useParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
+			;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
+			let      dragIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
+			let      sameIndex = dragIndex == index || dragIndex == index - 1
+			let   dropIsParent = dropZone.children.intersects(draggedZones)
+			let     spawnCycle = dropZone.spawnCycle
+			let    isForbidden = gIsEssayMode && dropZone.isInBigMap
+			let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0 || isForbidden
+			let         isDone = iGesture?.isDone ?? false
+
+			if  !isNoop, !isDone {
+				dragRelation   = relation
+				dropIndices    = NSMutableIndexSet(index: index)
+				dropWidget     = dropZoneWidget
+				dragPoint      = location
+				dragLine       = dropZoneWidget.createDragLine()
+
+				if  notDropHere && index > 0 {
+					dropIndices?.add(index - 1)
+				}
+			}
+
+			gMapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
+
+			if !isNoop, isDone {
+				let   toBookmark = dropZone.isBookmark
+				var dropAt: Int? = index
+
+				if  toBookmark {
+					dropAt       = gListsGrowDown ? nil : 0
+				} else if dropIsParent,
+					dragIndex  != nil,
+					dragIndex! <= index {
+					dropAt!     -= 1
+				}
+
+				dropOnto(dropZone, at: dropAt, iGesture)
+
+				return true
+			}
+		}
+
+		return false
+	}
+
+}
+

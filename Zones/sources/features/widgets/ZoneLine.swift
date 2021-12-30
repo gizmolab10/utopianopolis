@@ -18,6 +18,7 @@ enum ZLineCurve: Int {
 class ZoneLine: ZPseudoView {
 
 	var              length = CGFloat(25)
+	var           dragAngle : CGFloat?
 	var             dragDot : ZoneDot?
 	var           revealDot : ZoneDot?
 	var         childWidget : ZoneWidget?

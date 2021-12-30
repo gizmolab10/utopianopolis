@@ -84,14 +84,9 @@ class ZoneDot: ZPseudoView {
 
 		return  filled != isHovering
 	}
-	
-	init(view: ZView?, isDraggingDot: Bool = false) {
-		super.init(view: view)
-		
-}
 
-    // MARK: - initialization
-    // MARK: -
+	// MARK: - initialization
+	// MARK: -
 
 	@discardableResult func updateDotDrawnSize() -> CGSize {
 		let inBig = widget?.type.isBigMap ?? true

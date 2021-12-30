@@ -13,9 +13,9 @@ import Foundation
 
 extension ZoneWidget {
 
-	var                   placesCount :         Int { return ZWidgets.placesCount(at: linesLevel) }
-	var                   spreadAngle :     CGFloat { return parentWidget?.incrementAngle ?? CGFloat(k2PI) }
-	var                incrementAngle :     CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
+	var    placesCount :     Int { return ZWidgets.placesCount(at: linesLevel) }
+	var    spreadAngle : CGFloat { return parentWidget?.incrementAngle ?? CGFloat(k2PI) }
+	var incrementAngle : CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
 
 	var placeAngle : CGFloat {
 		var angle  = siblingAngle
@@ -28,7 +28,7 @@ extension ZoneWidget {
 		return angle
 	}
 
-	var siblingAngle : CGFloat {
+	var siblingAngle : CGFloat { // offset from parent's place angle
 		if  let angle = parentWidget?.incrementAngle,
 			let  zone = widgetZone, !isCenter,
 			let index = zone.siblingIndex,
@@ -178,32 +178,120 @@ extension ZoneWidget {
 
 }
 
-// MARK: - widgets array
+// MARK: - widgets static methods
 // MARK: -
 
-extension ZoneWidgetArray {
+extension ZWidgets {
 
-	var scrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
+	static func placesCount(at iLevel: Int) -> Int {
+		var  level = iLevel
+		var  total = 1
 
-	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
-		if  let  frame = controller?.mapPseudoView?.frame {
-			let radius = ZWidgets.ringRadius(at: level)
-			let center = frame.center - scrollOffset
-			let   half = gCircleIdeaRadius
+		while true {
+			let cCount = maxVisibleChildren(at: level)
+			level     -= 1
 
-			for w in self {
-				if  absolute {
-					w.updateAbsoluteFrame(relativeTo: controller)
-				} else if w.linesLevel > 0 {
-					let   angle = Double(-w.placeAngle) - kHalfPI
-					let rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
-					let  origin = center + rotated
-					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
-					w   .bounds = CGRect(origin:  .zero, size: rect.size)
-					w    .frame = rect
-				}
+			if  cCount > 0 {
+				total *= cCount
+			}
+
+			if  level  < 0 {
+				return total
 			}
 		}
+	}
+
+	static func levelAt(_ radius: CGFloat) -> Int {
+		var level = 0
+
+		while ringRadius(at: level) < radius {
+			level += 1
+		}
+
+		return level
+	}
+
+	static func ringRadius(at level: Int) -> CGFloat {
+		let  enlarged = gCircleIdeaRadius * 1.8
+		let increment = gDotWidth + enlarged + gDotHeight
+
+		return gDotHalfWidth + (CGFloat(level) * increment)
+	}
+
+	static func maxVisibleChildren(at level: Int) -> Int {
+		let   children = visibleChildren(at: level - 1)
+		var maxVisible = 0
+
+		for child in children {
+			if  let  count = child.widgetZone?.visibleChildren.count,
+				maxVisible < count {
+				maxVisible = count
+			}
+		}
+
+		return maxVisible
+	}
+
+	static func traverseAllVisibleWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
+		var   level = 0
+		var widgets = visibleChildren(at: level)
+
+		while widgets.count != 0 {
+			block(level, widgets)
+
+			level  += 1
+			widgets = visibleChildren(at: level)
+		}
+	}
+
+	static func hasVisibleChildren(at level: Int) -> Bool {
+		for widget in gHere.visibleWidgets {
+			if  widget.linesLevel == level {
+				return true
+			}
+		}
+
+		return false
+	}
+
+	static func visibleChildren(at level: Int) -> ZoneWidgetArray {
+		var widgets = ZoneWidgetArray()
+
+		for widget in gHere.visibleWidgets {
+			if  widget.linesLevel == level {
+				widgets.append(widget)
+			}
+		}
+
+		return widgets
+	}
+
+	static func widgetNearest(to vector: CGPoint) -> (ZoneWidget?, CGFloat, CGFloat) {
+		// also, determine and set PARENT WIDGET and LENGTH
+
+		let      level = levelAt(vector.length)
+		let      angle = vector.angle
+		let    widgets = visibleChildren(at: level)
+		var difference = CGFloat(k2PI)
+		var      found : ZoneWidget?
+
+		for widget in widgets {
+			let delta      = widget.placeAngle - angle
+			if  abs(delta) < abs(difference) {
+				difference = delta
+				found      = widget
+			}
+		}
+
+		if  let widget = found {
+			let   sign = CGFloat(difference > 0 ? 1 : -1)
+			let iAngle = widget.incrementAngle * sign
+			let length = ringRadius(at: level) + gCircleIdeaRadius
+
+			return (widget, widget.placeAngle + iAngle, length)
+		}
+
+		return (nil, .zero, .zero)
 	}
 
 }
@@ -235,16 +323,13 @@ extension ZoneLine {
 	var circularAbsoluteDropDragDotRect: CGRect {
 		var rect = CGRect.zero
 
-		if  let widget = gDragging.dropWidget,
-			let extent = gDragging.dragPoint {
-			let   size = widget.drawnSize
-//			let  pSize = widget.pseudoTextWidget?.absoluteFrame.size {
-//			let larger = pSize + CGSize(width: gDotHeight, height: gDotHalfWidth)
-//			let center = widget.highlightFrame.center
-//			let vector = extent - center
-//			let  angle = vector.angle.confine(within: CGFloat(k2PI))
-//			let length = larger.lengthAt(angle) // apply trigonometry
-			rect       = CGRect(origin: extent, size: .zero).expandedBy(size.multiplyBy(0.5))
+		if  let  isBig = controller?.isBigMap,
+			let widget = parentWidget,
+			let  angle = dragAngle {
+			let vector = CGPoint(x: length, y: .zero).rotate(by: Double(angle))
+			let center = widget.absoluteFrame.center
+			let   size = gDotSize(forReveal: false, forBigMap: isBig)
+			rect       = CGRect(origin: center + vector, size: .zero).expandedBy(size.multiplyBy(0.5))
 		}
 
 		return rect
@@ -282,11 +367,9 @@ extension ZoneDot {
 
 	var circularIsDragDrop : Bool { return line == gDragging.dragLine }
 
-	// reveal dot is at circle around text, at angle, drag dot is further out along same ray
-
 	var dotToDotLength : CGFloat {
 		if  gCirclesDisplayMode.contains(.cIdeas) {
-			let width = isReveal ? gDotHeight : gDotWidth
+			let   width = isReveal ? gDotHeight : gDotWidth
 
 			return gCircleIdeaRadius + 1.5 + (width / 4.0)
 		} else if let l = line,
@@ -304,7 +387,7 @@ extension ZoneDot {
 			let     center = l.parentWidget?.frame.center,
 			let lineVector = l.parentToChildVector {
 			let  newLength = dotToDotLength
-			let     length = lineVector.length               // line's length determined by parentToChildLine
+			let     length = lineVector.length
 			let      width = isReveal ? gDotHeight : gDotWidth
 			let       size = CGSize(width: width, height: gDotWidth).multiplyBy(0.5)
 			let    divisor = isReveal ? newLength : (length - newLength)
@@ -346,6 +429,39 @@ extension ZoneDot {
 
 }
 
+// MARK: - widgets array
+// MARK: -
+
+extension ZoneWidgetArray {
+
+	var scrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
+
+	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
+		if  let  frame = controller?.mapPseudoView?.frame {
+			let radius = ZWidgets.ringRadius(at: level)
+			let center = frame.center - scrollOffset
+			let   half = gCircleIdeaRadius
+
+			for w in self {
+				if  absolute {
+					w.updateAbsoluteFrame(relativeTo: controller)
+				} else if w.linesLevel > 0 {
+					let   angle = Double(-w.placeAngle) - kHalfPI
+					let rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
+					let  origin = center + rotated
+					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
+					w   .bounds = CGRect(origin:  .zero, size: rect.size)
+					w    .frame = rect
+				}
+			}
+		}
+	}
+
+}
+
+// MARK: - controller
+// MARK: -
+
 extension ZMapController {
 
 	func circularDrawLevelRings() {
@@ -361,6 +477,31 @@ extension ZMapController {
 				rect.drawColoredCircle(color, thickness: 0.2)
 			}
 		}
+	}
+
+}
+
+// MARK: - dragging
+// MARK: -
+
+extension ZDragging {
+
+	func circularDropMaybeOntoWidget(_ gesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+		clearDragParticulars()
+
+		if  let      view = gesture?.view,
+			let  location = gesture?.location(in: view),
+			let      root = controller.rootWidget {
+			let       raw = location - root.absoluteFrame.center
+			let (w, a, l) = ZWidgets.widgetNearest(to: raw)
+			if  let     p = w {
+				dragLine  = p.createDragLine(with: l, a)
+
+				return true
+			}
+		}
+
+		return false
 	}
 	
 }

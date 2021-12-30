@@ -274,10 +274,14 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 	
-	func createDragLine() -> ZoneLine {
+	func createDragLine(with length: CGFloat? = nil, _ angle: CGFloat? = nil) -> ZoneLine {
 		let          line = createLineFor(child: nil)
-		line.parentWidget = gDragging.dropWidget
+		line   .dragAngle = angle
+		line.parentWidget = self
 		let        reveal = isCircularMode ? ZoneDot(view: absoluteView) : gDragging.dropWidget?.sharedRevealDot
+		if  let         l = length {
+			line  .length = l
+		}
 
 		line.addDots(reveal: reveal, drag:   ZoneDot(view: absoluteView))
 

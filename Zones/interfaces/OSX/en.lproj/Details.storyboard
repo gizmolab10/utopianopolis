@@ -498,7 +498,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="290" height="279"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box borderType="none" title="starburst circles show for" translatesAutoresizingMaskIntoConstraints="NO" id="EBA-0Z-ZoM">
+                            <box borderType="none" title="circles show for" translatesAutoresizingMaskIntoConstraints="NO" id="EBA-0Z-ZoM">
                                 <rect key="frame" x="5" y="236" width="280" height="35"/>
                                 <view key="contentView" id="bZ5-d7-EXq">
                                     <rect key="frame" x="0.0" y="0.0" width="280" height="20"/>
@@ -528,7 +528,7 @@
                                     <constraint firstAttribute="height" constant="31" id="ISZ-w9-xNH"/>
                                 </constraints>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="none" title="children counts show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
+                            <box autoresizesSubviews="NO" borderType="none" title="list lengths show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
                                 <rect key="frame" x="5" y="197" width="280" height="35"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="0.0" y="0.0" width="280" height="20"/>
@@ -727,7 +727,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="18" id="BNZ-fl-QS2"/>
                                                     </constraints>
-                                                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="distance to child" id="mLK-OR-6f6">
+                                                    <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="distance to list" id="mLK-OR-6f6">
                                                         <font key="font" metaFont="message" size="11"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

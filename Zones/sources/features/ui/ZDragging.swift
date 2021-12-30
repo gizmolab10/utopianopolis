@@ -28,6 +28,15 @@ class ZDragging: NSObject {
 		dropWidget?.controller?.restartGestureRecognition()
 	}
 
+	func clearDragParticulars() {
+		dragRelation = nil
+		dropIndices  = nil
+		dropWidget   = nil
+		dropCrumb    = nil
+		dragPoint    = nil
+		dragLine     = nil
+	}
+
 	func cleanupAfterDrag() {
 
 		// cursor exited view, remove drag cruft
@@ -36,15 +45,9 @@ class ZDragging: NSObject {
 
 		gRubberband.rubberbandStart = .zero
 
-		dragRelation = nil
-		dropIndices  = nil
-		dropWidget   = nil
-		dropCrumb    = nil
-		dragPoint    = nil
-		dragLine     = nil
-
+		clearDragParticulars()
 		gDragView?.setNeedsDisplay() // erase drag: line and dot
-		gMapView?  .setNeedsDisplay()
+		gMapView? .setNeedsDisplay()
 	}
 
 	func handleDragGesture(_ gesture: ZKeyPanGestureRecognizer, in controller: ZMapController) {
@@ -134,76 +137,7 @@ class ZDragging: NSObject {
 		}
 	}
 
-	func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means done with drags
-		if  !draggedZones.containsARoot {
-			let         totalGrabs = draggedZones + gSelecting.currentMapGrabs
-			if  draggedZones.userCanMoveAll,
-				let (inBigMap, zone, location) = controller.widgetHit(by: iGesture, locatedInBigMap: controller.isBigMap),
-				var       dropZone = zone, !totalGrabs.contains(dropZone),
-				var dropZoneWidget = dropZone.widget {
-				let      dropIndex = dropZone.siblingIndex
-				let           here = inBigMap ? gHere : gSmallMapHere
-				let    notDropHere = dropZone != here
-				let       relation = controller.relationOf(location, to: dropZoneWidget)
-				let      useParent = relation != .upon && notDropHere
-
-				if  useParent,
-					let dropParent = dropZone.parentZone,
-					let    pWidget = dropParent.widget {
-					dropZone       = dropParent
-					dropZoneWidget = pWidget
-
-					if  relation  == .below {
-						noop()
-					}
-				}
-
-				let  lastDropIndex = dropZone.count
-				var          index = (useParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
-				;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
-				let      dragIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
-				let      sameIndex = dragIndex == index || dragIndex == index - 1
-				let   dropIsParent = dropZone.children.intersects(draggedZones)
-				let     spawnCycle = dropZone.spawnCycle
-				let    isForbidden = gIsEssayMode && dropZone.isInBigMap
-				let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0 || isForbidden
-				let         isDone = iGesture?.isDone ?? false
-				let      forgetAll = isNoop || isDone
-				dragRelation       = forgetAll ? nil : relation
-				dropIndices        = forgetAll ? nil : NSMutableIndexSet(index: index)
-				dropWidget         = forgetAll ? nil : dropZoneWidget
-				dragPoint          = forgetAll ? nil : location
-				dragLine           = forgetAll ? nil : dropZoneWidget.createDragLine()
-
-				if !forgetAll && notDropHere && index > 0 {
-					dropIndices?.add(index - 1)
-				}
-
-				gMapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
-
-				if !isNoop, isDone {
-					let   toBookmark = dropZone.isBookmark
-					var dropAt: Int? = index
-
-					if  toBookmark {
-						dropAt       = gListsGrowDown ? nil : 0
-					} else if dropIsParent,
-						dragIndex  != nil,
-						dragIndex! <= index {
-						dropAt!     -= 1
-					}
-
-					dropOnto(dropZone, at: dropAt, iGesture)
-
-					return true
-				}
-			}
-		}
-
-		return false
-	}
-
-	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means done with drags
+	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
 		if  let crumb = gBreadcrumbsView?.detectCrumb(iGesture),
 			!draggedZones.containsARoot,
 			!draggedZones.contains(crumb.zone),

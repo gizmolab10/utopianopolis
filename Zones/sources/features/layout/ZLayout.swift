@@ -110,3 +110,22 @@ extension ZoneDot {
 	}
 
 }
+
+// MARK: - dragging
+// MARK: -
+
+extension ZDragging {
+
+	func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+		if !draggedZones.containsARoot,
+			draggedZones.userCanMoveAll {
+			switch controller.mapLayoutMode {
+			case .linearMode:   return   linearDropMaybeOntoWidget(iGesture, in: controller)
+			case .circularMode: return circularDropMaybeOntoWidget(iGesture, in: controller)
+			}
+		}
+
+		return false
+	}
+
+}
