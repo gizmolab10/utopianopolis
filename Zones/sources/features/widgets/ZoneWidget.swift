@@ -100,7 +100,6 @@ class ZoneWidget: ZPseudoView {
 	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot  ?? false }
-	var             isBigMap :            Bool  { return controller?.isBigMap ?? true }
 	var             isCenter :            Bool  { return linesLevel == 0 }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
 

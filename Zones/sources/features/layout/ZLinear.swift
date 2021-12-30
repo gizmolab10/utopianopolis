@@ -44,8 +44,7 @@ extension ZoneWidget {
 				index    -= 1 // go backwards [up] the children array
 				let child = childrenWidgets[index]
 				let  size = child.drawnSize
-				height   += size.height + ((index == 0) ? .zero : gFontSize)
-
+				height   += size.height + ((index == 0) ? .zero : gBaseFontSize)
 				if  width < size.width {
 					width = size.width
 				}
@@ -81,7 +80,7 @@ extension ZoneWidget {
 	func linearUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var         y = CGFloat.zero
-			let       gap = gFontSize
+			let       gap = gBaseFontSize
 			var     index = childrenWidgets.count
 			while   index > 0 {
 				index    -= 1 // go backwards [up] the children array
@@ -121,7 +120,7 @@ extension ZoneWidget {
 				c.updateAbsoluteFrame(relativeTo: controller)
 			} else if let tFrame = pseudoTextWidget?.frame {
 				let    reduction = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
-				let       offset = gDotWidth + gFontSize * 1.2
+				let       offset = gDotWidth + gBaseFontSize * 1.2
 				let            x = tFrame.maxX + offset * reduction
 				let       origin = CGPoint(x: x, y: .zero)
 				let       cFrame = CGRect(origin: origin, size: c.drawnSize)
@@ -148,7 +147,7 @@ extension ZoneWidget {
 			let    xExpand = gDotHeight * 1.2
 			let    yExpand = gDotHeight / -30.0 + 2.0
 			let       size = CGSize(width: xExpand, height: yExpand)
-			highlightFrame = t.frame.expandedBy(size.multiplyBy(mapReduction)).offsetBy(dx: gDotWidth * -0.2, dy: .zero)
+			highlightFrame = t.frame.expandedBy(size.multiplyBy(mapReduction)).offsetBy(dx: gDotHalfWidth * 0.67, dy: .zero)
 		}
 	}
 
@@ -160,7 +159,7 @@ extension ZoneWidget {
 		return path
 	}
 
-	func linearUpdateDotFrames(_ absolute: Bool) {
+	func linearUpdateBothDotFrames(_ absolute: Bool) {
 		if  absolute,
 			let textFrame = pseudoTextWidget?.absoluteFrame {
 
@@ -193,7 +192,7 @@ extension ZoneWidget {
 	func linearUpdateSubframes(_ absolute: Bool = false) {
 		linearUpdateTextViewFrame       (absolute)
 		linearUpdateChildrenWidgetFrames(absolute)
-		linearUpdateDotFrames           (absolute)
+		linearUpdateBothDotFrames       (absolute)
 		linearUpdateChildrenViewFrame   (absolute)
 		linearUpdateLinesViewFrame      (absolute)
 	}
@@ -246,8 +245,7 @@ extension ZoneLine {
 						let   relation = gDragging.dragRelation
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
 						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
-						let    gHeight = gFontSize
-						let      delta = (gHeight + gDotWidth) * multiplier
+						let      delta = (gBaseFontSize + gDotWidth) * multiplier
 						rect           = rect.offsetBy(dx: 0.0, dy: delta)
 
 					} else if lastIndex < zone.count, let secondDot = parentWidget?.dot(at: lastIndex) {
@@ -309,7 +307,7 @@ extension ZoneDot {
 	var linearIsDragDrop : Bool { return widget == gDragging.dropWidget }
 
 	func linearUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		let    center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotHalfWidth, 0.0) : absoluteTextFrame.centerLeft.offsetBy(-gDotWidth, 0.0)
+		let    center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, 0.0) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, 0.0)
 		absoluteFrame = CGRect(origin: center, size: .zero).expandedBy(drawnSize.multiplyBy(0.5))
 
 		updateTooltips()

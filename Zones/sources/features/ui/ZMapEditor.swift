@@ -392,10 +392,10 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func updateFontSize(up: Bool) {
-		let delta = CGFloat(up ? 1 : -1)
-		var  size = gFontSize + delta
-		size      = size.confineBetween(low: 0.0, high: 15.0)
-		gFontSize = size
+		let     delta = CGFloat(up ? 1 : -1)
+		var      size = gBaseFontSize + delta
+		size          = size.confineBetween(low: 0.0, high: 15.0)
+		gBaseFontSize = size
 
 		gRelayoutMaps()
 	}

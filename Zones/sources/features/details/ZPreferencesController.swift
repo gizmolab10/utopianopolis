@@ -35,7 +35,7 @@ class ZPreferencesController: ZGenericController {
             let                            grabbed = gSelecting.firstSortedGrab
             countsModeControl?    .selectedSegment = gCountsMode   .rawValue
             lineThickness?            .doubleValue = gLineThickness
-            fontSize?                 .doubleValue = Double(gFontSize)
+            fontSize?                 .doubleValue = Double(gBaseFontSize)
             horizontalSpacing?        .doubleValue = Double(gHorizontalGap)
 			circlesDisplayBox?           .isHidden = gMapLayoutMode == .linearMode
 			colorPreferencesBox?         .isHidden = !gColorfulMode
@@ -59,7 +59,7 @@ class ZPreferencesController: ZGenericController {
 			switch (identifier) {
 			case  "thickness": gLineThickness = Double(value)
 			case "horizontal": gHorizontalGap = value
-			case  "font size":      gFontSize = value
+			case  "font size":  gBaseFontSize = value
 			default:           break
 			}
 

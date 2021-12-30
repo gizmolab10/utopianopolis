@@ -576,7 +576,7 @@ var gHorizontalGap: CGFloat {
 		var value: CGFloat? = UserDefaults.standard.object(forKey: kHorizontalGap) as? CGFloat
 
 		if  value == nil {
-			value  = 20.0
+			value  = 30.0
 
 			UserDefaults.standard.set(value, forKey:kHorizontalGap)
 			UserDefaults.standard.synchronize()
@@ -591,7 +591,7 @@ var gHorizontalGap: CGFloat {
 	}
 }
 
-var gFontSize: CGFloat {
+var gBaseFontSize: CGFloat {
 	get {
 		var value: CGFloat? = UserDefaults.standard.object(forKey: kFontSize) as? CGFloat
 

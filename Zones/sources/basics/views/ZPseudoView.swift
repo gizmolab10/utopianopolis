@@ -39,9 +39,11 @@ class ZPseudoView: NSObject {
 	var       drawnView : ZView?
 	var      controller : ZMapController? { return nil }
 	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
+	var        fontSize : CGFloat         { return isBigMap ? gBigFontSize : gSmallFontSize }
+	var        isBigMap : Bool            { return controller?.isBigMap ?? true }
 	var    isLinearMode : Bool            { return mode == .linearMode }
 	var  isCircularMode : Bool            { return mode == .circularMode }
-	
+
 	override var description: String { return toolTip ?? super.description }
 	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses
 	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }
