@@ -857,7 +857,7 @@ class ZMapEditor: ZBaseEditor {
 					gRelayoutMaps()
 				}
 
-				if isBookmark {
+				if  isBookmark, self.undoManager.groupingLevel > 0 {
 					self.undoManager.endUndoGrouping()
 				}
 

@@ -16,11 +16,16 @@ extension ZoneWidget {
 	var    placesCount :     Int { return ZWidgets.placesCount(at: linesLevel) }
 	var    spreadAngle : CGFloat { return parentWidget?.incrementAngle ?? CGFloat(k2PI) }
 	var incrementAngle : CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
+	var     placeAngle : CGFloat { return (-rawPlaceAngle - CGFloat(kHalfPI)).confine(within: CGFloat(k2PI)) }
 
-	var placeAngle : CGFloat {
+	var rawPlaceAngle : CGFloat {
+
+		// zero == noon
+		// increases clockwise
+
 		var angle  = siblingAngle
 		if  let p  = parentWidget, !isCenter {
-			let o  = p.placeAngle
+			let o  = p.rawPlaceAngle
 			angle += o
 			angle  = angle.confine(within: CGFloat(k2PI))
 		}
@@ -212,10 +217,10 @@ extension ZWidgets {
 	}
 
 	static func ringRadius(at level: Int) -> CGFloat {
-		let  enlarged = gCircleIdeaRadius * 1.8
-		let increment = gDotWidth + enlarged + gDotHeight
+		let increment = gCircleIdeaRadius + gDotHeight
+		let  multiple = CGFloat(level) * 1.7
 
-		return gDotHalfWidth + (CGFloat(level) * increment)
+		return gDotHalfWidth + multiple * increment
 	}
 
 	static func maxVisibleChildren(at level: Int) -> Int {
@@ -267,28 +272,26 @@ extension ZWidgets {
 	}
 
 	static func widgetNearest(to vector: CGPoint) -> (ZoneWidget?, CGFloat, CGFloat) {
-		// also, determine and set PARENT WIDGET and LENGTH
-
-		let      level = levelAt(vector.length)
-		let      angle = vector.angle
-		let    widgets = visibleChildren(at: level)
-		var difference = CGFloat(k2PI)
-		var      found : ZoneWidget?
+		let   angle = vector.angle
+		let   level = levelAt(vector.length)
+		let widgets = visibleChildren(at: level)
+		var  dAngle = CGFloat(k2PI)
+		var   found : ZoneWidget?
 
 		for widget in widgets {
-			let delta      = widget.placeAngle - angle
-			if  abs(delta) < abs(difference) {
-				difference = delta
-				found      = widget
+			let diff      = widget.placeAngle - angle
+			if  abs(diff) < abs(dAngle) {
+				dAngle    = diff
+				found     = widget
 			}
 		}
 
 		if  let widget = found {
-			let   sign = CGFloat(difference > 0 ? 1 : -1)
-			let iAngle = widget.incrementAngle * sign
-			let length = ringRadius(at: level) + gCircleIdeaRadius
+			let   sign = CGFloat(dAngle >= 0 ? 1 : -1)
+			let iAngle = widget.incrementAngle * sign / 2.0
+			let tAngle = (widget.placeAngle + iAngle).confine(within: CGFloat(k2PI))
 
-			return (widget, widget.placeAngle + iAngle, length)
+			return (widget, tAngle, gCircleIdeaRadius)
 		}
 
 		return (nil, .zero, .zero)
@@ -446,8 +449,8 @@ extension ZoneWidgetArray {
 				if  absolute {
 					w.updateAbsoluteFrame(relativeTo: controller)
 				} else if w.linesLevel > 0 {
-					let   angle = Double(-w.placeAngle) - kHalfPI
-					let rotated = CGPoint(x: .zero, y: radius).rotate(by: angle)
+					let   angle = w.placeAngle
+					let rotated = CGPoint(x: .zero, y: radius).rotate(by: Double(angle))
 					let  origin = center + rotated
 					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
 					w   .bounds = CGRect(origin:  .zero, size: rect.size)
@@ -487,15 +490,26 @@ extension ZMapController {
 extension ZDragging {
 
 	func circularDropMaybeOntoWidget(_ gesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
-		clearDragParticulars()
+		let prior = dragLine?.parentWidget?.widgetZone
+		clearDragAndDrop()
 
 		if  let      view = gesture?.view,
 			let  location = gesture?.location(in: view),
 			let      root = controller.rootWidget {
-			let       raw = location - root.absoluteFrame.center
-			let (w, a, l) = ZWidgets.widgetNearest(to: raw)
-			if  let     p = w {
-				dragLine  = p.createDragLine(with: l, a)
+			let    vector = location - root.absoluteFrame.center
+			let (d, a, l) = ZWidgets.widgetNearest(to: vector)
+			if  let     w = d,
+				let  zone = w.widgetZone,
+				!draggedZones.contains(zone) {
+				dragLine  = w.createDragLine(with: l, a)
+
+				if  zone != prior {
+					print("\(w)")
+				}
+
+				if  gesture?.isDone ?? false {
+					dropOnto(zone, gesture)
+				}
 
 				return true
 			}

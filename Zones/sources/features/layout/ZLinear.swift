@@ -118,9 +118,8 @@ extension ZoneWidget {
 			if  absolute {
 				c.updateAbsoluteFrame(relativeTo: controller)
 			} else if let tFrame = pseudoTextWidget?.frame {
-				let    reduction = type.isBigMap ? 1.0 : kSmallMapReduction / 3.0
-				let       offset = dotPlusGap * 1.2
-				let            x = tFrame.maxX + offset * reduction
+				let    reduction = type.isBigMap ? 0.8 : kSmallMapReduction / 1.5
+				let            x = tFrame.maxX + dotPlusGap * reduction
 				let       origin = CGPoint(x: x, y: .zero)
 				let       cFrame = CGRect(origin: origin, size: c.drawnSize)
 				c         .frame = cFrame
@@ -339,7 +338,7 @@ extension ZoneDot {
 extension ZDragging {
 
 	func linearDropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
-		clearDragParticulars()
+		clearDragAndDrop()
 
 		let         totalGrabs = draggedZones + gSelecting.currentMapGrabs
 		if  let (inBigMap, zone, location) = controller.widgetHit(by: iGesture, locatedInBigMap: controller.isBigMap),

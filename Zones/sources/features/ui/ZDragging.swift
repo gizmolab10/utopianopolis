@@ -28,7 +28,7 @@ class ZDragging: NSObject {
 		dropWidget?.controller?.restartGestureRecognition()
 	}
 
-	func clearDragParticulars() {
+	func clearDragAndDrop() {
 		dragRelation = nil
 		dropIndices  = nil
 		dropWidget   = nil
@@ -45,7 +45,7 @@ class ZDragging: NSObject {
 
 		gRubberband.rubberbandStart = .zero
 
-		clearDragParticulars()
+		clearDragAndDrop()
 		gDragView?.setNeedsDisplay() // erase drag: line and dot
 		gMapView? .setNeedsDisplay()
 	}
@@ -118,6 +118,7 @@ class ZDragging: NSObject {
 			zone.addZones(draggedZones, at: dropAt, undoManager: gMapEditor.undoManager, flags) {
 				gSelecting.updateBrowsingLevel()
 				gSelecting.updateCousinList()
+				self.cleanupAfterDrag()
 				self.restartGestureRecognitiono()
 				gRelayoutMaps()
 			}
