@@ -147,8 +147,9 @@ class ZoneWidget: ZPseudoView {
 	// MARK: -
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
-		sharedRevealDot = isLinearMode ? ZoneDot(view: absoluteView) : nil
-		var count = 1
+		let     mapView = absoluteView as? ZMapView
+		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.dotsAndLinesView) : nil
+		var       count = 1
 
 		if  let v = parentPseudoView,
 		   !v.subpseudoviews.contains(self) {
@@ -274,29 +275,29 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 	
-	func createDragLine(with length: CGFloat? = nil, _ angle: CGFloat? = nil) -> ZoneLine {
+	func createDragLine(with  angle: CGFloat? = nil) -> ZoneLine {
 		let          line = createLineFor(child: nil)
+		let         aView = line.absoluteView
 		line   .dragAngle = angle
 		line.parentWidget = self
-		let        reveal = isCircularMode ? ZoneDot(view: absoluteView) : gDragging.dropWidget?.sharedRevealDot
-		if  let         l = length {
-			line  .length = l
-		}
+		let        reveal = isCircularMode ? ZoneDot(view: aView) : gDragging.dropWidget?.sharedRevealDot
+		line      .length = gCircleIdeaRadius + gDotHalfWidth
 
-		line.addDots(reveal: reveal, drag:   ZoneDot(view: absoluteView))
+		line.addDots(reveal: reveal, drag:   ZoneDot(view: aView))
 
 		return line
 	}
 
 	func createLineFor(child: ZoneWidget?) -> ZoneLine {
-		let          line = ZoneLine(view: absoluteView)
+		let       mapView = absoluteView as? ZMapView
+		let          line = ZoneLine(view: mapView?.dotsAndLinesView)
 		line .childWidget = child
 		child?.parentLine = line
 
 		return line
 	}
 
-	private func addLine(to child: ZoneWidget?) {
+	private func addLine(connectingTo child: ZoneWidget?) {
 		let        reveal = isLinearMode ? sharedRevealDot : nil
 		let          line = createLineFor(child: child)
 		line.parentWidget = self
@@ -315,10 +316,10 @@ class ZoneWidget: ZPseudoView {
 
 		if  let zone = widgetZone, zone.isShowing {
 			if !zone.hasVisibleChildren, isLinearMode {
-				addLine(to: nil)
+				addLine(connectingTo: nil)
 			} else {
 				for child in childrenWidgets {
-					addLine(to: child)
+					addLine(connectingTo: child)
 				}
 			}
 		}
@@ -394,61 +395,6 @@ class ZoneWidget: ZPseudoView {
             return nil
         }
     }
-
-	func dragHitRect(in view: ZPseudoView, _ here: Zone) -> CGRect {
-		if  here == widgetZone {
-			return view.frame
-		}
-
-		return absoluteFrame
-	}
-
-    func widgetNearestTo(_ point: CGPoint, in iView: ZPseudoView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
-		if  let view = iView,
-			let here = iHere,
-			!visited.contains(self),
-			dragHitRect(in: view, here).contains(point) {
-
-			for child in childrenWidgets {
-				if  self        != child,
-					let    found = child.widgetNearestTo(point, in: view, here, visited + [self]) {    // recurse into child
-					return found
-				}
-			}
-
-			return self
-		}
-
-        return nil
-    }
-
-	func detect(at location: CGPoint, recursive: Bool = true) -> Any? {
-		if  let                z = widgetZone, z.isShowing, detectionFrame.contains(location) {
-			if  let            d = parentLine?.dragDot,    d.absoluteFrame.contains(location) {
-				return         d
-			}
-			for line in childrenLines {
-				if  let        r = line.revealDot,         r.absoluteFrame.contains(location) {
-					return     r
-				}
-			}
-			if  let            t = pseudoTextWidget,       t.absoluteFrame.contains(location) {
-				return         textWidget
-			}
-			if  isCircularMode,                            highlightFrame.contains(location) {
-				return         self
-			}
-			if  recursive {
-				for child in childrenWidgets {
-					if  let    c = child.detect(at: location) {
-						return c
-					}
-				}
-			}
-		}
-
-		return nil
-	}
 
 	// MARK: - draw
 	// MARK: -

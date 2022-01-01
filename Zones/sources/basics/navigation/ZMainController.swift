@@ -54,7 +54,7 @@ class ZMainController: ZGesturesController {
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
 		gShowDetailsView = gDetailsViewIsHidden
 
-		gMapView?.clear(ofType: .small)
+		gMapView?.removeAllTextViews(ofType: .small)
 		gSignal([.spMain, .sDetails, .spRelayout])
 	}
 

@@ -12,15 +12,10 @@
     import UIKit
 #endif
 
-class ZDragView: ZView, ZGestureRecognizerDelegate {
-
-	let mapView = ZMapView()
+class ZDragView: ZMapView, ZGestureRecognizerDelegate {
 
 	func setup() {
-		mapView.zlayer.backgroundColor = ZColor.clear.cgColor
-
-		addSubview(mapView)
-		mapView.setup(.mText)
+		setup(.mTextAndHighlights)
 	}
 
 	override func updateTrackingAreas() {

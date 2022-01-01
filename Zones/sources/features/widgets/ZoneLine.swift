@@ -83,16 +83,16 @@ class ZoneLine: ZPseudoView {
 		let       path = linePath(in: rect, kind: kind)
 		path.lineWidth = CGFloat(gLineThickness)
 
+		if  let  p = parentWidget?.widgetZone, !p.isExpanded {
+			return
+		}
+
+		if  rect.hasZeroSize {
+			return
+		}
+
 		if  isCircularMode {
 			ZBezierPath(rect: gMapView!.bounds).setClip()
-
-			if  let  p = parentWidget?.widgetZone, !p.isExpanded {
-				return
-			}
-
-			if  rect.hasZeroSize {
-				return
-			}
 		}
 
 		color.setStroke()

@@ -1163,12 +1163,12 @@ extension ZoneLine {
 
 	func lineRect(for kind: ZLineCurve?) -> CGRect {
 		switch mode {
-		case .linearMode:   return   linesLineRect(for: kind)
-		case .circularMode: return circlesLineRect()
+		case .linearMode:   return   linearLineRect(for: kind)
+		case .circularMode: return circularLineRect()
 		}
 	}
 
-	func circlesLineRect() -> CGRect {
+	func circularLineRect() -> CGRect {
 		if  let origin = revealDot?.absoluteFrame.center,
 			let center = dragDot?.absoluteFrame.center {
 			let   size = CGSize(center - origin).absSize
@@ -1178,7 +1178,7 @@ extension ZoneLine {
 		return .zero
 	}
 
-    func linesLineRect(for kind: ZLineCurve?) -> CGRect {
+    func linearLineRect(for kind: ZLineCurve?) -> CGRect {
 		var                 rect = CGRect.zero
         if  kind                != nil,
 			let      sourceFrame = revealDot?.absoluteFrame,

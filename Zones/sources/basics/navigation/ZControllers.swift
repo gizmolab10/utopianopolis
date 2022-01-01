@@ -152,7 +152,7 @@ class ZControllers: NSObject {
 
 		if  multiple.contains(.spRelayout) {
 			gWidgets.clearAll()
-			gMapView?.clear()
+			gMapView?.removeAllTextViews(ofType: .both)
 		}
 
 		FOREGROUND(canBeDirect: true) {

@@ -90,13 +90,12 @@ extension ZoneWidget {
 	}
 
 	func circularUpdateHighlightFrame() {
-		let           half = gDotHalfWidth
 		if  gCirclesDisplayMode.contains(.cIdeas) {
 			let     center = absoluteFrame.center
-			let     radius = gCircleIdeaRadius + half
+			let     radius = gCircleIdeaRadius + gDotHalfWidth
 			highlightFrame = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
 		} else if let    t = pseudoTextWidget {
-			highlightFrame = t.absoluteFrame.expandedBy(dx: half, dy: .zero)
+			highlightFrame = t.absoluteFrame.expandedBy(dx: gDotHalfWidth, dy: .zero)
 		}
 	}
 
@@ -271,7 +270,7 @@ extension ZWidgets {
 		return widgets
 	}
 
-	static func widgetNearest(to vector: CGPoint) -> (ZoneWidget?, CGFloat, CGFloat) {
+	static func widgetNearest(to vector: CGPoint) -> (ZoneWidget?, CGFloat) {
 		let   angle = vector.angle
 		let   level = levelAt(vector.length)
 		let widgets = visibleChildren(at: level)
@@ -291,10 +290,10 @@ extension ZWidgets {
 			let iAngle = widget.incrementAngle * sign / 2.0
 			let tAngle = (widget.placeAngle + iAngle).confine(within: CGFloat(k2PI))
 
-			return (widget, tAngle, gCircleIdeaRadius)
+			return (widget, tAngle)
 		}
 
-		return (nil, .zero, .zero)
+		return (nil, .zero)
 	}
 
 }
@@ -443,7 +442,6 @@ extension ZoneWidgetArray {
 		if  let  frame = controller?.mapPseudoView?.frame {
 			let radius = ZWidgets.ringRadius(at: level)
 			let center = frame.center - scrollOffset
-			let   half = gCircleIdeaRadius
 
 			for w in self {
 				if  absolute {
@@ -452,7 +450,7 @@ extension ZoneWidgetArray {
 					let   angle = w.placeAngle
 					let rotated = CGPoint(x: .zero, y: radius).rotate(by: Double(angle))
 					let  origin = center + rotated
-					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(half)
+					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(gCircleIdeaRadius)
 					w   .bounds = CGRect(origin:  .zero, size: rect.size)
 					w    .frame = rect
 				}
@@ -490,21 +488,19 @@ extension ZMapController {
 extension ZDragging {
 
 	func circularDropMaybeOntoWidget(_ gesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
-		let prior = dragLine?.parentWidget?.widgetZone
 		clearDragAndDrop()
 
-		if  let      view = gesture?.view,
-			let  location = gesture?.location(in: view),
-			let      root = controller.rootWidget {
-			let    vector = location - root.absoluteFrame.center
-			let (d, a, l) = ZWidgets.widgetNearest(to: vector)
-			if  let     w = d,
-				let  zone = w.widgetZone,
-				!draggedZones.contains(zone) {
-				dragLine  = w.createDragLine(with: l, a)
-
-				if  zone != prior {
-					print("\(w)")
+		if  let       view = gesture?.view,
+			let   location = gesture?.location(in: view),
+			let       root = controller.rootWidget {
+			let     vector = location - root.absoluteFrame.center
+			let     (w, a) = ZWidgets.widgetNearest(to: vector)
+			if  let widget = w,
+				let zone   = widget.widgetZone, !draggedZones.contains(zone) {
+				dragLine   = widget.createDragLine(with: a)
+				if  zone  != prior {
+					prior  = zone
+					print("\(zone)")
 				}
 
 				if  gesture?.isDone ?? false {

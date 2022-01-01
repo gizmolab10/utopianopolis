@@ -12,20 +12,16 @@ let gHovering = ZHovering()
 
 class ZHovering: NSObject {
 
-	var dot           : ZoneDot?
-	var widget        : ZoneWidget?
-	var textWidget    : ZoneTextWidget?
+	var dot             : ZoneDot?
+	var widget          : ZoneWidget?
+	var textWidget      : ZoneTextWidget?
 
-	var absoluteView  : ZView? {
-		if  let       t = textWidget?.widget?.absoluteView as? ZMapView {
-			return    t
-		} else if let m = dot?               .absoluteView as? ZMapView {
-			return    m.dotsAndLinesView
-		} else if let w = widget?            .absoluteView as? ZMapView {
-			return    w
+	var absoluteView    : ZView? {
+		if  textWidget != nil || widget != nil || dot != nil {
+			return gMapView
 		}
 
-		return nil  // too often returns nil
+		return nil
 	}
 
 	@discardableResult func clear() -> ZView? {
@@ -39,18 +35,21 @@ class ZHovering: NSObject {
 
 		return cleared
 	}
-	
+
 	func setHover(on p: ZPseudoView) -> ZView? {
 		clear()
 
+		var hover       = false
 		p   .isHovering = true
 		if  let       d = p as? ZoneDot {
+			hover       = true
 			dot         = d
 		} else if let w = p as? ZoneWidget {
+			hover       = true
 			widget      = w
 		}
 
-		return p.absoluteView
+		return hover ? gMapView : nil
 	}
 
 	func setHover(on t: ZoneTextWidget) -> ZView? {
@@ -59,7 +58,7 @@ class ZHovering: NSObject {
 		t.isHovering = true
 		textWidget   = t
 
-		return t.widget?.absoluteView
+		return gMapView
 	}
 	
 	@discardableResult func declareHover(_ any: Any?) -> ZView? {

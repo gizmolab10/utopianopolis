@@ -19,6 +19,7 @@ class ZDragging: NSObject {
 	var    dropCrumb : ZBreadcrumbButton?
 	var    dragPoint :           CGPoint?
 	var     dragLine :          ZoneLine?
+	var        prior :              Zone?
 	var    dragIndex :               Int? { return (draggedZones.count == 0) ? nil : draggedZones[0].siblingIndex }
 
 	// MARK: - drag

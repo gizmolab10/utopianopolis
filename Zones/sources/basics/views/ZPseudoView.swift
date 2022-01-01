@@ -17,8 +17,8 @@ import UIKit
 
 enum ZDrawPhase: String {
 	case pLines      = "l"
-	case pDots       = "d"
 	case pHighlights = "h"
+	case pDots       = "d"
 
 	static let allInOrder: [ZDrawPhase] = [.pLines, .pHighlights, .pDots]
 }

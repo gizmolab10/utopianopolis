@@ -16,20 +16,18 @@ import UIKit
 #endif
 
 enum ZMapID: String {
-	case mDotsAndLines = "d"
-	case mHighlight    = "h"
-	case mText         = "t"
+	case mDotsAndLines      = "d"
+	case mTextAndHighlights = "t"
 
-	var title          : String { return "\(self)".lowercased().substring(fromInclusive: 1) }
-	var identifier     : NSUserInterfaceItemIdentifier { return NSUserInterfaceItemIdentifier(title) }
+	var title      : String { return "\(self)".lowercased().substring(fromInclusive: 1) }
+	var identifier : NSUserInterfaceItemIdentifier { return NSUserInterfaceItemIdentifier(title) }
 }
 
 class ZMapView: ZView {
 
-	var mapID                   : ZMapID?
-	var dotsAndLinesView        : ZMapView?
-	var highlightMapView        : ZMapView?
-	override func menu(for event: ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
+	var mapID                    : ZMapID?
+	var dotsAndLinesView         : ZMapView?
+	override func menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
 	// MARK: - hover
 	// MARK: -
@@ -39,20 +37,17 @@ class ZMapView: ZView {
 	// MARK: - initialize
 	// MARK: -
 
-	func setup(_ id: ZMapID = .mText) {
+	func setup(_ id: ZMapID = .mTextAndHighlights) {
 		identifier = id.identifier
 		mapID      = id
 
 		switch id {
-			case .mText:
+			case .mTextAndHighlights:
 				dotsAndLinesView = ZMapView()
-				highlightMapView = ZMapView()
 
 				updateTracking()
 				addSubview(dotsAndLinesView!)
-				addSubview(highlightMapView!)
 				dotsAndLinesView?.setup(.mDotsAndLines)
-				highlightMapView?.setup(.mHighlight)
 				fallthrough
 			default:
 				zlayer.backgroundColor = CGColor.clear
@@ -66,8 +61,7 @@ class ZMapView: ZView {
 	func resize() {
 		if  let   view = gMapController?.view {
 			frame      = view.bounds
-			if  mapID == .mText {
-				highlightMapView?.resize()
+			if  mapID == .mTextAndHighlights {
 				dotsAndLinesView?.resize()
 			}
 		}
@@ -90,16 +84,14 @@ class ZMapView: ZView {
 	func debugDraw() {
 		bounds                 .insetEquallyBy(1.5).drawColoredRect(.blue)
 		dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)
-		highlightMapView?.frame.insetEquallyBy(4.5).drawColoredRect(.purple)
 		superview?.drawBox(in: self, with:                          .orange)
 	}
 	
 	func mustDrawFor(_ phase: ZDrawPhase) -> Bool {
 		switch mapID {
-		case .mDotsAndLines: return phase == .pLines || phase == .pDots
-		case .mText:         return phase == .pLines
-		case .mHighlight:    return phase == .pHighlights
-		default:             return false
+		case .mDotsAndLines:      return phase == .pLines || phase == .pDots
+		case .mTextAndHighlights: return phase == .pHighlights
+		default:                  return false
 		}
 	}
 
@@ -108,19 +100,19 @@ class ZMapView: ZView {
 			return
 		}
 
-		switch mapID {
-			case .mText:
-				super            .draw(iDirtyRect) // text fields are drawn by OS
-				dotsAndLinesView?.draw(iDirtyRect)
-				highlightMapView?.draw(iDirtyRect)
-			default:
-				for phase in ZDrawPhase.allInOrder {
-					if  mustDrawFor(phase) {
-						ZBezierPath(rect: iDirtyRect).setClip()
-						gSmallMapController?.drawWidgets(for: phase)
-						gMapController?     .drawWidgets(for: phase)
-					}
-				}
+//		clearRect(iDirtyRect)
+
+		if  mapID == .mTextAndHighlights {
+			super            .draw(iDirtyRect) // text fields are drawn by OS
+			dotsAndLinesView?.draw(iDirtyRect)
+		}
+
+		for phase in ZDrawPhase.allInOrder {
+			if  mustDrawFor(phase) {
+				ZBezierPath(rect: iDirtyRect).setClip()
+				gSmallMapController?.drawWidgets(for: phase)
+				gMapController?     .drawWidgets(for: phase)
+			}
 		}
 	}
 
@@ -133,18 +125,8 @@ class ZMapView: ZView {
 		ZBezierPath(rect: iDirtyRect).fill()
 	}
 
-	func clear(ofType: ZRelayoutMapType = .both) {
-		if  mapID == .mText {
-			highlightMapView?.clear()
-			dotsAndLinesView?.clear()
-
-			removeAllTextViews(ofType: ofType)
-		}
-	}
-
 	@objc override func printView() {
 		gDetailsController?.temporarilyHideView(for: .vSmallMap) {
-			clear(ofType: .small)
 			super.printView()
 		}
 		

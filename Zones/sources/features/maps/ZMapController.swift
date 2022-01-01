@@ -15,7 +15,7 @@ import SnapKit
 #endif
 
 var gMapController: ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
-var gMapView:       ZMapView?       { return gDragView?.mapView }
+var gMapView:       ZMapView?       { return gDragView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
@@ -52,7 +52,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func drawWidgets(for phase: ZDrawPhase) {
 		if  isBigMap || gDetailsViewIsVisible(for: .vSmallMap) {
-			rootLine?.draw(phase) // for here's drag dot
+			if  phase == .pDots,
+				mode  == .linearMode {
+				rootLine?.draw(phase) // for here's drag dot
+			}
+
 			rootWidget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}
@@ -298,36 +302,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
     // MARK: - internals
     // MARK: -
-
-	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, Zone?, CGPoint)? {
-		if  let         viewG = gesture?.view,
-			let     locationM = gesture?.location(in: viewG),
-			let       widgetM = rootWidget?.widgetNearestTo(locationM, in: mapPseudoView, hereZone) {
-			let     alternate = isBigMap ? gSmallMapController : gMapController
-			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
-				let locationA = mapPseudoView?.convertPoint(locationM, toRootPseudoView: mapViewA),
-				let   widgetA = alternate?.rootWidget?.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone),
-				let  dragDotM = widgetM.parentLine?.dragDot,
-				let  dragDotA = widgetA.parentLine?.dragDot {
-				let   vectorM = dragDotM.absoluteFrame.center - locationM
-				let   vectorA = dragDotA.absoluteFrame.center - locationM
-				let   lengthM = vectorM.length
-				let   lengthA = vectorA.length
-
-				// ////////////////////////////////////////////////////// //
-				// determine which drag dot's center is closest to cursor //
-				// ////////////////////////////////////////////////////// //
-
-				if  lengthA < lengthM {
-					return (false, widgetA.widgetZone, locatedInBigMap ? locationM : locationA)
-				}
-			}
-
-            return (true, widgetM.widgetZone, locationM)
-        }
-
-        return nil
-    }
     
     func isEditingText(at location: CGPoint) -> Bool {
         if  gIsEditIdeaMode, let textWidget = gCurrentlyEditingWidget {
@@ -355,18 +329,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
         return relation
     }
-
-    // MARK: - detect
-    // MARK: -
-
-	func detect(at location: CGPoint) -> Any? {
-		if  isBigMap,
-			let    any = gSmallMapController?.detect(at: location) {
-			return any
-		}
-		
-		return rootWidget?.detect(at: location)
-	}
 
 }
 
