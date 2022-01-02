@@ -17,7 +17,9 @@ class ZHovering: NSObject {
 	var textWidget      : ZoneTextWidget?
 
 	var absoluteView    : ZView? {
-		if  textWidget != nil || widget != nil || dot != nil {
+		if  dot != nil {
+			return gMapView?.dotsAndLinesView
+		} else if textWidget != nil || widget != nil {
 			return gMapView
 		}
 
@@ -39,17 +41,17 @@ class ZHovering: NSObject {
 	func setHover(on p: ZPseudoView) -> ZView? {
 		clear()
 
-		var hover       = false
+		var        view : ZView?
 		p   .isHovering = true
 		if  let       d = p as? ZoneDot {
-			hover       = true
+			view        = gMapView?.dotsAndLinesView
 			dot         = d
 		} else if let w = p as? ZoneWidget {
-			hover       = true
+			view        = gMapView
 			widget      = w
 		}
 
-		return hover ? gMapView : nil
+		return view
 	}
 
 	func setHover(on t: ZoneTextWidget) -> ZView? {

@@ -319,6 +319,10 @@ extension ZoneDot {
 			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
 		} else {
 			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
+
+			if  widgetZone?.zoneName == "pay bills" {
+				noop()
+			}
 		}
 
 //		if  let z = widgetZone, gDebugDraw { // for debugging hover
