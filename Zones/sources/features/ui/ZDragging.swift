@@ -47,7 +47,7 @@ class ZDragging: NSObject {
 		gRubberband.rubberbandStart = .zero
 
 		clearDragAndDrop()
-		gDragView?.setNeedsDisplay() // erase drag: line and dot
+		gMapView?.setNeedsDisplay() // erase drag: line and dot
 		gMapView? .setNeedsDisplay()
 	}
 
@@ -63,7 +63,7 @@ class ZDragging: NSObject {
 			} else if state == .changed,                      // enlarge rubberband
 				gRubberband.setRubberbandExtent(to: location) {
 				gRubberband.updateGrabs()
-				gDragView?.setNeedsDisplay()
+				gMapView?.setNeedsDisplay()
 				gMapView?.setNeedsDisplay()
 			} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 				gRubberband.rubberbandRect = nil              // erase rubberband
@@ -84,7 +84,7 @@ class ZDragging: NSObject {
 				gMainWindow?.makeFirstResponder(gMapView)
 			}
 
-			gDragView?.setNeedsDisplay()
+			gMapView?.setNeedsDisplay()
 		}
 	}
 

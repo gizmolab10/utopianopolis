@@ -41,7 +41,7 @@ class ZMainController: ZGesturesController {
 		searchResultsView?.isHidden = true
 		view.gestureHandler         = self
 
-		gDragView?.setup()
+		gMapView?.setup()
 		update()
 	}
 
@@ -99,7 +99,7 @@ class ZMainController: ZGesturesController {
 				essayContainerView?.isHidden = !gIsEssayMode
 				gRefusesFirstResponder       = false
 
-				gDragView?.setNeedsDisplay()
+				gMapView?.setNeedsDisplay()
 			default: break
         }
 

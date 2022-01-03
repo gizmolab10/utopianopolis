@@ -416,7 +416,7 @@ extension ZoneTextWidget {
 
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         layoutTextField()
-        gDragView?.setAllSubviewsNeedDisplay()
+        gMapView?.setAllSubviewsNeedDisplay()
 
         return true
     }

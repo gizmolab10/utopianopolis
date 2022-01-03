@@ -319,15 +319,7 @@ extension ZoneDot {
 			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
 		} else {
 			path       = ZBezierPath                (ovalIn: iDirtyRect.insetEquallyBy(thickness))
-
-			if  let name = widgetZone?.zoneName, parameters.filled {
-				print("fill " + name)
-			}
 		}
-
-//		if  let z = widgetZone, gDebugDraw { // for debugging hover
-//			print("drawing \(isReveal ? "REVEAL" : "DRAG  ") dot for \"\(z)\"\(parameters.filled ? " FILLED" : "")\(isHovering ? " HOVER" : "")")
-//		}
 
 		path.lineWidth = thickness
 		path .flatness = 0.0001

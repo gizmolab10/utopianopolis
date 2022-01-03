@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -43,7 +42,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
-                                            <rect key="frame" x="0.0" y="0.0" width="1184" height="825"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="1155" height="825"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" white="1" alpha="0.0" colorSpace="deviceWhite"/>
@@ -294,7 +293,7 @@
                     </view>
                     <connections>
                         <outlet property="bottomLabel" destination="KDc-oP-JYJ" id="jZc-n5-DE4"/>
-                        <outlet property="mapView" destination="biU-wq-VIU" id="Kek-j3-vlD"/>
+                        <outlet property="helpMapView" destination="biU-wq-VIU" id="BP1-6L-cxK"/>
                         <outlet property="topLabel" destination="NcL-My-K47" id="b0a-di-QaH"/>
                     </connections>
                 </viewController>
@@ -391,7 +390,7 @@
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
                                         <rect key="frame" x="-2" y="0.0" width="404" height="112"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
-                                            <font key="font" metaFont="smallSystem"/>
+                                            <font key="font" metaFont="label" size="11"/>
                                             <string key="title">    1                2            3            4           5          6                         7
 
 1 &amp; 2  first two buttons take you to prior and next note/essay (respectively)
@@ -418,7 +417,7 @@
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="p1n-xy-ora">
                                 <rect key="frame" x="15" y="194" width="571" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" id="Lsu-2X-LiW">
-                                    <font key="font" metaFont="smallSystem"/>
+                                    <font key="font" metaFont="label" size="11"/>
                                     <string key="title">A grabbed note (inside an essay) has a rounded rectangle surrounding it and the drag dot is filled (see below). You can grab or ungrab a note by clicking on its drag dot.</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -438,7 +437,7 @@
                                     <constraint firstAttribute="height" constant="60" id="k0e-JL-ylo"/>
                                 </constraints>
                                 <textFieldCell key="cell" selectable="YES" id="6bN-E5-CdH">
-                                    <font key="font" metaFont="smallSystem"/>
+                                    <font key="font" metaFont="label" size="11"/>
                                     <string key="title">A note can be of any length. All font, color and tabbing functionalities are available. One or more images can be inserted anywhere, and later moved, resized or deleted.
 
 The essay editor has a typical toolbar with some special added buttons:</string>

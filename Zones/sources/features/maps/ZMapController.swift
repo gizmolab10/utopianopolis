@@ -15,35 +15,32 @@ import SnapKit
 #endif
 
 var gMapController : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
-var gMapView       : ZMapView?       { return gMapController?.view as? ZMapView }
-var gDragView      : ZMapView?       { return gMapController?.view as? ZMapView }
+var gMapView       : ZMapView?       { return gMapController?.mapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
-	var           priorScrollLocation = CGPoint.zero
-	var                 mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
-	override  var        controllerID : ZControllerID  { return .idBigMap }
-	var                    widgetType : ZWidgetType    { return .tBigMap }
-	var                    isExemplar : Bool           { return false }
-	var                      isBigMap : Bool           { return true }
-	var                      hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
-	var                          mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
-	var                 mapPseudoView : ZPseudoView?
-	var                    rootWidget : ZoneWidget?
-	var                      rootLine : ZoneLine?
-	@IBOutlet var   mapContextualMenu : ZContextualMenu?
-	@IBOutlet var  ideaContextualMenu : ZoneContextualMenu?
+	var          priorScrollLocation = CGPoint.zero
+	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
+	override  var       controllerID : ZControllerID  { return .idBigMap }
+	var                   widgetType : ZWidgetType    { return .tBigMap }
+	var                   isExemplar : Bool           { return false }
+	var                     isBigMap : Bool           { return true }
+	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
+	var                         mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
+	var                      mapView : ZMapView?      { return view as? ZMapView}
+	var                mapPseudoView : ZPseudoView?
+	var                   rootWidget : ZoneWidget?
+	var                     rootLine : ZoneLine?
+	@IBOutlet var  mapContextualMenu : ZContextualMenu?
+	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 
 	override func setup() {
-		if  let                          map = gMapView {
-			gestureView                      = gDragView         // do this before calling super setup: it uses gesture view
+		if  let                          map = mapView {
+			gestureView                      = map         // do this before calling super setup: it uses gesture view
 			rootWidget                       = ZoneWidget (view: map)
 			mapPseudoView                    = ZPseudoView(view: map)
 			view     .layer?.backgroundColor = kClearColor.cgColor
-			gMapView?.layer?.backgroundColor = kClearColor.cgColor
-			if  let                    frame = gMapView?.frame {
-				mapPseudoView?        .frame = frame
-			}
+			mapPseudoView?            .frame = map.frame
 
 			super.setup()
 			platformSetup()
@@ -117,6 +114,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		layoutForCurrentScrollOffset()
 	}
 
+	func setNeedsDisplay() {
+		view.setNeedsDisplay()
+		mapView?.linesAndDotsView?.setNeedsDisplay()
+
+	}
+
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
@@ -128,8 +131,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			rootWidget?.frame = CGRect(origin: origin, size: size)
 
 			rootWidget?.grandUpdate()
-			detectHover(at: gMapView?.currentMouseLocationInWindow)
-			gMapView?.setNeedsDisplay()
+			detectHover(at: view.currentMouseLocationInWindow)
+			setNeedsDisplay()
 		}
 	}
 
@@ -159,7 +162,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let type : ZRelayoutMapType = isBigMap ? .big : .small
 
-		gMapView?.removeAllTextViews(ofType: type)
+		mapView?.removeAllTextViews(ofType: type)
 
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
@@ -189,7 +192,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				layoutWidgets(for: iSignalObject, kind)
 			}
 
-			gDragView?.setAllSubviewsNeedDisplay()
+			view.setAllSubviewsNeedDisplay()
 		}
 	}
 
@@ -288,7 +291,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 					if !kIsPhone {	// default reaction to click on background: select here
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch
-						gMapView?.setNeedsDisplay()
+						setNeedsDisplay()
 					}
                 } else if gIsEssayMode {
 					gControllers.swapMapAndEssay(force: .wMapMode)

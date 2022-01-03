@@ -22,7 +22,7 @@ class ZHelpDotsExemplarController : ZMapController {
 	var                   zone : Zone?
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?
-	@IBOutlet var      mapView : ZMapView?
+	@IBOutlet var  helpMapView : ZMapView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)

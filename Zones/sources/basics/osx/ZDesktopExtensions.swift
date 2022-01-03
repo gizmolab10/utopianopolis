@@ -465,7 +465,7 @@ extension ZView {
         }
     }
 
-    func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true } }
+    @objc func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true } }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 

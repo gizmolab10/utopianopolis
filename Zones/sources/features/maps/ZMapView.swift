@@ -53,6 +53,11 @@ class ZMapView: ZView {
 		setNeedsDisplay()
 	}
 
+	override func setNeedsDisplay() {
+		super.setNeedsDisplay()
+		linesAndDotsView?.setNeedsDisplay()
+	}
+
 	// MARK: - initialize
 	// MARK: -
 
@@ -112,7 +117,7 @@ class ZMapView: ZView {
 		case .mTextAndHighlights:
 			drawDrag              (iDirtyRect)
 			super            .draw(iDirtyRect) // text fields are drawn by OS
-			linesAndDotsView?.draw(iDirtyRect) // recurse into this method ... for mLinesAndDots (below)
+//			linesAndDotsView?.draw(iDirtyRect) // recurse into this method ... for mLinesAndDots (below)
 			drawWidgets(in:        iDirtyRect, for: .pHighlights)
 		case .mLinesAndDots:
 			for phase in ZDrawPhase.linesAndDots {
