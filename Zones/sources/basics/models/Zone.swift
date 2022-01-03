@@ -828,20 +828,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			|| gCurrentKeyPressed?.arrow != nil
 			|| gCurrentMouseDownZone     == self
 	}
-	
-	var isShowing: Bool {
-		if  let w = widget, w.isLinearMode {
-			return true
-		}
-		
-		if  let p = parentZone, p.isExpanded,
-			let name = recordName,
-			!gHiddenZones.contains(name) {
-			return true
-		}
-		
-		return false
-	}
 
 	// MARK: - core data
 	// MARK: -
@@ -2683,6 +2669,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: - children visibility
 	// MARK: -
 
+	func     hide() {    add(  to: .hide) }
+	func   expand() {    add(  to: .expand) }
+	func collapse() { remove(from: .expand) }
+	func     show() { remove(from: .hide) }
+
+	func toggleChildrenVisibility() {
+		if  isExpanded {
+			collapse()
+		} else {
+			expand()
+		}
+	}
+
 	var isExpanded: Bool {
 		if  let name = recordName,
 			gExpandedZones.contains(name) {
@@ -2691,24 +2690,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		return false
 	}
-	
-	enum ZVisibilityType : Int {
-		case expand
-		case hide
-		
-		var array : StringsArray {
-			switch self {
-			case .expand: return gExpandedZones
-			case .hide:   return gHiddenZones
-			}
+
+	var isShowing: Bool {
+		if  let w = widget, w.isLinearMode {
+			return true
 		}
-		
-		func setArray(_ array: StringsArray) {
-			switch self {
-			case .expand: gExpandedZones = array
-			case .hide:     gHiddenZones = array
-			}
+
+		if  self == gHere {
+			return true
 		}
+
+		if  let name = recordName {
+			return !gHiddenZones.contains(name)
+		}
+
+		return true
 	}
 	
 	func add(to type: ZVisibilityType) {
@@ -2744,19 +2740,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			while let index = array.firstIndex(of: name) {
 				array.remove(at: index)
 			}
-		}
-	}
-	
-	func     hide() {    add(  to: .hide) }
-	func   expand() {    add(  to: .expand) }
-	func collapse() { remove(from: .expand) }
-	func     show() { remove(from: .hide) }
-
-	func toggleChildrenVisibility() {
-		if  isExpanded {
-			collapse()
-		} else {
-			expand()
 		}
 	}
 

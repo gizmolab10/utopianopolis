@@ -221,7 +221,27 @@ var gCoreDataMode : ZCoreDataMode {
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
-fileprivate var gHidden: StringsArray?
+fileprivate var gHidden   : StringsArray?
+fileprivate var gExpanded : StringsArray?
+
+enum ZVisibilityType : Int {
+	case expand
+	case hide
+
+	var array : StringsArray {
+		switch self {
+		case .expand: return gExpandedZones
+		case .hide:   return gHiddenZones
+		}
+	}
+
+	func setArray(_ array: StringsArray) {
+		switch self {
+		case .expand: gExpandedZones = array
+		case .hide:     gHiddenZones = array
+		}
+	}
+}
 
 var gHiddenZones : StringsArray {
 	get {
@@ -239,8 +259,6 @@ var gHiddenZones : StringsArray {
 		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kHiddenZones)
 	}
 }
-
-fileprivate var gExpanded: StringsArray?
 
 var gExpandedZones : StringsArray {
     get {
