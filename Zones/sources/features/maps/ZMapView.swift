@@ -115,14 +115,12 @@ class ZMapView: ZView {
 
 		switch mapID {
 		case .mTextAndHighlights:
-			drawDrag              (iDirtyRect)
-			super            .draw(iDirtyRect) // text fields are drawn by OS
-//			linesAndDotsView?.draw(iDirtyRect) // recurse into this method ... for mLinesAndDots (below)
-			drawWidgets(in:        iDirtyRect, for: .pHighlights)
+			drawDrag       (iDirtyRect)
+			super.draw     (iDirtyRect) // text fields are drawn by OS
+			drawWidgets(in: iDirtyRect, for: .pHighlights)
 		case .mLinesAndDots:
-			for phase in ZDrawPhase.linesAndDots {
-				drawWidgets(in:    iDirtyRect, for: phase)
-			}
+			drawWidgets(in: iDirtyRect, for: .pLines)
+			drawWidgets(in: iDirtyRect, for: .pDots)
 		default: break
 		}
 	}

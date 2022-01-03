@@ -19,8 +19,6 @@ enum ZDrawPhase: String {
 	case pLines      = "l"
 	case pHighlights = "h"
 	case pDots       = "d"
-
-	static let linesAndDots: [ZDrawPhase] = [.pLines, .pDots]
 }
 
 class ZPseudoView: NSObject {

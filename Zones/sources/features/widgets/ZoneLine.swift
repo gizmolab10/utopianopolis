@@ -39,19 +39,20 @@ class ZoneLine: ZPseudoView {
 			}
 		}
 		
-		if  dragDot     == nil {
-			let       c  = childWidget
-			if  drag    != nil {
-				dragDot  = drag
-			} else if c != nil, !c!.hideDragDot,
-				let   z  = c!.widgetZone, z.isShowing {
-				dragDot  = ZoneDot(view: absoluteView)
+		if  dragDot        == nil {
+			if  drag       != nil {
+				dragDot     = drag
+			} else if let c = childWidget, !c.hideDragDot,
+				let       z = c.widgetZone, z.isShowing {
+				dragDot     = ZoneDot(view: absoluteView)
 			}
 
-			dragDot?.line = self
-			
-			addSubpseudoview(dragDot)
-			dragDot?.setupForWidget(c, asReveal: false)
+			if  let       d = dragDot {
+				d     .line = self
+
+				addSubpseudoview(d)
+				d.setupForWidget(childWidget, asReveal: false)
+			}
 		}
 	}
 

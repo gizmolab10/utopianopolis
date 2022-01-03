@@ -17,7 +17,6 @@ var gSmallMapHere       : Zone?                { return gSmallMapController?.her
 
 class ZSmallMapController: ZMapController {
 
-
 	override  var      hereZone : Zone?          { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
 	override  var    widgetType : ZWidgetType    { return gIsRecentlyMode ? .tRecent      : .tFavorite }
 	override  var  controllerID : ZControllerID  { return .idSmallMap }
@@ -64,8 +63,21 @@ class ZSmallMapController: ZMapController {
 	}
 
 	override func startup() {
-		setup()                                                // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
+		setup()                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
 		gMapControlsView?.setupAndRedraw()
+	}
+
+	override func setup() {
+		if  let                          map = gMapView {
+			rootWidget                       = ZoneWidget (view: map)
+			mapPseudoView                    = ZPseudoView(view: map)
+			view     .layer?.backgroundColor = kClearColor.cgColor
+			mapPseudoView?            .frame = map.frame
+
+			super.setup()
+			platformSetup()
+			mapPseudoView?.addSubpseudoview(rootWidget!)
+		}
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {   // true means handled

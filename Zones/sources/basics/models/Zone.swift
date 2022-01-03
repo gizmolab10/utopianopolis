@@ -120,6 +120,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                      userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
 	var                     userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
 	var             userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
+	var                      hideDragDot :               Bool  { return isExpanded && (isSmallMapHere || (kIsPhone && (self == gHereMaybe))) }
 	var                  inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
 	var   smallMapBookmarksTargetingSelf :          ZoneArray  { return bookmarksTargetingSelf.filter { $0.isInSmallMap } }
 	var           bookmarkTargets        :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
@@ -140,16 +141,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                      recount()                        { updateAllProgenyCounts() }
 	class  func randomZone(in dbID: ZDatabaseID) ->      Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
-
-	var onlyShowRevealDot : Bool {
-		let isHere = self == gHereMaybe
-
-		if  isExpanded {
-			return isSmallMapHere || (kIsPhone && isHere)
-		} else {
-			return widget?.isCircularMode ?? false
-		}
-	}
 
 	var visibleDoneZone: Zone? {
 		var done: Zone?

@@ -97,9 +97,9 @@ class ZoneWidget: ZPseudoView {
 	var           parentLine :        ZoneLine?
 	var         parentWidget :      ZoneWidget?
 	var         mapReduction :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
-	override var description :          String  { return widgetZone?.description ?? kEmptyIdea }
+	override var description :          String  { return widgetZone?       .description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
-	var          hideDragDot :            Bool  { return widgetZone?.onlyShowRevealDot  ?? false }
+	var          hideDragDot :            Bool  { return widgetZone?       .hideDragDot ?? false }
 	var             isCenter :            Bool  { return linesLevel == 0 }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
 
