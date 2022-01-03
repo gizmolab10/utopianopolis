@@ -14,20 +14,9 @@
 
 class ZDragView: ZMapView, ZGestureRecognizerDelegate {
 
-	func setup() {
-		setup(.mTextAndHighlights)
-	}
-
 	override func updateTrackingAreas() {
 		super.updateTrackingAreas()
 		addTracking(for: bounds)
-	}
-
-    override func draw(_ dirtyRect: CGRect) {
-        kClearColor.setFill()
-        ZBezierPath(rect: bounds).fill() // transparent background
-		gRubberband.draw()
-		gDragging.dragLine?.drawDragLineAndDot()
 	}
 
 	override func mouseExited(with event: ZEvent) {

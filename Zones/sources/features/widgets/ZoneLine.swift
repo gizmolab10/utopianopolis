@@ -92,7 +92,7 @@ class ZoneLine: ZPseudoView {
 		}
 
 		if  isCircularMode {
-			ZBezierPath(rect: gMapView!.bounds).setClip()
+			ZBezierPath.setClip(to: gMapView!.bounds)
 		}
 
 		color.setStroke()

@@ -16,7 +16,7 @@ import UIKit
 #endif
 
 enum ZMapID: String {
-	case mDotsAndLines      = "d"
+	case mLinesAndDots      = "d"
 	case mTextAndHighlights = "t"
 
 	var title      : String { return "\(self)".lowercased().substring(fromInclusive: 1) }
@@ -26,7 +26,7 @@ enum ZMapID: String {
 class ZMapView: ZView {
 
 	var mapID                    : ZMapID?
-	var dotsAndLinesView         : ZMapView?
+	var linesAndDotsView         : ZMapView?
 	override func menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
 	// MARK: - hover
@@ -43,11 +43,11 @@ class ZMapView: ZView {
 
 		switch id {
 			case .mTextAndHighlights:
-				dotsAndLinesView = ZMapView()
+				linesAndDotsView = ZMapView()
 
 				updateTracking()
-				addSubview(dotsAndLinesView!)
-				dotsAndLinesView?.setup(.mDotsAndLines)
+				addSubview(linesAndDotsView!)
+				linesAndDotsView?.setup(.mLinesAndDots)
 				fallthrough
 			default:
 				zlayer.backgroundColor = CGColor.clear
@@ -62,7 +62,7 @@ class ZMapView: ZView {
 		if  let   view = gMapController?.view {
 			frame      = view.bounds
 			if  mapID == .mTextAndHighlights {
-				dotsAndLinesView?.resize()
+				linesAndDotsView?.resize()
 			}
 		}
 	}
@@ -83,16 +83,8 @@ class ZMapView: ZView {
 
 	func debugDraw() {
 		bounds                 .insetEquallyBy(1.5).drawColoredRect(.blue)
-		dotsAndLinesView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)
+		linesAndDotsView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)
 		superview?.drawBox(in: self, with:                          .orange)
-	}
-	
-	func mustDrawFor(_ phase: ZDrawPhase) -> Bool {
-		switch mapID {
-		case .mDotsAndLines:      return phase == .pLines || phase == .pDots
-		case .mTextAndHighlights: return phase == .pHighlights
-		default:                  return false
-		}
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
@@ -100,29 +92,30 @@ class ZMapView: ZView {
 			return
 		}
 
-//		clearRect(iDirtyRect)
-
-		if  mapID == .mTextAndHighlights {
+		switch mapID {
+		case .mTextAndHighlights:
+			drawDrag              (iDirtyRect)
 			super            .draw(iDirtyRect) // text fields are drawn by OS
-			dotsAndLinesView?.draw(iDirtyRect)
-		}
-
-		for phase in ZDrawPhase.allInOrder {
-			if  mustDrawFor(phase) {
-				ZBezierPath(rect: iDirtyRect).setClip()
-				gSmallMapController?.drawWidgets(for: phase)
-				gMapController?     .drawWidgets(for: phase)
+			linesAndDotsView?.draw(iDirtyRect) // recurse into this method ... for mLinesAndDots (below)
+			drawWidgets(in:        iDirtyRect, for: .pHighlights)
+		case .mLinesAndDots:
+			for phase in ZDrawPhase.linesAndDots {
+				drawWidgets(in:    iDirtyRect, for: phase)
 			}
+		default: break
 		}
 	}
 
-	func clearRect(_ iDirtyRect: CGRect) {
-		if  iDirtyRect.hasZeroSize {
-			return
-		}
+	func drawWidgets(in iDirtyRect: CGRect, for phase: ZDrawPhase) {
+		ZBezierPath.setClip(to: iDirtyRect)
+		gSmallMapController?.drawWidgets(for: phase)
+		gMapController?     .drawWidgets(for: phase)
+	}
 
-		gBackgroundColor.setFill()
-		ZBezierPath(rect: iDirtyRect).fill()
+	func drawDrag(_ dirtyRect: CGRect) {
+		ZBezierPath.fillWithColor(gBackgroundColor, in: dirtyRect) // remove old rubberband and drag line/dot
+		gRubberband.draw()
+		gDragging.dragLine?.drawDragLineAndDot()
 	}
 
 	@objc override func printView() {

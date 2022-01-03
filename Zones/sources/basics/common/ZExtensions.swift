@@ -1041,7 +1041,14 @@ extension CGRect {
 }
 
 extension ZBezierPath {
-	
+
+	static func setClip(to rect: CGRect) { ZBezierPath(rect: rect).setClip() }
+
+	static func fillWithColor(_ color: ZColor, in rect: CGRect) {
+		color.setFill()
+		ZBezierPath(rect: rect).fill()
+	}
+
 	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
 		let path = trianglePath(orientedUp: orientedUp, in: iRect)
 

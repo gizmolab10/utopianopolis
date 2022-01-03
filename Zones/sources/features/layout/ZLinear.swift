@@ -318,10 +318,10 @@ extension ZoneDot {
 		if  parameters.isReveal {
 			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
 		} else {
-			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
+			path       = ZBezierPath                (ovalIn: iDirtyRect.insetEquallyBy(thickness))
 
-			if  widgetZone?.zoneName == "pay bills" {
-				noop()
+			if  let name = widgetZone?.zoneName, parameters.filled {
+				print("fill " + name)
 			}
 		}
 

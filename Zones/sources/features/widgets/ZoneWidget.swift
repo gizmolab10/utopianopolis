@@ -148,7 +148,7 @@ class ZoneWidget: ZPseudoView {
 
 	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		let     mapView = absoluteView as? ZMapView
-		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.dotsAndLinesView) : nil
+		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.linesAndDotsView) : nil
 		var       count = 1
 
 		if  let v = parentPseudoView,
@@ -290,7 +290,7 @@ class ZoneWidget: ZPseudoView {
 
 	func createLineFor(child: ZoneWidget?) -> ZoneLine {
 		let       mapView = absoluteView as? ZMapView
-		let          line = ZoneLine(view: mapView?.dotsAndLinesView)
+		let          line = ZoneLine(view: mapView?.linesAndDotsView)
 		line .childWidget = child
 		child?.parentLine = line
 

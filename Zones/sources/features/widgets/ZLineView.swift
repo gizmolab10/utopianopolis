@@ -17,8 +17,7 @@ import UIKit
 class ZLineView: ZView {
     
 	override func draw(_ iDirtyRect: CGRect) {
-        kGridColor.setFill()
-		ZBezierPath(rect: iDirtyRect).fill()
+		ZBezierPath.fillWithColor(kGridColor, in: iDirtyRect)
     }
 
 }

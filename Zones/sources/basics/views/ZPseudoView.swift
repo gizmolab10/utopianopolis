@@ -20,7 +20,7 @@ enum ZDrawPhase: String {
 	case pHighlights = "h"
 	case pDots       = "d"
 
-	static let allInOrder: [ZDrawPhase] = [.pLines, .pHighlights, .pDots]
+	static let linesAndDots: [ZDrawPhase] = [.pLines, .pDots]
 }
 
 class ZPseudoView: NSObject {

@@ -18,7 +18,7 @@ class ZHovering: NSObject {
 
 	var absoluteView    : ZView? {
 		if  dot != nil {
-			return gMapView?.dotsAndLinesView
+			return gMapView?.linesAndDotsView
 		} else if textWidget != nil || widget != nil {
 			return gMapView
 		}
@@ -44,7 +44,7 @@ class ZHovering: NSObject {
 		var        view : ZView?
 		p   .isHovering = true
 		if  let       d = p as? ZoneDot {
-			view        = gMapView?.dotsAndLinesView
+			view        = gMapView?.linesAndDotsView
 			dot         = d
 		} else if let w = p as? ZoneWidget {
 			view        = gMapView
@@ -80,7 +80,7 @@ class ZHovering: NSObject {
 extension ZMapController {
 
 	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
-		if  let     location = locationInWindow {
+		if  let     location = locationInWindow, !gRubberband.showRubberband { // not blink rubberband
 			if  let      any = detect(at: location) {
 				if  let    v = gHovering.declareHover(any) {
 					return v
@@ -99,7 +99,14 @@ extension ZDragView {
 
 	override func mouseMoved(with event: ZEvent) {
 		super.mouseMoved(with: event)
-		gMapController?.detectHover(at: event.locationInWindow)?.setNeedsDisplay()
+
+		if  let view = gMapController?.detectHover(at: event.locationInWindow) {
+			view.setNeedsDisplay()
+
+			if  let s = view.superview as? ZMapView {
+				s.setNeedsDisplay()
+			}
+		}
 	}
 
 }
