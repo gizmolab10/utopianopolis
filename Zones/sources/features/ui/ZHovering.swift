@@ -95,7 +95,7 @@ extension ZMapController {
 
 }
 
-extension ZDragView {
+extension ZMapView {
 
 	override func mouseMoved(with event: ZEvent) {
 		super.mouseMoved(with: event)

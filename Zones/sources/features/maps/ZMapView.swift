@@ -25,14 +25,33 @@ enum ZMapID: String {
 
 class ZMapView: ZView {
 
-	var mapID                    : ZMapID?
-	var linesAndDotsView         : ZMapView?
-	override func menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
+	var mapID                      : ZMapID?
+	@IBOutlet var linesAndDotsView : ZMapView?
+	override func menu(for event   : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
-	// MARK: - hover
+	// MARK: - mouse
 	// MARK: -
 
 	func updateTracking() { addTracking(for: frame) }
+
+	override func updateTrackingAreas() {
+		super.updateTrackingAreas()
+		addTracking(for: bounds)
+	}
+
+	override func mouseExited(with event: ZEvent) {
+		super.mouseExited(with: event)
+
+		if  gRubberband.rubberbandRect != nil {
+			gRubberband.rubberbandRect  = nil
+		}
+
+		if  gDragging.dropWidget != nil {
+			gDragging.dropWidget  = nil
+		}
+
+		setNeedsDisplay()
+	}
 
 	// MARK: - initialize
 	// MARK: -
@@ -43,10 +62,7 @@ class ZMapView: ZView {
 
 		switch id {
 			case .mTextAndHighlights:
-				linesAndDotsView = ZMapView()
-
 				updateTracking()
-				addSubview(linesAndDotsView!)
 				linesAndDotsView?.setup(.mLinesAndDots)
 				fallthrough
 			default:
@@ -61,9 +77,9 @@ class ZMapView: ZView {
 	func resize() {
 		if  let   view = gMapController?.view {
 			frame      = view.bounds
-			if  mapID == .mTextAndHighlights {
-				linesAndDotsView?.resize()
-			}
+//			if  mapID == .mTextAndHighlights {
+//				linesAndDotsView?.resize()
+//			}
 		}
 	}
 

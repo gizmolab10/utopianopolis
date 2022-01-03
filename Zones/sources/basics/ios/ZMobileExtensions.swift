@@ -324,7 +324,7 @@ extension UITableView {
     
 }
 
-extension ZDragView {
+extension ZMapView {
     
     func updateMagnification(with event: ZEvent) {}
     

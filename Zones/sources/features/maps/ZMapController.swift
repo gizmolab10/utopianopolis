@@ -14,8 +14,9 @@ import SnapKit
     import UIKit
 #endif
 
-var gMapController: ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
-var gMapView:       ZMapView?       { return gDragView }
+var gMapController : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
+var gMapView       : ZMapView?       { return gMapController?.view as? ZMapView }
+var gDragView      : ZMapView?       { return gMapController?.view as? ZMapView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
@@ -35,7 +36,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	override func setup() {
 		if  let                          map = gMapView {
-			gestureView                      = gDragView                    // do this before calling super setup, which uses gesture view
+			gestureView                      = gDragView         // do this before calling super setup: it uses gesture view
 			rootWidget                       = ZoneWidget (view: map)
 			mapPseudoView                    = ZPseudoView(view: map)
 			view     .layer?.backgroundColor = kClearColor.cgColor

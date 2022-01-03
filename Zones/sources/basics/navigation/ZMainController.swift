@@ -13,7 +13,6 @@
 #endif
 
 var gMainController : ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
-var gDragView       : ZDragView?       { return gMainController?.dragView }
 
 class ZMainController: ZGesturesController {
 
@@ -25,7 +24,6 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var searchBoxView      : ZView?
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
-	@IBOutlet var dragView           : ZDragView?
 	@IBOutlet var helpButton         : ZHelpButton?
 	@IBOutlet var hamburgerButton    : ZButton?
 
@@ -43,7 +41,7 @@ class ZMainController: ZGesturesController {
 		searchResultsView?.isHidden = true
 		view.gestureHandler         = self
 
-		dragView?.setup()
+		gDragView?.setup()
 		update()
 	}
 
@@ -101,7 +99,7 @@ class ZMainController: ZGesturesController {
 				essayContainerView?.isHidden = !gIsEssayMode
 				gRefusesFirstResponder       = false
 
-				dragView?.setNeedsDisplay()
+				gDragView?.setNeedsDisplay()
 			default: break
         }
 
