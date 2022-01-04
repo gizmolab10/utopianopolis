@@ -141,11 +141,14 @@ extension ZoneWidget {
 	}
 
 	func linearUpdateHighlightFrame() {
-		if  let          t = textWidget {
-			let    xExpand = gDotHeight * 1.2
-			let    yExpand = gDotHeight / -30.0 + 2.0
-			let       size = CGSize(width: xExpand, height: yExpand)
-			highlightFrame = t.frame.expandedBy(size.multiplyBy(mapReduction)).offsetBy(dx: gDotHalfWidth * 0.67, dy: .zero)
+		if  let           t = textWidget,
+			let        zone = widgetZone {
+			let     fExpand = CGFloat(zone.showRevealDot ? 0.67 : -0.8)
+			let     mExpand = CGFloat(zone.showRevealDot ? 1.2  :  0.6)
+			let     xExpand = gDotHeight * mExpand
+			let     yExpand = gDotHeight / -30.0 + 2.0
+			let   expansion = CGSize(width: xExpand, height: yExpand).multiplyBy(mapReduction)
+			highlightFrame  = t.frame.expandedBy(expansion).offsetBy(dx: gDotHalfWidth * fExpand, dy: .zero)
 		}
 	}
 

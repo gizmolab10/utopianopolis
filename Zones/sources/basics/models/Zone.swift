@@ -68,21 +68,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                           widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
-	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                        textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : gDefaultTextColor }
 	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
-	override var         cloudProperties :       StringsArray  { return Zone.cloudProperties }
-	override var optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
+	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
+	var                            count :                Int  { return children.count }
+	var                 smallMapRootName :             String  { return isFavoritesRoot ? kFavoritesRootName : isRecentsRoot ? kRecentsRootName : emptyName }
+	var                      clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
 	override var               emptyName :             String  { return kEmptyIdea }
 	override var             description :             String  { return decoratedName }
 	override var           unwrappedName :             String  { return zoneName ?? smallMapRootName }
 	override var           decoratedName :             String  { return decoration + unwrappedName }
+	override var         cloudProperties :       StringsArray  { return Zone.cloudProperties }
+	override var optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
 	override var    matchesFilterOptions :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
 	override var                 isAZone :               Bool  { return true }
-	var                 smallMapRootName :             String  { return isFavoritesRoot ? kFavoritesRootName : isRecentsRoot ? kRecentsRootName : emptyName }
-	var                      clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
-	var                            count :                Int  { return children.count }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
 	var        isCurrentSmallMapBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var                  isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }

@@ -173,8 +173,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 										"Then return here and click Continue, below."].joined(separator: "\n\n")
 
 	var loadingText: String = ["Your data is loading (it can take up to a minute the first time).",
-							   "Please wait until the drawing (of ideas) appears to add new ideas to it.",
-							   "Also, you may have to relaunch if the app gets stuck (it sometimes does)."].joined(separator: kSpace)
+							   "Please wait until the drawing (of ideas) appears before adding new ideas to it."].joined(separator: kSpace)
 
 	var helpText: String = ["Would you like to look at something more interesting than this progress bar?",
 							"Each button below takes you to a chart.",

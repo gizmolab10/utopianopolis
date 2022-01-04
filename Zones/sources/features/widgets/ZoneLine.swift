@@ -79,14 +79,14 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawLine(in color: ZColor) {
+		if  let  p = parentWidget?.widgetZone, !p.isExpanded, self != gDragging.dragLine {
+			return
+		}
+
 		let       kind = lineKind
 		let       rect = lineRect(for: kind)
 		let       path = linePath(in: rect, kind: kind)
 		path.lineWidth = CGFloat(gLineThickness)
-
-		if  let  p = parentWidget?.widgetZone, !p.isExpanded {
-			return
-		}
 
 		if  rect.hasZeroSize {
 			return
