@@ -19,8 +19,8 @@ class ZDragging: NSObject {
 	var    dropCrumb : ZBreadcrumbButton?
 	var    dragPoint :           CGPoint?
 	var     dragLine :          ZoneLine?
-	var        prior :              Zone?
 	var    dragIndex :               Int? { return (draggedZones.count == 0) ? nil : draggedZones[0].siblingIndex }
+	var   isDragging :               Bool { return !draggedZones.isEmpty }
 
 	// MARK: - drag
 	// MARK: -
@@ -52,6 +52,10 @@ class ZDragging: NSObject {
 	}
 
 	func handleDragGesture(_ gesture: ZKeyPanGestureRecognizer, in controller: ZMapController) {
+		if  gIgnoreEvents {
+			return
+		}
+
 		if  let     flags  = gesture.modifiers {
 			let   location = gesture.location(in: gesture.view)
 			let     state  = gesture.state

@@ -3369,8 +3369,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showSideDot    = isCurrentSmallMapBookmark
 		p.isDragged      = gDragging.draggedZones.contains(self)
 		p.isDrop         = isDrop
-		p.filled         = showAsFilled || (!isReveal && isGrabbed)
-		p.fill           = p.filled ? c.lighter(by: 2.5) : gBackgroundColor
+		p.filled         = showAsFilled // || (!isReveal && isGrabbed)
+		p.fill           = showAsFilled ? c.lighter(by: 2.5) : gBackgroundColor
 		p.verticleOffset = offsetFromMiddle / (Double(gHorizontalGap) - 27.0) * 3.0
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.accessType     = (directAccess == .eProgenyWritable) ? .sideDot : .vertical

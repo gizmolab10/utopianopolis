@@ -84,7 +84,7 @@ extension ZoneWidget {
 	func updateAllDotFrames(_ absolute: Bool) {
 		if  absolute {
 			for line in childrenLines {
-				line.circularUpdateDotFrames(relativeTo: absoluteFrame, hideDragDot: hideDragDot)
+				line.circularUpdateDotFrames()
 			}
 		}
 	}
@@ -337,9 +337,9 @@ extension ZoneLine {
 		return rect
 	}
 
-	func circularUpdateDotFrames(relativeTo absoluteTextFrame: CGRect, hideDragDot: Bool) {
-		dragDot?  .circularUpdateDotAbsoluteFrame(relativeTo: absoluteTextFrame)
-		revealDot?.circularUpdateDotAbsoluteFrame(relativeTo: absoluteTextFrame)
+	func circularUpdateDotFrames() {
+		dragDot?  .circularUpdateDotAbsoluteFrame()
+		revealDot?.circularUpdateDotAbsoluteFrame()
 	}
 
 	func circularStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
@@ -384,7 +384,7 @@ extension ZoneDot {
 		return .zero
 	}
 
-	func circularUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
+	func circularUpdateDotAbsoluteFrame() {
 		if  let          l = line,
 			let     center = l.parentWidget?.frame.center,
 			let lineVector = l.parentToChildVector {
@@ -399,6 +399,7 @@ extension ZoneDot {
 			l      .length = newLength
 			let       rect = CGRect(origin: origin, size: drawnSize)
 			absoluteFrame  = rect.offsetBy(dx: 0.0, dy: -3.0)
+			detectionFrame = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
 
 			updateTooltips()
 		}
@@ -498,10 +499,6 @@ extension ZDragging {
 			if  let widget = w,
 				let zone   = widget.widgetZone, !draggedZones.contains(zone) {
 				dragLine   = widget.createDragLine(with: a)
-				if  zone  != prior {
-					prior  = zone
-					print("\(zone)")
-				}
 
 				if  gesture?.isDone ?? false {
 					dropOnto(zone, gesture)

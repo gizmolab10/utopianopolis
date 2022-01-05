@@ -138,7 +138,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	override func mouseEntered(with event: ZEvent) {
 		super.mouseEntered(with: event)
 
-		if  isEnabled, !gRubberband.showRubberband { // not blink rubberband
+		if  isEnabled, !gIgnoreHovering { // not blink rubberband
 			gHovering.declareHover(self)
 		}
 	}
@@ -146,7 +146,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	override func mouseMoved(with event: ZEvent) {
 		super.mouseMoved(with: event)
 
-		if  isEnabled, !gRubberband.showRubberband { // not blink rubberband
+		if  isEnabled, !gIgnoreHovering { // not blink rubberband
 			gHovering.declareHover(self)
 		}
 	}

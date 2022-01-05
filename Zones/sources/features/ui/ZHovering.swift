@@ -9,6 +9,7 @@
 import Foundation
 
 let gHovering = ZHovering()
+var gIgnoreHovering : Bool { return gRubberband.showRubberband || gDragging.isDragging }
 
 class ZHovering: NSObject {
 
@@ -80,7 +81,7 @@ class ZHovering: NSObject {
 extension ZMapController {
 
 	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
-		if  let     location = locationInWindow, !gRubberband.showRubberband { // not blink rubberband
+		if  let     location = locationInWindow, !gIgnoreHovering { // not blink rubberband
 			if  let      any = detect(at: location) {
 				if  let    v = gHovering.declareHover(any) {
 					return v

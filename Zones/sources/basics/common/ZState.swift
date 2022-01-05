@@ -22,6 +22,7 @@ var          gIsReadyToShowUI                     = false
 var          gDeferringRedraw                     = false
 var           gPushIsDisabled                     = false
 var            gTextCapturing                     = false
+var             gIgnoreEvents                     = false
 var             gNeedsRecount                     = false
 var               gLaunchedAt                     = Date()
 var            gProgressTimes                     = [ZOperationID : Double]()
@@ -339,16 +340,6 @@ var gClipBreadcrumbs : Bool {
 	set { setPreferencesBool(newValue, for: kClipBreadcrumbs) }
 }
 
-var gStartupLevel : ZStartupLevel {
-	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel))! }
-	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
-}
-
-var gEssayTitleMode : ZEssayTitleMode {
-	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sFull.rawValue))! }
-	set { setPreferencesInt(newValue.rawValue, for: kEssayTitleMode) }
-}
-
 var gColorfulMode : Bool {
 	get { return getPreferencesBool(   for: kColorfulMode, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kColorfulMode) }
@@ -357,6 +348,52 @@ var gColorfulMode : Bool {
 var gShowSmallMapForIOS : Bool {
 	get { return getPreferencesBool(   for: kShowSmallMap, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kShowSmallMap) }
+}
+
+var gSmallMapIsVisible: Bool {
+	get { return getPreferencesBool(   for: kSmallMapIsVisibleKey, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kSmallMapIsVisibleKey) }
+}
+
+var gTestForUserActivity: Bool {
+	if  let w = gUserIsActive {
+		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
+		gInterruptionCount += 1
+
+		return true
+	}
+
+	return false
+}
+
+var gShowToolTips : Bool {
+	get {
+		var value  = UserDefaults.standard.object(forKey: kShowToolTips) as? Bool
+
+		if  value == nil {
+			value  = true
+
+			UserDefaults.standard.set(true, forKey:kShowToolTips)
+			UserDefaults.standard.synchronize()
+		}
+
+		return value!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue, forKey:kShowToolTips)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+var gStartupLevel : ZStartupLevel {
+	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel))! }
+	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
+}
+
+var gEssayTitleMode : ZEssayTitleMode {
+	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sFull.rawValue))! }
+	set { setPreferencesInt(newValue.rawValue, for: kEssayTitleMode) }
 }
 
 var gHereRecordNames: String {
@@ -372,11 +409,6 @@ var gAuthorID: String? {    // persist for file read on launch
 var gUserRecordName: String? {    // persist for file read on launch
     get { return getPreferenceString(    for: kUserRecordName) }
     set { setPreferencesString(newValue, for: kUserRecordName) }
-}
-
-var gSmallMapIsVisible: Bool {
-	get { return getPreferencesBool(   for: kSmallMapIsVisibleKey, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kSmallMapIsVisibleKey) }
 }
 
 var gAccentColor: ZColor {
@@ -472,27 +504,6 @@ var gSmallMapMode: ZSmallMapMode {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kSmallMapMode)
 		UserDefaults.standard.synchronize()
 	}
-}
-
-var gShowToolTips : Bool {
-	get {
-		var value  = UserDefaults.standard.object(forKey: kShowToolTips) as? Bool
-
-		if  value == nil {
-			value  = true
-
-			UserDefaults.standard.set(true, forKey:kShowToolTips)
-			UserDefaults.standard.synchronize()
-		}
-
-		return value!
-	}
-
-	set {
-		UserDefaults.standard.set(newValue, forKey:kShowToolTips)
-		UserDefaults.standard.synchronize()
-	}
-
 }
 
 var gCountsMode: ZCountsMode {
@@ -813,17 +824,6 @@ var gUserIsActive: ZActiveWindowID? {
 	}
 
 	return nil
-}
-
-var gTestForUserActivity: Bool {
-	if  let w = gUserIsActive {
-		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
-		gInterruptionCount += 1
-
-		return true
-	}
-
-	return false
 }
 
 var gLastLocation = CGPoint.zero

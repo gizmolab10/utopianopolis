@@ -76,9 +76,9 @@ class ZoneDot: ZPseudoView {
 		var     filled = false
 		if  let zone   = widgetZone {
 			if  isReveal {
-				filled = !zone.isExpanded || (zone.isTraveller && zone.count == 0)
+				filled = (!zone.isExpanded || (zone.isTraveller && zone.count == 0)) && isLinearMode
 			} else {
-				filled =  zone.isGrabbed
+				filled =   zone.isGrabbed
 			}
 		}
 
@@ -125,7 +125,7 @@ class ZoneDot: ZPseudoView {
 		path.lineWidth   = CGFloat(gLineThickness * 1.2)
 		path.flatness    = 0.0001
 
-		if  let zone = widgetZone, zone.isInFavorites == gIsRecentlyMode {
+		if  let     zone = widgetZone, zone.isInFavorites == gIsRecentlyMode {   // WTF?
 			path.stroke()
 		} else {
 			path.fill()

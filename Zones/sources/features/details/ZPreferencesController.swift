@@ -63,6 +63,10 @@ class ZPreferencesController: ZGenericController {
 			default:           break
 			}
 
+			temporarilyApplyThenDelay(for: 0.2) { flag in
+				gIgnoreEvents = flag
+			}
+
 			gRelayoutMaps()
 		}
     }

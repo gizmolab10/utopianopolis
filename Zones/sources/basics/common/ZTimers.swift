@@ -18,6 +18,7 @@ let gTimers = ZTimers()
 var gCurrentTimerID: ZTimerID?
 
 enum ZTimerID : Int {
+
 	case tTextEditorHandlesArrows
 	case tNeedCloudDriveEnabled
 	case tCoreDataDeferral

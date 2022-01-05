@@ -141,14 +141,13 @@ extension ZoneWidget {
 	}
 
 	func linearUpdateHighlightFrame() {
-		if  let           t = textWidget,
-			let        zone = widgetZone {
-			let     fExpand = CGFloat(zone.showRevealDot ? 0.67 : -0.8)
-			let     mExpand = CGFloat(zone.showRevealDot ? 1.2  :  0.6)
-			let     xExpand = gDotHeight * mExpand
-			let     yExpand = gDotHeight / -30.0 + 2.0
-			let   expansion = CGSize(width: xExpand, height: yExpand).multiplyBy(mapReduction)
-			highlightFrame  = t.frame.expandedBy(expansion).offsetBy(dx: gDotHalfWidth * fExpand, dy: .zero)
+		if  let      frame = textWidget?.frame,
+			let       zone = widgetZone {
+			let    fExpand = CGFloat(zone.showRevealDot ? 0.56 : -1.06)
+			let    mExpand = CGFloat(zone.showRevealDot ? 1.25 :  0.65)
+			let    xExpand = gDotHeight * mExpand
+			let    yExpand = gDotHeight / -20.0 * mapReduction
+			highlightFrame = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: gDotHalfWidth * fExpand, dy: .zero)
 		}
 	}
 
@@ -308,8 +307,9 @@ extension ZoneDot {
 	var linearIsDragDrop : Bool { return widget == gDragging.dropWidget }
 
 	func linearUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		let    center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, 0.0) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, 0.0)
-		absoluteFrame = CGRect(origin: center, size: .zero).expandedBy(drawnSize.multiplyBy(0.5))
+		let     center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, 0.0) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, 0.0)
+		absoluteFrame  = CGRect(origin: center, size: .zero).expandedBy(drawnSize.multiplyBy(0.5))
+		detectionFrame = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
 
 		updateTooltips()
 	}

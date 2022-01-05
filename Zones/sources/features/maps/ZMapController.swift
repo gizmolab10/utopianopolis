@@ -223,6 +223,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
+		if  gIgnoreEvents {
+			return true
+		}
+
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }
@@ -246,6 +250,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     }
 	
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
+		if  gIgnoreEvents {
+			return
+		}
+
         if  gIsSearchMode {
             gSearching.exitSearchMode()
         }

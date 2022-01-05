@@ -42,15 +42,18 @@ class ZMapView: ZView {
 	override func mouseExited(with event: ZEvent) {
 		super.mouseExited(with: event)
 
-		if  gRubberband.rubberbandRect != nil {
-			gRubberband.rubberbandRect  = nil
-		}
+		if  !(event.window?.contentView?.frame.contains(event.locationInWindow) ?? false) {
 
-		if  gDragging.dropWidget != nil {
-			gDragging.dropWidget  = nil
-		}
+			if  gRubberband.rubberbandRect != nil {
+				gRubberband.rubberbandRect  = nil
+			}
 
-		setNeedsDisplay()
+			if  gDragging.dropWidget != nil {
+				gDragging.dropWidget  = nil
+			}
+
+			setNeedsDisplay()
+		}
 	}
 
 	override func setNeedsDisplay() {

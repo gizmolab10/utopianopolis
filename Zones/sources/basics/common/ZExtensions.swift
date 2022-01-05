@@ -182,6 +182,15 @@ extension NSObject {
         }
     }
 
+	func temporarilyApplyThenDelay(for interval: Double, _ closure: BoolClosure?) {
+		closure?(true)
+
+		let _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
+			closure?(false)
+			iTimer.invalidate()
+		}
+	}
+
     func repeatUntil(_ isDone: @escaping ToBooleanClosure, then: @escaping Closure) {
         let _ = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { iTimer in
             if  isDone() {

@@ -16,18 +16,18 @@ extension ZoneWidget {
 
 	func detect(at location: CGPoint, recursive: Bool = true) -> Any? {
 		if  let                z = widgetZone, z.isShowing, detectionFrame.contains(location) {
-			if  let            d = parentLine?.dragDot,    d.absoluteFrame.contains(location) {
+			if  let            d = parentLine?.dragDot,   d.detectionFrame.contains(location) {
 				return         d
 			}
 			for line in childrenLines {
-				if  let        r = line.revealDot,         r.absoluteFrame.contains(location) {
+				if  let        r = line.revealDot,        r.detectionFrame.contains(location) {
 					return     r
 				}
 			}
 			if  let            t = pseudoTextWidget,       t.absoluteFrame.contains(location) {
 				return         textWidget
 			}
-			if  isCircularMode,                            highlightFrame.contains(location) {
+			if  isCircularMode,                             highlightFrame.contains(location) {
 				return         self
 			}
 			if  recursive {

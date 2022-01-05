@@ -309,6 +309,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func handleClick(with event: ZEvent) -> Bool {
+		if  gIgnoreEvents {
+			return true
+		}
+
 		let              rect = rectFromEvent(event)
 		if  let        attach = hitTestForAttachment(in: rect) {
 			resizeDot         = hitTestForResizeDot(in: rect, for: attach)

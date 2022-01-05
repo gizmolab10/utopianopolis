@@ -70,6 +70,7 @@ class ZBaseEditor : NSObject {
 
 	@discardableResult func handleEvent(_ event: ZEvent, isWindow: Bool, forced: Bool = false) -> ZEvent? {
 		if  (canHandleKey || forced),
+			!gIgnoreEvents,
 			!matchesPrevious(event) {
 			previousEvent  = event
 			
