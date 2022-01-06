@@ -399,7 +399,7 @@ extension ZoneDot {
 			l      .length = newLength
 			let       rect = CGRect(origin: origin, size: drawnSize)
 			absoluteFrame  = rect.offsetBy(dx: 0.0, dy: -3.0)
-			detectionFrame = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
+			detectionFrame = absoluteFrame
 
 			updateTooltips()
 		}

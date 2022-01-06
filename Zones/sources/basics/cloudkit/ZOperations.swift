@@ -223,7 +223,7 @@ class ZOperations: NSObject {
 		    gAssureProgressTimesAreLoaded() {
 
 			let priorTime = getAccumulatedProgressTime(untilExcluding: op)
-			let delta     = gStartup.elapsedStartupTime - priorTime
+			let delta     = gStartup.elapsedTime - priorTime
 
 			if  delta    >= 1.5 {
 				gProgressTimes[op] = delta

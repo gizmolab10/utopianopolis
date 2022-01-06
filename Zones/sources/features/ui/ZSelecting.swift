@@ -6,7 +6,6 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-import CloudKit
 import Foundation
 
 #if os(OSX)

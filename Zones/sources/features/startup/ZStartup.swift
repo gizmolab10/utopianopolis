@@ -6,8 +6,8 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import CloudKit
 import Foundation
+import CloudKit
 
 #if os(OSX)
 import Cocoa
@@ -18,16 +18,16 @@ import UIKit
 let gStartup = ZStartup()
 
 class ZStartup: NSObject {
-	var              prior = 0.0
-	let          startedAt = Date()
-	var elapsedStartupTime = 0.0
+	var       prior = 0.0
+	let   startedAt = Date()
+	var elapsedTime = 0.0
 	
-	var oneTimerIntervalElapsed : Bool {
-		let  lapse = Date().timeIntervalSince(startedAt)
-		let enough = (lapse - prior) > kOneTimerInterval
+	var oneTimerIntervalHasElapsed : Bool {
+		let lapse       = Date().timeIntervalSince(startedAt)
+		let enough      = (lapse - prior) > kOneTimerInterval
 		if  enough {
-			prior  = lapse
-			elapsedStartupTime += kOneTimerInterval
+			prior       = lapse
+			elapsedTime = lapse
 		}
 
 		return enough

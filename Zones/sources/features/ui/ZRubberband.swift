@@ -13,7 +13,8 @@ let gRubberband = ZRubberband()
 class ZRubberband: NSObject {
 	var rubberbandPreGrabs = ZoneArray ()
 	var rubberbandStart    = CGPoint.zero
-	var showRubberband: Bool { return rubberbandRect != nil && rubberbandRect != .zero }
+	var showRubberband     : Bool { return rubberbandRect != nil && rubberbandRect != .zero }
+	func clearRubberband()        { rubberbandStart = .zero }
 
 	var rubberbandRect: CGRect? { // wrapper with new value logic
 		didSet {

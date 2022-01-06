@@ -2608,6 +2608,15 @@ extension ZView {
 		return nil
 	}
 
+	var rootSuperview : ZView {
+		var root    = self
+		while let s = root.superview {
+			root    = s
+		}
+
+		return root
+	}
+
 	var simpleToolID : ZSimpleToolID? {
 		let           item = self as NSUserInterfaceItemIdentification
 		if  let identifier = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),

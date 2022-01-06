@@ -6,8 +6,8 @@
 //
 
 import CoreData
-import CloudKit
 import Foundation
+import CloudKit
 
 #if os(OSX)
 import Cocoa

@@ -6,7 +6,6 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import CloudKit
 import Foundation
 
 #if os(OSX)
@@ -18,15 +17,17 @@ import UIKit
 class ZStartupProgressBar: NSProgressIndicator {
 
 	func updateProgress() {
-		if  gAssureProgressTimesAreLoaded() {
+		let  totalTime = gTotalTime
+		let multiplier = maxValue - minValue
+		let      value = multiplier * gStartup.elapsedTime / totalTime
+		doubleValue    = value + minValue
 
-			let  totalTime = gTotalTime
-			let multiplier = maxValue - minValue
-			let      value = multiplier * gStartup.elapsedStartupTime / totalTime
-			doubleValue    = value + minValue
+		printDebug(.dTime, "\(doubleValue.stringTo(precision: 2))      \(gCurrentOp)")
+		display()
+	}
 
-			printDebug(.dTime, "\(doubleValue.stringTo(precision: 2))      \(gCurrentOp)")
-		}
+	override func draw(_ iDirtyRect: CGRect) {
+		super.draw(frame)
 	}
 
 }

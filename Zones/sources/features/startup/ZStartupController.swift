@@ -22,16 +22,13 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var pleaseWait        : ZView?
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
-//	@IBOutlet var progressIndicator : ZTextField?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
 	var           startupCompletion : Closure?
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
-//		helpButtonsView?.setupAndRedraw()
 
 		gMainController?.helpButton?.isHidden = true
-//		helpButtonsView?            .isHidden = true // stupid thing doesn't respond to clicks
 		enableCloudLabel?.text = enableCloudDriveText
 		accessIDLabel?   .text = appleIDText
 		loadingLabel?    .text = loadingText
@@ -49,7 +46,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		switch kind {
-			case .spStartupStatus: updateThermometerBar(); updateSubviewVisibility()
+			case .spStartupStatus: updateThermometerBar(); updateStartupVisibility()
 			default: break
 		}
 	}
@@ -63,51 +60,35 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func fullStartupUpdate() {
-		if !gHasFinishedStartup, gStartup.oneTimerIntervalElapsed {
+		if !gHasFinishedStartup, gStartup.oneTimerIntervalHasElapsed {
 			FOREGROUND(forced: true) {
 				self.updateThermometerBar()
-				self.updateSubviewVisibility()
-//				RunLoop.main.acceptInput(forMode: .default, before: Date().addingTimeInterval(0.1))		// update operation label
+				self.updateStartupVisibility()
 			}
 		}
 	}
 
-	func updateSubviewVisibility() {
+	func updateStartupVisibility() {
 		let            hasInternet = gHasInternet
 		let                notWait = [.firstTime, .pleaseEnableDrive].contains(gStartupLevel)
 		acccessToAppleID?.isHidden = !hasInternet || gStartupLevel != .firstTime         // .firstTime shows this
 		enableCloudDrive?.isHidden = !hasInternet || gStartupLevel != .pleaseEnableDrive // .firstTime hides this
-		pleaseWait?      .isHidden =  hasInternet && notWait                             // .firstTime hides this
-	}
-
-	var progressText:String {
-		if  gGotProgressTimes {
-			let   total = gTotalTime
-			let   ratio = total / 54.0
-			let elapsed = gStartup.elapsedStartupTime
-			let   count = Int(elapsed / ratio)
-			let remains = 54 - count
-
-			if  remains > 0, count > 0 {
-				let    text = kSpace.repeatedFor(count) + "-".repeatedFor(remains)
-				return text
-			}
-		}
-
-		return ""
+		pleaseWait?      .isHidden =  hasInternet && notWait                             // " " "
 	}
 
 	func updateThermometerBar() {
 		if  gAssureProgressTimesAreLoaded() {
-			operationLabel?        .text = gCurrentOp.fullStatus
-			operationLabel?.needsDisplay = true
+			let         rootView = gMainWindow?.contentView
+			operationLabel?.text = gCurrentOp.fullStatus
 
-			gMainWindow?.contentView?.setNeedsDisplay()
-			thermometerBar?          .setNeedsDisplay()
-			view                     .setNeedsDisplay()
-			thermometerBar?          .updateProgress()
-			gApplication             .setWindowsNeedUpdate(true)
-			gApplication             .updateWindows()
+			rootView?.applyToAllSubviews { v in
+				v.setNeedsDisplay()
+			}
+
+			thermometerBar?.updateProgress()
+			gApplication.setWindowsNeedUpdate(true)
+			gApplication.updateWindows()
+			rootView?.display()
 		}
 	}
 

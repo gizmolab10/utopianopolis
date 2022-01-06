@@ -6,8 +6,8 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import CloudKit
 import Foundation
+import CloudKit
 
 #if os(OSX)
 import Cocoa
@@ -261,7 +261,7 @@ class ZCoreDataStack: NSObject {
 		invokeUsingDatabaseID(dbID) {
 			let ids = objects.map { $0.objectID }
 			for id in ids {
-				FOREGROUND(canBeDirect: true) {
+				FOREGROUND(forced: true) {
 					let      object = self.context.object(with: id)
 					if  let zRecord = object as? ZRecord {
 						zRecord.convertFromCoreData(visited: [])
@@ -397,8 +397,8 @@ class ZCoreDataStack: NSObject {
 
 			let ids = objects.map { $0.objectID }
 
-			FOREGROUND(canBeDirect: true) {
-				for id in ids {
+			for id in ids {
+				FOREGROUND(forced: true) {
 					self.registerObject(id, recordName: recordName, dbID: dbID)
 				}
 			}

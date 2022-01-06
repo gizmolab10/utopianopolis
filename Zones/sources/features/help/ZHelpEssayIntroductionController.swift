@@ -7,7 +7,6 @@
 //
 
 import CoreData
-import CloudKit
 import Foundation
 
 #if os(OSX)

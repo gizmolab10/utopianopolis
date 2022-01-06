@@ -6,8 +6,8 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import CloudKit
 import Foundation
+import CloudKit
 
 #if os(OSX)
 import Cocoa

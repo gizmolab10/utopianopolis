@@ -38,17 +38,11 @@ class ZDragging: NSObject {
 		dragLine     = nil
 	}
 
-	func cleanupAfterDrag() {
-
-		// cursor exited view, remove drag cruft
-
+	func cleanupAfterDrag() {   // cursor exited view, remove drag cruft
 		dropCrumb?.highlight(false)
-
-		gRubberband.rubberbandStart = .zero
-
+		gRubberband.clearRubberband()
 		clearDragAndDrop()
 		gMapView?.setNeedsDisplay() // erase drag: line and dot
-		gMapView? .setNeedsDisplay()
 	}
 
 	func handleDragGesture(_ gesture: ZKeyPanGestureRecognizer, in controller: ZMapController) {
