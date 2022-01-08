@@ -23,7 +23,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
     @IBOutlet var               lineView : UIView?
     var                         isCached : Bool      =  false
     var                     cachedOffset : CGPoint   = .zero
-    var                   keyboardHeight : CGFloat   =  0.0
+    var                   keyboardHeight : CGFloat   = .zero
 
 	
 	var nextMapFunction: ZFunction {
@@ -101,7 +101,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 
     @objc func updateHeightForKeyboard(_ notification: Notification) {
         gKeyboardIsVisible     = notification.name == UIResponder.keyboardWillShowNotification
-        keyboardHeight         = 0.0
+        keyboardHeight         = .zero
 
         if  gKeyboardIsVisible,
             let info           = notification.userInfo,

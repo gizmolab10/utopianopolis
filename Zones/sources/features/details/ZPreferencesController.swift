@@ -15,6 +15,13 @@ import Foundation
     import UIKit
 #endif
 
+enum ZCountsMode: Int { // do not change the order, they are persisted
+	case none
+	case dots
+	case fetchable
+	case progeny
+}
+
 class ZPreferencesController: ZGenericController {
 
 	@IBOutlet var     countsModeControl : ZSegmentedControl?

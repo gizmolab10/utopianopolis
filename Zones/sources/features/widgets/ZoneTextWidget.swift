@@ -115,7 +115,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		if  let     size = textSize {
 			let   height = size.height + 1.0
 			let     hide = widgetZone?.isSmallMapHere ?? false
-			let    width = hide ? 0.0 : size.width + 6.0
+			let    width = hide ? .zero : size.width + 6.0
 			drawnSize    = CGSize(width: width, height: height)
 		}
 	}
@@ -265,7 +265,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			// /////////////////////////////////////////////////////
 
 			var         rect = dirtyRect.insetBy(dx: deltaX, dy: inset)
-			rect.size.height = 0.0
+			rect.size.height = .zero
 			rect.origin.y    = dirtyRect.maxY - 1.0
 			path             = ZBezierPath(rect: rect)
 			path? .lineWidth = 0.4

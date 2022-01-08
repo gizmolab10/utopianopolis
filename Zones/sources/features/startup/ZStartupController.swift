@@ -78,17 +78,23 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	func updateThermometerBar() {
 		if  gAssureProgressTimesAreLoaded() {
+			let       statusText = gCurrentOp.fullStatus
 			let         rootView = gMainWindow?.contentView
-			operationLabel?.text = gCurrentOp.fullStatus
+			operationLabel?.text = statusText
 
-			rootView?.applyToAllSubviews { v in
+//			print(statusText)
+
+			rootView?.applyToAllVisibleSubviews { v in
 				v.setNeedsDisplay()
 			}
 
 			thermometerBar?.updateProgress()
 			gApplication.setWindowsNeedUpdate(true)
 			gApplication.updateWindows()
-			rootView?.display()
+
+			rootView?.applyToAllVisibleSubviews { v in
+				v.display()
+			}
 		}
 	}
 

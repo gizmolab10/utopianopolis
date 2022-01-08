@@ -10,10 +10,10 @@ import Foundation
 
 class ZButtonsView : ZView {
 
-	var           clipped : Bool { return false }
-	var          centered : Bool { return false }
-	var distributeEqually : Bool { return false }
-	var           buttons = [ZButton]()
+	var            clipped : Bool    { return false }
+	var           centered : Bool    { return false }
+	var distributedEqually : Bool    { return false }
+	var            buttons = [ZButton]()
 
 	func setupButtons()  {}
 	func updateButtons() {}
@@ -50,7 +50,7 @@ class ZButtonsView : ZView {
 			addSubview(button)
 			button.snp.removeConstraints()
 			button.snp.makeConstraints { make in
-				if !distributeEqually {
+				if !distributedEqually {
 					let title = button.title
 					let range = NSRange(location: 0, length: title.length)
 					let  rect = title.rect(using: button.font!, for: range, atStart: true)

@@ -165,10 +165,10 @@ extension ZColor {
     }
     
     var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
-		var h: CGFloat = 0.0
-		var s: CGFloat = 0.0
-		var b: CGFloat = 0.0
-		var a: CGFloat = 0.0
+		var h: CGFloat = .zero
+		var s: CGFloat = .zero
+		var b: CGFloat = .zero
+		var a: CGFloat = .zero
 		let      color = CGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent) // avoid crash due to grey color space
 
 		color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
@@ -178,8 +178,8 @@ extension ZColor {
 
     var inverted: ZColor {
         let components = hsba
-        let b = max(0.0, min(1.0, 1.25 - components.brightness))
-        let s = max(0.0, min(1.0, 1.45 - components.saturation))
+        let b = max(.zero, min(1.0, 1.25 - components.brightness))
+        let s = max(.zero, min(1.0, 1.45 - components.saturation))
         
         return ZColor(hue: components.hue, saturation: s, brightness: b, alpha: components.alpha)
     }

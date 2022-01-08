@@ -25,7 +25,7 @@ var gMapControlsView : ZMapControlsView? { return gControlsController?.mapContro
 class ZMapControlsView : ZButtonsView, ZTooltips {
 
 	override  var centered          : Bool { return true }
-	override  var distributeEqually : Bool { return true }
+	override  var distributedEqually : Bool { return true }
 
 	override func setupButtons() {
 		removeButtons()

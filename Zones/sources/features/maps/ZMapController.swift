@@ -17,6 +17,25 @@ import SnapKit
 var gMapController : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
 var gMapView       : ZMapView?       { return gMapController?.mapView }
 
+enum ZMapLayoutMode: Int { // do not change the order, they are persisted
+	case linearMode
+	case circularMode
+
+	var next: ZMapLayoutMode {
+		switch self {
+		case .linearMode: return .circularMode
+		default:          return .linearMode
+		}
+	}
+
+	var title: String {
+		switch self {
+		case .linearMode: return "Tree"
+		default:          return "Star"
+		}
+	}
+}
+
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	var          priorScrollLocation = CGPoint.zero
@@ -60,7 +79,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			}
 
 			if  phase == .pLines,
-				mode  == .circularMode {
+				mode  == .circularMode,
+				gCirclesDisplayMode.contains(.cRings) {
 				circularDrawLevelRings()      // now, draw level rings
 			}
 		}
@@ -109,7 +129,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func recenter(_ SPECIAL: Bool = false) {
 		gScaling      = 1.0
-		gScrollOffset = !SPECIAL ? .zero : CGPoint(x: kHalfDetailsWidth, y: 0.0)
+		gScrollOffset = !SPECIAL ? .zero : CGPoint(x: kHalfDetailsWidth, y: .zero)
 		
 		layoutForCurrentScrollOffset()
 	}
@@ -123,10 +143,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(0.0, 20.0) : CGPoint(x: -12.0, y: -6.0)
+		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(.zero, 20.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y              = -offset.y               // why?
 		if  let          size = rootWidget?.drawnSize {
-			let      relocate = CGPoint((view.frame.size - size).multiplyBy(0.5))
+			let      relocate = CGPoint((view.frame.size - size).dividedInHalf)
 			let        origin = (isBigMap ? relocate : .zero) + offset
 			rootWidget?.frame = CGRect(origin: origin, size: size)
 
@@ -138,6 +158,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	var doNotLayout: Bool {
 		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || gIsEditIdeaMode
+	}
+
+	enum ZRelayoutMapType: Int {
+		case small
+		case both
+		case big
 	}
 
     func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
@@ -328,7 +354,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {
         var     relation = ZRelation.upon
 		if  let     text = iWidget?.pseudoTextWidget {
-			let     rect = text.absoluteFrame.insetBy(dx: 0.0, dy: 5.0)
+			let     rect = text.absoluteFrame.insetBy(dx: .zero, dy: 5.0)
 			let     minY = rect.minY
 			let     maxY = rect.maxY
 			let        y = point.y

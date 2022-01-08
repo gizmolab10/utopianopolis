@@ -15,6 +15,49 @@ import Cocoa
 import UIKit
 #endif
 
+enum ZStorageType: String {
+	case lost            = "lostAndFound"    // general
+	case bookmarks       = "bookmarks"
+	case favorites       = "favorites"
+	case manifest        = "manifest"
+	case minimal         = "minimal"
+	case destroy         = "destroy"
+	case userID          = "user ID"
+	case recent          = "recent"
+	case model           = "model"
+	case graph           = "graph"
+	case trash           = "trash"
+	case date            = "date"
+
+	case recordName      = "recordName"		 // zones
+	case parentLink      = "parentLink"
+	case attributes      = "attributes"
+	case children        = "children"
+	case progeny         = "progeny"
+	case strings         = "strings"
+	case traits          = "traits"
+	case access          = "access"
+	case author          = "author"
+	case essay           = "essay"
+	case order           = "order"
+	case color           = "color"
+	case count           = "count"
+	case needs           = "needs"
+	case link            = "link"
+	case name            = "name"
+	case note            = "note"
+
+	case assetNames      = "assetNames"      // traits
+	case assets          = "assets"
+	case format          = "format"
+	case time            = "time"
+	case text            = "text"
+	case data            = "data"
+	case type            = "type"
+
+	case deleted         = "deleted"         // ZManifest
+}
+
 @objc (ZRecord)
 class ZRecord: ZManagedObject {
 

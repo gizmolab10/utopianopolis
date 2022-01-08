@@ -231,6 +231,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return results
 	}
 
+	struct ZoneType: OptionSet {
+		let rawValue : Int
+
+		init(rawValue: Int) { self.rawValue = rawValue }
+
+		static let zChildless = ZoneType(rawValue: 0x0001)
+		static let zTrait     = ZoneType(rawValue: 0x0002)
+		static let zNote      = ZoneType(rawValue: 0x0004)
+		static let zDuplicate = ZoneType(rawValue: 0x0008)
+		static let zBookmark  = ZoneType(rawValue: 0x0010)
+	}
+
 	var zoneType : ZoneType {
 		var type = ZoneType()
 
@@ -808,7 +820,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var offsetFromMiddle : Double {
 		var index = ((Double(parentZone?.count ?? 0) / 2.0) - Double(siblingIndex ?? 0)) * 0.8
 		let limit = 6.0
-		if  index < 0.0 {
+		if  index < .zero {
 			index = max(index, -limit)
 		} else {
 			index = min(index,  limit)

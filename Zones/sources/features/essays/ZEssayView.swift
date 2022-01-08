@@ -26,6 +26,91 @@ struct ZEssayDragDot {
 	var      note : ZNote?
 }
 
+enum ZEssayTitleMode: Int {
+	case sEmpty // do not change the order, storyboard and code dependencies
+	case sTitle
+	case sFull
+}
+
+enum ZEssayLinkType: String {
+	case hWeb   = "h"
+	case hFile  = "u"
+	case hIdea  = "i"
+	case hNote  = "n"
+	case hEssay = "e"
+	case hEmail = "m"
+	case hClear = "c"
+
+	var title: String {
+		switch self {
+		case .hWeb:   return "Internet"
+		case .hFile:  return "Upload"
+		case .hIdea:  return "Idea"
+		case .hNote:  return "Note"
+		case .hEssay: return "Essay"
+		case .hEmail: return "Email"
+		case .hClear: return "Clear"
+		}
+	}
+
+	var linkDialogLabel: String {
+		switch self {
+		case .hWeb:   return "Text of link"
+		case .hEmail: return "Email address"
+		default:      return "Name of file"
+		}
+	}
+
+	var linkType: String {
+		switch self {
+		case .hWeb:   return "http"
+		case .hEmail: return "mailto"
+		default:      return title.lowercased()
+		}
+	}
+
+	static var all: [ZEssayLinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hFile, .hClear] }
+
+}
+
+enum ZEssayButtonID : Int {
+	case idForward
+	case idCancel
+	case idDelete
+	case idTitles
+	case idBack
+	case idSave
+	case idHide
+
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idHide, .idDelete, .idCancel] }
+
+	var title: String {
+		switch self {
+		case .idBack:    return "left.arrow"
+		case .idForward: return "right.arrow"
+		case .idCancel:  return "cancel"
+		case .idDelete:  return "trash"
+		case .idTitles:  return kEmpty
+		case .idHide:    return "exit"
+		case .idSave:    return "save"
+		}
+	}
+
+	var tooltipString : String {
+		let kind = (gCurrentEssay?.isNote ?? true) ? "note" : "essay"
+		switch self {
+		case .idForward: return "show next"
+		case .idCancel:  return "cancel editing of \(kind)"
+		case .idDelete:  return "delete"
+		case .idTitles:  return kEmpty
+		case .idHide:    return "hide \(kind)"
+		case .idBack:    return "show previous"
+		case .idSave:    return "save"
+		}
+	}
+
+}
+
 @objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate {
 	let margin          = CGFloat(20.0)
@@ -413,7 +498,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  let rect = rectForRange(range) {
 				point    = rect.origin
-				point .y = max(0.0, point.y - 100.0)
+				point .y = max(.zero, point.y - 100.0)
 			}
 
 			setSelectedRange(range)
@@ -1193,18 +1278,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .bottomLeft:  size   = size  .offsetBy(-wGrow,  hGrow)
 				case .topRight:    size   = size  .offsetBy( wGrow, -hGrow)
 				case .bottomRight: size   = size  .offsetBy( wGrow,  hGrow)
-				case .left:        size   = size  .offsetBy(-wGrow,  0.0)
-				case .right:       size   = size  .offsetBy( wGrow,  0.0)
-				case .top:         size   = size  .offsetBy( 0.0,   -hGrow)
-				case .bottom:      size   = size  .offsetBy( 0.0,    hGrow)
+				case .left:        size   = size  .offsetBy(-wGrow, .zero)
+				case .right:       size   = size  .offsetBy( wGrow, .zero)
+				case .top:         size   = size  .offsetBy( .zero, -hGrow)
+				case .bottom:      size   = size  .offsetBy( .zero,  hGrow)
 			}
 
 			switch direction {
 				case .topLeft:     origin = origin.offsetBy( wGrow,  hGrow)
 				case .top,
-					 .topRight:    origin = origin.offsetBy( 0.0,    hGrow)
+					 .topRight:    origin = origin.offsetBy( .zero,  hGrow)
 				case .left,
-					 .bottomLeft:  origin = origin.offsetBy( wGrow,  0.0)
+					 .bottomLeft:  origin = origin.offsetBy( wGrow, .zero)
 				default:           break
 			}
 
@@ -1255,11 +1340,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			for (direction, point) in points {
 				var  rect = CGRect(origin: point, size: .zero).insetEquallyBy(dotInset)
-				let  size = imageRect.size.multiplyBy(-0.5).insetBy(dotInset, dotInset)
+				let  size = imageRect.size.multiplyBy(-0.5)   .insetEquallyBy(dotInset)
 
 				switch direction {
-					case .bottom, .top: rect = rect.insetBy(dx: size.width, dy: 0.0)  // extend width
-					case .right, .left: rect = rect.insetBy(dx: 0.0, dy: size.height) // extend height
+				case .bottom, .top: rect = rect.insetBy(dx: size.width, dy: .zero)  // extend width
+				case .right, .left: rect = rect.insetBy(dx: .zero, dy: size.height) // extend height
 					default:            break
 				}
 
@@ -1541,7 +1626,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 									self.setSelectedRange(range)
 
 									if  let    r = self.rectForRange(start) {
-										let rect = self.convert(r, to: self).offsetBy(dx: 0.0, dy: -150.0)
+										let rect = self.convert(r, to: self).offsetBy(dx: .zero, dy: -150.0)
 
 										// highlight text of note, and scroll it to visible
 

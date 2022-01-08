@@ -399,6 +399,19 @@ class ZoneWidget: ZPseudoView {
 	// MARK: - draw
 	// MARK: -
 
+	struct ZHighlightStyle: OptionSet {
+		let rawValue : Int
+
+		init(rawValue: Int) { self.rawValue = rawValue }
+
+		static let sUltraThin = ZHighlightStyle(rawValue: 1 << 0)
+		static let sDashed    = ZHighlightStyle(rawValue: 1 << 1)
+		static let sMedium    = ZHighlightStyle(rawValue: 1 << 2)
+		static let sThick     = ZHighlightStyle(rawValue: 1 << 3)
+		static let sThin      = ZHighlightStyle(rawValue: 1 << 4)
+		static let sNone      = ZHighlightStyle([])
+	}
+
 	func drawSelectionHighlight(_ style: ZHighlightStyle) {
 		if  highlightFrame.hasZeroSize || style == .none {
 			return
@@ -435,7 +448,7 @@ class ZoneWidget: ZPseudoView {
 					let isGrabbed = zone.isGrabbed
 					let isEditing = t.isFirstResponder
 					let tHovering = t.isHovering
-					let ringIdeas = gCirclesDisplayMode.contains(.cIdeas) && isCircularMode
+					let ringIdeas = gDisplayIdeasWithCircles && isCircularMode
 					
 					if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
 						var style = ZHighlightStyle.sNone
@@ -460,9 +473,9 @@ class ZoneWidget: ZPseudoView {
     }
 
 	func debugDraw(_ extraThick: Bool = false) {
-		detectionFrame.drawColoredRect(.green, radius: 0.0, thickness: extraThick ? 5.0 : 1.0)
-//		highlightFrame.drawColoredRect(.blue,  radius: 0.0)
-//		absoluteFrame .drawColoredRect(.red,   radius: 0.0)
+		detectionFrame.drawColoredRect(.green, radius: .zero, thickness: extraThick ? 5.0 : 1.0)
+//		highlightFrame.drawColoredRect(.blue,  radius: .zero)
+//		absoluteFrame .drawColoredRect(.red,   radius: .zero)
 		childrenView?.absoluteFrame.drawColoredRect(.orange)
 	}
 

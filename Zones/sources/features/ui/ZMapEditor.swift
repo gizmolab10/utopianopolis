@@ -16,6 +16,27 @@ import Foundation
 
 let gMapEditor = ZMapEditor()
 
+enum ZReorderMenuType: String {
+	case eAlphabetical = "a"
+	case eReversed     = "r"
+	case eByLength     = "l"
+	case eBySizeOfList = "s"
+	case eByKind       = "k"
+
+	static var activeTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind] }
+
+	var title: String {
+		switch self {
+		case .eAlphabetical: return "alphabetically"
+		case .eReversed:     return "reverse order"
+		case .eByLength:     return "by length of idea"
+		case .eBySizeOfList: return "by size of list"
+		case .eByKind:       return "by kind of idea"
+		}
+	}
+
+}
+
 // mix of zone mutations and web services requests
 
 class ZMapEditor: ZBaseEditor {
@@ -172,6 +193,26 @@ class ZMapEditor: ZBaseEditor {
 
 		onCompletion?()
     }
+
+	enum ZMenuType: Int {
+		case eUndo
+		case eHelp
+		case eSort
+		case eFind
+		case eColor
+		case eChild
+		case eAlter
+		case eFiles
+		case eCloud
+		case eAlways
+		case eParent
+		case eTravel
+
+		case eRedo
+		case ePaste
+		case eUseGrabs
+		case eMultiple
+	}
 
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehlnuw#" + kMarkingCharacters + kReturn
@@ -393,7 +434,7 @@ class ZMapEditor: ZBaseEditor {
 	func updateFontSize(up: Bool) {
 		let     delta = CGFloat(up ? 1 : -1)
 		var      size = gBaseFontSize + delta
-		size          = size.confineBetween(low: 0.0, high: 15.0)
+		size          = size.confineBetween(low: .zero, high: 15.0)
 		gBaseFontSize = size
 
 		gRelayoutMaps()

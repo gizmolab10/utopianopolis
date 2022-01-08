@@ -59,7 +59,7 @@ class ZMainController: ZGesturesController {
 	func update() {
 		let            showDetails = gShowDetailsView
 		hamburgerButton?  .toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
-		alternateLeading?.constant = !showDetails ? 0.0 : 226.0
+		alternateLeading?.constant = !showDetails ? .zero : 226.0
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 		hamburgerButton?    .image = hamburgerImage
@@ -81,7 +81,7 @@ class ZMainController: ZGesturesController {
 				let gesture = iGesture {
 				let      location = gesture.location(in: eView)
 
-				if  location.x < 0.0 {				// is gesture located outside essay view?
+				if  location.x < .zero {				// is gesture located outside essay view?
 					eView.save()
 					gControllers.swapMapAndEssay(force: .wMapMode)
 				}

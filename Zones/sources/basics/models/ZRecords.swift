@@ -24,6 +24,97 @@ enum ZRecordState: String {
     case needsWritable  = "writable"
 }
 
+enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values are persisted
+	case everyoneIndex
+	case mineIndex
+	case favoritesIndex
+	case recentsIndex
+
+
+	var databaseID: ZDatabaseID? {
+		switch self {
+		case .favoritesIndex: return .favoritesID
+		case .everyoneIndex:  return .everyoneID
+		case .recentsIndex:   return .recentsID
+		case .mineIndex:      return .mineID
+		}
+	}
+}
+
+enum ZDatabaseID: String {
+	case favoritesID = "favorites"
+	case  everyoneID = "everyone"
+	case   recentsID = "recents"
+	case      mineID = "mine"
+
+	var isSmallMapDB: Bool { return [.favoritesID, .recentsID].contains(self) }
+	var identifier: String { return rawValue.substring(toExclusive: 1) }
+	var index:        Int? { return self.databaseIndex?.rawValue }
+
+	var zRecords: ZRecords? {
+		switch self {
+		case .favoritesID: return gFavorites
+		case  .everyoneID: return gEveryoneCloud
+		case   .recentsID: return gRecents
+		case      .mineID: return gMineCloud
+		}
+	}
+
+	var mapControlString: String {
+		switch self {
+		case .everyoneID: return "Mine"
+		case     .mineID: return "Public"
+		default:          return kEmpty
+		}
+	}
+
+	var userReadableString: String {
+		switch self {
+		case .everyoneID: return "public"
+		case     .mineID: return "my"
+		default:          return kEmpty
+		}
+	}
+
+	var databaseIndex: ZDatabaseIndex? {
+		switch self {
+		case .favoritesID: return .favoritesIndex
+		case  .everyoneID: return .everyoneIndex
+		case   .recentsID: return .recentsIndex
+		case      .mineID: return .mineIndex
+		}
+	}
+
+	static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
+		switch scope {
+		case .public:  return .everyoneID
+		case .private: return .mineID
+		default:       return nil
+		}
+	}
+
+	static func convert(from id: String?) -> ZDatabaseID? {
+		guard id != nil else {
+			return gDatabaseID
+		}
+
+		switch id {
+		case "f": return .favoritesID
+		case "e": return .everyoneID
+		case "r": return .recentsID
+		case "m": return .mineID
+		default:  return nil
+		}
+	}
+
+	func isDeleted(dict: ZStorageDictionary) -> Bool {
+		let    name = dict[.recordName] as? String
+
+		return name == nil ? false : gRemoteStorage.zRecords(for: self)?.manifest?.deletedRecordNames?.contains(name!) ?? false
+	}
+
+}
+
 class ZRecords: NSObject {
 
 	var            maxLevel = 0

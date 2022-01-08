@@ -61,6 +61,7 @@ var        gIsSearchEssayMode:               Bool { return gSearching.priorWorkM
 var      gIsMapOrEditIdeaMode:               Bool { return gIsMapMode || gIsEditIdeaMode }
 var          gCanSaveWorkMode:               Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode:               Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
+var  gDisplayIdeasWithCircles:               Bool { return gCirclesDisplayMode.contains(.cIdeas) }
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
 var           gMapIsResponder:               Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
 var             gUserIsExempt:               Bool { return gIgnoreExemption ? false : gUser?.isExempt ?? false } // discard this?
@@ -386,6 +387,13 @@ var gShowToolTips : Bool {
 	}
 }
 
+enum ZStartupLevel: Int {
+	case firstTime
+	case localOkay
+	case pleaseWait
+	case pleaseEnableDrive
+}
+
 var gStartupLevel : ZStartupLevel {
 	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel))! }
 	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
@@ -419,6 +427,18 @@ var gAccentColor: ZColor {
 var gActiveColor: ZColor {
 	get { return !gColorfulMode ? kGrayColor : getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
 	set { setPreferencesColor(newValue, for: kActiveColorKey) }
+}
+
+struct ZFilterOption: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let fBookmarks = ZFilterOption(rawValue: 1 << 0)
+	static let     fNotes = ZFilterOption(rawValue: 1 << 1)
+	static let     fIdeas = ZFilterOption(rawValue: 1 << 2)
+	static let      fNone = ZFilterOption([])
+	static let       fAll = ZFilterOption(rawValue: 7)
 }
 
 var gFilterOption: ZFilterOption {
@@ -463,6 +483,11 @@ var gScrollOffset: CGPoint {
 	}
 }
 
+enum ZConfinementMode: String {
+	case list = "List"
+	case all  = "All"
+}
+
 var gConfinementMode: ZConfinementMode {
 	get {
 		let value  = UserDefaults.standard.object(forKey: kConfinementMode) as? String
@@ -482,6 +507,11 @@ var gConfinementMode: ZConfinementMode {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kConfinementMode)
 		UserDefaults.standard.synchronize()
 	}
+}
+
+enum ZSmallMapMode: String {
+	case favorites = "Favorites"
+	case recent    = "Recent"
 }
 
 var gSmallMapMode: ZSmallMapMode {
@@ -525,6 +555,45 @@ var gCountsMode: ZCountsMode {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kCountsMode)
 		UserDefaults.standard.synchronize()
 	}
+}
+
+struct ZCirclesDisplayMode: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let cNone  = ZCirclesDisplayMode(rawValue: 0x0001)
+	static let cIdeas = ZCirclesDisplayMode(rawValue: 0x0002)
+	static let cRings = ZCirclesDisplayMode(rawValue: 0x0004)
+
+	static func createFrom(_ set: IndexSet) -> ZCirclesDisplayMode {
+		var mode = ZCirclesDisplayMode.cNone
+
+		if  set.contains(0) {
+			mode.insert(.cIdeas)
+		}
+
+		if  set.contains(1) {
+			mode.insert(.cRings)
+		}
+
+		return mode
+	}
+
+	var indexSet: IndexSet {
+		var set = IndexSet()
+
+		if  contains(.cIdeas) {
+			set.insert(0)
+		}
+
+		if  contains(.cRings) {
+			set.insert(1)
+		}
+
+		return set
+	}
+
 }
 
 var gCirclesDisplayMode: ZCirclesDisplayMode {
@@ -638,6 +707,11 @@ var gBaseFontSize: CGFloat {
 		UserDefaults.standard.set(newValue, forKey:kFontSize)
 		UserDefaults.standard.synchronize()
 	}
+}
+
+enum ZListGrowthMode: String {
+	case down = "Down"
+	case up   = "Up"
 }
 
 var gListGrowthMode: ZListGrowthMode {
@@ -762,6 +836,14 @@ var gCurrentMapFunction : ZFunction {
 }
 
 #endif
+
+enum ZWorkMode: String {
+	case wEditIdeaMode = "i"
+	case wStartupMode  = "s"
+	case wSearchMode   = "?"
+	case wEssayMode    = "n"
+	case wMapMode      = "g"
+}
 
 var gWorkMode: ZWorkMode = .wStartupMode {
 	didSet {

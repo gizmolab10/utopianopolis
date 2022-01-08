@@ -28,6 +28,10 @@ enum ZExportType: String {
 	case eCSV       = "csv"
 }
 
+enum ZInterruptionError : Error {
+	case userInterrupted
+}
+
 class ZFiles: NSObject {
 
 	let               manager = FileManager.default

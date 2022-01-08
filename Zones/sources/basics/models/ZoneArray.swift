@@ -76,7 +76,7 @@ extension ZoneArray {
 		}
 	}
 
-	func updateOrder() { updateOrdering(start: 0.0, end: 1.0) }
+	func updateOrder() { updateOrdering(start: .zero, end: 1.0) }
 
 	func orderLimits() -> (start: Double, end: Double) {
 		var start = 1.0
@@ -143,7 +143,7 @@ extension ZoneArray {
 
 		if count > 1 {
 			var candidates = ZoneArray()
-			var      order = goingUp ? 1.0 : 0.0
+			var      order = goingUp ? 1.0 : .zero
 			var      level = candidate?.level ?? Int.max
 
 			for zone in self {

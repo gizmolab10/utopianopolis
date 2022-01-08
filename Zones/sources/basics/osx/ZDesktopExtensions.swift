@@ -317,8 +317,8 @@ extension ZColor {
     }
 
     var inverted: ZColor {
-        let b = max(0.0, min(1.0, 1.25 - brightnessComponent))
-        let s = max(0.0, min(1.0, 1.45 - saturationComponent))
+        let b = max(.zero, min(1.0, 1.25 - brightnessComponent))
+        let s = max(.zero, min(1.0, 1.45 - saturationComponent))
         
         return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
     }
@@ -401,7 +401,7 @@ extension ZTextView {
 			let  c = textContainer {
 
 			m.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: c) { (rect, flag) in
-				result.append(rect.offsetBy(dx: 20.0, dy: 0.0))
+				result.append(rect.offsetBy(dx: 20.0, dy: .zero))
 			}
 		}
 
@@ -681,7 +681,7 @@ extension ZAlerts {
                 a.accessoryView?.frame = frame
                 a.layout()
             } else if let     w = width {
-				let       frame = CGRect(x: 0.0, y: 0.0, width: w, height: 0.0)
+				let       frame = CGRect(x: .zero, y: .zero, width: w, height: .zero)
 				a.accessoryView = ZView(frame: frame)
 				a.layout()
 			}
@@ -948,6 +948,26 @@ extension ZMenu {
 		item                .isEnabled = true
 
 		return item
+	}
+
+	enum ZRefetchMenuType: String {
+		case eList    = "l"
+		case eIdeas   = "g"
+		case eAdopt   = "a"
+		case eTraits  = "t"
+		case eProgeny = "p"
+
+		static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits, .eProgeny, .eList, .eAdopt] }
+
+		var title: String {
+			switch self {
+			case .eList:    return "list"
+			case .eAdopt:   return "adopt"
+			case .eIdeas:   return "all ideas"
+			case .eTraits:  return "all traits"
+			case .eProgeny: return "all progeny"
+			}
+		}
 	}
 
 	static func refetchPopup(target: AnyObject, action: Selector) -> ZMenu {

@@ -195,23 +195,18 @@ class ZoneDot: ZPseudoView {
 	func offsetFor(_ string: String) -> CGFloat {
 		switch string {
 			case "=", "+": return 0.9
-			default:       return 0.0
+			default:       return .zero
 		}
 	}
 
-	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForMap: Bool = true) {
-		let    text = string == "h" ? "=" : string == "n" ? "+" : string
-		let   width = CGFloat(gDotHeight - 2.0) * ratio
-		let    font = ZFont.boldSystemFont(ofSize: width)
-		let    size = text.sizeWithFont(font)
-		let   ratio = ZTraitType(rawValue: text)?.heightRatio ?? 1.0
-		let  height = size.height * ratio + (isForMap ? 1.0 : -8.0)
-		let  xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
-		let  yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
-		let yOffset = (height / 12.0) - 1.0 + (offsetFor(text) * (isForMap ? 1.0 : kSmallMapReduction))
-		let    rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: yOffset)
+	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForBigMap: Bool = true) {
+		let   text = string == "h" ? "=" : string == "n" ? "+" : string
+		let  width = CGFloat(gDotHeight - 2.0) * ratio
+		let   font = ZFont.boldSystemFont(ofSize: width)
+		let offset = text.sizeWithFont(font).dividedInHalf
+		let  point = iDirtyRect.center.offsetBy(-offset.width, 1.5 - offset.height)
 
-		text.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+		text.draw(at: point, withAttributes: [.foregroundColor : color, .font: font])
 	}
 
 	func drawRevealDotDecorations(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {

@@ -15,6 +15,13 @@ import CloudKit
     import UIKit
 #endif
 
+enum ZCloudAccountStatus: Int {
+	case none
+	case begin
+	case available
+	case active
+}
+
 var gCloudStatusIsActive      : Bool { return gCloudAccountStatus == .active }
 var gCloudStatusIsAvailable   : Bool { return gCloudAccountStatus == .available }
 var gCloudAccountStatus       = ZCloudAccountStatus.begin

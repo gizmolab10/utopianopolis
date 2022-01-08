@@ -22,6 +22,27 @@ import UIKit
 
 var gSimpleToolsController: ZSimpleToolsController? { return gControllers.controllerForID(.idStartHere) as? ZSimpleToolsController }
 
+enum ZSimpleToolID: String {
+	case up      = "up"
+	case add     = "add"
+	case edit    = "edit"
+	case move    = "move"
+	case idea    = "idea"
+	case note    = "note"
+	case down    = "down"
+	case left    = "left"
+	case child   = "child"
+	case right   = "right"
+	case focus   = "focus"
+	case shift   = "shift"
+	case swapDB  = "swapDB"
+	case option  = "option"
+	case command = "command"
+	case control = "control"
+	case sibling = "sibling"
+	case tooltip = "tooltip"
+}
+
 class ZSimpleToolsController: ZGenericController, ZTooltips {
 
 	override var controllerID : ZControllerID { return .idStartHere }

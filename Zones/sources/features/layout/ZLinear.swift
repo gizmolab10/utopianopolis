@@ -17,9 +17,9 @@ extension ZoneWidget {
 		if  let       t = textWidget,
 			let   lSize = linesView?   .drawnSize {
 			let   cSize = childrenView?.drawnSize
-			var   width = cSize?.width  ?? 0.0
-			var  height = cSize?.height ?? 0.0
-			let   extra = width != 0.0 ? 0.0 : gHorizontalGap / 2.0
+			var   width = cSize?.width  ?? .zero
+			var  height = cSize?.height ?? .zero
+			let   extra = width != .zero ? .zero : gHorizontalGap / 2.0
 			width      += t.drawnSize.width
 			let lheight = lSize.height
 			let  lWidth = lSize.width * 2.0
@@ -61,8 +61,8 @@ extension ZoneWidget {
 	}
 
 	func linearUpdateLinesViewDrawnSize() {
-		var     width = CGFloat(0.0)
-		var    height = CGFloat(0.0)
+		var     width = CGFloat.zero
+		var    height = CGFloat.zero
 
 		for line in childrenLines {
 			line.updateLineSize()
@@ -227,7 +227,7 @@ extension ZoneLine {
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
-					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: 0.0).offsetBy(dx: gHorizontalGap, dy: 0.0)
+					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: .zero).offsetBy(dx: gHorizontalGap, dy: .zero)
 				}
 			} else if let      indices = gDragging.dropIndices, indices.count > 0 {
 				let         firstindex = indices.firstIndex
@@ -246,7 +246,7 @@ extension ZoneLine {
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
 						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
 						let      delta = dotPlusGap * multiplier
-						rect           = rect.offsetBy(dx: 0.0, dy: delta)
+						rect           = rect.offsetBy(dx: .zero, dy: delta)
 
 					} else if lastIndex < zone.count, let secondDot = parentWidget?.dot(at: lastIndex) {
 
@@ -256,7 +256,7 @@ extension ZoneLine {
 
 						let secondRect = secondDot.absoluteFrame
 						let      delta = (rect.minY - secondRect.minY) / CGFloat(2.0)
-						rect           = rect.offsetBy(dx: 0.0, dy: -delta)
+						rect           = rect.offsetBy(dx: .zero, dy: -delta)
 					}
 				}
 			}
@@ -307,8 +307,8 @@ extension ZoneDot {
 	var linearIsDragDrop : Bool { return widget == gDragging.dropWidget }
 
 	func linearUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		let     center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, 0.0) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, 0.0)
-		absoluteFrame  = CGRect(origin: center, size: .zero).expandedBy(drawnSize.multiplyBy(0.5))
+		let     center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, .zero)
+		absoluteFrame  = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
 		detectionFrame = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
 
 		updateTooltips()

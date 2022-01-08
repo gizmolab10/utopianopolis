@@ -450,13 +450,13 @@ class ZTextEditor: ZTextView {
         } else if currentlyEditedZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit()
             gMapEditor.moveInto { reveal in
-                editAtOffset(0.0)
+                editAtOffset(.zero)
             }
         }
     }
 
 	func editingOffset(_ atStart: Bool) -> CGFloat {
-        return currentTextWidget?.offset(for: selectedRange, atStart) ?? 0.0
+        return currentTextWidget?.offset(for: selectedRange, atStart) ?? .zero
     }
 
 	func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {

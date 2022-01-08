@@ -778,6 +778,7 @@ extension CGSize {
 
 	static var big     : CGSize  { return CGSize.squared(1000000.0) }
 	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
+	var dividedInHalf  : CGSize  { return multiplyBy(0.5) }
 	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
 	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
 	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
@@ -789,6 +790,9 @@ extension CGSize {
 	func multiplyBy(_ fraction: CGFloat)             -> CGSize { return CGSize(width: width * fraction, height: height * fraction) }
 	func multiplyBy(_ fraction: CGSize)              -> CGSize { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
 	func fraction(_ delta: CGSize)                   -> CGSize { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
+	func expandedEquallyBy(_ expansion: CGFloat)     -> CGSize { return insetEquallyBy(-expansion) }
+	func    insetEquallyBy(_     inset: CGFloat)     -> CGSize { return insetBy(inset, inset) }
+	func expandedBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize { return insetBy(-x, -y) }
 	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
 	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize { return CGSize(width: width + x, height: height + y).absSize }
 	func offsetBy(_ delta: CGSize)                   -> CGSize { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
@@ -858,6 +862,15 @@ extension CGSize {
 		}
 	}
 
+	func ellipticalLengthAt(_ angle: Double) -> Double {
+		let a = Double(width)  / 2.0
+		let b = Double(height) / 2.0
+		let c = sqrt((b * b * cos(angle) * cos(angle)) + (a * a * sin(angle) * sin(angle)))
+		let l = a * b / c // (𝑏cos(𝜃))2+(𝑎sin(𝜃))2
+
+		return l
+	}
+
 	func lengthAt(_ angle: CGFloat) -> CGFloat {
 		let a = Double(angle)
 		let x = width / CGFloat(abs(cos(a)))
@@ -867,6 +880,29 @@ extension CGSize {
 		}
 
 		return height / CGFloat(abs(sin(a))) / 2.0
+	}
+
+}
+
+enum ZDirection : Int {
+
+	case top
+	case left
+	case right
+	case bottom
+	case topLeft
+	case topRight
+	case bottomLeft
+	case bottomRight
+
+	var cursor: NSCursor {
+		switch self {
+		case .bottom,
+			 .top:  return .resizeUpDown
+		case .right,
+			 .left: return .resizeLeftRight
+		default:    return kFourArrowsCursor ?? .crosshair
+		}
 	}
 
 }
@@ -2448,6 +2484,19 @@ extension String {
 		return "\(small)\(self)\(small)"
 	}
 
+//	func draw(at point: CGPoint, angle: CGFloat, andAttributes attributes: [String: AnyObject]) {
+//		let radius: CGFloat = 100
+//		let textSize: CGSize = sizeWithAttributes(attributes)
+//		let context: CGContext = GraphicsGetCurrentContext()!
+//		let t: CGAffineTransform = CGAffineTransform(translationX: point.x, y: point.y)
+//		let r: CGAffineTransform = CGAffineTransform(rotationAngle: angle)
+//		context.concatenate(t)
+//		context.concatenate(r)
+//		drawAtPoint(CGPointMake(radius-textSize.width/2, -textSize.height/2), withAttributes: attributes)
+//		context.concatenate(r.inverted())
+//		context.concatenate(t.inverted())
+//	}
+
 }
 
 extension NSPredicate {
@@ -2778,6 +2827,16 @@ extension ZView {
             view.applyToAllSubviews(closure)
         }
     }
+
+	func applyToAllVisibleSubviews(_ closure: ViewClosure) {
+		closure(self)
+
+		for view in subviews {
+			if !view.isHidden {
+				view.applyToAllSubviews(closure)
+			}
+		}
+	}
 
     func applyToAllSuperviews(_ closure: ViewClosure) {
         closure(self)

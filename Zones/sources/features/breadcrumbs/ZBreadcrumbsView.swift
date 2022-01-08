@@ -17,7 +17,7 @@ class ZBreadcrumbsView : ZButtonsView {
 	@IBOutlet var clipCrumbsButton : ZButton?
 
 	var crumbButtonsWidth: CGFloat {
-		var width = CGFloat(0.0)
+		var width = CGFloat.zero
 
 		for button in buttons {
 			width += button.bounds.width
@@ -100,6 +100,16 @@ class ZBreadcrumbsView : ZButtonsView {
 	override func draw(_ dirtyRect: NSRect) {
 		if  gIsReadyToShowUI {
 			super.draw(dirtyRect)
+
+			for (index, button) in buttons.enumerated() {
+				if  index > 0,
+					let crumb = button as? ZBreadcrumbButton {
+					let point = crumb.frame.centerLeft.offsetBy(.zero, -6.0)
+					let color = crumb.zone.color ?? gDefaultTextColor
+
+					">".draw(at: point, withAttributes: [.foregroundColor : color, .font: gSmallFont])
+				}
+			}
 		}
 	}
 

@@ -90,7 +90,7 @@ class ZMapView: ZView {
 		}
 	}
 
-	func removeAllTextViews(ofType: ZRelayoutMapType = .both) {
+	func removeAllTextViews(ofType: ZMapController.ZRelayoutMapType = .both) {
 		for subview in subviews {
 			if  let textView = subview as? ZoneTextWidget,
 				let   widget = textView.widget {

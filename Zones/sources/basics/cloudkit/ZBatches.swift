@@ -13,6 +13,12 @@ var gUser          :       ZUser? { return gBatches.user }
 var gCurrentOp     : ZOperationID { return gBatches.currentOp }
 var gHasFullAccess :         Bool { return gBatches.hasFullAccess }
 
+enum ZMigrationState: Int {
+	case firstTime
+	case migrate
+	case normal
+}
+
 enum ZBatchID: Int {
     case bRoot
     case bSync

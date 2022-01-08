@@ -99,6 +99,18 @@ enum ZHelpDotType: String {
 
 }
 
+enum ZHelpType: String {
+	case hPro       = "2"
+	case hBold      = "!"
+	case hDots      = "."
+	case hSkip      = "="
+	case hExtra     = "+"
+	case hEmpty     = "-"
+	case hBasic     = "0"
+	case hIntermed  = "1"
+	case hUnderline = "_"
+}
+
 enum ZFillType: String {
 	case filled = "f"
 	case empty  = "e"
