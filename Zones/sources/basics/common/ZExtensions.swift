@@ -2138,7 +2138,6 @@ extension String {
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
-    func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
 		let within = substring(with: iRange)
@@ -2484,18 +2483,14 @@ extension String {
 		return "\(small)\(self)\(small)"
 	}
 
-//	func draw(at point: CGPoint, angle: CGFloat, andAttributes attributes: [String: AnyObject]) {
-//		let radius: CGFloat = 100
-//		let textSize: CGSize = sizeWithAttributes(attributes)
-//		let context: CGContext = GraphicsGetCurrentContext()!
-//		let t: CGAffineTransform = CGAffineTransform(translationX: point.x, y: point.y)
-//		let r: CGAffineTransform = CGAffineTransform(rotationAngle: angle)
-//		context.concatenate(t)
-//		context.concatenate(r)
-//		drawAtPoint(CGPointMake(radius-textSize.width/2, -textSize.height/2), withAttributes: attributes)
-//		context.concatenate(r.inverted())
-//		context.concatenate(t.inverted())
-//	}
+	func draw(at point: CGPoint, angle: CGFloat, andAttributes attributes: [NSAttributedString.Key : Any]) {
+		let transform = NSAffineTransform()
+		let    offset = CGPoint((self as NSString).size(withAttributes: attributes).dividedInHalf)
+
+		transform.translateX(by: point.x, yBy: point.y)
+		transform.rotate(byRadians: angle)
+		draw(at: .zero - offset, withAttributes: attributes)
+	}
 
 }
 

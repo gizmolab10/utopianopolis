@@ -126,6 +126,7 @@ extension NSObject {
 
 extension String {
 
+	func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 	func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = .usesDeviceMetrics) -> CGFloat { return sizeWithFont(font, options: options).height }
     func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
 
@@ -1120,7 +1121,7 @@ public extension ZImage {
         // Draw the original image, rotated, into the new image
         rotatedImage.lockFocus()
         transform.concat()
-        draw(in: imageBounds, from: NSZeroRect, operation: .copy, fraction: 1.0)
+		draw(in: imageBounds, from: .zero, operation: .copy, fraction: 1.0)
         rotatedImage.unlockFocus()
 
         return rotatedImage

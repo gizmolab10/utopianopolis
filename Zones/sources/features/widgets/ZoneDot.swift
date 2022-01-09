@@ -199,12 +199,12 @@ class ZoneDot: ZPseudoView {
 		}
 	}
 
-	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForBigMap: Bool = true) {
+	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForBigMap: Bool = true) {
 		let   text = string == "h" ? "=" : string == "n" ? "+" : string
-		let  width = CGFloat(gDotHeight - 2.0) * ratio
+		let  width = gDotWidth * ratio
 		let   font = ZFont.boldSystemFont(ofSize: width)
 		let offset = text.sizeWithFont(font).dividedInHalf
-		let  point = iDirtyRect.center.offsetBy(-offset.width, 1.5 - offset.height)
+		let  point = iDirtyRect.center.offsetBy(-offset.width, -offset.height * 0.93)
 
 		text.draw(at: point, withAttributes: [.foregroundColor : color, .font: font])
 	}

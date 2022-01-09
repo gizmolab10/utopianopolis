@@ -84,7 +84,7 @@ extension ZoneWidget {
 	func updateAllDotFrames() {
 		for line in childrenLines {
 			line  .dragDot?.circularUpdateDragDotAbsoluteFrame()
-			line.revealDot?.circularUpdateRevealDotAbsoluteFrame()
+			line.revealDot?.circularUpdateDotAbsoluteFrame()
 
 		}
 	}
@@ -294,6 +294,35 @@ extension ZWidgets {
 
 }
 
+// MARK: - widgets array
+// MARK: -
+
+extension ZoneWidgetArray {
+
+	var scrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
+
+	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
+		if  let  frame = controller?.mapPseudoView?.frame {
+			let radius = ZWidgets.ringRadius(at: level)
+			let center = frame.center - scrollOffset
+
+			for w in self {
+				if  absolute {
+					w.updateAbsoluteFrame(relativeTo: controller)
+				} else if w.linesLevel > 0 {
+					let   angle = w.placeAngle
+					let rotated = CGPoint(x: .zero, y: radius).rotate(by: Double(angle))
+					let  origin = center + rotated
+					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(gCircleIdeaRadius)
+					w   .bounds = CGRect(origin:  .zero, size: rect.size)
+					w    .frame = rect
+				}
+			}
+		}
+	}
+
+}
+
 // MARK: - line
 // MARK: -
 
@@ -380,7 +409,7 @@ extension ZoneDot {
 		return .zero
 	}
 
-	func circularUpdateRevealDotAbsoluteFrame() {
+	func circularUpdateDotAbsoluteFrame() {
 		if  let          l = line,
 			let     center = l.parentWidget?.frame.center,
 			let lineVector = l.parentToChildVector {
@@ -419,25 +448,44 @@ extension ZoneDot {
 
 			return .atRight
 		}
+
+		var angle: Double {
+			switch self {
+			case .above, .below: return kHalfPI
+			default:             return .zero
+			}
+		}
+	}
+
+	func ratioForAngle(_ angle: CGFloat) -> CGFloat {
+		let a = Double(angle)
+		let b = a.confine(within: kPI) - kHalfPI
+		let c = b / kHalfPI
+
+		return CGFloat(c)
 	}
 
 	func circularUpdateDragDotAbsoluteFrame() {
 		if  gDisplayIdeasWithCircles {
-			circularUpdateRevealDotAbsoluteFrame()
+			circularUpdateDotAbsoluteFrame()
 		} else {
 			if  let          l = line,
 				let      frame = l.childWidget?.pseudoTextWidget?.absoluteFrame.expandedBy(dx: gDotHalfWidth, dy: .zero),
 				let lineVector = l.parentToChildVector {
-				let   position = ZPosition.position(for: Double(lineVector.angle))
+				let      angle = lineVector.angle
+				let   position = ZPosition.position(for: Double(angle))
 				let  expansion = gDotSize(forReveal: false, forBigMap: isBigMap).dividedInHalf
 				let   halfSize = frame.size.dividedInHalf.expandedBy(.zero, gDotHalfWidth / 2.0)
+				let      width = halfSize.width
+				let     height = halfSize.height
+				let     offset = width * ratioForAngle(angle)
 				var     center = frame.center
 
 				switch position {
-				case .above:   center = center.offsetBy(.zero, -halfSize.height)
-				case .below:   center = center.offsetBy(.zero,  halfSize.height)
-				case .atLeft:  center = center.offsetBy( halfSize.width,  .zero)
-				case .atRight: center = center.offsetBy(-halfSize.width,  .zero)
+				case .above:   center = center.offsetBy( offset, -height)
+				case .below:   center = center.offsetBy(-offset,  height)
+				case .atLeft:  center = center.offsetBy(  width,   .zero)
+				case .atRight: center = center.offsetBy( -width,   .zero)
 				}
 
 				absoluteFrame  = CGRect(origin: center, size: .zero).expandedBy(expansion)
@@ -449,56 +497,26 @@ extension ZoneDot {
 	}
 
 	func circularDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		if  let         l = line,
-			let         p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
-			let         z = l .childWidget?.widgetZone {
-			let     angle = l.dotToDotAngle + CGFloat((z.isShowing && p.isExpanded) ? .zero : kPI)
-			let thickness = CGFloat(gLineThickness * 2.0)
-			let      rect = iDirtyRect.insetEquallyBy(thickness)
-			var      path = ZBezierPath()
-
-//			rect.drawColoredRect(.brown)
+		if  let     l = line,
+			let     p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
+			let     z = l .childWidget?.widgetZone {
+			var angle = l.dotToDotAngle + CGFloat((z.isShowing && p.isExpanded) ? .zero : kPI)
+			let thick = CGFloat(gLineThickness * 2.0)
+			let  rect = iDirtyRect.insetEquallyBy(thick)
+			var  path = ZBezierPath()
 			
 			if  parameters.isReveal {
-				path      = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
+				path  = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
 			} else {
-				path      = ZBezierPath           .ovalPath(in: rect, at: angle)
+				angle = gDisplayIdeasWithCircles ? angle : CGFloat(ZPosition.position(for: Double(l.parentToChildAngle)).angle)
+				path  = ZBezierPath.ovalPath(in: rect, at: angle)
 			}
 			
-			path.lineWidth = thickness
+			path.lineWidth = thick
 			path .flatness = 0.0001
 			
 			path.stroke()
 			path.fill()
-		}
-	}
-
-}
-
-// MARK: - widgets array
-// MARK: -
-
-extension ZoneWidgetArray {
-
-	var scrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
-
-	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
-		if  let  frame = controller?.mapPseudoView?.frame {
-			let radius = ZWidgets.ringRadius(at: level)
-			let center = frame.center - scrollOffset
-
-			for w in self {
-				if  absolute {
-					w.updateAbsoluteFrame(relativeTo: controller)
-				} else if w.linesLevel > 0 {
-					let   angle = w.placeAngle
-					let rotated = CGPoint(x: .zero, y: radius).rotate(by: Double(angle))
-					let  origin = center + rotated
-					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(gCircleIdeaRadius)
-					w   .bounds = CGRect(origin:  .zero, size: rect.size)
-					w    .frame = rect
-				}
-			}
 		}
 	}
 
