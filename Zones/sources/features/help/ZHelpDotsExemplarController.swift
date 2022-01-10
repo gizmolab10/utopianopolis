@@ -30,8 +30,8 @@ class ZHelpDotsExemplarController : ZMapController {
 		super.handleSignal(object, kind: kind)
 	}
 
-	override func startup() {
-		setup()
+	override func controllerStartup() {
+		controllerSetup()
 		setupExemplar()
 
 		topLabel?   .font = kLargeHelpFont

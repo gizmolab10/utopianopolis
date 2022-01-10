@@ -21,13 +21,13 @@ class ZGenericController: ZController, ZGeneric {
 	var     allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
 	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
     func handleSignal(_ object: Any?, kind: ZSignalKind) {}
-	func startup() {}
-	func setup() {}
+	func controllerStartup() {}
+	func controllerSetup() {}
 
 	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
 			case .idSubscription,
-				 .idData,
+				 .idDataDetails,
 				 .idMain:    return [.sResize, .spStartupStatus]
 			case .idActions: return [.sResize, .sSearch, .sFound]
 			case .idBigMap:  return [.sData]             // ignore the signal from the end of process next batch
@@ -64,7 +64,7 @@ class ZGenericController: ZController, ZGeneric {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		startup()
+		controllerStartup()
 
         gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
 			self.view.zlayer.backgroundColor = gControllers.backgroundColorFor(self.controllerID).cgColor
@@ -80,7 +80,7 @@ class ZGenericController: ZController, ZGeneric {
     override func viewDidAppear() {
         super.viewDidAppear()
 		isVisible = true
-        setup()
+        controllerSetup()
     }
 
 	override func viewDidDisappear() {

@@ -47,13 +47,13 @@ typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
 let                   gApplication = ZApplication.shared
 
 protocol ZGeneric {
-	func setup()
+	func controllerSetup()
 }
 
 func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
 	if  let t = test, !t() { return }
 	let fancy = (surround == nil) ? message : message.surround(with: surround!)
-	FOREGROUND(canBeDirect: true) {
+	FOREGROUND {
 		print(fancy)
 	}
 }
@@ -2593,6 +2593,8 @@ extension ZColor {
 
 		return ZColor(red: (rLeft + rRight) / 2, green: (gLeft + gRight) / 2, blue: (bLeft + bRight) / 2, alpha: (aLeft + aRight) / 2)
 	}
+
+	func withAlpha(_ alpha: CGFloat) -> ZColor { return ZColor(calibratedRed: redComponent, green: greenComponent, blue: blueComponent, alpha: alpha) }
 
 }
 

@@ -871,14 +871,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  let name = child.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
-					FOREGROUND(canBeDirect: true) {
+					FOREGROUND {
 						self.addChildNoDuplicate(child, updateCoreData: false) // not update core data, it already exists
 						child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 					}
 				}
 			}
 
-			FOREGROUND(canBeDirect: true) {
+			FOREGROUND {
 				self.respectOrder()
 			}
 		}
@@ -1586,7 +1586,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func editAndSelect(range: NSRange? = nil) {
 		edit()
-		FOREGROUND(canBeDirect: true) {
+		FOREGROUND {
 			let newRange = range ?? NSRange(location: 0, length: self.zoneName?.length ?? 0)
 
 			self.widget?.textWidget?.selectCharacter(in: newRange)
@@ -2187,7 +2187,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				p.grab()
-				gSignal([.spCrumbs, .spData, .spSmallMap, .sDetails])
+				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
 			}
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
@@ -2245,7 +2245,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.spCrumbs, .spData, .spSmallMap])
+			gSignal([.spCrumbs, .spDataDetails, .spSmallMap])
 		}
 	}
 
@@ -3510,7 +3510,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// add to map
 
 	func addToParent(_ onCompletion: ZoneMaybeClosure? = nil) {
-		FOREGROUND(canBeDirect: true) {
+		FOREGROUND {
 			self.colorMaybe   = nil               // recompute color
 			let parent        = self.resolveParent
 			let done: Closure = {

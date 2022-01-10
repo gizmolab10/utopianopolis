@@ -40,13 +40,13 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	override func viewWillAppear() {
-		super .viewWillAppear()
-		fullStartupUpdate()
+		super.viewWillAppear()
+		startupUpdate()
 	}
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		switch kind {
-			case .spStartupStatus: updateThermometerBar(); updateStartupVisibility()
+			case .spStartupStatus: updateStartupStatus()
 			default: break
 		}
 	}
@@ -59,24 +59,25 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		}
 	}
 
-	func fullStartupUpdate() {
+	func pingRunloop() {
+		startupUpdate()
+	}
+
+	func startupUpdate() {
 		if !gHasFinishedStartup, gStartup.oneTimerIntervalHasElapsed {
 			FOREGROUND(forced: true) {
-				self.updateThermometerBar()
-				self.updateStartupVisibility()
+				self.updateStartupStatus()
 			}
 		}
 	}
 
-	func updateStartupVisibility() {
+	func updateStartupStatus() {
 		let            hasInternet = gHasInternet
 		let                notWait = [.firstTime, .pleaseEnableDrive].contains(gStartupLevel)
 		acccessToAppleID?.isHidden = !hasInternet || gStartupLevel != .firstTime         // .firstTime shows this
 		enableCloudDrive?.isHidden = !hasInternet || gStartupLevel != .pleaseEnableDrive // .firstTime hides this
 		pleaseWait?      .isHidden =  hasInternet && notWait                             // " " "
-	}
 
-	func updateThermometerBar() {
 		if  gAssureProgressTimesAreLoaded() {
 			let       statusText = gCurrentOp.fullStatus
 			let         rootView = gMainWindow?.contentView
@@ -106,17 +107,12 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			case "continue": gStartupLevel = .pleaseWait; startupCompletion?()
 
 				gBatches.batch(.bResumeCloud) { result in
-					self.refresh()
+					self.startupUpdate()
 				}
 			default:         break
 		}
 
-		refresh()
-	}
-
-	func refresh() {
-		view.setAllSubviewsNeedDisplay()
-		fullStartupUpdate()
+		startupUpdate()
 	}
 
 	func accessAppleID() {
@@ -132,7 +128,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
 		gStartupLevel = .pleaseEnableDrive
 
-		refresh()
+		startupUpdate()
 	}
 
 	var appleIDText: String = [["Seriously is an iCloud enabled app.",

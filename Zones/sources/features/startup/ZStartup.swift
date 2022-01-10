@@ -42,19 +42,19 @@ class ZStartup: NSObject {
 		gRemoteStorage.clear()
 		gSearching.setSearchStateTo(.sNot)
 		gSignal([.spMain, .spStartupStatus])
+		gTimers.startTimers(for: [.tStartup])
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
 				gIsReadyToShowUI = true
 
-				gTimers.startTimers(for: [.tStartup])
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
 						gRefreshPersistentWorkMode()
 						gRemoteStorage.recount()
 						gRefreshCurrentEssay()
-						gProducts.setup()
+						gProducts.fetchProductData()
 
 						gRefusesFirstResponder                = false
 						gMainController?.helpButton?.isHidden = false

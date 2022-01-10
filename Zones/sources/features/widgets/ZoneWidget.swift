@@ -160,7 +160,7 @@ class ZoneWidget: ZPseudoView {
 		backgroundColor = kClearColor
 		#endif
 
-		gStartupController?.fullStartupUpdate()
+		gStartupController?.startupUpdate()
 		gWidgets.setWidgetForZone(self, for: mapType)
 		addTextView()
 
@@ -220,7 +220,7 @@ class ZoneWidget: ZPseudoView {
 				gMapView?.addSubview(t)
 			}
 
-			t.setup()
+			t.controllerSetup()
 		}
 	}
 

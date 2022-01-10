@@ -524,7 +524,7 @@ extension ZAlerts {
     }
     
     func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
-        FOREGROUND(canBeDirect: true) {
+        FOREGROUND {
             let        a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
             let okAction = UIAlertAction(title: iOKTitle, style: .default) { iAction in
                 closure?(a, .sYes)

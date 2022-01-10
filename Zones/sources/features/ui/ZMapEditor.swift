@@ -136,7 +136,7 @@ class ZMapEditor: ZBaseEditor {
 						case "h":        showTraitsPopup()
 						case "f":        gSearching.showSearch(OPTION)
 						case "i":        grabDuplicatesAndRedraw()
-						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spData]) } else { gSelecting.handleDuplicates(COMMAND) }
+						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "n":        editNote(OPTION)
@@ -437,7 +437,7 @@ class ZMapEditor: ZBaseEditor {
 		size          = size.confineBetween(low: .zero, high: 15.0)
 		gBaseFontSize = size
 
-		gRelayoutMaps()
+		gSignal([.spRelayout, .spPreferences])
 	}
 
 	func addDashedLine(onCompletion: Closure? = nil) {
@@ -998,7 +998,7 @@ class ZMapEditor: ZBaseEditor {
 
 					if  recurse {
 						if !isHere {
-							response = [.spData, .spCrumbs]
+							response = [.spDataDetails, .spCrumbs]
 						}
 
 						gSelecting.updateCousinList()
@@ -1112,7 +1112,7 @@ class ZMapEditor: ZBaseEditor {
 						grabThis.grab(updateBrowsingLevel: false)
 
 						if !isHere && forcedResponse == nil {
-							response = [.spData, .spCrumbs]
+							response = [.spDataDetails, .spCrumbs]
 						}
 					} else if !grabThis.isGrabbed || extreme {
 						var grabThese = [grabThis]
@@ -1137,7 +1137,7 @@ class ZMapEditor: ZBaseEditor {
 						gSelecting.addMultipleGrabs(grabThese)
 
 						if !isHere && forcedResponse == nil {
-							response = [.spData, .spCrumbs]
+							response = [.spDataDetails, .spCrumbs]
 						}
 					}
 				} else if doCousinJump,

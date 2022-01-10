@@ -51,7 +51,7 @@ class ZActionsController : ZGenericController {
 
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		update()
+		actionUpdate()
 	}
 	
 	
@@ -67,7 +67,7 @@ class ZActionsController : ZGenericController {
 			
 			switch function {
 			case .eTop, .eEdit, .eCloud,
-				 .eMore:    gCurrentFunction = function; update()
+				 .eMore:    gCurrentFunction = function; actionUpdate()
 			case .eRefetchAll,
 				 .eRefetch: refetch(for: function == .eRefetchAll)
 			case .ePrefs:   switchView(to: function)
@@ -84,7 +84,7 @@ class ZActionsController : ZGenericController {
 	}
 	
 
-	func update() {
+	func actionUpdate() {
 		if  let actions = actionsSelector {
 			let    font = UIFont.systemFont(ofSize: 17)
 			
@@ -163,7 +163,7 @@ class ZActionsController : ZGenericController {
 	func showTop() {
 		gCurrentFunction = .eTop
 		
-		update()
+		actionUpdate()
 	}
 	
 

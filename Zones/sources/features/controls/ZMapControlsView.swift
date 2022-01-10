@@ -74,7 +74,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 		gSignal([.sDetails, .spCrumbs, .spRelayout])
 	}
 
-	func update() {
+	func controlsUpdate() {
 		updateButtonTitlesAndColors()
 		setupAndRedraw()
 		updateTooltips()

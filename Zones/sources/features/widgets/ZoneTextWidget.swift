@@ -53,7 +53,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         }
     }
 
-	func setup() {
+	func controllerSetup() {
 		delegate                   = self
         isBordered                 = false
         textAlignment              = .left

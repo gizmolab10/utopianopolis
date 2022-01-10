@@ -77,7 +77,7 @@ class ZHelpController: ZGenericTableController {
 	// MARK: - display
 	// MARK: -
 
-	func update() {
+	func helpUpdate() {
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
 		titleBarButtons.updateAndRedraw()
@@ -85,11 +85,11 @@ class ZHelpController: ZGenericTableController {
 		updateGridVisibility()
 	}
 
-	override func setup() {
+	override func controllerSetup() {
 		view.zlayer.backgroundColor = .white
 		let                       m = gCurrentHelpMode
 
-		super        .setup()
+		super        .controllerSetup()
 		essayHelpData.setupForMode(m)
 		dotsHelpData .setupForMode(m)
 		mapHelpData  .setupForMode(m)
@@ -155,7 +155,7 @@ class ZHelpController: ZGenericTableController {
 				gHelpWindow?.close()                      // workaround to force a call to the dots draw method (perhaps an apple bug?)
 				gHelpController?.helpData.prepareStrings()
 				gHelpWindowController?.showWindow(self)   // bring to front
-				update()
+				helpUpdate()
 
 				isShowing        = false
 			}

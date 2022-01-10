@@ -153,7 +153,7 @@ class ZBatches: ZOnboarding {
         // 3. no more current batches,                            transfer deferred and recurse
         // 4. no more batches, nothing to process                              turn off spinner
 
-        FOREGROUND(canBeDirect: true) {
+        FOREGROUND {
             if  let         batch = self.currentBatches.first {
                 let    operations = batch.allowedOperations
 				self.currentBatch = batch

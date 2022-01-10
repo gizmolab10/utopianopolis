@@ -436,13 +436,14 @@ extension ZoneDot {
 		case atRight
 
 		static func position(for angle: Double) -> ZPosition {
-			let adjusted = (angle - (kHalfPI / 2.0)).confine(within: k2PI)
+			let adjusted = (angle - (kHalfPI / 2.0)).confine(within: k2PI) // subtract 45 degrees
+			let      tid = kHalfPI / 6.0 // 15 degrees
 
-			if  adjusted < kHalfPI {
+			if        adjusted < (kHalfPI + tid) {
 				return .above
 			} else if adjusted < kPI {
 				return .atLeft
-			} else if adjusted < (kPI + kHalfPI) {
+			} else if adjusted < (kPI + kHalfPI - tid) {
 				return .below
 			}
 
@@ -533,10 +534,10 @@ extension ZMapController {
 			while ZWidgets.hasVisibleChildren   (at: level) {
 				let radius = ZWidgets.ringRadius(at: level)
 				let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
-				let  color = gAccentColor.lighter(by: 2.0)
+				let  color = gAccentColor.withAlpha(0.2)
 				level     += 1
 
-				rect.drawColoredCircle(color, thickness: 0.2)
+				rect.drawColoredCircle(color, thickness: gDotHeight)
 			}
 		}
 	}

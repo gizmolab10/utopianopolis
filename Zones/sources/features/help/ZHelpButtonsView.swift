@@ -81,8 +81,4 @@ class ZHelpButtonsView : ZButtonsView {
 		gHelpController?.showHelpFor(mode)
 	}
 
-	func update() {
-		updateAndRedraw()
-	}
-
 }

@@ -14,6 +14,7 @@ enum ZControllerID: Int {
 	case idHelpEssayGraphicals
     case idSearchResults
 	case idSubscription
+	case idDataDetails
 	case idPreferences
 	case idDebugAngles
 	case idStartHere
@@ -27,7 +28,6 @@ enum ZControllerID: Int {
     case idSearch
 	case idCrumbs
 	case idDebug
-	case idData
 	case idLink
 	case idNote
 	case idMain
@@ -51,12 +51,12 @@ enum ZSignalKind: Int {
 	// these are filtered below, in signalFor
 
 	case spMain
-	case spData
 	case spDebug
 	case spCrumbs
 	case spBigMap
 	case spSmallMap
-    case spPreferences
+	case spDataDetails
+	case spPreferences
 	case spSubscription
 	case spStartupStatus
 }
@@ -150,12 +150,12 @@ class ZControllers: NSObject {
 		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
 		let    mapsIDs : [ZControllerID] = [.idBigMap, .idSmallMap]
 
-		if  multiple.contains(.spRelayout) {
-			gWidgets.clearAll()
-			gMapView?.removeAllTextViews(ofType: .both)
-		}
+		FOREGROUND {
+			if  multiple.contains(.spRelayout) {
+				gWidgets.clearAll()
+				gMapView?.removeAllTextViews(ofType: .both)
+			}
 
-		FOREGROUND(canBeDirect: true) {
 			for regarding in multiple {
 				for (identifier, signalObject) in self.signalObjectsByControllerID {
                     let closure = {
@@ -163,17 +163,17 @@ class ZControllers: NSObject {
                     }
                     
 					switch regarding {  // these non-default cases send a signal only to the one corresponding controller
-						case .spMain:          if identifier == .idMain           { closure() }
-						case .spData:          if identifier == .idData           { closure() }
-						case .spDebug:         if identifier == .idDebug          { closure() }
-						case .spCrumbs:        if identifier == .idCrumbs         { closure() }
-						case .spBigMap:        if identifier == .idBigMap         { closure() }
-						case .spSmallMap:      if identifier == .idSmallMap       { closure() }
-						case .spPreferences:   if identifier == .idPreferences    { closure() }
-						case .spSubscription:  if identifier == .idSubscription   { closure() }
-						case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
-						case .spRelayout:      if    mapsIDs.contains(identifier) { closure() }
-						default:                                                    closure()
+					case .spMain:          if identifier == .idMain           { closure() }
+					case .spDebug:         if identifier == .idDebug          { closure() }
+					case .spCrumbs:        if identifier == .idCrumbs         { closure() }
+					case .spBigMap:        if identifier == .idBigMap         { closure() }
+					case .spSmallMap:      if identifier == .idSmallMap       { closure() }
+					case .spDataDetails:   if identifier == .idDataDetails    { closure() }
+					case .spPreferences:   if identifier == .idPreferences    { closure() }
+					case .spSubscription:  if identifier == .idSubscription   { closure() }
+					case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
+					case .spRelayout:      if    mapsIDs.contains(identifier) { closure() }
+					default:                                                    closure()
 					}
                 }
             }

@@ -34,7 +34,7 @@ class ZGridController: UICollectionViewController {
 		update()
 	}
 
-	func update() {
+	func gridUpdate() {
 		collectionView.reloadData()
 	}
 
@@ -85,7 +85,7 @@ class ZGridController: UICollectionViewController {
 			let complete = {
 				gSelecting.updateAfterMove()
 				redrawMap()
-				self.update()
+				self.gridUpdate()
 			}
 
 			switch gridIID {

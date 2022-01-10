@@ -32,13 +32,13 @@ class ZSimpleToolButton: ZTooltipButton {
 
 	override func mouseUp(with event: ZEvent) {
 		updateTitleForDown(false)
-		controller?.update()
+		controller?.toolsUpdate()
 		super.mouseUp(with: event)
 	}
 
 	override func mouseExited(with event: ZEvent) {
 		updateTitleForDown(false)
-		controller?.update()
+		controller?.toolsUpdate()
 		super.mouseExited(with: event)
 	}
 

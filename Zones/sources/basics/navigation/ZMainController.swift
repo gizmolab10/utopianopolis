@@ -37,12 +37,13 @@ class ZMainController: ZGesturesController {
 		return image
 	}
 
-	override func setup() {
+	override func controllerSetup() {
 		searchResultsView?.isHidden = true
 		view.gestureHandler         = self
 
 		gMapView?.setup()
-		update()
+		super    .controllerSetup()
+		mainUpdate()
 	}
 
 	@IBAction func helpButtonAction(_ button: NSButton) {
@@ -56,7 +57,7 @@ class ZMainController: ZGesturesController {
 		gSignal([.spMain, .sDetails, .spRelayout])
 	}
 
-	func update() {
+	func mainUpdate() {
 		let            showDetails = gShowDetailsView
 		hamburgerButton?  .toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
 		alternateLeading?.constant = !showDetails ? .zero : 226.0
@@ -113,7 +114,7 @@ class ZMainController: ZGesturesController {
 		searchResultsView?.isHidden =  hideResults || gIsEssayMode
 		searchBoxView?    .isHidden =  hideSearch
 
-		update()
+		mainUpdate()
     }
 
 }

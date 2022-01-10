@@ -40,7 +40,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 	
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		update()
+		phoneUpdate()
 	}
 
 
@@ -48,7 +48,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 		gCurrentMapFunction = nextMapFunction
 
 		gActionsController.switchView(to: gCurrentMapFunction)
-		update()
+		phoneUpdate()
 	}
 	
 
@@ -57,7 +57,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 	}
 	
 
-    func update() {
+    func phoneUpdate() {
         let               selectorHeight = CGFloat(48)
         let                    hereTitle = gHereMaybe?.zoneName ?? kEmpty
         editorBottomConstraint?.constant = gKeyboardIsVisible ? keyboardHeight : selectorHeight
@@ -68,7 +68,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
 		actionsView?           .isHidden = false
 		undoButton?            .isHidden = false
 
-		gActionsController.update()
+		gActionsController.actionUpdate()
 		layoutForKeyboard()
     }
 
@@ -109,7 +109,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
             keyboardHeight     = frame.cgRectValue.height
         }
 
-        update()
+        phoneUpdate()
     }
 
 

@@ -12,9 +12,13 @@ import Foundation
 let gFOREGROUND = DispatchQueue.main
 let gBACKGROUND = DispatchQueue.global(qos: .background)
 
-func FOREGROUND(canBeDirect: Bool = false, forced: Bool = false, _ closure: @escaping Closure) {
-    if  Thread.isMainThread && (canBeDirect || forced) {
+func FOREGROUND(forced: Bool = false, after seconds: Double? = nil, _ closure: @escaping Closure) {
+    if  Thread.isMainThread {
         closure()
+	} else if let after = seconds {
+		let when = DispatchTime.now() + Double(Int64(after * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+
+		gFOREGROUND.asyncAfter(deadline: when) { closure() }
 	} else if forced {
 		gFOREGROUND .sync { closure() }
     } else {
@@ -22,23 +26,13 @@ func FOREGROUND(canBeDirect: Bool = false, forced: Bool = false, _ closure: @esc
     }
 }
 
-func BACKGROUND(canBeDirect: Bool = false, _ closure: @escaping Closure) {
-	if  canBeDirect && !Thread.isMainThread {
+func FOREBACKGROUND(_ closure: @escaping Closure) { FOREGROUND(closure) }
+
+func BACKGROUND(_ closure: @escaping Closure) {
+	if !Thread.isMainThread {
 		closure()
 	} else {
 		gBACKGROUND.async { closure() }
 	}
-}
-
-func FOREGROUND(after seconds: Double, closure: @escaping Closure) {
-    let when = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-
-    gFOREGROUND.asyncAfter(deadline: when) { closure() }
-}
-
-func BACKGROUND(after seconds: Double, closure: @escaping Closure) {
-    let when = DispatchTime.now() + Double(Int64(seconds * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
-
-    gBACKGROUND.asyncAfter(deadline: when) { closure() }
 }
 

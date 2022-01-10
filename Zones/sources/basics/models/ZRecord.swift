@@ -146,7 +146,7 @@ class ZRecord: ZManagedObject {
 			}
 
 			converted.append(contentsOf: updateFromCoreDataHierarchyRelationships(visited: v))
-			gStartupController?.fullStartupUpdate()
+			gStartupController?.pingRunloop()
 		}
 
 		return converted
@@ -378,7 +378,7 @@ class ZRecord: ZManagedObject {
 
 	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
 
-		gStartupController?.fullStartupUpdate()
+		gStartupController?.pingRunloop()
 
 		// case 1: name is nil
 		// case 2: ck record already exists

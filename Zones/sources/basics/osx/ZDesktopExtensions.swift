@@ -664,7 +664,7 @@ extension ZAlerts {
     }
 
 	func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
-        FOREGROUND(canBeDirect: true) {
+        FOREGROUND {
             let             a = ZAlert()
             a    .messageText = iMessage
             a.informativeText = iExplain ?? kEmpty

@@ -39,7 +39,7 @@ class ZCloud: ZRecords {
     func start(_ operation: CKDatabaseOperation) {
         currentOperation = operation
 
-        BACKGROUND {     // not stall foreground processor
+        FOREBACKGROUND {     // not stall foreground processor
             self.database?.add(operation)
         }
     }
@@ -148,7 +148,7 @@ class ZCloud: ZRecords {
 	}
 
 	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
-		FOREGROUND(canBeDirect: true) {
+		FOREGROUND {
 			self.manifest = ZManifest.uniqueManifest(recordName: kManifestRootName, in: self.databaseID)
 			self.manifest?.applyDeleted()
 			onCompletion?(op)

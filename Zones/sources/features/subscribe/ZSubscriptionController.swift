@@ -32,16 +32,16 @@ class ZSubscriptionController: ZGenericController {
 	func toggleViews() {
 		gShowMySubscriptions = !gShowMySubscriptions
 
-		update()
+		subscriptionUpdate()
 	}
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSubscribe) { // ignore if hidden
-			update()
+			subscriptionUpdate()
 		}
 	}
 
-	func update() {
+	func subscriptionUpdate() {
 		statusView?      .isHidden = !gShowMySubscriptions
 		buttonsView?     .isHidden =  gShowMySubscriptions
 		height?          .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
@@ -92,7 +92,7 @@ class ZSubscriptionController: ZGenericController {
 	@objc func buttonAction(button: ZSubscriptionButton) {
 		gProducts.purchaseProduct(at: button.tag)
 
-		update()
+		subscriptionUpdate()
 	}
 
 }

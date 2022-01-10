@@ -61,7 +61,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		queue.remove(self)
 	}
 
-	func setup() {   // fetch product data
+	func fetchProductData() {   // fetch product data
 		queue.add(self) // for paymentQueue callbacks
 		queue.restoreCompletedTransactions()
 		fetchProducts()

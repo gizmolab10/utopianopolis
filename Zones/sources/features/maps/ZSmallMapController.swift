@@ -51,30 +51,30 @@ class ZSmallMapController: ZMapController {
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller
-			update()
+			smallMapUpdate()
 			super.handleSignal(iSignalObject, kind: kind)
 		}
 	}
 
-	func update() {
+	func smallMapUpdate() {
 		layoutForCurrentScrollOffset()
-		gMapControlsView?.update()
+		gMapControlsView?.controlsUpdate()
 		gCurrentSmallMapRecords?.updateCurrentBookmark()
 	}
 
-	override func startup() {
-		setup()                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
+	override func controllerStartup() {
+		controllerSetup()                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
 		gMapControlsView?.setupAndRedraw()
 	}
 
-	override func setup() {
+	override func controllerSetup() {
 		if  let                          map = gMapView {
 			rootWidget                       = ZoneWidget (view: map)
 			mapPseudoView                    = ZPseudoView(view: map)
 			view     .layer?.backgroundColor = kClearColor.cgColor
 			mapPseudoView?            .frame = map.frame
 
-			super.setup()
+			super.controllerSetup()
 			platformSetup()
 			mapPseudoView?.addSubpseudoview(rootWidget!)
 		}

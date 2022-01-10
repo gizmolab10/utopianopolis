@@ -276,7 +276,7 @@ class ZFiles: NSObject {
 					}
 				}
 
-				BACKGROUND {
+				FOREBACKGROUND {
 					let jsonDict = dict.jsonDict
 
 					if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {

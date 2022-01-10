@@ -175,7 +175,7 @@ class ZCoreDataStack: NSObject {
 	func saveContext() {
 		if  gCanSave, gIsReadyToShowUI {
 			self.deferUntilAvailable(for: .oSave) {
-				BACKGROUND {
+				FOREBACKGROUND {
 					let context = self.context
 					if  context.hasChanges {
 						self.checkCrossStore()
@@ -201,7 +201,7 @@ class ZCoreDataStack: NSObject {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) {
-				BACKGROUND {
+				FOREBACKGROUND {
 					self.load(type: kManifestType, into: dbID, onlyOne: false)
 
 					gProgressTimesReady = true
@@ -221,7 +221,7 @@ class ZCoreDataStack: NSObject {
 						gRemoteStorage.updateManifestCount(for: dbID)
 						gRemoteStorage.recount()
 						gHereMaybe?.grab()
-						gSignal([.spRelayout, .spData, .spCrumbs])
+						gSignal([.spRelayout, .spDataDetails, .spCrumbs])
 						self.makeAvailable()
 						onCompletion?(0)
 					}
@@ -448,7 +448,7 @@ class ZCoreDataStack: NSObject {
 			request.predicate = predicate.and(dbidPredicate(from: dbID))
 
 			deferUntilAvailable(for: .oSearch) {
-				BACKGROUND {
+				FOREBACKGROUND {
 					self.persistentContainer.performBackgroundTask { context in
 						var objectIDs = ZObjectIDsArray()
 						do {
@@ -555,16 +555,16 @@ class ZCoreDataStack: NSObject {
 	func isAvailable(for opID: ZCDOperationID) -> Bool { return currentOpID == nil || currentOpID == opID }
 	func makeAvailable()                               {        currentOpID  = nil }
 
-	func invokeDeferralMaybe(_ iTimer: Timer?) {
-		if  currentOpID == nil {           // nil means core data is no longer doing anything
-			if  deferralStack.count == 0 { // check if anything is deferred
-				iTimer?.invalidate()       // do not fire again, closure is only invoked once
+	func invokeDeferralMaybe(_ iTimerID: ZTimerID?) {
+		if  currentOpID == nil {                  // nil means core data is no longer doing anything
+			if  deferralStack.count == 0 {        // check if anything is deferred
+				gTimers.stopTimer(for: iTimerID)  // do not fire again, closure is no longer invoked
 			} else {
 				let waiting = deferralStack.remove(at: 0)
 				currentOpID = waiting.opID
 
-				gSignal([.spData])         // tell data detail view about it
-				waiting.closure?()     // do what was deferred
+				gSignal([.spDataDetails])         // tell data detail view about it
+				waiting.closure?()                // do what was deferred
 			}
 		}
 	}
@@ -706,7 +706,7 @@ class ZCoreDataStack: NSObject {
 			printDebug(.dExist, "\(dbID.identifier) = \(count)\(entityName)")
 
 			deferUntilAvailable(for: .oExistence) {
-				BACKGROUND {
+				FOREBACKGROUND {
 					do {
 						let items = try self.context.fetch(request)
 

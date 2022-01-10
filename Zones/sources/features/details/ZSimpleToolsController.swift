@@ -82,7 +82,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	}
 
 	@IBAction func buttonAction(_ button: ZSimpleToolButton) {
-		update()
+		toolsUpdate()
 
 		if  let itemID = button.simpleToolID,
 			let    key = keyFrom(itemID) {
@@ -96,7 +96,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		}
 	}
 
-	override func startup() {
+	override func controllerStartup() {
 
 		// //////////////////////////////////// //
 		// map buttons & boxes, using their ids //
@@ -127,11 +127,11 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSimpleTools) { // ignore if hidden
-			update()
+			toolsUpdate()
 		}
 	}
 
-	func update() {
+	func toolsUpdate() {
 		updateFlags() // must call this first as others rely on flags
 		updateTooltips()
 		updateBoxesAndButtons()

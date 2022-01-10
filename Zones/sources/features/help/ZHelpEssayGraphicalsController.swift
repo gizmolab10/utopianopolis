@@ -17,8 +17,8 @@ class ZHelpEssayGraphicalsController : ZGenericController {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
 	}
 
-	override func startup() {
-		setup()
+	override func controllerStartup() {
+		controllerSetup()
 
 	}
 
