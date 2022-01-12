@@ -222,11 +222,16 @@ extension ZMapControlsView {
 			if  gShowToolTips,
 				let     type = button.modeButtonType {
 				let browsing = "vertical browsing"
+				var      tip : String?
 
 				switch type {
-				case .tLayout: break
-				case .tGrowth:  button.toolTip = "Growth direction\n\n\(kClickTo)grow lists \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
-				case .tConfine: button.toolTip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within current list")"
+				case .tLayout:  tip = "Arrangement\n\n\(kClickTo)arrange ideas as a \(gMapLayoutMode == .circularMode ? "tree" : "starburst")"
+				case .tGrowth:  tip = "Growth direction\n\n\(kClickTo)grow lists \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+				case .tConfine: tip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within current list")"
+				}
+
+				if  let t = tip {
+					button.toolTip = t
 				}
 			}
 		}

@@ -780,6 +780,7 @@
 				A752FC2B24512D7700603A54 /* ZoneArray.swift */,
 				0C39B25E1F182EBB0091F4D1 /* ZRecord.swift */,
 				0C43EFC921010F62000976CE /* ZRecords.swift */,
+				A711059C25BB95E400D051E9 /* ZSmallMapRecords.swift */,
 				0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */,
 				A711059625BB620500D051E9 /* ZTraitArray.swift */,
 				A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */,
@@ -992,12 +993,21 @@
 				A705B09F2780F02700DBA20F /* ZDetecting.swift */,
 				A705B09B27768C0800DBA20F /* ZDragging.swift */,
 				A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */,
-				A7395BAE21B877B600F5759F /* ZMapEditor.swift */,
 				A7DF7DBB247AFE2800F03060 /* ZRubberband.swift */,
 				0C39B2491F182EBB0091F4D1 /* ZSelecting.swift */,
 				A706442D246E182400F90B86 /* ZTooltips.swift */,
 			);
 			path = ui;
+			sourceTree = "<group>";
+		};
+		A7583EED278F625B00F57996 /* editors */ = {
+			isa = PBXGroup;
+			children = (
+				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
+				A7395BAE21B877B600F5759F /* ZMapEditor.swift */,
+				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
+			);
+			path = editors;
 			sourceTree = "<group>";
 		};
 		A769977E24983C2C00DF289D /* breadcrumbs */ = {
@@ -1016,7 +1026,6 @@
 			children = (
 				A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */,
 				A78A6DFF23B02163000F581F /* ZEssayController.swift */,
-				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
 				A7B48A7923E0E80C00654DBD /* ZEssayView.swift */,
 				A7E096C923EB98FA0017EC32 /* ZLinkDialogController.swift */,
 				A7229FAC23B84B4300FA2841 /* ZNote.swift */,
@@ -1100,7 +1109,6 @@
 				0CB619951FB3C4660087B066 /* ZMapController.swift */,
 				A777A7AE260FAC0300361265 /* ZMapView.swift */,
 				A70644212461EC3600F90B86 /* ZSmallMapController.swift */,
-				A711059C25BB95E400D051E9 /* ZSmallMapRecords.swift */,
 			);
 			path = maps;
 			sourceTree = "<group>";
@@ -1147,6 +1155,7 @@
 				A796740D26597CD200F06769 /* controls */,
 				A786C6EE25DF5F7400B23FBF /* debug */,
 				0C39B2271F182EBB0091F4D1 /* details */,
+				A7583EED278F625B00F57996 /* editors */,
 				A769977F24983C9600DF289D /* essays */,
 				A7D2D65224902F8F00F652B0 /* help */,
 				A73A601C273DA36500703459 /* layout */,
@@ -1169,7 +1178,6 @@
 				A78460F027289E7D006A4075 /* ZoneLine.swift */,
 				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
 				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
-				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
 				0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */,
 			);
 			path = widgets;
@@ -2110,14 +2118,14 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
-				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2037;
+				CURRENT_PROJECT_VERSION = 2038;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -2150,7 +2158,7 @@
 				SWIFT_INCLUDE_PATHS = "$(inherited)";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;
@@ -2162,14 +2170,14 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
-				ASSETCATALOG_COMPILER_OPTIMIZATION = time;
+				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2037;
+				CURRENT_PROJECT_VERSION = 2038;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -2201,6 +2209,7 @@
 				SWIFT_INCLUDE_PATHS = "$(inherited)";
 				SWIFT_INSTALL_OBJC_HEADER = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.2;

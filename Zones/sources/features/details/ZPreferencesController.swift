@@ -74,7 +74,7 @@ class ZPreferencesController: ZGenericController {
 				gIgnoreEvents = flag
 			}
 
-			gRelayoutMaps()
+			gSignal([.spRelayout, .spCrumbs, .spPreferences])
 		}
     }
 

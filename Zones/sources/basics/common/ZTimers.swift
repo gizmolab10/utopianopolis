@@ -109,7 +109,7 @@ class ZTimers: NSObject {
 				case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
 				case .tSync:                    block = { if gIsReadyToShowUI { gSaveContext() } }
 				case .tRecount:                 block = { if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.spDataDetails]) } }
-				case .tCloudAvailable:          block = { FOREGROUND { gBatches.cloudFire() } }
+				case .tCloudAvailable:          block = { gBatches.cloudFire() }
 				case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
 				case .tStartup:                 block = { gStartupController?.startupUpdate() }
 				case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }
@@ -137,9 +137,10 @@ class ZTimers: NSObject {
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping Closure) {
 		if  let id = timerID {
 			FOREGROUND { // timers require a runloop
-				self.timers[id]?.invalidate()
-				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { iTimer in block() })
-//				self.timers[id]?.fire()
+				self.timers[id]?.invalidate() // do not leave the old one "floating around and uncontrollable"
+				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { iTimer in
+					block()
+				})
 			}
 		}
 	}

@@ -516,7 +516,7 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="cUb-54-gft"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Switch linear and circular mode" keyEquivalent="'" id="ocY-HI-lhX">
+                                                    <menuItem title="Switch between tree and starbutst modes" keyEquivalent="'" id="ocY-HI-lhX">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="a1Z-fH-D0W"/>
                                                         </connections>

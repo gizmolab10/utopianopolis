@@ -143,7 +143,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(.zero, 20.0) : CGPoint(x: -12.0, y: -6.0)
+		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(.zero, 22.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y              = -offset.y               // why?
 		if  let          size = rootWidget?.drawnSize {
 			let      relocate = CGPoint((view.frame.size - size).dividedInHalf)
