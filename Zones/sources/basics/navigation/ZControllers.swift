@@ -89,7 +89,7 @@ class ZControllers: NSObject {
 
 		gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
 
-		gEssayView?.updateTitlesControlAndMode()     // why?
+		gEssayView?.updateTitlesControlAndMode()
 		gEssayView?.enableEssayControls(gIsEssayMode)
 		gSignal([.sSwap, .spCrumbs, .spSmallMap])
 

@@ -245,8 +245,8 @@ extension ZTooltipButton {
 		toolTip = nil
 
 		if  gShowToolTips,
-			let tagID = ZEssayButtonID(rawValue: tag) {
-			toolTip   = "\(kClickTo)\(tagID.tooltipString)"
+			let buttonID = ZEssayButtonID(rawValue: tag) {
+			toolTip      = "\(kClickTo)\(buttonID.tooltipString)"
 		}
 	}
 

@@ -34,15 +34,15 @@ class ZStartup: NSObject {
 	}
 
 	func startupCloudAndUI() {
-		gRefusesFirstResponder         = true			// WORKAROUND new feature of mac os x
-		gHelpWindowController          = NSStoryboard(name: "Help",         bundle: nil).instantiateInitialController() as? NSWindowController
-		gMigrationState                = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime
-		gWorkMode                      = .wStartupMode
+		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
+		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
+		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime
+		gWorkMode              = .wStartupMode
 
 		gRemoteStorage.clear()
 		gSearching.setSearchStateTo(.sNot)
 		gSignal([.spMain, .spStartupStatus])
-		gTimers.startTimers(for: [.tStartup])
+		gTimers.startTimer(for: .tStartup)
 
 		gBatches.startUp { iSame in
 			FOREGROUND {
