@@ -459,31 +459,28 @@ class ZTextEditor: ZTextView {
         return currentTextWidget?.offset(for: selectedRange, atStart) ?? .zero
     }
 
-	func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
-        currentOffset   = currentOffset ?? editingOffset(iMoveUp)
-        let currentZone = currentlyEditedZone
-        let      isHere = currentZone == gHere
-        let           e = currentEdit // for the case where stopEdit is true
+	func moveUp(_ up: Bool, stopEdit: Bool) {
+        currentOffset = currentOffset ?? editingOffset(up)
+        let         e = currentEdit // for the case where stopEdit is true
 
         if  stopEdit {
             applyPreservingOffset {
                 capture()
-                currentZone?.grab()
+                currentlyEditedZone?.grab()
             }
         }
         
-        if  var original = currentZone {
-            gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { kinds in
+        if  var original = currentlyEditedZone {
+            gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
                 gControllers.signalFor(nil, multiple: kinds) {
-                    if  isHere {
-                        self.currentOffset = currentZone?.widget?.textWidget?.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
+					if  let widget = original.widget, widget.isHere {       // offset has changed
+                        self.currentOffset = widget.textWidget?.offset(for: self.selectedRange, up)
                     }
                     
-                    if  stopEdit,
-                        let first = gSelecting.firstSortedGrab {
+					if  let first = gSelecting.firstSortedGrab, stopEdit {
                         original  = first
                         
-                        if  original != currentZone { // if move up (above) does nothing, ignore
+						if  original != self.currentlyEditedZone { // if move up (above) does nothing, ignore
                             self.edit(original)
                         } else {
                             self.currentEdit = e // restore after capture sets it to nil

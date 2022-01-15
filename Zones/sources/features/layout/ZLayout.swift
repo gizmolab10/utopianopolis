@@ -32,10 +32,10 @@ extension ZoneWidget {
 		}
 	}
 
-	func updateHighlightFrame() {
+	func updateHighlightRect() {
 		switch mode {
-		case .linearMode:   return   linearUpdateHighlightFrame()
-		case .circularMode: return circularUpdateHighlightFrame()
+		case .linearMode:   return   linearUpdateHighlightRect()
+		case .circularMode: return circularUpdateHighlightRect()
 		}
 	}
 
@@ -60,10 +60,10 @@ extension ZoneWidget {
 
 extension ZoneLine {
 
-	var absoluteDropDragDotRect: CGRect {
+	var absoluteFloatingDotRect: CGRect {
 		switch mode {
-			case .linearMode:   return   linearAbsoluteDropDragDotRect
-			case .circularMode: return circularAbsoluteDropDragDotRect
+			case .linearMode:   return   linearAbsoluteFloatingDotRect
+			case .circularMode: return circularAbsoluteFloatingDotRect
 		}
 	}
 

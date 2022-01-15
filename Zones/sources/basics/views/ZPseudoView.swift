@@ -23,8 +23,8 @@ enum ZDrawPhase: String {
 class ZPseudoView: NSObject {
 
 	var      isHovering = false
-	var  detectionFrame = CGRect.zero
 	var   absoluteFrame = CGRect.zero
+	var absoluteHitRect = CGRect.zero
 	var          bounds = CGRect.zero
 	var           frame = CGRect.zero
 	var       drawnSize = CGSize.zero { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }

@@ -82,7 +82,7 @@ extension ZMapController {
 
 	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
 		if  let     location = locationInWindow, !gIgnoreHovering { // not blink rubberband
-			if  let      any = detect(at: location) {
+			if  let      any = detectHit(at: location) {
 				if  let    v = gHovering.declareHover(any) {
 					return v
 				}

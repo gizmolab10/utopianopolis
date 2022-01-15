@@ -13,9 +13,11 @@ let gDragging = ZDragging()
 class ZDragging: NSObject {
 
 	var draggedZones =         ZoneArray()
-	var dragRelation :         ZRelation?
+	var dropRelation :         ZRelation?
+	var debugIndices : NSMutableIndexSet?
 	var  dropIndices : NSMutableIndexSet?
 	var   dropWidget :        ZoneWidget?
+	var    debugDrop :              Zone?
 	var    dropCrumb : ZBreadcrumbButton?
 	var    dragPoint :           CGPoint?
 	var     dragLine :          ZoneLine?
@@ -30,7 +32,15 @@ class ZDragging: NSObject {
 	}
 
 	func clearDragAndDrop() {
-		dragRelation = nil
+		if  let z = dropWidget?.widgetZone {
+			debugDrop = z
+		}
+
+		if  let i = dropIndices {
+			debugIndices = i
+		}
+
+		dropRelation = nil
 		dropIndices  = nil
 		dropWidget   = nil
 		dropCrumb    = nil
@@ -45,7 +55,7 @@ class ZDragging: NSObject {
 		gMapView?.setNeedsDisplay() // erase drag: line and dot
 	}
 
-	func handleDragGesture(_ gesture: ZKeyPanGestureRecognizer, in controller: ZMapController) {
+	func handleDragGesture(_ gesture: ZPanGestureRecognizer, in controller: ZMapController) {
 		if  gIgnoreEvents {
 			return
 		}
@@ -69,7 +79,7 @@ class ZDragging: NSObject {
 				cleanupAfterDrag()
 				controller.restartGestureRecognition()
 				gSignal([.spPreferences, .sDatum])                            // so color well and indicators get updated
-			} else if let any = controller.detect(at: location),
+			} else if let any = controller.detectHit(at: location),
 				let       dot = any as? ZoneDot {
 				if  dot.isReveal {
 					cleanupAfterDrag()                        // no dragging
@@ -112,7 +122,7 @@ class ZDragging: NSObject {
 	// MARK: -
 
 	func dropOnto(_ zone: Zone, at dropAt: Int? = nil, _ iGesture: ZGestureRecognizer?) {
-		if  let gesture = iGesture as? ZKeyPanGestureRecognizer,
+		if  let gesture = iGesture as? ZPanGestureRecognizer,
 			let   flags = gesture.modifiers {
 			zone.addZones(draggedZones, at: dropAt, undoManager: gMapEditor.undoManager, flags) {
 				gSelecting.updateBrowsingLevel()

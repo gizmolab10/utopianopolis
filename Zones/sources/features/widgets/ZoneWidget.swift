@@ -85,7 +85,7 @@ class ZWidgetObject: NSObject {
 @objc (ZoneWidget)
 class ZoneWidget: ZPseudoView {
 
-	var       highlightFrame =     CGRect.zero
+	var        highlightRect =     CGRect.zero
 	let         widgetObject =   ZWidgetObject()
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
@@ -100,6 +100,7 @@ class ZoneWidget: ZPseudoView {
 	override var description :          String  { return widgetZone?       .description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?       .hideDragDot ?? false }
+	var               isHere :            Bool  { return controller?.hereWidget == self }
 	var             isCenter :            Bool  { return linesLevel == 0 }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
 
@@ -333,8 +334,8 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func traverseAllWidgetProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
-		safeTraverseWidgetProgeny(visited: [], inReverse: inReverse) { iWidget -> ZTraverseStatus in
-			block(iWidget)
+		safeTraverseWidgetProgeny(visited: [], inReverse: inReverse) { widget -> ZTraverseStatus in
+			block(widget)
 
 			return .eContinue
 		}
@@ -413,7 +414,7 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func drawSelectionHighlight(_ style: ZHighlightStyle) {
-		if  highlightFrame.hasZeroSize || style == .none {
+		if  highlightRect.hasZeroSize || style == .none {
 			return
 		}
 
@@ -473,10 +474,10 @@ class ZoneWidget: ZPseudoView {
     }
 
 	func debugDraw(_ extraThick: Bool = false) {
-		detectionFrame.drawColoredRect(.green, radius: .zero, thickness: extraThick ? 5.0 : 1.0)
-//		highlightFrame.drawColoredRect(.blue,  radius: .zero)
-//		absoluteFrame .drawColoredRect(.red,   radius: .zero)
-		childrenView?.absoluteFrame.drawColoredRect(.orange)
+		absoluteDragHitRect.drawColoredRect(.green, radius: .zero, thickness: extraThick ? 5.0 : 1.0)
+//		highlightRect.drawColoredRect(.blue,  radius: .zero)
+//		absoluteFrame.drawColoredRect(.red,   radius: .zero)
+//		childrenView?.absoluteFrame.drawColoredRect(.orange)
 	}
 
 }

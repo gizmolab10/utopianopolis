@@ -89,12 +89,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                  dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
+	var               canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
+	var                      hasSiblings :               Bool  { return parentZoneMaybe?.count ?? 0 > 1 }
 	var                 hasBadRecordName :               Bool  { return recordName == nil }
 	var                    showRevealDot :               Bool  { return count > 0 || isTraveller }
 	var                    hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                    hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                     hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
-	var                      hasSiblings :               Bool  { return parentZone?.count ?? 0 > 1 }
 	var                       linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                       isSelected :               Bool  { return gSelecting.isSelected(self) }
 	var                        isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }

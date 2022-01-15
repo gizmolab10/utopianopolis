@@ -96,7 +96,7 @@ extension ZSimpleToolButton {
 			let   adjective = notMultiple ? kEmpty : "\(gListsGrowDown ? "bottom" : "top")- or left-most "
 			let currentIdea = " the \(adjective)currently selected idea"
 			let     unfocus = "from \(gCurrentSmallMapName)s, remove bookmark targeting"
-			let       focus = (gIsHere ? "creates a \(gCurrentSmallMapName) from" : (canTravel ? "travel to target of" : "focus on"))
+			let       focus = (gSelecting.movableIsHere ? "creates a \(gCurrentSmallMapName) from" : (canTravel ? "travel to target of" : "focus on"))
 			let    forFocus = CONTROL ? unfocus  : focus
 			let  forSibling = OPTION  ? "parent" : "sibling"
 

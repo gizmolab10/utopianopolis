@@ -48,7 +48,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                         mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
 	var                      mapView : ZMapView?      { return view as? ZMapView}
 	var                mapPseudoView : ZPseudoView?
-	var                   rootWidget : ZoneWidget?
+	var                   hereWidget : ZoneWidget?
 	var                     rootLine : ZoneLine?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
@@ -56,14 +56,14 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	override func controllerSetup() {
 		if  let                          map = mapView {
 			gestureView                      = map         // do this before calling super setup: it uses gesture view
-			rootWidget                       = ZoneWidget (view: map)
+			hereWidget                       = ZoneWidget (view: map)
 			mapPseudoView                    = ZPseudoView(view: map)
 			view     .layer?.backgroundColor = kClearColor.cgColor
 			mapPseudoView?            .frame = map.frame
 
 			super.controllerSetup()
 			platformSetup()
-			mapPseudoView?.addSubpseudoview(rootWidget!)
+			mapPseudoView?.addSubpseudoview(hereWidget!)
 		}
 	}
 
@@ -74,7 +74,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				rootLine?.draw(phase) // for here's drag dot
 			}
 
-			rootWidget?.traverseAllWidgetProgeny() { widget in
+			hereWidget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}
 
@@ -101,7 +101,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     #if false
 
 	private func updateMinZoomScaleForSize(_ size: CGSize) {
-        let           w = rootWidget
+        let           w = hereWidget
         let heightScale = size.height / w.bounds.height
         let  widthScale = size.width  / w.bounds.width
         let    minScale = min(widthScale, heightScale)
@@ -145,12 +145,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(.zero, 22.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y              = -offset.y               // why?
-		if  let          size = rootWidget?.drawnSize {
+		if  let          size = hereWidget?.drawnSize {
 			let      relocate = CGPoint((view.frame.size - size).dividedInHalf)
 			let        origin = (isBigMap ? relocate : .zero) + offset
-			rootWidget?.frame = CGRect(origin: origin, size: size)
+			hereWidget?.frame = CGRect(origin: origin, size: size)
 
-			rootWidget?.grandUpdate()
+			hereWidget?.grandUpdate()
 			detectHover(at: view.currentMouseLocationInWindow)
 			setNeedsDisplay()
 		}
@@ -173,7 +173,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		var specificIndex:    Int?
 		let specificView           = mapPseudoView
-		var specificWidget         = rootWidget
+		var specificWidget         = hereWidget
         var              recursing = true
 		let                   here = hereZone
         specificWidget?.widgetZone = here
@@ -192,7 +192,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
-		if  let    r = rootWidget, (!isBigMap || gMapLayoutMode == .linearMode) {
+		if  let    r = hereWidget, (!isBigMap || gMapLayoutMode == .linearMode) {
 			let line = r.createLineFor(child: r)
 			rootLine = line
 
@@ -258,7 +258,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         }
 
 		if  gIsDraggableMode,
-			let gesture  = iGesture as? ZKeyPanGestureRecognizer {
+			let gesture  = iGesture as? ZPanGestureRecognizer {
 			let location = gesture.location(in: gesture.view)
 
 			printDebug(.dClick, "drag")
@@ -310,7 +310,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 				gTextEditor.stopCurrentEdit()
 				
-				if  let any = detect(at: location) {
+				if  let any = detectHit(at: location) {
 					if  let w = any as? ZoneWidget {
 						w.widgetZone?.grab()
 					} else if let d = any as? ZoneDot,
@@ -351,9 +351,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
         return false
     }
 
-    func relationOf(_ point: CGPoint, to iWidget: ZoneWidget?) -> ZRelation {
+    func relationOf(_ point: CGPoint, to widget: ZoneWidget?) -> ZRelation {
         var     relation = ZRelation.upon
-		if  let     text = iWidget?.pseudoTextWidget {
+		if  let     text = widget?.pseudoTextWidget {
 			let     rect = text.absoluteFrame.insetBy(dx: .zero, dy: 5.0)
 			let     minY = rect.minY
 			let     maxY = rect.maxY

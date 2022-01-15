@@ -177,7 +177,7 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gMapController?.rootWidget?.bounds.size.width, w < 1.0 {
+        if  let w = gMapController?.hereWidget?.bounds.size.width, w < 1.0 {
             bam("blank map !!!!!!")
         }
     }
@@ -997,6 +997,7 @@ extension CGRect {
 
 	func        expandedBy(dx: CGFloat, dy: CGFloat) -> CGRect { return insetBy(dx: -dx, dy: -dy) }
 	func expandedEquallyBy(_     expansion: CGFloat) -> CGRect { return insetEquallyBy(-expansion) }
+	func expandedEquallyBy(       fraction: CGFloat) -> CGRect { return insetEquallyBy(fraction: -fraction) }
 	func    insetEquallyBy(       fraction: CGFloat) -> CGRect { return insetBy(fractionX: fraction, fractionY: fraction) }
 	func    insetEquallyBy(_         inset: CGFloat) -> CGRect { return insetBy(dx: inset, dy: inset) }
 	func   offsetEquallyBy(_        offset: CGFloat) -> CGRect { return offsetBy(dx: offset, dy: offset) }

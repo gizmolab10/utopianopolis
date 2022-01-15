@@ -266,8 +266,8 @@ extension UIView {
         return gesture
     }
 
-    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
-        let                    gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZPanGestureRecognizer {
+        let                    gesture = ZPanGestureRecognizer(target: target, action: action)
         gesture              .delegate = target
         gesture.maximumNumberOfTouches = 1
 

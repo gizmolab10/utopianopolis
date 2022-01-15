@@ -43,7 +43,7 @@ class ZRubberband: NSObject {
 		if  let rect = rubberbandRect {
 			for widget in gWidgets.visibleWidgets {
 				if  let zone = widget.widgetZone, !zone.isSmallMapRoot,
-					widget.highlightFrame.intersects(rect) {
+					widget.highlightRect.intersects(rect) {
 					gSelecting.addOneGrab(zone)
 				}
 			}

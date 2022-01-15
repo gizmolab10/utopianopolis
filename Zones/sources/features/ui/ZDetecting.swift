@@ -14,43 +14,29 @@ import UIKit
 
 extension ZoneWidget {
 
-	func detect(at location: CGPoint, recursive: Bool = true) -> Any? {
-		if  let                z = widgetZone, z.isShowing, detectionFrame.contains(location) {
-			if  let            d = parentLine?.dragDot,   d.detectionFrame.contains(location) {
-				return         d
-			}
-			for line in childrenLines {
-				if  let        r = line.revealDot,        r.detectionFrame.contains(location) {
-					return     r
-				}
-			}
-			if  let            t = pseudoTextWidget,       t.absoluteFrame.contains(location) {
-				return         textWidget
-			}
-			if  isCircularMode,                             highlightFrame.contains(location) {
-				return         self
-			}
-			if  recursive {
-				for child in childrenWidgets {
-					if  let    c = child.detect(at: location) {
-						return c
-					}
-				}
+	var absoluteDragHitRect : CGRect {
+		var     rect  = absoluteHitRect
+		if  let view  = controller?.mapPseudoView {
+			let vRect = view.frame
+			if  isHere {
+				rect  = vRect
+			} else if gDragging.isDragging {
+				rect            = rect.expandedEquallyBy(fraction: 0.5)
+				rect  .origin.x = vRect.minX
+				rect.size.width = vRect.width
 			}
 		}
 
-		return nil
+		return rect
 	}
 
-	func widgetNearestTo(_ point: CGPoint, in iView: ZPseudoView?, _ iHere: Zone?, _ visited: ZoneWidgetArray = []) -> ZoneWidget? {
-		if  let view = iView,
-			let here = iHere,
-			!visited.contains(self),
-			dragHitRect(in: view, here).contains(point) {
+	func widgetNearestTo(_ point: CGPoint, _  visited: ZoneWidgetArray = []) -> ZoneWidget? {
+		if  !visited.contains(self),
+			absoluteDragHitRect.contains(point) {
 
 			for child in childrenWidgets {
 				if  self        != child,
-					let    found = child.widgetNearestTo(point, in: view, here, visited + [self]) {    // recurse into child
+					let    found = child.widgetNearestTo(point, visited + [self]) {    // recurse into child
 					return found
 				}
 			}
@@ -61,55 +47,45 @@ extension ZoneWidget {
 		return nil
 	}
 
-	func dragHitRect(in view: ZPseudoView, _ here: Zone) -> CGRect {
-		if  here == widgetZone {
-			return view.frame
+	func detectHit(at location: CGPoint, recursive: Bool = true) -> Any? {
+		if  let                z = widgetZone, z.isShowing, absoluteHitRect.contains(location) {
+			if  let            d = parentLine?.dragDot,   d.absoluteHitRect.contains(location) {
+				return         d
+			}
+			for line in childrenLines {
+				if  let        r = line.revealDot,        r.absoluteHitRect.contains(location) {
+					return     r
+				}
+			}
+			if  let            t = pseudoTextWidget,        t.absoluteFrame.contains(location) {
+				return         textWidget
+			}
+			if  isCircularMode,                               highlightRect.contains(location) {
+				return         self
+			}
+			if  recursive {
+				for child in childrenWidgets {
+					if  let    c = child.detectHit(at: location) {
+						return c
+					}
+				}
+			}
 		}
 
-		return absoluteFrame
+		return nil
 	}
 
 }
 
 extension ZMapController {
 
-	func detect(at location: CGPoint) -> Any? {
+	func detectHit(at location: CGPoint) -> Any? {
 		if  isBigMap,
-			let    any = gSmallMapController?.detect(at: location) {
+			let    any = gSmallMapController?.detectHit(at: location) {
 			return any
 		}
 
-		return rootWidget?.detect(at: location)
-	}
-
-	func widgetHit(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (Bool, Zone?, CGPoint)? {
-		if  let         viewG = gesture?.view,
-			let     locationM = gesture?.location(in: viewG),
-			let       widgetM = rootWidget?.widgetNearestTo(locationM, in: mapPseudoView, hereZone) {
-			let     alternate = isBigMap ? gSmallMapController : gMapController
-			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
-				let locationA = mapPseudoView?.convertPoint(locationM, toRootPseudoView: mapViewA),
-				let   widgetA = alternate?.rootWidget?.widgetNearestTo(locationA, in: mapViewA, alternate?.hereZone),
-				let  dragDotM = widgetM.parentLine?.dragDot,
-				let  dragDotA = widgetA.parentLine?.dragDot {
-				let   vectorM = dragDotM.absoluteFrame.center - locationM
-				let   vectorA = dragDotA.absoluteFrame.center - locationM
-				let   lengthM = vectorM.length
-				let   lengthA = vectorA.length
-
-				// ////////////////////////////////////////////////////// //
-				// determine which drag dot's center is closest to cursor //
-				// ////////////////////////////////////////////////////// //
-
-				if  lengthA < lengthM {
-					return (false, widgetA.widgetZone, locatedInBigMap ? locationM : locationA)
-				}
-			}
-
-			return (true, widgetM.widgetZone, locationM)
-		}
-
-		return nil
+		return hereWidget?.detectHit(at: location)
 	}
 
 }

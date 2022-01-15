@@ -95,9 +95,9 @@ class ZoneDot: ZPseudoView {
 		return drawnSize
 	}
 
-    func setupForWidget(_ iWidget: ZoneWidget?, asReveal: Bool) {
+    func setupForWidget(_ w: ZoneWidget?, asReveal: Bool) {
         isReveal = asReveal
-        widget   = iWidget
+        widget   = w
 
 		updateDotDrawnSize()
 	}
@@ -297,12 +297,13 @@ class ZoneDot: ZPseudoView {
 
     func draw() {
 		let rect   = absoluteFrame
-		let isDrop = isDragDrop && gDragging.dragLine?.parentWidget == widget
+		let drag   = gDragging.dragLine?.parentWidget?.widgetZone
+		let isDrop = isDragDrop && drag != nil && drag == widgetZone
 		if  rect.hasSize, dotIsVisible,
 			let parameters = widgetZone?.plainDotParameters(isFilled, isReveal, isDrop) {
 
 //			if  isCircularMode, gdebugdraw {
-//				detectionFrame.drawColoredRect(.red, radius: 2.0, thickness: 1.0)
+//				hitRect.drawColoredRect(.red, radius: 2.0, thickness: 1.0)
 //			}
 			
 			drawDot      (rect, parameters)

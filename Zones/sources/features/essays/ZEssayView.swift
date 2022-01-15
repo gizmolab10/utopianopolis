@@ -1020,7 +1020,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			// //////////////////////////////////////////////////////////////// //
 
 			rect                = bar.subviews[0].frame
-			let x               = CGFloat(73.0)
+			let x               = CGFloat(63.0)
 			let y               = CGFloat(-2.0)
 			let gap             = CGFloat( 4.0)
 			var prior           = rect!

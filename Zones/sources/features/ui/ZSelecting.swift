@@ -62,6 +62,7 @@ class ZSnapshot: NSObject {
 
 class ZSelecting: NSObject {
 
+	var   movableIsHere :  Bool  { return gHereMaybe != nil && gHereMaybe == currentMoveableMaybe }
 	var         hasGrab :  Bool  { return  currentGrabs.count > 0 }
 	var hasMultipleGrab :  Bool  { return  currentGrabs.count > 1 }
 	var currentMoveable :  Zone  { return  currentMoveableMaybe ?? gHere }

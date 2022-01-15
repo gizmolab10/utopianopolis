@@ -131,28 +131,28 @@ extension ZoneWidget {
 
 	}
 
-	func linearUpdateDetectionFrame() {
+	func linearUpdateAbsoluteHitRect() {
 		var rect       = absoluteFrame
 		let extra      = CGSize(width: gDotHalfWidth, height: .zero)
 		if  let  child = childrenView?.absoluteFrame {
 			rect       = rect.union(child)
 		}
-		detectionFrame = rect.expandedBy(extra).offsetBy(extra)
+		absoluteHitRect = rect.expandedBy(extra).offsetBy(extra)
 	}
 
-	func linearUpdateHighlightFrame() {
-		if  let      frame = textWidget?.frame,
-			let       zone = widgetZone {
-			let    fExpand = CGFloat(zone.showRevealDot ? 0.56 : -1.06)
-			let    mExpand = CGFloat(zone.showRevealDot ? 1.25 :  0.65)
-			let    xExpand = gDotHeight * mExpand
-			let    yExpand = gDotHeight / -20.0 * mapReduction
-			highlightFrame = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: gDotHalfWidth * fExpand, dy: .zero)
+	func linearUpdateHighlightRect() {
+		if  let     frame = textWidget?.frame,
+			let      zone = widgetZone {
+			let   fExpand = CGFloat(zone.showRevealDot ? 0.56 : -1.06)
+			let   mExpand = CGFloat(zone.showRevealDot ? 1.25 :  0.65)
+			let   xExpand = gDotHeight * mExpand
+			let   yExpand = gDotHeight / -20.0 * mapReduction
+			highlightRect = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: gDotHalfWidth * fExpand, dy: .zero)
 		}
 	}
 
 	var linearSelectionHighlightPath: ZBezierPath {
-		let   rect = highlightFrame
+		let   rect = highlightRect
 		let radius = rect.minimumDimension / 2.08 - 1.0
 		let   path = ZBezierPath(roundedRect: rect, cornerRadius: radius)
 
@@ -177,14 +177,14 @@ extension ZoneWidget {
 	// first with absolute false, then with true
 
 	func linearUpdateAllFrames(_ absolute: Bool = false) {
-		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			iWidget.linearUpdateSubframes(absolute)
+		traverseAllWidgetProgeny(inReverse: !absolute) { widget in
+			widget.linearUpdateSubframes(absolute)
 		}
 
 		if  absolute  {
-			traverseAllWidgetProgeny(inReverse: true) { iWidget in
-				iWidget.linearUpdateHighlightFrame()
-				iWidget.linearUpdateDetectionFrame()
+			traverseAllWidgetProgeny(inReverse: true) { widget in
+				widget.linearUpdateHighlightRect()
+				widget.linearUpdateAbsoluteHitRect()
 			}
 		}
 	}
@@ -215,7 +215,7 @@ extension ZoneLine {
 		return .zero
 	}
 
-	var linearAbsoluteDropDragDotRect: CGRect {
+	var linearAbsoluteFloatingDotRect: CGRect {
 		var rect = CGRect()
 
 		if  let zone = parentWidget?.widgetZone {
@@ -242,7 +242,7 @@ extension ZoneLine {
 						// DOT IS ABOVE OR BELOW //
 						// ////////////////////////
 
-						let   relation = gDragging.dragRelation
+						let   relation = gDragging.dropRelation
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
 						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
 						let      delta = dotPlusGap * multiplier
@@ -304,12 +304,18 @@ extension ZoneLine {
 
 extension ZoneDot {
 
-	var linearIsDragDrop : Bool { return widget == gDragging.dropWidget }
+	var linearIsDragDrop : Bool {
+		if  let    d  = gDragging.dropWidget?.widgetZone {
+			return d == widgetZone
+		}
+
+		return false
+	}
 
 	func linearUpdateDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		let     center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, .zero)
-		absoluteFrame  = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
-		detectionFrame = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
+		let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, .zero)
+		absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
+		absoluteHitRect = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
 
 		updateTooltips()
 	}
@@ -334,72 +340,84 @@ extension ZoneDot {
 
 }
 
+// MARK: - dragging
+// MARK: -
+
 extension ZDragging {
 
+	func debug(_ flag: Bool) {
+		if  let     z = dropWidget?.widgetZone,
+			let     i = dropIndices {
+			var show  = false
+			if  let p = debugDrop,    p != z {
+				show  = true
+			}
+
+			if  let d = debugIndices, d != i {
+				show  = true
+			}
+
+			if  show, flag {
+				print("\(i.string) \(z)")
+//				print(i.string + "\(flag ? "  << above or below >> " : "") \(z)")
+			}
+		}
+	}
+
 	func linearDropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
-		clearDragAndDrop()
+		let            totalGrabs = draggedZones + gSelecting.currentMapGrabs
+		if  let   (widget, point) = controller.linearNearestWidget(by: iGesture, locatedInBigMap: controller.isBigMap),
+			var       nearestZone = widget?.widgetZone, !totalGrabs.contains(nearestZone),
+			var     nearestWidget = widget {
+			let relationToNearest = controller.relationOf(point, to: nearestWidget)
+			let  draggedFromIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
+			let      nearestIndex = nearestZone.siblingIndex! + relationToNearest.rawValue
+			let         sameIndex = draggedFromIndex == nearestIndex // || draggedFromIndex == nearestIndex - 1
+			let      aboveOrBelow = relationToNearest != .upon
 
-		let         totalGrabs = draggedZones + gSelecting.currentMapGrabs
-		if  let (inBigMap, zone, location) = controller.widgetHit(by: iGesture, locatedInBigMap: controller.isBigMap),
-			var       dropZone = zone, !totalGrabs.contains(dropZone),
-			var dropZoneWidget = dropZone.widget {
-			let      dropIndex = dropZone.siblingIndex
-			let           here = inBigMap ? gHere : gSmallMapHere
-			let    notDropHere = dropZone != here
-			let       relation = controller.relationOf(location, to: dropZoneWidget)
-			let      useParent = relation != .upon && notDropHere
-
-			if  useParent,
-				let dropParent = dropZone.parentZone,
-				let    pWidget = dropParent.widget {
-				dropZone       = dropParent
-				dropZoneWidget = pWidget
-
-				if  relation  == .below {
-					noop()
-				}
+			if  let    dropParent = nearestZone.parentZone, aboveOrBelow,
+				let   otherWidget = dropParent.widget {
+				nearestWidget     = otherWidget
+				nearestZone       = dropParent
 			}
 
-			let  lastDropIndex = dropZone.count
-			var          index = (useParent && dropIndex != nil) ? (dropIndex! + relation.rawValue) : (!gListsGrowDown ? 0 : lastDropIndex)
-			;            index = notDropHere ? index : relation != .below ? 0 : lastDropIndex
-			let      dragIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
-			let      sameIndex = dragIndex == index || dragIndex == index - 1
-			let   dropIsParent = dropZone.children.intersects(draggedZones)
-			let     spawnCycle = dropZone.spawnCycle
-			let    isForbidden = gIsEssayMode && dropZone.isInBigMap
-			let         isNoop = spawnCycle || (sameIndex && dropIsParent) || index < 0 || isForbidden
-			let         isDone = iGesture?.isDone ?? false
+			let   nearestIsParent = nearestZone.children.intersects(draggedZones)
+			let        spawnCycle = nearestZone.spawnCycle
+			let       isForbidden = gIsEssayMode && nearestZone.isInBigMap
+			let            isNoop = spawnCycle || (sameIndex && nearestIsParent) || nearestIndex < 0 || isForbidden
+			let            isDone = iGesture?.isDone ?? false
 
-			if  !isNoop, !isDone {
-				dragRelation   = relation
-				dropIndices    = NSMutableIndexSet(index: index)
-				dropWidget     = dropZoneWidget
-				dragPoint      = location
-				dragLine       = dropZoneWidget.createDragLine()
+			if  !isNoop {
+				if  !isDone {
+					dropRelation  = relationToNearest
+					dropIndices   = NSMutableIndexSet(index: nearestIndex)
+					dropWidget    = nearestWidget
+					dragPoint     = point
+					dragLine      = nearestWidget.createDragLine()
 
-				if  notDropHere && index > 0 {
-					dropIndices?.add(index - 1)
-				}
-			}
+					if  nearestIndex > 0 {
+						dropIndices?.add(nearestIndex - 1)
+					}
 
-			gMapView?.setNeedsDisplay() // relayout drag line and dot, in each drag view
-
-			if !isNoop, isDone {
-				let   toBookmark = dropZone.isBookmark
-				var dropAt: Int? = index
-
-				if  toBookmark {
-					dropAt       = gListsGrowDown ? nil : 0
-				} else if dropIsParent,
-					dragIndex  != nil,
-					dragIndex! <= index {
-					dropAt!     -= 1
+//					debug(aboveOrBelow)
 				}
 
-				dropOnto(dropZone, at: dropAt, iGesture)
+				gMapView?.setNeedsDisplay() // draw drag line and dot
 
-				return true
+				if  isDone {
+					var dropAt: Int?       = nearestIndex
+					if  nearestZone.isBookmark {
+						dropAt             = gListsGrowDown ? nil : 0
+					} else if nearestIsParent,
+						draggedFromIndex  != nil,
+						draggedFromIndex! <= nearestIndex {
+						dropAt!           -= 1
+					}
+
+					dropOnto(nearestZone, at: dropAt, iGesture)
+
+					return true
+				}
 			}
 		}
 
@@ -408,3 +426,39 @@ extension ZDragging {
 
 }
 
+// MARK: - map controller
+// MARK: -
+
+extension ZMapController {
+
+	func linearNearestWidget(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (ZoneWidget?, CGPoint)? {
+		if  let         viewG = gesture?.view,
+			let     locationM = gesture?.location(in: viewG),
+			let       widgetM = hereWidget?.widgetNearestTo(locationM) {
+			let     alternate = isBigMap ? gSmallMapController : gMapController
+			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
+				let locationA = mapPseudoView?.convertPoint(locationM, toRootPseudoView: mapViewA),
+				let   widgetA = alternate?.hereWidget?.widgetNearestTo(locationA),
+				let  dragDotM = widgetM.parentLine?.dragDot,
+				let  dragDotA = widgetA.parentLine?.dragDot {
+				let   vectorM = dragDotM.absoluteFrame.center - locationM
+				let   vectorA = dragDotA.absoluteFrame.center - locationM
+				let   lengthM = vectorM.length
+				let   lengthA = vectorA.length
+
+				// ////////////////////////////////////////////////////// //
+				// determine which drag dot's center is closest to cursor //
+				// ////////////////////////////////////////////////////// //
+
+				if  lengthA < lengthM {
+					return (widgetA, locatedInBigMap ? locationM : locationA)
+				}
+			}
+
+			return (widgetM, locationM)
+		}
+
+		return nil
+	}
+
+}

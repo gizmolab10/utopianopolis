@@ -73,7 +73,6 @@ public typealias ZTableViewDelegate          = NSTableViewDelegate
 public typealias ZTableViewDataSource        = NSTableViewDataSource
 public typealias ZSearchFieldDelegate        = NSSearchFieldDelegate
 public typealias ZApplicationDelegate        = NSApplicationDelegate
-public typealias ZPanGestureRecognizer       = NSPanGestureRecognizer
 public typealias ZClickGestureRecognizer     = NSClickGestureRecognizer
 public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
@@ -122,6 +121,20 @@ extension NSObject {
 	}
 	
 	func showTopLevelFunctions() {}
+}
+
+extension NSIndexSet {
+
+	var string : String {
+		var result = ""
+		var separator = ""
+		enumerate { (index, _) in
+			result = result + separator + "\(index)"
+			separator = ", "
+		}
+
+		return "(" + result + ")"
+	}
 }
 
 extension String {
@@ -478,8 +491,8 @@ extension ZView {
         }
     }
 
-    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
-        let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZPanGestureRecognizer {
+        let                            gesture = ZPanGestureRecognizer(target: target, action: action)
         gesture                      .delegate = target
         gesture               .delaysKeyEvents = false
         gesture.delaysPrimaryMouseButtonEvents = false

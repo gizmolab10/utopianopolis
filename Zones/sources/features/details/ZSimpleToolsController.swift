@@ -75,7 +75,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		buttonFor(.down)?       .title =  expandMaybe      + "down"
 		buttonFor(.left)?       .title =  isMixed          ? "conceal"      : "left"
 		buttonFor(.right)?      .title =  isMixed          ? "reveal"       : canTravel ? "travel" : "right"
-		buttonFor(.focus)?      .title =  canUnfocus       ? "unfocus"      : canTravel ? "travel" : gIsHere ? gCurrentSmallMapName : "focus"
+		buttonFor(.focus)?      .title =  canUnfocus       ? "unfocus"      : canTravel ? "travel" : gSelecting.movableIsHere ? gCurrentSmallMapName : "focus"
 		buttonFor(.tooltip)?    .title = (gShowToolTips    ? "dis"          : "en")     + "able tooltips"
 		boxFor   (.move)?       .title = (isRelocate       ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to end"  : kEmpty)
 		boxFor   (.edit)?       .title =  gIsEditing       ? "Stop Editing" : "Edit"

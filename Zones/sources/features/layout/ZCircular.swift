@@ -51,7 +51,7 @@ extension ZoneWidget {
 
 	var circularSelectionHighlightPath : ZBezierPath {
 		if  gDisplayIdeasWithCircles {
-			return ZBezierPath(ovalIn: highlightFrame)
+			return ZBezierPath(ovalIn: highlightRect)
 		} else {
 			return linearSelectionHighlightPath
 		}
@@ -89,23 +89,23 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularUpdateHighlightFrame() {
+	func circularUpdateHighlightRect() {
 		if  gDisplayIdeasWithCircles {
-			let     center = absoluteFrame.center
-			let     radius = gCircleIdeaRadius + gDotHalfWidth
-			highlightFrame = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
-		} else if let    t = pseudoTextWidget {
-			highlightFrame = t.absoluteFrame.expandedBy(dx: gDotHalfWidth, dy: .zero)
+			let    center = absoluteFrame.center
+			let    radius = gCircleIdeaRadius + gDotHalfWidth
+			highlightRect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
+		} else if let   t = pseudoTextWidget {
+			highlightRect = t.absoluteFrame.expandedBy(dx: gDotHalfWidth, dy: .zero)
 		}
 	}
 
-	func circularUpdateDetectionFrame() {
+	func circularUpdateAbsoluteHitRect() {
 		var rect  = absoluteFrame
 
 		if  let z = widgetZone {
 			if  z.count      != 0 {
 				for child in childrenWidgets {
-					let cRect = child.detectionFrame
+					let cRect = child.absoluteHitRect
 					if  cRect.hasSize {
 						rect  = rect.union(cRect)
 					}
@@ -127,7 +127,7 @@ extension ZoneWidget {
 			}
 		}
 
-		detectionFrame = rect
+		absoluteHitRect = rect
 	}
 
 	// MARK: - traverse
@@ -145,15 +145,15 @@ extension ZoneWidget {
 			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // sets lineAngle
 		}
 
-		traverseAllWidgetProgeny(inReverse: !absolute) { iWidget in
-			iWidget.updateTextViewFrame(absolute)
+		traverseAllWidgetProgeny(inReverse: !absolute) { widget in
+			widget.updateTextViewFrame(absolute)
 		}
 
 		if  absolute  {
-			traverseAllWidgetProgeny(inReverse: true) { iWidget in
-				iWidget.circularUpdateHighlightFrame()
-				iWidget.updateAllDotFrames()
-				iWidget.circularUpdateDetectionFrame()
+			traverseAllWidgetProgeny(inReverse: true) { widget in
+				widget.circularUpdateHighlightRect()
+				widget.updateAllDotFrames()
+				widget.circularUpdateAbsoluteHitRect()
 			}
 		}
 	}
@@ -353,7 +353,7 @@ extension ZoneLine {
 		return nil
 	}
 
-	var circularAbsoluteDropDragDotRect: CGRect {
+	var circularAbsoluteFloatingDotRect: CGRect {
 		var rect = CGRect.zero
 
 		if  let  isBig = controller?.isBigMap,
@@ -393,7 +393,13 @@ extension ZoneLine {
 
 extension ZoneDot {
 
-	var circularIsDragDrop : Bool { return line == gDragging.dragLine }
+	var circularIsDragDrop : Bool {
+		if  let    d  = gDragging.dragLine {
+			return d == line
+		}
+
+		return false
+	}
 
 	var dotHypotenuse : CGFloat {
 		if  gDisplayIdeasWithCircles {
@@ -401,7 +407,7 @@ extension ZoneDot {
 
 			return gCircleIdeaRadius + 1.5 + (width / 4.0)
 		} else if let l = line,
-			let    size = l.parentWidget?.highlightFrame.expandedBy(dx: gDotHalfWidth, dy: gDotHalfWidth).size {
+			let    size = l.parentWidget?.highlightRect.expandedBy(dx: gDotHalfWidth, dy: gDotHalfWidth).size {
 
 			return CGFloat(size.ellipticalLengthAt(Double(l.parentToChildAngle))) // apply trigonometry
 		}
@@ -413,17 +419,17 @@ extension ZoneDot {
 		if  let          l = line,
 			let     center = l.parentWidget?.frame.center,
 			let lineVector = l.parentToChildVector {
-			let hypotenuse = dotHypotenuse
-			let     length = lineVector.length
-			let      width = isReveal ? gDotHeight : gDotWidth
-			let       size = CGSize(width: width, height: gDotWidth).dividedInHalf
-			let    divisor = isReveal ? hypotenuse : (length - hypotenuse)
-			let      ratio = divisor / length
-			let      delta = lineVector * ratio
-			let     origin = center + delta - size - CGPoint(x: .zero, y: 1.0)
-			l      .length = hypotenuse
-			absoluteFrame  = CGRect(origin: origin, size: drawnSize)
-			detectionFrame = absoluteFrame
+			let  hypotenuse = dotHypotenuse
+			let      length = lineVector.length
+			let       width = isReveal ? gDotHeight : gDotWidth
+			let        size = CGSize(width: width, height: gDotWidth).dividedInHalf
+			let     divisor = isReveal ? hypotenuse : (length - hypotenuse)
+			let       ratio = divisor / length
+			let       delta = lineVector * ratio
+			let      origin = center + delta - size - CGPoint(x: .zero, y: 1.0)
+			l       .length = hypotenuse
+			absoluteFrame   = CGRect(origin: origin, size: drawnSize)
+			absoluteHitRect = absoluteFrame
 
 			updateTooltips()
 		}
@@ -489,8 +495,8 @@ extension ZoneDot {
 				case .atRight: center = center.offsetBy( -width,   .zero)
 				}
 
-				absoluteFrame  = CGRect(origin: center, size: .zero).expandedBy(expansion)
-				detectionFrame = absoluteFrame
+				absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(expansion)
+				absoluteHitRect = absoluteFrame
 
 				updateTooltips()
 			}
@@ -529,7 +535,7 @@ extension ZoneDot {
 extension ZMapController {
 
 	func circularDrawLevelRings() {
-		if  let     center = rootWidget?.absoluteFrame.center {
+		if  let     center = hereWidget?.absoluteFrame.center {
 			var      level = 1
 			while ZWidgets.hasVisibleChildren   (at: level) {
 				let radius = ZWidgets.ringRadius(at: level)
@@ -554,7 +560,7 @@ extension ZDragging {
 
 		if  let       view = gesture?.view,
 			let   location = gesture?.location(in: view),
-			let       root = controller.rootWidget {
+			let       root = controller.hereWidget {
 			let     vector = location - root.absoluteFrame.center
 			let     (w, a) = ZWidgets.widgetNearest(to: vector)
 			if  let widget = w,

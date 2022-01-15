@@ -15,8 +15,7 @@ import Foundation
     import UIKit
 #endif
 
-
-class ZKeyPanGestureRecognizer : ZPanGestureRecognizer {
+class ZPanGestureRecognizer : NSPanGestureRecognizer {
 
     var modifiers: ZEventFlags?
     override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }

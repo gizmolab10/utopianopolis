@@ -954,22 +954,21 @@ class ZMapEditor: ZBaseEditor {
 		move(up: iMoveUp, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
 	}
 
-	func move(up iMoveUp: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
+	func move(up: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
 		priorHere     = gHere
 
 		if  let grabs = moveables {
-			moveUp(iMoveUp, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
+			moveUp(up, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
 				gSignal(kinds)
 			}
 		}
 	}
 
-	func moveUp(_ iMoveUp: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: ZSignalKindArray? = nil, onCompletion: SignalArrayClosure? = nil) {
+	func moveUp(_ up: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: ZSignalKindArray? = nil, onCompletion: SignalArrayClosure? = nil) {
 		var       response = forcedResponse ?? [ZSignalKind.spRelayout]
 		let   doCousinJump = !gBrowsingIsConfined
-		let      hereMaybe = gHereMaybe
-		let         isHere = hereMaybe != nil && originalGrabs.contains(hereMaybe!)
-		guard let rootMost = originalGrabs.rootMost(goingUp: iMoveUp) else {
+		let  hereIsGrabbed = gHereMaybe != nil && originalGrabs.contains(gHereMaybe!)
+		guard let rootMost = originalGrabs.rootMost(goingUp: up) else {
 			onCompletion?([.sData])
 
 			return
@@ -977,7 +976,7 @@ class ZMapEditor: ZBaseEditor {
 
 		let rootMostParent = rootMost.parentZone
 
-		if  isHere {
+		if  hereIsGrabbed {
 			if  rootMost.isARoot {
 				onCompletion?([.sData])
 			} else {
@@ -997,12 +996,12 @@ class ZMapEditor: ZBaseEditor {
 					gHere = parent
 
 					if  recurse {
-						if !isHere {
+						if !hereIsGrabbed {
 							response = [.spDataDetails, .spCrumbs]
 						}
 
 						gSelecting.updateCousinList()
-						self.moveUp(iMoveUp, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
+						self.moveUp(up, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
 					} else {
 						gFavorites.updateAllFavorites()
 						onCompletion?([.spRelayout])
@@ -1019,17 +1018,17 @@ class ZMapEditor: ZBaseEditor {
 			// ////////////////////
 
 			if  let       index = targetZones.firstIndex(of: rootMost) {
-				var     toIndex = index + (iMoveUp ? -1 : 1)
+				var     toIndex = index + (up ? -1 : 1)
 				var  allGrabbed = true
 				var soloGrabbed = false
 				var     hasGrab = false
 
 				let moveClosure: ZonesClosure = { iZones in
 					if  extreme {
-						toIndex = iMoveUp ? 0 : targetMax
+						toIndex = up ? 0 : targetMax
 					}
 
-					var  moveUp = iMoveUp
+					var  moveUp = up
 
 					if  !extreme {
 
@@ -1087,9 +1086,9 @@ class ZMapEditor: ZBaseEditor {
 					// vertical wrap around //
 					// ///////////////////////
 
-					if        (!iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( iMoveUp && soloGrabbed && aboveTop) {
+					if        (!up && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( up && soloGrabbed && aboveTop) {
 						toIndex = targetMax // bottom
-					} else if ( iMoveUp && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!iMoveUp && soloGrabbed && belowBottom) {
+					} else if ( up && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!up && soloGrabbed && belowBottom) {
 						toIndex = 0         // top
 					}
 				}
@@ -1102,16 +1101,16 @@ class ZMapEditor: ZBaseEditor {
 					// //////////////////////////
 
 					UNDO(self) { iUndoSelf in
-						iUndoSelf.move(up: !iMoveUp, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
+						iUndoSelf.move(up: !up, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
 					}
 
 					if !selectionOnly {
 						moveClosure(originalGrabs)
 					} else if !growSelection {
-						findChildMatching(&grabThis, iMoveUp, iOffset) // TODO: should look at siblings, not children
+						findChildMatching(&grabThis, up, iOffset) // TODO: should look at siblings, not children
 						grabThis.grab(updateBrowsingLevel: false)
 
-						if !isHere && forcedResponse == nil {
+						if !hereIsGrabbed && forcedResponse == nil {
 							response = [.spDataDetails, .spCrumbs]
 						}
 					} else if !grabThis.isGrabbed || extreme {
@@ -1123,7 +1122,7 @@ class ZMapEditor: ZBaseEditor {
 							// expand to end //
 							// ////////////////
 
-							if iMoveUp {
+							if  up {
 								for i in 0 ..< toIndex {
 									grabThese.append(targetZones[i])
 								}
@@ -1136,7 +1135,7 @@ class ZMapEditor: ZBaseEditor {
 
 						gSelecting.addMultipleGrabs(grabThese)
 
-						if !isHere && forcedResponse == nil {
+						if !hereIsGrabbed && forcedResponse == nil {
 							response = [.spDataDetails, .spCrumbs]
 						}
 					}
@@ -1147,7 +1146,7 @@ class ZMapEditor: ZBaseEditor {
 					// cousin jump //
 					// //////////////
 
-					index     += (iMoveUp ? -1 : 1)
+					index     += (up ? -1 : 1)
 
 					if  index >= targetCount {
 						index  = growSelection ? targetMax : 0
@@ -1157,7 +1156,7 @@ class ZMapEditor: ZBaseEditor {
 
 					var grab = targetZones[index]
 
-					findChildMatching(&grab, iMoveUp, iOffset)
+					findChildMatching(&grab, up, iOffset)
 
 					if !selectionOnly {
 						moveClosure(originalGrabs)
@@ -1204,14 +1203,18 @@ class ZMapEditor: ZBaseEditor {
 	// MARK: - move horizontally
 	// MARK: -
 
-	func moveLeft(_ isLeft: Bool, flags: ZEventFlags, onCompletion: Closure? = nil) {
+	func moveLeft(_ out: Bool, flags: ZEventFlags, onCompletion: Closure? = nil) {
 		if  let moveable = gSelecting.rootMostMoveable {
 			let  COMMAND = flags.isCommand
 			let   OPTION = flags.isOption
 			let    SHIFT = flags.isShift
 
+			if  OPTION, !moveable.canRelocateInOrOut {
+				return
+			}
+
 			if !SHIFT || moveable.isInSmallMap {
-				move(out: isLeft, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
+				move(out: out, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
 					gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
 					onCompletion?() // invoke closure from essay editor
 				}
@@ -1222,9 +1225,9 @@ class ZMapEditor: ZBaseEditor {
 				// ///////////////
 
 				if  OPTION {
-					browseBreadcrumbs(isLeft)
+					browseBreadcrumbs(out)
 				} else {
-					moveable.applyGenerationally(!isLeft, extreme: COMMAND)
+					moveable.applyGenerationally(!out, extreme: COMMAND)
 				}
 			}
 		}

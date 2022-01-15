@@ -22,13 +22,13 @@ class ZSmallMapController: ZMapController {
 	override  var  controllerID : ZControllerID  { return .idSmallMap }
 	override  var mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override  var      isBigMap : Bool           { return false }
-	var             isRecentMap : Bool           { return rootWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
+	var             isRecentMap : Bool           { return hereWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gDetailsViewIsVisible(for: .vSmallMap) {
 			super.layoutWidgets(for: nil, .spRelayout)
 
-			if  let           r = rootWidget,
+			if  let           r = hereWidget,
 				let           p = mapPseudoView,
 				let detailsSize = gDetailsController?.view.frame.size,
 				let   controlsY = gMapControlsView?.frame.height,
@@ -69,14 +69,14 @@ class ZSmallMapController: ZMapController {
 
 	override func controllerSetup() {
 		if  let                          map = gMapView {
-			rootWidget                       = ZoneWidget (view: map)
+			hereWidget                       = ZoneWidget (view: map)
 			mapPseudoView                    = ZPseudoView(view: map)
 			view     .layer?.backgroundColor = kClearColor.cgColor
 			mapPseudoView?            .frame = map.frame
 
 			super.controllerSetup()
 			platformSetup()
-			mapPseudoView?.addSubpseudoview(rootWidget!)
+			mapPseudoView?.addSubpseudoview(hereWidget!)
 		}
 	}
 
