@@ -21,9 +21,27 @@ extension ZoneWidget {
 			if  isHere {
 				rect  = vRect
 			} else if gDragging.isDragging {
-				rect            = rect.expandedEquallyBy(fraction: 0.5)
-				rect  .origin.x = vRect.minX
-				rect.size.width = vRect.width
+				rect  = rect.expandedEquallyBy(fraction: 0.4)
+
+				if  parentWidget?.isHere ?? false {
+					rect.size.width = vRect.width
+					rect  .origin.x = .zero
+				}
+
+				if  let z = widgetZone {     // if widget is at top or bottom, extend vertically to furthest edge
+					if  z.isFirstSibling {
+						rect.size.height = vRect.maxY - rect.minY
+					}
+
+					if  z.isLastSibling {
+						rect.size.height = rect.maxY
+						rect   .origin.y = .zero
+					}
+
+					if  rect.isEmpty {
+						noop()
+					}
+				}
 			}
 		}
 

@@ -418,7 +418,7 @@ class ZoneWidget: ZPseudoView {
 			return
 		}
 
-		let      color = widgetZone?.color?.withAlphaComponent(0.30)
+		let      color = gDragging.isDragged(widgetZone) ? gActiveColor : widgetZone?.color?.withAlphaComponent(0.30)
 		let       path = selectionHighlightPath
 		path.lineWidth = CGFloat(gLineThickness * 3.5)
 		path .flatness = 0.0001

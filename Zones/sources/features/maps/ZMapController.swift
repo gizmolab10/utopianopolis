@@ -74,6 +74,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				rootLine?.draw(phase) // for here's drag dot
 			}
 
+//			if  phase == .pHighlights, gDragging.draggedZones.count > 0 {
+//				mapView?.draw(iDirtyRect)
+//			}
+
 			hereWidget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}

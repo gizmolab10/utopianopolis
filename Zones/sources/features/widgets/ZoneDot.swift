@@ -296,11 +296,13 @@ class ZoneDot: ZPseudoView {
 	}
 
     func draw() {
-		let rect   = absoluteFrame
-		let drag   = gDragging.dragLine?.parentWidget?.widgetZone
-		let isDrop = isDragDrop && drag != nil && drag == widgetZone
+		let rect = absoluteFrame
 		if  rect.hasSize, dotIsVisible,
-			let parameters = widgetZone?.plainDotParameters(isFilled, isReveal, isDrop) {
+			let parameters = widgetZone?.plainDotParameters(isFilled, isReveal, isDragDrop) {
+
+			if  parameters.isDrop {
+				noop()
+			}
 
 //			if  isCircularMode, gdebugdraw {
 //				hitRect.drawColoredRect(.red, radius: 2.0, thickness: 1.0)

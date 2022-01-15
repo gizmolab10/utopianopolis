@@ -48,7 +48,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     }
 
     func updateTextColor() {
-        if  let  zone = widgetZone {
+		if  gDragging.isDragged(widgetZone) {
+			textColor = gActiveColor
+		} else if let   zone = widgetZone {
 			textColor = zone.textColor
         }
     }

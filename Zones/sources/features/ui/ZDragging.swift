@@ -24,12 +24,11 @@ class ZDragging: NSObject {
 	var    dragIndex :               Int? { return (draggedZones.count == 0) ? nil : draggedZones[0].siblingIndex }
 	var   isDragging :               Bool { return !draggedZones.isEmpty }
 
+	func isDragged(_ zone: Zone?) -> Bool { return gDragging.dragLine != nil && zone != nil && gDragging.draggedZones.contains(zone!) }
+	func restartGestureRecognitiono()     { dropWidget?.controller?.restartGestureRecognition() }
+
 	// MARK: - drag
 	// MARK: -
-
-	func restartGestureRecognitiono() {
-		dropWidget?.controller?.restartGestureRecognition()
-	}
 
 	func clearDragAndDrop() {
 		if  let z = dropWidget?.widgetZone {
@@ -138,7 +137,7 @@ class ZDragging: NSObject {
 		cleanupAfterDrag()
 
 		if  dropMaybeOntoCrumbButton(iGesture, in: controller) ||
-			dropMaybeOntoWidget(iGesture, in: controller) {
+			dropMaybeOntoWidget     (iGesture, in: controller) {
 		}
 
 		if  iGesture?.isDone ?? false {

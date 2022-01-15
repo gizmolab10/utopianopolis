@@ -101,14 +101,17 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawDragLineAndDot() {
-		let               rect = absoluteFloatingDotRect
-		dragDot?.absoluteFrame = rect
+		let rect = absoluteFloatingDotRect
 
-		gActiveColor.setFill()
-		gActiveColor.setStroke()
-		ZBezierPath(ovalIn: rect).fill()
-		drawLine(in: gActiveColor)
-		gDragging.dropWidget?.debugDraw()
+		if  !rect.isEmpty {
+			dragDot?.absoluteFrame = rect
+
+			gActiveColor.setFill()
+			gActiveColor.setStroke()
+			ZBezierPath(ovalIn: rect).fill()
+			drawLine(in: gActiveColor)
+//			gDragging.dropWidget?.debugDraw()
+		}
 	}
 
 	func drawLine() {

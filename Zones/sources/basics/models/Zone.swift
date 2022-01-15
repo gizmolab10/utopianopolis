@@ -2779,6 +2779,32 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return total < progenyCount
 	}
 
+	var isFirstSibling: Bool {
+		if  let parent     = parentZone {
+			let siblings   = parent.children
+			if  siblings.count > 0 {
+				let first  = siblings[0]
+				let isHere = parent.widget?.isHere ?? false
+
+				return first == self && (isHere || parent.isFirstSibling)
+			}
+		}
+
+		return false
+	}
+
+	var isLastSibling: Bool {
+		if  let parent   = parentZone {
+			let siblings = parent.children
+			let isHere   = parent.widget?.isHere ?? false
+			if  isHere || parent.isLastSibling {
+				return (siblings.count < 2) || (self == siblings[siblings.count - 1])
+			}
+		}
+
+		return false
+	}
+
 	override var isAdoptable: Bool { return parentRID != nil || parentLink != nil }
 
 	// adopt recursively
@@ -3364,12 +3390,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func plainDotParameters(_ showAsFilled: Bool, _ isReveal: Bool, _ isDrop: Bool = false) -> ZDotParameters {
+	func plainDotParameters(_ showAsFilled: Bool, _ isReveal: Bool, _ isDragDrop: Bool = false) -> ZDotParameters {
 		let            c = widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
 		var            p = ZDotParameters()
 		let            t = bookmarkTarget
 		let            k = traitKeys
 		let            g = groupOwner
+		let            d = gDragging.dragLine?.parentWidget?.widgetZone
 		p.color          = c
 		p.isGrouped      = g != nil
 		p.showList       = isExpanded
@@ -3380,8 +3407,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
 		p.showSideDot    = isCurrentSmallMapBookmark
-		p.isDragged      = gDragging.draggedZones.contains(self)
-		p.isDrop         = isDrop
+		p.isDragged      = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil
+		p.isDrop         = isDragDrop && d != nil && d == self
 		p.filled         = showAsFilled // || (!isReveal && isGrabbed)
 		p.fill           = showAsFilled ? c.lighter(by: 2.5) : gBackgroundColor
 		p.verticleOffset = offsetFromMiddle / (Double(gHorizontalGap) - 27.0) * 3.0

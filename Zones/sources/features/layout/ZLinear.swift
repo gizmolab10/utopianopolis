@@ -345,7 +345,7 @@ extension ZoneDot {
 
 extension ZDragging {
 
-	func debug(_ flag: Bool) {
+	func debug(_ message: String? = nil) {
 		if  let     z = dropWidget?.widgetZone,
 			let     i = dropIndices {
 			var show  = false
@@ -357,9 +357,8 @@ extension ZDragging {
 				show  = true
 			}
 
-			if  show, flag {
-				print("\(i.string) \(z)")
-//				print(i.string + "\(flag ? "  << above or below >> " : "") \(z)")
+			if  show {
+				print(i.string + (message ?? "") + " \(z)")
 			}
 		}
 	}
@@ -369,13 +368,14 @@ extension ZDragging {
 		if  let   (widget, point) = controller.linearNearestWidget(by: iGesture, locatedInBigMap: controller.isBigMap),
 			var       nearestZone = widget?.widgetZone, !totalGrabs.contains(nearestZone),
 			var     nearestWidget = widget {
+			let  nearestIsNotHere = !nearestWidget.isHere
 			let relationToNearest = controller.relationOf(point, to: nearestWidget)
 			let  draggedFromIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
 			let      nearestIndex = nearestZone.siblingIndex! + relationToNearest.rawValue
 			let         sameIndex = draggedFromIndex == nearestIndex // || draggedFromIndex == nearestIndex - 1
 			let      aboveOrBelow = relationToNearest != .upon
 
-			if  let    dropParent = nearestZone.parentZone, aboveOrBelow,
+			if  let    dropParent = nearestZone.parentZone, aboveOrBelow, nearestIsNotHere,
 				let   otherWidget = dropParent.widget {
 				nearestWidget     = otherWidget
 				nearestZone       = dropParent
@@ -395,11 +395,11 @@ extension ZDragging {
 					dragPoint     = point
 					dragLine      = nearestWidget.createDragLine()
 
-					if  nearestIndex > 0 {
+					if  nearestIndex > 0, nearestIsNotHere {
 						dropIndices?.add(nearestIndex - 1)
 					}
 
-//					debug(aboveOrBelow)
+					debug(aboveOrBelow ? " <<<a||b>>>" : nil)
 				}
 
 				gMapView?.setNeedsDisplay() // draw drag line and dot

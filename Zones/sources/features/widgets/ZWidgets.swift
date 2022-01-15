@@ -61,7 +61,7 @@ class ZWidgets: NSObject {
     /// (see widgetForZone)
     ///
     /// - Parameter widget: UI element containing text, drag and reveal dots and children widgets
-	/// - type: indicates which dictionary to put the zone:widget pair in
+	/// - Parameter type: indicates which dictionary to put the zone:widget pair in
 
 	func setWidgetForZone( _ widget: ZoneWidget, for type: ZWidgetType) {
         if  let   zone = widget.widgetZone {
@@ -77,7 +77,8 @@ class ZWidgets: NSObject {
     ///
     /// - Parameter iZone: Zone associated with previously registered ZoneWidget
     /// - Returns: ZoneWidget
-    func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
+
+	func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let zone = iZone {
 			let type = zone.widgetType
 			let dict = getZoneWidgetRegistry(for: type)
