@@ -133,7 +133,7 @@ extension ZoneWidget {
 
 	func linearUpdateAbsoluteHitRect() {
 		var rect       = absoluteFrame
-		let extra      = CGSize(width: gDotHalfWidth, height: .zero)
+		let extra      = CGSize(width: gDotWidth, height: .zero)
 		if  let  child = childrenView?.absoluteFrame {
 			rect       = rect.union(child)
 		}
@@ -401,7 +401,7 @@ extension ZDragging {
 						dropIndices?.add(nearestIndex - 1)
 					}
 
-					debug(aboveOrBelow ? " <<<a||b>>>" : nil)
+//					debug(aboveOrBelow ? " <<<a||b>>>" : nil)
 				} else {
 					var dropAt: Int?       = nearestIndex
 					if  nearestZone.isBookmark {
