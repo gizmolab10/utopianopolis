@@ -2796,8 +2796,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var isLastSibling: Bool {
 		if  let parent   = parentZone {
 			let siblings = parent.children
-			let isHere   = parent.widget?.isHere ?? false
-			if  isHere || parent.isLastSibling {
+			let pIsHere  = parent.widget?.isHere ?? false
+			if  pIsHere || parent.isLastSibling {
 				return (siblings.count < 2) || (self == siblings[siblings.count - 1])
 			}
 		}

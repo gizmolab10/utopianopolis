@@ -372,7 +372,7 @@ extension ZDragging {
 			let relationToNearest = controller.relationOf(point, to: nearestWidget)
 			let  draggedFromIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
 			let      nearestIndex = nearestZone.siblingIndex! + relationToNearest.rawValue
-			let         sameIndex = draggedFromIndex == nearestIndex // || draggedFromIndex == nearestIndex - 1
+			let         sameIndex = draggedFromIndex == nearestIndex || draggedFromIndex == nearestIndex - 1
 			let      aboveOrBelow = relationToNearest != .upon
 
 			if  let    dropParent = nearestZone.parentZone, aboveOrBelow, nearestIsNotHere,
@@ -387,6 +387,8 @@ extension ZDragging {
 			let            isNoop = spawnCycle || (sameIndex && nearestIsParent) || nearestIndex < 0 || isForbidden
 			let            isDone = iGesture?.isDone ?? false
 
+			gMapView?.setNeedsDisplay() // draw drag line and dot
+
 			if  !isNoop {
 				if  !isDone {
 					dropRelation  = relationToNearest
@@ -395,16 +397,12 @@ extension ZDragging {
 					dragPoint     = point
 					dragLine      = nearestWidget.createDragLine()
 
-					if  nearestIndex > 0, nearestIsNotHere {
+					if  nearestIndex > 0, nearestIsNotHere, aboveOrBelow {
 						dropIndices?.add(nearestIndex - 1)
 					}
 
 					debug(aboveOrBelow ? " <<<a||b>>>" : nil)
-				}
-
-				gMapView?.setNeedsDisplay() // draw drag line and dot
-
-				if  isDone {
+				} else {
 					var dropAt: Int?       = nearestIndex
 					if  nearestZone.isBookmark {
 						dropAt             = gListsGrowDown ? nil : 0

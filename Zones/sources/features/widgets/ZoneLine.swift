@@ -78,7 +78,7 @@ class ZoneLine: ZPseudoView {
 		return ZBezierPath()
 	}
 
-	func drawLine(in color: ZColor) {
+	func drawLine(using color: ZColor) {
 		if  let  p = parentWidget?.widgetZone, !p.isExpanded, self != gDragging.dragLine {
 			return
 		}
@@ -103,21 +103,20 @@ class ZoneLine: ZPseudoView {
 	func drawDragLineAndDot() {
 		let rect = absoluteFloatingDotRect
 
-		if  !rect.isEmpty {
+		if  !rect.hasZeroSize {
 			dragDot?.absoluteFrame = rect
 
 			gActiveColor.setFill()
 			gActiveColor.setStroke()
 			ZBezierPath(ovalIn: rect).fill()
-			drawLine(in: gActiveColor)
-//			gDragging.dropWidget?.debugDraw()
+			drawLine(using: gActiveColor)
 		}
 	}
 
 	func drawLine() {
 		if  let other = childWidget ?? parentWidget,
 			let color = other.widgetZone?.color {
-			drawLine(in: color)
+			drawLine(using: color)
 		}
 	}
 

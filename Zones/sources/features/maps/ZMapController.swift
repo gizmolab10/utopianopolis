@@ -74,10 +74,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				rootLine?.draw(phase) // for here's drag dot
 			}
 
-//			if  phase == .pHighlights, gDragging.draggedZones.count > 0 {
-//				mapView?.draw(iDirtyRect)
-//			}
-
 			hereWidget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}
@@ -141,13 +137,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func setNeedsDisplay() {
 		view.setNeedsDisplay()
 		mapView?.linesAndDotsView?.setNeedsDisplay()
-
 	}
 
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(.zero, 22.0) : CGPoint(x: -12.0, y: -6.0)
+		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y              = -offset.y               // why?
 		if  let          size = hereWidget?.drawnSize {
 			let      relocate = CGPoint((view.frame.size - size).dividedInHalf)
