@@ -2844,6 +2844,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	func indexInRelation(_ relation: ZRelation) -> Int {
+		if  relation == .upon {
+			return validIndex(from: gListsGrowDown ? nil : 0)
+		} else {
+			return siblingIndex! + relation.rawValue
+		}
+	}
+
 	func validIndex(from iIndex: Int?) -> Int {
 		var index = iIndex ?? (gListsGrowDown ? count : 0)
 

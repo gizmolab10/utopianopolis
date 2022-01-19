@@ -21,7 +21,7 @@ extension ZoneWidget {
 			if  isHere {
 				rect  = vRect
 			} else if gDragging.isDragging {
-				rect  = rect.expandedEquallyBy(fraction: 0.4)
+				rect  = rect.expandedEquallyBy(gDotHeight / 3.0).expandedEquallyBy(fraction: 0.05)
 
 				if  parentWidget?.isHere ?? false {
 					rect.size.width = vRect.width
@@ -47,6 +47,10 @@ extension ZoneWidget {
 	func widgetNearestTo(_ point: CGPoint, _  visited: ZoneWidgetArray = []) -> ZoneWidget? {
 		if  !visited.contains(self),
 			absoluteDragHitRect.contains(point) {
+
+			if  let name = widgetZone?.zoneName, name == "stay-centered is broken" {
+				noop()
+			}
 
 			for child in childrenWidgets {
 				if  self        != child,

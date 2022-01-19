@@ -462,12 +462,12 @@ class ZoneWidget: ZPseudoView {
 						} else if isHovering     { style = .sMedium
 						} else if ringIdeas      { style = .sUltraThin }
 
-//						debugDraw(isHovering || tHovering)
-
 						if  style != .sNone {
 							drawSelectionHighlight(style)
 						}
 					}
+
+//					debugDraw(isHovering || tHovering)
 				}
 			}
 		}

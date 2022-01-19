@@ -368,14 +368,14 @@ extension ZDragging {
 		if  let   (widget, point) = controller.linearNearestWidget(by: iGesture, locatedInBigMap: controller.isBigMap),
 			var       nearestZone = widget?.widgetZone, !totalGrabs.contains(nearestZone),
 			var     nearestWidget = widget {
-			let  nearestIsNotHere = !nearestWidget.isHere
 			let relationToNearest = controller.relationOf(point, to: nearestWidget)
-			let  draggedFromIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
-			let      nearestIndex = nearestZone.siblingIndex! + relationToNearest.rawValue
-			let         sameIndex = draggedFromIndex == nearestIndex || draggedFromIndex == nearestIndex - 1
 			let      aboveOrBelow = relationToNearest != .upon
+			let  neitherOnNorHere = aboveOrBelow && !nearestWidget.isHere
+			let  draggedFromIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
+			let      nearestIndex = nearestZone.indexInRelation(relationToNearest)
+			let         sameIndex = draggedFromIndex == nearestIndex || draggedFromIndex == nearestIndex - 1
 
-			if  let    dropParent = nearestZone.parentZone, aboveOrBelow, nearestIsNotHere,
+			if  let    dropParent = nearestZone.parentZone, neitherOnNorHere,
 				let   otherWidget = dropParent.widget {
 				nearestWidget     = otherWidget
 				nearestZone       = dropParent
@@ -397,11 +397,11 @@ extension ZDragging {
 					dragPoint     = point
 					dragLine      = nearestWidget.createDragLine()
 
-					if  nearestIndex > 0, nearestIsNotHere, aboveOrBelow {
+					if  nearestIndex > 0, neitherOnNorHere {
 						dropIndices?.add(nearestIndex - 1)
 					}
 
-//					debug(aboveOrBelow ? " <<<a||b>>>" : nil)
+					debug(aboveOrBelow ? " <<<a||b>>>" : nil)
 				} else {
 					var dropAt: Int?       = nearestIndex
 					if  nearestZone.isBookmark {
