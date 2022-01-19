@@ -64,6 +64,11 @@ class ZoneLine: ZPseudoView {
 			return kind
 		}
 
+		if  let    line = gDragging.dragLine, line == self,
+			let    kind = gDragging.dropKind {
+			return kind
+		}
+
 		return .straight
 	}
 	

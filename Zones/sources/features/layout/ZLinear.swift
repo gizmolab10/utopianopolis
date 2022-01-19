@@ -347,9 +347,14 @@ extension ZDragging {
 
 	func debug(_ message: String? = nil) {
 		if  let     z = dropWidget?.widgetZone,
-			let     i = dropIndices {
+			let     i = dropIndices,
+			let     c = dropKind {
 			var show  = false
 			if  let p = debugDrop,    p != z {
+				show  = true
+			}
+
+			if  let k = debugKind,    k != c {
 				show  = true
 			}
 
@@ -358,7 +363,7 @@ extension ZDragging {
 			}
 
 			if  show {
-				print(i.string + (message ?? "") + " \(z)")
+				print((message ?? "") + i.string + " \(z)")
 			}
 		}
 	}
@@ -401,7 +406,7 @@ extension ZDragging {
 						dropIndices?.add(nearestIndex - 1)
 					}
 
-					debug(aboveOrBelow ? " <<<a||b>>>" : nil)
+//					debug(" \(relationToNearest)")
 				} else {
 					var dropAt: Int?       = nearestIndex
 					if  nearestZone.isBookmark {

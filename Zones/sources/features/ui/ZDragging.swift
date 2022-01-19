@@ -13,7 +13,7 @@ let gDragging = ZDragging()
 class ZDragging: NSObject {
 
 	var draggedZones =         ZoneArray()
-	var dropRelation :         ZRelation?
+	var dropRelation :         ZRelation? { didSet { dropKind = dropRelation?.lineCurve } }
 	var debugIndices : NSMutableIndexSet?
 	var  dropIndices : NSMutableIndexSet?
 	var   dropWidget :        ZoneWidget?
@@ -21,6 +21,8 @@ class ZDragging: NSObject {
 	var    dropCrumb : ZBreadcrumbButton?
 	var    dragPoint :           CGPoint?
 	var     dragLine :          ZoneLine?
+	var     dropKind :        ZLineCurve?
+	var    debugKind :        ZLineCurve?
 	var    dragIndex :               Int? { return (draggedZones.count == 0) ? nil : draggedZones[0].siblingIndex }
 	var   isDragging :               Bool { return !draggedZones.isEmpty }
 
@@ -37,6 +39,10 @@ class ZDragging: NSObject {
 
 		if  let i = dropIndices {
 			debugIndices = i
+		}
+
+		if  let k = dropKind {
+			debugKind = k
 		}
 
 		dropRelation = nil

@@ -24,6 +24,14 @@ enum ZRelation: Int {
     case above = 0 // do not change these values
 	case below = 1
     case upon  = 2
+
+	var lineCurve: ZLineCurve {
+		switch self {
+		case .upon:  return .straight
+		case .above: return .above
+		case .below: return .below
+		}
+	}
 }
 
 let gSelecting = ZSelecting()
