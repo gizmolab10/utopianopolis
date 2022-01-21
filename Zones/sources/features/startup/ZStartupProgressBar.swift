@@ -26,7 +26,7 @@ class ZStartupProgressBar: NSProgressIndicator {
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
-		super.draw(iDirtyRect)
+		super.draw(frame)
 	}
 
 }

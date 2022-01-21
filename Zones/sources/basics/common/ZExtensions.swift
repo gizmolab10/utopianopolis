@@ -691,6 +691,7 @@ extension CGPoint {
 	var descriptionToTwoDecimals : String  { return "(\(x.stringTo(precision: 2)), \(y.stringTo(precision: 2)))"}
 	var length                   : CGFloat { return sqrt(x * x + y * y) }
 	var angle                    : CGFloat { return atan2(y, x) }
+	var dividedInHalf            : CGPoint { return multiplyBy(0.5) }
 
 	public static func equaled(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 

@@ -79,11 +79,12 @@ enum ZEssayButtonID : Int {
 	case idCancel
 	case idDelete
 	case idTitles
+	case idPrint
 	case idBack
 	case idSave
 	case idHide
 
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idMultiple, .idSave, .idHide, .idDelete, .idCancel] }
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idCancel, .idMultiple] }
 
 	var title: String {
 		switch self {
@@ -93,6 +94,7 @@ enum ZEssayButtonID : Int {
 		case .idCancel:   return "cancel"
 		case .idDelete:   return "trash"
 		case .idTitles:   return kEmpty
+		case .idPrint:    return "printer"
 		case .idHide:     return "exit"
 		case .idSave:     return "save"
 		}
@@ -106,6 +108,7 @@ enum ZEssayButtonID : Int {
 		case .idCancel:   return "cancel editing of \(kind)"
 		case .idDelete:   return "delete"
 		case .idTitles:   return kEmpty
+		case .idPrint:    return "print this \(kind)"
 		case .idHide:     return "exit \(kind) editor"
 		case .idBack:     return "show previous"
 		case .idSave:     return "save"
@@ -139,6 +142,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var multipleButton  : ZButton?
 	var cancelButton    : ZButton?
 	var deleteButton    : ZButton?
+	var printButton     : ZButton?
 	var hideButton      : ZButton?
 	var saveButton      : ZButton?
 	var resizeDragStart : CGPoint?
@@ -981,6 +985,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		titlesControl? .isEnabled = enabled
 		deleteButton?  .isEnabled = enabled
 		cancelButton?  .isEnabled = enabled
+		printButton?   .isEnabled = enabled
 		hideButton?    .isEnabled = enabled
 		saveButton?    .isEnabled = enabled
 
@@ -998,16 +1003,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	@objc private func handleButtonPress(_ iButton: ZButton) {
+	@objc private func handleControlAction(_ iButton: ZButton) {
 		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
 			switch buttonID {
 			case .idMultiple: swapBetweenNoteAndEssay()
 			case .idForward:  save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRelayoutMaps() }
 			case .idBack:     save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRelayoutMaps() }
 			case .idSave:     save()
-			case .idHide:                           grabDone()
-			case .idCancel:                         gCurrentEssayZone?.grab();       exit()
+			case .idPrint:    printView()
+			case .idHide:     grabDone()
 			case .idDelete:   if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
+			case .idCancel:                         gCurrentEssayZone?.grab();       exit()
 			default:          break
 			}
 		}
@@ -1060,7 +1066,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let bar = inspectorBar {
 
 			func buttonWith(_ title: String) -> ZTooltipButton {
-				let    action = #selector(handleButtonPress)
+				let    action = #selector(handleControlAction)
 
 				if  let image = ZImage(named: title)?.resize(CGSize.squared(17.0)) {
 					return      ZTooltipButton(image: image, target: self, action: action)
@@ -1101,6 +1107,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					case .idForward:   forwardButton = button
 					case .idCancel:     cancelButton = button
 					case .idDelete:     deleteButton = button
+					case .idPrint:       printButton = button
 					case .idHide:         hideButton = button
 					case .idSave:         saveButton = button
 					default: break

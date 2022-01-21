@@ -144,10 +144,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
 		offset.y              = -offset.y               // why?
-		if  let          size = hereWidget?.drawnSize {
-			let      relocate = CGPoint((view.frame.size - size).dividedInHalf)
+		if  let         wSize = hereWidget?.drawnSize {
+			let      relocate = (CGPoint(view.frame.size) - CGPoint(wSize)).dividedInHalf
 			let        origin = (isBigMap ? relocate : .zero) + offset
-			hereWidget?.frame = CGRect(origin: origin, size: size)
+			hereWidget?.frame = CGRect(origin: origin, size: wSize)
 
 			hereWidget?.grandUpdate()
 			detectHover(at: view.currentMouseLocationInWindow)

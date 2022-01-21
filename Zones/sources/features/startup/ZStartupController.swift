@@ -85,17 +85,14 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 //			print(statusText)
 
-			rootView?.applyToAllVisibleSubviews { v in
-				v.setNeedsDisplay()
-			}
-
 			thermometerBar?.updateProgress()
 			gApplication.setWindowsNeedUpdate(true)
 			gApplication.updateWindows()
 
-//			rootView?.applyToAllVisibleSubviews { v in
-//				v.display()
-//			}
+			rootView?.applyToAllVisibleSubviews { v in
+				v.setNeedsDisplay()
+				v.display()
+			}
 		}
 	}
 

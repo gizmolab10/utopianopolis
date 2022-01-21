@@ -260,14 +260,16 @@ extension ZBreadcrumbButton {
 		if  gShowToolTips {
 			let title = "Breadcrumb\n\n"
 			let  name = zone.unwrappedName
+			let alter = zone.ancestralPath.contains(gHere) ? "shrink" : "expand"
 
-			if  zone == gHereMaybe {
+			if  gIsEssayMode {
+				toolTip = "\(title)\(kClickTo)show map, focused on \"\(name)\""
+			} else if  zone == gHereMaybe {
 				toolTip = "\(title)current focus is \"\(name)\""
 			} else if zone.isGrabbed {
 				toolTip = "\(title)currently selected idea is \"\(name)\""
 			} else {
-				let shrink = zone.ancestralPath.contains(gHere)
-				toolTip = "\(title)\(kClickTo)\(shrink ? "shrink" : "expand") focus to \"\(name)\""
+				toolTip = "\(title)\(kClickTo)\(alter) focus to \"\(name)\""
 			}
 		}
 	}

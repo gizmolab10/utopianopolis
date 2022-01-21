@@ -72,19 +72,18 @@ class ZBreadcrumbsView : ZButtonsView {
 				attributes[.underlineStyle] = 1
 			}
 
-			attributed.addAttributes(attributes, range: range)
-			button.showsBorderOnlyWhileMouseInside = true
-			button.setButtonType(.momentaryPushIn)
-			button.updateTracking()
-
 			if  let color = zone.color {
-				attributed.addAttributes([.foregroundColor : color], range: range)
+				attributes[.foregroundColor] = color
 			}
 
-			button.attributedTitle = attributed
-
+			attributed.addAttributes(attributes, range: range)
+			button.setButtonType(.momentaryPushIn)
+			button.updateTracking()
 			button.updateTooltips()
 			buttons.append(button)
+
+			button.attributedTitle = attributed
+			button.showsBorderOnlyWhileMouseInside = true
 		}
 
 		fitBreadcrumbsToWindow()   // side effect: updates clipped
