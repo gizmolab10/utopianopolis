@@ -6,10 +6,8 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
-
 
 let gRemoteStorage = ZRemoteStorage()
 var gEveryoneCloud : ZCloud?     { return gRemoteStorage.zRecords(for: .everyoneID) as? ZCloud }
@@ -21,6 +19,14 @@ var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
 
+func gRecountMaybe() {
+	if  gNeedsRecount {
+		gNeedsRecount = false
+
+		gRemoteStorage.recount()
+		gSignal([.spDataDetails])
+	}
+}
 
 class ZRemoteStorage: NSObject {
 
@@ -35,7 +41,6 @@ class ZRemoteStorage: NSObject {
     var      destroyZone : Zone?       { return currentRecords.destroyZone }
     var        trashZone : Zone?       { return currentRecords.trashZone }
     var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
-
 
 	var allProgeny : ZoneArray {
 		var total = ZoneArray()

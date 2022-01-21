@@ -992,7 +992,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let      bar = inspectorBar {
 			bar.isHidden = !enabled
 
-			bar.draw(bar.bounds)
+			if  enabled {
+				bar.setNeedsDisplay()
+			}
 		}
 	}
 
@@ -1020,9 +1022,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			// //////////////////////////////////////////////////////////////// //
 
 			rect                = bar.subviews[0].frame
-			let x               = CGFloat(63.0)
-			let y               = CGFloat(-2.0)
-			let gap             = CGFloat( 4.0)
+			let x               = CGFloat(190.0)
+			let y               = CGFloat( -2.0)
+			let gap             = CGFloat(  4.0)
 			var prior           = rect!
 
 			for index in 1...target {
@@ -1121,9 +1123,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let       control = titlesControl,
 			var         frame = controlButtonRect(at: bar.subviews.count - 1) {
 			frame       .size = control.size
-			control    .frame = frame.offsetBy(dx: 14.0, dy: 6.0)
+			control    .frame = frame.offsetBy(dx: 9.0, dy: 6.0)
 			control.isEnabled = false
-
 
 			bar.addSubview(control)
 		}

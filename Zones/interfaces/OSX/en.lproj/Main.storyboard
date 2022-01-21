@@ -1485,7 +1485,7 @@ Gw
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="wVW-5S-6K5" userLabel="Lower View">
                                         <rect key="frame" x="0.0" y="0.0" width="450" height="313"/>
                                         <subviews>
-                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
+                                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NGd-6W-C0X">
                                                 <rect key="frame" x="0.0" y="264" width="450" height="49"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="xlc-Yd-hnd" userLabel="apple id">
@@ -1579,7 +1579,7 @@ DQ
                                                     <constraint firstAttribute="bottom" secondItem="eJt-eS-JWW" secondAttribute="bottom" id="y6Q-3Q-OMr"/>
                                                 </constraints>
                                             </customView>
-                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="rmD-x7-RtA" userLabel="Please Wait">
+                                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rmD-x7-RtA" userLabel="Please Wait">
                                                 <rect key="frame" x="0.0" y="0.0" width="450" height="313"/>
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="kKM-9B-fW0">

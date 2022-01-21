@@ -21,17 +21,19 @@ enum ZTimerID : Int {
 
 	case tTextEditorHandlesArrows
 	case tNeedCloudDriveEnabled
-	case tCoreDataDeferral
+	case tCoreDataDeferral         // repeat forever
 	case tNeedUserAccess
-	case tCloudAvailable
+	case tCloudAvailable           // repeat forever
 	case tMouseLocation
 	case tMouseZone
 	case tOperation
 	case tLicense
-	case tRecount
+	case tRecount                  // repeat forever
 	case tStartup
-	case tSync
+	case tSync                     // repeat forever
 	case tKey
+
+	static let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
 
 	var string: String { return "\(self)" }
 
@@ -88,32 +90,31 @@ class ZTimers: NSObject {
 	}
 
 	func startTimer(for timerID: ZTimerID?) {
-		if  let       tid = timerID {
-			let repeaters : [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
-			var     block : Closure    = { }          // do nothing by default
-			let   repeats = repeaters.contains(tid)
-			var   waitFor = 1.0                                   // one second
+		if  let     tid = timerID {
+			let repeats = ZTimerID.repeaters.contains(tid)
+			var waitFor = 1.0                   // one second
+			var   block : Closure = {}          // do nothing by default
 
 			switch tid {
-				case .tSync:                    waitFor = 15.0    // seconds
-				case .tLicense:                 waitFor = 60.0
-				case .tRecount:                 waitFor = 60.0    // one minute
-				case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval
-				default:                        break
+			case .tKey:                     waitFor =  5.0
+			case .tSync:                    waitFor = 15.0              // fifteen seconds
+			case .tLicense, .tRecount:      waitFor = 60.0              // one minute
+			case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval // one fifth second
+			default:                        break
 			}
 
 			switch tid {
-				case .tKey:                     block = { gCurrentKeyPressed        = nil }
-				case .tMouseZone:               block = { gCurrentMouseDownZone     = nil }
-				case .tMouseLocation:           block = { gCurrentMouseDownLocation = nil }
-				case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
-				case .tSync:                    block = { if gIsReadyToShowUI { gSaveContext() } }
-				case .tRecount:                 block = { if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.spDataDetails]) } }
-				case .tCloudAvailable:          block = { gBatches.cloudFire() }
-				case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
-				case .tStartup:                 block = { gStartupController?.startupUpdate() }
-				case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }
-				default:                        break
+			case .tKey:                     block = { gCurrentKeyPressed        = nil }
+			case .tMouseZone:               block = { gCurrentMouseDownZone     = nil }
+			case .tMouseLocation:           block = { gCurrentMouseDownLocation = nil }
+			case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
+			case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
+			case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }
+			case .tStartup:                 block = { gStartupController?.startupUpdate() }
+			case .tCloudAvailable:          block = { gBatches.cloudFire() }
+			case .tRecount:                 block = { gRecountMaybe() }
+			case .tSync:                    block = { gSaveContext() }
+			default:                        break
 			}
 
 			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats) {
@@ -134,9 +135,18 @@ class ZTimers: NSObject {
 		}
 	}
 
+	func rresetTimer(for id: ZTimerID?, withTimeInterval seconds: TimeInterval, repeats: Bool = false, block: @escaping Closure) {
+		let  nano = DispatchTime(uptimeNanoseconds: UInt64(seconds * 1000000000.0))    // 10 ^ 9
+		let  time = DispatchQueue.SchedulerTimeType(nano)
+		let i = DispatchQueue.SchedulerTimeType.Stride(floatLiteral: seconds)
+		let _ = gBACKGROUND.schedule(after: time, interval: i) {
+			block()
+		}
+	}
+
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping Closure) {
 		if  let id = timerID {
-			FOREGROUND { // timers require a runloop
+			FOREGROUND(forced: true) { // timers require a runloop
 				self.timers[id]?.invalidate() // do not leave the old one "floating around and uncontrollable"
 				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { iTimer in
 					block()

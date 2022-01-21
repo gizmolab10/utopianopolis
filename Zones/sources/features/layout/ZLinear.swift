@@ -406,7 +406,7 @@ extension ZDragging {
 						dropIndices?.add(nearestIndex - 1)
 					}
 
-//					debug(" \(relationToNearest)")
+//					debug("\(relationToNearest) ")
 				} else {
 					var dropAt: Int?       = nearestIndex
 					if  nearestZone.isBookmark {

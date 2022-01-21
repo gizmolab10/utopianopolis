@@ -69,18 +69,21 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     }
 
 	func updateEssayEditorInspectorBar(show: Bool = false) {
-		if  let         tools = inspectorBar?.subviews {
-			for index in 1..<tools.count {
-				let      tool = tools[index]
-				let     prior = tools[index - 1]
-				tool.isHidden = false
-
-				tool.snp.makeConstraints { make in
-					make.centerY.equalTo(prior)
-					make.left.equalTo(prior.snp.right).offset(9.0)
-				}
-			}
-		}
+//		if  let         tools = inspectorBar?.subviews {
+//			let         count = tools.count
+//			if          count > 8 {
+//				for index in 8..<tools.count {
+//					let  tool = tools[index]
+//					let prior = tools[index - 1]
+//					tool.isHidden = false
+//
+//					tool.snp.makeConstraints { make in
+//						make.centerY.equalTo(prior)
+//						make.left.equalTo(prior.snp.right).offset(9.0)
+//					}
+//				}
+//			}
+//		}
 
 		showsToolbarButton     =  show
 		inspectorBar?.isHidden = !show

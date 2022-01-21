@@ -40,6 +40,7 @@ class ZStartup: NSObject {
 		gWorkMode              = .wStartupMode
 
 		gRemoteStorage.clear()
+		gEssayView?.enableEssayControls(false)
 		gSearching.setSearchStateTo(.sNot)
 		gSignal([.spMain, .spStartupStatus])
 		gTimers.startTimer(for: .tStartup)
@@ -73,7 +74,7 @@ class ZStartup: NSObject {
 							self.requestFeedback() {
 								gTimers.stopTimer (for: .tStartup)
 								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
-								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap])
+								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap, .spDataDetails])
 							}
 						}
 					}

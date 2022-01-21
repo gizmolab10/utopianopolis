@@ -93,9 +93,9 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			gApplication.setWindowsNeedUpdate(true)
 			gApplication.updateWindows()
 
-			rootView?.applyToAllVisibleSubviews { v in
-				v.display()
-			}
+//			rootView?.applyToAllVisibleSubviews { v in
+//				v.display()
+//			}
 		}
 	}
 

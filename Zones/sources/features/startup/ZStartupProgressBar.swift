@@ -23,11 +23,10 @@ class ZStartupProgressBar: NSProgressIndicator {
 		doubleValue    = value + minValue
 
 		printDebug(.dTime, "\(doubleValue.stringTo(precision: 2))      \(gCurrentOp)")
-		display()
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
-		super.draw(frame)
+		super.draw(iDirtyRect)
 	}
 
 }
