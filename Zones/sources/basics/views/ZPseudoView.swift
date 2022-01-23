@@ -31,7 +31,7 @@ class ZPseudoView: NSObject {
 	var      identifier = NSUserInterfaceItemIdentifier("")
 	var  subpseudoviews = [ZPseudoView] ()
 	var superpseudoview : ZPseudoView?
-	var      toolTipTag : NSView.ToolTipTag?
+	var      toolTipTag : ZToolTipTag?
 	var    absoluteView : ZView?
 	var       drawnView : ZView?
 	var      controller : ZMapController? { return nil }
@@ -49,13 +49,17 @@ class ZPseudoView: NSObject {
 
 	var toolTip : String? {
 		didSet {
-			if  toolTip    != nil {
-				toolTipTag  = absoluteView?.addToolTip(absoluteFrame, owner: self, userData: nil)
-			} else if let t = toolTipTag {
-				toolTipTag  = nil
-
+			if  let t = toolTipTag {
 				absoluteView?.removeToolTip(t)
 			}
+
+			if  toolTip   != nil {
+				toolTipTag = absoluteView?.addToolTip(absoluteFrame, owner: self, userData: nil)
+			} else {
+				toolTipTag = nil
+			}
+
+			absoluteView?.addTracking(for: absoluteFrame)
 		}
 	}
 

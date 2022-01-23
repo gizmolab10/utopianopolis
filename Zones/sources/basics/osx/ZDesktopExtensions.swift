@@ -54,6 +54,7 @@ public typealias ZButtonCell                 = NSButtonCell
 public typealias ZBezierPath                 = NSBezierPath
 public typealias ZScrollView                 = NSScrollView
 public typealias ZController                 = NSViewController
+public typealias ZToolTipTag                 = ZView.ToolTipTag
 public typealias ZEventFlags                 = ZEvent.ModifierFlags
 public typealias ZSearchField                = NSSearchField
 public typealias ZApplication                = NSApplication

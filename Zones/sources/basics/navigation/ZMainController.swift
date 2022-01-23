@@ -59,7 +59,7 @@ class ZMainController: ZGesturesController {
 
 	func mainUpdate() {
 		let            showDetails = gShowDetailsView
-		hamburgerButton?  .toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
+		hamburgerButton?  .toolTip = gConcealmentString(for: gShowDetailsView) + " detail views"
 		alternateLeading?.constant = !showDetails ? .zero : 226.0
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)

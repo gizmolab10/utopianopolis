@@ -3419,7 +3419,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isDrop         = isDragDrop && d != nil && d == self
 		p.filled         = showAsFilled // || (!isReveal && isGrabbed)
 		p.fill           = showAsFilled ? c.lighter(by: 2.5) : gBackgroundColor
-		p.verticleOffset = offsetFromMiddle / (Double(gHorizontalGap) - 27.0) * 3.0
+		p.verticleOffset = offsetFromMiddle / (Double(gHorizontalGap) - 27.0) * 4.0
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.accessType     = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
 

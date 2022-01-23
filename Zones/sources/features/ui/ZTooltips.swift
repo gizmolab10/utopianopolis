@@ -35,43 +35,11 @@ protocol ZToolable {
 
 }
 
-class ZRecordTooltip : NSObject {
-	var zRecord: ZRecord?
-
-	override var description: String {
-		let prefix = "necklace dot"
-
-		if  let  r = zRecord {
-			return "\(prefix)\n\nchanges the focus to \"\(r.unwrappedName)\""
-		}
-
-		return prefix
-	}
-
-	convenience init(zRecord iZRecord: ZRecord) {
-		self.init()
-
-		zRecord = iZRecord
-	}
-}
-
-extension ZRecord {
-
-	var tooltipOwner: Any {
-		if  _tooltipRecord == nil {
-			_tooltipRecord  = ZRecordTooltip(zRecord: self)
-		}
-
-		return _tooltipRecord!
-	}
-
-}
-
 extension ZNote {
 
 	func tooltipString(grabbed: Bool) -> String? {
 		if  gShowToolTips {
-			let prefix = grabbed ? "This note is selected" : "\(kClickTo)select this note"
+			let prefix = grabbed ? "This note is selected" : "select this note"
 
 			return "\(prefix)\r\rTo move it, hold down the OPTION key and tap a vertical arrow key"
 		}
@@ -159,15 +127,56 @@ func gConcealmentString(for hide: Bool) -> String {
 
 extension Zone {
 
-	var revealTipText: String {
+	var revealTipSuffix: String {
+		var string = kEmpty
+
 		if  count == 0, isTraveller {
-			return hasNote      ? "edit note for"   :
-				hasEmail        ? "send an email"   :
-				isBookmark      ? "change focus to" :
-				hasHyperlink    ? "invoke web link" : kEmpty
+			string = count == 0 ? kEmpty : "\n\nor with COMMAND key down, "
+
+			if  hasNote {
+				string += "begin editing note"
+			} else if hasEmail {
+				string += "send an email"
+			} else if hasHyperlink {
+				string += "invoke web link"
+			}
 		}
 
-		return gConcealmentString(for: isExpanded) + " list for"
+		return string
+
+	}
+
+	func dotTooltip(_ isReveal: Bool) -> String? {
+		if  let   name = zoneName {
+			let target = (count == 0 && isTraveller && isReveal) ? kEmpty : "\"\(name)\""
+			let  plain =  count == 0 ? kEmpty : gConcealmentString(for: isExpanded) + " list for "
+			let  extra = isBookmark  && !isReveal ? " bookmark of " : kEmpty
+			let reveal = isBookmark  ? "change focus to " : plain
+			let   drag = isGrabbed   ? "drag " : "select or drag "
+			let  title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
+			let action = isReveal    ? reveal : drag
+			let suffix = isReveal    ? revealTipSuffix : kEmpty
+			let   text = title + action + extra + target + suffix
+
+			return text
+		}
+
+		return nil
+	}
+
+	func updateToolTips() { widget?.updateToolTips() }
+
+}
+
+extension ZoneWidget {
+
+	func updateToolTips() {
+		textWidget?.updateTooltips()
+		parentLine?.dragDot?.updateTooltips()
+
+		for child in childrenLines {
+			child.revealDot?.updateTooltips()
+		}
 	}
 
 }
@@ -175,14 +184,7 @@ extension Zone {
 extension ZoneDot {
 
 	func updateTooltips() {
-		toolTip = nil
-
-		if  gShowToolTips,
-			let zone = widgetZone,
-			let name = zone.zoneName,
-			(!isReveal || zone.isBookmark || zone.count > 0 || zone.hasNote) {
-			toolTip  = "\(isReveal ? "Reveal" : "Drag") dot\n\n\(kClickTo)\(isReveal ? zone.revealTipText : zone.isGrabbed ? "drag" : "select or drag") \"\(name)\"\(zone.isBookmark && !isReveal ? " bookmark" : kEmpty)"
-		}
+		toolTip = !gShowToolTips ? nil : widgetZone?.dotTooltip(isReveal)
 	}
 
 }
@@ -194,7 +196,7 @@ extension ZBannerButton {
 
 		if  gShowToolTips,
 			let view = togglingView {
-			toolTip  = "\(kClickTo)\(view.hideHideable ? "view" : "hide") \(view.toolTipText)"
+			toolTip  = "\(view.hideHideable ? "view" : "hide") \(view.toolTipText)"
 		}
 	}
 
@@ -207,8 +209,10 @@ extension ZoneTextWidget {
 
 		if  gShowToolTips,
 			let name = widgetZone?.zoneName {
-			toolTip  = "Idea text\n\n\(kClickTo)edit \"\(name)\""
+			toolTip  = "Idea text\n\nedit \"\(name)\""
 		}
+
+		updateTracking()
 	}
 
 }
@@ -225,13 +229,14 @@ extension ZMapControlsView {
 				var      tip : String?
 
 				switch type {
-				case .tLayout:  tip = "Arrangement\n\n\(kClickTo)arrange ideas as a \(gMapLayoutMode == .circularMode ? "tree" : "starburst")"
-				case .tGrowth:  tip = "Growth direction\n\n\(kClickTo)grow lists \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
-				case .tConfine: tip = "Browsing confinement\n\n\(kClickTo)\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within current list")"
+				case .tLayout:  tip = "Arrangement\n\narrange ideas as a \(gMapLayoutMode == .circularMode ? "tree" : "starburst")"
+				case .tGrowth:  tip = "Growth direction\n\ngrow lists \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
+				case .tConfine: tip = "Browsing confinement\n\n\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within current list")"
 				}
 
 				if  let t = tip {
 					button.toolTip = t
+					button.updateTrackingAreas()
 				}
 			}
 		}
@@ -246,7 +251,7 @@ extension ZTooltipButton {
 
 		if  gShowToolTips,
 			let buttonID = ZEssayButtonID(rawValue: tag) {
-			toolTip      = "\(kClickTo)\(buttonID.tooltipString)"
+			toolTip      = "\(buttonID.tooltipString)"
 		}
 	}
 
@@ -258,18 +263,23 @@ extension ZBreadcrumbButton {
 		toolTip = nil
 
 		if  gShowToolTips {
+			var  body : String?
 			let title = "Breadcrumb\n\n"
-			let  name = zone.unwrappedName
+			let  name = "\"\(zone.unwrappedName)\""
 			let alter = zone.ancestralPath.contains(gHere) ? "shrink" : "expand"
 
 			if  gIsEssayMode {
-				toolTip = "\(title)\(kClickTo)show map, focused on \"\(name)\""
+				body = "show map, focused on "
 			} else if  zone == gHereMaybe {
-				toolTip = "\(title)current focus is \"\(name)\""
+				body = "current focus is "
 			} else if zone.isGrabbed {
-				toolTip = "\(title)currently selected idea is \"\(name)\""
+				body = "currently selected idea is "
 			} else {
-				toolTip = "\(title)\(kClickTo)\(alter) focus to \"\(name)\""
+				body = alter + " focus to "
+			}
+
+			if  let b = body {
+				toolTip = title + b + name
 			}
 		}
 	}

@@ -105,11 +105,11 @@ enum ZEssayButtonID : Int {
 		switch self {
 		case .idMultiple: return "switch between showing note and essay"
 		case .idForward:  return "show next"
-		case .idCancel:   return "cancel editing of \(kind)"
+		case .idCancel:   return "discard changes and exit editor"
 		case .idDelete:   return "delete"
 		case .idTitles:   return kEmpty
 		case .idPrint:    return "print this \(kind)"
-		case .idHide:     return "exit \(kind) editor"
+		case .idHide:     return "save changes and exit editor"
 		case .idBack:     return "show previous"
 		case .idSave:     return "save"
 		}
@@ -1144,8 +1144,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if !isNote {
 			let image = ZImage(named: "show.drag.dot")?.resize(CGSize.squared(16.0))
-			titlesControl?.setToolTip("show all titles", forSegment: 2)
-			titlesControl?.setImage(image,               forSegment: 2)
+			titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
+			titlesControl?.setImage(image,                         forSegment: 2)
 		}
 	}
 

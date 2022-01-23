@@ -2855,7 +2855,7 @@ extension ZView {
 		return (false, true, false, false, false)
 	}
 
-	func addTracking(for rect: CGRect, clearFirst: Bool = true) {
+	func addTracking(for rect: CGRect, clearFirst: Bool = false) {
 		if  clearFirst {
 			for area in trackingAreas {
 				removeTrackingArea(area)
@@ -2863,9 +2863,9 @@ extension ZView {
 		}
 
 		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeAlways, .inVisibleRect, .cursorUpdate]
-		let tracker = NSTrackingArea(rect:rect, options: options, owner:self, userInfo: nil)
+		let    area = NSTrackingArea(rect:rect, options: options, owner: self, userInfo: nil)
 
-		addTrackingArea(tracker)
+		addTrackingArea(area)
 	}
 
 }

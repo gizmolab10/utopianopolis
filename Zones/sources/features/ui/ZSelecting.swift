@@ -288,19 +288,6 @@ class ZSelecting: NSObject {
 	// MARK: - selection
 	// MARK: -
 
-    func ungrabAll(retaining: ZoneArray? = nil) {
-        let        more = retaining ?? []
-		currentMapGrabs = []
-        sortedGrabs     = []
-        cousinList      = []
-
-		if  more.count > 0 {
-            hasNewGrab = more[0]
-        }
-
-		currentMapGrabs.append(contentsOf: more)
-    }
-
 	func assureMinimalGrabs() {
 		if  currentMapGrabs.count == 0,
 			let here = gHereMaybe {
@@ -320,8 +307,31 @@ class ZSelecting: NSObject {
         if let zone = iZone, let index = currentMapGrabs.firstIndex(of: zone) {
 			currentMapGrabs.remove(at: index)
             maybeClearBrowsingLevel()
+			zone.updateToolTips()
         }
     }
+
+	func ungrabAll(retaining: ZoneArray? = nil) {
+		let  all = currentMapGrabs + sortedGrabs + cousinList
+		let more = retaining ?? []
+
+		for zone in all {
+			if !more.contains(zone) {
+				zone.ungrab()
+			}
+		}
+
+		if  more.count > 0 {
+			hasNewGrab = more[0]
+		}
+
+		for zone in more {
+			if !currentMapGrabs.contains(zone) {
+				currentMapGrabs.append(zone)
+				zone.updateToolTips()
+			}
+		}
+	}
 
     func addMultipleGrabs(_ iZones: ZoneArray) {
 		for zone in iZones {
@@ -333,31 +343,15 @@ class ZSelecting: NSObject {
         if  let zone = iZone,
             !currentMapGrabs.contains(zone) {
 			currentMapGrabs.append(zone)
+			zone.updateToolTips()
 
 			currentMapGrabs = respectOrder(for: currentMapGrabs)
         }
     }
-    
-	@discardableResult func grabAndNoUI(_ iZones: ZoneArray?) -> ZoneArray? {
-		if  let    newGrabs = iZones {
-			let    oldGrabs = currentMapGrabs
-			currentMapGrabs = [] // can't use ungrabAll because we need to keep cousinList
-			sortedGrabs     = []
 
-			if  newGrabs.count != 0 {
-				hasNewGrab = newGrabs[0]
-			}
-
-			addMultipleGrabs(newGrabs)
-
-			return oldGrabs
-		}
-
-		return nil
-	}
-    
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
-		if  let _ = grabAndNoUI(iZones) {
+		if  let zones = iZones {
+			ungrabAll(retaining: zones)
 			gSignal([.spCrumbs, .spPreferences])                // so color wells and breadcrumbs are updated
 
             if  updateBrowsingLevel,
@@ -367,8 +361,7 @@ class ZSelecting: NSObject {
         }
     }
     
-    
-    private func firstGrab(using: ZoneArray? = nil) -> Zone? {
+    func firstGrab(using: ZoneArray? = nil) -> Zone? {
 		let   grabs = (using == nil || using!.count == 0) ? currentGrabs : using!
 		var grabbed = grabs.first
 

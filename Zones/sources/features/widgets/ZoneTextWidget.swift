@@ -69,7 +69,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
             isEditable             = widgetZone?.userCanWrite ?? false
         #endif
 
-		updateTracking()
+		updateTooltips()
     }
 
 	override func menu(for event: ZEvent) -> ZMenu? {
@@ -185,10 +185,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 				gSetEditIdeaMode()
 			}
 
-			if  var prior = gSelecting.grabAndNoUI([zone]) {
-				prior.appendUnique(item: zone)
-			}
-
+			gSelecting.ungrabAll(retaining: [zone])
 			printDebug(.dEdit, " RESPOND " + zone.unwrappedName)
 			gTextEditor.edit(zone, setOffset: gTextOffset)
 

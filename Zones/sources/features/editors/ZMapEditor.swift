@@ -185,7 +185,7 @@ class ZMapEditor: ZBaseEditor {
 				gTextEditor.handleArrow(arrow, flags: flags)
 			} else if !((flags.isOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
 				switch arrow {
-					case .down,    .up: moveUp  (arrow == .up, flags: flags);                               forceRedraw()
+					case .down,    .up: moveUp  (arrow == .up,   flags: flags);                             forceRedraw()
 					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion); forceRedraw(); return
 				}
 			}
@@ -958,7 +958,7 @@ class ZMapEditor: ZBaseEditor {
 		priorHere     = gHere
 
 		if  let grabs = moveables {
-			moveUp(up, grabs.reversed(), selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
+			moveUp(up, grabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
 				gSignal(kinds)
 			}
 		}
