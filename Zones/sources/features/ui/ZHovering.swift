@@ -103,10 +103,6 @@ extension ZMapView {
 
 		if  let view = gMapController?.detectHover(at: event.locationInWindow) {
 			view.setNeedsDisplay()
-
-			if  let s = view.superview as? ZMapView {
-				s.setNeedsDisplay()
-			}
 		}
 	}
 

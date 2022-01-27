@@ -142,14 +142,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		var            offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
-		offset.y              = -offset.y               // why?
 		if  let         wSize = hereWidget?.drawnSize {
+			var        offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
+			if !kIsPhone {
+				offset.y      = -offset.y    // why?
+			}
 			let      relocate = (CGPoint(view.frame.size) - CGPoint(wSize)).dividedInHalf
 			let        origin = (isBigMap ? relocate : .zero) + offset
 			hereWidget?.frame = CGRect(origin: origin, size: wSize)
 
-			hereWidget?.grandUpdate()
+			hereWidget?.grandRelayout()
 			detectHover(at: view.currentMouseLocationInWindow)
 			setNeedsDisplay()
 		}
@@ -165,7 +167,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		case big
 	}
 
-    func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
+    func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize { return }
 
 		printDebug(.dSpeed, "\(zClassName) layoutWidgets")
@@ -214,7 +216,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				resize()
 				layoutForCurrentScrollOffset()
 			} else {
-				layoutWidgets(for: iSignalObject, kind)
+				createAndLayoutWidgets(for: iSignalObject, kind)
 			}
 
 			view.setAllSubviewsNeedDisplay()

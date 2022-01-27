@@ -69,7 +69,7 @@ extension ZoneWidget {
 	func updateTextViewFrame(_ absolute: Bool = false) {
 		if  let                 t = pseudoTextWidget {
 			if  absolute {
-				t.updateAbsoluteFrame(relativeTo: controller)
+				t.relayoutAbsoluteFrame(relativeTo: controller)
 
 				textWidget?.frame = t.absoluteFrame
 			} else if let    size = textWidget?.drawnSize {
@@ -99,7 +99,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularUpdateAbsoluteHitRect() {
+	func circularRelayoutAbsoluteHitRect() {
 		var rect  = absoluteFrame
 
 		if  let z = widgetZone {
@@ -133,11 +133,11 @@ extension ZoneWidget {
 	// MARK: - traverse
 	// MARK: -
 	
-	func circularGrandUpdate() {
+	func circularGrandRelayout() {
 		updateByLevelAllFrames(in: controller)
 		updateFrameSize()
 		updateByLevelAllFrames(in: controller, true)
-		updateAbsoluteFrame(relativeTo: controller)
+		relayoutAbsoluteFrame(relativeTo: controller)
 	}
 
 	func updateByLevelAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
@@ -153,7 +153,7 @@ extension ZoneWidget {
 			traverseAllWidgetProgeny(inReverse: true) { widget in
 				widget.circularUpdateHighlightRect()
 				widget.updateAllDotFrames()
-				widget.circularUpdateAbsoluteHitRect()
+				widget.circularRelayoutAbsoluteHitRect()
 			}
 		}
 	}
@@ -308,7 +308,7 @@ extension ZoneWidgetArray {
 
 			for w in self {
 				if  absolute {
-					w.updateAbsoluteFrame(relativeTo: controller)
+					w.relayoutAbsoluteFrame(relativeTo: controller)
 				} else if w.linesLevel > 0 {
 					let   angle = w.placeAngle
 					let rotated = CGPoint(x: .zero, y: radius).rotate(by: Double(angle))

@@ -51,14 +51,14 @@ class ZMapView: ZView {
 				gDragging.dropWidget  = nil
 			}
 
-			setNeedsDisplay()
+//			setNeedsDisplay()
 		}
 	}
 
-	override func setNeedsDisplay() {
-		super.setNeedsDisplay()
-		linesAndDotsView?.setNeedsDisplay()
-	}
+//	override func setNeedsDisplay() {
+//		super.setNeedsDisplay()
+//		linesAndDotsView?.setNeedsDisplay()
+//	}
 
 	// MARK: - initialize
 	// MARK: -

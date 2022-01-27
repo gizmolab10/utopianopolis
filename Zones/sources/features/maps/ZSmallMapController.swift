@@ -24,9 +24,9 @@ class ZSmallMapController: ZMapController {
 	override  var      isBigMap : Bool           { return false }
 	var             isRecentMap : Bool           { return hereWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
-	override func layoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
+	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gDetailsViewIsVisible(for: .vSmallMap) {
-			super.layoutWidgets(for: nil, .spRelayout)
+			super.createAndLayoutWidgets(for: nil, .spRelayout)
 
 			if  let           r = hereWidget,
 				let           p = mapPseudoView,
@@ -51,15 +51,10 @@ class ZSmallMapController: ZMapController {
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller
-			smallMapUpdate()
+			gMapControlsView?.controlsUpdate()
+			gCurrentSmallMapRecords?.updateCurrentBookmark()
 			super.handleSignal(iSignalObject, kind: kind)
 		}
-	}
-
-	func smallMapUpdate() {
-		layoutForCurrentScrollOffset()
-		gMapControlsView?.controlsUpdate()
-		gCurrentSmallMapRecords?.updateCurrentBookmark()
 	}
 
 	override func controllerStartup() {

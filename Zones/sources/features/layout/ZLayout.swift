@@ -34,7 +34,7 @@ extension ZoneWidget {
 
 	func updateHighlightRect() {
 		switch mode {
-		case .linearMode:   return   linearUpdateHighlightRect()
+		case .linearMode:   return   linearRelayoutHighlightRect()
 		case .circularMode: return circularUpdateHighlightRect()
 		}
 	}
@@ -46,10 +46,10 @@ extension ZoneWidget {
 		}
 	}
 
-	func grandUpdate() {
+	func grandRelayout() {
 		switch mode {
-			case .linearMode:     linearGrandUpdate()
-			case .circularMode: circularGrandUpdate()
+			case .linearMode:     linearGrandRelayout()
+			case .circularMode: circularGrandRelayout()
 		}
 	}
 

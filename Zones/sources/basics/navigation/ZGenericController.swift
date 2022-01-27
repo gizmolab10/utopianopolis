@@ -26,12 +26,15 @@ class ZGenericController: ZController, ZGeneric {
 
 	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
-			case .idSubscription,
-				 .idDataDetails,
-				 .idMain:    return [.sResize, .spStartupStatus]
-			case .idActions: return [.sResize, .sSearch, .sFound]
-			case .idBigMap:  return [.sData]             // ignore the signal from the end of process next batch
-			default: break
+		case .idSubscription,
+			 .idDataDetails,
+			 .idMain:    return [.sResize, .spStartupStatus]
+		case .idActions: return [.sResize, .sSearch, .sFound]
+		case .idPreferences,
+			 .idSmallMap,
+			 .idBigMap,
+			 .idCrumbs:  return [.sData]             // ignore the signal from the end of process next batch
+		default: break
 		}
 
 		return [.sResize]
@@ -39,17 +42,17 @@ class ZGenericController: ZController, ZGeneric {
 
 	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
-			case .idHelpEssayIntroduction,
-				 .idHelpEssayGraphicals,
-				 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .spRelayout]
-			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .spRelayout,     .sResize,  .sLaunchDone, .spBigMap]
-			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .spRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
-			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
-			case .idSearchResults: return [.sFound]
-			case .idSearch:        return [.sSearch]
-			case .idStartup:       return [.spStartupStatus]
-			case .idNote:          return [.sEssay, .sAppearance]             // ignore the signal from the end of process next batch
-			default:               break
+		case .idHelpEssayIntroduction,
+			 .idHelpEssayGraphicals,
+			 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .spRelayout]
+		case .idBigMap:        return [.sData, .sDatum, .sAppearance, .spRelayout,     .sResize,  .sLaunchDone, .spBigMap]
+		case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .spRelayout,     .sDetails, .sLaunchDone, .spSmallMap]
+		case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
+		case .idSearchResults: return [.sFound]
+		case .idSearch:        return [.sSearch]
+		case .idStartup:       return [.spStartupStatus]
+		case .idNote:          return [.sEssay, .sAppearance]             // ignore the signal from the end of process next batch
+		default:               break
 		}
 
 		return []

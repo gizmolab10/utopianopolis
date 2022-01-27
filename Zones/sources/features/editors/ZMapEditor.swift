@@ -859,7 +859,7 @@ class ZMapEditor: ZBaseEditor {
 					}
 
 					gDeferringRedraw = false
-					gRelayoutMaps(for: grab)
+					gRelayoutMaps()
                 }
             }
         }
