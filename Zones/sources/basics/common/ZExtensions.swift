@@ -2543,7 +2543,7 @@ extension Data {
 		let query = [
 			kSecClass       as String : kSecClassGenericPassword as String,
 			kSecAttrAccount as String : key,
-			kSecReturnData  as String : kCFBooleanTrue,
+			kSecReturnData  as String : kCFBooleanTrue!,
 			kSecMatchLimit  as String : kSecMatchLimitOne
 		] as CFDictionary
 
