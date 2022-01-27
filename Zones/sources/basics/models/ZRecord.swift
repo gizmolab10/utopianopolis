@@ -316,7 +316,7 @@ class ZRecord: ZManagedObject {
 
 					for asset in assets {
 						if  let base64 = asset.data?.base64EncodedString() {
-							let fileName = asset.fileURL.lastPathComponent
+							let fileName = asset.fileURL!.lastPathComponent
 
 							printDebug(.dImages, "DICT     " + fileName)
 

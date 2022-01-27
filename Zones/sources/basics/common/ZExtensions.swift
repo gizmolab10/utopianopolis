@@ -472,8 +472,8 @@ extension CGImageSource {
 
 extension CKAsset {
 
-	var data       :   Data? { return FileManager.default.contents(atPath: fileURL.path) }
-	var imageSize  : CGSize? { return fileURL.imageSize }
+	var data       :   Data? { return FileManager.default.contents(atPath: fileURL!.path) }
+	var imageSize  : CGSize? { return fileURL!.imageSize }
 	var uuidString : String? { return value(forKeyPath: "_UUID") as? String }
 	var length     :    Int? { return value(forKeyPath: "_size") as? Int }
 

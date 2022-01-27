@@ -370,7 +370,9 @@ extension NSBezierPath {
             case .curveTo:   path.addCurve(to: CGPoint(x: points[2].x, y: points[2].y),
                                                       control1: CGPoint(x: points[0].x, y: points[0].y),
                                                       control2: CGPoint(x: points[1].x, y: points[1].y) )
-            }
+			@unknown default:
+				fatalError()
+			}
         }
 
         return path

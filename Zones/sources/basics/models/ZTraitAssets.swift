@@ -78,7 +78,7 @@ class ZTraitAssets : ZRecord {
 		if  wrapper     == nil,
 			let    asset = assetFromAssetNames(for: fileName) {
 			let original = url
-			url          = asset.fileURL
+			url          = asset.fileURL!
 
 			grabWrapper()
 

@@ -97,7 +97,7 @@ class ZStringArrayTransformer: ZDataTransformer {
 class ZAssetArrayTransformer: ZDataTransformer {
 
 	override func transformedValue(_ value: Any?) -> Any? {
-		let array = (value as! Array<CKAsset>).map { $0.fileURL.path }
+		let array = (value as! Array<CKAsset>).map { $0.fileURL!.path }
 
 		return array.joined(separator: kArrayTransformSeparator).data(using: .ascii)
 	}

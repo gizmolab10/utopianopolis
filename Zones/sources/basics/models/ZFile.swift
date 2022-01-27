@@ -50,7 +50,7 @@ class ZFile : ZRecord {
 	}
 
 	static func uniqueFile(_ asset: CKAsset, databaseID: ZDatabaseID) -> ZFile? {
-		let  url  = asset.fileURL
+		let  url  = asset.fileURL!
 		do {
 			let data  = try Data(contentsOf: url)
 			let name  = url.deletingPathExtension().lastPathComponent

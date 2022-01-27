@@ -256,20 +256,20 @@ class ZRemoteStorage: NSObject {
     }
 
 
-    func resetBadgeCounter() {
-        if  gCloudAccountStatus == .active {
-            let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
-
-            badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
-                if error == nil {
-                    FOREGROUND {
-                        gApplication.clearBadge()
-                    }
-                }
-            }
-
-            gContainer.add(badgeResetOperation)
-        }
-    }
+//    func resetBadgeCounter() {
+//        if  gCloudAccountStatus == .active {
+//            let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
+//
+//            badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
+//                if error == nil {
+//                    FOREGROUND {
+//                        gApplication.clearBadge()
+//                    }
+//                }
+//            }
+//
+//            gContainer.add(badgeResetOperation)
+//        }
+//    }
 
 }
