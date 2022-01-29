@@ -136,6 +136,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func setNeedsDisplay() {
 		view.setNeedsDisplay()
+		mapView?.setNeedsDisplay()
 		mapView?.linesAndDotsView?.setNeedsDisplay()
 	}
 
@@ -153,7 +154,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 			hereWidget?.grandRelayout()
 			detectHover(at: view.currentMouseLocationInWindow)
-			setNeedsDisplay()
 		}
 	}
 
@@ -167,7 +167,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		case big
 	}
 
-    func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
+	func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
+		createWidgets(for: iZone, kind)
+		layoutForCurrentScrollOffset()
+	}
+
+    func createWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize { return }
 
 		printDebug(.dSpeed, "\(zClassName) layoutWidgets")
@@ -200,8 +205,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			line.addDots(reveal: ZoneDot(view: r.absoluteView))
 		}
 
-		layoutForCurrentScrollOffset()
-
 		if  let t = total {
 			printDebug(.dWidget, "layout \(widgetType.description): \(t)")
 		}
@@ -219,7 +222,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				createAndLayoutWidgets(for: iSignalObject, kind)
 			}
 
-			view.setAllSubviewsNeedDisplay()
+			setNeedsDisplay()
 		}
 	}
 
@@ -332,7 +335,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					gControllers.swapMapAndEssay(force: .wMapMode)
 				}
 
-                gSignal([ZSignalKind.sData])
+                gSignal([.sData])
             }
 
             restartGestureRecognition()

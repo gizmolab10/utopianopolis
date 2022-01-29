@@ -12,12 +12,12 @@ class ZHelpButton : ZButton {
 
 	var helpButtonsView : ZHelpButtonsView?
 
-	override func draw(_ dirtyRect: NSRect) {
+	override func draw(_ iDirtyRect: NSRect) {
 		let isInTitle = helpButtonsView?.isInTitleBar ?? false
 		let isCurrent = isInTitle && helpMode == gCurrentHelpMode
 		isHighlighted = isCurrent              // work around another pissy apple os bug!
 
-		super.draw(dirtyRect)
+		super.draw(iDirtyRect)
 	}
 
 }

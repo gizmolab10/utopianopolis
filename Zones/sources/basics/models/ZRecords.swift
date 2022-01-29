@@ -244,10 +244,12 @@ class ZRecords: NSObject {
 		for index in 2...3 {
 			if  references.count      > index {
 				let              name = references[index]
-				if  let          root = rootFor(index),
-					!root.allProgeny.containsAnyOf(name) {
-					references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
-					changed           = true
+				if  let          root = rootFor(index) {
+					let rootNames = root.all.map { return $0.recordName ?? kEmpty }
+					if !rootNames.contains(name) {
+						references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
+						changed           = true
+					}
 				}
 			}
 		}

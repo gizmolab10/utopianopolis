@@ -35,16 +35,15 @@ enum ZControllerID: Int {
 
 enum ZSignalKind: Int {
 	case sAll
-	case sData
-	case sSwap
-    case sDatum
+	case sData       // relayout all ideas
+	case sSwap       // between notes and map
+    case sDatum      // redraw single idea
     case sError
-	case sEssay
+	case sEssay      // ???
     case sFound
-	case sResize
+	case sResize     // resize window
 	case sSearch
-	case sDetails
-    case spRelayout
+	case sDetails    // recompute and display all details except small map
 	case sLaunchDone
     case sAppearance
 
@@ -53,9 +52,10 @@ enum ZSignalKind: Int {
 	case spMain
 	case spDebug
 	case spCrumbs
-	case spBigMap
-	case spSmallMap
-	case spDataDetails
+	case spBigMap         // only relayout big map
+	case spSmallMap       // only relayout small map
+	case spRelayout       // only relayout both maps
+	case spDataDetails    // only update the data view in details
 	case spPreferences
 	case spSubscription
 	case spStartupStatus

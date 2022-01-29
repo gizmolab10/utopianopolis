@@ -25,32 +25,35 @@ class ZSmallMapController: ZMapController {
 	var             isRecentMap : Bool           { return hereWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-		if  gHasFinishedStartup, gDetailsViewIsVisible(for: .vSmallMap) {
-			super.createAndLayoutWidgets(for: nil, .spRelayout)
-
-			if  let           r = hereWidget,
-				let           p = mapPseudoView,
-				let detailsSize = gDetailsController?.view.frame.size,
-				let   controlsY = gMapControlsView?.frame.height,
-				let        mapY = gMapView?.bounds.height {
-				let     widgetY = r.drawnSize.height
-				let      deltaY = CGFloat(16.0)
-				let           y = mapY - widgetY - controlsY - detailsSize.height - deltaY
-				let        size = CGSize(width: detailsSize.width, height: widgetY + deltaY)
-				let      origin = CGPoint(x: .zero, y: y)
-				let        rect = CGRect(origin: origin, size: size)
-				r.absoluteFrame = rect
-				p.absoluteFrame = rect
-				r        .frame = rect
-				p        .frame = rect
-
-				gMapView?.setAllSubviewsNeedDisplay()
-			}
+		if  gHasFinishedStartup, gSmallMapIsVisible {
+			super.createAndLayoutWidgets(for: iZone, kind)
 		}
 	}
 
+	override func layoutForCurrentScrollOffset() {
+		super.layoutForCurrentScrollOffset()
+
+		if  let           r = hereWidget,
+			let           p = mapPseudoView,
+			let detailsSize = gDetailsController?.view.frame.size,
+			let   controlsY = gMapControlsView?.frame.height,
+			let        mapY = gMapView?.bounds.height {
+			let     widgetY = r.drawnSize.height
+			let      deltaY = CGFloat(16.0)
+			let           y = mapY - widgetY - controlsY - detailsSize.height - deltaY
+			let        size = CGSize(width: detailsSize.width, height: widgetY + deltaY)
+			let      origin = CGPoint(x: .zero, y: y)
+			let        rect = CGRect(origin: origin, size: size)
+			r.absoluteFrame = rect
+			p.absoluteFrame = rect
+			r        .frame = rect
+			p        .frame = rect
+		}
+	}
+
+
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
-		if  gDetailsViewIsVisible(for: .vSmallMap) {  // don't send signal to a hidden controller
+		if  gSmallMapIsVisible {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()
 			gCurrentSmallMapRecords?.updateCurrentBookmark()
 			super.handleSignal(iSignalObject, kind: kind)

@@ -96,9 +96,9 @@ class ZBreadcrumbsView : ZButtonsView {
 		clipCrumbsButton?.image = !clipped ? nil : kTriangleImage?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
 	}
 
-	override func draw(_ dirtyRect: NSRect) {
+	override func draw(_ iDirtyRect: NSRect) {
 		if  gIsReadyToShowUI {
-			super.draw(dirtyRect)
+			super.draw(iDirtyRect)
 
 			for (index, button) in buttons.enumerated() {
 				if  index > 0,

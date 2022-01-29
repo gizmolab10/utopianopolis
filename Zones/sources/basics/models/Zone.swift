@@ -1424,6 +1424,64 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	func moveSelectionInto(extreme: Bool = false, onCompletion: BoolClosure?) {
+		if  isBookmark {
+			invokeBookmark(onCompletion: onCompletion)
+		} else if isTraveller && fetchableCount == 0 && count == 0 {
+			invokeTravel(onCompletion: onCompletion)
+		} else if isInBigMap {
+			addAGrab(extreme: extreme, onCompletion: onCompletion)
+		} else if let next = gListsGrowDown ? children.last : children.first {
+			parentZone?.collapse()
+			setAsSmallMapHereZone()
+			expand()
+			next.grab()
+			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+		}
+	}
+
+	func moveSelectionOut(extreme: Bool = false, onCompletion: BoolClosure?) {
+		if  extreme {
+			if  gHere.isARoot {
+				gHere = self // reverse what the last move out extreme did
+			} else {
+				let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
+
+				grab()
+				revealZonesToRoot() {
+					here.revealSiblings(untilReaching: gRoot!)
+					onCompletion?(true)
+				}
+
+				return
+			}
+		} else if let p = parentZone {
+			if  self == gHere {
+				revealParentAndSiblings()
+				revealSiblings(untilReaching: p)
+			} else {
+				if !isInSmallMap {
+					p.expand()
+				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
+					p.collapse()
+					g.expand()
+					g.setAsSmallMapHereZone()
+					// FUBAR: parent sometimes disappears!!!!!!!!!
+				} else if p.isARoot {
+					onCompletion?(true)
+					return // do nothing if p is root of either small map
+				}
+
+				p.grab()
+				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+			}
+		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
+			gHere              = bookmark			                 // change focus to bookmark of self
+		}
+
+		onCompletion?(true)
+	}
+
 	// MARK: - import
 	// MARK: -
 
@@ -2153,48 +2211,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				gSignal([.spSmallMap, .spRelayout])
 			}
 		}
-	}
-
-	func moveSelectionOut(extreme: Bool = false, onCompletion: BoolClosure?) {
-		if  extreme {
-			if  gHere.isARoot {
-				gHere = self // reverse what the last move out extreme did
-			} else {
-				let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
-
-				grab()
-				revealZonesToRoot() {
-					here.revealSiblings(untilReaching: gRoot!)
-					onCompletion?(true)
-				}
-
-				return
-			}
-		} else if let p = parentZone {
-			if  self == gHere {
-				revealParentAndSiblings()
-				revealSiblings(untilReaching: p)
-			} else {
-				if !isInSmallMap {
-					p.expand()
-				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
-					p.collapse()
-					g.expand()
-					g.setAsSmallMapHereZone()
-					// FUBAR: parent sometimes disappears!!!!!!!!!
-				} else if p.isARoot {
-					onCompletion?(true)
-					return // do nothing if p is root of either small map
-				}
-
-				p.grab()
-				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
-			}
-		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
-			gHere              = bookmark			                 // change focus to bookmark of self
-		}
-
-		onCompletion?(true)
 	}
 
 	func revealZonesToRoot(_ onCompletion: Closure?) {

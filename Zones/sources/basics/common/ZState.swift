@@ -350,11 +350,6 @@ var gShowSmallMapForIOS : Bool {
 	set { setPreferencesBool(newValue, for: kShowSmallMap) }
 }
 
-var gSmallMapIsVisible: Bool {
-	get { return getPreferencesBool(   for: kSmallMapIsVisibleKey, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kSmallMapIsVisibleKey) }
-}
-
 var gTestForUserActivity: Bool {
 	if  let w = gUserIsActive {
 		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")

@@ -32,8 +32,8 @@ class ZButtonsView : ZView {
 	func updateAndRedraw() {
 		updateButtons()
 		layoutButtons()
-		setNeedsDisplay()
 		setNeedsLayout()
+		setNeedsDisplay()
 	}
 
 	func layoutButtons() {

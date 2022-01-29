@@ -55,11 +55,6 @@ class ZMapView: ZView {
 		}
 	}
 
-//	override func setNeedsDisplay() {
-//		super.setNeedsDisplay()
-//		linesAndDotsView?.setNeedsDisplay()
-//	}
-
 	// MARK: - initialize
 	// MARK: -
 
@@ -133,8 +128,8 @@ class ZMapView: ZView {
 		gMapController?     .drawWidgets(for: phase)
 	}
 
-	func drawDrag(_ dirtyRect: CGRect) {
-		ZBezierPath.fillWithColor(gBackgroundColor, in: dirtyRect) // remove old rubberband and drag line/dot
+	func drawDrag(_ iDirtyRect: CGRect) {
+		ZBezierPath.fillWithColor(gBackgroundColor, in: iDirtyRect) // remove old rubberband and drag line/dot
 		gRubberband.draw()
 		gDragging.dragLine?.drawDragLineAndDot()
 	}

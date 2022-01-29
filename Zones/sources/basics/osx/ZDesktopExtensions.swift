@@ -81,9 +81,8 @@ public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
 let kVerticalWeight = CGFloat( 1)
 
-var gIsPrinting: Bool {
-    return NSPrintOperation.current != nil
-}
+var gIsPrinting        : Bool { return NSPrintOperation.current != nil }
+var gSmallMapIsVisible : Bool { return gDetailsViewIsVisible(for: .vSmallMap) }
 
 protocol ZScrollDelegate : NSObjectProtocol {}
 

@@ -1330,16 +1330,10 @@ class ZMapEditor: ZBaseEditor {
     }
 
 	func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
-		if !selectionOnly {
+		if  selectionOnly {
+			moveables?.first?.moveSelectionInto(extreme: extreme, onCompletion: onCompletion)
+		} else {
 			moveables?.actuallyMoveInto(onCompletion: onCompletion)
-		} else if let zone = moveables?.first {
-			if  zone.isBookmark {
-				zone.invokeBookmark(onCompletion: onCompletion)
-			} else if zone.isTraveller && zone.fetchableCount == 0 && zone.count == 0 {
-				zone.invokeTravel(onCompletion: onCompletion)
-			} else {
-				zone.addAGrab(extreme: extreme, onCompletion: onCompletion)
-			}
 		}
 	}
 

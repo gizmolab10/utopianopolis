@@ -184,11 +184,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK: - output
 	// MARK: -
 
-	override func draw(_ dirtyRect: NSRect) {
+	override func draw(_ iDirtyRect: NSRect) {
 		let attach = imageAttachment ?? eraseAttachment
 
 		clearImageResizeRubberband()
-		super.draw(dirtyRect)
+		super.draw(iDirtyRect)
 
 		if  attach != nil {
 			gActiveColor.setStroke()

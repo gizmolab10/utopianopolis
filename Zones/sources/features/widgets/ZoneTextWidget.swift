@@ -146,11 +146,11 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
 	override func mouseMoved(with event: ZEvent) {
-		super.mouseMoved(with: event)
-
 		if  isEnabled, !gIgnoreHovering { // not blink rubberband
 			gHovering.declareHover(self)
 		}
+
+		super.mouseMoved(with: event)
 	}
 
 	override func mouseExited(with event: ZEvent) {
@@ -245,13 +245,13 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         return extract
     }
 
-    override func draw(_ dirtyRect: CGRect) {
+    override func draw(_ iDirtyRect: CGRect) {
         updateTextColor()
-        super.draw(dirtyRect)
+        super.draw(iDirtyRect)
 
 		var   path : ZBezierPath?
 		let  inset = CGFloat(0.5)
-		let deltaX = min(3.0, dirtyRect.width / 2.0)
+		let deltaX = min(3.0, iDirtyRect.width / 2.0)
 
 		if  !isFirstResponder,
 			gIsMapOrEditIdeaMode,
@@ -263,9 +263,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			// draw line underneath text indicating it can travel //
 			// /////////////////////////////////////////////////////
 
-			var         rect = dirtyRect.insetBy(dx: deltaX, dy: inset)
+			var         rect = iDirtyRect.insetBy(dx: deltaX, dy: inset)
 			rect.size.height = .zero
-			rect.origin.y    = dirtyRect.maxY - 1.0
+			rect.origin.y    = iDirtyRect.maxY - 1.0
 			path             = ZBezierPath(rect: rect)
 			path? .lineWidth = 0.4
 

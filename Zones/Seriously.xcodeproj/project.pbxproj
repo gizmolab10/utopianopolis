@@ -469,7 +469,6 @@
 		0C09A7D61FE5DEC600F3D736 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
 		0C1651EA21012021003FF76C /* PadFocus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "PadFocus-Bridging-Header.h"; path = "PadZones/PadFocus-Bridging-Header.h"; sourceTree = "<group>"; };
 		0C1651EB2101203A003FF76C /* iFocus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "iFocus-Bridging-Header.h"; path = "iFocus/iFocus-Bridging-Header.h"; sourceTree = "<group>"; };
-		0C1651EC2101204F003FF76C /* Zones-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Zones-Bridging-Header.h"; path = "Zones/Zones-Bridging-Header.h"; sourceTree = "<group>"; };
 		0C2E22BB1F75B8AB00B50A71 /* ZMainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMainController.swift; sourceTree = "<group>"; };
 		0C2E22CE1F75BEEA00B50A71 /* ZGenericTableController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGenericTableController.swift; sourceTree = "<group>"; };
 		0C2E22CF1F75BEEA00B50A71 /* ZPhoneController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZPhoneController.swift; sourceTree = "<group>"; };
@@ -882,7 +881,6 @@
 		0C39B3C41F198C8F0091F4D1 /* desktop */ = {
 			isa = PBXGroup;
 			children = (
-				0C1651EC2101204F003FF76C /* Zones-Bridging-Header.h */,
 				0C39B3C01F1989830091F4D1 /* Zones.entitlements */,
 				0C39B3BF1F1989830091F4D1 /* Info.plist */,
 				A7D507D0268AFA0B001CEA9F /* Products.plist */,
@@ -2119,6 +2117,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -2144,7 +2143,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 0.7.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
@@ -2155,10 +2154,10 @@
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SWIFT_INCLUDE_PATHS = "$(inherited)";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
@@ -2170,6 +2169,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon.OSX;
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -2195,7 +2195,7 @@
 					"$(SDKROOT)/usr/lib/system",
 					"$(PROJECT_DIR)",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.5;
 				MARKETING_VERSION = 0.7.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2205,10 +2205,10 @@
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
 				SWIFT_INCLUDE_PATHS = "$(inherited)";
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "Zones/Zones-Bridging-Header.h";
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
+				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};

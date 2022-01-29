@@ -28,7 +28,7 @@ class ZHovering: NSObject {
 	}
 
 	@discardableResult func clear() -> ZView? {
-		let            cleared = absoluteView // do this before setting to nil (below)
+		let            cleared = absoluteView // do this before setting everything to nil
 		dot?       .isHovering = false
 		widget?    .isHovering = false
 		textWidget?.isHovering = false

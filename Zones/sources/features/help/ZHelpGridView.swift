@@ -12,17 +12,17 @@ class ZHelpGridView: ZView {
 
 	var helpData: ZHelpData?
 
-	override func draw(_ dirtyRect: NSRect) {
-		super.draw(dirtyRect)
+	override func draw(_ iDirtyRect: NSRect) {
+		super.draw(iDirtyRect)
 
 		if  !isHidden,
 			let      data  = helpData,
 			[.dotMode, .essayMode].contains(data.helpMode) {
-			drawDotsHelp(in: dirtyRect, using: data)
+			drawDotsHelp(in: iDirtyRect, using: data)
 		}
 	}
 
-	func drawDotsHelp(in dirtyRect: NSRect, using data: ZHelpData) {
+	func drawDotsHelp(in iDirtyRect: NSRect, using data: ZHelpData) {
 		for row        in  0..<data.countOfRows {
 			for column in  0...data.indexOfLastColumn {
 				let (dc, ft) = data.dotTypes(for: row, column: column)
@@ -31,8 +31,8 @@ class ZHelpGridView: ZView {
 					var e = true
 					var f = true
 					let v = Double(data.rowHeight) + 2.0
-					let y = Double(row)    *    -v + Double(dirtyRect.extent.y) - 24.0
-					let x = Double(column) * 580.0 + Double(dirtyRect.origin.x) + 30.0
+					let y = Double(row)    *    -v + Double(iDirtyRect.extent.y) - 24.0
+					let x = Double(column) * 580.0 + Double(iDirtyRect.origin.x) + 30.0
 					let d = ZoneDot(view: self)
 
 					switch t {

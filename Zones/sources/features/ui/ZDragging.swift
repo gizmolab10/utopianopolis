@@ -83,7 +83,7 @@ class ZDragging: NSObject {
 
 				cleanupAfterDrag()
 				controller.restartGestureRecognition()
-				gSignal([.spPreferences, .sDatum])                            // so color well and indicators get updated
+				gSignal([.spPreferences, .sData])                            // so color well and indicators get updated
 			} else if let any = controller.detectHit(at: location),
 				let       dot = any as? ZoneDot {
 				if  dot.isReveal {

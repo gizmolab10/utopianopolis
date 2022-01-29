@@ -509,7 +509,7 @@ extension ZoneArray {
 		return found
 	}
 
-	func grabAppropriate() -> Zone? {
+	var appropriateNext : Zone? {
 		let         down = gListsGrowDown
 		let           up = !down
 		if  let   parent = first?.parentZone {
@@ -565,7 +565,7 @@ extension ZoneArray {
 		}
 
 		let    zones = sortedByReverseOrdering()
-		let     grab = !iShouldGrab ? nil : grabAppropriate()
+		let     grab = !iShouldGrab ? nil : appropriateNext
 		var doneOnce = false
 
 		if !doneOnce {
