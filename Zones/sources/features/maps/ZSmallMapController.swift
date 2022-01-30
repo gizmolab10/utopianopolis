@@ -31,8 +31,6 @@ class ZSmallMapController: ZMapController {
 	}
 
 	override func layoutForCurrentScrollOffset() {
-		super.layoutForCurrentScrollOffset()
-
 		if  let           r = hereWidget,
 			let           p = mapPseudoView,
 			let detailsSize = gDetailsController?.view.frame.size,
@@ -49,6 +47,8 @@ class ZSmallMapController: ZMapController {
 			r        .frame = rect
 			p        .frame = rect
 		}
+
+		super.layoutForCurrentScrollOffset()
 	}
 
 

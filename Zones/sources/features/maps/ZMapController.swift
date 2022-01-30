@@ -15,7 +15,7 @@ import SnapKit
 #endif
 
 var gMapController : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
-var gMapView       : ZMapView?       { return gMapController?.mapView }
+var gMapView       : ZMapView?       { return gMapController?.view as? ZMapView }
 
 enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 	case linearMode
@@ -46,7 +46,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                     isBigMap : Bool           { return true }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
 	var                         mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
-	var                      mapView : ZMapView?      { return view as? ZMapView}
 	var                mapPseudoView : ZPseudoView?
 	var                   hereWidget : ZoneWidget?
 	var                     rootLine : ZoneLine?
@@ -54,7 +53,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 
 	override func controllerSetup() {
-		if  let                          map = mapView {
+		if  let                          map = gMapView {
 			gestureView                      = map         // do this before calling super setup: it uses gesture view
 			hereWidget                       = ZoneWidget (view: map)
 			mapPseudoView                    = ZPseudoView(view: map)
@@ -135,26 +134,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func setNeedsDisplay() {
-		view.setNeedsDisplay()
-		mapView?.setNeedsDisplay()
-		mapView?.linesAndDotsView?.setNeedsDisplay()
-	}
-
-	func layoutForCurrentScrollOffset() {
-		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
-
-		if  let         wSize = hereWidget?.drawnSize {
-			var        offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
-			if !kIsPhone {
-				offset.y      = -offset.y    // why?
-			}
-			let      relocate = (CGPoint(view.frame.size) - CGPoint(wSize)).dividedInHalf
-			let        origin = (isBigMap ? relocate : .zero) + offset
-			hereWidget?.frame = CGRect(origin: origin, size: wSize)
-
-			hereWidget?.grandRelayout()
-			detectHover(at: view.currentMouseLocationInWindow)
-		}
+		gMapView?.setNeedsDisplay()
+		gMapView?.linesAndDotsView?.setNeedsDisplay()
 	}
 
 	var doNotLayout: Bool {
@@ -194,7 +175,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let type : ZRelayoutMapType = isBigMap ? .big : .small
 
-		mapView?.removeAllTextViews(ofType: type)
+		gMapView?.removeAllTextViews(ofType: type)
 
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
@@ -210,6 +191,24 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
     }
 
+	func layoutForCurrentScrollOffset() {
+		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
+
+		if  let         wSize = hereWidget?.drawnSize {
+			var        offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
+			if !kIsPhone {
+				offset.y      = -offset.y    // why?
+			}
+			let      relocate = (CGPoint(view.frame.size) - CGPoint(wSize)).dividedInHalf
+			let        origin = (isBigMap ? relocate : .zero) + offset
+			hereWidget?.frame = CGRect(origin: origin, size: wSize)
+
+			hereWidget?.grandRelayout()
+			detectHover(at: view.currentMouseLocationInWindow)
+			setNeedsDisplay()
+		}
+	}
+
 	// MARK: - events
 	// MARK: -
 
@@ -221,8 +220,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			} else {
 				createAndLayoutWidgets(for: iSignalObject, kind)
 			}
-
-			setNeedsDisplay()
 		}
 	}
 

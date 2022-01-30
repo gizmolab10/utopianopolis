@@ -147,9 +147,6 @@ class ZControllers: NSObject {
 	}
 
 	func signalFor(_ object: Any? = nil, multiple: ZSignalKindArray, onCompletion: Closure? = nil) {
-		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
-		let    mapsIDs : [ZControllerID] = [.idBigMap, .idSmallMap]
-
 		FOREGROUND {
 			if  multiple.contains(.spRelayout) {
 				gWidgets.clearAll()
@@ -157,23 +154,29 @@ class ZControllers: NSObject {
 			}
 
 			for regarding in multiple {
-				for (identifier, signalObject) in self.signalObjectsByControllerID {
+				for (cid, signalObject) in self.signalObjectsByControllerID {
                     let closure = {
                         signalObject.closure(object, regarding)
                     }
                     
-					switch regarding {  // these non-default cases send a signal only to the one corresponding controller
-					case .spMain:          if identifier == .idMain           { closure() }
-					case .spDebug:         if identifier == .idDebug          { closure() }
-					case .spCrumbs:        if identifier == .idCrumbs         { closure() }
-					case .spBigMap:        if identifier == .idBigMap         { closure() }
-					case .spSmallMap:      if identifier == .idSmallMap       { closure() }
-					case .spDataDetails:   if identifier == .idDataDetails    { closure() }
-					case .spPreferences:   if identifier == .idPreferences    { closure() }
-					case .spSubscription:  if identifier == .idSubscription   { closure() }
-					case .spStartupStatus: if startupIDs.contains(identifier) { closure() }
-					case .spRelayout:      if    mapsIDs.contains(identifier) { closure() }
-					default:                                                    closure()
+					switch (regarding, cid) {  // these non-default cases send a signal only to the one corresponding controller
+						case (.spMain,         .idMain):         closure()
+						case (.spDebug,        .idDebug):        closure()
+						case (.spCrumbs,       .idCrumbs):       closure()
+						case (.spBigMap,       .idBigMap):       closure()
+						case (.spSmallMap,     .idSmallMap):     closure()
+						case (.spDataDetails,  .idDataDetails):  closure()
+						case (.spPreferences,  .idPreferences):  closure()
+						case (.spSubscription, .idSubscription): closure()
+						default:
+							let     mapCIDs : [ZControllerID] = [.idBigMap,  .idSmallMap]
+							let startupCIDs : [ZControllerID] = [.idStartup, .idHelpDots]
+
+							switch regarding {
+								case .spRelayout:      if     mapCIDs.contains(cid) { closure() }
+								case .spStartupStatus: if startupCIDs.contains(cid) { closure() }
+								default:                                              closure()
+							}
 					}
                 }
             }
