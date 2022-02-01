@@ -43,7 +43,7 @@ class ZMapEditor: ZBaseEditor {
 	var             priorHere : Zone?
 	override var canHandleKey : Bool       { return gIsMapOrEditIdeaMode }
 	var             moveables : ZoneArray? { return (gIsEssayMode && !gMapIsResponder) ? gEssayView?.grabbedZones : gSelecting.sortedGrabs }
-	func          forceRedraw()            { gMapView?.setNeedsDisplay() }
+	func          forceRedraw()            { gMapController?.setNeedsDisplay() }
 
 	// MARK: - events
 	// MARK: -

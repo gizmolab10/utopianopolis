@@ -57,7 +57,7 @@ class ZDragging: NSObject {
 		dropCrumb?.highlight(false)
 		gRubberband.clearRubberband()
 		clearDragAndDrop()
-		gMapView?.setNeedsDisplay() // erase drag: line and dot
+		gMapController?.setNeedsDisplay() // erase drag: line and dot
 	}
 
 	func handleDragGesture(_ gesture: ZPanGestureRecognizer, in controller: ZMapController) {
@@ -76,8 +76,6 @@ class ZDragging: NSObject {
 			} else if state == .changed,                      // enlarge rubberband
 				gRubberband.setRubberbandExtent(to: location) {
 				gRubberband.updateGrabs()
-				gMapView?.setNeedsDisplay()
-				gMapView?.setNeedsDisplay()
 			} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 				gRubberband.rubberbandRect = nil              // erase rubberband
 
@@ -97,7 +95,7 @@ class ZDragging: NSObject {
 				gMainWindow?.makeFirstResponder(gMapView)
 			}
 
-			gMapView?.setNeedsDisplay()
+			gMapController?.setNeedsDisplay()
 		}
 	}
 

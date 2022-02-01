@@ -73,6 +73,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                            count :                Int  { return children.count }
+	var                         dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor }
 	var                 smallMapRootName :             String  { return isFavoritesRoot ? kFavoritesRootName : isRecentsRoot ? kRecentsRootName : emptyName }
 	var                      clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
 	override var               emptyName :             String  { return kEmptyIdea }
@@ -3414,17 +3415,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func plainDotParameters(_ showAsFilled: Bool, _ isReveal: Bool, _ isDragDrop: Bool = false) -> ZDotParameters {
-		let            c = widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor
+	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool, _ isDragDrop: Bool = false) -> ZDotParameters {
+		let            d = gDragging.dragLine?.parentWidget?.widgetZone
 		var            p = ZDotParameters()
 		let            t = bookmarkTarget
 		let            k = traitKeys
 		let            g = groupOwner
-		let            d = gDragging.dragLine?.parentWidget?.widgetZone
-		p.color          = c
+		p.color          = dotColor
 		p.isGrouped      = g != nil
 		p.showList       = isExpanded
-		p.isReveal       = isReveal
 		p.hasTarget      = isBookmark
 		p.typeOfTrait    = k.first ?? kEmpty
 		p.showAccess     = hasAccessDecoration
@@ -3432,12 +3431,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isGroupOwner   = g == self || g == t
 		p.showSideDot    = isCurrentSmallMapBookmark
 		p.isDragged      = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil
-		p.isDrop         = isDragDrop && d != nil && d == self
-		p.filled         = showAsFilled // || (!isReveal && isGrabbed)
-		p.fill           = showAsFilled ? c.lighter(by: 2.5) : gBackgroundColor
 		p.verticleOffset = offsetFromMiddle / (Double(gHorizontalGap) - 27.0) * 4.0
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.accessType     = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
+		p.isReveal       = isReveal
+		p.isDrop         = isDragDrop && d != nil && d == self
+		p.filled         = isFilled
+		p.fill           = isFilled ? dotColor.lighter(by: 2.5) : gBackgroundColor
 
 		return p
 	}

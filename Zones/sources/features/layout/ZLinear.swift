@@ -392,7 +392,7 @@ extension ZDragging {
 			let            isNoop = spawnCycle || (sameIndex && nearestIsParent) || nearestIndex < 0 || isForbidden
 			let            isDone = iGesture?.isDone ?? false
 
-			gMapView?.setNeedsDisplay() // draw drag line and dot
+			gMapController?.setNeedsDisplay() // draw drag line and dot
 
 			if  !isNoop {
 				if  !isDone {

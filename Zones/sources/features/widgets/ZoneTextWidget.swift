@@ -153,11 +153,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		super.mouseMoved(with: event)
 	}
 
-	override func mouseExited(with event: ZEvent) {
-		super.mouseExited(with: event)
-		gHovering.clear()?.setNeedsDisplay()
-	}
-
 	override func mouseDown(with event: ZEvent) {
 		if !gRefusesFirstResponder { // ignore mouse down during startup
 			gTemporarilySetMouseDownLocation(event.locationInWindow.x)
