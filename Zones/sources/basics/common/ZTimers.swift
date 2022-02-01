@@ -30,10 +30,11 @@ enum ZTimerID : Int {
 	case tLicense
 	case tRecount                  // repeat forever
 	case tStartup
+	case tHover                    // repeat forever
 	case tSync                     // repeat forever
 	case tKey
 
-	static let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
+	static let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tSync]
 
 	var string: String { return "\(self)" }
 
@@ -96,25 +97,27 @@ class ZTimers: NSObject {
 			var   block : Closure = {}          // do nothing by default
 
 			switch tid {
-			case .tKey:                     waitFor =  5.0
-			case .tSync:                    waitFor = 15.0              // fifteen seconds
-			case .tLicense, .tRecount:      waitFor = 60.0              // one minute
-			case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval // one fifth second
-			default:                        break
+				case .tHover:                   waitFor =  0.1
+				case .tKey:                     waitFor =  5.0
+				case .tSync:                    waitFor = 15.0              // fifteen seconds
+				case .tLicense, .tRecount:      waitFor = 60.0              // one minute
+				case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval // one fifth second
+				default:                        break
 			}
 
 			switch tid {
-			case .tKey:                     block = { gCurrentKeyPressed        = nil }
-			case .tMouseZone:               block = { gCurrentMouseDownZone     = nil }
-			case .tMouseLocation:           block = { gCurrentMouseDownLocation = nil }
-			case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
-			case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
-			case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }
-			case .tStartup:                 block = { gStartupController?.startupUpdate() }
-			case .tCloudAvailable:          block = { gBatches.cloudFire() }
-			case .tRecount:                 block = { gRecountMaybe() }
-			case .tSync:                    block = { gSaveContext() }
-			default:                        break
+				case .tKey:                     block = { gCurrentKeyPressed        = nil }
+				case .tMouseZone:               block = { gCurrentMouseDownZone     = nil }
+				case .tMouseLocation:           block = { gCurrentMouseDownLocation = nil }
+				case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
+				case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
+				case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }
+				case .tStartup:                 block = { gStartupController?.startupUpdate() }
+				case .tCloudAvailable:          block = { gBatches.cloudFire() }
+				case .tRecount:                 block = { gRecountMaybe() }
+				case .tHover:                   block = { gUpdateHover() }
+				case .tSync:                    block = { gSaveContext() }
+				default:                        break
 			}
 
 			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats) {

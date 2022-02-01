@@ -604,11 +604,8 @@ extension ZWindow {
 	@IBAction func undo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.undo() }
 	@IBAction func redo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.redo() }
 
-	var keyPressed: Bool {
-		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
-
-		return e != nil
-	}
+	var userIsActive: Bool { return isKeyWindow && currentEvent != nil }
+	var keyPressed: Bool { return nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false) != nil }
 
 	var mouseMoved: Bool {
 		let last = gLastLocation
@@ -619,10 +616,6 @@ extension ZWindow {
 		}
 
 		return last != gLastLocation
-	}
-
-	var userIsActive: Bool {
-		return isKeyWindow && (mouseMoved || keyPressed)
 	}
 
 }

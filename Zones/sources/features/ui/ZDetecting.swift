@@ -69,8 +69,7 @@ extension ZoneWidget {
 		if                                                  absoluteHitRect.contains(location) {
 			if  let            d = parentLine?.dragDot,   d.absoluteHitRect.contains(location) {
 				return         d
-			}
-			if  isCircularMode {
+			} else if isCircularMode {
 				if                                            highlightRect.contains(location) {
 					return     self
 				}
@@ -79,8 +78,9 @@ extension ZoneWidget {
 						return r
 					}
 				}
-			} else if let      s = sharedRevealDot,       s.absoluteHitRect.contains(location) {
-				return s
+			}
+			if  let            s = sharedRevealDot,       s.absoluteHitRect.contains(location) {
+				return         s
 			}
 			if  let            t = pseudoTextWidget,        t.absoluteFrame.contains(location) {
 				return         textWidget

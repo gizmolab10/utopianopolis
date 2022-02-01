@@ -73,7 +73,7 @@ class ZStartup: NSObject {
 						FOREGROUND(after: 0.1) {
 							self.requestFeedback() {
 								gTimers.stopTimer (for: .tStartup)
-								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense])
+								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense, .tHover])
 								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap, .spDataDetails])
 							}
 						}

@@ -64,6 +64,7 @@ var  gDisplayIdeasWithCircles:               Bool { return gCirclesDisplayMode.c
 var      gDetailsViewIsHidden:               Bool { return gMainController?.detailView?.isHidden ?? true }
 var           gMapIsResponder:               Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
 var             gUserIsExempt:               Bool { return gIgnoreExemption ? false : gUser?.isExempt ?? false } // discard this?
+var               gUserIsIdle:               Bool { return gUserActiveInWindow == nil }
 var         gCurrentEssayZone:              Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName:             String { return CKRecordID().recordName }
 var      gCurrentSmallMapName:             String { return gIsRecentlyMode ? "recent" : "favorite" }
@@ -350,8 +351,8 @@ var gShowSmallMapForIOS : Bool {
 	set { setPreferencesBool(newValue, for: kShowSmallMap) }
 }
 
-var gTestForUserActivity: Bool {
-	if  let w = gUserIsActive {
+var gUserActivityDetected: Bool {
+	if  let w = gUserActiveInWindow {
 		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
 		gInterruptionCount += 1
 
@@ -890,7 +891,7 @@ enum ZActiveWindowID : Int {
 
 }
 
-var gUserIsActive: ZActiveWindowID? {
+var gUserActiveInWindow: ZActiveWindowID? {
 	if  gMainWindow?.userIsActive ?? false {
 		return .main
 	}
@@ -906,13 +907,13 @@ var gLastLocation = CGPoint.zero
 
 func gThrowOnUserActivity() throws {
 	if  Thread.isMainThread {
-		if  gTestForUserActivity {
+		if  gUserActivityDetected {
 			throw(ZInterruptionError.userInterrupted)
 		}
 	} else {
-		gFOREGROUND.async {
-			if  gTestForUserActivity {
-				// cannot throw, so now what?
+		try gFOREGROUND.sync {
+			if  gUserActivityDetected {
+				throw(ZInterruptionError.userInterrupted)
 			}
 		}
 	}

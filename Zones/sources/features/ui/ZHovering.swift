@@ -10,18 +10,36 @@ import Foundation
 
 let gHovering = ZHovering()
 var gIgnoreHovering : Bool { return gRubberband.showRubberband || gDragging.isDragging }
+func gUpdateHover() { gMapController?.detectHover()?.setNeedsDisplay() }
 
 class ZHovering: NSObject {
 
 	var dot             : ZoneDot?
 	var widget          : ZoneWidget?
 	var textWidget      : ZoneTextWidget?
+	var onObject        : AnyObject? { return dot ?? widget ?? textWidget }
 
 	var absoluteView    : ZView? {
 		if  dot != nil {
 			return gMapView?.linesAndDotsView
 		} else if textWidget != nil || widget != nil {
 			return gMapView
+		}
+
+		return nil
+	}
+
+	func onObject(at location: CGPoint) -> AnyObject? {
+		if  let object = onObject {
+			if  let pseudo = object as? ZPseudoView {
+				if  pseudo.absoluteFrame.contains(location) {
+					return pseudo
+				}
+			} else if let t = object as? ZoneTextWidget,
+					  let p = t.widget?.pseudoTextWidget,
+					  p.absoluteFrame.contains(location) {
+				return t
+			}
 		}
 
 		return nil
@@ -80,6 +98,14 @@ class ZHovering: NSObject {
 
 extension ZMapController {
 
+	func detectHover() -> ZView? {
+		if  let point = gMapView?.currentMouseLocation {
+			return detectHover(at: point)
+		}
+
+		return nil
+	}
+
 	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
 		if  let     location = locationInWindow, !gIgnoreHovering { // not blink rubberband
 			if  let      any = detectHit(at: location) {
@@ -96,14 +122,14 @@ extension ZMapController {
 
 }
 
-extension ZMapView {
-
-	override func mouseMoved(with event: ZEvent) {
-		super.mouseMoved(with: event)
-
-		if  let view = gMapController?.detectHover(at: event.locationInWindow) {
-			view.setNeedsDisplay()
-		}
-	}
-
-}
+//extension ZMapView {
+//
+//	override func mouseMoved(with event: ZEvent) {
+//		super.mouseMoved(with: event)
+//
+//		if  let view = gMapController?.detectHover(at: event.locationInWindow) {
+//			view.setNeedsDisplay()
+//		}
+//	}
+//
+//}
