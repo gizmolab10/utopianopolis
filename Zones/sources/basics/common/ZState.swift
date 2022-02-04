@@ -78,7 +78,6 @@ var          gOtherDatabaseID:        ZDatabaseID { return gDatabaseID == .mineI
 var  gLightishBackgroundColor:             ZColor { return gAccentColor.lightish(by: 1.02)  }
 var          gDarkAccentColor:             ZColor { return gAccentColor.darker  (by: 1.3) }
 var       gLighterActiveColor:             ZColor { return gActiveColor.lighter (by: 4.0)   }
-var         gDefaultTextColor:             ZColor { return (gIsDark && !gIsPrinting) ? kLighterGrayColor : kBlackColor }
 var          gBackgroundColor:             ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
 var                gSmallFont:              ZFont { return .systemFont(ofSize: gSmallFontSize) }
 var                gMicroFont:              ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction * kSmallMapReduction) }

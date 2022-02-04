@@ -66,7 +66,7 @@ class ZHovering: NSObject {
 			view        = gMapView?.linesAndDotsView
 			dot         = d
 		} else if let w = p as? ZoneWidget {
-			view        = gMapView
+			view        = gMapView?.linesAndDotsView
 			widget      = w
 		}
 

@@ -51,7 +51,7 @@ class ZMapView: ZView {
 				gDragging.dropWidget  = nil
 			}
 
-//			setNeedsDisplay()
+			gMapController?.setNeedsDisplay()
 		}
 	}
 
@@ -117,7 +117,7 @@ class ZMapView: ZView {
 			drawWidgets(in: iDirtyRect, for: .pHighlights)
 		case .mLinesAndDots:
 			drawWidgets(in: iDirtyRect, for: .pLines)
-			drawWidgets(in: iDirtyRect, for: .pDots)
+			drawWidgets(in: iDirtyRect, for: .pDots)   // draw dots last so they can "cover" the ends of lines
 		default: break
 		}
 	}

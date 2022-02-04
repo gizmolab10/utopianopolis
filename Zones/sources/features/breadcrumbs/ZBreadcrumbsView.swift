@@ -67,13 +67,10 @@ class ZBreadcrumbsView : ZButtonsView {
 			let    attributed = NSMutableAttributedString(string: name)
 			let         range = NSRange(location:0, length: name.length)
 			attributes[.font] = gSmallFont
+			attributes[.foregroundColor] = zone.color
 
 			if  zone.hasNote {
 				attributes[.underlineStyle] = 1
-			}
-
-			if  let color = zone.color {
-				attributes[.foregroundColor] = color
 			}
 
 			attributed.addAttributes(attributes, range: range)

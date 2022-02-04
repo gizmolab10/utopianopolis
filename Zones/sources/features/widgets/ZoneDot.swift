@@ -39,7 +39,7 @@ struct  ZDotParameters {
 	var showAccess     = false
 	var showSideDot    = false
 	var fill           = gBackgroundColor
-	var color          = gDefaultTextColor
+	var color          = kDefaultIdeaColor
 	var accessType     = ZDecorationType.vertical
 
 }
