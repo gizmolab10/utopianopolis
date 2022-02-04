@@ -53,6 +53,7 @@ class ZStartup: NSObject {
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
 						gRefreshPersistentWorkMode()
+						gRemoteStorage.updateRootsOfAllProjeny()
 						gRemoteStorage.recount()
 						gRefreshCurrentEssay()
 						gProducts.fetchProductData()

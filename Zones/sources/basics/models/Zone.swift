@@ -60,6 +60,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                        noteMaybe :              ZNote?
 	var                   crossLinkMaybe :            ZRecord?
 	var                  parentZoneMaybe :               Zone?
+	var                             root :               Zone?
 	var                       groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
 	var                   bookmarkTarget :               Zone? { return crossLink as? Zone }
 	var                      destroyZone :               Zone? { return cloud?.destroyZone }
@@ -83,6 +84,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var         cloudProperties :       StringsArray  { return Zone.cloudProperties }
 	override var optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
 	override var    matchesFilterOptions :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
+	override var             isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                 isAZone :               Bool  { return true }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
 	var        isCurrentSmallMapBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
@@ -141,8 +143,29 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                    toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                toggleShowing()                        { isShowing ? hide() : show() }
 	func                      recount()                        { updateAllProgenyCounts() }
-	class  func randomZone(in dbID: ZDatabaseID) ->      Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
+	class  func randomZone(in dbID: ZDatabaseID)         ->     Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
+	override func hasMissingChildren()                   ->     Bool  { return count < fetchableCount }
+	override func orphan()                                            { parentZone?.removeChild(self) }
+	func updateRootFromParent()                                       { root = parentZone?.root ?? self }
+
+	func updateRootsOfAllAncestors() {
+		for ancestor in ancestralPath {
+			ancestor.updateRootFromParent()
+		}
+	}
+
+	var rroot: Zone? {
+		var base: Zone?
+
+		traverseAllAncestors { zone in
+			if  zone.isARoot {
+				base = zone
+			}
+		}
+
+		return base
+	}
 
 	var visibleDoneZone: Zone? {
 		var done: Zone?
@@ -415,10 +438,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var  results = ZoneArray()
 
 		traverseAllAncestors { ancestor in
-			results.append(ancestor)
+			results = [ancestor] + results
 		}
 
-		return results.reversed()
+		return results
 	}
 
 	var ancestralString: String {
@@ -470,18 +493,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return self
-	}
-
-	var root: Zone? {
-		var base: Zone?
-
-		traverseAllAncestors { zone in
-			if  zone.isARoot {
-				base = zone
-			}
-		}
-
-		return base
 	}
 
 	var decoration: String {
@@ -2784,8 +2795,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: - children
 	// MARK: -
 
-	override func hasMissingChildren() -> Bool { return count < fetchableCount }
-
 	override func hasMissingProgeny() -> Bool {
 		var total = 0
 
@@ -2822,8 +2831,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	override var isAdoptable: Bool { return parentRID != nil || parentLink != nil }
-
 	// adopt recursively
 
 	override func adopt(recursively: Bool = false) {
@@ -2841,10 +2848,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		removeState(.needsAdoption)
-	}
-
-	override func orphan() {
-		parentZone?.removeChild(self)
 	}
 
 	func addChildAndRespectOrder(_ child: Zone?) {
@@ -2974,6 +2977,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			needCount()
 			updateMaxLevel()
+			child.updateRootsOfAllAncestors()
 			onCompletion?(child)
 
 			return toIndex

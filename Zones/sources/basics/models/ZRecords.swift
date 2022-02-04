@@ -371,13 +371,27 @@ class ZRecords: NSObject {
         return lost
     }
 
+	func updateRootsOfAllProjeny() {
+		applyToAllRoots { zone in
+			zone?.traverseAllProgeny { zone in
+				zone.updateRootFromParent()
+			}
+		}
+	}
+
+	func applyToAllRoots(_ closure: ZoneMaybeClosure) {
+		closure(rootZone)
+		closure(trashZone)
+		closure(destroyZone)
+		closure(recentsZone)
+		closure(favoritesZone)
+		closure(lostAndFoundZone)
+	}
+
     func recount() {  // all progenyCounts for all progeny in all roots
-		rootZone?        .recount()
-		trashZone?       .recount()
-		destroyZone?     .recount()
-		recentsZone?     .recount()
-		favoritesZone?   .recount()
-		lostAndFoundZone?.recount()
+		applyToAllRoots { zone in
+			zone?.recount()
+		}
 
 		manifest?.count = NSNumber(value: zRecordsCount)
     }
