@@ -68,12 +68,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                           widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
-	var                        textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : gDefaultTextColor }
+	var                        textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kDefaultIdeaColor }
 	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                            count :                Int  { return children.count }
-	var                         dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? gDefaultTextColor) : gDefaultTextColor }
+	var                         dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
 	var                 smallMapRootName :             String  { return isFavoritesRoot ? kFavoritesRootName : isRecentsRoot ? kRecentsRootName : emptyName }
 	var                      clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
 	override var               emptyName :             String  { return kEmptyIdea }
