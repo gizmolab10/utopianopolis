@@ -470,7 +470,7 @@ class ZTextEditor: ZTextView {
             }
         }
         
-        if  var original = currentlyEditedZone {
+        if  var original = e?.packedZone {
             gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
                 gControllers.signalFor(nil, multiple: kinds) {
 					if  let widget = original.widget, widget.isHere {       // offset has changed
@@ -489,9 +489,10 @@ class ZTextEditor: ZTextView {
                             e?.textWidget?.becomeFirstResponder()
                         }
                     } // else widgets are wrong
-                    
+
                     FOREGROUND(after: 0.01) {
                         self.setCursor(at: self.currentOffset)
+						gMapView?.setNeedsDisplay()
                     }
                 }
             }
