@@ -51,7 +51,7 @@ class ZMapView: ZView {
 				gDragging.dropWidget  = nil
 			}
 
-			gMapController?.setNeedsDisplay()
+//			gMapController?.setNeedsDisplay()
 		}
 	}
 

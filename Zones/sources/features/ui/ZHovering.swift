@@ -21,7 +21,7 @@ class ZHovering: NSObject {
 
 	var absoluteView    : ZView? {
 		if  dot != nil {
-			return gMapView?.linesAndDotsView
+			return gLinesAndDotsView
 		} else if textWidget != nil || widget != nil {
 			return gMapView
 		}
@@ -57,41 +57,37 @@ class ZHovering: NSObject {
 		return cleared
 	}
 
-	func setHover(on p: ZPseudoView) -> ZView? {
+	func setHover(on p: ZPseudoView) {
 		clear()
 
-		var        view : ZView?
-		p   .isHovering = true
 		if  let       d = p as? ZoneDot {
-			view        = gMapView?.linesAndDotsView
 			dot         = d
 		} else if let w = p as? ZoneWidget {
-			view        = gMapView?.linesAndDotsView
 			widget      = w
+		} else {
+			return
 		}
 
-		return view
+		p   .isHovering = true
 	}
 
-	func setHover(on t: ZoneTextWidget) -> ZView? {
+	func setHover(on t: ZoneTextWidget) {
 		clear()
 
 		t.isHovering = true
 		textWidget   = t
-
-		return gMapView
 	}
 	
 	@discardableResult func declareHover(_ any: Any?) -> ZView? {
 		if  let p = any as? ZPseudoView {
-			return setHover(on: p)
+			setHover(on: p)
 		}
 
 		if  let t = any as? ZoneTextWidget {
-			return setHover(on: t)
+			setHover(on: t)
 		}
 		
-		return nil
+		return absoluteView
 	}
 
 }
@@ -121,15 +117,3 @@ extension ZMapController {
 	}
 
 }
-
-//extension ZMapView {
-//
-//	override func mouseMoved(with event: ZEvent) {
-//		super.mouseMoved(with: event)
-//
-//		if  let view = gMapController?.detectHover(at: event.locationInWindow) {
-//			view.setNeedsDisplay()
-//		}
-//	}
-//
-//}

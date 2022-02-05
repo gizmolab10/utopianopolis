@@ -533,24 +533,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var computed: ZColor? = kDefaultIdeaColor
 
 			if  gColorfulMode {
-				if  colorMaybe          != nil {
-					computed             = colorMaybe
+				if  let       b = bookmarkTarget {
+					return b.color
+				} else if let m = colorMaybe ?? zoneColor?.color {
+					computed    = m
 				} else {
-					traverseAncestors { ancestor -> ZTraverseStatus in
-						if  let        b = ancestor.bookmarkTarget {
-							if  let    c = b.color {
-								computed = c
-
-								return .eStop
-							}
-						} else if let  c = ancestor.zoneColor?.color {
-							computed     = c
-
-							return .eStop
-						}
-
-						return .eContinue
-					}
+					return parentZone?.color
 				}
 			}
 

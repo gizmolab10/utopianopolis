@@ -137,22 +137,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
 	func updateTracking() { addTracking(for: frame) }
 
-	override func mouseEntered(with event: ZEvent) {
-		super.mouseEntered(with: event)
-
-		if  isEnabled, !gIgnoreHovering { // not blink rubberband
-			gHovering.declareHover(self)
-		}
-	}
-
-	override func mouseMoved(with event: ZEvent) {
-		if  isEnabled, !gIgnoreHovering { // not blink rubberband
-			gHovering.declareHover(self)
-		}
-
-		super.mouseMoved(with: event)
-	}
-
 	override func mouseDown(with event: ZEvent) {
 		if !gRefusesFirstResponder { // ignore mouse down during startup
 			gTemporarilySetMouseDownLocation(event.locationInWindow.x)

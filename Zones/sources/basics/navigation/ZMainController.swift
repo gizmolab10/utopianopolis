@@ -106,7 +106,7 @@ class ZMainController: ZGesturesController {
 				essayContainerView?.isHidden = !gIsEssayMode
 				gRefusesFirstResponder       = false
 
-				gMapView?.setNeedsDisplay()
+				gMapController?.setNeedsDisplay()
 			default: break
         }
 
