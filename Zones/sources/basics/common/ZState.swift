@@ -102,32 +102,30 @@ func gToggleShowTooltips() {
 }
 
 func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
-	if  let c = gDetailsController {
-		func toggle() {
-			gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
+	func toggle() {
+		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
-			if  OPTION {			        // if any grabs are in current small map, move them to other map
-				let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
-				let   priorID : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
+		if  OPTION {			        // if any grabs are in current small map, move them to other map
+			let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
+			let   priorID : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
 
-				gSelecting.swapGrabsFrom(priorID, toID: currentID)
-			}
+			gSelecting.swapGrabsFrom(priorID, toID: currentID)
 		}
+	}
 
-		if !c.viewIsVisible(for: .vSmallMap) {
-			c.showViewFor       (.vSmallMap)
+	if !gSmallMapIsVisible {
+		gDetailsController?.showViewFor(.vSmallMap)
 
-			if  forceToggle {
-				toggle()
-			}
-		} else {
+		if  forceToggle {
 			toggle()
 		}
-
-		gShowDetailsView = true    	// make sure the details view is visible
-
-		gSignal([.spMain, .sDetails, .spSmallMap, .spRelayout])
+	} else {
+		toggle()
 	}
+
+	gShowDetailsView = true    	// make sure the details view is visible
+
+	gSignal([.spMain, .sDetails, .spSmallMap])
 }
 
 func gLoadProgressTimes() {
