@@ -10,7 +10,7 @@ import Foundation
 
 let gHovering = ZHovering()
 var gIgnoreHovering : Bool { return gRubberband.showRubberband || gDragging.isDragging }
-func gUpdateHover() { gMapController?.detectHover()?.setNeedsDisplay() }
+func gUpdateHover() { gMapController?.detectHover() }
 
 class ZHovering: NSObject {
 
@@ -18,6 +18,7 @@ class ZHovering: NSObject {
 	var widget          : ZoneWidget?
 	var textWidget      : ZoneTextWidget?
 	var onObject        : AnyObject? { return dot ?? widget ?? textWidget }
+	var showHover       : Bool       { return absoluteView != nil }
 
 	var absoluteView    : ZView? {
 		if  dot != nil {
@@ -45,8 +46,8 @@ class ZHovering: NSObject {
 		return nil
 	}
 
-	@discardableResult func clear() -> ZView? {
-		let            cleared = absoluteView // do this before setting everything to nil
+	@discardableResult func clear() -> Bool {
+		let            cleared = showHover // do this before setting everything to nil
 		dot?       .isHovering = false
 		widget?    .isHovering = false
 		textWidget?.isHovering = false
@@ -78,7 +79,7 @@ class ZHovering: NSObject {
 		textWidget   = t
 	}
 	
-	@discardableResult func declareHover(_ any: Any?) -> ZView? {
+	@discardableResult func declareHover(_ any: Any?) -> Bool {
 		if  let p = any as? ZPseudoView {
 			setHover(on: p)
 		}
@@ -87,33 +88,29 @@ class ZHovering: NSObject {
 			setHover(on: t)
 		}
 		
-		return absoluteView
+		return showHover
 	}
 
 }
 
 extension ZMapController {
 
-	func detectHover() -> ZView? {
-		if  let point = gMapView?.currentMouseLocation {
-			return detectHover(at: point)
+	func detectHover() {
+		if  let point = gMapView?.currentMouseLocation, detectHover(at: point) {
+			setNeedsDisplay()
 		}
-
-		return nil
 	}
 
-	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> ZView? {
-		if  let     location = locationInWindow, !gIgnoreHovering { // not blink rubberband
-			if  let      any = detectHit(at: location) {
-				if  let    v = gHovering.declareHover(any) {
-					return v
-				}
-			} else if let  v = gHovering.clear() {
-				return     v
+	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> Bool {
+		if  let location = locationInWindow, !gIgnoreHovering { // not blink rubberband
+			if  let  any = detectHit(at: location) {
+				return gHovering.declareHover(any)
+			} else {
+				return gHovering.clear()
 			}
 		}
 
-		return nil
+		return false
 	}
 
 }
