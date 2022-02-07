@@ -1323,7 +1323,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="2tm-CL-1xj"/>
                                         </connections>
                                     </button>
-                                    <button identifier="cancel" toolTip="discard changes and exit editor" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Bk-q7-w37" userLabel="cancel">
+                                    <button identifier="cancel" toolTip="discard changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Bk-q7-w37" userLabel="cancel">
                                         <rect key="frame" x="143" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="2od-Um-DWP"/>

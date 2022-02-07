@@ -72,7 +72,7 @@ class ZEssayControlsView: ZView {
 			rect.size.width = 100.0
 			frame = rect
 
-			inspectorBar?.addSubview(self)
+			b.addSubview(self)
 		}
 	}
 
@@ -98,6 +98,12 @@ class ZEssayControlsView: ZView {
 		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
 		titlesControl?.segmentCount = isNote ? 2 : 3
 		titlesControl?   .isEnabled = enabled
+
+		if !isNote {
+			let image = ZImage(named: "show.drag.dot")?.resize(CGSize.squared(16.0))
+			titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
+			titlesControl?.setImage(image,                         forSegment: 2)
+		}
 	}
 
 	func matchTitlesControlTo(_ mode: ZEssayTitleMode) {
