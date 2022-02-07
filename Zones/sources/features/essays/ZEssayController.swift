@@ -14,12 +14,14 @@ import Cocoa
 import UIKit
 #endif
 
-var gEssayController: ZEssayController? { return gControllers.controllerForID(.idNote) as? ZEssayController }
+var gEssayController   : ZEssayController? { return gControllers.controllerForID(.idNote) as? ZEssayController }
+var gEssayControlsView : ZEssayControlsView? { return gEssayController?.essayControlsView }
 
-class ZEssayController: ZGesturesController, ZScrollDelegate {
+class ZEssayController : ZGesturesController, ZScrollDelegate {
 	override  var         controllerID : ZControllerID { return .idNote }
 	var           linkDialogController : ZLinkDialogController?
 	var                     parameters : ZEssayLinkParameters?
+	@IBOutlet var    essayControlsView : ZEssayControlsView?
 	@IBOutlet var            essayView : ZEssayView?
 
 	override func controllerSetup() {

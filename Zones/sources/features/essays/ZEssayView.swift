@@ -73,50 +73,6 @@ enum ZEssayLinkType: String {
 
 }
 
-enum ZEssayButtonID : Int {
-	case idMultiple
-	case idForward
-	case idCancel
-	case idDelete
-	case idTitles
-	case idPrint
-	case idBack
-	case idSave
-	case idHide
-
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idCancel, .idMultiple] }
-
-	var title: String {
-		switch self {
-		case .idBack:     return "left.arrow"
-		case .idForward:  return "right.arrow"
-		case .idMultiple: return "multiple"
-		case .idCancel:   return "cancel"
-		case .idDelete:   return "trash"
-		case .idTitles:   return kEmpty
-		case .idPrint:    return "printer"
-		case .idHide:     return "exit"
-		case .idSave:     return "save"
-		}
-	}
-
-	var tooltipString : String {
-		let kind = (gCurrentEssay?.isNote ?? true) ? "note" : "essay"
-		switch self {
-		case .idMultiple: return "switch between showing note and essay"
-		case .idForward:  return "show next"
-		case .idCancel:   return "discard changes and exit editor"
-		case .idDelete:   return "delete"
-		case .idTitles:   return kEmpty
-		case .idPrint:    return "print this \(kind)"
-		case .idHide:     return "save changes and exit editor"
-		case .idBack:     return "show previous"
-		case .idSave:     return "save"
-		}
-	}
-
-}
-
 @objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate {
 	let margin          = CGFloat(20.0)
@@ -136,21 +92,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
 	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
 	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var inspectorBar    : ZView?             { return gMainWindow?.inspectorBar }
-	var backwardButton  : ZButton?
-	var forwardButton   : ZButton?
-	var multipleButton  : ZButton?
-	var cancelButton    : ZButton?
-	var deleteButton    : ZButton?
-	var printButton     : ZButton?
-	var hideButton      : ZButton?
-	var saveButton      : ZButton?
 	var resizeDragStart : CGPoint?
 	var resizeDragRect  : CGRect?
 	var resizeDot       : ZDirection?
 	var essayRecordName : String?
 
-	@IBOutlet var titlesControl : ZSegmentedControl?
 	var selectedNotes : [ZNote] {
 		return (gCurrentEssay?.zone?.zonesWithNotes.filter {
 			$0.note?.noteRange != nil &&
@@ -441,6 +387,22 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	@objc func handleControlAction(_ iButton: ZTooltipButton) {
+		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
+			switch buttonID {
+				case .idMultiple: swapBetweenNoteAndEssay()
+				case .idForward:  save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRelayoutMaps() }
+				case .idBack:     save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRelayoutMaps() }
+				case .idSave:     save()
+				case .idPrint:    printView()
+				case .idHide:     grabDone()
+				case .idDelete:   if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
+				case .idCancel:                         gCurrentEssayZone?.grab();       exit()
+				default:          break
+			}
+		}
+	}
+
 	override func mouseDown(with event: ZEvent) {
 		if  !handleClick   (with: event) {
 			super.mouseDown(with: event)
@@ -571,17 +533,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func essayViewSetup() {
-		if  backwardButton != nil {
-			removeEssayControlButtons()
-		}
-
-		gMainWindow?.updateEssayEditorInspectorBar(show: false)
-
-		for tag in ZEssayButtonID.all {
-			addEssayControlButtonFor(tag)
-		}
-
-		addTitlesControl()
+		gMainWindow?.updateEssayEditorInspectorBar(show: true)
+		gEssayControlsView?.setupAllEssayControls()
 		updateTextStorage()
 	}
 
@@ -622,9 +575,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  gCurrentEssay == nil {
 			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
 		} else {
-			updateTitleSegments()
+			gEssayControlsView?.updateTitleSegments()
 
-			delta = updateTitlesControlAndMode()
+			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
 			if  (shouldOverwrite || restoreSelection != nil),
 				let text = gCurrentEssay?.essayText {
@@ -632,10 +585,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
 				selectAndScrollTo(restoreSelection)
 				undoManager?.removeAllActions()                               // clear the undo stack of prior / disastrous information (about prior text)
-				matchTitlesControlTo(gEssayTitleMode)
+				gEssayControlsView?.matchTitlesControlTo(gEssayTitleMode)
 			}
 
-			enableEssayControls(true)
+			gEssayControlsView?.enableEssayControls(true)
 
 			essayRecordName = gCurrentEssayZone?.recordName                   // do this after overwriting
 			delegate        = self 					    	                  // set delegate after setText
@@ -972,250 +925,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		regrab(grabbed)
 		scrollToGrabbed()
 		gSignal([.spCrumbs, .sDetails])
-	}
-
-	// MARK: - buttons
-	// MARK: -
-
-	func enableEssayControls(_      enabled: Bool) {
-		let      hasMultipleNotes = gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
-		backwardButton?.isEnabled = enabled && hasMultipleNotes
-		forwardButton? .isEnabled = enabled && hasMultipleNotes
-		multipleButton?.isEnabled = enabled
-		titlesControl? .isEnabled = enabled
-		deleteButton?  .isEnabled = enabled
-		cancelButton?  .isEnabled = enabled
-		printButton?   .isEnabled = enabled
-		hideButton?    .isEnabled = enabled
-		saveButton?    .isEnabled = enabled
-
-		updateTitleSegments(enabled)
-		redrawInspectorBar (enabled)
-	}
-
-	func redrawInspectorBar(_ enabled: Bool) {
-		if  let      bar = inspectorBar {
-			bar.isHidden = !enabled
-
-			if  enabled {
-				bar.setNeedsDisplay()
-			}
-		}
-	}
-
-	@objc private func handleControlAction(_ iButton: ZButton) {
-		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
-			switch buttonID {
-			case .idMultiple: swapBetweenNoteAndEssay()
-			case .idForward:  save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRelayoutMaps() }
-			case .idBack:     save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRelayoutMaps() }
-			case .idSave:     save()
-			case .idPrint:    printView()
-			case .idHide:     grabDone()
-			case .idDelete:   if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
-			case .idCancel:                         gCurrentEssayZone?.grab();       exit()
-			default:          break
-			}
-		}
-	}
-
-	private func controlButtonRect(at target: Int) -> CGRect? {
-		var rect : CGRect?
-		if  let bar = inspectorBar {
-
-			// //////////////////////////////////////////////////////////////// //
-			// Apple bug: inspector bar subviews are not located where expected //
-			// //////////////////////////////////////////////////////////////// //
-
-			rect                = bar.subviews[0].frame
-			let x               = CGFloat(190.0)
-			let y               = CGFloat( -2.0)
-			let gap             = CGFloat(  4.0)
-			var prior           = rect!
-
-			for index in 1...target {
-				let tool        = bar.subviews[index]
-				tool.isHidden   = false
-				rect?.size      = tool.size
-				rect?.origin.x += prior.size.width + gap
-				rect?.origin.y  = y
-				prior           = rect!
-			}
-
-			rect?.origin.x     += x
-		}
-
-		return rect
-	}
-
-	func removeEssayControlButtons() {
-		if  let bar = inspectorBar {
-			for subview in bar.subviews {
-				if  let b = subview as? ZTooltipButton {
-					b.removeFromSuperview()
-				}
-
-				if  let s = subview as? ZSegmentedControl {
-					s.removeFromSuperview()
-				}
-			}
-		}
-	}
-
-	private func addEssayControlButtonFor(_ tag: ZEssayButtonID) {
-		if  let bar = inspectorBar {
-
-			func buttonWith(_ title: String) -> ZTooltipButton {
-				let    action = #selector(handleControlAction)
-
-				if  let image = ZImage(named: title)?.resize(CGSize.squared(17.0)) {
-					return      ZTooltipButton(image: image, target: self, action: action)
-				}
-
-				let    button = ZTooltipButton(title: title, target: self, action: action)
-				button  .font = gSmallFont
-
-				return button
-			}
-
-			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton? {
-				if  var         frame = controlButtonRect(at: bar.subviews.count - 1) {
-					let         title = tag.title
-					let        button = buttonWith(title)
-					frame       .size = button.size
-					frame             = frame.insetBy(dx: 6.5, dy: 1.5)
-					button       .tag = tag.rawValue
-					button     .frame = frame
-					button .isEnabled = false
-					button.isBordered = true
-					button.bezelStyle = .texturedRounded
-
-					button.setButtonType(.momentaryChange)
-					button.updateTracking()
-
-					return button
-				}
-
-				return nil
-			}
-
-			func assignButton(_ button: ZButton) {
-				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
-					switch tag {
-					case .idMultiple: multipleButton = button
-					case .idBack:     backwardButton = button
-					case .idForward:   forwardButton = button
-					case .idCancel:     cancelButton = button
-					case .idDelete:     deleteButton = button
-					case .idPrint:       printButton = button
-					case .idHide:         hideButton = button
-					case .idSave:         saveButton = button
-					default: break
-					}
-				}
-			}
-
-			if  let b = buttonFor(tag) {
-				bar.addSubview(b)
-				assignButton(b)
-			}
-		}
-	}
-
-	// MARK: - titles control
-	// MARK: -
-
-	func addTitlesControl() {
-		if  let           bar = inspectorBar,
-			let       control = titlesControl,
-			var         frame = controlButtonRect(at: bar.subviews.count - 1) {
-			frame       .size = control.size
-			control    .frame = frame.offsetBy(dx: 9.0, dy: 6.0)
-			control.isEnabled = false
-
-			bar.addSubview(control)
-		}
-	}
-
-	func updateTitleSegments(_ enabled: Bool = true) {
-		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
-		titlesControl?.segmentCount = isNote ? 2 : 3
-		titlesControl?   .isEnabled = enabled
-
-		if !isNote {
-			let image = ZImage(named: "show.drag.dot")?.resize(CGSize.squared(16.0))
-			titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
-			titlesControl?.setImage(image,                         forSegment: 2)
-		}
-	}
-
-	func matchTitlesControlTo(_ mode: ZEssayTitleMode) {
-		let    last = (titlesControl?.segmentCount ?? 1) - 1
-		let segment = min(last, mode.rawValue)
-
-		titlesControl?.selectedSegment = segment
-	}
-
-	@discardableResult func updateTitlesControlAndMode() -> Int {
-		let mode = gAdjustedEssayTitleMode
-
-		matchTitlesControlTo(mode)
-
-		return deltaForTransitioningTo(mode)  // updates gEssayTitleMode
-	}
-
-	@IBAction func handleSegmentedControlAction(_ iControl: ZSegmentedControl) {
-		if  let  mode = ZEssayTitleMode(rawValue: iControl.selectedSegment) {
-			var range = selectedRange
-
-			save()
-
-			range.location += deltaForTransitioningTo(mode)
-			titlesControl?.needsDisplay = true
-
-			updateTextStorage(restoreSelection: range)
-			gSignal([.sEssay])
-		}
-	}
-
-	func titleLengthsUpTo(_ note: ZNote, for mode: ZEssayTitleMode) -> Int {
-		let    isEmpty = mode == .sEmpty
-		let     isFull = mode == .sFull
-		if  let  eZone = gCurrentEssay?.zone,  // essay zones
-			let target = note.zone {           // target zone
-			let eZones = eZone.zonesWithNotes
-			let  isOne = eZones.count == 1
-			var  total = isOne ? -4 : isEmpty ? -2 : isFull ? -2 : 0
-
-			for zone in eZones {
-				if  let zNote = zone.note {
-					zNote.updateIndentCount(relativeTo: eZone)
-
-					total += zNote.titleOffsetFor(mode)
-				}
-
-				if  zone  == target {
-					return total
-				}
-			}
-		}
-
-		return isEmpty ? 0 : note.titleRange.length
-	}
-
-	func deltaForTransitioningTo(_ mode: ZEssayTitleMode) -> Int {
-		var delta           = 0
-		if  mode           != gEssayTitleMode {
-			if  let    note = selectedNote {
-				let  before = titleLengthsUpTo(note, for: gEssayTitleMode) // call this first
-				let   after = titleLengthsUpTo(note, for: mode)            // call this second
-				delta       = after - before
-			}
-
-			gEssayTitleMode = mode
-		}
-
-		return delta
 	}
 
 	// MARK: - images

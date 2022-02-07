@@ -246,14 +246,7 @@ extension ZMapControlsView {
 
 extension ZTooltipButton {
 
-	func updateTooltips() {
-		toolTip = nil
-
-		if  gShowToolTips,
-			let buttonID = ZEssayButtonID(rawValue: tag) {
-			toolTip      = "\(buttonID.tooltipString)"
-		}
-	}
+	func updateTooltips() {}
 
 }
 

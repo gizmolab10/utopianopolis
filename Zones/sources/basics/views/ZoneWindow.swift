@@ -21,6 +21,16 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     var          observer : NSKeyValueObservation?
 	var      inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
 
+	func redrawInspectorBar(_ enabled: Bool) {
+		if  let      bar = inspectorBar {
+			bar.isHidden = !enabled
+
+			if  enabled {
+				bar.setNeedsDisplay()
+			}
+		}
+	}
+
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  let            key = iKey {
 			gTemporarilySetKey(key)  // enable become first responder
@@ -69,22 +79,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     }
 
 	func updateEssayEditorInspectorBar(show: Bool = false) {
-//		if  let         tools = inspectorBar?.subviews {
-//			let         count = tools.count
-//			if          count > 8 {
-//				for index in 8..<tools.count {
-//					let  tool = tools[index]
-//					let prior = tools[index - 1]
-//					tool.isHidden = false
-//
-//					tool.snp.makeConstraints { make in
-//						make.centerY.equalTo(prior)
-//						make.left.equalTo(prior.snp.right).offset(9.0)
-//					}
-//				}
-//			}
-//		}
-
 		showsToolbarButton     =  show
 		inspectorBar?.isHidden = !show
 	}
