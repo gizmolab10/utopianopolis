@@ -38,20 +38,18 @@ class ZMapView: ZView {
 		addTracking(for: bounds)
 	}
 
+	override func mouseMoved(with event: ZEvent) {
+		super.mouseMoved(with: event)
+
+		gOkayToDetectHover = true
+	}
+
 	override func mouseExited(with event: ZEvent) {
 		super.mouseExited(with: event)
 
-		if  !(event.window?.contentView?.frame.contains(event.locationInWindow) ?? false) {
-
-			if  gRubberband.rubberbandRect != nil {
-				gRubberband.rubberbandRect  = nil
-			}
-
-			if  gDragging.dropWidget != nil {
-				gDragging.dropWidget  = nil
-			}
-
-//			gMapController?.setNeedsDisplay()
+		if  let view = gMainWindow?.contentView, !view.frame.contains(event.locationInWindow) {
+			gRubberband.rubberbandRect = nil
+			gDragging      .dropWidget = nil
 		}
 	}
 
@@ -77,11 +75,10 @@ class ZMapView: ZView {
 	}
 
 	func resize() {
-		if  let   view = gMapController?.view {
-			frame      = view.bounds
-//			if  mapID == .mTextAndHighlights {
-//				linesAndDotsView?.resize()
-//			}
+		if  let view = gMapView {
+			frame    = view.bounds
+
+			setNeedsDisplay()
 		}
 	}
 
@@ -125,7 +122,10 @@ class ZMapView: ZView {
 	func drawWidgets(in iDirtyRect: CGRect, for phase: ZDrawPhase) {
 		ZBezierPath.setClip(to: iDirtyRect)
 		gSmallMapController?.drawWidgets(for: phase)
-		gMapController?     .drawWidgets(for: phase)
+
+		if  !gIsEssayMode {
+			gMapController? .drawWidgets(for: phase)
+		}
 	}
 
 	func drawDrag(_ iDirtyRect: CGRect) {
@@ -133,13 +133,13 @@ class ZMapView: ZView {
 		gRubberband.draw()
 		gDragging.dragLine?.drawDragLineAndDot()
 	}
-
-	@objc override func printView() {
-		gDetailsController?.temporarilyHideView(for: .vSmallMap) {
-			super.printView()
-		}
-		
-		gRelayoutMaps()
-	}
+//
+//	@objc override func printView() {
+//		gDetailsController?.temporarilyHideView(for: .vSmallMap) {
+//			super.printView()
+//		}
+//		
+//		gRelayoutMaps()
+//	}
 
 }

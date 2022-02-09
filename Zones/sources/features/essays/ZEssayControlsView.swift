@@ -66,9 +66,10 @@ class ZEssayControlsView: ZView {
 	@IBAction func handleButtonAction(_ iButton: ZTooltipButton) { gEssayView?.handleControlAction(iButton) }
 
 	func setupAllEssayControls() {
-		if  let b = inspectorBar, !b.subviews.contains(self) {
-			var rect = bounds
-			rect.origin = CGPoint(x: 394.0, y: 4.0)
+		if  let           b = inspectorBar, !b.subviews.contains(self) {
+			var        rect = bounds
+			let           x = b.maxX + 4.0
+			rect    .origin = CGPoint(x: x, y: 4.0)
 			rect.size.width = 100.0
 			frame = rect
 

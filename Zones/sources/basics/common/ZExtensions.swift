@@ -126,7 +126,7 @@ extension NSObject {
 	func              noop()                 {}
     func       performance(_ iMessage: Any?) { log(iMessage) }
 	func               bam(_ iMessage: Any?) { log("\("-".repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
-	func printCurrentFocus()                 {   gMapView?.printView() }
+	func printCurrentFocus()                 { gMapController?.hereWidget?.printWidget()}
 	func printCurrentEssay()                 { gEssayView?.printView() }
 
 	var zClassName: String {
@@ -797,6 +797,13 @@ extension CGSize {
 	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
 	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize { return CGSize(width: width + x, height: height + y).absSize }
 	func offsetBy(_ delta: CGSize)                   -> CGSize { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
+
+	func scaleToFit(_ other: CGSize) -> CGFloat {
+		let horizontal = other.width / width
+		let   vertical = other.height / height
+
+		return horizontal < vertical ? horizontal : vertical
+	}
 
 	public init(_ point: CGPoint) {
 		self.init()
@@ -2646,6 +2653,20 @@ extension ZView {
 
 	var currentMouseLocationInWindow: CGPoint? {
 		return window?.convertPoint(fromScreen: ZEvent.mouseLocation)
+	}
+
+	var maxX: CGFloat {
+		var x = CGFloat.zero
+
+		for subview in subviews {
+			let subX = subview.frame.maxX
+
+			if  x < subX {
+				x = subX
+			}
+		}
+
+		return x
 	}
 
 	var currentMouseLocation: CGPoint? {

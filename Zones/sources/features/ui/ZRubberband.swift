@@ -18,7 +18,7 @@ class ZRubberband: NSObject {
 
 	var rubberbandRect: CGRect? { // wrapper with new value logic
 		didSet {
-			if  rubberbandRect == nil || rubberbandRect == .zero {
+			if  oldValue != nil, (rubberbandRect == nil || rubberbandRect == .zero) {
 				gSelecting.assureMinimalGrabs()
 				gSelecting.updateCurrentBrowserLevel()
 				gSelecting.updateCousinList()

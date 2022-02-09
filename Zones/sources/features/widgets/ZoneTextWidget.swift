@@ -225,6 +225,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     }
 
     override func draw(_ iDirtyRect: CGRect) {
+		if  gIsEssayMode, widgetZone?.isInBigMap ?? true { return }
         updateTextColor()
         super.draw(iDirtyRect)
 

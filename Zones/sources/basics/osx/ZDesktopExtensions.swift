@@ -536,8 +536,15 @@ extension ZView {
 			let      isWider = bounds.size.width > bounds.size.height
 			let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
 			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+			let         size = printInfo.imageablePageBounds.size.multiplyBy(0.8)
 
-			PMSetScale(pmPageFormat, 80.0)
+			if  isWider {
+				size         = size.swapped
+			}
+
+			let        scale = bounds.size.scaleToFit(size) * 100.0
+
+			PMSetScale(pmPageFormat, scale)
 			PMSetOrientation(pmPageFormat, orientation, false)
 			printInfo.updateFromPMPrintSettings()
 			printInfo.updateFromPMPageFormat()

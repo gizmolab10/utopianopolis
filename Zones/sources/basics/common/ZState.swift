@@ -177,7 +177,6 @@ func gSetProgressTime(opInt: Int, value: Double?) {
 	}
 }
 
-
 func gAssureProgressTimesAreLoaded() -> Bool {
 	if  gProgressTimesReady, !gGotProgressTimes {
 		for op in ZOperationID.oStartingUp.rawValue ... ZOperationID.oDone.rawValue {

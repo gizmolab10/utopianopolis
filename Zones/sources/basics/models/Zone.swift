@@ -86,6 +86,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var    matchesFilterOptions :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
 	override var             isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                 isAZone :               Bool  { return true }
+	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
 	var        isCurrentSmallMapBookmark :               Bool  { return isCurrentFavorite || isCurrentRecent }
 	var                  isCurrentRecent :               Bool  { return self ==   gRecents.currentBookmark }
@@ -147,25 +148,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 	override func hasMissingChildren()                   ->     Bool  { return count < fetchableCount }
 	override func orphan()                                            { parentZone?.removeChild(self) }
-	func updateRootFromParent()                                       { root = parentZone?.root ?? self }
-
-	func updateRootsOfAllAncestors() {
-		for ancestor in ancestralPath {
-			ancestor.updateRootFromParent()
-		}
-	}
-
-	var rroot: Zone? {
-		var base: Zone?
-
-		traverseAllAncestors { zone in
-			if  zone.isARoot {
-				base = zone
-			}
-		}
-
-		return base
-	}
+	func updateRootFromParent()                                       { setRoot(parentZone?.root ?? self) }
+	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
 
 	var visibleDoneZone: Zone? {
 		var done: Zone?
@@ -768,7 +752,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		set {
-			if  isARoot {
+			if  root == self {
 				unlinkParentAndMaybeNeedSave()
 			} else if parentZoneMaybe    != newValue {
 				parentZoneMaybe           = newValue
@@ -2951,6 +2935,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				c.deleteSelf(onCompletion: nil)
 			}
 
+			child.root       = root
 			child.parentZone = self
 
 			if  toIndex < count {
@@ -2965,7 +2950,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			needCount()
 			updateMaxLevel()
-			child.updateRootsOfAllAncestors()
 			onCompletion?(child)
 
 			return toIndex

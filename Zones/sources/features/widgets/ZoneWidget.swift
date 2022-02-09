@@ -480,4 +480,19 @@ class ZoneWidget: ZPseudoView {
 //		childrenView?.absoluteFrame.drawColoredRect(.orange)
 	}
 
+	func printWidget() {
+		if  let prior = gMapView?.frame {
+			gMapView?.frame = bounds
+
+			gDetailsController?.temporarilyHideView(for: .vSmallMap) {
+				gMapController?.layoutForCurrentScrollOffset()
+				gMapView?.printView()
+			}
+
+			gMapView?.frame = prior
+
+			gRelayoutMaps()
+		}
+	}
+
 }
