@@ -778,6 +778,7 @@ extension CGPoint {
 extension CGSize {
 
 	static var big     : CGSize  { return CGSize.squared(1000000.0) }
+	var swapped        : CGSize  { return CGSize(width: height, height: width) }
 	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
 	var dividedInHalf  : CGSize  { return multiplyBy(0.5) }
 	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }

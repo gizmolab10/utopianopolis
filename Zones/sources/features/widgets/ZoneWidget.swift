@@ -482,7 +482,7 @@ class ZoneWidget: ZPseudoView {
 
 	func printWidget() {
 		if  let prior = gMapView?.frame {
-			gMapView?.frame = bounds
+			gMapView?.frame = bounds.expandedBy(dx: 40.0, dy: 0.0)
 
 			gDetailsController?.temporarilyHideView(for: .vSmallMap) {
 				gMapController?.layoutForCurrentScrollOffset()
