@@ -35,7 +35,7 @@ class ZSmallMapController: ZMapController {
 			let           p = mapPseudoView,
 			let detailsSize = gDetailsController?.view.frame.size,
 			let   controlsY = gMapControlsView?.frame.height,
-			let        mapY = gMapView?.bounds.height {
+			let        mapY = mapView?.bounds.height {
 			let     widgetY = r.drawnSize.height
 			let      deltaY = CGFloat(16.0)
 			let           y = mapY - widgetY - controlsY - detailsSize.height - deltaY

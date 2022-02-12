@@ -122,6 +122,7 @@ class ZoneWidget: ZPseudoView {
 		if type.isBigMap   { return      gMapController }
 		if type.isRecent   { return gSmallMapController }
 		if type.isFavorite { return gSmallMapController }
+		if type.isExemplar { return gHelpDotsExemplarController }
 
 		return nil
 	}
@@ -218,10 +219,10 @@ class ZoneWidget: ZPseudoView {
 			}
 
 			if  t.superview == nil {
-				gMapView?.addSubview(t)
+				controller?.mapView?.addSubview(t)
 			}
 
-			t.controllerSetup(with: gMapView)
+			t.controllerSetup(with: controller?.mapView)
 		}
 	}
 
@@ -481,15 +482,15 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func printWidget() {
-		if  let prior = gMapView?.frame {
-			gMapView?.frame = bounds.expandedBy(dx: 40.0, dy: 0.0)
+		if  let prior = controller?.mapView?.frame {
+			controller?.mapView?.frame = bounds.expandedBy(dx: 40.0, dy: 0.0)
 
 			gDetailsController?.temporarilyHideView(for: .vSmallMap) {
 				gMapController?.layoutForCurrentScrollOffset()
-				gMapView?.printView()
+				controller?.mapView?.printView()
 			}
 
-			gMapView?.frame = prior
+			controller?.mapView?.frame = prior
 
 			gRelayoutMaps()
 		}

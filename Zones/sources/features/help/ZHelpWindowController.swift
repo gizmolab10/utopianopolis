@@ -12,6 +12,6 @@ class ZHelpWindowController : ZWindowController {
 
 	override func close() {
 		super.close()
-		gRelayoutMaps()
+		gRelayoutMaps()    // so map will reappear properly in big map view
 	}
 }

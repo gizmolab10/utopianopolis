@@ -97,8 +97,8 @@ class ZoneLine: ZPseudoView {
 			return
 		}
 
-		if  isCircularMode {
-			ZBezierPath.setClip(to: gMapView!.bounds)
+		if  let b = controller?.mapView?.bounds, isCircularMode {
+			ZBezierPath.setClip(to: b)
 		}
 
 		color.setStroke()

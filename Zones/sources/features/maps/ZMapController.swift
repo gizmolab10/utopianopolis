@@ -50,18 +50,20 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                mapPseudoView : ZPseudoView?
 	var                   hereWidget : ZoneWidget?
 	var                     rootLine : ZoneLine?
+	var                      mapView : ZMapView?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 
-	override func controllerSetup(with mapView: ZMapView?) {
-		if  let                     map = mapView {
+	override func controllerSetup(with iMapView: ZMapView?) {
+		if  let                     map = iMapView {
+			mapView                     = map
 			gestureView                 = map         // do this before calling super setup: it uses gesture view
 			hereWidget                  = ZoneWidget (view: map)
 			mapPseudoView               = ZPseudoView(view: map)
 			view.layer?.backgroundColor = kClearColor.cgColor
 			mapPseudoView?       .frame = map.frame
 
-			super.controllerSetup(with: mapView)
+			super.controllerSetup(with: iMapView)
 			platformSetup()
 			mapPseudoView?.addSubpseudoview(hereWidget!)
 		}
@@ -135,7 +137,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func setNeedsDisplay() {
-		gMapView?         .setNeedsDisplay()
+		mapView?          .setNeedsDisplay()
 		gLinesAndDotsView?.setNeedsDisplay()
 	}
 
@@ -176,7 +178,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let type : ZRelayoutMapType = isBigMap ? .big : .small
 
-		gMapView?.removeAllTextViews(ofType: type)
+		mapView?.removeAllTextViews(ofType: type)
 
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
@@ -227,7 +229,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func resize() {
 		mapPseudoView?.frame = view.bounds
 
-		gMapView?.resize()
+		mapView?.resize()
 	}
 	
 	func gestureRecognizer(_ gestureRecognizer: ZGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: ZGestureRecognizer) -> Bool {
@@ -288,7 +290,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
 		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer {
-			let   location  = gesture.location(in: gMapView)
+			let   location  = gesture.location(in: mapView)
             let editWidget  = gCurrentlyEditingWidget
             var  notInEdit  = true
 
@@ -300,7 +302,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				// detect click inside text being edited //
 				// ////////////////////////////////////////
 
-                let textRect = editWidget!.convert(editWidget!.bounds, to: gMapView)
+                let textRect = editWidget!.convert(editWidget!.bounds, to: mapView)
                 notInEdit    = !textRect.contains(location)
             }
 
@@ -345,7 +347,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     
     func isEditingText(at location: CGPoint) -> Bool {
         if  gIsEditIdeaMode, let textWidget = gCurrentlyEditingWidget {
-            let rect = textWidget.convert(textWidget.bounds, to: gMapView)
+            let rect = textWidget.convert(textWidget.bounds, to: mapView)
 
             return rect.contains(location)
         }

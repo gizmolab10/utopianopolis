@@ -17,6 +17,7 @@ class ZHelpDotsExemplarController : ZMapController {
 	override  var controllerID : ZControllerID { return .idHelpDots }
 	override  var   widgetType : ZWidgetType   { return .tExemplar }
 	override  var   isExemplar : Bool          { return true }
+	override  var     isBigMap : Bool          { return false }
 	override  var     hereZone : Zone?         { return zone }
 	var                   zone : Zone?
 	@IBOutlet var     topLabel : ZTextField?
@@ -35,7 +36,8 @@ class ZHelpDotsExemplarController : ZMapController {
 		topLabel?   .text = "ALL ideas have a DRAG dot on the left. Many have a REVEAL dot on the right. For example:"
 		bottomLabel?.font = kLargeHelpFont
 		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nWhen the cursor hovers over a dot, the fill in color reverses (try the dots above). Dots are often decorated, providing further information about their idea (see below)."
-		gMapView?.drawBorder(thickness: 0.5, radius: .zero, color: kDarkGrayColor.cgColor)
+//		mapView?.drawBorder(thickness: 0.5, radius: .zero, color: kDarkGrayColor.cgColor)
+		gRelayoutMaps()
 	}
 
 	func setupExemplar() {
@@ -43,13 +45,17 @@ class ZHelpDotsExemplarController : ZMapController {
 		zone               = Zone.create(within: name, databaseID: .everyoneID)
 		zone?.zoneName     = "this is a typical idea, with three [hidden] ideas in its list"
 		zone?.parentLink   = kNullLink
+		zone?.root         = zone
 
 		for index in 1...3 {
 			let      child = Zone.create(within: name, for: index, databaseID: .everyoneID)
 			child.zoneName = "exemplar \(index)"
+			child.root     = zone
 
 			zone?.addChildNoDuplicate(child)
 		}
+
+		zone?.expand()
 	}
 
 }

@@ -73,6 +73,10 @@ class ZPseudoView: NSObject {
 
 	func convertPoint(_ point: NSPoint, toRootPseudoView view: ZPseudoView?) -> NSPoint {
 		if	let s = superpseudoview, s != self, view != self {
+			if  s == view, controller?.isExemplar ?? false {
+				return point
+			}
+
 			let p = point + s.frame.origin
 
 			return s.convertPoint(p, toRootPseudoView: view) // recurse
