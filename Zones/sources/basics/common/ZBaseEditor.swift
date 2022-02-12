@@ -32,7 +32,7 @@ class ZBaseEditor : NSObject {
 			if  flags.exactlySpecial {
 				switch key {
 					case "/": gHelpController?.show(       flags: flags); return true
-					case "a": gApplication.showHideAbout();               return true
+					case "a": gApplication?.showHideAbout();              return true
 					case "k": toggleColorfulMode();                       return true
 					case "o": gFiles.showInFinder();                      return true
 					case "r": sendEmailBugReport();                       return true
@@ -42,8 +42,8 @@ class ZBaseEditor : NSObject {
 			} else if flags.isCommand {
 				switch key {
 					case "w": gHelpController?.show(false, flags: flags); return true
-					case "h": gApplication.hide(nil);                     return true
-					case "q": gApplication.terminate(self);               return true
+					case "h": gApplication?.hide(nil);                    return true
+					case "q": gApplication?.terminate(self);              return true
 					case "y": gToggleShowTooltips();                      return true
 					case "'": gToggleLayoutMode();                        return true
 					default:  break

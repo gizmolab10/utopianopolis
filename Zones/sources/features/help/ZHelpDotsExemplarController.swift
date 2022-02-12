@@ -26,12 +26,9 @@ class ZHelpDotsExemplarController : ZMapController {
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
 	}
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		super.handleSignal(object, kind: kind)
-	}
 
 	override func controllerStartup() {
-		controllerSetup()
+		controllerSetup(with: helpMapView)
 		setupExemplar()
 
 		topLabel?   .font = kLargeHelpFont

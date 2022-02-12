@@ -86,8 +86,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 //			print(statusText)
 
 			thermometerBar?.updateProgress()
-			gApplication.setWindowsNeedUpdate(true)
-			gApplication.updateWindows()
+			gApplication?.setWindowsNeedUpdate(true)
+			gApplication?.updateWindows()
 			rootView?.setNeedsDisplay()
 		}
 	}

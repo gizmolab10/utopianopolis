@@ -22,7 +22,7 @@ class ZControlsController: ZGenericController {
 	@IBAction func search(_ sender: ZButton) { gSearching.showSearch() }
 	func updateOptionView() { updateForState() }
 
-	override func controllerSetup() {
+	override func controllerSetup(with mapView: ZMapView?) {
 		searchOptionsView?.zlayer.backgroundColor = kWhiteColor.cgColor
 
 		updateForState()

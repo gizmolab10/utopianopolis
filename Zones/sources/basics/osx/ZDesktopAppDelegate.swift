@@ -33,9 +33,9 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			gAppDelegate = self
 
             UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
-            gApplication.registerForRemoteNotifications(matching: .badge)
+			gApplication?.registerForRemoteNotifications(matching: .badge)
             gStartup.startupCloudAndUI()
-            gEvents.controllerSetup()
+            gEvents.controllerSetup(with: nil)
         }
     }
 

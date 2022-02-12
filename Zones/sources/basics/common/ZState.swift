@@ -87,6 +87,12 @@ var                  gBigFont:              ZFont { return .systemFont(ofSize: g
 func        gToggleDatabaseID()                   { gDatabaseID   =  gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode     = .wEditIdeaMode }
 func          gSetMapWorkMode()                   { gWorkMode     = .wMapMode }
+var gDebugCount = 0
+
+func gPrintDebugCount() {
+	gDebugCount += 1
+	print("\(gDebugCount)")
+}
 
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next

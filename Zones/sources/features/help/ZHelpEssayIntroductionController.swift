@@ -28,7 +28,7 @@ class ZHelpEssayIntroductionController : ZGenericController {
 	}
 
 	override func controllerStartup() {
-		controllerSetup()
+		controllerSetup(with: nil)
 
 		topLabel?   .font = kLargeHelpFont
 		topLabel?   .text = "Any idea can [optionally] have a note, which can be viewed, edited, saved and printed in the essay editor. Each note has a title at top (the idea text) followed by the full text of the note (like this, ignoring the grey rectangle)."

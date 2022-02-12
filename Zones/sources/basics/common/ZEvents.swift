@@ -33,7 +33,7 @@ class ZEvents: ZGeneric {
 //        return event
 //    }
 
-    func controllerSetup() {
+    func controllerSetup(with mainView: ZMapView?) {
         setupLocalEventsMonitor()
         gNotificationCenter.addObserver(self, selector: #selector(ZEvents.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
     }

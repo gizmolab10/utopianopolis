@@ -55,7 +55,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         }
     }
 
-	func controllerSetup() {
+	func controllerSetup(with mapView: ZMapView?) {
 		delegate                   = self
         isBordered                 = false
         textAlignment              = .left

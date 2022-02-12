@@ -37,12 +37,12 @@ class ZMainController: ZGesturesController {
 		return image
 	}
 
-	override func controllerSetup() {
+	override func controllerSetup(with mapView: ZMapView?) {
 		searchResultsView?.isHidden = true
 		view.gestureHandler         = self
 
 		gMapView?.setup()
-		super    .controllerSetup()
+		super    .controllerSetup(with: mapView)
 		mainUpdate()
 	}
 

@@ -136,7 +136,7 @@ extension String {
 
     func openAsURL() {
         if let url = URL(string: self) {
-            gApplication.open(url)
+            gApplication?.open(url)
         }
     }
 
@@ -511,7 +511,7 @@ extension ZAlerts {
 
     func openSystemPreferences() {
         if let url = URL(string: "App-Prefs:root=General&path=Network") {
-            gApplication.open(url)
+            gApplication?.open(url)
         }
     }
     

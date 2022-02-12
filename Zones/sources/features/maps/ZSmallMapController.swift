@@ -61,18 +61,18 @@ class ZSmallMapController: ZMapController {
 	}
 
 	override func controllerStartup() {
-		controllerSetup()                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
+		controllerSetup(with: gMapView)                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
 		gMapControlsView?.setupAndRedraw()
 	}
 
-	override func controllerSetup() {
-		if  let                          map = gMapView {
+	override func controllerSetup(with mapView: ZMapView?) {
+		if  let                          map = mapView {
 			hereWidget                       = ZoneWidget (view: map)
 			mapPseudoView                    = ZPseudoView(view: map)
 			view     .layer?.backgroundColor = kClearColor.cgColor
 			mapPseudoView?            .frame = map.frame
 
-			super.controllerSetup()
+			super.controllerSetup(with: mapView)
 			platformSetup()
 			mapPseudoView?.addSubpseudoview(hereWidget!)
 		}

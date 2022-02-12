@@ -22,7 +22,7 @@ class ZGenericController: ZController, ZGeneric {
 	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
     func handleSignal(_ object: Any?, kind: ZSignalKind) {}
 	func controllerStartup() {}
-	func controllerSetup() {}
+	func controllerSetup(with mapView: ZMapView?) {}
 
 	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
@@ -44,10 +44,10 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 		case .idHelpEssayIntroduction,
 			 .idHelpEssayGraphicals,
-			 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .spRelayout]
+			 .idHelpDots:      return [.sData, .sDatum, .sAppearance, .spRelayout,    .spMain]
 		case .idBigMap:        return [.sData, .sDatum, .sAppearance, .spRelayout,    .sResize,            .sLaunchDone, .spBigMap]
 		case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .spRelayout,    .sResize, .sDetails, .sLaunchDone, .spSmallMap]
-		case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences, .sDetails]
+		case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences,           .sDetails]
 		case .idSearchResults: return [.sFound]
 		case .idSearch:        return [.sSearch]
 		case .idStartup:       return [.spStartupStatus]
@@ -83,7 +83,7 @@ class ZGenericController: ZController, ZGeneric {
     override func viewDidAppear() {
         super.viewDidAppear()
 		isVisible = true
-        controllerSetup()
+        controllerSetup(with: view as? ZMapView)
     }
 
 	override func viewDidDisappear() {

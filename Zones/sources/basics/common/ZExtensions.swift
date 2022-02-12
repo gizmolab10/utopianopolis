@@ -44,10 +44,8 @@ typealias  StringZRecordDictionary = [String       : ZRecord]
 typealias StringZRecordsDictionary = [String       : ZRecordsArray]
 typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
 
-let                   gApplication = ZApplication.shared
-
 protocol ZGeneric {
-	func controllerSetup()
+	func controllerSetup(with mapView: ZMapView?)
 }
 
 func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {

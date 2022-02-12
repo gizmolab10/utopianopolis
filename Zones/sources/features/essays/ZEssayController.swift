@@ -24,10 +24,10 @@ class ZEssayController : ZGesturesController, ZScrollDelegate {
 	@IBOutlet var    essayControlsView : ZEssayControlsView?
 	@IBOutlet var            essayView : ZEssayView?
 
-	override func controllerSetup() {
+	override func controllerSetup(with mapView: ZMapView?) {
 		gestureView = essayView    // do this before calling super setup
 
-		super.controllerSetup()
+		super.controllerSetup(with: mapView)
 		essayView?.essayViewSetup()
 	}
 

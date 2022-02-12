@@ -221,7 +221,7 @@ class ZoneWidget: ZPseudoView {
 				gMapView?.addSubview(t)
 			}
 
-			t.controllerSetup()
+			t.controllerSetup(with: gMapView)
 		}
 	}
 

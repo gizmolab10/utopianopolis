@@ -53,15 +53,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
 
-	override func controllerSetup() {
-		if  let                          map = gMapView {
-			gestureView                      = map         // do this before calling super setup: it uses gesture view
-			hereWidget                       = ZoneWidget (view: map)
-			mapPseudoView                    = ZPseudoView(view: map)
-			view     .layer?.backgroundColor = kClearColor.cgColor
-			mapPseudoView?            .frame = map.frame
+	override func controllerSetup(with mapView: ZMapView?) {
+		if  let                     map = mapView {
+			gestureView                 = map         // do this before calling super setup: it uses gesture view
+			hereWidget                  = ZoneWidget (view: map)
+			mapPseudoView               = ZPseudoView(view: map)
+			view.layer?.backgroundColor = kClearColor.cgColor
+			mapPseudoView?       .frame = map.frame
 
-			super.controllerSetup()
+			super.controllerSetup(with: mapView)
 			platformSetup()
 			mapPseudoView?.addSubpseudoview(hereWidget!)
 		}

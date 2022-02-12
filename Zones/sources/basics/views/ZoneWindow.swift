@@ -13,7 +13,6 @@
 #endif
 
 var gMainWindow : ZoneWindow? { return ZoneWindow.mainWindow }
-var gHelpWindow : ZWindow?    { return gHelpWindowController?.window }
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
@@ -60,7 +59,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     #if os(OSX)
 
 	func windowWillClose(_ notification: Notification) {
-		gApplication.terminate(self)
+		gApplication?.terminate(self)
 	}
 
     override open var acceptsFirstResponder: Bool { return true }

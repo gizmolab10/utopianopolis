@@ -57,7 +57,6 @@ public typealias ZController                 = NSViewController
 public typealias ZToolTipTag                 = ZView.ToolTipTag
 public typealias ZEventFlags                 = ZEvent.ModifierFlags
 public typealias ZSearchField                = NSSearchField
-public typealias ZApplication                = NSApplication
 public typealias ZTableColumn                = NSTableColumn
 public typealias ZTableRowView               = NSTableRowView
 public typealias ZMenuDelegate               = NSMenuDelegate
@@ -227,27 +226,6 @@ extension NSURL {
 //        }
     }
 
-}
-
-extension ZApplication {
-
-    func clearBadge() {
-        dockTile.badgeLabel = kEmpty
-    }
-    
-    func showHideAbout() {
-        for     window in windows {
-			if  window.isKeyWindow,
-				window.isKind(of: NSPanel.self) { // check if about box is visible
-                window.close()
-
-				return
-            }
-        }
-        
-        orderFrontStandardAboutPanel(nil)
-    }
-    
 }
 
 extension ZEventFlags {
@@ -481,7 +459,7 @@ extension ZView {
         }
     }
 
-    @objc func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true } }
+	@objc func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true; gPrintDebugCount() } }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 
@@ -668,7 +646,7 @@ extension ZAlerts {
                 alert?.showModal { status in
                     let window = alert?.window
                     
-                    gApplication.abortModal()
+                    gApplication?.abortModal()
                     window?.orderOut(alert)
                     closure?(status)
                 }
@@ -1160,7 +1138,7 @@ extension ZFiles {
     }
     
     class func presentOpenPanel(_ callback: AnyClosure? = nil) {
-        if  let  window = gApplication.mainWindow {
+		if  let  window = gApplication?.mainWindow {
             let   panel = NSOpenPanel()
 
             callback?(panel)

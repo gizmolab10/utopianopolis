@@ -17,6 +17,7 @@ import SnapKit
 
 var gHelpWindowController : NSWindowController?         // instantiated once, in startupCloudAndUI
 var gHelpController       : ZHelpController? { return gHelpWindowController?.contentViewController as? ZHelpController }
+var gHelpWindow           : ZWindow?         { return gHelpWindowController?.window }
 let gAllHelpModes         : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
 
 enum ZHelpMode: String {
@@ -85,11 +86,11 @@ class ZHelpController: ZGenericTableController {
 		updateGridVisibility()
 	}
 
-	override func controllerSetup() {
+	override func controllerSetup(with mapView: ZMapView?) {
 		view.zlayer.backgroundColor = .white
 		let                       m = gCurrentHelpMode
 
-		super        .controllerSetup()
+		super        .controllerSetup(with: mapView)
 		essayHelpData.setupForMode(m)
 		dotsHelpData .setupForMode(m)
 		mapHelpData  .setupForMode(m)
@@ -185,8 +186,8 @@ class ZHelpController: ZGenericTableController {
 			case "?", "/":         show(       flags: flags)
 			case "w":              show(false, flags: flags)
 			case "p":              view.printView()
-			case "q":              gApplication.terminate(self)
-			case "a": if SPECIAL { gApplication.showHideAbout() }
+			case "q":              gApplication?.terminate(self)
+			case "a": if SPECIAL { gApplication?.showHideAbout() }
 			case "r": if COMMAND { sendEmailBugReport() }
 			default:  if  let arrow = key.arrow {
 				switch arrow {

@@ -18,8 +18,7 @@ class ZHelpEssayGraphicalsController : ZGenericController {
 	}
 
 	override func controllerStartup() {
-		controllerSetup()
-
+		controllerSetup(with: nil)
 	}
 
 }

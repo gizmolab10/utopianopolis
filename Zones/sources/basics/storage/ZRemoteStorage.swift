@@ -269,7 +269,7 @@ class ZRemoteStorage: NSObject {
 //            badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
 //                if error == nil {
 //                    FOREGROUND {
-//                        gApplication.clearBadge()
+//                        gApplication?.clearBadge()
 //                    }
 //                }
 //            }

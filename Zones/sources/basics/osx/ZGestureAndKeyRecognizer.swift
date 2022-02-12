@@ -29,8 +29,9 @@ class ZPanGestureRecognizer : NSPanGestureRecognizer {
     }
 
     override open func mouseDown (with event: ZEvent) {
-        super.mouseDown (with: event)
-        modifiers = event.modifierFlags
+		modifiers = event.modifierFlags
+
+		super.mouseDown (with: event)
     }
 
 }
@@ -50,7 +51,8 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
 
     override open func mouseDown (with event: ZEvent) {
 		modifiers = event.modifierFlags
-        super.mouseDown (with: event)
+
+		super.mouseDown (with: event)
     }
     
 }
