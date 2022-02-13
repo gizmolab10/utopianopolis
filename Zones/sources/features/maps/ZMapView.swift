@@ -24,53 +24,43 @@ enum ZMapID: String {
 
 class ZMapView: ZView {
 
-	var mapID                      : ZMapID?
+	var          okayToDetectHover = false
+	var                      mapID : ZMapID?
+	var                   hovering : ZHovering?
+	var                 controller : ZMapController?
 	@IBOutlet var linesAndDotsView : ZMapView?
-	override func menu(for event   : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
+	override func   menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
-	// MARK: - mouse
-	// MARK: -
-
-	func updateTracking() { addTracking(for: frame) }
-
-	override func updateTrackingAreas() {
-		super.updateTrackingAreas()
-		addTracking(for: bounds)
-	}
-
-	override func mouseMoved(with event: ZEvent) {
-		super.mouseMoved(with: event)
-
-		gOkayToDetectHover = true
-	}
-
-	override func mouseExited(with event: ZEvent) {
-		super.mouseExited(with: event)
-
-		if  let view = gMainWindow?.contentView, !view.frame.contains(event.locationInWindow) {
-			gRubberband.rubberbandRect = nil
-			gDragging      .dropWidget = nil
-		}
+	var ignoreHovering : Bool {
+		return !okayToDetectHover
+		|| gDragging.isDragging
+		|| gRubberband.showRubberband    // not blink rubberband or drag
+		|| !(controller?.isExemplar ?? false)
 	}
 
 	// MARK: - initialize
 	// MARK: -
 
-	func setup(_ id: ZMapID = .mTextAndHighlights) {
-		identifier = id.identifier
-		mapID      = id
+	func setup(_ id: ZMapID = .mTextAndHighlights, with iController: ZMapController) {
+		if  controller == nil {
+			controller  = iController
+			identifier  = id.identifier
+			mapID       = id
 
-		switch id {
-			case .mTextAndHighlights:
-				updateTracking()
-				linesAndDotsView?.setup(.mLinesAndDots)
-				fallthrough
-			default:
-				zlayer.backgroundColor = CGColor.clear
-				
-				if  let s = superview {
-					frame = s.bounds
-				}
+			switch id {
+				case .mTextAndHighlights:
+					hovering = ZHovering()
+
+					updateTracking()
+					linesAndDotsView?.setup(.mLinesAndDots, with: iController)
+					fallthrough
+				default:
+					zlayer.backgroundColor = CGColor.clear
+
+					if  let s = superview, (!iController.isExemplar || id != .mTextAndHighlights) { // not do this for help dots exemplar
+						frame = s.bounds
+					}
+			}
 		}
 	}
 
@@ -90,6 +80,25 @@ class ZMapView: ZView {
 					textView.removeFromSuperview()
 				}
 			}
+		}
+	}
+
+	// MARK: - mouse
+	// MARK: -
+
+	func updateTracking() { addTracking(for: frame) }
+
+	override func updateTrackingAreas() {
+		super.updateTrackingAreas()
+		addTracking(for: bounds)
+	}
+
+	override func mouseExited(with event: ZEvent) {
+		super.mouseExited(with: event)
+
+		if  let view = gMainWindow?.contentView, !view.frame.contains(event.locationInWindow) {
+			gRubberband.rubberbandRect = nil
+			gDragging      .dropWidget = nil
 		}
 	}
 

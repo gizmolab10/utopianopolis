@@ -8,27 +8,14 @@
 
 import Foundation
 
-let gHovering = ZHovering()
-var gOkayToDetectHover = false
-func gUpdateHover() { gMapController?.detectHover() }
-
 class ZHovering: NSObject {
 
 	var dot             : ZoneDot?
 	var widget          : ZoneWidget?
 	var textWidget      : ZoneTextWidget?
+	var absoluteView    : ZView?     { return dot?.absoluteView ?? textWidget?.controller?.mapView ?? widget?.absoluteView }
 	var onObject        : AnyObject? { return dot ?? widget ?? textWidget }
 	var showHover       : Bool       { return absoluteView != nil }
-
-	var absoluteView    : ZView? {
-		if  dot != nil {
-			return gLinesAndDotsView
-		} else if textWidget != nil || widget != nil {
-			return gMapView
-		}
-
-		return nil
-	}
 
 	func onObject(at location: CGPoint) -> AnyObject? {
 		if  let object = onObject {
@@ -93,28 +80,46 @@ class ZHovering: NSObject {
 
 }
 
-extension ZMapController {
+extension ZMapView {
 
-	func detectHover() {
-		if  let point = gMapView?.currentMouseLocation, detectHover(at: point) {
-			setNeedsDisplay()
-		}
+	override func mouseMoved(with event: ZEvent) {
+		super.mouseMoved(with: event)
+
+		okayToDetectHover = true
 	}
 
-	@discardableResult func detectHover(at locationInWindow: CGPoint?) -> Bool {
-		var      hoverDetected = false
-		let     ignoreHovering = gRubberband.showRubberband || gDragging.isDragging   // not blink rubberband or drag
-		if  let       location = locationInWindow, !ignoreHovering, gOkayToDetectHover {
-			if  let        any = detectHit(at: location) {
-				hoverDetected  = gHovering.declareHover(any)
+	@discardableResult func detectHover() -> Bool {
+		var     hoverDetected = false
+		if  let      location = currentMouseLocation,
+			let             h = hovering { // , !ignoreHovering {
+			if  let       any = controller?.detectHit(at: location) {
+				hoverDetected = h.declareHover(any)
 			} else {
-				hoverDetected  = gHovering.clear()
+				hoverDetected = h.clear()
 			}
 
-			gOkayToDetectHover = false
+			okayToDetectHover = false
 		}
 
 		return hoverDetected
 	}
 
+}
+
+extension ZMapController {
+
+	func detectHover() {
+		if  mapView?.detectHover() ?? false {
+			setNeedsDisplay()
+		}
+	}
+
+}
+
+func gUpdateHover() {
+	gMapController?.detectHover()
+
+	if  gHelpWindow?.isVisible ?? false, gCurrentHelpMode == .dotMode {
+		gHelpDotsExemplarController?.detectHover()
+	}
 }

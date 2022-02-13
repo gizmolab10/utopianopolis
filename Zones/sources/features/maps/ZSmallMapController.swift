@@ -61,21 +61,8 @@ class ZSmallMapController: ZMapController {
 	}
 
 	override func controllerStartup() {
-		controllerSetup(with: gMapView)                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
+		super.controllerStartup()
 		gMapControlsView?.setupAndRedraw()
-	}
-
-	override func controllerSetup(with mapView: ZMapView?) {
-		if  let                          map = mapView {
-			hereWidget                       = ZoneWidget (view: map)
-			mapPseudoView                    = ZPseudoView(view: map)
-			view     .layer?.backgroundColor = kClearColor.cgColor
-			mapPseudoView?            .frame = map.frame
-
-			super.controllerSetup(with: mapView)
-			platformSetup()
-			mapPseudoView?.addSubpseudoview(hereWidget!)
-		}
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {   // true means handled

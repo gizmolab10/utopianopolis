@@ -101,12 +101,20 @@ extension ZoneWidget {
 
 extension ZMapController {
 
-	func detectHit(at location: CGPoint) -> Any? {
+	@objc func detectHit(at location: CGPoint) -> Any? {
 		if  isBigMap,
 			let    any = gSmallMapController?.detectHit(at: location) {
 			return any
 		}
 
+		return hereWidget?.detectHit(at: location)
+	}
+
+}
+
+extension ZHelpDotsExemplarController {
+
+	override func detectHit(at location: CGPoint) -> Any? {
 		return hereWidget?.detectHit(at: location)
 	}
 

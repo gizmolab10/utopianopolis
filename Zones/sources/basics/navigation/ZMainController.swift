@@ -41,8 +41,7 @@ class ZMainController: ZGesturesController {
 		searchResultsView?.isHidden = true
 		view.gestureHandler         = self
 
-		gMapView?.setup()
-		super    .controllerSetup(with: mapView)
+		super.controllerSetup(with: mapView)
 		mainUpdate()
 	}
 

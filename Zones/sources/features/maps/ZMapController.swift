@@ -40,8 +40,8 @@ enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	var          priorScrollLocation = CGPoint.zero
-	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	override  var       controllerID : ZControllerID  { return .idBigMap }
+	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	var                   widgetType : ZWidgetType    { return .tBigMap }
 	var                   isExemplar : Bool           { return false }
 	var                     isBigMap : Bool           { return true }
@@ -63,10 +63,18 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			view.layer?.backgroundColor = kClearColor.cgColor
 			mapPseudoView?       .frame = map.frame
 
-			super.controllerSetup(with: iMapView)
+			if  isBigMap || isExemplar {
+				map.setup(with: self)
+			}
+
+			super.controllerSetup(with: map)
 			platformSetup()
 			mapPseudoView?.addSubpseudoview(hereWidget!)
 		}
+	}
+
+	override func controllerStartup() {
+		controllerSetup(with: gMapView)                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
 	}
 
 	func drawWidgets(for phase: ZDrawPhase) {
@@ -137,8 +145,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func setNeedsDisplay() {
-		mapView?          .setNeedsDisplay()
-		gLinesAndDotsView?.setNeedsDisplay()
+		mapView?                  .setNeedsDisplay()
+		mapView?.linesAndDotsView?.setNeedsDisplay()
 	}
 
 	var doNotLayout: Bool {
@@ -207,7 +215,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			hereWidget?.frame = CGRect(origin: origin, size: wSize)
 
 			hereWidget?.grandRelayout()
-			detectHover(at: view.currentMouseLocationInWindow)
+			detectHover()
 			setNeedsDisplay()
 		}
 	}

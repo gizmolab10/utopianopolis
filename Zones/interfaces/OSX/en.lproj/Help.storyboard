@@ -264,10 +264,22 @@
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="biU-wq-VIU" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="51" y="124" width="500" height="50"/>
+                                <subviews>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="sby-t3-IyJ" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="500" height="50"/>
+                                    </customView>
+                                </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="sby-t3-IyJ" secondAttribute="bottom" id="38I-HU-yHI"/>
+                                    <constraint firstItem="sby-t3-IyJ" firstAttribute="leading" secondItem="biU-wq-VIU" secondAttribute="leading" id="55h-lv-G9u"/>
+                                    <constraint firstItem="sby-t3-IyJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="top" id="QpJ-VW-bbo"/>
                                     <constraint firstAttribute="width" constant="500" id="dRm-Nx-NZp"/>
+                                    <constraint firstAttribute="trailing" secondItem="sby-t3-IyJ" secondAttribute="trailing" id="vtT-q8-Ens"/>
                                     <constraint firstAttribute="height" constant="50" id="xRG-Gk-2Jx"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="linesAndDotsView" destination="sby-t3-IyJ" id="5QC-0H-Sxi"/>
+                                </connections>
                             </customView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="KDc-oP-JYJ">
                                 <rect key="frame" x="-1" y="20" width="604" height="96"/>
@@ -300,7 +312,7 @@
                 </viewController>
                 <customObject id="pb3-EB-5uM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2342" y="90"/>
+            <point key="canvasLocation" x="2341.5" y="90"/>
         </scene>
         <!--Help Essay Introduction Controller-->
         <scene sceneID="vue-cx-fsz">

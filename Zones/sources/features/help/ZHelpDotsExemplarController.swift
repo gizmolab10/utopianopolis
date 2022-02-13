@@ -9,20 +9,21 @@
 import Foundation
 import CoreData
 
-var gHelpHyperlinkColor: ZColor { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
+var gHelpMapView                : ZMapView?                    { return gHelpDotsExemplarController?.helpMapView }
+var gHelpHyperlinkColor         : ZColor                       { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
 var gHelpDotsExemplarController : ZHelpDotsExemplarController? { return gControllers.controllerForID(.idHelpDots) as? ZHelpDotsExemplarController }
 
 class ZHelpDotsExemplarController : ZMapController {
 
-	override  var controllerID : ZControllerID { return .idHelpDots }
-	override  var   widgetType : ZWidgetType   { return .tExemplar }
-	override  var   isExemplar : Bool          { return true }
-	override  var     isBigMap : Bool          { return false }
-	override  var     hereZone : Zone?         { return zone }
-	var                   zone : Zone?
-	@IBOutlet var     topLabel : ZTextField?
-	@IBOutlet var  bottomLabel : ZTextField?
-	@IBOutlet var  helpMapView : ZMapView?
+	override  var   controllerID : ZControllerID { return .idHelpDots }
+	override  var     widgetType : ZWidgetType   { return .tExemplar }
+	override  var     isExemplar : Bool          { return true }
+	override  var       isBigMap : Bool          { return false }
+	override  var       hereZone : Zone?         { return rootZone }
+	var                 rootZone : Zone?
+	@IBOutlet var       topLabel : ZTextField?
+	@IBOutlet var    bottomLabel : ZTextField?
+	@IBOutlet var    helpMapView : ZMapView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
@@ -41,21 +42,21 @@ class ZHelpDotsExemplarController : ZMapController {
 	}
 
 	func setupExemplar() {
-		let           name = kExemplarRootName
-		zone               = Zone.create(within: name, databaseID: .everyoneID)
-		zone?.zoneName     = "this is a typical idea, with three [hidden] ideas in its list"
-		zone?.parentLink   = kNullLink
-		zone?.root         = zone
+		let             name = kExemplarRootName
+		rootZone             = Zone.create(within: name, databaseID: .everyoneID)
+		rootZone?.zoneName   = "this is a typical idea, with three [hidden] ideas in its list"
+		rootZone?.parentLink = kNullLink
+		rootZone?.root       = rootZone
 
 		for index in 1...3 {
-			let      child = Zone.create(within: name, for: index, databaseID: .everyoneID)
-			child.zoneName = "exemplar \(index)"
-			child.root     = zone
+			let        child = Zone.create(within: name, for: index, databaseID: .everyoneID)
+			child  .zoneName = "exemplar \(index)"
+			child      .root = rootZone
 
-			zone?.addChildNoDuplicate(child)
+			rootZone?.addChildNoDuplicate(child)
 		}
 
-		zone?.expand()
+		rootZone?.expand()
 	}
 
 }

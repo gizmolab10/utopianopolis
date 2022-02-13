@@ -294,7 +294,7 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func tableViewSelectionIsChanging(_ notification: Notification) {
-		if  let (row, column) = clickCoordinates,
+		if  let (row, column) = clickCoordinates, column >= 0,
 			let hyperlink = helpData.url(for: row, column: column) {
 			hyperlink.openAsURL()
 		}
