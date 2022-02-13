@@ -83,25 +83,6 @@ class ZMapView: ZView {
 		}
 	}
 
-	// MARK: - mouse
-	// MARK: -
-
-	func updateTracking() { addTracking(for: frame) }
-
-	override func updateTrackingAreas() {
-		super.updateTrackingAreas()
-		addTracking(for: bounds)
-	}
-
-	override func mouseExited(with event: ZEvent) {
-		super.mouseExited(with: event)
-
-		if  let view = gMainWindow?.contentView, !view.frame.contains(event.locationInWindow) {
-			gRubberband.rubberbandRect = nil
-			gDragging      .dropWidget = nil
-		}
-	}
-
 	// MARK: - draw
 	// MARK: -
 

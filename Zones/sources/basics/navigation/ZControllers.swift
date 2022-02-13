@@ -150,6 +150,7 @@ class ZControllers: NSObject {
 		FOREGROUND {
 			if  multiple.contains(.spRelayout) {
 				gWidgets.clearAll()
+				gMapView?.updateTracking()
 				gMapView?.removeAllTextViews(ofType: .both)
 			}
 

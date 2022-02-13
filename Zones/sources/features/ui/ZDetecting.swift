@@ -119,3 +119,46 @@ extension ZHelpDotsExemplarController {
 	}
 
 }
+
+extension ZView {
+
+	func removeAllTracking() {
+		for area in trackingAreas {
+			removeTrackingArea(area)
+		}
+	}
+
+	func addTracking(for rect: CGRect, clearFirst: Bool = false) {
+		if  clearFirst {
+			removeAllTracking()
+		}
+
+		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeAlways, .inVisibleRect, .cursorUpdate]
+		let    area = NSTrackingArea(rect:rect, options: options, owner: self, userInfo: nil)
+
+		addTrackingArea(area)
+	}
+
+}
+
+extension ZMapView {
+
+	func updateTracking() {
+		addTracking(for: frame, clearFirst: true)
+	}
+
+	override func updateTrackingAreas() {
+		super.updateTrackingAreas()
+		addTracking(for: bounds)
+	}
+
+	override func mouseExited(with event: ZEvent) {
+		super.mouseExited(with: event)
+
+		if  let view = gMainWindow?.contentView, !view.frame.contains(event.locationInWindow) {
+			gRubberband.rubberbandRect = nil
+			gDragging      .dropWidget = nil
+		}
+	}
+
+}

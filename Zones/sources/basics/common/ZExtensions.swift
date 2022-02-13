@@ -2875,23 +2875,6 @@ extension ZView {
 		return (false, true, false, false, false)
 	}
 
-	func removeAllTracking() {
-		for area in trackingAreas {
-			removeTrackingArea(area)
-		}
-	}
-
-	func addTracking(for rect: CGRect, clearFirst: Bool = false) {
-		if  clearFirst {
-			removeAllTracking()
-		}
-
-		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeAlways, .inVisibleRect, .cursorUpdate]
-		let    area = NSTrackingArea(rect:rect, options: options, owner: self, userInfo: nil)
-
-		addTrackingArea(area)
-	}
-
 }
 
 extension ZPseudoView {
