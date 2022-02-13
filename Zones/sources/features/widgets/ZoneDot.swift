@@ -296,20 +296,16 @@ class ZoneDot: ZPseudoView {
 	}
 
     func draw() {
-		let rect = absoluteFrame
+		let rect  = absoluteFrame
 		if  rect.hasSize, dotIsVisible,
-			let parameters = widgetZone?.plainDotParameters(isFilled, isReveal, isDragDrop) {
-
-			if  parameters.isDrop {
-				noop()
-			}
+			let p = widgetZone?.plainDotParameters(isFilled, isReveal, isDragDrop) {
 
 //			if  isCircularMode, gdebugdraw {
 //				hitRect.drawColoredRect(.red, radius: 2.0, thickness: 1.0)
 //			}
 			
-			drawDot      (rect, parameters)
-			drawAroundDot(rect, parameters)
+			drawDot      (rect, p)
+			drawAroundDot(rect, p)
 		}
 	}
 

@@ -330,6 +330,10 @@ extension ZoneDot {
 			path       = ZBezierPath                (ovalIn: iDirtyRect.insetEquallyBy(thickness))
 		}
 
+		if  isHovering {
+			noop()
+		}
+
 		path.lineWidth = thickness
 		path .flatness = 0.0001
 

@@ -78,7 +78,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func drawWidgets(for phase: ZDrawPhase) {
-		if  isBigMap || gDetailsViewIsVisible(for: .vSmallMap) {
+		if  isBigMap || isExemplar || gDetailsViewIsVisible(for: .vSmallMap) {
 			if  phase == .pDots,
 				mode  == .linearMode {
 				rootLine?.draw(phase) // for here's drag dot

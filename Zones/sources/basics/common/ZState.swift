@@ -28,6 +28,7 @@ var               gLaunchedAt                     = Date()
 var            gProgressTimes                     = [ZOperationID : Double]()
 var           gAnglesFraction                     = 42.0
 var              gAnglesDelta                     = 15.0
+var               gDebugCount                     = 0
 var        gInterruptionCount                     = 0
 var    gTimeUntilCurrentEvent:       TimeInterval = 0  // by definition, first event is startup
 var           gMigrationState:    ZMigrationState = .firstTime
@@ -87,12 +88,6 @@ var                  gBigFont:              ZFont { return .systemFont(ofSize: g
 func        gToggleDatabaseID()                   { gDatabaseID   =  gOtherDatabaseID }
 func         gSetEditIdeaMode()                   { gWorkMode     = .wEditIdeaMode }
 func          gSetMapWorkMode()                   { gWorkMode     = .wMapMode }
-var gDebugCount = 0
-
-func gPrintDebugCount() {
-	gDebugCount += 1
-	print("\(gDebugCount)")
-}
 
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next

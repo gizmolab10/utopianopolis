@@ -91,7 +91,7 @@ extension ZMapView {
 	@discardableResult func detectHover() -> Bool {
 		var     hoverDetected = false
 		if  let      location = currentMouseLocation,
-			let             h = hovering { // , !ignoreHovering {
+			let             h = hovering { //, detectHovering {
 			if  let       any = controller?.detectHit(at: location) {
 				hoverDetected = h.declareHover(any)
 			} else {

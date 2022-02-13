@@ -31,11 +31,11 @@ class ZMapView: ZView {
 	@IBOutlet var linesAndDotsView : ZMapView?
 	override func   menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
-	var ignoreHovering : Bool {
-		return !okayToDetectHover
-		|| gDragging.isDragging
-		|| gRubberband.showRubberband    // not blink rubberband or drag
-		|| !(controller?.isExemplar ?? false)
+	var detectHovering : Bool {
+		return okayToDetectHover
+		&& !gDragging.isDragging
+		&& !gRubberband.showRubberband    // not blink rubberband or drag
+		&& (controller?.isExemplar ?? false)
 	}
 
 	// MARK: - initialize
@@ -111,10 +111,17 @@ class ZMapView: ZView {
 
 	func drawWidgets(in iDirtyRect: CGRect, for phase: ZDrawPhase) {
 		ZBezierPath.setClip(to: iDirtyRect)
-		gSmallMapController?.drawWidgets(for: phase)
 
-		if  !gIsEssayMode {
-			gMapController? .drawWidgets(for: phase)
+		if  let c = controller {
+			if  c.isExemplar {
+				c.drawWidgets(for: phase)
+			} else {
+				if  !gIsEssayMode {
+					c.drawWidgets(for: phase)
+				}
+
+				gSmallMapController?.drawWidgets(for: phase)
+			}
 		}
 	}
 

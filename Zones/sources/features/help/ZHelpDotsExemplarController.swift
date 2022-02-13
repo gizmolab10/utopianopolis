@@ -45,6 +45,7 @@ class ZHelpDotsExemplarController : ZMapController {
 		let             name = kExemplarRootName
 		rootZone             = Zone.create(within: name, databaseID: .everyoneID)
 		rootZone?.zoneName   = "this is a typical idea, with three [hidden] ideas in its list"
+		rootZone?.color      = kDefaultIdeaColor
 		rootZone?.parentLink = kNullLink
 		rootZone?.root       = rootZone
 

@@ -229,9 +229,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         updateTextColor()
         super.draw(iDirtyRect)
 
-		var   path : ZBezierPath?
-		let  inset = CGFloat(0.5)
-		let deltaX = min(3.0, iDirtyRect.width / 2.0)
+		if  isHovering {
+			noop()
+		}
 
 		if  !isFirstResponder,
 			gIsMapOrEditIdeaMode,
@@ -243,14 +243,16 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			// draw line underneath text indicating it can travel //
 			// /////////////////////////////////////////////////////
 
+			let       deltaX = min(3.0, iDirtyRect.width / 2.0)
+			let        inset = CGFloat(0.5)
 			var         rect = iDirtyRect.insetBy(dx: deltaX, dy: inset)
 			rect.size.height = .zero
-			rect.origin.y    = iDirtyRect.maxY - 1.0
-			path             = ZBezierPath(rect: rect)
-			path? .lineWidth = 0.4
+			rect   .origin.y = iDirtyRect.maxY - 1.0
+			let         path = ZBezierPath(rect: rect)
+			path  .lineWidth = 0.4
 
 			zone.color?.setStroke()
-			path?.stroke()
+			path.stroke()
 		}
 	}
 
