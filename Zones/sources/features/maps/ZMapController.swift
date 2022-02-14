@@ -205,12 +205,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		if  let         wSize = hereWidget?.drawnSize {
-			var        offset = isExemplar ? .zero : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
+		if  let         wSize = hereWidget?.drawnSize,
+			let         mSize = mapView?.frame.size {
+			var        offset = isExemplar ? CGPoint(x: 0.0, y: -6.0) : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
 			if !kIsPhone {
 				offset.y      = -offset.y    // why?
 			}
-			let      relocate = (CGPoint(view.frame.size) - CGPoint(wSize)).dividedInHalf
+			let      relocate = (CGPoint(mSize) - CGPoint(wSize)).dividedInHalf
 			let        origin = (isBigMap ? relocate : .zero) + offset
 			hereWidget?.frame = CGRect(origin: origin, size: wSize)
 

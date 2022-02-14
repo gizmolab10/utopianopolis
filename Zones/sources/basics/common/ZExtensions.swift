@@ -352,6 +352,15 @@ extension ZStorageDictionary {
 
 extension Int {
 
+	var ordinal: String {
+		switch self {
+			case 1:  return "first"
+			case 2:  return "second"
+			case 3:  return "third"
+			default: return kEmpty
+		}
+	}
+
 	func isWithin(_ range: ClosedRange<Int>) -> Bool { return range.contains(self) }
 	func confine(within: Int)                -> Int  { return Int(Double(self).confine(within: Double(within))) }
 

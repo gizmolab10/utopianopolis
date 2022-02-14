@@ -44,14 +44,14 @@ class ZHelpDotsExemplarController : ZMapController {
 	func setupExemplar() {
 		let             name = kExemplarRootName
 		rootZone             = Zone.create(within: name, databaseID: .everyoneID)
-		rootZone?.zoneName   = "this is a typical idea, with three [hidden] ideas in its list"
+		rootZone?.zoneName   = "this idea holds a list of three ideas"
 		rootZone?.color      = kDefaultIdeaColor
 		rootZone?.parentLink = kNullLink
 		rootZone?.root       = rootZone
 
-		for index in 1...3 {
+		for index in [3, 2, 1] {
 			let        child = Zone.create(within: name, for: index, databaseID: .everyoneID)
-			child  .zoneName = "exemplar \(index)"
+			child  .zoneName = "\(index.ordinal) idea"
 			child      .root = rootZone
 
 			rootZone?.addChildNoDuplicate(child)

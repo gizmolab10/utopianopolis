@@ -116,7 +116,7 @@ class ZMapView: ZView {
 			if  c.isExemplar {
 				c.drawWidgets(for: phase)
 			} else {
-				if  !gIsEssayMode {
+				if !gIsEssayMode {
 					c.drawWidgets(for: phase)
 				}
 
