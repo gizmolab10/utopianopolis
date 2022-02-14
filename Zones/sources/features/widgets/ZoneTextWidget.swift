@@ -135,8 +135,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         return nil
     }
 
-	func updateTracking() { addTracking(for: frame) }
-
 	override func mouseDown(with event: ZEvent) {
 		if !gRefusesFirstResponder { // ignore mouse down during startup
 			gTemporarilySetMouseDownLocation(event.locationInWindow.x)

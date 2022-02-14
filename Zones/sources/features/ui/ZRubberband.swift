@@ -18,7 +18,7 @@ class ZRubberband: NSObject {
 
 	var rubberbandRect: CGRect? { // wrapper with new value logic
 		didSet {
-			if  oldValue != nil, oldValue != .zero, (rubberbandRect == nil || rubberbandRect == .zero) {
+			if  oldValue != nil, oldValue != .zero, !showRubberband {
 				gSelecting.assureMinimalGrabs()
 				gSelecting.updateCurrentBrowserLevel()
 				gSelecting.updateCousinList()
@@ -65,7 +65,6 @@ class ZRubberband: NSObject {
 			rubberbandPreGrabs.removeAll()
 		}
 
-		gTextEditor.stopCurrentEdit()
 		gSelecting.ungrabAll(retaining: rubberbandPreGrabs)
 	}
 

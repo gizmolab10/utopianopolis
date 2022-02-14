@@ -32,8 +32,6 @@ class ZTooltipButton: ZButton, ZTooltips {
 		return result
 	}
 
-	func updateTracking() { addTracking(for: frame) }
-
 	override func mouseEntered(with event: ZEvent) {
 		if  isEnabled,
 			let                   c = cell as? NSButtonCell {

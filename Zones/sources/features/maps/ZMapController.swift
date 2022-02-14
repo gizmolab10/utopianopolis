@@ -215,6 +215,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let        origin = (isBigMap ? relocate : .zero) + offset
 			hereWidget?.frame = CGRect(origin: origin, size: wSize)
 
+			gRemoveAllTracking()
 			hereWidget?.grandRelayout()
 			detectHover()
 			setNeedsDisplay()
@@ -249,6 +250,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gestureView?.gestureHandler = self
 
 		gDragging.draggedZones.removeAll()
+		gRemoveAllTracking()
 	}
 
 	func scrollEvent(move: Bool, to location: CGPoint) {

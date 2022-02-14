@@ -171,7 +171,6 @@ extension Zone {
 extension ZoneWidget {
 
 	func updateToolTips() {
-		absoluteView?.removeAllTracking()
 		textWidget?.updateTooltips()
 		parentLine?.dragDot?.updateTooltips()
 

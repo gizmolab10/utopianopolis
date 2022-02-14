@@ -69,6 +69,8 @@ class ZDragging: NSObject {
 			let   location = gesture.location(in: gesture.view)
 			let     state  = gesture.state
 
+			gTextEditor.stopCurrentEdit(forceCapture: true, andRedraw: false) // so drag and rubberband do not lose user's changes
+
 			if  flags.isCommand && !flags.isOption {          // shift background
 				controller.scrollEvent(move: state == .changed,  to: location)
 			} else if !draggedZones.isEmpty {

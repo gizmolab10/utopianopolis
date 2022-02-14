@@ -120,24 +120,55 @@ extension ZHelpDotsExemplarController {
 
 }
 
-extension ZView {
+class ZTrackedArea : NSObject {
 
-	func removeAllTracking() {
-		for area in trackingAreas {
-			removeTrackingArea(area)
+	var area: NSTrackingArea?
+	var view: ZView?
+
+	init(_ iView: ZView, _ iArea: NSTrackingArea) {
+		view = iView
+		area = iArea
+	}
+
+}
+
+var gTrackedAreas = [ZTrackedArea]()
+
+func gRemoveAllTracking() {
+	while gTrackedAreas.count > 0 {
+		let  tracked = gTrackedAreas.removeFirst()
+		if  let area = tracked.area {
+			tracked.view?.removeTrackingArea(area)
 		}
 	}
+}
+
+extension ZView {
 
 	func addTracking(for rect: CGRect, clearFirst: Bool = false) {
 		if  clearFirst {
-			removeAllTracking()
+			gRemoveAllTracking()
 		}
 
 		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeAlways, .inVisibleRect, .cursorUpdate]
 		let    area = NSTrackingArea(rect:rect, options: options, owner: self, userInfo: nil)
+		let tracked = ZTrackedArea(self, area)
 
+		gTrackedAreas.append(tracked)
 		addTrackingArea(area)
 	}
+
+}
+
+extension ZTooltipButton {
+
+	func updateTracking() { addTracking(for: frame) }
+
+}
+
+extension ZoneTextWidget {
+
+	func updateTracking() { addTracking(for: frame) }
 
 }
 
@@ -158,6 +189,8 @@ extension ZMapView {
 		if  let view = gMainWindow?.contentView, !view.frame.contains(event.locationInWindow) {
 			gRubberband.rubberbandRect = nil
 			gDragging      .dropWidget = nil
+
+			setNeedsDisplay()
 		}
 	}
 
