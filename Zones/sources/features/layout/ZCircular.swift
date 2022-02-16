@@ -353,7 +353,7 @@ extension ZoneLine {
 		return nil
 	}
 
-	var circularAbsoluteFloatingDotRect: CGRect {
+	var circularDraggingDotAbsoluteFrame: CGRect {
 		var rect = CGRect.zero
 
 		if  let  isBig = controller?.isBigMap,

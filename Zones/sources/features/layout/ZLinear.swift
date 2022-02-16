@@ -215,7 +215,7 @@ extension ZoneLine {
 		return .zero
 	}
 
-	var linearAbsoluteFloatingDotRect: CGRect {
+	var linearDraggingDotAbsoluteFrame: CGRect {
 		var rect = CGRect()
 
 		if  let zone = parentWidget?.widgetZone {
@@ -244,8 +244,8 @@ extension ZoneLine {
 
 						let   relation = gDragging.dropRelation
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))
-						let multiplier = CGFloat(isAbove ? 1.0 : -1.0) * kVerticalWeight
-						let      delta = dotPlusGap * multiplier
+						let multiplier = CGFloat(isAbove ? 1.0 : -1.0)
+						let      delta = dotPlusGap * multiplier * kVerticalWeight * 0.5
 						rect           = rect.offsetBy(dx: .zero, dy: delta)
 
 					} else if lastIndex < zone.count, let secondDot = parentWidget?.dot(at: lastIndex) {

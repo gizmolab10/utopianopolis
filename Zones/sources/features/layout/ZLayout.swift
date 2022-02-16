@@ -60,10 +60,10 @@ extension ZoneWidget {
 
 extension ZoneLine {
 
-	var absoluteFloatingDotRect: CGRect {
+	var draggingDotAbsoluteFrame: CGRect {
 		switch mode {
-			case .linearMode:   return   linearAbsoluteFloatingDotRect
-			case .circularMode: return circularAbsoluteFloatingDotRect
+			case .linearMode:   return   linearDraggingDotAbsoluteFrame
+			case .circularMode: return circularDraggingDotAbsoluteFrame
 		}
 	}
 

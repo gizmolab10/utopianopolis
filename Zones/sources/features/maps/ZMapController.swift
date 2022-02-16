@@ -250,7 +250,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gestureView?.gestureHandler = self
 
 		gDragging.draggedZones.removeAll()
-		gRemoveAllTracking()
+		gRemoveAllTracking() // fix fluttery cursor !!!!!!!!
 	}
 
 	func scrollEvent(move: Bool, to location: CGPoint) {

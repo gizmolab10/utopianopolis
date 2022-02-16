@@ -106,7 +106,7 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawDragLineAndDot() {
-		let rect = absoluteFloatingDotRect
+		let rect = draggingDotAbsoluteFrame
 
 		if  !rect.hasZeroSize {
 			dragDot?.absoluteFrame = rect

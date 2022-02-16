@@ -22,6 +22,7 @@ class ZSearchResultsController: ZGenericTableController {
 	var          foundRecords = ZRecordsDictionary()
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
+	func         zoneAt(_ row : Int) -> Zone? { return zoneFor(zRecordAt(row)) }
 
 	func applyFilter() {
 		filteredResults = ZRecordsDictionary()
@@ -33,7 +34,6 @@ class ZSearchResultsController: ZGenericTableController {
 
     var hasResults: Bool {
         var     result = false
-
         for     results in filteredResults.values {
             if  results.count > 0 {
                 result = true
@@ -87,8 +87,7 @@ class ZSearchResultsController: ZGenericTableController {
 		return nil
 	}
 
-	func zoneAt(_ row: Int) -> Zone? {
-		let   zRecord = zRecordAt(row)
+	func zoneFor(_ zRecord: ZRecord?) -> Zone? {
 		var      zone = zRecord as? Zone
 		if  let trait = zRecord as? ZTrait {
 			zone      = trait.ownerZone
@@ -158,16 +157,16 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK: - user feel
     // MARK: -
 
-    func identifierAndRecord(at iIndex: Int) -> (ZDatabaseID, ZRecord)? {
-        var index = iIndex
+    func identifierAndRecord(at iRow: Int) -> (ZDatabaseID, ZRecord)? {
+        var   row = iRow
         var count = 0
 
         for (dbID, records) in filteredResults {
-            index -= count
+            row   -= count
             count  = records.count
 
-            if  index >= 0, index < count  {
-                return (dbID, records[index])
+            if  row >= 0, row < count  {
+                return (dbID, records[row])
             }
         }
 
@@ -179,9 +178,9 @@ class ZSearchResultsController: ZGenericTableController {
 
         #if os(OSX)
             if  gIsSearchMode,
-                let          index = genericTableView?.selectedRow,
-                index             != -1,
-                let (dbID, record) = identifierAndRecord(at: index) {
+                let            row = genericTableView?.selectedRow,
+                row               != -1,
+                let (dbID, record) = identifierAndRecord(at: row) {
                 resolved           = true
 				resolveRecord(dbID, record)
             }
@@ -253,33 +252,68 @@ class ZSearchResultsController: ZGenericTableController {
         }
     }
 
+	func removeRecord(at row: Int) -> Bool {
+		if  let        (dbID, record) = identifierAndRecord(at: row) {
+			var               records = filteredResults[dbID]
+			if  let             index = records?.firstIndex(of: record) {
+				records?.remove(at: index)
+				filteredResults[dbID] = records
+
+				if  let zone = zoneFor(record) {
+					zone.deleteSelf {}
+				}
+
+				return true
+			}
+		}
+
+		return false
+	}
+
+	func removeSelection() {
+		if  let   t = genericTableView {
+			let row = t.selectedRow
+
+			if  removeRecord(at: row) {
+				t.reloadData()
+				selectAndRedisplay(row: row)
+			}
+		}
+	}
+
+	func selectAndRedisplay(row: Int) {
+		if  let    t = genericTableView {
+			let rows = [row] as IndexSet
+
+			t.selectRowIndexes(rows, byExtendingSelection: false)
+			t.scrollRowToVisible(row)
+			gSignal([.spCrumbs])
+		}
+	}
+
+	func moveSelection(up: Bool, extreme: Bool) {
+		if  let             t = genericTableView {
+			var           row = t.selectedRow
+			let       maximum = t.numberOfRows - 1
+
+			if extreme {
+				row           = up ?  0 : maximum
+			} else {
+				row          += up ? -1 : 1
+
+				if  row       > maximum {
+					row       = 0
+				} else if row < 0 {
+					row       = maximum
+				}
+			}
+
+			selectAndRedisplay(row: row)
+		}
+	}
+
 	// MARK: - events
 	// MARK: -
-
-    func moveSelection(up: Bool, extreme: Bool) {
-        if  let             t = genericTableView {
-            var           row = t.selectedRow
-            let       maximum = t.numberOfRows - 1
-
-            if extreme {
-                row           = up ?  0 : maximum
-            } else {
-                row          += up ? -1 : 1
-
-                if  row       > maximum {
-                    row       = 0
-                } else if row < 0 {
-                    row       = maximum
-                }
-            }
-
-            let rows = [row] as IndexSet
-
-            t.selectRowIndexes(rows, byExtendingSelection: false)
-            t.scrollRowToVisible(row)
-			gSignal([.spCrumbs])
-        }
-    }
 
 	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
 		gSearching.setSearchStateTo(.sList)
@@ -338,8 +372,9 @@ class ZSearchResultsController: ZGenericTableController {
 	@discardableResult func handleKey(_ key: String, flags: ZEventFlags) -> Bool { // false means not handled
 		switch key {
 			case "f", kTab: gSearching.setSearchStateTo(.sFind)
-			case   kReturn: if !resolve() { return false }
-			case   kEscape: clear()
+			case kReturn: if !resolve() { return false }
+			case kEscape: clear()
+			case kDelete: removeSelection()
 			default:
 				if  let arrow = key.arrow,
 					!handleArrow(arrow, flags: flags) {
@@ -354,10 +389,9 @@ class ZSearchResultsController: ZGenericTableController {
 		let COMMAND = flags.isCommand
 
 		switch arrow {
-			case    .up: moveSelection(up: true,  extreme: COMMAND)
-			case  .down: moveSelection(up: false, extreme: COMMAND)
-			case .right: if !resolve() { return false }
-			case  .left: gSearching.setSearchStateTo(.sFind)
+			case .up, .down: moveSelection(up: arrow == .up, extreme: COMMAND)
+			case     .right: if !resolve() { return false }
+			case      .left: gSearching.setSearchStateTo(.sFind)
 		}
 
 		return true
