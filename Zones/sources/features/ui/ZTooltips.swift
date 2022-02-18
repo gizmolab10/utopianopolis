@@ -217,6 +217,41 @@ extension ZoneTextWidget {
 
 }
 
+extension WidgetHashDictionary {
+
+	mutating func clear() {
+		removeTooltips()
+		removeAll()
+	}
+
+	func removeTooltips() {
+		for widget in values {
+			widget.toolTip = nil
+			widget.parentLine?.revealDot?.toolTip = nil
+			for line in widget.childrenLines {
+				line.dragDot?.toolTip = nil
+			}
+		}
+	}
+
+}
+
+extension ZWidgets {
+
+	func removeTooltipsFromAllWidgets(for controller: ZMapController) {
+		if  let type = controller.hereZone?.widgetType {
+			removeTooltips(for: type)
+		}
+	}
+
+	func removeTooltips(for type: ZWidgetType) {
+		let registry = getZoneWidgetRegistry(for: type)
+
+		registry?.removeTooltips()
+	}
+
+}
+
 extension ZMapControlsView {
 
 	func updateTooltips() {

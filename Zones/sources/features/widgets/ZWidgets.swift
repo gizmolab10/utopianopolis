@@ -24,30 +24,28 @@ class ZWidgets: NSObject {
     var        visibleWidgets : ZoneWidgetArray { return gHere.visibleWidgets + (gSmallMapHere?.visibleWidgets ?? []) }
 
 	func clearAll() {
-		bigMapWidgets   = [:]
-		recentWidgets   = [:]
-		favoriteWidgets = [:]
-		exemplarWidgets = [:]
+		bigMapWidgets  .clear()
+		recentWidgets  .clear()
+		favoriteWidgets.clear()
+		exemplarWidgets.clear()
 	}
 
-	func  allWidgets(for type: ZWidgetType) -> ZoneWidgetArray? {
+	func allWidgets(for type: ZWidgetType) -> ZoneWidgetArray? {
 		switch type {
 			case .tExemplar: return exemplarWidgets.justWidgets
 			default:         return bigMapWidgets.justWidgets + recentWidgets.justWidgets + favoriteWidgets.justWidgets
 		}
 	}
 
-    func clearRegistry(for type: ZWidgetType) {
-		setZoneWidgetRegistry([:], for: type)
-    }
+	func getZoneWidgetRegistry(for type: ZWidgetType?) -> WidgetHashDictionary? {
+		if  let t = type {
+			if  t.isBigMap   { return   bigMapWidgets }
+			if  t.isRecent   { return   recentWidgets }
+			if  t.isFavorite { return favoriteWidgets }
+			if  t.isExemplar { return exemplarWidgets }
+		}
 
-	func getZoneWidgetRegistry(for type: ZWidgetType) -> WidgetHashDictionary {
-		if type.isBigMap   { return   bigMapWidgets }
-		if type.isRecent   { return   recentWidgets }
-		if type.isFavorite { return favoriteWidgets }
-		if type.isExemplar { return exemplarWidgets }
-
-		return [:]
+		return nil
 	}
 
 	func setZoneWidgetRegistry(_ dict: WidgetHashDictionary, for type: ZWidgetType) {
@@ -64,8 +62,8 @@ class ZWidgets: NSObject {
 	/// - Parameter type: indicates which dictionary to put the zone:widget pair in
 
 	func setWidgetForZone( _ widget: ZoneWidget, for type: ZWidgetType) {
-        if  let   zone = widget.widgetZone {
-			var   dict = getZoneWidgetRegistry(for: type)
+        if  let   zone = widget.widgetZone,
+			var   dict = getZoneWidgetRegistry(for: type) {
 			let   hash = zone.hash
 			dict[hash] = widget
 
@@ -81,9 +79,9 @@ class ZWidgets: NSObject {
 	func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let zone = iZone {
 			let type = zone.widgetType
-			let dict = getZoneWidgetRegistry(for: type)
-
-			return dict[zone.hash]
+			if  let dict = getZoneWidgetRegistry(for: type) {
+				return dict[zone.hash]
+			}
 		}
 
         return nil

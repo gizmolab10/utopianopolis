@@ -186,7 +186,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let type : ZRelayoutMapType = isBigMap ? .big : .small
 
+		gRemoveAllTracking()
 		mapView?.removeAllTextViews(ofType: type)
+		gWidgets.removeTooltipsFromAllWidgets(for: self)
 
 		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
@@ -215,7 +217,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let        origin = (isBigMap ? relocate : .zero) + offset
 			hereWidget?.frame = CGRect(origin: origin, size: wSize)
 
-			gRemoveAllTracking()
 			hereWidget?.grandRelayout()
 			detectHover()
 			setNeedsDisplay()
