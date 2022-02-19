@@ -510,17 +510,18 @@ extension ZView {
 
 	@objc func printView() { // ZView
 		if  gProducts.hasEnabledSubscription {
-			let    printInfo = NSPrintInfo.shared
-			let      isWider = bounds.size.width > bounds.size.height
-			let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-			var         size = printInfo.imageablePageBounds.size.multiplyBy(0.8)
+			let       printInfo = NSPrintInfo.shared
+			printInfo.topMargin = 72.0
+			let         isWider = bounds.width > bounds.height
+			let     orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
+			let    pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+			var            size = printInfo.paperSize.multiplyBy(0.8)
 
 			if  isWider {
-				size         = size.swapped
+				size            = size.swapped
 			}
 
-			let        scale = bounds.size.scaleToFit(size) * 100.0
+			let           scale = bounds.size.scaleToFit(size) * 100.0
 
 			PMSetScale(pmPageFormat, scale)
 			PMSetOrientation(pmPageFormat, orientation, false)

@@ -186,11 +186,19 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 		let type : ZRelayoutMapType = isBigMap ? .big : .small
 
-		gRemoveAllTracking()
+		// //////////////////////////// //
+		// clear remnants of prior loop //
+		// //////////////////////////// //
+
 		mapView?.removeAllTextViews(ofType: type)
 		gWidgets.removeTooltipsFromAllWidgets(for: self)
+		gRemoveAllTracking()
 
-		let total = specificWidget?.layoutAllPseudoViews(parentPseudoView: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
+		// ////////////////////////// //
+		// create all new widget tree //
+		// ////////////////////////// //
+
+		let    total = specificWidget?.createChildPseudoViews(for: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
 		if  let    r = hereWidget, (!isBigMap || gMapLayoutMode == .linearMode) {
 			let line = r.createLineFor(child: r)

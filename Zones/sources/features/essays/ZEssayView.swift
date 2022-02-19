@@ -76,7 +76,6 @@ enum ZEssayLinkType: String {
 @objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate {
 	let margin          = CGFloat(20.0)
-	let dotInset        = CGFloat(-5.0)
 	var dropped         = StringsArray()
 	var grabbedNotes    = [ZNote]()
 	var selectionRect   = CGRect()           { didSet { if selectionRect.origin == .zero { imageAttachment = nil } } }
@@ -353,19 +352,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		}
 
-		let              rect = rectFromEvent(event)
-		if  let        attach = hitTestForAttachment(in: rect) {
-			resizeDot         = hitTestForResizeDot(in: rect, for: attach)
-			resizeDragStart   = rect.origin
-			imageAttachment   = attach
+		let            rect = rectFromEvent(event)
+		if  let      attach = hitTestForAttachment(in: rect) {
+			resizeDot       = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
+			resizeDragStart = rect.origin
+			imageAttachment = attach
 
 			setSelectedRange(attach.range)
 			setNeedsDisplay()
 
 			return resizeDot != nil // true means do not further process this event
-		} else if let     dot = dragDotHit(at: rect),
-				  let    note = dot.note {
-			if  let     index = grabbedNotes.firstIndex(of: note) {
+		} else if let   dot = dragDotHit(at: rect),
+				  let  note = dot.note {
+			if  let   index = grabbedNotes.firstIndex(of: note) {
 				grabbedNotes.remove(at: index)
 			} else {
 				if !event.modifierFlags.isShift {
@@ -431,8 +430,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			NSCursor.arrow.set()
-		} else if let attach = hitTestForAttachment(in: rect) {
-			if  let      dot = hitTestForResizeDot(in: rect, for: attach) {
+		} else if let    attach = hitTestForAttachment(in: rect) {
+			if  let         dot = rectForRangedAttachment(attach)?.hitTestForResizeDot (in: rect) {
 				dot.cursor.set()
 			} else {
 				NSCursor.openHand.set()
@@ -682,7 +681,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return true // yes, change text
 	}
 
-	// MARK: - grab / drag
+	// MARK: - dragging notes
 	// MARK: -
 
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
@@ -948,20 +947,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			path.setLineDash(pattern, count: 2, phase: 4.0)
 			path.stroke()
-			drawImageResizeDots(onBorderOf: rect)
+			rect.drawImageResizeDots()
 		} else if let    a = attach,
 				  let rect = rectForRangedAttachment(a) {
-			drawImageResizeDots(onBorderOf: rect)
-		}
-	}
-
-	func drawImageResizeDots(onBorderOf rect: CGRect) {
-		for point in rect.selectionPoints.values {
-			let   dotRect = CGRect(origin: point, size: .zero).insetEquallyBy(dotInset)
-			let      path = ZBezierPath(ovalIn: dotRect)
-			path.flatness = 0.0001
-
-			path.stroke()
+			rect.drawImageResizeDots()
 		}
 	}
 
@@ -999,8 +988,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func updateImageRubberband(for delta: CGSize, _ COMMAND : Bool) {
 
-		// compute imageDragRect from delta.width, image rect and corner
-		// preserving aspect ratio
+		// compute resizeDragRect from delta.width, image rect and corner
+		// for COMMAND == false: preserving aspect ratio
 
 		if  let direction = resizeDot,
 			let    attach = imageAttachment,
@@ -1009,7 +998,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			var    origin = rect.origin
 			var  fraction = size.fraction(delta)
 
-			if  COMMAND, [ZDirection.topLeft, ZDirection.bottomRight].contains(direction) { // apply original ratio to fraction
+			if !COMMAND, direction.isFullResizeCorner { // apply original ratio to fraction
 				fraction  = size.fractionPreservingRatio(delta)
 			}
 
@@ -1017,23 +1006,23 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let     hGrow = size.height * (1.0 - fraction.height)
 
 			switch direction {
-			case .topLeft:     size   = size  .offsetBy(-wGrow, -hGrow)
-			case .bottomLeft:  size   = size  .offsetBy(-wGrow,  hGrow)
-			case .topRight:    size   = size  .offsetBy( wGrow, -hGrow)
-			case .bottomRight: size   = size  .offsetBy( wGrow,  hGrow)
-			case .left:        size   = size  .offsetBy(-wGrow, .zero)
-			case .right:       size   = size  .offsetBy( wGrow, .zero)
-			case .top:         size   = size  .offsetBy( .zero, -hGrow)
-			case .bottom:      size   = size  .offsetBy( .zero,  hGrow)
+				case .topLeft:     size   = size  .offsetBy(-wGrow, -hGrow)
+				case .bottomLeft:  size   = size  .offsetBy(-wGrow,  hGrow)
+				case .topRight:    size   = size  .offsetBy( wGrow, -hGrow)
+				case .bottomRight: size   = size  .offsetBy( wGrow,  hGrow)
+				case .left:        size   = size  .offsetBy(-wGrow, .zero)
+				case .right:       size   = size  .offsetBy( wGrow, .zero)
+				case .top:         size   = size  .offsetBy( .zero, -hGrow)
+				case .bottom:      size   = size  .offsetBy( .zero,  hGrow)
 			}
 
 			switch direction {
-			case .topLeft:     origin = origin.offsetBy( wGrow,  hGrow)
-			case .top,
-				 .topRight:    origin = origin.offsetBy( .zero,  hGrow)
-			case .left,
-				 .bottomLeft:  origin = origin.offsetBy( wGrow, .zero)
-			default:           break
+				case .topLeft: origin = origin.offsetBy( wGrow,  hGrow)
+				case .topRight,
+						.top:  origin = origin.offsetBy( .zero,  hGrow)
+				case .bottomLeft,
+						.left: origin = origin.offsetBy( wGrow, .zero)
+				default:       break
 			}
 
 			resizeDragRect = CGRect(origin: origin, size: size)
@@ -1076,30 +1065,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
-	func hitTestForResizeDot(in selectionRect: CGRect, for attachment: ZRangedAttachment?) -> ZDirection? {
-		if  let    attach = attachment,
-			let imageRect = rectForRangedAttachment(attach) {
-			let    points = imageRect.selectionPoints
-
-			for (direction, point) in points {
-				var  rect = CGRect(origin: point, size: .zero).insetEquallyBy(dotInset)
-				let  size = imageRect.size.multiplyBy(-0.5)   .insetEquallyBy(dotInset)
-
-				switch direction {
-				case .bottom, .top: rect = rect.insetBy(dx: size.width, dy: .zero)  // extend width
-				case .right, .left: rect = rect.insetBy(dx: .zero, dy: size.height) // extend height
-					default:            break
-				}
-
-				if  selectionRect.intersects(rect) {
-					return direction
-				}
-			}
-		}
-
-		return nil
-	}
-
 	func rectForUnclippedRangedAttachment(_ attach: ZRangedAttachment, orientedFrom direction: ZDirection) -> CGRect? {      // return nil if image is clipped
 		if  let image       = attach.attachment.cellImage,
 			var rect        = rectForRangedAttachment(attach) {
@@ -1131,7 +1096,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func hitTestForAttachment(in rect: CGRect) -> ZRangedAttachment? {
 		if  let attaches = textStorage?.rangedAttachments {
 			for attach in attaches {
-				if  let imageRect = rectForRangedAttachment(attach)?.insetEquallyBy(dotInset),
+				if  let imageRect = rectForRangedAttachment(attach)?.expandedEquallyBy(kEssayImageDotRadius),
 					imageRect.intersects(rect) {
 
 					return attach

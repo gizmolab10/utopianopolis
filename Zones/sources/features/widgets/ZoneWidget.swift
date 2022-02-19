@@ -148,7 +148,7 @@ class ZoneWidget: ZPseudoView {
 	// MARK: - view hierarchy
 	// MARK: -
 
-	@discardableResult func layoutAllPseudoViews(parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func createChildPseudoViews(for parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		let     mapView = absoluteView as? ZMapView
 		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.linesAndDotsView) : nil
 		var       count = 1
@@ -179,12 +179,12 @@ class ZoneWidget: ZPseudoView {
 			var index = childrenWidgets.count
 			let vplus = visited + [zone]
 
-			while index           > 0 {
-				index            -= 1 // go backwards down the children arrays, linear mode bottom and top constraints expect it
-				let child         = childrenWidgets[index]
-				child .widgetZone =            zone[index]
-				let    parentView = isLinearMode ? childrenView : parentPseudoView
-				count            += child.layoutAllPseudoViews(parentPseudoView: parentView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
+			while index          > 0 {
+				index           -= 1 // go backwards down the children arrays, linear mode bottom and top constraints expect it
+				let child        = childrenWidgets[index]
+				child.widgetZone =            zone[index]
+				let   parentView = isLinearMode ? childrenView : parentPseudoView
+				count           += child.createChildPseudoViews(for: parentView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
 			}
 		}
 
@@ -483,7 +483,7 @@ class ZoneWidget: ZPseudoView {
 
 	func printWidget() {
 		if  let prior = controller?.mapView?.frame {
-			controller?.mapView?.frame = bounds.expandedBy(dx: 40.0, dy: 0.0)
+			controller?.mapView?.frame = bounds.expandedBy(dx: 40.0, dy: 40.0)
 
 			gDetailsController?.temporarilyHideView(for: .vSmallMap) {
 				gMapController?.layoutForCurrentScrollOffset()

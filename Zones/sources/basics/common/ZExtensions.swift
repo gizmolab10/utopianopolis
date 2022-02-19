@@ -801,7 +801,7 @@ extension CGSize {
 	func fraction(_ delta: CGSize)                   -> CGSize { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
 	func expandedEquallyBy(_ expansion: CGFloat)     -> CGSize { return insetEquallyBy(-expansion) }
 	func    insetEquallyBy(_     inset: CGFloat)     -> CGSize { return insetBy(inset, inset) }
-	func expandedBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize { return insetBy(-x, -y) }
+	func expandedBy(_ x: CGFloat, _ y: CGFloat)      -> CGSize { return insetBy(-x, -y) }
 	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
 	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize { return CGSize(width: width + x, height: height + y).absSize }
 	func offsetBy(_ delta: CGSize)                   -> CGSize { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
@@ -920,6 +920,8 @@ enum ZDirection : Int {
 		default:    return kFourArrowsCursor ?? .crosshair
 		}
 	}
+
+	var isFullResizeCorner: Bool { return self == .topLeft || self == .bottomRight }
 
 }
 
@@ -1075,6 +1077,27 @@ extension CGRect {
 		return delta > 0
 	}
 
+	func hitTestForResizeDot(in selectionRect: CGRect) -> ZDirection? {
+		let   points = selectionPoints
+		let     size = size.dividedInHalf      .expandedEquallyBy(kEssayImageDotRadius)
+
+		for (direction, point) in points {
+			var rect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
+
+			switch direction {
+				case .bottom, .top: rect = rect.expandedBy(dx: size.width, dy: .zero)    // extend width
+				case .right, .left: rect = rect.expandedBy(dx: .zero, dy: size.height)   //    "   height
+				default:            break
+			}
+
+			if  selectionRect.intersects(rect) {
+				return direction
+			}
+		}
+
+		return nil
+	}
+
 	func drawColoredRect(_ color: ZColor, radius: CGFloat = 0.0, thickness: CGFloat = 0.5) {
 		let       path = ZBezierPath(roundedRect: self, xRadius: radius, yRadius: radius)
 		path.lineWidth = thickness
@@ -1098,6 +1121,16 @@ extension CGRect {
 
 	func drawColoredCircle(_ color: ZColor, thickness: CGFloat = 0.5, filled: Bool = false) {
 		squareCentered.drawColoredOval(color, thickness: thickness, filled: filled)
+	}
+
+	func drawImageResizeDots() {
+		for point in selectionPoints.values {
+			let   dotRect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
+			let      path = ZBezierPath(ovalIn: dotRect)
+			path.flatness = 0.0001
+
+			path.stroke()
+		}
 	}
 
 }

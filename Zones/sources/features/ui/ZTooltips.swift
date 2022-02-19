@@ -146,14 +146,14 @@ extension Zone {
 
 	}
 
-	func dotTooltip(_ isReveal: Bool) -> String? {
+	func dotTooltipText(_ isReveal: Bool) -> String? {
 		if  let   name = zoneName {
-			let target = (count == 0 && isTraveller && isReveal) ? kEmpty : "\"\(name)\""
+			let target = (count == 0 && isTraveller && isReveal && !isBookmark ) ? kEmpty : "\"\(name)\""
 			let  plain =  count == 0 ? kEmpty : gConcealmentString(for: isExpanded) + " list for "
-			let  extra = isBookmark  && !isReveal ? " bookmark of " : kEmpty
+			let  extra = !isReveal   ? kEmpty : !isBookmark ? kEmpty : "target of "
+			let  title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
 			let reveal = isBookmark  ? "change focus to " : plain
 			let   drag = isGrabbed   ? "drag " : "select or drag "
-			let  title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
 			let action = isReveal    ? reveal : drag
 			let suffix = isReveal    ? revealTipSuffix : kEmpty
 			let   text = title + action + extra + target + suffix
@@ -183,9 +183,8 @@ extension ZoneWidget {
 
 extension ZoneDot {
 
-	func updateTooltips() {
-		toolTip = !gShowToolTips ? nil : widgetZone?.dotTooltip(isReveal)
-	}
+	var toolTipIsHidden: Bool { return !gShowToolTips || !dotIsVisible }
+	func updateTooltips() { toolTip = toolTipIsHidden ? nil : widgetZone?.dotTooltipText(isReveal) }
 
 }
 
