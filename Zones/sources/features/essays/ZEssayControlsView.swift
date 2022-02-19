@@ -77,8 +77,8 @@ class ZEssayControlsView: ZView {
 		}
 	}
 
-	func enableEssayControls(_      enabled: Bool) {
-		let      hasMultipleNotes = gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
+	func enableEssayControls(_ enabled: Bool) {
+		let hasMultipleNotes = gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
 		backwardButton?.setEnabledAndTracking(enabled && hasMultipleNotes)
 		forwardButton? .setEnabledAndTracking(enabled && hasMultipleNotes)
 		multipleButton?.setEnabledAndTracking(enabled)
@@ -89,7 +89,6 @@ class ZEssayControlsView: ZView {
 		saveButton?    .setEnabledAndTracking(enabled)
 
 		updateTitleSegments(enabled)
-		gMainWindow?.redrawInspectorBar(enabled)
 	}
 
 	// MARK: - titles control

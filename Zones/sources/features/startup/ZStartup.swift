@@ -40,7 +40,7 @@ class ZStartup: NSObject {
 		gWorkMode              = .wStartupMode
 
 		gRemoteStorage.clear()
-		gEssayControlsView?.enableEssayControls(false)
+		gMainWindow?.revealEssayEditorInspectorBar(false)
 		gSearching.setSearchStateTo(.sNot)
 		gSignal([.spMain, .spStartupStatus])
 		gTimers.startTimer(for: .tStartup)

@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import SnapKit
 import AppKit
 
 #if os(OSX)
@@ -533,6 +534,39 @@ extension ZView {
 
 	func drawBox(in view: ZView, inset: CGFloat = 0, with color: ZColor) {
 		convert(bounds, to: view).insetEquallyBy(inset).drawColoredRect(color)
+	}
+
+	func rearrangeInspectorTools() {
+
+		// workaround bug in OS 10.12
+		// discarded by display() arrrgh!!!!!!
+
+		var             x = CGFloat(7.0)
+		for tool in subviews {
+			var      rect = tool.frame
+			rect          = CGRect(origin: CGPoint(x: x, y: rect.minY), size: rect.size)
+			x             = rect.maxX + 3.0
+			tool   .frame = rect
+		}
+	}
+
+	func relayoutInspectorTools() {
+
+		// another workaround for bug in OS 10.12
+
+		var x = 7.0
+
+		for tool in subviews {
+			let y = tool.isHidden ? -3.0 : -8.0
+			tool.removeConstraints(tool.constraints)
+			tool.snp.makeConstraints { make in
+				make.left.equalToSuperview().offset(x)
+				make.bottom.equalToSuperview().offset(y)
+			}
+
+			x += tool.bounds.width + 3.0
+			tool.isHidden = false
+		}
 	}
 
 }

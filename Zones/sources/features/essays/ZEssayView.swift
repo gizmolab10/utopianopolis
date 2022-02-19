@@ -126,6 +126,165 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return 0
 	}
 
+	// MARK: - setup
+	// MARK: -
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		usesRuler            = true
+		isRulerVisible       = true
+		importsGraphics      = true
+		usesInspectorBar     = true
+		allowsImageEditing   = true
+		displaysLinkToolTips = true
+		textContainerInset   = NSSize(width: margin, height: margin)
+
+		resetForDarkMode()
+	}
+
+	private func discardPriorText() {
+		gCurrentEssayZone?.noteMaybe = nil
+		delegate                     = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
+
+		if  let length = textStorage?.length, length > 0 {
+			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: kEmpty)
+		}
+	}
+
+	func resetForDarkMode() {
+		usesAdaptiveColorMappingForDarkAppearance = true
+		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
+		let                            scrollView = superview?.superview as? NSScrollView
+		let                             rulerView = scrollView?.horizontalRulerView
+		let                              scroller = scrollView?.verticalScroller
+		let modeAppearance                        = NSAppearance(named: gIsDark ? .darkAqua : .aqua)
+		appearance                                = modeAppearance
+		rulerView?                    .appearance = modeAppearance
+		scroller?                     .appearance = modeAppearance
+		scroller?.zlayer         .backgroundColor = backgroundColor
+		zlayer                   .backgroundColor = backgroundColor
+	}
+
+	func essayViewSetup() {
+		updateTextStorage()
+	}
+
+	@discardableResult func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) -> Int {
+		var           delta = 0
+		if  let        note = current {
+			essayRecordName = nil
+			gCurrentEssay   = note
+
+			note.setupChildren()
+
+			delta           = updateTextStorage()
+
+			note.updateNoteOffsets()
+			note.updatedRangesFrom(note.noteTrait?.noteText)
+
+			if  let r = range {
+				FOREGROUND {
+					self.selectAndScrollTo(r.offsetBy(delta))
+				}
+			}
+		}
+
+		return delta
+	}
+
+	@discardableResult func updateTextStorage(restoreSelection: NSRange? = nil) -> Int {
+		var delta = 0
+
+		// make sure we actually have a current essay
+		// activate the buttons in the control bar
+		// grab the current essay text and put it in place
+		// grab record id of essay to indicate that this essay has not been saved
+		// saves time by not needlessly overwriting it later
+
+		resetForDarkMode()
+
+		if  gCurrentEssay == nil {
+			gControllers.swapMapAndEssay(force: .wMapMode)                            // not show blank essay
+		} else {
+			gEssayControlsView?.updateTitleSegments()
+
+			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
+
+			if  (shouldOverwrite || restoreSelection != nil),
+				let text = gCurrentEssay?.essayText {
+				discardPriorText()
+				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
+				selectAndScrollTo(restoreSelection)
+				undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
+				gEssayControlsView?.matchTitlesControlTo(gEssayTitleMode)
+			}
+
+			essayRecordName = gCurrentEssayZone?.recordName                           // do this after altering essay zone
+			delegate        = self 					    	                          // set delegate after discarding prior and injecting current text
+
+			if  gIsEssayMode {
+				gMainWindow?.makeFirstResponder(self)                                 // show cursor and respond to key input
+				gMainWindow?.setupEssayInspectorBar()
+
+				gEssayControlsView?.setupAllEssayControls()
+				gEssayControlsView?.enableEssayControls(true)
+			}
+		}
+
+		return delta
+	}
+
+	// MARK: - clean up
+	// MARK: -
+
+	func done() {
+		save()
+		exit()
+	}
+
+	func exit() {
+		prepareToExit()
+		gControllers.swapMapAndEssay(force: .wMapMode)
+	}
+
+	func save() {
+		if  let e = gCurrentEssay {
+			e.saveInEssay(textStorage)
+		}
+	}
+
+	func prepareToExit() {
+		if  let e = gCurrentEssay,
+			e.lastTextIsDefault,
+			e.autoDelete {
+			e.zone?.deleteNote()
+		}
+
+		undoManager?.removeAllActions()
+	}
+
+	func grabSelectionHereDone() {
+		if  let zone = selectedZone {
+			gHere = zone
+
+			zone.grab()
+			done()
+		} else {
+			grabDone()
+		}
+	}
+
+	func grabDone() {
+		if  let zone = lastGrabbedDot?.note?.zone {
+			zone.grab()
+		} else {
+			gCurrentEssayZone?.grab()
+		}
+
+		done()
+	}
+
 	// MARK: - output
 	// MARK: -
 
@@ -489,165 +648,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let range = lastGrabbedDot?.noteRange {
 			scrollRangeToVisible(range)
 		}
-	}
-
-	// MARK: - setup
-	// MARK: -
-
-	override func awakeFromNib() {
-		super.awakeFromNib()
-
-		usesRuler            = true
-		isRulerVisible       = true
-		importsGraphics      = true
-		usesInspectorBar     = true
-		allowsImageEditing   = true
-		displaysLinkToolTips = true
-		textContainerInset   = NSSize(width: margin, height: margin)
-
-		resetForDarkMode()
-	}
-
-	private func discardPriorText() {
-		gCurrentEssayZone?.noteMaybe = nil
-		delegate                     = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
-
-		if  let length = textStorage?.length, length > 0 {
-			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: kEmpty)
-		}
-	}
-
-	func resetForDarkMode() {
-		usesAdaptiveColorMappingForDarkAppearance = true
-		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
-		let                            scrollView = superview?.superview as? NSScrollView
-		let                             rulerView = scrollView?.horizontalRulerView
-		let                              scroller = scrollView?.verticalScroller
-		let modeAppearance                        = NSAppearance(named: gIsDark ? .darkAqua : .aqua)
-		appearance                                = modeAppearance
-		rulerView?                    .appearance = modeAppearance
-		scroller?                     .appearance = modeAppearance
-		scroller?.zlayer         .backgroundColor = backgroundColor
-		zlayer                   .backgroundColor = backgroundColor
-	}
-
-	func essayViewSetup() {
-		gMainWindow?.updateEssayEditorInspectorBar(show: true)
-		gEssayControlsView?.setupAllEssayControls()
-		updateTextStorage()
-	}
-
-	@discardableResult func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) -> Int {
-		var           delta = 0
-		if  let        note = current {
-			essayRecordName = nil
-			gCurrentEssay   = note
-
-			note.setupChildren()
-
-			delta           = updateTextStorage()
-
-			note.updateNoteOffsets()
-			note.updatedRangesFrom(note.noteTrait?.noteText)
-
-			if  let r = range {
-				FOREGROUND {
-					self.selectAndScrollTo(r.offsetBy(delta))
-				}
-			}
-		}
-
-		return delta
-	}
-
-	@discardableResult func updateTextStorage(restoreSelection: NSRange? = nil) -> Int {
-		var delta = 0
-
-		// make sure we actually have a current essay
-		// activate the buttons in the control bar
-		// grab the current essay text and put it in place
-		// grab record id of essay to indicate that essay
-		// has not been saved, avoids overwriting later
-
-		resetForDarkMode()
-
-		if  gCurrentEssay == nil {
-			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
-		} else {
-			gEssayControlsView?.updateTitleSegments()
-
-			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
-
-			if  (shouldOverwrite || restoreSelection != nil),
-				let text = gCurrentEssay?.essayText {
-				discardPriorText()
-				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
-				selectAndScrollTo(restoreSelection)
-				undoManager?.removeAllActions()                               // clear the undo stack of prior / disastrous information (about prior text)
-				gEssayControlsView?.matchTitlesControlTo(gEssayTitleMode)
-			}
-
-			gEssayControlsView?.enableEssayControls(true)
-
-			essayRecordName = gCurrentEssayZone?.recordName                   // do this after overwriting
-			delegate        = self 					    	                  // set delegate after setText
-
-			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(self)                         // show cursor and respond to key input
-			}
-		}
-
-		return delta
-	}
-
-	// MARK: - clean up
-	// MARK: -
-
-	func done() {
-		save()
-		exit()
-	}
-
-	func exit() {
-		prepareToExit()
-		gControllers.swapMapAndEssay(force: .wMapMode)
-	}
-
-	func save() {
-		if  let e = gCurrentEssay {
-			e.saveInEssay(textStorage)
-		}
-	}
-
-	func prepareToExit() {
-		if  let e = gCurrentEssay,
-			e.lastTextIsDefault,
-			e.autoDelete {
-			e.zone?.deleteNote()
-		}
-
-		undoManager?.removeAllActions()
-	}
-
-	func grabSelectionHereDone() {
-		if  let zone = selectedZone {
-			gHere = zone
-
-			zone.grab()
-			done()
-		} else {
-			grabDone()
-		}
-	}
-
-	func grabDone() {
-		if  let zone = lastGrabbedDot?.note?.zone {
-			zone.grab()
-		} else {
-			gCurrentEssayZone?.grab()
-		}
-
-		done()
 	}
 
 	// MARK: - locked ranges

@@ -20,13 +20,21 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     var          observer : NSKeyValueObservation?
 	var      inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
 
-	func redrawInspectorBar(_ enabled: Bool) {
-		if  let      bar = inspectorBar {
-			bar.isHidden = !enabled
+	func revealEssayEditorInspectorBar(_ show: Bool = false) {
+		showsToolbarButton     =  show
+		inspectorBar?.isHidden = !show
+		if  show {
+			inspectorBar?.setNeedsDisplay()
+		}
+	}
 
-			if  enabled {
-				bar.setNeedsDisplay()
-			}
+	func setupEssayInspectorBar() {
+		if  let      bar = inspectorBar,
+			let controls = gEssayControlsView,
+		    !bar.subviews.contains(controls) {
+			bar.rearrangeInspectorTools()
+			revealEssayEditorInspectorBar(true)                      // show inspector bar
+			bar.relayoutInspectorTools()
 		}
 	}
 
@@ -76,11 +84,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     func windowWillReturnFieldEditor(_ sender: NSWindow, to client: Any?) -> Any? {
         return gTextEditor
     }
-
-	func updateEssayEditorInspectorBar(show: Bool = false) {
-		showsToolbarButton     =  show
-		inspectorBar?.isHidden = !show
-	}
 
     #endif
 }

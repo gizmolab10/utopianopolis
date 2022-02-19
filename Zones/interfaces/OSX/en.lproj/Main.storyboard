@@ -1208,21 +1208,21 @@ CA
             <objects>
                 <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <customView key="view" id="HOI-yt-EwI" userLabel="View">
-                        <rect key="frame" x="0.0" y="0.0" width="278" height="289"/>
+                        <rect key="frame" x="0.0" y="0.0" width="356" height="289"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <scrollView appearanceType="aqua" borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hqm-9J-YF3">
-                                <rect key="frame" x="0.0" y="0.0" width="278" height="289"/>
+                                <rect key="frame" x="0.0" y="0.0" width="356" height="289"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
-                                    <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="341" height="289"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" allowsImageEditing="YES" usesRuler="YES" quoteSubstitution="YES" linkDetection="YES" dashSubstitution="YES" textReplacement="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="263" height="289"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="341" height="289"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <color key="backgroundColor" white="1" alpha="0.00016505281690140845" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <size key="minSize" width="263" height="289"/>
+                                            <size key="minSize" width="341" height="289"/>
                                             <size key="maxSize" width="435" height="10000000"/>
                                             <color key="insertionPointColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                         </textView>
@@ -1234,7 +1234,7 @@ CA
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="edr-tD-Gmf">
-                                    <rect key="frame" x="263" y="0.0" width="15" height="289"/>
+                                    <rect key="frame" x="341" y="0.0" width="15" height="289"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
@@ -1295,7 +1295,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="wId-4b-3QH"/>
                                         </connections>
                                     </button>
-                                    <button identifier="exit" toolTip="save changes and exit editor" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sJ-7J-RbI" userLabel="exit">
+                                    <button identifier="exit" toolTip="save changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sJ-7J-RbI" userLabel="exit">
                                         <rect key="frame" x="95" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="TQP-vV-Jxa"/>
@@ -1426,7 +1426,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1384" y="1172.5"/>
+            <point key="canvasLocation" x="1423" y="1172.5"/>
         </scene>
         <!--Create a Link-->
         <scene sceneID="yhj-YB-Xij">
@@ -2141,7 +2141,7 @@ DQ
                 <customObject id="T49-Ar-q9j" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="CX0-7s-ZzA"/>
             </objects>
-            <point key="canvasLocation" x="1705" y="1128"/>
+            <point key="canvasLocation" x="1830" y="1128"/>
         </scene>
         <!--Debug Controller-->
         <scene sceneID="xPN-n7-b66">
