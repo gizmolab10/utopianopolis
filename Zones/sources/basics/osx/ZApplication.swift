@@ -20,7 +20,7 @@ class ZApplication : NSApplication {
 		if  t == 17 {
 			gDebugCount += 1
 
-			print("\(gDebugCount) cursor updated")
+//			print("\(gDebugCount) cursor updated")
 		}
 	}
 

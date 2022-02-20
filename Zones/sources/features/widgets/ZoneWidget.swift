@@ -104,6 +104,12 @@ class ZoneWidget: ZPseudoView {
 	var             isCenter :            Bool  { return linesLevel == 0 }
 	var           linesLevel :             Int  { return (parentWidget?.linesLevel ?? -1) + 1 }
 
+	override func debug(_ rect: CGRect, _ message: String = kEmpty) {
+		if  widgetZone == gHere {
+			print(rect.minX.stringTo(precision: 1) + " " + rect.maxX.stringTo(precision: 1) + " \(self) " + message)
+		}
+	}
+
 	var type : ZWidgetType {
 		var result    = widgetZone?.widgetType
 
@@ -134,7 +140,6 @@ class ZoneWidget: ZPseudoView {
 			if  let                        name = widgetZone?.zoneName {
 				identifier                      = NSUserInterfaceItemIdentifier("<z> \(name)")
 				childrenView?       .identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
-//				revealDot?          .identifier = NSUserInterfaceItemIdentifier("<r> \(name)")
 				parentLine?.dragDot?.identifier = NSUserInterfaceItemIdentifier("<d> \(name)")
 				textWidget?         .identifier = NSUserInterfaceItemIdentifier("<t> \(name)")
 			}
@@ -349,6 +354,10 @@ class ZoneWidget: ZPseudoView {
 	@discardableResult func safeTraverseWidgetProgeny(visited: ZoneWidgetArray, inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
 		var status  = ZTraverseStatus.eContinue
 
+		if  visited.contains(self) {
+			return status			        // do not revisit or traverse further inward
+		}
+
 		if !inReverse {
 			status  = block(self)           // first call block on self, then recurse on each child
 
@@ -358,14 +367,10 @@ class ZoneWidget: ZPseudoView {
 		}
 
 		for child in childrenWidgets {
-			if  visited.contains(child) {
-				break						// do not revisit or traverse further inward
-			}
-
 			status = child.safeTraverseWidgetProgeny(visited: visited + [self], inReverse: inReverse, block)
 
 			if  status == .eStop {
-				break                       // halt traversal
+				return status               // halt traversal
 			}
 		}
 

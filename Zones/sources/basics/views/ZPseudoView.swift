@@ -47,6 +47,8 @@ class ZPseudoView: NSObject {
 	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }
 	func setupDrawnView() { drawnView = absoluteView }
 
+	func debug(_ rect: CGRect, _ message: String = kEmpty) {}
+
 	var toolTip : String? {
 		didSet {
 			if  let t = toolTipTag {
@@ -94,6 +96,7 @@ class ZPseudoView: NSObject {
 	func relayoutAbsoluteFrame(relativeTo controller: ZMapController?) {
 		if  let       map = controller?.mapPseudoView {
 			absoluteFrame = convertRect(frame, toRootPseudoView: map)
+//			debug(absoluteFrame, "FRAME")
 		}
 	}
 

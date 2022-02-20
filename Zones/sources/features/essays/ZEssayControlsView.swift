@@ -27,8 +27,8 @@ enum ZEssayButtonID : Int {
 				case "left.arrow":  return .idBack
 				case "right.arrow": return .idForward
 				case "multiple":    return .idMultiple
-				case "cancel":      return .idDelete
-				case "trash":       return .idCancel
+				case "cancel":      return .idCancel
+				case "trash":       return .idDelete
 				case "printer":     return .idPrint
 				case "exit":        return .idHide
 				case "save":        return .idSave

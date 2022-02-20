@@ -30,11 +30,14 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 
 	func setupEssayInspectorBar() {
 		if  let      bar = inspectorBar,
-			let controls = gEssayControlsView,
-		    !bar.subviews.contains(controls) {
-			bar.rearrangeInspectorTools()
-			revealEssayEditorInspectorBar(true)                      // show inspector bar
-			bar.relayoutInspectorTools()
+			let controls = gEssayControlsView {
+			if  bar.subviews.contains(controls) {
+				revealEssayEditorInspectorBar(true)                      // show inspector bar
+			} else {
+				bar.rearrangeInspectorTools()
+				revealEssayEditorInspectorBar(true)
+				bar.relayoutInspectorTools()
+			}
 		}
 	}
 

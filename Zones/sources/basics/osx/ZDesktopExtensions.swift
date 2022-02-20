@@ -237,11 +237,11 @@ extension ZEventFlags {
 	var exactlySpecial: Bool       { return  isCommand &&  isOption && !isControl }
 	var exactlySplayed: Bool       { return  isCommand && !isOption &&  isControl }
 	var exactlyUnusual: Bool       { return !isCommand &&  isOption &&  isControl }
-    var isNumericPad:   Bool       { return  contains(.numericPad) }
-    var isControl:      Bool { get { return  contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
-	var isCommand:      Bool { get { return  contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }
-    var isOption:       Bool { get { return  contains(.option)  } set { if newValue { insert(.option)  } else { remove(.option) } } }
-    var isShift:        Bool { get { return  contains(.shift)   } set { if newValue { insert(.shift)   } else { remove(.shift) } } }
+    var isNumericPad:   Bool { get { return  contains(.numericPad) } set { if newValue { insert(.numericPad) } else { remove(.numericPad) } } }
+	var isControl:      Bool { get { return  contains(.control)    } set { if newValue { insert(.control)    } else { remove(.control) } } }
+	var isCommand:      Bool { get { return  contains(.command)    } set { if newValue { insert(.command)    } else { remove(.command) } } }
+    var isOption:       Bool { get { return  contains(.option)     } set { if newValue { insert(.option)     } else { remove(.option) } } }
+    var isShift:        Bool { get { return  contains(.shift)      } set { if newValue { insert(.shift)      } else { remove(.shift) } } }
 
 }
 

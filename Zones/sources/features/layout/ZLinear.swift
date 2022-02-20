@@ -132,12 +132,15 @@ extension ZoneWidget {
 	}
 
 	func linearRelayoutAbsoluteHitRect() {
-		var rect       = absoluteFrame
-		let extra      = CGSize(width: gDotWidth, height: .zero)
-		if  let  child = childrenView?.absoluteFrame {
-			rect       = rect.union(child)
+		var rect         = absoluteFrame
+		let extra        = CGSize(width: gDotWidth, height: .zero)
+		for child in childrenWidgets {
+			if  let zone = child.widgetZone, zone.isVisible {
+				rect     = rect.union(child.absoluteFrame)
+			}
 		}
-		absoluteHitRect = rect.expandedBy(extra).offsetBy(extra)
+		absoluteHitRect  = rect.expandedBy(extra).offsetBy(extra)
+//		debug(absoluteHitRect, "HIT")
 	}
 
 	func linearRelayoutHighlightRect() {
@@ -183,8 +186,10 @@ extension ZoneWidget {
 
 		if  absolute  {
 			traverseAllWidgetProgeny(inReverse: true) { widget in
-				widget.linearRelayoutHighlightRect()
-				widget.linearRelayoutAbsoluteHitRect()
+				if  let zone = widget.widgetZone, zone.isVisible {
+					widget.linearRelayoutHighlightRect()
+					widget.linearRelayoutAbsoluteHitRect()
+				}
 			}
 		}
 	}
@@ -200,8 +205,8 @@ extension ZoneWidget {
 	func linearGrandRelayout() {
 		linearRelayoutAllFrames()
 		updateFrameSize()
-		linearRelayoutAllFrames(true)
 		relayoutAbsoluteFrame(relativeTo: controller)
+		linearRelayoutAllFrames(true)
 	}
 
 }

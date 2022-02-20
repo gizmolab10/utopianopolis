@@ -426,49 +426,55 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let  OPTION = flags.isOption
 		let COMMAND = flags.isCommand
 		let SPECIAL = flags.exactlySpecial
+		let SPLAYED = flags.exactlySplayed
 
 		if  hasGrabbedNote {
 			handleGrabbed(arrow, flags: flags)
 		} else if  SPECIAL {
 			switch arrow {
-			case .left,
-				 .right: move(out: arrow == .left)
-			default:     break
+				case .left:  fallthrough
+				case .right: move(out: arrow == .left)
+				default:     break
+			}
+		} else if  SPLAYED {
+			switch arrow {
+				case .right: convertSentencesIntoChildIdeas(flags)
+				default:     break
 			}
 		} else if  COMMAND && SHIFT {
 			switch arrow {
-			case .up:    moveToBeginningOfDocumentAndModifySelection(nil)
-			case .down:  moveToEndOfDocumentAndModifySelection(nil)
-			case .left:  moveToLeftEndOfLineAndModifySelection(nil)
-			case .right: moveToRightEndOfLineAndModifySelection(nil)
+				case .up:    moveToBeginningOfDocumentAndModifySelection(nil)
+				case .down:  moveToEndOfDocumentAndModifySelection(nil)
+				case .left:  moveToLeftEndOfLineAndModifySelection(nil)
+				case .right: moveToRightEndOfLineAndModifySelection(nil)
 			}
 		} else if  COMMAND {
 			switch arrow {
-			case .up:    moveToBeginningOfParagraph(nil)
-			case .down:  moveToEndOfParagraph(nil)
-			case .left:  moveToBeginningOfLine(nil)
-			case .right: moveToEndOfLine(nil)
+				case .up:    moveToBeginningOfParagraph(nil)
+				case .down:  moveToEndOfParagraph(nil)
+				case .left:  moveToBeginningOfLine(nil)
+				case .right: moveToEndOfLine(nil)
 			}
 		} else if  OPTION && SHIFT {
 			switch arrow {
-			case .up:    moveToBeginningOfParagraphAndModifySelection(nil)
-			case .down:  moveToEndOfParagraphAndModifySelection(nil)
-			case .left:  moveWordLeftAndModifySelection(nil)
-			case .right: moveWordRightAndModifySelection(nil)
+				case .up:    moveToBeginningOfParagraphAndModifySelection(nil)
+				case .down:  moveToEndOfParagraphAndModifySelection(nil)
+				case .left:  moveWordLeftAndModifySelection(nil)
+				case .right: moveWordRightAndModifySelection(nil)
 			}
 		} else if  SHIFT {
 			switch arrow {
-			case .up:    moveUpAndModifySelection(nil)
-			case .down:  moveDownAndModifySelection(nil)
-			case .left:  moveLeftAndModifySelection(nil)
-			case .right: moveRightAndModifySelection(nil)
+				case .up:    moveUpAndModifySelection(nil)
+				case .down:  moveDownAndModifySelection(nil)
+				case .left:  moveLeftAndModifySelection(nil)
+				case .right: moveRightAndModifySelection(nil)
 			}
 		} else if  OPTION {
 			switch arrow {
-			case .up:    moveToLeftEndOfLine(nil)
-			case .down:  moveToRightEndOfLine(nil)
-			case .left:  moveWordBackward(nil)
-			case .right: moveWordForward(nil)
+				case .up:    moveToLeftEndOfLine(nil)
+				case .down:  moveToRightEndOfLine(nil)
+				case .left:  moveWordBackward(nil)
+				case .right: moveWordForward(nil)
 			}
 		} else {
 			handlePlainArrow(arrow)
@@ -1457,10 +1463,24 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		gSignal([.spCrumbs])
 	}
 
-	private func convertToChild(_ flags: ZEventFlags) {
-		if  let   text = selectionString, text.length > 0,
-			let   dbID = gCurrentEssayZone?.databaseID,
+	func convertSentencesIntoChildIdeas(_ flags: ZEventFlags) {
+		if  let s = selectionString {
+			let a = s.separatedIntoSentences   // separate into sentences
+			// delete the text
+
+			for sentence in a {
+				createNoteNamed(sentence, flags)   			// create a child idea from each
+			}
+			// add them as notes to the essay
+		}
+	}
+
+	private func convertToChild(_ flags: ZEventFlags) { createNoteNamed(selectionString, flags) }
+
+	private func createNoteNamed(_ name: String?, _ flags: ZEventFlags) {
+		if  let   text = name, text.length > 0,
 			let parent = selectedZone {
+			let   dbID = parent.databaseID
 
 			func child(named name: String, withText: String) {
 				let child = Zone.uniqueZoneNamed(name, databaseID: dbID)   	// create new (to be child) zone from text
@@ -1474,8 +1494,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if        flags.exactlyUnusual {
 				child(named: "idea", withText: text)
-			} else if flags.isOption {
-				child(named: text,   withText: kEmpty)
+			} else if flags.isOption || flags.exactlySplayed {
+				child(named: text,   withText: kEssayDefault)
 			} else {
 				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text
 				insertText(kEmpty, replacementRange: selectedRange)	            // remove text

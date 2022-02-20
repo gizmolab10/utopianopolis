@@ -2141,6 +2141,10 @@ extension String {
 		return nil
 	}
 
+	var separatedIntoSentences : StringsArray {
+		return components(separatedBy: ". ")
+	}
+
 	func componentsSeparatedAt(level: Int) -> StringsArray {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}

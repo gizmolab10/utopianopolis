@@ -35,7 +35,7 @@ class ZMapView: ZView {
 		return okayToDetectHover
 		&& !gDragging.isDragging
 		&& !gRubberband.showRubberband    // not blink rubberband or drag
-		&& (controller?.isExemplar ?? false)
+		&& !(controller?.isExemplar ?? false)
 	}
 
 	// MARK: - initialize
