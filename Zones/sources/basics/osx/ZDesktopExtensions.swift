@@ -560,7 +560,7 @@ extension ZView {
 			let y = tool.isHidden ? -3.0 : -8.0
 			tool.removeConstraints(tool.constraints)
 			tool.snp.makeConstraints { make in
-				make.left.equalToSuperview().offset(x)
+				make.left  .equalToSuperview().offset(x)
 				make.bottom.equalToSuperview().offset(y)
 			}
 

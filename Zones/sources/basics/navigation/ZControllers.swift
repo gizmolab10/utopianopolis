@@ -89,13 +89,14 @@ class ZControllers: NSObject {
 
 		gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
 
-		gEssayControlsView?.updateTitlesControlAndMode()
-		gEssayControlsView?.enableEssayControls(gIsEssayMode)
-		gSignal([.sSwap, .spCrumbs, .spSmallMap])
-
-		if !gIsEssayMode {
+		if  gIsEssayMode {
+			gEssayControlsView?.updateTitlesControlAndMode()
+		} else {
+			gMainWindow?.revealEssayEditorInspectorBar(false)
 			gSignal([.spRelayout])
 		}
+
+		gSignal([.sSwap, .spCrumbs, .spSmallMap])
 	}
 
 	// MARK: - registry

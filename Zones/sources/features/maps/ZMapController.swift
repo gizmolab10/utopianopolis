@@ -191,8 +191,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		// //////////////////////////// //
 
 		mapView?.removeAllTextViews(ofType: type)
-		gWidgets.removeTooltipsFromAllWidgets(for: self)
-		gRemoveAllTracking()
 
 		// ////////////////////////// //
 		// create all new widget tree //
@@ -215,9 +213,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
+		gWidgets.removeTooltipsFromAllWidgets(for: self)
+		gRemoveAllTracking()
+
 		if  let         wSize = hereWidget?.drawnSize,
 			let         mSize = mapView?.frame.size {
-			var        offset = isExemplar ? CGPoint(x: 0.0, y: -6.0) : isBigMap ? gScrollOffset.offsetBy(-gDotHeight, 22.0) : CGPoint(x: -12.0, y: -6.0)
+			let        bigMap = gScrollOffset.offsetBy(-gDotHeight, 22.0)
+			let      smallMap = CGPoint(x: -12.0, y: -6.0)
+			let      exemplar = CGPoint(x: .zero, y: -6.0)
+			var        offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
 			if !kIsPhone {
 				offset.y      = -offset.y    // why?
 			}
