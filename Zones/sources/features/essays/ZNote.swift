@@ -31,17 +31,17 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
 	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }
-	var      offsetTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
 	var        lastTextRange : NSRange?  { return textRange }
+	var        noteTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
 	var       maybeNoteTrait : ZTrait?   { return zone?.traits  [.tNote] }
 	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
 	var           recordName : String?   { return zone?.recordName }
 	var                 kind : String    { return "note" }
-	var               prefix : String    { return titleSpacer }
+	var               prefix : String    { return titleIndent }
 	var               suffix : String    { return kTab }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
-	var          titleSpacer : String    { return kNoteIndentSpacer * indentCount }
-	var          titleOffset : Int       { return titleSpacer.length }
+	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
+	var          titleOffset : Int       { return titleIndent.length }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kEssayDefault }
 	var               isNote : Bool      { return isMember(of: ZNote.self) }
@@ -240,13 +240,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let   onlyTitle = gEssayTitleMode == .sTitle
 		let     noTitle = gEssayTitleMode == .sEmpty
 		if  let    text = fromText,
-			let    name = noTitle ? kEmpty : zone?.zoneName {
-			let  spacer = onlyTitle ? kEmpty : titleSpacer
-			let hasGoof = name.contains("􀅇")
-			let tLength = noTitle ? 0 :  name  .length
-			let sOffset = noTitle ? 0 :  spacer.length
-			let tOffset = noTitle ? 0 :  sOffset + tLength + kBlankLine.length + 1 + (hasGoof ? 1 : 0)
-			titleRange  = NSRange(location: sOffset, length: tLength)
+			let    name =   noTitle ? kEmpty : zone?.zoneName {
+			let  indent = onlyTitle ? kEmpty : titleIndent
+			let unicode = name.contains("􀅇")
+			let tLength = noTitle ? 0 :   name.length
+			let iOffset = noTitle ? 0 : indent.length
+			let tOffset = noTitle ? 0 : iOffset + tLength + kBlankLine.length + 1 + (unicode ? 1 : 0)
+			titleRange  = NSRange(location: iOffset, length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
 
@@ -280,11 +280,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func isLocked(within range: NSRange) -> Bool {
 		let   titStart = titleRange.lowerBound
+		let     titEnd = titleRange.upperBound
 		let  textStart = textRange .lowerBound
+		let    textEnd = textRange .upperBound
 		let   ranStart = range     .lowerBound
 		let     ranEnd = range     .upperBound
-		let     titEnd = titleRange.upperBound
-		let    textEnd = textRange .upperBound
 		let atTitStart = titStart == ranStart                                   // range begins at beginning of title
 		let   atTitEnd = titEnd   == ranEnd                                     // range ends at end of title
 		let  afterText = NSMakeRange(textEnd, 0)
@@ -292,7 +292,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let    between = NSMakeRange(titEnd, textStart - titEnd)
 		let    isAfter = range.intersects(afterText)
 		let   isBefore = range.intersects(beforeTit)                            // before title
-		let  isBetween = range.intersects(between)                              // between title and text
+		let  isBetween = range.intersects(between) && between.length > 0        // between title and text
 		let     locked = isAfter || (isBefore && !atTitStart) || (isBetween && !atTitEnd)
 
 		return locked

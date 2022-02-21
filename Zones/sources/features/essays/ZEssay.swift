@@ -51,7 +51,9 @@ class ZEssay: ZNote {
 
 		if  index == 0 {
 
-			// this is an empty essay, convert it to a note
+			// //////////////////////////// //
+			// empty essay: convert to note //
+			// //////////////////////////// //
 
 			gCreateCombinedEssay = false
 			let     note = ZNote(zone)
@@ -103,9 +105,9 @@ class ZEssay: ZNote {
 
 	func traverseAndSetupChildren() {
 		children.removeAll()
-		zone?.traverseAllProgeny { iChild in
-			if  iChild.hasTrait(for: .tNote),
-				let note = iChild.note,
+		zone?.traverseAllProgeny { child in
+			if  child.hasTrait(for: .tNote),
+				let note = child.note,
 				!self.children.contains(note) {
 				self.children.append(note)	// do not use essayMaybe as it may not yet be initialized
 			}
@@ -117,7 +119,7 @@ class ZEssay: ZNote {
 
 		for child in children {				// update note offsets
 			child.noteOffset = offset
-			offset           = child.offsetTextRange.upperBound + kNoteSeparator.length
+			offset          += child.textRange.upperBound + kNoteSeparator.length
 		}
 	}
 
@@ -132,14 +134,14 @@ class ZEssay: ZNote {
 	}
 
 	override func isLocked(within range: NSRange) -> Bool {
-		let child = noteIn(range)
+		let note = noteIn(range)
 
-		if  child.zone == zone {
+		if  note.zone == zone {
 			return super.isLocked(within: range)
 		} else {
-			let lockRange = range.offsetBy(-child.noteOffset)
+			let lockRange = range.offsetBy(-note.noteOffset)
 
-			return child.isLocked(within: lockRange)
+			return note.isLocked(within: lockRange)
 		}
 	}
 
@@ -159,40 +161,40 @@ class ZEssay: ZNote {
 		gRelayoutMaps()
 	}
 
-	override func shouldAlterEssay(in range:NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
-		let equal  = range.contains(essayRange)
+	override func shouldAlterEssay(in range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
+		let inside = range.contains(essayRange)
 		var result = ZAlterationType.eLock
 		var adjust = 0
 		var offset : Int?
 
-		let applyTo = { (child: ZNote) in
-			if  equal {
-				adjust        -= child.noteRange.length
+		let examine = { (note: ZNote) in
+			if  inside {
+				adjust        -= note.noteRange.length
 
-				child.zone?.deleteNote()
+				note.zone?.deleteNote()
 			} else {
-				let (alter,  delta) = child.shouldAlterNote(inRange: range, replacementLength: replacementLength, adjustment: adjust)
+				let (alter,  delta) = note.shouldAlterNote(inRange: range, replacementLength: replacementLength, adjustment: adjust)
 
 				if  alter     != .eLock {
 					result     = .eAlter
 					adjust    +=  delta
 
 					if  alter == .eDelete {
-						offset = child.noteOffset
+						offset = note.noteOffset
 					}
 				}
 			}
 		}
 
 		if  children.count == 0 {
-			applyTo(self)
+			examine(self)
 		} else {
 			for child in children {
-				applyTo(child)
+				examine(child)
 			}
 		}
 
-		if  equal {
+		if  inside {
 			result = .eExit
 		} else if let o = offset {
 			result = .eDelete

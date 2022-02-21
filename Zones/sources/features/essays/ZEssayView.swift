@@ -1334,7 +1334,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 						FOREGROUND {
 							if  let  note = target.noteMaybe, gCurrentEssay?.children.contains(note) ?? false {
-								let range = note.offsetTextRange	    // text range of target essay
+								let range = note.noteTextRange	    // text range of target essay
 								let start = NSRange(location: range.location, length: 1)
 
 								self.setSelectedRange(range)
@@ -1489,7 +1489,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				child.setTraitText(text, for: .tNote)                       // create note from text in the child
 				gCurrentEssayZone?.createNote()
 
-				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
+				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.noteTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			}
 
 			if        flags.exactlyUnusual {
