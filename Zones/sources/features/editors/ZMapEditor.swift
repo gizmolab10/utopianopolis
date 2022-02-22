@@ -133,8 +133,8 @@ class ZMapEditor: ZBaseEditor {
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
 						case "c":        if  OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
-						case "h":        showTraitsPopup()
 						case "f":        gSearching.showSearch(OPTION)
+						case "h":        showTraitsPopup()
 						case "i":        grabDuplicatesAndRedraw()
 						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()

@@ -311,13 +311,14 @@ class ZTextEditor: ZTextView {
 
 				printDebug(.dEdit, " MAYBE   " + zone.unwrappedName)
 				deferEditingStateChange()
-				pack.updateText(isEditing: true)
+				pack.updateText(isEditing: true)            // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
 
-				if  let textWidget = zone.widget?.textWidget {
-					textWidget.enableUndo()
-					textWidget.becomeFirstResponder()
+				if  let t = zone.widget?.textWidget {
+					t.enableUndo()
+					t.controller?.createAndLayoutWidgets(for: zone, .spRelayout)       // relayout and draw widget and its children
+					t.becomeFirstResponder()
 				}
 
 				if  let at = setOffset ?? gCurrentMouseDownLocation {

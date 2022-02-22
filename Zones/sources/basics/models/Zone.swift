@@ -100,6 +100,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                    hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                    hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                     hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
+	var                      isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
 	var                       linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                       isSelected :               Bool  { return gSelecting.isSelected(self) }
 	var                        isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
@@ -107,7 +108,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                         hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
 	var                         hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                          hasNote :               Bool  { return hasTrait(for: .tNote) }
-	var                      isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
 	var                        isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
 	var                       isInBigMap :               Bool  { return root?.isBigMapRoot       ?? false }
 	var                       isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
@@ -821,9 +821,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var userWantsToEdit: Bool {
-		return [kTab, kSpace, kReturn, "-", "d", "h"].contains(gCurrentKeyPressed)
-			|| gCurrentKeyPressed?.arrow != nil
-			|| gCurrentMouseDownZone     == self
+		if  let key = gCurrentKeyPressed {
+			return "-deh \t\r".contains(key)
+				|| gCurrentKeyPressed?.arrow != nil
+				|| gCurrentMouseDownZone     == self
+			}
+		return false
 	}
 
 	// MARK: - core data
