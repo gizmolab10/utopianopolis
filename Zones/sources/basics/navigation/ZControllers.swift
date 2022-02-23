@@ -82,7 +82,7 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
+	func swapMapAndEssay(force mode: ZWorkMode? = nil, _ closure: Closure? = nil) {
 		// FOREGROUND { // TODO: avoid infinite recursion (generic menu handler invoking map editor's handle key)
 		// do not use FOREGROUND: so click on small map will fully exit the essay editor
 		gTextEditor.stopCurrentEdit()
@@ -97,6 +97,8 @@ class ZControllers: NSObject {
 		}
 
 		gSignal([.sSwap, .spCrumbs, .spSmallMap])
+
+		closure?()
 	}
 
 	// MARK: - registry

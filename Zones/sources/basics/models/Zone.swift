@@ -821,12 +821,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var userWantsToEdit: Bool {
-		if  let key = gCurrentKeyPressed {
-			return "-deh \t\r".contains(key)
-				|| gCurrentKeyPressed?.arrow != nil
-				|| gCurrentMouseDownZone     == self
-			}
-		return false
+		let key = gCurrentKeyPressed ?? kEmpty
+		return "-deh \t\r".contains(key)
+		|| gCurrentKeyPressed?.arrow != nil
+		|| gCurrentMouseDownZone     == self
 	}
 
 	// MARK: - core data
@@ -3341,7 +3339,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 			
 			gRelayoutMaps()
-		} else if count > 0, !OPTION, !isBookmark {
+		} else if isBookmark || (isTraveller && count == 0) {
+			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
+				gRelayoutMaps()
+			}
+		} else if count > 0, !OPTION {
 			let show = !isExpanded
 
 			if  isInSmallMap {
@@ -3352,10 +3354,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				generationalUpdate(show: show, to: goal) {
 					gRelayoutMaps(for: self)
 				}
-			}
-		} else if isTraveller {
-			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
-				gRelayoutMaps()
 			}
 		}
 	}

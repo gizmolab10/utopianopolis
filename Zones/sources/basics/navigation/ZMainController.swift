@@ -83,7 +83,9 @@ class ZMainController: ZGesturesController {
 
 				if  location.x < .zero {				// is gesture located outside essay view?
 					eView.save()
-					gControllers.swapMapAndEssay(force: .wMapMode)
+					gControllers.swapMapAndEssay(force: .wMapMode) {
+						gMapController?.handleClickGesture(iGesture)
+					}
 				}
 			}
 		}

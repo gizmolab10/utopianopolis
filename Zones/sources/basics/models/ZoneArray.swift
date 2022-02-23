@@ -542,6 +542,12 @@ extension ZoneArray {
 					index       -= 1
 				}
 
+				if  index > max {
+					index = max
+				} else if index < 0 {
+					index = 0
+				}
+
 				return siblings[index]
 			}
 		}
