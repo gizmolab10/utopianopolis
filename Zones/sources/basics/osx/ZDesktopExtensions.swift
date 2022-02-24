@@ -325,10 +325,11 @@ extension CGRect {
 	var centerRight:  CGPoint { return CGPoint(x: maxX, y: midY) }
 	var center:       CGPoint { return CGPoint(x: midX, y: midY) }
 	var centerBottom: CGPoint { return CGPoint(x: midX, y: maxY) }
-	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: minY) }
-	var bottomLeft:   CGPoint { return CGPoint(x: minX, y: minY) } // same as origin
-	var topLeft:      CGPoint { return CGPoint(x: minX, y: maxY) }
-	var extent:       CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var bottomLeft:   CGPoint { return origin }
+	var topLeft:      CGPoint { return CGPoint(x: minX, y: minY) }
+	var topRight:     CGPoint { return extent }
+	var extent:       CGPoint { return CGPoint(x: maxX, y: minY) }
 
 }
 

@@ -935,8 +935,8 @@ extension CGRect {
 	var cornerPoints: [ZDirection : CGPoint] {
 		var           result = [ZDirection : CGPoint]()
 		result[.topLeft]     = topLeft
-		result[.topRight]    = extent
-		result[.bottomLeft]  = origin
+		result[.topRight]    = topRight
+		result[.bottomLeft]  = bottomLeft
 		result[.bottomRight] = bottomRight
 
 		return result
@@ -1079,7 +1079,7 @@ extension CGRect {
 
 	func hitTestForResizeDot(in selectionRect: CGRect) -> ZDirection? {
 		let   points = selectionPoints
-		let     size = size.dividedInHalf      .expandedEquallyBy(kEssayImageDotRadius)
+		let     size = size.dividedInHalf      .insetEquallyBy(kEssayImageDotRadius)
 
 		for (direction, point) in points {
 			var rect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
