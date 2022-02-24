@@ -106,7 +106,7 @@ class ZoneDot: ZPseudoView {
 		super.setupDrawnView()
 
 		if  let     m = absoluteView as? ZMapView {
-			drawnView = m.linesAndDotsView
+			drawnView = m.decorationsView
 		}
 	}
 

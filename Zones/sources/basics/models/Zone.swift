@@ -3339,7 +3339,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 			
 			gRelayoutMaps()
-		} else if isBookmark || (isTraveller && count == 0) {
+		} else if isBookmark || (isTraveller && (COMMAND || count == 0)) {
 			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
 				gRelayoutMaps()
 			}

@@ -113,7 +113,7 @@ class ZoneLine: ZPseudoView {
 
 			gActiveColor.setFill()
 			gActiveColor.setStroke()
-			ZBezierPath(ovalIn: rect).fill()
+			ZBezierPath(ovalIn: rect.insetEquallyBy(gLineThickness)).fill()
 			drawLine(using: gActiveColor)
 		}
 	}

@@ -16,7 +16,7 @@ import SnapKit
 
 var gMapController    : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
 var gMapView          : ZMapView?       { return gMapController?.view as? ZMapView }
-var gLinesAndDotsView : ZMapView?       { return gMapView?.linesAndDotsView }
+var gLinesAndDotsView : ZMapView?       { return gMapView?.decorationsView }
 
 enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 	case linearMode
@@ -146,7 +146,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func setNeedsDisplay() {
 		mapView?                  .setNeedsDisplay()
-		mapView?.linesAndDotsView?.setNeedsDisplay()
+		mapView?.decorationsView?.setNeedsDisplay()
 	}
 
 	var doNotLayout: Bool {

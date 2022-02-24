@@ -15,8 +15,8 @@ import UIKit
 #endif
 
 enum ZMapID: String {
-	case mLinesAndDots      = "d"
-	case mTextAndHighlights = "t"
+	case mText        = "t"
+	case mDecorations = "d"
 
 	var title      : String { return "\(self)".lowercased().substring(fromInclusive: 1) }
 	var identifier : NSUserInterfaceItemIdentifier { return NSUserInterfaceItemIdentifier(title) }
@@ -24,12 +24,12 @@ enum ZMapID: String {
 
 class ZMapView: ZView {
 
-	var          okayToDetectHover = false
-	var                      mapID : ZMapID?
-	var                   hovering : ZHovering?
-	var                 controller : ZMapController?
-	@IBOutlet var linesAndDotsView : ZMapView?
-	override func   menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
+	var         okayToDetectHover = false
+	var                     mapID : ZMapID?
+	var                  hovering : ZHovering?
+	var                controller : ZMapController?
+	@IBOutlet var decorationsView : ZMapView?
+	override func  menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
 	var detectHovering : Bool {
 		return okayToDetectHover
@@ -41,23 +41,23 @@ class ZMapView: ZView {
 	// MARK: - initialize
 	// MARK: -
 
-	func setup(_ id: ZMapID = .mTextAndHighlights, with iController: ZMapController) {
+	func setup(_ id: ZMapID = .mText, with iController: ZMapController) {
 		if  controller == nil {
 			controller  = iController
 			identifier  = id.identifier
 			mapID       = id
 
 			switch id {
-				case .mTextAndHighlights:
+				case .mText:
 					hovering = ZHovering()
 
 					updateTracking()
-					linesAndDotsView?.setup(.mLinesAndDots, with: iController)
+					decorationsView?.setup(.mDecorations, with: iController)
 					fallthrough
 				default:
 					zlayer.backgroundColor = CGColor.clear
 
-					if  let s = superview, (!iController.isExemplar || id != .mTextAndHighlights) { // not do this for help dots exemplar
+					if  let s = superview, (!iController.isExemplar || id != .mText) { // not do this for help dots exemplar
 						frame = s.bounds
 					}
 			}
@@ -88,7 +88,7 @@ class ZMapView: ZView {
 
 	func debugDraw() {
 		bounds                 .insetEquallyBy(1.5).drawColoredRect(.blue)
-		linesAndDotsView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)
+		decorationsView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)
 		superview?.drawBox(in: self, with:                          .orange)
 	}
 
@@ -98,14 +98,15 @@ class ZMapView: ZView {
 		}
 
 		switch mapID {
-		case .mTextAndHighlights:
-			drawDrag       (iDirtyRect)
-			super.draw     (iDirtyRect) // text fields are drawn by OS
-			drawWidgets(in: iDirtyRect, for: .pHighlights)
-		case .mLinesAndDots:
-			drawWidgets(in: iDirtyRect, for: .pLines)
-			drawWidgets(in: iDirtyRect, for: .pDots)   // draw dots last so they can "cover" the ends of lines
-		default: break
+			case .mText:
+				super.draw     (iDirtyRect) // text fields are drawn by OS
+			case .mDecorations:
+				ZBezierPath.fillWithColor(gBackgroundColor, in: iDirtyRect) // remove old rubberband and drag line/dot
+				drawWidgets(in: iDirtyRect, for: .pHighlights)
+				drawWidgets(in: iDirtyRect, for: .pLines)
+				drawWidgets(in: iDirtyRect, for: .pDots)   // draw dots last so they can "cover" the ends of lines
+				drawDrag       (iDirtyRect)
+			default: break
 		}
 	}
 
@@ -126,7 +127,6 @@ class ZMapView: ZView {
 	}
 
 	func drawDrag(_ iDirtyRect: CGRect) {
-		ZBezierPath.fillWithColor(gBackgroundColor, in: iDirtyRect) // remove old rubberband and drag line/dot
 		gRubberband.draw()
 		gDragging.dragLine?.drawDragLineAndDot()
 	}
