@@ -1,5 +1,5 @@
 //
-//  ZSimpleToolsController.swift
+//  ZKickoffToolsController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/28/20.
@@ -20,9 +20,9 @@ import UIKit
 //                                                        //
 // ////////////////////////////////////////////////////// //
 
-var gSimpleToolsController: ZSimpleToolsController? { return gControllers.controllerForID(.idStartHere) as? ZSimpleToolsController }
+var gKickoffToolsController: ZKickoffToolsController? { return gControllers.controllerForID(.idStartHere) as? ZKickoffToolsController }
 
-enum ZSimpleToolID: String {
+enum ZKickoffToolID: String {
 	case up      = "up"
 	case add     = "add"
 	case edit    = "edit"
@@ -43,7 +43,7 @@ enum ZSimpleToolID: String {
 	case tooltip = "tooltip"
 }
 
-class ZSimpleToolsController: ZGenericController, ZTooltips {
+class ZKickoffToolsController: ZGenericController, ZTooltips {
 
 	override var controllerID : ZControllerID { return .idStartHere }
 	var            isRelocate :   Bool { return flags.isOption  && !gIsEditing }
@@ -53,10 +53,10 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	var            swapDBText : String { return "switch to \(gIsMine ? "everyone's" : "my") ideas" }
 	var           expandMaybe : String { return isMixed ? "expand selection " : kEmpty }
 	var                 flags = ZEventFlags()
-	var        buttonsByID    = [ZSimpleToolID  :  ZSimpleToolButton]()
-	var          boxesByID    = [ZSimpleToolID  :  ZBox]()
-	func       buttonFor(_ id :  ZSimpleToolID) -> ZSimpleToolButton? { return buttonsByID[id] }
-	func          boxFor(_ id :  ZSimpleToolID) -> ZBox?              { return boxesByID  [id] }
+	var        buttonsByID    = [ZKickoffToolID  :  ZKickoffToolButton]()
+	var          boxesByID    = [ZKickoffToolID  :  ZBox]()
+	func       buttonFor(_ id :  ZKickoffToolID) -> ZKickoffToolButton? { return buttonsByID[id] }
+	func          boxFor(_ id :  ZKickoffToolID) -> ZBox?              { return boxesByID  [id] }
 
 	func updateBoxesAndButtons() {
 
@@ -81,10 +81,10 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		boxFor   (.edit)?       .title =  gIsEditing       ? "Stop Editing" : "Edit"
 	}
 
-	@IBAction func buttonAction(_ button: ZSimpleToolButton) {
+	@IBAction func buttonAction(_ button: ZKickoffToolButton) {
 		toolsUpdate()
 
-		if  let itemID = button.simpleToolID,
+		if  let itemID = button.kickoffToolID,
 			let    key = keyFrom(itemID) {
 			var      f = flags
 
@@ -104,10 +104,10 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 
 		view.applyToAllSubviews { subview in
 			if  let         box       = subview as? ZBox,
-				let         boxID     = box.simpleToolID {
+				let         boxID     = box.kickoffToolID {
 				boxesByID  [boxID]    = box
-			} else if let   button    = subview as? ZSimpleToolButton,
-				let         buttonID  = button.simpleToolID {
+			} else if let   button    = subview as? ZKickoffToolButton,
+				let         buttonID  = button.kickoffToolID {
 				buttonsByID[buttonID] = button
 
 				setAutoRepeat(for: button)
@@ -115,9 +115,9 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		}
 	}
 
-	func setAutoRepeat(for button: ZSimpleToolButton) {
-		let autorepeaters: [ZSimpleToolID] = [.up, .down, .right, .left]
-		if  let                    buttonID  = button.simpleToolID,
+	func setAutoRepeat(for button: ZKickoffToolButton) {
+		let autorepeaters: [ZKickoffToolID] = [.up, .down, .right, .left]
+		if  let                    buttonID  = button.kickoffToolID,
 			autorepeaters.contains(buttonID) {
 			button.isContinuous              = true
 
@@ -126,7 +126,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 	}
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		if  gDetailsViewIsVisible(for: .vSimpleTools) { // ignore if hidden
+		if  gDetailsViewIsVisible(for: .vKickoffTools) { // ignore if hidden
 			toolsUpdate()
 		}
 	}
@@ -144,7 +144,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		flags.isControl = buttonFor(.control)?.state == NSControl.StateValue.on
 	}
 
-	func arrowFrom(_ from: ZSimpleToolID) -> ZArrowKey? {
+	func arrowFrom(_ from: ZKickoffToolID) -> ZArrowKey? {
 		switch from {
 			case .up:      return .up
 			case .down:    return .down
@@ -154,7 +154,7 @@ class ZSimpleToolsController: ZGenericController, ZTooltips {
 		}
 	}
 
-	func keyFrom(_ from: ZSimpleToolID) -> String? {
+	func keyFrom(_ from: ZKickoffToolID) -> String? {
 		switch from {
 			case .note:    return "n"
 			case .focus:   return "/"

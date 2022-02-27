@@ -50,7 +50,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	func setupChildren() {}
 	func updateNoteOffsets() {}
 	func noteIn(_ range: NSRange) -> ZNote { return self }
-	func saveInEssay(_ attributedString: NSAttributedString?) { saveInNote(attributedString) }
+	func saveAsEssay(_ attributedString: NSAttributedString?) { saveAsNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
@@ -78,7 +78,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK: - persistency
 	// MARK: -
 
-	func saveInNote(_ attributedString: NSAttributedString?) {
+	func saveAsNote(_ attributedString: NSAttributedString?) {
 		if  let            trait  = maybeNoteTrait,
 			let       attributed  = attributedString {
 			let            delta  = attributed.string.length - textRange.upperBound
@@ -279,21 +279,25 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func isLocked(within range: NSRange) -> Bool {
-		let   titStart = titleRange.lowerBound
-		let     titEnd = titleRange.upperBound
-		let  textStart = textRange .lowerBound
-		let    textEnd = textRange .upperBound
-		let   ranStart = range     .lowerBound
-		let     ranEnd = range     .upperBound
-		let atTitStart = titStart == ranStart                                   // range begins at beginning of title
-		let   atTitEnd = titEnd   == ranEnd                                     // range ends at end of title
-		let  afterText = NSMakeRange(textEnd, 0)
-		let  beforeTit = NSMakeRange(0, titStart)
-		let    between = NSMakeRange(titEnd, textStart - titEnd)
-		let    isAfter = range.intersects(afterText)
-		let   isBefore = range.intersects(beforeTit)                            // before title
-		let  isBetween = range.intersects(between) && between.length > 0        // between title and text
-		let     locked = isAfter || (isBefore && !atTitStart) || (isBetween && !atTitEnd)
+		let   titleStart = titleRange.lowerBound
+		let     titleEnd = titleRange.upperBound
+		let    textStart = textRange .lowerBound
+		let      textEnd = textRange .upperBound
+		let   rangeStart = range     .lowerBound
+		let     rangeEnd = range     .upperBound
+		let  beforeTitle = NSMakeRange(0, titleStart)
+		let      between = NSMakeRange(titleEnd, textStart - titleEnd)
+		let    afterText = NSMakeRange(textEnd, 0)
+		let      isAfter = range.intersects(afterText)
+		let     isBefore = range.intersects(beforeTitle)                          // before title
+		let    isBetween = range.intersects(between) && between.length > 0        // between title and text
+		let atTitleStart = titleStart == rangeStart                               // range begins at beginning of title
+		let   atTitleEnd = titleEnd   == rangeEnd                                 // range ends at end of title
+		let       locked = isAfter || (isBefore && !atTitleStart) || (isBetween && !atTitleEnd)
+
+		if  locked, range.location > 0 {
+			print("\(range)")
+		}
 
 		return locked
 	}

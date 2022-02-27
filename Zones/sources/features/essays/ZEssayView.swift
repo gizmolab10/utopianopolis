@@ -250,7 +250,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 	func save() {
 		if  let e = gCurrentEssay {
-			e.saveInEssay(textStorage)
+			e.saveAsEssay(textStorage)
 		}
 	}
 
@@ -659,10 +659,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK: - locked ranges
 	// MARK: -
 
-	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
+	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
 		let     noKeys = gCurrentKeyPressed == nil
-		let     locked = gCurrentEssay?.isLocked(within: newSelectedCharRange) ?? false
-		return (locked && noKeys) ? oldSelectedCharRange : newSelectedCharRange
+		let     locked = gCurrentEssay?.isLocked(within: newRange) ?? false
+		return (locked && noKeys) ? oldRange : newRange
 	}
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {

@@ -763,7 +763,7 @@ var gHiddenDetailViewIDs: ZDetailsViewID {
 		}
 		
 		if  viewID    == nil {
-			viewID     = .vSimpleTools
+			viewID     = .vKickoffTools
 			
 			UserDefaults.standard.set(viewID!.rawValue, forKey:kDetailsState)
 			UserDefaults.standard.synchronize()

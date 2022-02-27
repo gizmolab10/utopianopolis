@@ -49,13 +49,13 @@ extension ZNote {
 
 }
 
-extension ZSimpleToolButton {
+extension ZKickoffToolButton {
 
 	var tooltipString : String? {
 		if  gShowToolTips,
-			let    buttonID = simpleToolID {
+			let    buttonID = kickoffToolID {
 			let   canTravel = gIsMapMode && gGrabbedCanTravel
-			let       flags = gSimpleToolsController?.flags
+			let       flags = gKickoffToolsController?.flags
 			let    	 OPTION = flags?.isOption  ?? false
 			let    	CONTROL = flags?.isControl ?? false
 			let     addANew = "adds a new idea as "
@@ -91,8 +91,8 @@ extension ZBox {
 
 	var tooltipString : String? {
 		if  gShowToolTips,
-			let  boxID = simpleToolID {
-			let  flags = gSimpleToolsController?.flags
+			let  boxID = kickoffToolID {
+			let  flags = gKickoffToolsController?.flags
 			let  SHIFT = flags?.isShift  ?? false
 			let OPTION = flags?.isOption ?? false
 
@@ -107,11 +107,11 @@ extension ZBox {
 
 }
 
-extension ZSimpleToolsController {
+extension ZKickoffToolsController {
 
 	func updateTooltips() {
 		view.applyToAllSubviews { subview in
-			if  let     button = subview as? ZSimpleToolButton {
+			if  let     button = subview as? ZKickoffToolButton {
 				button.toolTip = button.tooltipString
 			} else if  let box = subview as? ZBox {
 				box   .toolTip = box   .tooltipString

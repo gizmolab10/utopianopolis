@@ -134,7 +134,7 @@ extension ZoneWidget {
 	func linearRelayoutAbsoluteHitRect() {
 		var rect         = absoluteFrame
 		let hasReveal    = widgetZone?.showRevealDot ?? false
-		let deltaX       = gDotWidth * (hasReveal ? 2.0 : 1.0)
+		let deltaX       = gDotWidth * (hasReveal ? 3.0 : 1.0)    // why 3?
 		let extra        = CGSize(width: deltaX, height: .zero)
 		for child in childrenWidgets {
 			if  let zone = child.widgetZone, zone.isVisible {

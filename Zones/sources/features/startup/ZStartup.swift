@@ -49,6 +49,8 @@ class ZStartup: NSObject {
 			FOREGROUND {
 				gIsReadyToShowUI = true
 
+				gDetailsController?.removeViewFromStack(for: .vSubscribe)
+
 				gFavorites.setup { result in
 					FOREGROUND {
 						gFavorites.updateAllFavorites()
@@ -56,7 +58,7 @@ class ZStartup: NSObject {
 						gRemoteStorage.updateRootsOfAllProjeny()
 						gRemoteStorage.recount()
 						gRefreshCurrentEssay()
-						gProducts.fetchProductData()
+//						gProducts.fetchProductData()
 
 						gRefusesFirstResponder                = false
 						gMainController?.helpButton?.isHidden = false
@@ -74,7 +76,7 @@ class ZStartup: NSObject {
 						FOREGROUND(after: 0.1) {
 							self.requestFeedback() {
 								gTimers.stopTimer (for: .tStartup)
-								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tLicense, .tHover])
+								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tHover]) // .tLicense
 								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap, .spDataDetails])
 							}
 						}

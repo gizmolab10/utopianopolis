@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="16096"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -159,7 +159,7 @@
                                                         <rect key="frame" x="1" y="-1" width="163" height="19"/>
                                                         <buttonCell key="cell" type="roundRect" title="Subscribe" bezelStyle="roundedRect" alignment="left" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="4Dz-Zl-Ruw" userLabel="Subscription">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="t4I-OM-7sJ" id="yh0-bF-4AZ"/>
@@ -173,7 +173,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QzM-as-gcE">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                             <string key="keyEquivalent">'</string>
                                                         </buttonCell>
                                                         <connections>
@@ -213,20 +213,20 @@
                                             <outlet property="titleButton" destination="ay8-Kf-2wF" id="V94-TH-8Dc"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="simpleTools" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Simple Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="kickoffTools" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Kickoff Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1828" width="226" height="1154"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Simple Tools Banner">
+                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Kickoff Tools Banner">
                                                 <rect key="frame" x="0.0" y="611" width="226" height="21"/>
                                                 <subviews>
-                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Simple Tools Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
+                                                    <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Kickoff Tools Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="1" y="-1" width="224" height="19"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="18" id="oFz-pg-brp"/>
                                                         </constraints>
-                                                        <buttonCell key="cell" type="roundRect" title="Simple Tools" alternateTitle="Simple Tools" bezelStyle="roundedRect" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xRi-eo-teP">
+                                                        <buttonCell key="cell" type="roundRect" title="Kickoff Tools" alternateTitle="Kickoff Tools" bezelStyle="roundedRect" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xRi-eo-teP">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="dSG-o4-XPL" id="Bzc-KJ-Wcp"/>
@@ -241,7 +241,7 @@
                                                     <constraint firstItem="uxs-aX-Fhe" firstAttribute="centerY" secondItem="h9A-Dp-8sZ" secondAttribute="centerY" id="trl-qE-Uyg"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Simple Tools Hideable">
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Kickoff Tools Hideable">
                                                 <rect key="frame" x="0.0" y="311" width="226" height="300"/>
                                                 <connections>
                                                     <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
@@ -275,7 +275,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Data" bezelStyle="roundedRect" alignment="left" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nh5-Lk-WYv" userLabel="Data">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="M2W-8y-R0e" id="t9H-CJ-EpI"/>
@@ -292,7 +292,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YF9-6k-EhW">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                             <string key="keyEquivalent">'</string>
                                                         </buttonCell>
                                                         <connections>
@@ -346,7 +346,7 @@
                                                         <rect key="frame" x="1" y="-1" width="224" height="19"/>
                                                         <buttonCell key="cell" type="roundRect" title="Preferences" alternateTitle="Preferences" bezelStyle="roundedRect" alignment="left" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="9j5-fI-wCz" id="Jfv-dJ-JP1"/>
@@ -393,7 +393,7 @@
                                                         <rect key="frame" x="1" y="-1" width="163" height="19"/>
                                                         <buttonCell key="cell" type="roundRect" title="Favorites" bezelStyle="roundedRect" alignment="left" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XJD-P5-eSB" userLabel="Small Map">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
                                                         <connections>
                                                             <action selector="toggleAction:" target="Utx-K3-0a0" id="nzW-6y-ZRI"/>
@@ -407,7 +407,7 @@
                                                         </constraints>
                                                         <buttonCell key="cell" type="roundRect" title="Switch" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                                            <font key="font" metaFont="label" size="12"/>
+                                                            <font key="font" metaFont="cellTitle"/>
                                                             <string key="keyEquivalent">'</string>
                                                         </buttonCell>
                                                         <connections>
@@ -505,7 +505,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="layout" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oGC-zp-Rq7">
-                                            <rect key="frame" x="1" y="-1" width="278" height="21"/>
+                                            <rect key="frame" x="0.0" y="-1" width="280" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectAny" id="kkM-fg-4gO">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <segments>
@@ -575,7 +575,7 @@
                                                         <constraint firstAttribute="height" constant="17" id="vRd-P4-pC3"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="ideas" id="pmv-x4-CVc">
-                                                        <font key="font" metaFont="label" size="12"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -586,7 +586,7 @@
                                                         <constraint firstAttribute="height" constant="17" id="9dI-E4-9GB"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="active, mine" id="qjf-lf-hsF">
-                                                        <font key="font" metaFont="label" size="12"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
@@ -597,13 +597,13 @@
                                                         <constraint firstAttribute="height" constant="17" id="RsG-gF-fWk"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="accent" id="QHW-3R-d1w">
-                                                        <font key="font" metaFont="label" size="12"/>
+                                                        <font key="font" metaFont="cellTitle"/>
                                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                     </textFieldCell>
                                                 </textField>
                                                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Qp-4d-Tu8" userLabel="clearColor">
-                                                    <rect key="frame" x="4" y="40" width="60" height="26"/>
+                                                    <rect key="frame" x="3" y="39" width="62" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="17" id="Qdx-4o-Snx"/>
                                                         <constraint firstAttribute="width" constant="50" id="nGj-dM-TOd"/>
@@ -752,7 +752,7 @@
                                             <rect key="frame" x="111" y="0.0" width="160" height="74"/>
                                             <subviews>
                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gh7-LP-7IV">
-                                                    <rect key="frame" x="-2" y="46" width="164" height="26"/>
+                                                    <rect key="frame" x="-2" y="42" width="164" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
@@ -762,7 +762,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="font size" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl" userLabel="Font Size">
-                                                    <rect key="frame" x="-2" y="24" width="164" height="26"/>
+                                                    <rect key="frame" x="-2" y="20" width="164" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
@@ -772,7 +772,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR" userLabel="Horizontal Spacing">
-                                                    <rect key="frame" x="-2" y="2" width="164" height="26"/>
+                                                    <rect key="frame" x="-2" y="-2" width="164" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
                                                     </constraints>
@@ -842,16 +842,16 @@
             </objects>
             <point key="canvasLocation" x="-95" y="1816"/>
         </scene>
-        <!--Simple Tools Controller-->
+        <!--Kickoff Tools Controller-->
         <scene sceneID="uRy-JP-y7m">
             <objects>
-                <viewController id="YdN-bY-sSj" customClass="ZSimpleToolsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="YdN-bY-sSj" customClass="ZKickoffToolsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="MMF-wn-1M6">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="316"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button identifier="tooltip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="2" y="280" width="286" height="32"/>
+                            <button identifier="tooltip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="1" y="280" width="288" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="WPU-QJ-waV"/>
                                 </constraints>
@@ -870,8 +870,8 @@
                                     <rect key="frame" x="3" y="3" width="274" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="148" height="32"/>
+                                        <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="-6" width="150" height="33"/>
                                             <buttonCell key="cell" type="push" title="child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -881,8 +881,8 @@
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="fdn-Hh-Epv"/>
                                             </connections>
                                         </button>
-                                        <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="132" y="1" width="148" height="18"/>
+                                        <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="131" y="1" width="150" height="19"/>
                                             <buttonCell key="cell" type="push" title="sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -914,8 +914,8 @@
                                     <rect key="frame" x="3" y="3" width="274" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="148" height="32"/>
+                                        <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="-6" width="150" height="33"/>
                                             <buttonCell key="cell" type="push" title="idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -925,8 +925,8 @@
                                                 <outlet property="controller" destination="YdN-bY-sSj" id="geW-8m-OI0"/>
                                             </connections>
                                         </button>
-                                        <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="132" y="1" width="148" height="18"/>
+                                        <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="131" y="1" width="150" height="19"/>
                                             <buttonCell key="cell" type="push" title="note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -958,8 +958,8 @@
                                     <rect key="frame" x="3" y="3" width="274" height="67"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="up" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="38" width="284" height="32"/>
+                                        <button identifier="up" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="36" width="286" height="35"/>
                                             <buttonCell key="cell" type="push" title="up" alternateTitle="UP ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -969,8 +969,8 @@
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="mgh-ge-XVZ"/>
                                             </connections>
                                         </button>
-                                        <button identifier="focus" toolTip="focus on the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="86" y="16" width="102" height="32"/>
+                                        <button identifier="focus" toolTip="focus on the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="85" y="15" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="focus" alternateTitle="/" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -980,8 +980,8 @@
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="pnE-P4-Zp1"/>
                                             </connections>
                                         </button>
-                                        <button identifier="right" verticalHuggingPriority="749" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="177" y="16" width="102" height="32"/>
+                                        <button identifier="right" verticalHuggingPriority="749" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="176" y="15" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -991,8 +991,8 @@
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="qTj-Mg-Cla"/>
                                             </connections>
                                         </button>
-                                        <button identifier="down" verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="284" height="32"/>
+                                        <button identifier="down" verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="-6" width="286" height="32"/>
                                             <buttonCell key="cell" type="push" title="down" alternateTitle="DOWN ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1002,8 +1002,8 @@
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="nSf-FX-5fk"/>
                                             </connections>
                                         </button>
-                                        <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="16" width="102" height="32"/>
+                                        <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-6" y="15" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="left" alternateTitle="&lt;-" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1045,8 +1045,8 @@
                                     <rect key="frame" x="3" y="3" width="274" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-4" y="15" width="147" height="33"/>
+                                        <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-5" y="15" width="149" height="34"/>
                                             <buttonCell key="cell" type="push" title="SHIFT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2fx-6f-Zh2">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1055,8 +1055,8 @@
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="vbC-Fx-38h"/>
                                             </connections>
                                         </button>
-                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-4" y="-6" width="147" height="31"/>
+                                        <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-5" y="-6" width="149" height="32"/>
                                             <buttonCell key="cell" type="push" title="COMMAND" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k68-pr-cxj">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1065,8 +1065,8 @@
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="Rgg-eO-V5C"/>
                                             </connections>
                                         </button>
-                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="133" y="15" width="146" height="33"/>
+                                        <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="132" y="15" width="148" height="34"/>
                                             <buttonCell key="cell" type="push" title="OPTION" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3qw-o2-Ih5">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1075,8 +1075,8 @@
                                                 <action selector="buttonAction:" target="YdN-bY-sSj" id="hoh-rf-eP2"/>
                                             </connections>
                                         </button>
-                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="133" y="-6" width="146" height="31"/>
+                                        <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="132" y="-6" width="148" height="32"/>
                                             <buttonCell key="cell" type="push" title="CONTROL" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fu3-k6-L9o">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1113,8 +1113,8 @@
                                     <constraint firstAttribute="height" constant="59" id="cSZ-RN-IYA"/>
                                 </constraints>
                             </box>
-                            <button identifier="swapDB" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="swap DB" customClass="ZSimpleToolButton" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="2" y="1" width="286" height="32"/>
+                            <button identifier="swapDB" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="swap DB" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="1" y="1" width="288" height="33"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="7JN-4I-ODg"/>
                                 </constraints>
@@ -1167,10 +1167,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="290" height="81"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
-                                        <rect key="frame" x="0.0" y="0.0" width="290" height="81"/>
+                                        <rect key="frame" x="0.0" y="1" width="290" height="80"/>
                                         <subviews>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMu-5O-o9h">
-                                                <rect key="frame" x="6" y="59" width="278" height="14"/>
+                                                <rect key="frame" x="6" y="58" width="278" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="OfC-14-FUY">
                                                     <font key="font" metaFont="message" size="11"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1178,7 +1178,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7TP-X8-yTZ">
-                                                <rect key="frame" x="6" y="37" width="278" height="14"/>
+                                                <rect key="frame" x="6" y="36" width="278" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="7k9-np-EMp">
                                                     <font key="font" metaFont="message" size="11"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1186,7 +1186,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="raV-jm-PNg">
-                                                <rect key="frame" x="73" y="1" width="145" height="32"/>
+                                                <rect key="frame" x="76" y="1" width="139" height="32"/>
                                                 <buttonCell key="cell" type="push" title="How do I Cancel?" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mme-M7-oqI">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>

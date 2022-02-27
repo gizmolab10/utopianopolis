@@ -145,15 +145,15 @@ class ZEssay: ZNote {
 		}
 	}
 
-	override func saveInEssay(_ attributedString: NSAttributedString?) {
-		if  let attributed  = attributedString {
+	override func saveAsEssay(_ attributedString: NSAttributedString?) {
+		if  let attributed = attributedString {
 			for child in children {
-				let range   = child.noteRange
+				let range  = child.noteRange
 
 				if  range.upperBound <= attributed.length {
-					let sub = attributed.attributedSubstring(from: range)
+					let substring = attributed.attributedSubstring(from: range)
 
-					child.saveInNote(sub)
+					child.saveAsNote(substring)
 				}
 			}
 		}

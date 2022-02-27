@@ -49,24 +49,24 @@ class ZTogglingView: ZView {
 
 	var toolTipText: String {
 		switch identity {
-			case .vPreferences : return "preference controls"
-			case .vSimpleTools : return "some simple tools which can get you oriented"
-			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
-			case .vSubscribe   : return "license details"
-			case .vData        : return "useful data about Seriously"
-			default            : return kEmpty
+			case .vKickoffTools : return "some simple tools to help get you oriented"
+			case .vPreferences  : return "preference controls"
+			case .vSmallMap     : return "\(gCurrentSmallMapName)s map"
+			case .vSubscribe    : return "license details"
+			case .vData         : return "useful data about Seriously"
+			default             : return kEmpty
 		}
 	}
 
 	var identity: ZDetailsViewID {
 		if  let    k = kind {
 			switch k {
-				case "preferences": return .vPreferences
-				case "simpleTools": return .vSimpleTools
-				case "subscribe":   return .vSubscribe
-				case "smallMap":    return .vSmallMap
-				case "data":        return .vData
-				default:            return .vAll
+				case "kickoffTools": return .vKickoffTools
+				case "preferences":  return .vPreferences
+				case "subscribe":    return .vSubscribe
+				case "smallMap":     return .vSmallMap
+				case "data":         return .vData
+				default:             return .vAll
 			}
 		}
 

@@ -2731,10 +2731,10 @@ extension ZView {
 		return root
 	}
 
-	var simpleToolID : ZSimpleToolID? {
+	var kickoffToolID : ZKickoffToolID? {
 		let           item = self as NSUserInterfaceItemIdentification
 		if  let identifier = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),
-			let     itemID = ZSimpleToolID(rawValue: identifier) {
+			let     itemID = ZKickoffToolID(rawValue: identifier) {
 			return  itemID
 		}
 

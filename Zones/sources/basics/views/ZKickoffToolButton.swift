@@ -1,5 +1,5 @@
 //
-//  ZSimpleToolButton.swift
+//  ZKickoffToolButton.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/4/20.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-class ZSimpleToolButton: ZTooltipButton {
+class ZKickoffToolButton: ZTooltipButton {
 
-	@IBOutlet var controller: ZSimpleToolsController?
+	@IBOutlet var controller: ZKickoffToolsController?
 	var downTitle = kEmpty
 	var   upTitle = kEmpty
 

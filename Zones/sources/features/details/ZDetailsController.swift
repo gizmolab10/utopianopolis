@@ -13,21 +13,21 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vSimpleTools, .vData, .vPreferences, .vSmallMap]
+private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vKickoffTools, .vData, .vPreferences, .vSmallMap]
 
 struct ZDetailsViewID: OptionSet {
 	let rawValue : Int
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let vPreferences = ZDetailsViewID(rawValue: 0x0001)
-	static let        vData = ZDetailsViewID(rawValue: 0x0002)
-	static let vSimpleTools = ZDetailsViewID(rawValue: 0x0004)
-	static let    vSmallMap = ZDetailsViewID(rawValue: 0x0008)
-	static let   vSubscribe = ZDetailsViewID(rawValue: 0x0010)
-	static let         vAll = ZDetailsViewID(rawValue: 0x001F)
+	static let  vPreferences = ZDetailsViewID(rawValue: 0x0001)
+	static let         vData = ZDetailsViewID(rawValue: 0x0002)
+	static let vKickoffTools = ZDetailsViewID(rawValue: 0x0004)
+	static let     vSmallMap = ZDetailsViewID(rawValue: 0x0008)
+	static let    vSubscribe = ZDetailsViewID(rawValue: 0x0010)
+	static let          vAll = ZDetailsViewID(rawValue: 0x001F)
 
-	static let        vLast = vSmallMap
+	static let         vLast = vSmallMap
 }
 
 class ZDetailsController: ZGesturesController {
@@ -100,6 +100,13 @@ class ZDetailsController: ZGesturesController {
 		stackView?.displayAllSubviews()
 		gSignal([.sDetails])
 		gRelayoutMaps()
+	}
+
+	func removeViewFromStack(for id: ZDetailsViewID) {
+		let v = view(for: id)
+
+		v?.removeFromSuperview()
+		view.display()
 	}
 
 }
