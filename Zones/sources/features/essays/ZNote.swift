@@ -79,6 +79,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func saveAsNote(_ attributedString: NSAttributedString?) {
+		updatedRangesFrom(attributedString)
+
 		if  let            trait  = maybeNoteTrait,
 			let       attributed  = attributedString {
 			let            delta  = attributed.string.length - textRange.upperBound

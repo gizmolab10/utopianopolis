@@ -1382,7 +1382,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let toEssay = count < 2
 			let   range = selectedRange
 
-			current.updatedRangesFrom(textStorage)
 			save()
 
 			gCreateCombinedEssay = toEssay // toggle
