@@ -96,7 +96,7 @@ class ZPseudoView: NSObject {
 	func relayoutAbsoluteFrame(relativeTo controller: ZMapController?) {
 		if  let       map = controller?.mapPseudoView {
 			absoluteFrame = convertRect(frame, toRootPseudoView: map)
-//			debug(absoluteFrame, "FRAME")
+//			debug(absoluteFrame, "ABS FRAME")
 		}
 	}
 

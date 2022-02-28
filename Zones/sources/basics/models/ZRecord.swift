@@ -356,7 +356,7 @@ class ZRecord: ZManagedObject {
 				let  object = prepare(extract, of: type) {
 				dict[type]  = object
 			} else if !optionals.contains(keyPath){
-				printDebug(.dFile, "broken keypath for \"\(self)\" : \(keyPath)")
+				printDebug(.dFile, "broken keypath for " + selfInQuotes + " : " + keyPath)
 			}
 		}
 

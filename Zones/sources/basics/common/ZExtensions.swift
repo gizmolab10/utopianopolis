@@ -126,20 +126,18 @@ extension NSObject {
 	func               bam(_ iMessage: Any?) { log("\("-".repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
 	func printCurrentFocus()                 { gMapController?.hereWidget?.printWidget()}
 	func printCurrentEssay()                 { gEssayView?.printView() }
+	@objc func copyWithZone(_ with: NSZone) -> NSObject { return self }
+	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
+
+	var selfInQuotes : String { return "\"\(self)\"" }
 
 	var zClassName: String {
-		var parts = className.components(separatedBy: ".")
+		var parts = className.components(separatedBy: kDotSeparator)
 		let  name = parts[1].substring(fromInclusive: 1).unCamelcased.uppercased()
 		parts     = name.components(separatedBy: kSpace).dropLast()
 
 		return parts.joined(separator: kSpace)
 	}
-
-	@objc func copyWithZone(_ with: NSZone) -> NSObject {
-		return self
-	}
-
-	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
 	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
@@ -780,6 +778,10 @@ extension CGPoint {
 		ZBezierPath.strokeLine(from: self, to: endPoint)
 	}
 
+	func printPoint(_ message: String = kEmpty) {
+		print(message + " x: " + x.stringTo(precision: 1) + " y: " + y.stringTo(precision: 1))
+	}
+
 }
 
 extension CGSize {
@@ -967,6 +969,10 @@ extension CGRect {
 		}
 
 		return r
+	}
+
+	func printRect(_ message: String = kEmpty) {
+		print(message + " x: " + minX.stringTo(precision: 1) + " X: " + maxX.stringTo(precision: 1))
 	}
 
     public init(start: CGPoint, extent: CGPoint) {

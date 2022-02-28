@@ -417,7 +417,7 @@ class ZCoreDataStack: NSObject {
 		if !gIsReadyToShowUI || !gCanLoad {
 			onCompletion?(result)
 		} else {
-			let searchables = names.map { $0.searchable }.filter { $0 != " " }
+			let searchables = names.map { $0.searchable }.filter { $0 != kSpace }
 			let dbPredicate = dbidPredicate(from: dbID)
 			let    entities = [kTraitType, kZoneType]
 			var       count = searchables.count * entities.count

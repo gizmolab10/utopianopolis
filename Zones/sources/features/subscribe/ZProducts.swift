@@ -94,11 +94,11 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 								"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
 								"Because I do see the value of letting you \(kTryThenBuy),",
 								"this alert is being shown to you only after a free period of use.",
-								"During this period all features of Seriously have been enabled."].joined(separator: " "), [
+								"During this period all features of Seriously have been enabled."].joined(separator: kSpace), [
 									"If you wish to continue using Seriously for free,",
 									"some features [editing notes, search and print] will be disabled.",
 									"If these features are important to you,",
-									"you can retain them by purchasing a license."].joined(separator: " ")].joined(separator: "\n\n"),
+									"you can retain them by purchasing a license."].joined(separator: kSpace)].joined(separator: "\n\n"),
 						  "Purchase a subscription",
 						  "No thanks, the limited features are perfect") { status in
 			if  status              == .sYes {

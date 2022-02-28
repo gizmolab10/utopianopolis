@@ -142,7 +142,7 @@ extension ZoneWidget {
 			}
 		}
 		absoluteHitRect  = rect.expandedBy(extra).offsetBy(extra)
-//		debug(absoluteHitRect, "HIT")
+		debug(absoluteHitRect, "HIT RECT  " + selfInQuotes)
 	}
 
 	func linearRelayoutHighlightRect() {

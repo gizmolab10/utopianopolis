@@ -106,7 +106,7 @@ class ZoneWidget: ZPseudoView {
 
 	override func debug(_ rect: CGRect, _ message: String = kEmpty) {
 		if  widgetZone == gHere {
-			print(rect.minX.stringTo(precision: 1) + " " + rect.maxX.stringTo(precision: 1) + " \(self) " + message)
+			rect.printRect(message + kSpace + selfInQuotes)
 		}
 	}
 
@@ -336,6 +336,14 @@ class ZoneWidget: ZPseudoView {
 		if !visited.contains(self) {
 			block(self)
 			parentWidget?.traverseAllWidgetAncestors(visited: visited + [self], block)
+		}
+	}
+
+	func traverseAllVisibleWidgetProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
+		traverseAllWidgetProgeny { widget in
+			if  let zone = widget.widgetZone, zone.isVisible {
+				block(widget)
+			}
 		}
 	}
 

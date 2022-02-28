@@ -72,8 +72,7 @@ extension ZoneWidget {
 				t.relayoutAbsoluteFrame(relativeTo: controller)
 
 				textWidget?.frame = t.absoluteFrame
-			} else if let    size = textWidget?.drawnSize {
-				let          half = size.dividedInHalf
+			} else if let    half = textWidget?.drawnSize.dividedInHalf {
 				let        center = bounds.center
 				let          rect = CGRect(origin: center, size: .zero).expandedBy(half)
 				t          .frame = rect
@@ -94,6 +93,7 @@ extension ZoneWidget {
 			let    center = absoluteFrame.center
 			let    radius = gCircleIdeaRadius + gDotHalfWidth
 			highlightRect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
+//			center.printPoint("HIGHLIGHT " + selfInQuotes)
 		} else if let   t = pseudoTextWidget {
 			highlightRect = t.absoluteFrame.expandedBy(dx: gDotHalfWidth, dy: .zero)
 		}
@@ -134,23 +134,23 @@ extension ZoneWidget {
 	// MARK: -
 	
 	func circularGrandRelayout() {
-		updateByLevelAllFrames(in: controller)
+		updateAllProgenyFrames(in: controller)
 		updateFrameSize()
-		updateByLevelAllFrames(in: controller, true)
 		relayoutAbsoluteFrame(relativeTo: controller)
+		updateAllProgenyFrames(in: controller, true)    // sets widget absolute frame
 	}
 
-	func updateByLevelAllFrames(in controller: ZMapController?, _ absolute: Bool = false) {
+	func updateAllProgenyFrames(in controller: ZMapController?, _ absolute: Bool = false) {
 		traverseAllWidgetsByLevel {          (level, widgets) in
-			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // sets lineAngle
+			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // not absolute sets lineAngle
 		}
 
-		traverseAllWidgetProgeny(inReverse: !absolute) { widget in
+		traverseAllVisibleWidgetProgeny(inReverse: !absolute) { widget in
 			widget.updateTextViewFrame(absolute)
 		}
 
 		if  absolute  {
-			traverseAllWidgetProgeny(inReverse: true) { widget in
+			traverseAllVisibleWidgetProgeny(inReverse: true) { widget in
 				widget.circularUpdateHighlightRect()
 				widget.updateAllDotFrames()
 				widget.circularRelayoutAbsoluteHitRect()
@@ -161,17 +161,17 @@ extension ZoneWidget {
 	func traverseAllWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
 		var    level = 1
 		var  widgets = childrenWidgets
-		
+
 		while widgets.count != 0 {
 			block(level, widgets)
-			
+
 			level   += 1
 			var next = ZoneWidgetArray()
-			
+
 			for widget in widgets {
 				next.append(contentsOf: widget.childrenWidgets)
 			}
-			
+
 			widgets  = next
 		}
 	}
@@ -299,12 +299,11 @@ extension ZWidgets {
 
 extension ZoneWidgetArray {
 
-	var scrollOffset : CGPoint { return CGPoint(x: -gScrollOffset.x, y: gScrollOffset.y + 21) }
-
 	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
-		if  let  frame = controller?.mapPseudoView?.frame {
+		if  let vFrame = controller?.mapPseudoView?.frame {
 			let radius = ZWidgets.ringRadius(at: level)
-			let center = frame.center - scrollOffset
+			let offset = CGPoint(x: gScrollOffset.x - gDotHeight, y: -gScrollOffset.y - 22.0)
+			let center = vFrame.center + offset
 
 			for w in self {
 				if  absolute {

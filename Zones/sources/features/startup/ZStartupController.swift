@@ -75,8 +75,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		let            hasInternet = gHasInternet
 		let                notWait = [.firstTime, .pleaseEnableDrive].contains(gStartupLevel)
 		acccessToAppleID?.isHidden = !hasInternet || gStartupLevel != .firstTime         // .firstTime shows this
-		enableCloudDrive?.isHidden = !hasInternet || gStartupLevel != .pleaseEnableDrive // .firstTime hides this
-		pleaseWait?      .isHidden =  hasInternet && notWait                             // " " "
+		enableCloudDrive?.isHidden = !hasInternet || gStartupLevel != .pleaseEnableDrive //  "  "  "
+		pleaseWait?      .isHidden =  hasInternet && notWait                             //  "  "  "
 
 		if  gAssureProgressTimesAreLoaded() {
 			let       statusText = gCurrentOp.fullStatus

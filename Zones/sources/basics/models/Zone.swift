@@ -2430,13 +2430,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var isVisible = true
 
 		traverseAncestors { iAncestor -> ZTraverseStatus in
-			if  iAncestor == gHere {
-				return .eStop
-			}
-
 			if  iAncestor != self, !iAncestor.isExpanded {
 				isVisible = false
 
+				return .eStop
+			}
+
+			if  iAncestor == gHere {
 				return .eStop
 			}
 
