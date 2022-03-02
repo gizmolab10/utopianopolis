@@ -217,7 +217,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
 				selectAndScrollTo(restoreSelection)
 				undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
-				gEssayControlsView?.matchTitlesControlTo(gEssayTitleMode)
+//				gEssayControlsView?.matchTitlesControlTo(gEssayTitleMode)
 			}
 
 			essayRecordName = gCurrentEssayZone?.recordName                           // do this after altering essay zone
@@ -560,7 +560,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idSave:     save()
 				case .idPrint:    printView()
 				case .idHide:     grabDone()
-				case .idDelete:   if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
+				case .idDelete:   if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); exit() }
 				case .idCancel:                         gCurrentEssayZone?.grab();       exit()
 				default:          break
 			}
@@ -1376,11 +1376,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK: -
 
 	func swapBetweenNoteAndEssay() {
-		if  let current = gCurrentEssay,
-			let    zone = current.zone {
-			let   count = current.children.count
+		if  gCurrentEssay != nil,
+			let    zone = gCurrentEssay!.zone {
+			let   count = gCurrentEssay!.children.count
 			let toEssay = count < 2
 			let   range = selectedRange
+
+			if  toEssay, gEssayTitleMode == .sEmpty, gCurrentEssay!.essayText!.string.length > 0 {
+				gCurrentEssay!.updatedRangesFrom(textStorage)
+			}
 
 			save()
 

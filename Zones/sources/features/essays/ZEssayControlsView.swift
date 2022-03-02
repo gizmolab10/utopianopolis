@@ -118,7 +118,7 @@ class ZEssayControlsView: ZView {
 
 		matchTitlesControlTo(mode)
 
-		return deltaForTransitioningTo(mode)  // updates gEssayTitleMode
+		return deltaWithTransitionTo(mode)  // updates gEssayTitleMode
 	}
 
 	func titleLengthsUpTo(_ note: ZNote, for mode: ZEssayTitleMode) -> Int {
@@ -146,7 +146,7 @@ class ZEssayControlsView: ZView {
 		return isEmpty ? 0 : note.titleRange.length
 	}
 
-	func deltaForTransitioningTo(_ mode: ZEssayTitleMode) -> Int {
+	func deltaWithTransitionTo(_ mode: ZEssayTitleMode) -> Int {
 		var delta           = 0
 		if  mode           != gEssayTitleMode {
 			if  let    note = gEssayView?.selectedNote {
@@ -165,9 +165,13 @@ class ZEssayControlsView: ZView {
 		if  let  mode = ZEssayTitleMode(rawValue: iControl.selectedSegment) {
 			var range = gEssayView?.selectedRange ?? NSRange()
 
+			if  mode != gEssayTitleMode {
+				gCurrentEssay?.updatedRangesFrom(gEssayView?.textStorage)
+			}
+
 			gEssayView?.save()
 
-			range.location += deltaForTransitioningTo(mode)
+			range.location += deltaWithTransitionTo(mode)
 			titlesControl?.needsDisplay = true
 
 			gEssayView?.updateTextStorage(restoreSelection: range)

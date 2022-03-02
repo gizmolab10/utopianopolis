@@ -79,8 +79,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func saveAsNote(_ attributedString: NSAttributedString?) {
-		updatedRangesFrom(attributedString)
-
 		if  let            trait  = maybeNoteTrait,
 			let       attributed  = attributedString {
 			let            delta  = attributed.string.length - textRange.upperBound
@@ -244,10 +242,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		if  let    text = fromText,
 			let    name =   noTitle ? kEmpty : zone?.zoneName {
 			let  indent = onlyTitle ? kEmpty : titleIndent
-			let unicode = name.contains("􀅇")
+			let unicode = name.contains("􀅇") // it is two bytes
 			let tLength = noTitle ? 0 :   name.length
 			let iOffset = noTitle ? 0 : indent.length
-			let tOffset = noTitle ? 0 : iOffset + tLength + kBlankLine.length + 1 + (unicode ? 1 : 0)
+			let tOffset = noTitle ? 0 : iOffset + tLength + kBlankLine.length + (unicode ? 2 : 1)
 			titleRange  = NSRange(location: iOffset, length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
@@ -296,10 +294,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let atTitleStart = titleStart == rangeStart                               // range begins at beginning of title
 		let   atTitleEnd = titleEnd   == rangeEnd                                 // range ends at end of title
 		let       locked = isAfter || (isBefore && !atTitleStart) || (isBetween && !atTitleEnd)
-
-		if  locked, range.location > 0 {
-			print("\(range)")
-		}
 
 		return locked
 	}
