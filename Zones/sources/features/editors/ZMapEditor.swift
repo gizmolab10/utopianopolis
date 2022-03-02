@@ -144,7 +144,7 @@ class ZMapEditor: ZBaseEditor {
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
 						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
-						case "t":        if COMMAND { showThesaurus() } else if SPECIAL { gControllers.showEssay(forGuide: false) } else { swapWithParent() }
+						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
