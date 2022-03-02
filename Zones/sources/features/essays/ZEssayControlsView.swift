@@ -165,7 +165,7 @@ class ZEssayControlsView: ZView {
 		if  let  mode = ZEssayTitleMode(rawValue: iControl.selectedSegment) {
 			var range = gEssayView?.selectedRange ?? NSRange()
 
-			if  mode != gEssayTitleMode {
+			if  mode != gEssayTitleMode { // user is changing mode
 				gCurrentEssay?.updatedRangesFrom(gEssayView?.textStorage)
 			}
 

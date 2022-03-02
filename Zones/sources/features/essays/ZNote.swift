@@ -318,7 +318,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 					result              = .eAlter
 				}
 
-				if  let  titleIntersect = range.inclusiveIntersection(titleRange) {
+				if  titleRange  .length > 0,
+					let  titleIntersect = range.inclusiveIntersection(titleRange) {
 					delta               = replacementLength - titleIntersect.length
 					titleRange .length += delta
 					textRange.location += delta
