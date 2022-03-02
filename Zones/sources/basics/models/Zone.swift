@@ -2431,12 +2431,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		traverseAncestors { iAncestor -> ZTraverseStatus in
 			if  iAncestor != self, !iAncestor.isExpanded {
-				isVisible = false
+				isVisible  = false
 
 				return .eStop
 			}
 
-			if  iAncestor == gHere {
+			if  let  here  = widget?.controller?.hereZone,
+				iAncestor == here {
 				return .eStop
 			}
 

@@ -216,20 +216,21 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gWidgets.removeTooltipsFromAllWidgets(for: self)
 		gRemoveAllTracking()
 
-		if  let         wSize = hereWidget?.drawnSize,
-			let         mSize = mapView?.frame.size {
-			let        bigMap = gScrollOffset.offsetBy(-gDotHeight, 22.0)
-			let      smallMap = CGPoint(x: -12.0, y: -6.0)
-			let      exemplar = CGPoint(x: .zero, y: -6.0)
-			var        offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
-			if !kIsPhone {
-				offset.y      = -offset.y    // why?
+		if  let         widget = hereWidget,
+			let     bigMapSize = mapView?.frame.size {
+			let         bigMap = gScrollOffset.offsetBy(-gDotHeight, 22.0)
+			let       smallMap = CGPoint(x: -12.0, y: -6.0)
+			let       exemplar = CGPoint(x: .zero, y: -6.0)
+			var   originOffset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
+			if  !kIsPhone {
+				originOffset.y = -originOffset.y    // default values are in iphone coordinates whereas y coordination is opposite in non-iphone devices
 			}
-			let      relocate = (CGPoint(mSize) - CGPoint(wSize)).dividedInHalf
-			let        origin = (isBigMap ? relocate : .zero) + offset
-			hereWidget?.frame = CGRect(origin: origin, size: wSize)
+			let     widgetSize = widget.drawnSize
+			let   bigMapOrigin = (CGPoint(bigMapSize) - CGPoint(widgetSize)).dividedInHalf
+			let         origin = (isBigMap ? bigMapOrigin : .zero) + originOffset
+			widget      .frame = CGRect(origin: origin, size: widgetSize)
 
-			hereWidget?.grandRelayout()
+			widget.grandRelayout()
 			detectHover()
 			setNeedsDisplay()
 		}
