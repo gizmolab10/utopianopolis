@@ -535,15 +535,7 @@ class ZMapEditor: ZBaseEditor {
 
 			gSignal([.spMain, .sDetails, .spBigMap])
         } else if COMMA {
-			if  gShowDetailsView {
-				gDetailsController?.toggleViewsFor(ids: [.vPreferences])
-			} else {
-				gShowDetailsView = true
-
-				gDetailsController?.showViewFor(.vPreferences)
-			}
-
-			gSignal([.spMain, .sDetails])
+			gDetailsController?.displayPreferences()
         } else if gIsEditIdeaMode {
             gTextEditor.cancel()
         }

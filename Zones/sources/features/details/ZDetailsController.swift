@@ -109,4 +109,16 @@ class ZDetailsController: ZGesturesController {
 		view.display()
 	}
 
+	func displayPreferences() {
+		if  gShowDetailsView {
+			toggleViewsFor(ids: [.vPreferences])
+		} else {
+			gShowDetailsView = true
+
+			showViewFor(.vPreferences)
+		}
+
+		gSignal([.spMain, .sDetails])
+	}
+
 }
