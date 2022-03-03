@@ -66,6 +66,7 @@ class ZTrait: ZTraitAssets {
 
 	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
 	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
+	override var    matchesFilterOptions: Bool         { return gFilterOption.contains(.fNotes) }
 
 	override class var cloudProperties: StringsArray {
 		return [#keyPath(type),
@@ -217,8 +218,6 @@ class ZTrait: ZTraitAssets {
             }
         }
     }
-
-	override var matchesFilterOptions: Bool { return gFilterOption.contains(.fNotes) }
 
 	func whileSelfIsCurrentTrait(during: Closure) {
 		let     prior = gCurrentTrait // can be called within recursive traversal of notes within notes, etc.

@@ -359,30 +359,6 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="LQ0-du-Ruk"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Reveal &amp; Edit Hidden Trait" id="FtB-kg-Qai">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <menu key="submenu" title="Reveal &amp; Edit Hidden Trait" id="TjQ-8Y-zNJ">
-                                                            <items>
-                                                                <menuItem title="Email" tag="10" keyEquivalent="e" id="oKh-cg-tNy">
-                                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                                    <connections>
-                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="zlO-ix-pfH"/>
-                                                                    </connections>
-                                                                </menuItem>
-                                                                <menuItem title="Hyperlink" tag="10" keyEquivalent="h" id="bGY-Q2-2NU">
-                                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                                    <connections>
-                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="Tr6-4K-PYH"/>
-                                                                    </connections>
-                                                                </menuItem>
-                                                                <menuItem title="Note" tag="10" keyEquivalent="n" id="eHh-JD-vMS">
-                                                                    <connections>
-                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="8XL-y6-rFW"/>
-                                                                    </connections>
-                                                                </menuItem>
-                                                            </items>
-                                                        </menu>
-                                                    </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="uVR-Bl-7cX"/>
                                                     <menuItem title="Select All (Children / Siblings)" keyEquivalent="a" id="KFq-Lb-Zy0">
                                                         <connections>
@@ -396,19 +372,19 @@ DQ
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="04E-yE-Www"/>
-                                                    <menuItem title="Alphabetize" keyEquivalent="a" id="UXb-P4-5bD">
+                                                    <menuItem title="Reveal &amp; Edit Hyperlink / Email" tag="10" keyEquivalent="h" id="bGY-Q2-2NU">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="PND-hB-Cfy"/>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="Tr6-4K-PYH"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Sort by Length" alternate="YES" keyEquivalent="m" id="j8B-vL-Xli">
+                                                    <menuItem title="Reveal &amp; Edit Note" tag="10" keyEquivalent="n" id="KX8-xe-d82">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="ahj-Y0-JXA"/>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="gbV-eN-qrQ"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Reverse" keyEquivalent="r" id="Ryh-sT-7Zr">
+                                                    <menuItem title="Reveal Sort Menu" keyEquivalent="r" id="Ryh-sT-7Zr">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="6f1-O7-8ws"/>
@@ -2238,17 +2214,17 @@ DQ
             <objects>
                 <viewController id="c3F-r9-TYw" userLabel="Controls Controller" customClass="ZControlsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="inW-Gh-k1T">
-                        <rect key="frame" x="0.0" y="0.0" width="182" height="39"/>
+                        <rect key="frame" x="0.0" y="0.0" width="217" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LcE-Ba-uvs" userLabel="Map Controls">
-                                <rect key="frame" x="0.0" y="0.0" width="182" height="39"/>
+                                <rect key="frame" x="0.0" y="0.0" width="217" height="44"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Rct-nF-Qx4" customClass="ZMapControlsView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="159" height="37"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="194" height="42"/>
                                     </customView>
                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bhB-1W-OBB" userLabel="Search Button">
-                                        <rect key="frame" x="165" y="12" width="15" height="15"/>
+                                        <rect key="frame" x="200" y="15" width="15" height="15"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="15" id="BF9-rd-D9E"/>
                                             <constraint firstAttribute="height" constant="9" id="vrO-8h-LnZ"/>
@@ -2273,49 +2249,55 @@ DQ
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="jbD-YT-XOW">
-                                <rect key="frame" x="0.0" y="0.0" width="182" height="39"/>
+                                <rect key="frame" x="0.0" y="0.0" width="217" height="44"/>
                                 <subviews>
-                                    <box borderType="none" title="Search for" titlePosition="aboveTop" translatesAutoresizingMaskIntoConstraints="NO" id="G4z-oF-KkF">
-                                        <rect key="frame" x="-3" y="-4" width="188" height="41"/>
-                                        <view key="contentView" id="tbM-b3-bJc">
-                                            <rect key="frame" x="0.0" y="0.0" width="188" height="29"/>
-                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                            <subviews>
-                                                <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
-                                                    <rect key="frame" x="4" y="6" width="148" height="23"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="18" id="fuA-YK-5ve"/>
-                                                    </constraints>
-                                                    <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
-                                                        <font key="font" metaFont="message" size="11"/>
-                                                        <segments>
-                                                            <segment label="bookmarks"/>
-                                                            <segment label="notes" selected="YES" tag="1"/>
-                                                            <segment label="ideas"/>
-                                                        </segments>
-                                                    </segmentedCell>
-                                                    <connections>
-                                                        <action selector="searchOptionActionWithSender:" target="c3F-r9-TYw" id="CmT-KF-OT7"/>
-                                                    </connections>
-                                                </segmentedControl>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="zJL-q5-otI" firstAttribute="centerX" secondItem="tbM-b3-bJc" secondAttribute="centerX" constant="-16" id="aLD-RD-HSY"/>
-                                                <constraint firstItem="zJL-q5-otI" firstAttribute="top" secondItem="tbM-b3-bJc" secondAttribute="top" constant="2" id="nqs-Q6-KGu"/>
-                                            </constraints>
-                                        </view>
-                                        <font key="titleFont" metaFont="label" size="9"/>
-                                    </box>
+                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
+                                        <rect key="frame" x="9" y="19" width="175" height="23"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="18" id="fuA-YK-5ve"/>
+                                        </constraints>
+                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
+                                            <font key="font" metaFont="system" size="14"/>
+                                            <segments>
+                                                <segment label="bookmarks"/>
+                                                <segment label="notes" selected="YES" tag="1"/>
+                                                <segment label="ideas"/>
+                                            </segments>
+                                        </segmentedCell>
+                                        <connections>
+                                            <action selector="searchFilterActionWithSender:" target="c3F-r9-TYw" id="SGR-eN-sUS"/>
+                                        </connections>
+                                    </segmentedControl>
+                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
+                                        <rect key="frame" x="6" y="0.0" width="181" height="21"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="18" id="cnb-Bz-45J"/>
+                                        </constraints>
+                                        <segmentedCell key="cell" controlSize="mini" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
+                                            <font key="font" metaFont="system" size="8"/>
+                                            <segments>
+                                                <segment label="public"/>
+                                                <segment label="mine" selected="YES" tag="1"/>
+                                                <segment label="trash"/>
+                                                <segment label="recent"/>
+                                                <segment label="fave"/>
+                                                <segment label="orphan"/>
+                                            </segments>
+                                        </segmentedCell>
+                                        <connections>
+                                            <action selector="searchScopeActionWithSender:" target="c3F-r9-TYw" id="tI9-6j-mO8"/>
+                                        </connections>
+                                    </segmentedControl>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="G4z-oF-KkF" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" id="52f-57-Idg"/>
-                                    <constraint firstItem="G4z-oF-KkF" firstAttribute="top" secondItem="jbD-YT-XOW" secondAttribute="top" constant="4" id="Q7g-Et-L9a"/>
-                                    <constraint firstAttribute="bottom" secondItem="G4z-oF-KkF" secondAttribute="bottom" id="cdM-MX-8JH"/>
-                                    <constraint firstAttribute="trailing" secondItem="G4z-oF-KkF" secondAttribute="trailing" id="xcU-WQ-6d6"/>
+                                    <constraint firstItem="e16-JP-Abj" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" constant="11" id="FVP-QG-ppX"/>
+                                    <constraint firstItem="zJL-q5-otI" firstAttribute="centerX" secondItem="jbD-YT-XOW" secondAttribute="centerX" constant="-12" id="HeE-cQ-ucn"/>
+                                    <constraint firstItem="e16-JP-Abj" firstAttribute="centerX" secondItem="jbD-YT-XOW" secondAttribute="centerX" constant="-12" id="PuR-Vd-Cbx"/>
+                                    <constraint firstItem="zJL-q5-otI" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" constant="-9" id="rB4-0W-OCA"/>
                                 </constraints>
                             </customView>
                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NcF-tr-4S4">
-                                <rect key="frame" x="165" y="12" width="15" height="15"/>
+                                <rect key="frame" x="200" y="15" width="15" height="15"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="15" id="eG0-pd-dSk"/>
                                     <constraint firstAttribute="height" constant="9" id="kRY-H0-bNA"/>
@@ -2346,13 +2328,14 @@ DQ
                         <outlet property="dismissButton" destination="NcF-tr-4S4" id="czS-bE-hIZ"/>
                         <outlet property="mapControlsView" destination="Rct-nF-Qx4" id="oFp-OH-Ee5"/>
                         <outlet property="searchButton" destination="bhB-1W-OBB" id="R4X-oK-Sff"/>
-                        <outlet property="searchOptionsControl" destination="zJL-q5-otI" id="cIz-oG-Vs7"/>
+                        <outlet property="searchFilterControl" destination="zJL-q5-otI" id="VAN-a0-naJ"/>
                         <outlet property="searchOptionsView" destination="jbD-YT-XOW" id="pwl-8w-hVd"/>
+                        <outlet property="searchScopeControl" destination="e16-JP-Abj" id="onY-hr-cBb"/>
                     </connections>
                 </viewController>
                 <customObject id="933-fU-289" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="957" y="466"/>
+            <point key="canvasLocation" x="974.5" y="468"/>
         </scene>
         <!--Small Map-->
         <scene sceneID="fRz-nE-ecT">

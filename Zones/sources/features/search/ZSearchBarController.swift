@@ -32,7 +32,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		return false
 	}
 
-	func updateForState() {
+	func stateDidChange() {
 		switch gSearching.state {
 			case .sList:
 				searchBox?.isHidden = true
@@ -106,12 +106,12 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		gSearching.exitSearchMode()
     }
 
-	func updateSearchBox() {
+	func updateSearchBox(allowSearchToEnd: Bool = true) {
 		if  let text = activeSearchBoxText,
 			text.length > 0,
 			![kEmpty, kSpace, "  "].contains(text) {
 			gSearching.performSearch(for: text)
-		} else {
+		} else if allowSearchToEnd {
 			endSearch()
 		}
 	}

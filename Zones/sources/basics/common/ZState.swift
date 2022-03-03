@@ -438,6 +438,26 @@ var gFilterOption: ZFilterOption {
 	set { setPreferencesInt(newValue.rawValue, for: kFilterOption) }
 }
 
+struct ZSearchScopeOption: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let    fPublic = ZSearchScopeOption(rawValue: 1 << 0)
+	static let      fMine = ZSearchScopeOption(rawValue: 1 << 1)
+	static let     fTrash = ZSearchScopeOption(rawValue: 1 << 2)
+	static let    fRecent = ZSearchScopeOption(rawValue: 1 << 3)
+	static let fFavorites = ZSearchScopeOption(rawValue: 1 << 4)
+	static let    fOrphan = ZSearchScopeOption(rawValue: 1 << 5)
+	static let      fNone = ZSearchScopeOption([])
+	static let       fAll = ZSearchScopeOption(rawValue: 7)
+}
+
+var gSearchScopeOption: ZSearchScopeOption {
+	get { return ZSearchScopeOption(rawValue: getPreferencesInt(for: kSearchScopeOption, defaultInt: ZSearchScopeOption.fMine.rawValue)) }
+	set { setPreferencesInt(newValue.rawValue, for: kSearchScopeOption) }
+}
+
 var gWindowRect: CGRect {
 	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
 	set { setPreferencesRect(newValue, for: kWindowRectKey) }

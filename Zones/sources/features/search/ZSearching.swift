@@ -50,15 +50,15 @@ class ZSearching: NSObject {
 		state = .sNot
 
 		swapMapAndSearch()
-		gSignal([.sFound, .sSearch])
+		gSignal([.sFound, .sSearch, .spRelayout])
 	}
 
 	func setSearchStateTo(_ iState: ZSearchState) {
 		state = iState
 
-		gControlsController?     .updateForState()
-		gSearchBarController?    .updateForState()
-		gSearchResultsController?.updateForState()
+		gControlsController?     .stateDidChange()
+		gSearchBarController?    .stateDidChange()
+		gSearchResultsController?.stateDidChange()
 
 		if  state == .sFind {
 			gSignal([.sSearch])

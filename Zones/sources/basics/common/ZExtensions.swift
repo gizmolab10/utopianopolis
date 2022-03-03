@@ -1374,6 +1374,9 @@ extension Array {
 	}
 
     func containsCompare(with other: Any?, using: CompareClosure? = nil) -> Bool {
+
+		// TODO: use a dictionary of record names : records
+
         if  let compare = using,
 			let to = other as AnyObject? {
             for item in self {
@@ -1455,6 +1458,48 @@ extension CKReferencesArray {
 	}
 
 }
+
+//extension StringZRecordsDictionary {
+//
+//	mutating func appending(_ dicts: StringZRecordDictionary?) -> StringZRecordsDictionary {
+//		if  let more = dicts {
+//			for item in more {
+//				appendIfUnique(item) // calls the method below this one
+//			}
+//		}
+//
+//		return self
+//	}
+//
+//}
+
+//extension StringZRecordDictionary {
+//
+//	@discardableResult mutating func appendIfUnique(_ record: ZRecord) -> Bool { // true means record is now in dict
+//		let name = record.recordName ?? gUniqueRecordName                        // if record has no record name, create a new one, assign to record, add record and return true
+//
+//		if  let existing = self[name] {
+//			return existing == record
+//		}
+//
+//		self[name] = record
+//
+//		return true
+//	}
+//
+//	static func fromObjectIDs(_ ids: ZObjectIDsArray, in context: NSManagedObjectContext) -> StringZRecordDictionary {
+//		let records = ids.map { context.object(with: $0) as? ZRecord }
+//		var result = StringZRecordDictionary()
+//		for record in records {
+//			if  let r = record {
+//				let name = r.recordName ?? gUniqueRecordName
+//				result[name] = r
+//			}
+//		}
+//		return result
+//	}
+//
+//}
 
 extension ZRecordsArray {
 

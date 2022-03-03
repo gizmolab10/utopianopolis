@@ -83,7 +83,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var           decoratedName :             String  { return decoration + unwrappedName }
 	override var         cloudProperties :       StringsArray  { return Zone.cloudProperties }
 	override var optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
-	override var    matchesFilterOptions :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
+	override var    matchesFilterOptions :               Bool  { return passesFilter && isInScope }
 	override var             isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
@@ -150,6 +150,31 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func orphan()                                            { parentZone?.removeChild(self) }
 	func updateRootFromParent()                                       { setRoot(parentZone?.root ?? self) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
+
+	var passesFilter: Bool {
+		return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
+	}
+
+	var isInScope: Bool {
+		var maybe = false
+
+		switch databaseID {
+			case .favoritesID: return  gSearchScopeOption.contains(.fFavorites)
+			case .recentsID:   return  gSearchScopeOption.contains(.fRecent)
+			case .everyoneID:  maybe = gSearchScopeOption.contains(.fPublic)
+			case .mineID:      maybe = gSearchScopeOption.contains(.fMine)
+		}
+
+		if !maybe {
+			if  let name = root?.recordName {
+				return name == kTrashName || name == kDestroyName
+			} else if gSearchScopeOption.contains(.fOrphan) {
+				return true
+			}
+		}
+
+		return maybe
+	}
 
 	var visibleDoneZone: Zone? {
 		var done: Zone?
@@ -1448,7 +1473,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if !isInSmallMap {
 					p.expand()
 				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
-					p.collapse()
+					g.concealAllProgeny()
 					g.expand()
 					g.setAsSmallMapHereZone()
 					// FUBAR: parent sometimes disappears!!!!!!!!!
@@ -2436,7 +2461,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return .eStop
 			}
 
-			if  let  here  = widget?.controller?.hereZone,
+			if  let  here  = widget?.controller?.hereZone,     // so this will also be correct for small map
 				iAncestor == here {
 				return .eStop
 			}
@@ -2527,21 +2552,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func concealAllProgeny() {
-		traverseAllProgeny { iChild in
+		traverseAllProgeny(inReverse: true) { iChild in
 			iChild.collapse()
 		}
 	}
 
-	func traverseAllProgeny(_ block: ZoneClosure) {
-		safeTraverseProgeny(visited: []) { iZone -> ZTraverseStatus in
+	func traverseAllProgeny(inReverse: Bool = false, _ block: ZoneClosure) {
+		safeTraverseProgeny(visited: [], inReverse: inReverse) { iZone -> ZTraverseStatus in
 			block(iZone)
 
 			return .eContinue
 		}
 	}
 
-	@discardableResult func traverseProgeny(_ block: ZoneToStatusClosure) -> ZTraverseStatus {
-		return safeTraverseProgeny(visited: [], block)
+	@discardableResult func traverseProgeny(inReverse: Bool = false, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
+		return safeTraverseProgeny(visited: [], inReverse: inReverse, block)
 	}
 
 	func traverseAllVisibleProgeny(inReverse: Bool = false, _ block: ZoneClosure) {

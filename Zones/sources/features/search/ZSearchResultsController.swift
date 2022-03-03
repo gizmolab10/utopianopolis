@@ -232,7 +232,7 @@ class ZSearchResultsController: ZGenericTableController {
 		}
 	}
 
-	func updateForState() {
+	func stateDidChange() {
 		if  gSearchResultsVisible {
 			genericTableView?.becomeFirstResponder()
 		}
