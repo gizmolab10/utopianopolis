@@ -1075,8 +1075,8 @@ extension NSSegmentedControl {
 
 extension NSProgressIndicator {
 
-    func startAnimating() { startAnimation(self) }
-    func  stopAnimating() {  stopAnimation(self) }
+	func startAnimating() { isHidden = false; startAnimation(self) }
+	func  stopAnimating() { isHidden = true;   stopAnimation(self) }
 
 }
 

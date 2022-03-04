@@ -69,11 +69,11 @@ class ZBatches: ZOnboarding {
 
         var operations: ZOpIDsArray {
 			switch identifier {
-				case .bResumeCloud: return [              .oMigrateFromCloud           ]
-				case .bSync:        return [              .oSavingLocalData               ]
-				case .bBookmarks:   return [.oBookmarks                                ]
-				case .bRoot:        return [.oRoots,      .oManifest                   ]
-				case .bFocus:       return [.oRoots                    ,               ]
+				case .bResumeCloud: return [              .oMigrateFromCloud                 ]
+				case .bSync:        return [              .oSavingLocalData                  ]
+				case .bRoot:        return [.oRoots,      .oManifest                         ]
+				case .bFocus:       return [.oRoots,                                         ]
+				case .bBookmarks:   return [.oBookmarks                                      ]
 				case .bStartUp:     return operationIDs(from: .oStartingUp,        to: .oDone)
 				case .bNewAppleID:  return operationIDs(from: .oCheckAvailability, to: .oDone)
 				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)

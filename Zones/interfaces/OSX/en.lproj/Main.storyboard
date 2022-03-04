@@ -1665,14 +1665,19 @@ DQ
                                                                     <action selector="handlePermissionAction:" target="ZgY-dx-Pyh" id="5nR-7K-CHe"/>
                                                                 </connections>
                                                             </button>
+                                                            <progressIndicator hidden="YES" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="WgU-WR-q9Z">
+                                                                <rect key="frame" x="217" y="2" width="16" height="16"/>
+                                                            </progressIndicator>
                                                         </subviews>
                                                         <constraints>
                                                             <constraint firstAttribute="bottom" secondItem="bWe-Ul-jBd" secondAttribute="bottom" id="1D2-ob-psE"/>
+                                                            <constraint firstItem="WgU-WR-q9Z" firstAttribute="centerX" secondItem="qwy-Fq-9BT" secondAttribute="centerX" id="5YS-4E-6xY"/>
                                                             <constraint firstItem="bWe-Ul-jBd" firstAttribute="leading" secondItem="gqY-tc-UwL" secondAttribute="trailing" constant="24" id="AQs-bs-qhu"/>
                                                             <constraint firstItem="gqY-tc-UwL" firstAttribute="leading" secondItem="qwy-Fq-9BT" secondAttribute="leading" id="Bdq-hd-IP0"/>
                                                             <constraint firstItem="bWe-Ul-jBd" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="F0T-j1-wsg"/>
                                                             <constraint firstItem="gqY-tc-UwL" firstAttribute="top" secondItem="qwy-Fq-9BT" secondAttribute="top" id="MPm-3Y-jaS"/>
                                                             <constraint firstAttribute="bottom" secondItem="gqY-tc-UwL" secondAttribute="bottom" id="egS-UK-ATn"/>
+                                                            <constraint firstItem="WgU-WR-q9Z" firstAttribute="centerY" secondItem="qwy-Fq-9BT" secondAttribute="centerY" id="hxo-xd-Ulg"/>
                                                             <constraint firstAttribute="trailing" secondItem="bWe-Ul-jBd" secondAttribute="trailing" id="tSF-tC-exh"/>
                                                         </constraints>
                                                     </customView>
@@ -1833,6 +1838,7 @@ DQ
                         <outlet property="loadingLabel" destination="kKM-9B-fW0" id="c49-Qv-BEM"/>
                         <outlet property="operationLabel" destination="ab6-2E-Tk7" id="UWg-bo-ff3"/>
                         <outlet property="pleaseWait" destination="rmD-x7-RtA" id="Pgi-uv-g7c"/>
+                        <outlet property="spinner" destination="WgU-WR-q9Z" id="HsV-21-7aa"/>
                         <outlet property="thermometerBar" destination="2xi-Mf-riK" id="GCP-V7-8ij"/>
                     </connections>
                 </viewController>

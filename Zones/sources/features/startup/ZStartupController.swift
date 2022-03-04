@@ -22,6 +22,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var pleaseWait        : ZView?
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
+	@IBOutlet var spinner           : ZProgressIndicator?
 	@IBOutlet var thermometerBar    : ZStartupProgressBar?
 	var           startupCompletion : Closure?
 
@@ -35,7 +36,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 		if  gNewUser ||
 			gStartupLevel == .localOkay {
-			gStartupLevel  = .firstTime
+			gStartupLevel  = .pleaseWait    // internet availability is not required until cloud access actually works
 		}
 	}
 
@@ -72,11 +73,14 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func updateStartupStatus() {
-		let            hasInternet = gHasInternet
-		let                notWait = [.firstTime, .pleaseEnableDrive].contains(gStartupLevel)
-		acccessToAppleID?.isHidden = !hasInternet || gStartupLevel != .firstTime         // .firstTime shows this
-		enableCloudDrive?.isHidden = !hasInternet || gStartupLevel != .pleaseEnableDrive //  "  "  "
-		pleaseWait?      .isHidden =  hasInternet && notWait                             //  "  "  "
+
+		// internet availability is not required until cloud access actually works
+
+//		let            hasInternet = gHasInternet
+//		let                notWait = [.firstTime, .pleaseEnableDrive].contains(gStartupLevel)
+		acccessToAppleID?.isHidden = true  // !hasInternet || gStartupLevel != .firstTime         // .firstTime shows this
+		enableCloudDrive?.isHidden = true  // !hasInternet || gStartupLevel != .pleaseEnableDrive //  "  "  "
+		pleaseWait?      .isHidden = false //  hasInternet && notWait                             //  "  "  "
 
 		if  gAssureProgressTimesAreLoaded() {
 			let       statusText = gCurrentOp.fullStatus
@@ -93,6 +97,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	@IBAction func handlePermissionAction(_ button: ZButton) {
+		spinner?.startAnimating()
 		let      identifier = gConvertFromOptionalUserInterfaceItemIdentifier(button.identifier)
 		switch   identifier {
 			case   "id yes": accessAppleID()
@@ -106,6 +111,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		}
 
 		startupUpdate()
+		spinner?.stopAnimating()
 	}
 
 	func accessAppleID() {
