@@ -14,6 +14,8 @@ import Foundation
     import UIKit
 #endif
 
+func gExitSearchMode(force: Bool = true) { if force || gIsSearchMode { gSearching.exitSearchMode() } }
+
 enum ZSearchState: Int {
     case sEntry
     case sFind
@@ -47,9 +49,10 @@ class ZSearching: NSObject {
 	}
 
 	func exitSearchMode() {
-		state = .sNot
+		state         = .sNot
+		priorWorkMode = gWorkMode
+		gWorkMode     = .wMapMode
 
-		swapMapAndSearch()
 		gSignal([.sFound, .sSearch, .spRelayout])
 	}
 
@@ -65,15 +68,10 @@ class ZSearching: NSObject {
 		}
 	}
 
-	func swapMapAndSearch() {
-		let      last = priorWorkMode ??          .wMapMode
-		priorWorkMode = gIsSearchMode ? nil  :    gWorkMode
-		gWorkMode     = gIsSearchMode ? last : .wSearchMode
-	}
-
 	func showSearch(_ OPTION: Bool = false) {
 //		if  gProducts.hasEnabledSubscription {
-			swapMapAndSearch()
+			priorWorkMode = nil
+			gWorkMode     = .wSearchMode
 			gSignal([OPTION ? .sFound : .sSearch])
 //		}
 	}

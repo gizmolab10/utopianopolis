@@ -103,7 +103,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
     func endSearch() {
         searchBox?.resignFirstResponder()
-		gSearching.exitSearchMode()
+		gExitSearchMode()
     }
 
 	func updateSearchBox(allowSearchToEnd: Bool = true) {

@@ -155,7 +155,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			super.becomeFirstResponder() {   // becomeFirstResponder is called first so delegate methods will be called
 
 			if  gIsSearchMode {
-                gSearching.exitSearchMode()
+                gExitSearchMode()
 			} else if gIsEssayMode {
 				gControllers.swapMapAndEssay()
 			} else {

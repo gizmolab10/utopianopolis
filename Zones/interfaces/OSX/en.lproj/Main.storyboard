@@ -63,7 +63,7 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="File" id="fri-jg-8iG">
                                     <items>
-                                        <menuItem title="Show in Finder" keyEquivalent="o" id="tay-ah-w3c">
+                                        <menuItem title="Show Data in Finder" keyEquivalent="o" id="tay-ah-w3c">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
                                                 <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="yol-4a-D1G"/>
@@ -205,19 +205,30 @@ CA
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <menu key="submenu" title="Create" id="GbF-qY-vTh">
                                                 <items>
-                                                    <menuItem title="New (child) Idea" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
+                                                    <menuItem title="New Child Idea" tag="6" alternate="YES" keyEquivalent=" " id="hu1-W0-ukM">
                                                         <modifierMask key="keyEquivalentModifierMask" control="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="AK5-SM-xcQ"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Next (sibling) Idea" tag="6" id="8Vw-09-keH">
+                                                    <menuItem title="New Child Idea from Selected Text" tag="6" keyEquivalent="d" id="OkO-XF-Hez">
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="G9O-zJ-ei8"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="New Sibling Idea" tag="6" id="8Vw-09-keH">
                                                         <string key="keyEquivalent" base64-UTF8="YES">
 CQ
 </string>
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="Xte-u6-NHv"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="New Parent from Selected Text" tag="6" keyEquivalent="d" id="lqH-Fs-Hm3">
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="TPm-VX-Kvm"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="New Parent Containing Selected Ideas" tag="7" id="E0i-4W-ZZI">
@@ -229,37 +240,13 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="bsP-FQ-jyh"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="New Hidden Trait" id="UCf-z7-IlP">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <menu key="submenu" title="New Hidden Trait" id="Huz-4U-bs2">
-                                                            <items>
-                                                                <menuItem title="Email" tag="10" keyEquivalent="e" id="aks-3C-gH9">
-                                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                                    <connections>
-                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="TEK-E3-3fV"/>
-                                                                    </connections>
-                                                                </menuItem>
-                                                                <menuItem title="Hyperlink" tag="10" keyEquivalent="h" id="FKJ-Ri-pBc">
-                                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                                    <connections>
-                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="mab-ZI-FmT"/>
-                                                                    </connections>
-                                                                </menuItem>
-                                                                <menuItem title="Essay" tag="10" keyEquivalent="n" id="XSg-41-GZj">
-                                                                    <modifierMask key="keyEquivalentModifierMask"/>
-                                                                    <connections>
-                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="R7p-6S-GAq"/>
-                                                                    </connections>
-                                                                </menuItem>
-                                                                <menuItem title="Note" tag="10" keyEquivalent="n" id="78J-jX-KHN">
-                                                                    <connections>
-                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="0S5-Mc-gOn"/>
-                                                                    </connections>
-                                                                </menuItem>
-                                                            </items>
-                                                        </menu>
-                                                    </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="MZf-mi-yuL"/>
+                                                    <menuItem title="New Note for Selected Idea" tag="10" keyEquivalent="n" id="Hbm-Mx-GWI">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="uoc-fM-8pK"/>
+                                                        </connections>
+                                                    </menuItem>
                                                     <menuItem title="Bookmark of Selected Idea" tag="10" keyEquivalent="b" id="3wN-52-oXT">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
@@ -273,15 +260,10 @@ CQ
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="KF1-qo-tG3"/>
-                                                    <menuItem title="New Idea from Selected Text" tag="6" keyEquivalent="d" id="OkO-XF-Hez">
+                                                    <menuItem title="Reveal Hyperlink / Email Menu" tag="10" keyEquivalent="h" id="hLr-7w-OSi">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="G9O-zJ-ei8"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="New Parent from Selected Text" tag="6" keyEquivalent="d" id="lqH-Fs-Hm3">
-                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="TPm-VX-Kvm"/>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="dej-Ia-7Tf"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
@@ -522,6 +504,37 @@ DQ
                                 <connections>
                                     <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="c2b-II-tLO"/>
                                 </connections>
+                            </menuItem>
+                            <menuItem title="Window" id="lhS-TQ-gI1">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Window" systemMenu="window" id="jKH-Dl-MAd">
+                                    <items>
+                                        <menuItem title="Reopen Main Window" keyEquivalent="w" id="Ree-52-TGl">
+                                            <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="dXe-8p-8ki"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Minimize" keyEquivalent="m" id="BOL-55-TQ7">
+                                            <connections>
+                                                <action selector="performMiniaturize:" target="Ady-hI-5gd" id="ZAd-xE-0Kl"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Zoom" id="UGp-i9-wmk">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="performZoom:" target="Ady-hI-5gd" id="vXj-ig-RxC"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Fmg-ZP-yqa"/>
+                                        <menuItem title="Bring All to Front" id="Jw5-6C-shH">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="arrangeInFront:" target="Ady-hI-5gd" id="H6Z-bi-g30"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="Help" id="wpr-3q-Mcd">
                                 <modifierMask key="keyEquivalentModifierMask"/>

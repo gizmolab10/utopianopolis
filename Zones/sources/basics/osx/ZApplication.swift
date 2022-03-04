@@ -14,6 +14,8 @@ var gApplication: ZApplication?
 class ZApplication : NSApplication {
 
 	override func sendEvent(_ event: NSEvent) {
+		gApplication = self
+
 		super.sendEvent(event)
 
 		let t  = event.type.rawValue

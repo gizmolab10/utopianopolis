@@ -23,6 +23,7 @@ class ZSearchResultsController: ZGenericTableController {
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
 	func         zoneAt(_ row : Int) -> Zone? { return zoneFor(zRecordAt(row)) }
+	func              clear()                 { gExitSearchMode(force: false) }
 
 	func applyFilter() {
 		filteredResults = ZRecordsDictionary()
@@ -237,12 +238,6 @@ class ZSearchResultsController: ZGenericTableController {
 			genericTableView?.becomeFirstResponder()
 		}
 	}
-
-    func clear() {
-        if  gIsSearchMode {
-			gSearching.exitSearchMode()
-        }
-    }
 
     func reset() {
         if  gSearchResultsVisible || filteredResults.count == 0 {

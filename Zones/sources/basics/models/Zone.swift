@@ -165,12 +165,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			case .mineID:      maybe = gSearchScopeOption.contains(.fMine)
 		}
 
-		if !maybe {
-			if  let name = root?.recordName {
+		if  let name = root?.recordName {
+			if  !maybe, gSearchScopeOption.contains(.fTrash) {
 				return name == kTrashName || name == kDestroyName
-			} else if gSearchScopeOption.contains(.fOrphan) {
-				return true
 			}
+		} else {
+			return gSearchScopeOption.contains(.fOrphan)
 		}
 
 		return maybe
@@ -1496,15 +1496,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
-//		ZFiles.presentOpenPanel() { (iAny) in
-//			if  let url = iAny as? URL {
-//				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
-//			} else if let panel = iAny as? NSPanel {
-//				let  suffix = type.rawValue
-//				panel.title = "Import as \(suffix)"
-//				panel.setAllowedFileType(suffix)
-//			}
-//		}
+		ZFiles.presentOpenPanel() { (iAny) in
+			if  let url = iAny as? URL {
+				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
+			} else if let panel = iAny as? NSOpenPanel {
+				let  suffix = type.rawValue
+				panel.title = "Import as \(suffix)"
+				panel.allowedFileTypes = [suffix]
+			}
+		}
 	}
 
 	func importSeriously(from data: Data) -> Zone? {

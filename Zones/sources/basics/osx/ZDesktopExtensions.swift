@@ -841,7 +841,7 @@ extension ZTextEditor {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()
         case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? true { gSelecting.rootMostMoveable?.addNext() } // stupid OSX issues tab twice (to create the new idea, then once MORE
-		case #selector(cancelOperation(_:)): if gWaitingForSearchEntry || gSearchResultsVisible { gSearching.exitSearchMode() }
+		case #selector(cancelOperation(_:)): if gWaitingForSearchEntry || gSearchResultsVisible { gExitSearchMode() }
         default:                             super.doCommand(by: selector)
         }
     }

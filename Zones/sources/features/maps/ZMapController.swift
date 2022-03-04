@@ -282,9 +282,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			return true
 		}
 
-        if  gIsSearchMode {
-            gSearching.exitSearchMode()
-        }
+		gExitSearchMode(force: false)
 
 		if  gIsDraggableMode,
 			let gesture  = iGesture as? ZPanGestureRecognizer {
@@ -309,9 +307,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			return
 		}
 
-        if  gIsSearchMode {
-            gSearching.exitSearchMode()
-        }
+		gExitSearchMode(force: false)
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
 		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer {
