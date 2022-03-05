@@ -184,8 +184,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			note.updatedRangesFrom(note.noteTrait?.noteText)
 
 			if  let r = range {
-				FOREGROUND {
-					self.selectAndScrollTo(r.offsetBy(delta))
+				FOREGROUND { [self] in
+					selectAndScrollTo(r.offsetBy(delta))
 				}
 			}
 		}
@@ -675,9 +675,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			case .eLock:          return false
 			case .eExit:  exit(); return false
 			case .eDelete:
-				FOREGROUND {                          // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
+				FOREGROUND { [self] in                    // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 					gCurrentEssay?.setupChildren()
-					self.updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
+					updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 				}
 			}
 
@@ -700,8 +700,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
 				save()
 
-				gMapEditor.handleArrow(arrow, flags: flags) {
-					self.resetTextAndGrabs()
+				gMapEditor.handleArrow(arrow, flags: flags) { [self] in
+					resetTextAndGrabs()
 				}
 			}
 		} else if flags.isShift {
@@ -864,15 +864,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			gNeedsRecount = true
 			let    parent = zone.parentZone                  // get the parent before we swap
-			let     reset = parent == self.firstNote?.zone   // check if current esssay should change
+			let     reset = parent == firstNote?.zone   // check if current esssay should change
 
 			gDisablePush {
-				zone.swapWithParent {
+				zone.swapWithParent { [self] in
 					if  reset {
 						gCurrentEssay = ZEssay(zone)
 					}
 
-					self.resetTextAndGrabs(grab: parent)
+					resetTextAndGrabs(grab: parent)
 				}
 			}
 		}
@@ -1332,26 +1332,26 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 						let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
-						FOREGROUND {
+						FOREGROUND { [self] in
 							if  let  note = target.noteMaybe, gCurrentEssay?.children.contains(note) ?? false {
 								let range = note.noteTextRange	    // text range of target essay
 								let start = NSRange(location: range.location, length: 1)
 
-								self.setSelectedRange(range)
+								setSelectedRange(range)
 
-								if  let    r = self.rectForRange(start) {
-									let rect = self.convert(r, to: self).offsetBy(dx: .zero, dy: -150.0)
+								if  let    r = rectForRange(start) {
+									let rect = convert(r, to: self).offsetBy(dx: .zero, dy: -150.0)
 
 									// highlight text of note, and scroll it to visible
 
-									self.scroll(rect.origin)
+									scroll(rect.origin)
 								}
 							} else {
 								gCreateCombinedEssay = type == .hEssay
 
 								target .asssureIsVisible()		        // for later, when user exits essay mode
 								common?.asssureIsVisible()
-								self.resetCurrentEssay(target.note)     // change current note to that of target
+								resetCurrentEssay(target.note)     // change current note to that of target
 								gSignal([.spSmallMap, .spCrumbs])
 							}
 						}
@@ -1434,7 +1434,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
 				if  ancestor != gCurrentEssayZone, ancestor.hasNote,
 					let essay = ancestor.note {
-					let delta = self.resetCurrentEssay(essay)
+					let delta = resetCurrentEssay(essay)
 
 					if  let zone = note?.zone {
 						for within in essay.children {
@@ -1443,7 +1443,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 								let indent = within.indentCount
 								let select = range.offsetBy(offset + delta + indent - prior + 1)
 
-								self.selectAndScrollTo(select)
+								selectAndScrollTo(select)
 							}
 						}
 					}
@@ -1457,10 +1457,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let  offset = n.noteOffset
 			let  indent = n.indentCount
 			let  adjust = indent * (n.isNote ? 1 : 2) + ((indent < 3) ? 0 : indent - 2)
-			let   delta = self.resetCurrentEssay(n)
+			let   delta = resetCurrentEssay(n)
 			let  select = range.offsetBy(delta - offset - adjust + 1)
 
-			self.selectAndScrollTo(select)
+			selectAndScrollTo(select)
 		}
 
 		gSignal([.spCrumbs])

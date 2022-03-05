@@ -129,11 +129,11 @@ class ZDragging: NSObject {
 	func dropOnto(_ zone: Zone, at dropAt: Int? = nil, _ iGesture: ZGestureRecognizer?) {
 		if  let gesture = iGesture as? ZPanGestureRecognizer,
 			let   flags = gesture.modifiers {
-			zone.addZones(draggedZones, at: dropAt, undoManager: gMapEditor.undoManager, flags) {
+			zone.addZones(draggedZones, at: dropAt, undoManager: gMapEditor.undoManager, flags) { [self] in
 				gSelecting.updateBrowsingLevel()
 				gSelecting.updateCousinList()
-				self.cleanupAfterDrag()
-				self.restartGestureRecognitiono()
+				cleanupAfterDrag()
+				restartGestureRecognitiono()
 				gRelayoutMaps()
 			}
 		}

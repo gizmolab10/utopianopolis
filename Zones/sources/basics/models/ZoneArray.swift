@@ -106,9 +106,9 @@ extension ZoneArray {
 	}
 
 	func updateOrdering(start: Double, end: Double) {
-		let increment = (end - start) / Double(self.count + 2)
+		let increment = (end - start) / Double(count + 2)
 
-		for (index, child) in self.enumerated() {
+		for (index, child) in enumerated() {
 			let newOrder = start + (increment * Double(index + 1))
 			let    order = child.order
 
@@ -432,7 +432,7 @@ extension ZoneArray {
 
 		gSelecting.ungrabAll()
 
-		let zones = gListsGrowDown ? self : self.reversed()
+		let zones = gListsGrowDown ? self : reversed()
 
 		for     zone in zones {
 			if  zone != into {
@@ -475,7 +475,7 @@ extension ZoneArray {
 		var originals = StringsArray()
 		var found = false
 
-		for (index, zone) in self.enumerated() {
+		for (index, zone) in enumerated() {
 			if  let name = zone.zoneName {
 				if !originals.contains(name) {
 					originals  .append(name)
@@ -645,14 +645,14 @@ extension ZoneArray {
 	}
 
 	func recursivelyRevealSiblings(untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {
-		if  self.contains(iAncestor) {
+		if  contains(iAncestor) {
 			onCompletion?(iAncestor)
 
 			return
 		}
 
 		traverseAllAncestors { iParent in
-			if  !self.contains(iParent) {
+			if  !contains(iParent) {
 				iParent.expand()
 			}
 		}

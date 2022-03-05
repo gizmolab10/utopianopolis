@@ -174,11 +174,11 @@ class ZCoreDataStack: NSObject {
 
 	func saveContext() {
 		if  gCanSave, gIsReadyToShowUI {
-			self.deferUntilAvailable(for: .oSave) {
-				FOREBACKGROUND {
-					let context = self.context
+			deferUntilAvailable(for: .oSave) {
+				FOREBACKGROUND { [self] in
+					let context = context
 					if  context.hasChanges {
-						self.checkCrossStore()
+						checkCrossStore()
 
 						do {
 							try context.save()
@@ -187,7 +187,7 @@ class ZCoreDataStack: NSObject {
 						}
 					}
 
-					self.makeAvailable()
+					makeAvailable()
 				}
 			}
 		}
@@ -201,8 +201,8 @@ class ZCoreDataStack: NSObject {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) {
-				FOREBACKGROUND {
-					self.load(type: kManifestType, into: dbID, onlyOne: false)
+				FOREBACKGROUND { [self] in
+					load(type: kManifestType, into: dbID, onlyOne: false)
 
 					gProgressTimesReady = true
 					var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
@@ -212,10 +212,10 @@ class ZCoreDataStack: NSObject {
 					}
 
 					for name in names {
-						self.loadZone(recordName: name, into: dbID)
+						loadZone(recordName: name, into: dbID)
 					}
 
-					self.load(type: kFileType,     into: dbID, onlyOne: false)
+					load(type: kFileType,     into: dbID, onlyOne: false)
 
 					FOREGROUND {
 						gRemoteStorage.updateManifestCount(for: dbID)
@@ -223,7 +223,7 @@ class ZCoreDataStack: NSObject {
 						gRemoteStorage.recount()
 						gHereMaybe?.grab()
 						gSignal([.spRelayout, .spDataDetails, .spCrumbs])
-						self.makeAvailable()
+						makeAvailable()
 						onCompletion?(0)
 					}
 				}
@@ -262,8 +262,8 @@ class ZCoreDataStack: NSObject {
 		invokeUsingDatabaseID(dbID) {
 			let ids = objects.map { $0.objectID }
 			for id in ids {
-				FOREGROUND(forced: true) {
-					let      object = self.context.object(with: id)
+				FOREGROUND(forced: true) { [self] in
+					let      object = context.object(with: id)
 					if  let zRecord = object as? ZRecord {
 						zRecord.convertFromCoreData(visited: [])
 						zRecord.register()
@@ -399,8 +399,8 @@ class ZCoreDataStack: NSObject {
 			let ids = objects.map { $0.objectID }
 
 			for id in ids {
-				FOREGROUND(forced: true) {
-					self.registerObject(id, recordName: recordName, dbID: dbID)
+				FOREGROUND(forced: true) { [self] in
+					registerObject(id, recordName: recordName, dbID: dbID)
 				}
 			}
 		}
@@ -425,7 +425,7 @@ class ZCoreDataStack: NSObject {
 			for searchable in searchables {
 				for entity in entities {
 					if  let predicate = searchPredicate(entityName: entity, string: searchable) {
-						self.search(within: dbID, entityName: entity, using: predicate.and(dbPredicate)) { matches in
+						search(within: dbID, entityName: entity, using: predicate.and(dbPredicate)) { matches in
 							if  matches.count > 0 {
 								result[searchable] = matches.appending(result[searchable])
 							}
@@ -449,8 +449,8 @@ class ZCoreDataStack: NSObject {
 			request.predicate = predicate.and(dbidPredicate(from: dbID))
 
 			deferUntilAvailable(for: .oSearch) {
-				FOREBACKGROUND {
-					self.persistentContainer.performBackgroundTask { context in
+				FOREBACKGROUND { [self] in
+					persistentContainer.performBackgroundTask { context in
 						var objectIDs = ZObjectIDsArray()
 						do {
 							let items = try context.fetch(request)
@@ -465,10 +465,10 @@ class ZCoreDataStack: NSObject {
 							print("search fetch failed")
 						}
 
-						self.makeAvailable() // before calling closure
+						makeAvailable() // before calling closure
 
 						FOREGROUND {
-							onCompletion?(ZRecordsArray.fromObjectIDs(objectIDs, in: self.context))
+							onCompletion?(ZRecordsArray.fromObjectIDs(objectIDs, in: context))
 						}
 					}
 				}
@@ -652,7 +652,7 @@ class ZCoreDataStack: NSObject {
 
 	func checkCrossStore() {
 		if  gPrintModes.contains(.dCross) {
-			for updated in self.context.updatedObjects {
+			for updated in context.updatedObjects {
 				if  let  zone  = updated as? Zone,
 					let zdbid  = zone.dbid,
 					let pdbid  = zone.parentZone?.dbid {
@@ -707,9 +707,9 @@ class ZCoreDataStack: NSObject {
 			printDebug(.dExist, "\(dbID.identifier) = \(count)\(entityName)")
 
 			deferUntilAvailable(for: .oExistence) {
-				FOREBACKGROUND {
+				FOREBACKGROUND { [self] in
 					do {
-						let items = try self.context.fetch(request)
+						let items = try context.fetch(request)
 
 						FOREGROUND {
 							for item in items {
@@ -720,8 +720,8 @@ class ZCoreDataStack: NSObject {
 							}
 
 							array.fireClosures()
-							self.setClosures([], for: entityName, dbID: dbID)
-							self.makeAvailable()
+							setClosures([], for: entityName, dbID: dbID)
+							makeAvailable()
 							onCompletion?(0)
 						}
 					} catch {
@@ -748,7 +748,7 @@ class ZCoreDataStack: NSObject {
 			} else {
 				let entityName = entityNames[index]
 
-				self.processClosures(for: entityName, dbID: dbID) { value in
+				processClosures(for: entityName, dbID: dbID) { value in
 					processForEntityName(at: index - 1)                // recursive while loop
 				}
 			}
@@ -778,9 +778,9 @@ class ZCoreDataStack: NSObject {
 				let extras = zRecords.filter() { $0 != zRecord }
 
 				if  count > extras.count {
-					FOREGROUND {
+					FOREGROUND { [self] in
 						for extra in extras {
-							self.context.delete(extra)
+							context.delete(extra)
 						}
 					}
 				}

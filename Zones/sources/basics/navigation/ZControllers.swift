@@ -150,7 +150,7 @@ class ZControllers: NSObject {
 	}
 
 	func signalFor(_ object: Any? = nil, multiple: ZSignalKindArray, onCompletion: Closure? = nil) {
-		FOREGROUND {
+		FOREGROUND { [self] in
 			if  multiple.contains(.spRelayout) {
 				gWidgets.clearAll()
 				gMapView?.updateTracking()
@@ -158,7 +158,7 @@ class ZControllers: NSObject {
 			}
 
 			for regarding in multiple {
-				for (cid, signalObject) in self.signalObjectsByControllerID {
+				for (cid, signalObject) in signalObjectsByControllerID {
                     let closure = {
                         signalObject.closure(object, regarding)
                     }

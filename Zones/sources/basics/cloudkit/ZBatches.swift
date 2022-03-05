@@ -153,21 +153,21 @@ class ZBatches: ZOnboarding {
         // 3. no more current batches,                            transfer deferred and recurse
         // 4. no more batches, nothing to process                              turn off spinner
 
-        FOREGROUND {
-            if  let         batch = self.currentBatches.first {
-                let    operations = batch.allowedOperations
-				self.currentBatch = batch
+        FOREGROUND { [self] in
+            if  let      batch = currentBatches.first {
+                let operations = batch.allowedOperations
+				currentBatch   = batch
 
-                self.setupAndRun(operations) {                  // 1.
-                    batch.fireCompletions()                     // 2.
-                    self.maybeRemoveFirst()
-                    self.processNextBatch()                     // recurse
+                setupAndRun(operations) {                  // 1.
+                    batch.fireCompletions()                // 2.
+                    maybeRemoveFirst()
+                    processNextBatch()                     // recurse
                 }
-            } else if self.deferredBatches.count > 0 {
-                self.transferDeferred()                         // 3.
-                self.processNextBatch()                         // recurse
+            } else if deferredBatches.count > 0 {
+                transferDeferred()                         // 3.
+                processNextBatch()                         // recurse
 			} else {
-				gSignal([.sData, .spStartupStatus])             // 4.
+				gSignal([.sData, .spStartupStatus])        // 4.
 			}
         }
     }
@@ -186,7 +186,7 @@ class ZBatches: ZOnboarding {
 //
 //				if  gStartupLevel != .firstTime {
 //					iTimer.invalidate()
-//					self.batch(iID, iCompletion)
+//					batch(iID, iCompletion)
 //				}
 //			}
 		} else {
@@ -263,7 +263,7 @@ class ZBatches: ZOnboarding {
 				let  databaseIDs: [ZDatabaseID] = operationID.forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
 				let                      isNoop = !gCloudStatusIsActive && onlyCurrentID && isMine && operationID != .oFavorites
                 var invokeForIndex: IntClosure?                // declare closure first, so compiler will let it recurse
-                invokeForIndex                  = { index in
+				invokeForIndex                  = { [self] index in
 
                     // //////////////////////////////
                     // always called in foreground //
@@ -272,10 +272,10 @@ class ZBatches: ZOnboarding {
                     if  operationID == .oFinishing || isNoop || index >= databaseIDs.count {
                         onCompletion(true)
                     } else {
-                        self.currentDatabaseID = databaseIDs[index]      // if hung, it happened in currentDatabaseID
+                        currentDatabaseID = databaseIDs[index]      // if hung, it happened in currentDatabaseID
 
 						do {
-							try self.invokeOperation(for: operationID) { (iResult: Any?) in
+							try invokeOperation(for: operationID) { (iResult: Any?) in
 
 								let expectedOp = iResult as? ZOperationID
 								let      error = iResult as? Error
@@ -285,7 +285,7 @@ class ZBatches: ZOnboarding {
 
 								if     isError || isOp || result == 0 {
 									if isError || (isOp && (expectedOp != operationID)) {
-										self.printOp("\(error!)")
+										printOp("\(error!)")
 									}
 
 									invokeForIndex?(index + 1)         // recurse
@@ -317,8 +317,9 @@ class ZBatches: ZOnboarding {
 		switch identifier {
 			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
 			case .oRecents:                                                                          gRecents.setup(cloudCallback)
-			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               cloudCallback?(0)
 			case .oSavingLocalData:  gSaveContext();                                                                cloudCallback?(0)
+			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               cloudCallback?(0)
+			case .oRead:             try gFiles.readFile(into: currentDatabaseID!,                    onCompletion: cloudCallback)
 			case .oLoadingIdeas:     try load(into: currentDatabaseID!,                               onCompletion: cloudCallback)
 			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
 		}

@@ -155,9 +155,9 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func validateCurrentReceipt() {
-		gReceipt.remoteValidateForID(zToken?.transactionID) { token in
+		gReceipt.remoteValidateForID(zToken?.transactionID) { [self] token in
 			if  let  t = token {
-				self.zToken = t
+				zToken = t
 
 				gSignal([.spSubscription])
 			}

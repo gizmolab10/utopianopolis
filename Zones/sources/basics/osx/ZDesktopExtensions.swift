@@ -144,7 +144,7 @@ extension String {
     func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
 
     func  rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
-        return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font])
+		return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font])
     }
     
     var cgPoint: CGPoint {
@@ -217,7 +217,7 @@ extension NSURL {
 //                if  let url = iAny as? NSURL {
 //                    url.open()
 //                } else if let panel = iAny as? NSPanel {
-//                    if    let  name = self.lastPathComponent {
+//                    if    let  name = lastPathComponent {
 //                        panel.title = "Open \(name)"
 //                    }
 //                    
@@ -339,8 +339,8 @@ extension NSBezierPath {
         let   path = CGMutablePath()
         var points = [CGPoint](repeating: .zero, count: 3)
 
-        for i in 0 ..< self.elementCount {
-            let type = self.element(at: i, associatedPoints: &points)
+        for i in 0 ..< elementCount {
+            let type = element(at: i, associatedPoints: &points)
 
             switch type {
             case .closePath: path.closeSubpath()
@@ -772,8 +772,8 @@ extension ZoneTextWidget {
     }
 
     override func textDidChange(_ iNote: Notification) {
-        gTextEditor.prepareUndoForTextChange(undoManager) {
-            self.textDidChange(iNote)
+		gTextEditor.prepareUndoForTextChange(undoManager) { [self] in
+            textDidChange(iNote)
         }
 
 		updateSize()
@@ -1127,10 +1127,10 @@ public extension ZImage {
 	}
 
     func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
-        var imageBounds = NSZeroRect ; imageBounds.size = self.size
+        var imageBounds = NSZeroRect ; imageBounds.size = size
         let pathBounds = NSBezierPath(rect: imageBounds)
         var transform = NSAffineTransform()
-		let rotatedBounds:CGRect = NSMakeRect(NSZeroPoint.x, NSZeroPoint.y , self.size.width, self.size.height )
+		let rotatedBounds:CGRect = NSMakeRect(NSZeroPoint.x, NSZeroPoint.y , size.width, size.height )
 		let rotatedImage = NSImage(size: rotatedBounds.size)
 
 		//Center the image within the rotated bounds

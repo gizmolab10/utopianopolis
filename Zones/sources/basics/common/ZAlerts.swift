@@ -41,11 +41,11 @@ class ZAlerts : NSObject {
     }
 
     func alertError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
-        detectError(iError, message) { iHasError in
+		detectError(iError, message) { [self] iHasError in
             if !iHasError {
                 closure?(false) // false means no error
             } else {
-                self.report(error: iError) { (choice: Any?) in
+                report(error: iError) { (choice: Any?) in
                     closure?(choice as? Bool ?? true) // true means user rejected alert
                 }
             }
@@ -83,19 +83,19 @@ class ZAlerts : NSObject {
     func alertNoInternet(_ onCompletion: @escaping Closure) {
         let message = "In System Preferences, please enable network access"
 
-        alert("To gain full use of this app,", message, "Click here to begin") { alert, status in
+		alert("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
             switch status {
             case .sShow:
 				alert?.showModal { choice in
                     switch choice {
                     case .sYes:
-                        self.openSystemPreferences()
+                        openSystemPreferences()
                         onCompletion()
                     default: break
                     }
                 }
             default:
-                self.openSystemPreferences()
+                openSystemPreferences()
                 onCompletion()
             }
         }
@@ -104,19 +104,19 @@ class ZAlerts : NSObject {
     func alertSystemPreferences(_ onCompletion: @escaping Closure) {
         let message = "In System Preferences, please \n  1. click on iCloud,\n  2. sign in,\n  3. turn on iCloud drive"
 
-        alert("To gain full use of this app,", message, "Click here to begin") { alert, status in
+		alert("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
                 switch status {
                 case .sShow:
-					alert?.showModal { choice in
+						alert?.showModal { choice in
                         switch choice {
                         case .sYes:
-                            self.openSystemPreferences()
+                            openSystemPreferences()
                             onCompletion()
                         default: break
                         }
                     }
                 default:
-                    self.openSystemPreferences()
+                    openSystemPreferences()
                     onCompletion()
                 }
         }

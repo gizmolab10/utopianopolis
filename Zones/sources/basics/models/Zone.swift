@@ -375,7 +375,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addBookmark() {
 		if  !isARoot {
 			if  gHere == self {
-				gHere  = self.parentZone ?? gHere
+				gHere  = parentZone ?? gHere
 				
 				revealParentAndSiblings()
 			}
@@ -882,15 +882,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  let name = child.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: c)
-					FOREGROUND {
-						self.addChildNoDuplicate(child, updateCoreData: false) // not update core data, it already exists
+					FOREGROUND { [self] in
+						addChildNoDuplicate(child, updateCoreData: false) // not update core data, it already exists
 						child.register() // need to wait until after child has a parent so bookmarks will be registered properly
 					}
 				}
 			}
 
-			FOREGROUND {
-				self.respectOrder()
+			FOREGROUND { [self] in
+				respectOrder()
 			}
 		}
 
@@ -1160,8 +1160,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			kScratchZone.children = []
 
 			kScratchZone.acquireZones(children)
-			self.moveZone(into: grandP, at: parentI, orphan: true) {
-				self.acquireZones(parent.children)
+			moveZone(into: grandP, at: parentI, orphan: true) { [self] in
+				acquireZones(parent.children)
 				parent.moveZone(into: self, at: grabbedI, orphan: true) {
 					parent.acquireZones(kScratchZone.children)
 					parent.needCount()
@@ -1222,13 +1222,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			let parent = parentZone
 			if  self  == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
-				let recurse: Closure = {
+				let recurse: Closure = { [self] in
 
 					// //////////
 					// RECURSE //
 					// //////////
 
-					self.deleteSelf(permanently: permanently, onCompletion: onCompletion)
+					deleteSelf(permanently: permanently, onCompletion: onCompletion)
 				}
 
 				if  let p = parent, p != self {
@@ -1249,7 +1249,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				}
 			} else {
-				let deleteBookmarksClosure: Closure = {
+				let deleteBookmarksClosure: Closure = { [self] in
 					if  let            p = parent, p != self {
 						p.fetchableCount = p.count       // delete alters the count
 					}
@@ -1258,7 +1258,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// RECURSE //
 					// //////////
 
-					self.bookmarksTargetingSelf.deleteZones(permanently: permanently) {
+					bookmarksTargetingSelf.deleteZones(permanently: permanently) {
 						onCompletion?()
 					}
 				}
@@ -1325,8 +1325,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gTextEditor.stopCurrentEdit()
 
 			gDeferRedraw {
-				parent.addIdea(at: index, with: childName) { iChild in
-					self.moveZone(to: iChild) {
+				parent.addIdea(at: index, with: childName) { [self] iChild in
+					moveZone(to: iChild) {
 						gRelayoutMaps()
 
 						gDeferringRedraw = false
@@ -1343,7 +1343,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let  index = siblingIndex
 
 			UNDO(self) { iUndoSelf in
-				self.moveZone(into: parent, at: index, orphan: orphan) { onCompletion?() }
+				iUndoSelf.moveZone(into: parent, at: index, orphan: orphan) { onCompletion?() }
 			}
 		}
 
@@ -1496,9 +1496,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
-		ZFiles.presentOpenPanel() { (iAny) in
+		ZFiles.presentOpenPanel() { [self] (iAny) in
 			if  let url = iAny as? URL {
-				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
+				importFile(from: url.path, type: type, onCompletion: onCompletion)
 			} else if let panel = iAny as? NSOpenPanel {
 				let  suffix = type.rawValue
 				panel.title = "Import as \(suffix)"
@@ -1655,10 +1655,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func editAndSelect(range: NSRange? = nil) {
 		edit()
-		FOREGROUND {
-			let newRange = range ?? NSRange(location: 0, length: self.zoneName?.length ?? 0)
+		FOREGROUND { [self] in
+			let newRange = range ?? NSRange(location: 0, length: zoneName?.length ?? 0)
 
-			self.widget?.textWidget?.selectCharacter(in: newRange)
+			widget?.textWidget?.selectCharacter(in: newRange)
 		}
 	}
 
@@ -2024,8 +2024,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let       targetDBID = targetZRecord.databaseID
 			let           target = bookmarkTarget
 
-			let complete : SignalClosure = { (iObject, kind) in
-				self.showTopLevelFunctions()
+			let complete : SignalClosure = { [self] (iObject, kind) in
+				showTopLevelFunctions()
 				atArrival(iObject, kind)
 			}
 
@@ -2088,8 +2088,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					let    here = gHere
 
 					UNDO(self) { iUndoSelf in
-						self.UNDO(self) { iRedoSelf in
-							self.focusOnBookmarkTarget(atArrival: complete)
+						iUndoSelf.UNDO(self) { iRedoSelf in
+							iRedoSelf.focusOnBookmarkTarget(atArrival: complete)
 						}
 
 						gHere = here
@@ -3019,11 +3019,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							iChild.zoneName = newName
 						}
 					} else {
-						addIdea(at: gListsGrowDown ? nil : 0, with: newName) { iChild in
+						addIdea(at: gListsGrowDown ? nil : 0, with: newName) { [self] iChild in
 							gDeferringRedraw = false
 
 							if  let child = iChild {
-								self.expand()
+								expand()
 								gRelayoutMaps(for: self) {
 									child.editAndSelect()
 								}
@@ -3047,7 +3047,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parent.extractChildren(from: self)
 
 			gDeferRedraw {
-				self.moveZone(to: gTrash)
+				moveZone(to: gTrash)
 
 				gDeferringRedraw = false
 
@@ -3116,9 +3116,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			let  goal = iLevel ?? level + (show ? 1 : -1)
 			let grabs = gSelecting.currentMapGrabs
-			let apply = {
+			let apply = { [self] in
 				var grabHere = false
-				self.traverseAllProgeny { iChild in
+				traverseAllProgeny { iChild in
 					if           !iChild.isBookmark {
 						if        iChild.level  < goal &&  show {
 							iChild.expand()
@@ -3183,9 +3183,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			func add() {
 				if  to < count {
-					self.children.insert(child, at: to)
+					children.insert(child, at: to)
 				} else {
-					self.children.append(child)
+					children.append(child)
 				}
 			}
 
@@ -3566,13 +3566,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// add to map
 
 	func addToParent(_ onCompletion: ZoneMaybeClosure? = nil) {
-		FOREGROUND {
-			self.colorMaybe   = nil               // recompute color
-			let parent        = self.resolveParent
+		FOREGROUND { [self] in
+			colorMaybe        = nil               // recompute color
+			let parent        = resolveParent
 			let done: Closure = {
 				parent?.respectOrder()          // assume newly fetched zone knows its order
 
-				self.columnarReport("   ->", self.unwrappedName)
+				columnarReport("   ->", unwrappedName)
 				onCompletion?(parent)
 			}
 
@@ -3710,7 +3710,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
 		if  let name = dict[.name] as? String,
-			responds(to: #selector(setter: self.zoneName)) {
+			responds(to: #selector(setter: zoneName)) {
 			zoneName = name
 		}
 

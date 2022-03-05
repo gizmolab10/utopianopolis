@@ -28,7 +28,6 @@ var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
 var          gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
 var           gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
 var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
-var           gReadFiles : Bool { return  gDebugModes.contains(.dReadFiles) }
 var             gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {
@@ -57,22 +56,20 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 
 	static let dNone                = ZDebugMode(rawValue: 1 <<  0)
 	static let dNewUser             = ZDebugMode(rawValue: 1 <<  1) // exercise new-user, first-time arrival code
-	static let dReadFiles           = ZDebugMode(rawValue: 1 <<  2) // read files
-	static let dDebugInfo           = ZDebugMode(rawValue: 1 <<  3) // inject debugging information into UI
-	static let dDebugDraw           = ZDebugMode(rawValue: 1 <<  4) // colorize rects
-	static let dWriteFiles          = ZDebugMode(rawValue: 1 <<  5) // write files
-	static let dDebugAngles         = ZDebugMode(rawValue: 1 <<  6) // experiment with circular angle algorithm
-	static let dDebugAccess         = ZDebugMode(rawValue: 1 <<  7) // test write access by me not having full
-	static let dShowDestroy         = ZDebugMode(rawValue: 1 <<  8) // add destroy bookmark to favorites
-	static let dShowDuplicates      = ZDebugMode(rawValue: 1 <<  9) // report duplicates
-	static let dIgnoreExemption     = ZDebugMode(rawValue: 1 << 10) // ignore user exemption
-	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 11) // super short timeout
+	static let dDebugInfo           = ZDebugMode(rawValue: 1 <<  2) // inject debugging information into UI
+	static let dDebugDraw           = ZDebugMode(rawValue: 1 <<  3) // colorize rects
+	static let dWriteFiles          = ZDebugMode(rawValue: 1 <<  4) // write files
+	static let dDebugAngles         = ZDebugMode(rawValue: 1 <<  5) // experiment with circular angle algorithm
+	static let dDebugAccess         = ZDebugMode(rawValue: 1 <<  6) // test write access by me not having full
+	static let dShowDestroy         = ZDebugMode(rawValue: 1 <<  7) // add destroy bookmark to favorites
+	static let dShowDuplicates      = ZDebugMode(rawValue: 1 <<  8) // report duplicates
+	static let dIgnoreExemption     = ZDebugMode(rawValue: 1 <<  9) // ignore user exemption
+	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 10) // super short timeout
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 
 	var descriptions: [String] {
 		return [(.dNewUser,             "arrival"),
-				(.dReadFiles,           "read files"),
 				(.dDebugInfo,           "show debug info"),
 				(.dDebugDraw,           "debug draw"),
 				(.dWriteFiles,          "write files"),

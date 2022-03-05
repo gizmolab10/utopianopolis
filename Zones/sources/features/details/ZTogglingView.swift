@@ -107,8 +107,8 @@ class ZTogglingView: ZView {
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
-        }) {
-            gDetailsController?.register(id: self.identity, for: self)
+		}) { [self] in
+            gDetailsController?.register(id: identity, for: self)
         }
 
 		toggleViewUpdate()
@@ -188,7 +188,7 @@ class ZTogglingView: ZView {
 				hideableView?.snp.makeConstraints { make in
 					make.bottom.equalTo(self)
 
-					if  let b = self.bannerView {
+					if  let b = bannerView {
 						make.top.equalTo(b.snp.bottom)
 						make.left.right.equalTo(b)
 					}

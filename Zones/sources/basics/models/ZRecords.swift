@@ -49,7 +49,7 @@ enum ZDatabaseID: String {
 
 	var isSmallMapDB: Bool { return [.favoritesID, .recentsID].contains(self) }
 	var identifier: String { return rawValue.substring(toExclusive: 1) }
-	var index:        Int? { return self.databaseIndex?.rawValue }
+	var index:        Int? { return databaseIndex?.rawValue }
 
 	var zRecords: ZRecords? {
 		switch self {
@@ -428,12 +428,12 @@ class ZRecords: NSObject {
 	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
 		let names = iName.components(separatedBy: kSpace).filter { $0 != kEmpty }
 
-		gCoreDataStack.searchZRecordsForNames(names, within: databaseID) { (dict: StringZRecordsDictionary) in
+		gCoreDataStack.searchZRecordsForNames(names, within: databaseID) { [self] (dict: StringZRecordsDictionary) in
 			for (name, zRecords) in dict {
 				let                    records = onEach(zRecords)
-				self.zRecordsArrayLookup[name] = records
+				zRecordsArrayLookup[name] = records
 
-				self.foundInSearch.append(contentsOf: records)
+				foundInSearch.append(contentsOf: records)
 			}
 
 			let _ = onEach(nil) // indicates done
@@ -595,8 +595,8 @@ class ZRecords: NSObject {
 	}
 
 	func resolve(_ onCompletion: IntClosure? = nil) {
-		FOREGROUND {
-			let (fixed, found) = self.updateAllInstanceProperties(0, 0)
+		FOREGROUND { [self] in
+			let (fixed, found) = updateAllInstanceProperties(0, 0)
 			printDebug(.dFix, "fixed: \(fixed) found: \(found)")
 			onCompletion?(0)
 		}
@@ -635,17 +635,17 @@ class ZRecords: NSObject {
 	}
 
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
-		FOREGROUND {
-			self.applyToAllZones { zone in
+		FOREGROUND { [self] in
+			applyToAllZones { zone in
 				if  zone.dbid == nil {
-					zone.dbid  = self.databaseID.identifier
+					zone.dbid  = databaseID.identifier
 				}
 
 				if !zone.isARoot {
 					zone.adopt(recursively: true)
 
 					if  zone.root == nil, !zone.isBookmark {
-						printDebug(.dAdopt, "lost child: (\(self.databaseID.identifier)) \(zone)")
+						printDebug(.dAdopt, "lost child: (\(databaseID.identifier)) \(zone)")
 					}
 				}
 			}

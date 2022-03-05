@@ -34,7 +34,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 		let t : [ZModeButtonType] = [.tLayout, .tGrowth, .tConfine]
 		for type in t {
 			let             title = type.rawValue
-			let            button = ZButton(title: title, target: self, action: #selector(self.handleButtonPress))
+			let            button = ZButton(title: title, target: self, action: #selector(handleButtonPress))
 			button.modeButtonType = type
 			button.isBordered     = true
 

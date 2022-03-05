@@ -46,9 +46,9 @@ class ZReceipt: NSObject {
 			let productionURL = "buy.itunes.apple.com"
 
 			for baseURL in [productionURL, sandboxURL] {
-				sendReceipt(receipt, to: baseURL) { responseDict in
+				sendReceipt(receipt, to: baseURL) { [self] responseDict in
 					if  let status = responseDict["status"] as? NSNumber, status.intValue == 0 {
-						let  token = self.unravelReceiptDict(responseDict, transactionID: transactionID, receipt)
+						let  token = unravelReceiptDict(responseDict, transactionID: transactionID, receipt)
 						onCompletion?(token)
 					}
 				}

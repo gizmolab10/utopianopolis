@@ -164,7 +164,7 @@ extension ZColor {
         var b: CGFloat = 0
         var a: CGFloat = 0
         
-        self.getRed(&r, green: &g, blue: &b, alpha: &a)
+        getRed(&r, green: &g, blue: &b, alpha: &a)
         
         return (r, g, b, a)
     }
@@ -499,7 +499,7 @@ extension ZAlert {
         modalPresentationStyle = .popover
 
         gControllers.currentController?.present(self, animated: true) {
-            self.dismiss(animated: false) {
+            dismiss(animated: false) {
                 closure?(.sShown)
             }
         }

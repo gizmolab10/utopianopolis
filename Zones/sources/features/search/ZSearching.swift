@@ -89,7 +89,7 @@ class ZSearching: NSObject {
 
 		for cloud in gRemoteStorage.allClouds {
 			cloud.foundInSearch.removeAll()
-			cloud.searchLocal(for: searchString) {
+			cloud.searchLocal(for: searchString) { [self] in
 				let   dbID  = cloud.databaseID
 				var results = combined[dbID] ?? ZRecordsArray()
 
@@ -99,7 +99,7 @@ class ZSearching: NSObject {
 				gSearchResultsController?.foundRecords = combined
 
 				gSearchResultsController?.applyFilter()
-				self.setSearchStateTo(self.hasResults ? .sList : .sFind)
+				setSearchStateTo(hasResults ? .sList : .sFind)
 				gSignal([.sFound])
 			}
 		}

@@ -79,9 +79,9 @@ class ZTimers: NSObject {
 
 	func stopTimer(for timerID: ZTimerID?) {
 		if  let id = timerID {
-			FOREGROUND {
-				self.timers[id]?.invalidate()
-				self.timers[id] = nil
+			FOREGROUND { [self] in
+				timers[id]?.invalidate()
+				timers[id] = nil
 
 				if  gCurrentTimerID == id {
 					gCurrentTimerID  = nil
@@ -149,9 +149,9 @@ class ZTimers: NSObject {
 
 	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping Closure) {
 		if  let id = timerID {
-			FOREGROUND(forced: true) { // timers require a runloop
-				self.timers[id]?.invalidate() // do not leave the old one "floating around and uncontrollable"
-				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { iTimer in
+			FOREGROUND(forced: true) { [self] in // timers require a runloop
+				timers[id]?.invalidate() // do not leave the old one "floating around and uncontrollable"
+				timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { iTimer in
 					block()
 				})
 			}
@@ -168,8 +168,8 @@ class ZTimers: NSObject {
 	}
 
 	func assureCompletion(for timerID: ZTimerID, now: Bool = false, withTimeInterval interval: TimeInterval, restartTimer: Bool = false, block: @escaping ThrowsClosure) {
-		FOREGROUND { // timers must have a runloop
-			if  restartTimer || self.isInvalidTimer(for: timerID) {
+		FOREGROUND { [self] in // timers must have a runloop
+			if  restartTimer || isInvalidTimer(for: timerID) {
 				var tryCatch : Closure = {}
 				let    start = Date()
 

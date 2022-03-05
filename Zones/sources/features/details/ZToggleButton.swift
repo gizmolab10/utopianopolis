@@ -27,7 +27,7 @@ class ZToggleButton : ZButton {
 
     func setState(_ on: Bool) {
         #if os(OSX)
-        self.image = on ? onStateImage : offStateImage
+        image = on ? onStateImage : offStateImage
         #endif
     }
 

@@ -52,7 +52,7 @@ class ZStartup: NSObject {
 				gDetailsController?.removeViewFromStack(for: .vSubscribe)
 
 				gFavorites.setup { result in
-					FOREGROUND {
+					FOREGROUND { [self] in
 						gFavorites.updateAllFavorites()
 						gRefreshPersistentWorkMode()
 						gRemoteStorage.updateRootsOfAllProjeny()
@@ -69,12 +69,13 @@ class ZStartup: NSObject {
 							gSetMapWorkMode()
 						}
 
+						setupFirstTime()
 						gRecents.push()
 						gHereMaybe?.grab()
 						gSignal([.sLaunchDone])
 
-						FOREGROUND(after: 0.1) {
-							self.requestFeedback() {
+						FOREGROUND(after: 0.1) { [self] in
+							requestFeedback() {
 								gTimers.stopTimer (for: .tStartup)
 								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tHover]) // .tLicense
 								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap, .spDataDetails])
@@ -83,6 +84,17 @@ class ZStartup: NSObject {
 					}
 				}
 			}
+		}
+	}
+
+	func setupFirstTime() {
+		if  gStartupLevel == .firstTime,
+			let      here  = gEveryoneCloud?.rootZone {
+			gDatabaseID    = .everyoneID
+			gColorfulMode  = true
+			gHere          = here
+
+			gHere.expand()
 		}
 	}
 
@@ -97,10 +109,10 @@ class ZStartup: NSObject {
 				"Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)?\n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
 				"Reply in an email",
 				"Dismiss",
-				image) { status in
+				image) { [self] status in
 
 				if  status != .sNo {
-					self.sendEmailBugReport()
+					sendEmailBugReport()
 				}
 
 				onCompletion()

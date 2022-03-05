@@ -85,7 +85,7 @@ class ZGridController: UICollectionViewController {
 			let complete = {
 				gSelecting.updateAfterMove()
 				redrawMap()
-				self.gridUpdate()
+				gridUpdate()
 			}
 
 			switch gridIID {

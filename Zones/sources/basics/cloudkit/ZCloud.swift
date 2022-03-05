@@ -39,8 +39,8 @@ class ZCloud: ZRecords {
     func start(_ operation: CKDatabaseOperation) {
         currentOperation = operation
 
-        FOREBACKGROUND {     // not stall foreground processor
-            self.database?.add(operation)
+		FOREBACKGROUND { [self] in     // not stall foreground processor
+            database?.add(operation)
         }
     }
 
@@ -57,8 +57,8 @@ class ZCloud: ZRecords {
 	}
 
 	func finishCreatingManagedObjects(_ onCompletion: IntClosure?) {
-		gCoreDataStack.finishCreating(for: databaseID) { i in
-			self.adoptAllNeedingAdoption()   // in case any orphans remain
+		gCoreDataStack.finishCreating(for: databaseID) { [self] i in
+			adoptAllNeedingAdoption()   // in case any orphans remain
 			onCompletion?(i)
 		}
 	}
@@ -78,9 +78,9 @@ class ZCloud: ZRecords {
                 onCompletion?(iRecord, nil)
             }
 
-            operation.queryCompletionBlock = { (iCursor, error) in
+			operation.queryCompletionBlock = { [self] (iCursor, error) in
                 if  let cursor = iCursor {
-                    self.queryFor(recordType, with: predicate, properties: properties, cursor: cursor, onCompletion: onCompletion)  // recurse with cursor
+                    queryFor(recordType, with: predicate, properties: properties, cursor: cursor, onCompletion: onCompletion)  // recurse with cursor
                 } else {
                     gAlerts.alertError(error, predicate.description) { iHasError in     // noop if error is nil
                         onCompletion?(nil, error)
@@ -148,9 +148,9 @@ class ZCloud: ZRecords {
 	}
 
 	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
-		FOREGROUND {
-			self.manifest = ZManifest.uniqueManifest(recordName: kManifestRootName, in: self.databaseID)
-			self.manifest?.applyDeleted()
+		FOREGROUND { [self] in
+			manifest = ZManifest.uniqueManifest(recordName: kManifestRootName, in: databaseID)
+			manifest?.applyDeleted()
 			onCompletion?(op)
 		}
 	}
@@ -180,38 +180,38 @@ class ZCloud: ZRecords {
 			rootIDs.append(contentsOf: [.favoritesID, .recentsID])
 		}
 
-		createFor                = { iIndex in
+		createFor                = { [self] iIndex in
             if  iIndex >= rootIDs.count {
                 onCompletion?(op)
             } else {
                 let       rootID = rootIDs[iIndex]
                 let   recordName = rootID.rawValue
-				let       isMine = self.databaseID == .mineID
-                var         name = self.databaseID.userReadableString + kSpace + recordName
+				let       isMine = databaseID == .mineID
+                var         name = databaseID.userReadableString + kSpace + recordName
                 let  recurseNext = { createFor?(iIndex + 1) }
 
                 switch rootID {
-				case .favoritesID: if self.favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesRootName }
-				case .recentsID:   if self.recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsRootName }
-                case .rootID:      if self.rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
-                case .lostID:      if self.lostAndFoundZone != nil            { recurseNext(); return }
-                case .trashID:     if self.trashZone        != nil            { recurseNext(); return }
-                case .destroyID:   if self.destroyZone      != nil            { recurseNext(); return }
+				case .favoritesID: if favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesRootName }
+				case .recentsID:   if recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsRootName }
+                case .rootID:      if rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
+                case .lostID:      if lostAndFoundZone != nil            { recurseNext(); return }
+                case .trashID:     if trashZone        != nil            { recurseNext(); return }
+                case .destroyID:   if destroyZone      != nil            { recurseNext(); return }
                 }
 
-				let root = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: self.databaseID)
+				let root = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: databaseID)
 
 				if  rootID != .rootID {
 					root.directAccess = .eProgenyWritable
 				}
 
 				switch rootID {
-					case .favoritesID: self.favoritesZone    = root
-					case .recentsID:   self.recentsZone      = root
-					case .destroyID:   self.destroyZone      = root
-					case .trashID:     self.trashZone        = root
-					case .lostID:      self.lostAndFoundZone = root
-					case .rootID:      self.rootZone         = root
+					case .favoritesID: favoritesZone    = root
+					case .recentsID:   recentsZone      = root
+					case .destroyID:   destroyZone      = root
+					case .trashID:     trashZone        = root
+					case .lostID:      lostAndFoundZone = root
+					case .rootID:      rootZone         = root
 				}
 
 				recurseNext()

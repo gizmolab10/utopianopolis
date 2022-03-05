@@ -105,11 +105,11 @@ class ZEssay: ZNote {
 
 	func traverseAndSetupChildren() {
 		children.removeAll()
-		zone?.traverseAllProgeny { child in
+		zone?.traverseAllProgeny { [self] child in
 			if  child.hasTrait(for: .tNote),
 				let note = child.note,
-				!self.children.contains(note) {
-				self.children.append(note)	// do not use essayMaybe as it may not yet be initialized
+				!children.contains(note) {
+				children.append(note)	// do not use essayMaybe as it may not yet be initialized
 			}
 		}
 	}

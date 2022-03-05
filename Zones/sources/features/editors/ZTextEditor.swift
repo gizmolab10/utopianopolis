@@ -204,10 +204,10 @@ class ZTextPack: NSObject {
 
             if  let                w  = textWidget {
                 let         original  = originalText
-                prepareUndoForTextChange(gUndoManager) {
-                    self.originalText = w.text
+                prepareUndoForTextChange(gUndoManager) { [self] in
+                    originalText = w.text
 
-					self.captureText(original, redrawSync: true)
+					captureText(original, redrawSync: true)
                     w.updateGUI()
                 }
             }
@@ -434,10 +434,10 @@ class ZTextEditor: ZTextView {
 
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
-        let editAtOffset: FloatClosure = { iOffset in
+		let editAtOffset: FloatClosure = { [self] iOffset in
             if  let grabbed = gSelecting.firstSortedGrab {
                 gSelecting.ungrabAll()
-                self.edit(grabbed, setOffset: iOffset, immediately: revealed)
+                edit(grabbed, setOffset: iOffset, immediately: revealed)
             }
 
 			gTextEditorHandlesArrows = false       // done last
@@ -473,26 +473,26 @@ class ZTextEditor: ZTextView {
         
         if  var original = e?.packedZone {
             gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
-                gControllers.signalFor(nil, multiple: kinds) {
+				gControllers.signalFor(nil, multiple: kinds) { [self] in
 					if  let widget = original.widget, widget.isHere {       // offset has changed
-                        self.currentOffset = widget.textWidget?.offset(for: self.selectedRange, up)
+                        currentOffset = widget.textWidget?.offset(for: selectedRange, up)
                     }
                     
 					if  let first = gSelecting.firstSortedGrab, stopEdit {
                         original  = first
                         
-						if  original != self.currentlyEditedZone { // if move up (above) does nothing, ignore
-                            self.edit(original)
+						if  original != currentlyEditedZone { // if move up (above) does nothing, ignore
+                            edit(original)
                         } else {
-                            self.currentEdit = e // restore after capture sets it to nil
+                            currentEdit = e // restore after capture sets it to nil
 
                             gSelecting.ungrabAll()
                             e?.textWidget?.becomeFirstResponder()
                         }
                     } // else widgets are wrong
 
-                    FOREGROUND(after: 0.01) {
-                        self.setCursor(at: self.currentOffset)
+                    FOREGROUND(after: 0.01) { [self] in
+                        setCursor(at: currentOffset)
 						gMapView?.setNeedsDisplay()
                     }
                 }
@@ -512,7 +512,7 @@ class ZTextEditor: ZTextView {
             let   location = name.location(of: offset, using: currentFont)
 
 			printDebug(.dEdit, " AT \(location)    \(name)")
-            self.selectedRange = NSMakeRange(location, 0)
+            selectedRange = NSMakeRange(location, 0)
         }
     }
     

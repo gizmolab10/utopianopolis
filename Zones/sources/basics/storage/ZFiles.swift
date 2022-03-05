@@ -17,8 +17,8 @@ import CoreFoundation
 
 let gFiles    = ZFiles()
 let gFilesURL : URL = {
-	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-		.appendingPathComponent("Seriously", isDirectory: true)
+	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .allDomainsMask, appropriateFor: nil, create: true)
+		.appendingPathComponent("Seriously", isDirectory: true) // .replacingPathComponent("com.seriously.mac", with: "Seriously")
 }()
 
 enum ZExportType: String {
@@ -125,7 +125,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  gReadFiles,
+		if  gMigrationState != .normal,
 			databaseID != .favoritesID,
 			let  index  = databaseID.databaseIndex {
 			let   path  = filePath(for: index)
@@ -303,7 +303,7 @@ class ZFiles: NSObject {
 			if  let     data = FileManager.default.contents(atPath: path),
 				data  .count > 0,
 				let     json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
-				let     dict = self.dictFromJSON(json)
+				let     dict = dictFromJSON(json)
 
 				for key in keys {
 					if  let value = dict[key] {
@@ -351,7 +351,7 @@ class ZFiles: NSObject {
 
 			cloud.recount()
 
-			self.isReading[index] = false
+			isReading[index] = false
 		}
 
 		onCompletion?(0)

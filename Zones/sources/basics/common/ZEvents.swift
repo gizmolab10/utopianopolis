@@ -64,7 +64,7 @@ class ZEvents: ZGeneric {
     func setupLocalEventsMonitor() {
         #if os(OSX)
 
-		self.localMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
+		localMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
                 if !isDuplicate(event: event) {
 					// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
 					let isWindow = event.type == .keyDown || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)

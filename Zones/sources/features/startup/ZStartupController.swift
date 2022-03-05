@@ -56,7 +56,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		if  gStartupLevel == .pleaseWait || !gHasInternet {
 			onCompletion?()
 		} else {
-			startupCompletion = onCompletion
+//			startupCompletion = onCompletion   // uncomment to support cloud kit
+			onCompletion?()
 		}
 	}
 
@@ -66,8 +67,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	func startupUpdate() {
 		if !gHasFinishedStartup, gStartup.oneTimerIntervalHasElapsed {
-			FOREGROUND(forced: true) {
-				self.updateStartupStatus()
+			FOREGROUND(forced: true) { [self] in
+				updateStartupStatus()
 			}
 		}
 	}
@@ -104,8 +105,8 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			case    "id no": gStartupLevel = .localOkay;  startupCompletion?()
 			case "continue": gStartupLevel = .pleaseWait; startupCompletion?()
 
-				gBatches.batch(.bResumeCloud) { result in
-					self.startupUpdate()
+				gBatches.batch(.bResumeCloud) { [self] result in
+					startupUpdate()
 				}
 			default:         break
 		}

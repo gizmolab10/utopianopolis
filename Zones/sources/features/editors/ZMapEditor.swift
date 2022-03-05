@@ -736,7 +736,7 @@ class ZMapEditor: ZBaseEditor {
 	func prepareUndoForDelete() {
 		gSelecting.clearPaste()
 
-		self.UNDO(self) { iUndoSelf in
+		UNDO(self) { iUndoSelf in
 			iUndoSelf.undoDelete()
 		}
 	}
@@ -803,7 +803,7 @@ class ZMapEditor: ZBaseEditor {
 				parent.addChildAndReorder(child, at: siblingIndex)
 			}
 
-			self.UNDO(self) { iUndoSelf in
+			UNDO(self) { iUndoSelf in
 				iUndoSelf.prepareUndoForDelete()
 				children .deleteZones(iShouldGrab: false) {}
 				iUndoSelf.pasteInto(parent, honorFormerParents: true)
@@ -814,9 +814,9 @@ class ZMapEditor: ZBaseEditor {
 	}
 
     func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
-        gDeferRedraw {
+        gDeferRedraw { [self] in
             if  preserveChildren && !permanently {
-                self.preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
+                preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
                     gFavorites.updateFavoritesAndRedraw {
                         gDeferringRedraw = false
                         
@@ -866,7 +866,7 @@ class ZMapEditor: ZBaseEditor {
 
 		if pastables.count > 0, let zone = iZone {
 			let isBookmark = zone.isBookmark
-			let action = {
+			let action = { [self] in
 				var forUndo = ZoneArray ()
 
 				gSelecting.ungrabAll()
@@ -884,15 +884,15 @@ class ZMapEditor: ZBaseEditor {
 					pasteMe.addToGrabs()
 				}
 
-				self.UNDO(self) { iUndoSelf in
+				UNDO(self) { iUndoSelf in
 					iUndoSelf.prepareUndoForDelete()
 					forUndo.deleteZones(iShouldGrab: false, onCompletion: nil)
 					zone.grab()
 					gRelayoutMaps()
 				}
 
-				if  isBookmark, self.undoManager.groupingLevel > 0 {
-					self.undoManager.endUndoGrouping()
+				if  isBookmark, undoManager.groupingLevel > 0 {
+					undoManager.endUndoGrouping()
 				}
 
 				gFavorites.updateFavoritesAndRedraw()
@@ -995,7 +995,7 @@ class ZMapEditor: ZBaseEditor {
 						}
 
 						gSelecting.updateCousinList()
-						self.moveUp(up, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
+						moveUp(up, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
 					} else {
 						gFavorites.updateAllFavorites()
 						onCompletion?([.spRelayout])
@@ -1254,17 +1254,17 @@ class ZMapEditor: ZBaseEditor {
 					// present an alert asking if user really wants to move here leftward //
 					// /////////////////////////////////////////////////////////////////////
 
-					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? kEmpty)\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { iStatus in
+					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? kEmpty)\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { [self] iStatus in
 						if  iStatus == .sYes {
-							self.moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
+							moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
 						}
 					}
 				} else {
-					let moveOutToHere = { (iHere: Zone?) in
+					let moveOutToHere = { [self] (iHere: Zone?) in
 						if  let here = iHere {
 							gHere = here
 
-							self.moveOut(to: here, onCompletion: onCompletion)
+							moveOut(to: here, onCompletion: onCompletion)
 						}
 					}
 
@@ -1335,7 +1335,7 @@ class ZMapEditor: ZBaseEditor {
 		if  let        zones = moveables?.reversed() as ZoneArray? {
 			var completedYet = false
 
-			zones.recursivelyRevealSiblings(untilReaching: into) { iRevealedZone in
+			zones.recursivelyRevealSiblings(untilReaching: into) { [self] iRevealedZone in
 				if !completedYet && iRevealedZone == into {
 					completedYet = true
 
@@ -1354,7 +1354,7 @@ class ZMapEditor: ZBaseEditor {
 						if  let  from = zone.parentZone {
 							let index = zone.siblingIndex
 
-							self.UNDO(self) { iUndoSelf in
+							UNDO(self) { iUndoSelf in
 								zone.moveZone(into: from, at: index, orphan: true) { onCompletion?(true) }
 							}
 						}

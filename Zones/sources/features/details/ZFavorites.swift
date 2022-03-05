@@ -139,8 +139,8 @@ class ZFavorites: ZSmallMapRecords {
 					// ///////////////////////////////////////
 
 					if  hasDuplicate {
-						let isUnfetched: ZoneClosure = { iZone in
-							if  let index = self.workingBookmarks.firstIndex(of: iZone) {
+						let isUnfetched: ZoneClosure = { [self] iZone in
+							if  let index = workingBookmarks.firstIndex(of: iZone) {
 								discards.append(index)
 							}
 						}

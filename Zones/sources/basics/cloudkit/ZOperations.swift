@@ -26,6 +26,7 @@ enum ZOperationID: Int, CaseIterable {
 
     // finish up
 
+	case oRead
 	case oManifest
 	case oLoadingIdeas       // LOCAL
 	case oRoots
@@ -172,7 +173,7 @@ class ZOperations: NSObject {
         let         saved = gDatabaseID
 
         for operationID in operationIDs + [.oFinishing] {
-            let blockOperation = BlockOperation {
+			let blockOperation = BlockOperation { [self] in
 
                 // /////////////////////////////////////////////////////////////
                 // ignore operations that are not local when have no internet //
@@ -181,24 +182,24 @@ class ZOperations: NSObject {
 				if  !operationID.isLocal && !gCloudStatusIsActive {
 					onCompletion()
 				} else {
-					self.currentOp         = operationID            // if hung, it happened inside this op
+					currentOp         = operationID            // if hung, it happened inside this op
 
 					// ////////////////////////////////////////////////////
 					// susend queue until operation calls its closure... //
 					// ////////////////////////////////////////////////////
 
-					self.queue.isSuspended = true
-					self.lastOpStart       = Date()
+					queue.isSuspended = true
+					lastOpStart       = Date()
 
-					self.invokeMultiple(for: operationID, restoreToID: saved) { iResult in
+					invokeMultiple(for: operationID, restoreToID: saved) { iResult in
 
 						// /////////////////////
 						// ...unsuspend queue //
 						// /////////////////////
 
-						self.queue.isSuspended = false
+						queue.isSuspended = false
 
-						if  self.currentOp == .oFinishing {
+						if  currentOp == .oFinishing {
 
 							// //////////// //
 							// end of batch //
@@ -206,7 +207,7 @@ class ZOperations: NSObject {
 
 							onCompletion()
 						} else {
-							self.setProgressTime(for: operationID)
+							setProgressTime(for: operationID)
 						}
 					}
 				}

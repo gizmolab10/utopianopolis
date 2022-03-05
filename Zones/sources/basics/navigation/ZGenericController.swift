@@ -68,11 +68,11 @@ class ZGenericController: ZController, ZGeneric {
         super.viewDidLoad()
 		controllerStartup()
 
-        gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
-			self.view.zlayer.backgroundColor = gControllers.backgroundColorFor(self.controllerID).cgColor
+		gControllers.setSignalHandler(for: self, iID: controllerID) { [self] object, kind in
+			view.zlayer.backgroundColor = gControllers.backgroundColorFor(controllerID).cgColor
 
-			if  self.shouldHandle(kind) {
-                self.handleSignal(object, kind: kind)
+			if  shouldHandle(kind) {
+                handleSignal(object, kind: kind)
             }
         }
     }

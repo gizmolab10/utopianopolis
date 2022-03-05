@@ -422,6 +422,7 @@ extension Dictionary {
 extension URL {
 
 	var originalImageName: String? { return CGImageSource.readFrom(self)?.originalImageName }
+	func fileExists() -> Bool { return FileManager.default.fileExists(atPath: path) }
 
 	func destination(imageType: CFString = kUTTypeImage) -> CGImageDestination? {
 		return CGImageDestinationCreateWithURL(self as CFURL, imageType, 1, nil)
@@ -463,7 +464,17 @@ extension URL {
 		return success
 	}
 
-	func fileExists() -> Bool { return FileManager.default.fileExists(atPath: path) }
+	func replacingPathComponent(_ first: String, with second: String) -> URL {
+		var components = pathComponents
+
+		for (index, component) in components.enumerated() {
+			if  component == first {
+				components[index] = second
+			}
+		}
+
+		return URL(fileURLWithPath: components.joined(separator: "/"))
+	}
 
 }
 
@@ -1984,7 +1995,7 @@ extension NSMutableAttributedString {
 	}
 
 	func fixAllAttributes() {
-		fixAttributes(in: NSRange(location: 0, length: self.length))
+		fixAttributes(in: NSRange(location: 0, length: length))
 	}
 
 }
@@ -2137,7 +2148,7 @@ extension String {
 	}
 
 	var unCamelcased: String {
-		guard self.count > 0 else { return self }
+		guard count > 0 else { return self }
 
 		var newString = kEmpty
 		let uppercase = CharacterSet.uppercaseLetters
@@ -2403,9 +2414,9 @@ extension String {
     }
 
     func character(at iOffset: Int) -> String {
-        let index = self.index(startIndex, offsetBy: iOffset)
+        let i = index(startIndex, offsetBy: iOffset)
 
-        return self[index].description
+        return self[i].description
     }
 
 	mutating func appendSpacesToLength(_ iLength: Int) {

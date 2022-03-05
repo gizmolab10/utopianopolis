@@ -338,15 +338,15 @@ class ZSearchResultsController: ZGenericTableController {
 			}
 
 			if total == 1 {               // not bother user if only one record found
-				self.resolveRecord(dbID!, record!)
+				resolveRecord(dbID!, record!)
 			} else if total > 0 {
 				sortRecords()
 				genericTableUpdate()
 
 				#if os(OSX)
-				FOREGROUND {
-					self.assignAsFirstResponder(nil)
-					self.genericTableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
+				FOREGROUND { [self] in
+					assignAsFirstResponder(nil)
+					genericTableView?.selectRowIndexes(IndexSet([0]), byExtendingSelection: false)
 				}
 				#endif
 			}
