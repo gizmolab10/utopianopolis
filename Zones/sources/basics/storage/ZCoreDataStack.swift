@@ -39,6 +39,12 @@ struct ZExistence {
 	let    file : ZFileDescriptor?
 }
 
+enum ZCDMigrationState: Int {
+	case firstTime
+	case migrateFileData
+	case normal
+}
+
 enum ZCDOperationID: Int {
 	case oLoad
 	case oSave
@@ -235,8 +241,8 @@ class ZCoreDataStack: NSObject {
 		if  let zRecords = gRemoteStorage.zRecords(for: dbID) {
 			let  fetched = load(type: kZoneType, recordName: recordName, into: dbID)
 
-			for zRecord in fetched {
-				if  let zone = zRecord as? Zone {
+			for object in fetched {
+				if  let zone = object as? Zone {
 					zone.respectOrder()
 
 					switch recordName {

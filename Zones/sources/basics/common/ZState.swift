@@ -31,7 +31,7 @@ var              gAnglesDelta                           = 15.0
 var               gDebugCount                           = 0
 var        gInterruptionCount                           = 0
 var    gTimeUntilCurrentEvent :            TimeInterval = 0  // by definition, first event is startup
-var           gMigrationState : ZCoreDataMigrationState = .firstTime
+var         gCDMigrationState :       ZCDMigrationState = .firstTime
 var             gCurrentTrait :                 ZTrait?
 var     gCurrentMouseDownZone :                   Zone?
 var gCurrentMouseDownLocation :                CGFloat?
@@ -193,7 +193,7 @@ func gAssureProgressTimesAreLoaded() -> Bool {
 }
 
 var gTimePerRecord : Int {
-	switch gMigrationState {         // TODO: adjust for cpu speed
+	switch gCDMigrationState {         // TODO: adjust for cpu speed
 		case .normal: return 800
 		default:      return 130
 	}

@@ -36,7 +36,7 @@ class ZStartup: NSObject {
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
-		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateToCoreData : .firstTime
+		gCDMigrationState      = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
 		gWorkMode              = .wStartupMode
 
 		gRemoteStorage.clear()
@@ -72,6 +72,7 @@ class ZStartup: NSObject {
 						gRecents.push()
 						gHereMaybe?.grab()
 						gSignal([.sLaunchDone])
+						gSaveContext()
 
 						FOREGROUND(after: 0.1) { [self] in
 							requestFeedback() {

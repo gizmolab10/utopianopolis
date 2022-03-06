@@ -43,10 +43,10 @@ class ZFiles: NSObject {
 	func assetURL(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
 
 	var migrationFilesSize : Int {
-		switch gMigrationState {
-			case .firstTime:         return fileSizeFor(.everyoneID)
-			case .migrateToCoreData: return totalFilesSize
-			default:                 return 0
+		switch gCDMigrationState {
+			case .firstTime:       return fileSizeFor(.everyoneID)
+			case .migrateFileData: return totalFilesSize
+			default:               return 0
 		}
 	}
 	
@@ -129,7 +129,7 @@ class ZFiles: NSObject {
 
 	func writeToFile(from databaseID: ZDatabaseID?) throws {
 		if  gWriteFiles,
-			gMigrationState == .normal,
+			gCDMigrationState == .normal,
 			let     dbID = databaseID,
 			dbID        != .favoritesID,
 			let    index = dbID.index,

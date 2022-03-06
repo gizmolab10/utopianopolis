@@ -13,12 +13,6 @@ var gUser          :       ZUser? { return gBatches.user }
 var gCurrentOp     : ZOperationID { return gBatches.currentOp }
 var gHasFullAccess :         Bool { return gBatches.hasFullAccess }
 
-enum ZCoreDataMigrationState: Int {
-	case firstTime
-	case migrateToCoreData
-	case normal
-}
-
 enum ZBatchID: Int {
     case bRoot
     case bSync
@@ -305,7 +299,7 @@ class ZBatches: ZOnboarding {
     }
 
 	func load(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		switch gMigrationState {
+		switch gCDMigrationState {
 			case .normal:  gLoadContext(into: databaseID, onCompletion: onCompletion)
 			default: try gFiles.migrate(into: databaseID, onCompletion: onCompletion)
 		}

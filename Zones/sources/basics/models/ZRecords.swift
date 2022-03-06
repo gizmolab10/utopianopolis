@@ -134,7 +134,13 @@ class ZRecords: NSObject {
 	var         recentsZone : Zone?
 	var         destroyZone : Zone?
     var           trashZone : Zone?
-    var            rootZone : Zone?
+	var            rootZone : Zone? {
+		didSet {
+			if  databaseID == .everyoneID {
+				noop()
+			}
+		}
+	}
 	var               count : Int       { return 0 }
 	var       zRecordsCount : Int       { return zRecordsLookup.count }
     var         hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
