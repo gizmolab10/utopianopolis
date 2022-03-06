@@ -756,7 +756,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.75" maxValue="1.75" doubleValue="1.1944444444444444" tickMarkPosition="below" sliderType="linear" id="whI-vU-fzO"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="0.75" maxValue="1.75" doubleValue="0.75" tickMarkPosition="below" sliderType="linear" id="whI-vU-fzO"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="2bw-KX-vd8"/>
                                                     </connections>
@@ -766,7 +766,7 @@
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
-                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="3" maxValue="15" doubleValue="4" tickMarkPosition="below" sliderType="linear" id="qGt-br-s4B"/>
+                                                    <sliderCell key="cell" continuous="YES" state="on" alignment="left" minValue="3" maxValue="15" doubleValue="3" tickMarkPosition="below" sliderType="linear" id="qGt-br-s4B"/>
                                                     <connections>
                                                         <action selector="sliderAction:" target="Naq-se-Exq" id="NZr-P4-M7Y"/>
                                                     </connections>

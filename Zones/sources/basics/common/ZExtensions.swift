@@ -1935,31 +1935,31 @@ extension NSMutableAttributedString {
 		}
 
 		set {
-			for string in newValue {
-				let      parts = string.componentsSeparatedAt(level: 4)
-				if       parts.count > 3,
-					let  start = parts[0].integerValue,
-					let  count = parts[1].integerValue {
-					let    raw = parts[2]
-					let string = parts[3]
-					let    key = NSAttributedString.Key(rawValue: raw)
-					let  range = NSRange(location: start, length: count)
+			for item in newValue {
+				let     parts = item.componentsSeparatedAt(level: 4)
+				if      parts.count > 3,
+					let start = parts[0].integerValue,
+					let count = parts[1].integerValue {
+					let   raw = parts[2]
+					let value = parts[3]
+					let   key = NSAttributedString.Key(rawValue: raw)
+					let range = NSRange(location: start, length: count)
 					var attribute: Any?
 
 					switch key {
-						case .link:            attribute =                                    string
-						case .font:            attribute = ZFont 		   		     (string: string)
-						case .attachment:      attribute = gCurrentTrait?.textAttachment(for: string)
+						case .link:            attribute =                                    value
+						case .font:            attribute = ZFont 		   		     (string: value)
+						case .attachment:      attribute = gCurrentTrait?.textAttachment(for: value)
 						case .foregroundColor,
-							 .backgroundColor: attribute = ZColor				     (string: string)
-						case .paragraphStyle:  attribute = NSMutableParagraphStyle   (string: string)
+							 .backgroundColor: attribute = ZColor				     (string: value)
+						case .paragraphStyle:  attribute = NSMutableParagraphStyle   (string: value)
 						default:    		   break
 					}
 
-					if  let value = attribute {
-						printDebug(.dNotes, "add attribute over \(range) for \(raw): \(value)")
+					if  let v = attribute {
+						printDebug(.dNotes, "add attribute over \(range) for \(raw): \(v)")
 
-						addAttribute(key, value: value, range: range)
+						addAttribute(key, value: v, range: range)
 					}
 				}
 			}

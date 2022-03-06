@@ -43,7 +43,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
 	var          titleOffset : Int       { return titleIndent.length }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
-	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kEssayDefault }
+	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kNoteDefault }
 	var               isNote : Bool      { return isMember(of: ZNote.self) }
 	var    	            zone : Zone?
 
@@ -60,7 +60,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		super.init()
 
 		autoDelete = true
-		self.zone = zone
+		self.zone  = zone
 	}
 
 	static func == ( left: ZNote, right: ZNote) -> Bool {

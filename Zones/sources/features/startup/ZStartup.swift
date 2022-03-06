@@ -36,7 +36,7 @@ class ZStartup: NSObject {
 	func startupCloudAndUI() {
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
-		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrate : .firstTime
+		gMigrationState        = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateToCoreData : .firstTime
 		gWorkMode              = .wStartupMode
 
 		gRemoteStorage.clear()
@@ -46,13 +46,13 @@ class ZStartup: NSObject {
 		gTimers.startTimer(for: .tStartup)
 
 		gBatches.startUp { iSame in
-			FOREGROUND {
+			FOREGROUND { [self] in
 				gIsReadyToShowUI = true
 
 				gDetailsController?.removeViewFromStack(for: .vSubscribe)
 
 				gFavorites.setup { result in
-					FOREGROUND { [self] in
+					FOREGROUND {
 						gFavorites.updateAllFavorites()
 						gRefreshPersistentWorkMode()
 						gRemoteStorage.updateRootsOfAllProjeny()
@@ -69,7 +69,6 @@ class ZStartup: NSObject {
 							gSetMapWorkMode()
 						}
 
-						setupFirstTime()
 						gRecents.push()
 						gHereMaybe?.grab()
 						gSignal([.sLaunchDone])
@@ -84,17 +83,6 @@ class ZStartup: NSObject {
 					}
 				}
 			}
-		}
-	}
-
-	func setupFirstTime() {
-		if  gStartupLevel == .firstTime,
-			let      here  = gEveryoneCloud?.rootZone {
-			gDatabaseID    = .everyoneID
-			gColorfulMode  = true
-			gHere          = here
-
-			gHere.expand()
 		}
 	}
 

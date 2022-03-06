@@ -103,7 +103,7 @@ class ZMapEditor: ZBaseEditor {
 						case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, SPLAYED)
 						case "f":      gSearching.showSearch(OPTION)
 						case "k":      toggleColorized()
-						case "n":      editNote(OPTION)
+						case "n":      editNote(flags: flags)
 						case "p":      printCurrentFocus()
 						case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
 						case "/":      return handleSlash(flags)
@@ -111,8 +111,8 @@ class ZMapEditor: ZBaseEditor {
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:     addSibling(OPTION)
 						case kSpace:   gSelecting.currentMoveable.addIdea()
-						case kReturn:  if COMMAND { editNote(OPTION) }
-						case kEscape:               editNote(OPTION, useGrabbed: false)
+						case kReturn:  if COMMAND { editNote(flags: flags) }
+						case kEscape:               editNote(flags: flags, useGrabbed: false)
 						case kBackspace,
 							 kDelete:  if CONTROL { focusOnTrash() }
 						default:       return false // false means key not handled
@@ -139,7 +139,7 @@ class ZMapEditor: ZBaseEditor {
 						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
-						case "n":        editNote(OPTION)
+						case "n":        editNote(flags: flags)
 						case "o":        moveable.importFromFile(OPTION ? .eOutline : SPLAYED ? .eCSV : .eSeriously) { gRelayoutMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
@@ -166,8 +166,8 @@ class ZMapEditor: ZBaseEditor {
 						case kBackSlash: mapControl(OPTION)
 						case kBackspace,
 							 kDelete:    handleDelete(flags, isWindow)
-						case kReturn:    if COMMAND { editNote(OPTION) } else { editIdea(OPTION) }
-						case kEscape:    editNote(OPTION, useGrabbed: false)
+						case kReturn:    if COMMAND { editNote(flags: flags) } else { editIdea(OPTION) }
+						case kEscape:    editNote(flags: flags, useGrabbed: false)
 						default:         return false // indicate key was not handled
 					}
                 }
@@ -679,16 +679,30 @@ class ZMapEditor: ZBaseEditor {
 		gSelecting.firstSortedGrab?.editTraitForType(type)
 	}
 
-	func editNote(_  OPTION: Bool, useGrabbed: Bool = true) {
+	func editNote(flags: ZEventFlags, useGrabbed: Bool = true) {
 		if !gIsEssayMode {
+			let           OPTION = flags.isOption
+			let          SPECIAL = flags.exactlySpecial
 			gCreateCombinedEssay = !OPTION				             // default is multiple, OPTION drives it to single
 
-			if  gCurrentEssay   == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
-				gCurrentEssay    = gSelecting.firstGrab?.note
+			if  let grab = gSelecting.firstGrab {
+				if  gCurrentEssay   == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
+					gCurrentEssay    = grab.note
+				}
+
+				if  SPECIAL {
+					grab.traverseAllProgeny { child in
+						if  child != grab, !child.isBookmark, !child.hasTrait(matchingAny: [.tNote, .tEssay]) {
+							child.setTraitText(kNoteDefault, for: .tNote)
+						}
+					}
+				}
 			}
 		}
 
-		gControllers.swapMapAndEssay()
+		gControllers.swapMapAndEssay(force: .wEssayMode) {
+			gEssayView?.swapBetweenNoteAndEssay()
+		}
 	}
 
     // MARK: - lines

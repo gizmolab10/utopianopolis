@@ -1716,7 +1716,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func hasTrait(matching iTypes: [ZTraitType]) -> Bool {
+	func hasTrait(matchingAny iTypes: [ZTraitType]) -> Bool {
 		for type in iTypes {
 			if  hasTrait(for: type) {
 				return true
@@ -1820,14 +1820,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	var note: ZNote? {
-		if  isBookmark {
-			return bookmarkTarget!.note
-		} else if (noteMaybe == nil || !hasTrait(matching: [.tNote, .tEssay])), let emptyNote = createNote() {
+	@discardableResult func createNoteMaybe() -> ZNote? {
+		if (noteMaybe == nil || !hasTrait(matchingAny: [.tNote, .tEssay])), let emptyNote = createNote() {
 			return emptyNote // might be note from "child"
 		}
 
 		return noteMaybe
+	}
+
+	var note: ZNote? {
+		if  isBookmark {
+			return bookmarkTarget!.note
+		}
+
+		return createNoteMaybe()
 	}
 
 	@discardableResult func createNote() -> ZNote? {
@@ -1856,7 +1862,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		for zone in zonesWithNotes {
 			zone.noteMaybe = nil
 		}
-
 	}
 
 	func deleteNote() {
@@ -1865,6 +1870,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		noteMaybe     = nil
 		gNeedsRecount = true // trigger recount on next timer fire
+	}
+
+	func deleteEssay() {
+		if  let c = note?.children {
+			for child in c {
+				if  let z = child.zone, z != self {
+					z.deleteEssay()
+				}
+			}
+		}
+
+		deleteNote()
 	}
 
 	func showNote() {

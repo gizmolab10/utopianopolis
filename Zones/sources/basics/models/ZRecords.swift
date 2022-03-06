@@ -262,8 +262,15 @@ class ZRecords: NSObject {
 	}
     
     var hereZoneMaybe: Zone? {
-		get { return maybeZoneForRecordName(hereRecordName) }
-		set { hereRecordName = newValue?.recordName ?? rootName }
+		get {
+			return maybeZoneForRecordName(hereRecordName)
+		}
+
+		set {
+			hereRecordName = newValue?.recordName ?? rootName
+
+//			registerZRecord(newValue)
+		}
     }
 
 	var rootName: String {
@@ -473,7 +480,7 @@ class ZRecords: NSObject {
 		var                created  = false
 		if  let            zRecord  = iRecord,
             let               name  = zRecord.recordName {
-			if  let existingRecord  = zRecordsLookup[name] {
+			if  let existingRecord  = zRecordsLookup[name], name != kRootName {
                 if  existingRecord != zRecord,
 					existingRecord.entity.name == zRecord.entity.name {
 
@@ -934,12 +941,5 @@ class ZRecords: NSObject {
 
 		return nil
 	}
-
-//	func      maybeZoneForReference (_ iReference: CKReference) ->     Zone? { return maybeZoneForRecordID      (iReference.recordID) }
-//    func       maybeZoneForCKRecord (_ iRecord:    CKRecord?)   ->     Zone? { return maybeZoneForRecordID      (iRecord?  .recordID) }
-//    func    maybeZRecordForCKRecord (_ iRecord:    CKRecord?)   ->  ZRecord? { return maybeZRecordForRecordName (iRecord?  .recordID.recordName) }
-//	func      maybeTraitForRecordID (_ iRecordID:  CKRecordID?) ->   ZTrait? { return maybeZRecordForRecordID   (iRecordID)   as? ZTrait }
-//	func       maybeZoneForRecordID (_ iRecordID:  CKRecordID?) ->     Zone? { return maybeZRecordForRecordID   (iRecordID)   as? Zone }
-//	func maybeCKRecordForRecordName (_ iRecordName:    String?) -> CKRecord? { return maybeZRecordForRecordName (iRecordName)?.ckRecord }
 
 }

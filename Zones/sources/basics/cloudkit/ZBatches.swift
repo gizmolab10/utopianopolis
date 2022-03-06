@@ -13,9 +13,9 @@ var gUser          :       ZUser? { return gBatches.user }
 var gCurrentOp     : ZOperationID { return gBatches.currentOp }
 var gHasFullAccess :         Bool { return gBatches.hasFullAccess }
 
-enum ZMigrationState: Int {
+enum ZCoreDataMigrationState: Int {
 	case firstTime
-	case migrate
+	case migrateToCoreData
 	case normal
 }
 
@@ -319,8 +319,7 @@ class ZBatches: ZOnboarding {
 			case .oRecents:                                                                          gRecents.setup(cloudCallback)
 			case .oSavingLocalData:  gSaveContext();                                                                cloudCallback?(0)
 			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               cloudCallback?(0)
-			case .oRead:             try gFiles.readFile(into: currentDatabaseID!,                    onCompletion: cloudCallback)
-			case .oLoadingIdeas:     try load(into: currentDatabaseID!,                               onCompletion: cloudCallback)
+			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                 onCompletion: cloudCallback)
 			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
 		}
     }

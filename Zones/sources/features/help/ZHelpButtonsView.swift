@@ -30,7 +30,7 @@ class ZHelpButtonsView : ZButtonsView {
 
 	func addButton(_ mode: ZHelpMode) -> ZHelpButton {
 		let              title = mode.title.capitalized
-		let             button = ZHelpButton(title: title, target: self, action: #selector(self.handleButtonPress))
+		let             button = ZHelpButton(title: title, target: self, action: #selector(handleButtonPress))
 		button.helpMode        = mode
 		button.helpButtonsView = self
 

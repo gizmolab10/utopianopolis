@@ -344,7 +344,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
 			case kEscape:  if     ANY { grabDone()                          } else { done() }
 			case kReturn:  if     ANY { grabDone() }
-			case kDelete:  deleteGrabbed()
+			case kDelete:  deleteGrabbedOrSelected()
 			default:       return false
 			}
 
@@ -560,8 +560,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idSave:     save()
 				case .idPrint:    printView()
 				case .idHide:     grabDone()
-				case .idDelete:   if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); exit() }
-				case .idCancel:                         gCurrentEssayZone?.grab();       exit()
+				case .idDelete:   if !deleteGrabbedOrSelected() { gCurrentEssayZone?.deleteEssay(); exit() }
+				case .idCancel:                                   gCurrentEssayZone?.grab();        exit()
 				default:          break
 			}
 		}
@@ -878,13 +878,20 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	@discardableResult func deleteGrabbed() -> Bool {
+	@discardableResult func deleteGrabbedOrSelected() -> Bool {
 		if  hasGrabbedNote {
 			for zone in grabbedZones {
 				zone.deleteNote()
 			}
 
 			ungrabAll()
+			resetTextAndGrabs()
+
+			return true
+		}
+
+		if  let zone = selectedNotes.last?.zone {
+			zone.deleteNote()
 			resetTextAndGrabs()
 
 			return true
@@ -1498,7 +1505,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if        flags.exactlyUnusual {
 				child(named: "idea", withText: text)
 			} else if flags.isOption || flags.exactlySplayed {
-				child(named: text,   withText: kEssayDefault)
+				child(named: text,   withText: kNoteDefault)
 			} else {
 				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text
 				insertText(kEmpty, replacementRange: selectedRange)	            // remove text

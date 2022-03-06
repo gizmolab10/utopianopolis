@@ -146,11 +146,11 @@ class ZTrait: ZTraitAssets {
 	var noteText: NSMutableAttributedString? {
 		get {
 			var        string : NSMutableAttributedString?
-			let       isEmpty = text == nil || text!.isEmpty || text! == kEssayDefault
+			let       isEmpty = text == nil || text!.isEmpty || text! == kNoteDefault
 
 			whileSelfIsCurrentTrait {
 				if  isEmpty {
-					text      = kEssayDefault
+					text      = kNoteDefault
 
 					updateSearchables()
 				}
@@ -161,7 +161,7 @@ class ZTrait: ZTraitAssets {
 					if  let f = format {
 						string?.attributesAsString = f
 					} else if isEmpty {
-						string?.addAttribute(.font, value: kDefaultEssayFont, range: NSRange(location: 0, length: text!.length))
+						string?.addAttribute(.font, value: kDefaultEssayFont, range: NSRange(location: 0, length: string!.length))
 					}
 				}
 			}
@@ -176,7 +176,7 @@ class ZTrait: ZTraitAssets {
 					format 	   = string.attributesAsString
 
 					if  text?.isEmpty ?? true {
-						text = kEssayDefault
+						text = kNoteDefault
 					}
 
 					// THE NEXT STATEMENT IS THE ONLY code which gathers assets for images,

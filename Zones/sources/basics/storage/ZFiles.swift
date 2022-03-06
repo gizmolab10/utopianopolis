@@ -44,9 +44,9 @@ class ZFiles: NSObject {
 
 	var migrationFilesSize : Int {
 		switch gMigrationState {
-			case .firstTime: return fileSizeFor(.everyoneID)
-			case .migrate:   return totalFilesSize
-			default:         return 0
+			case .firstTime:         return fileSizeFor(.everyoneID)
+			case .migrateToCoreData: return totalFilesSize
+			default:                 return 0
 		}
 	}
 	
@@ -99,7 +99,22 @@ class ZFiles: NSObject {
 		if  !hasMine, databaseID == .mineID {
 			onCompletion?(0)                   // mine file does not exist, do nothing
 		} else {
-			try readFile(into: databaseID, onCompletion: onCompletion)
+			try readFile(into: databaseID) { [self] (iResult: Any?) in
+				setupFirstTime()
+
+				onCompletion?(iResult)
+			}
+		}
+	}
+
+	func setupFirstTime() {
+		gColorfulMode = true
+		gStartupLevel = .localOkay
+		gDatabaseID   = .everyoneID
+		if  let  here = gEveryoneCloud?.rootZone {
+			gHere     = here
+
+			gHere.expand()
 		}
 	}
 
@@ -125,8 +140,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  gMigrationState != .normal,
-			databaseID != .favoritesID,
+		if  databaseID != .favoritesID,
 			let  index  = databaseID.databaseIndex {
 			let   path  = filePath(for: index)
 
@@ -333,6 +347,7 @@ class ZFiles: NSObject {
 									let    zone = Zone.uniqueZone(from: subDict, in: databaseID)
 
 									zone.updateRecordName(for: key)
+									cloud.registerZRecord(zone)
 
 									switch key {
 										case .lost:      cloud.lostAndFoundZone = zone

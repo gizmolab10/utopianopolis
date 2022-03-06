@@ -11,11 +11,11 @@ import SystemConfiguration.SCNetworkConnection
 
 enum ZOperationID: Int, CaseIterable {
 
-	case oNone               // default operation does nothing
+	case oNone               // default operation : does nothing
 
-    // start up / onboard
+    // start up / onboard --> order of operations
 
-    case oStartingUp            // NB: order here is order of operations (except miscellaneous)
+    case oStartingUp
 	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
@@ -24,17 +24,16 @@ enum ZOperationID: Int, CaseIterable {
     case oFetchUserID
     case oFetchUserRecord
 
-    // finish up
+    // finish up          --> order of operations
 
-	case oRead
-	case oManifest
-	case oLoadingIdeas       // LOCAL
+	case oManifest           // all these are LOCAL
 	case oRoots
     case oHere
+	case oLoadingIdeas
 	case oWrite
 	case oDone
 
-    // miscellaneous
+    // miscellaneous      --> no particular order
 
 	case oMigrateFromCloud
 	case oSavingLocalData    // LOCAL
@@ -94,7 +93,7 @@ class ZOperations: NSObject {
 	var      shouldCancel :            Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
 	var     debugTimeText :          String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
 	var     operationText :          String  { return currentOp.description }
-	func unHang()                            { if gStartupLevel != .firstTime { onCloudResponse?(0) } }
+	func unHang()                            { if gStartupLevel != .firstStartup { onCloudResponse?(0) } }
 	func printOp(_ message: String = kEmpty) { printDebug(.dOps, operationText + message) }
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {}
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}

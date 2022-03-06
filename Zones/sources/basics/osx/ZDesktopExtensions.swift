@@ -368,16 +368,16 @@ extension ZTextView {
 	func setText(_ text: Any) {
 		let range = NSRange(location: 0, length: textStorage?.length ?? 0)
 
-		guard let string = text as? NSMutableAttributedString else {
+		guard let attributed = text as? NSMutableAttributedString else {
 			insertText(text, replacementRange: range)
 
 			return
 		}
 
-		insertText(string.string, replacementRange: range)
+		insertText(attributed.string, replacementRange: range)
 		textStorage?.removeAllAttributes()
 
-		textStorage?.attributesAsString = string.attributesAsString
+		textStorage?.attributesAsString = attributed.attributesAsString
 	}
 
 	func rectForRange(_ range: NSRange) -> CGRect? {
