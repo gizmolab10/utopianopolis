@@ -111,7 +111,7 @@ class ZTogglingView: ZView {
             gDetailsController?.register(id: identity, for: self)
         }
 
-		toggleViewUpdate()
+		updateView()
     }
 
 	@IBAction func extraButtonAction(_ sender: Any) {
@@ -139,7 +139,7 @@ class ZTogglingView: ZView {
 		}
 	}
 
-	func toggleViewUpdate() {
+	func updateView() {
 		updateColors()
 		updateSpinner()
 		updateTitleButton()

@@ -218,12 +218,12 @@ class ZCoreDataStack: NSObject {
 					}
 
 					for name in names {
-						loadZone(recordName: name, into: dbID)
+						loadRootZone(recordName: name, into: dbID)
 					}
 
-					load(type: kFileType,     into: dbID, onlyOne: false)
+					load(type: kFileType,          into: dbID, onlyOne: false)
 
-					FOREGROUND {
+					FOREGROUND() {
 						gRemoteStorage.updateManifestCount(for: dbID)
 						gRemoteStorage.updateRootsOfAllProjeny()
 						gRemoteStorage.recount()
@@ -237,7 +237,7 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func loadZone(recordName: String, into dbID: ZDatabaseID) {
+	func loadRootZone(recordName: String, into dbID: ZDatabaseID) {
 		if  let zRecords = gRemoteStorage.zRecords(for: dbID) {
 			let  fetched = load(type: kZoneType, recordName: recordName, into: dbID)
 
@@ -245,15 +245,7 @@ class ZCoreDataStack: NSObject {
 				if  let zone = object as? Zone {
 					zone.respectOrder()
 
-					switch recordName {
-						case          kRootName: zRecords.rootZone         = zone
-						case         kTrashName: zRecords.trashZone        = zone
-						case       kDestroyName: zRecords.destroyZone      = zone
-						case   kRecentsRootName: zRecords.recentsZone      = zone
-						case kFavoritesRootName: zRecords.favoritesZone    = zone
-						case  kLostAndFoundName: zRecords.lostAndFoundZone = zone
-						default:                 break
-					}
+					zRecords.setRoot(zone, for: recordName.rootID)
 				}
 			}
 		}
@@ -287,7 +279,7 @@ class ZCoreDataStack: NSObject {
 			let dbID = descriptor.dbID {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kFileType)
 			request.predicate = NSPredicate(format: "name = %@ AND type = %@", name, type, dbID.identifier).and(dbidPredicate(from: dbID))
-			let      zRecords = fetchUsing(request: request, type: kFileType)
+			let      zRecords = fetchUsing(request: request)
 
 			for zRecord in zRecords {
 				if  let    file = zRecord as? ZFile {
@@ -351,7 +343,7 @@ class ZCoreDataStack: NSObject {
 
 	func find(type: String, recordName: String, in dbID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> [ZManagedObject] {
 		let           dbid = dbID == .everyoneID ? dbID : .mineID
-		if  let     object = fetchedRegistry[dbid]?[recordName] {
+		if  let     object = fetchedRegistry[dbid]?[recordName], !object.ignoreMaybe(recordName: recordName, into: dbid) {
 			return [object]
 		}
 
@@ -362,22 +354,23 @@ class ZCoreDataStack: NSObject {
 		return fetch(type: type, recordName: recordName, into: dbid, onlyOne: onlyOne)
 	}
 
-	func fetchUsing(request: NSFetchRequest<NSFetchRequestResult>, type: String, onlyOne: Bool = true) -> [ZManagedObject] {
+	func fetchUsing(request: NSFetchRequest<NSFetchRequestResult>, onlyOne: Bool = true) -> [ZManagedObject] {
 		var   objects = [ZManagedObject]()
 		do {
 			let items = try context.fetch(request)
 			for item in items {
 				if  let object = item as? ZManagedObject {
+
 					objects.append(object)
-				}
 
-				if  onlyOne {
+					if  onlyOne {
 
-					// //////////////////////////////////////////////////////////////////////////////// //
-					// NOTE: all but the first of multiple values found are duplicates and thus ignored //
-					// //////////////////////////////////////////////////////////////////////////////// //
+						// //////////////////////////////////////////////////////////////////////////////// //
+						// NOTE: all but the first of multiple values found are duplicates and thus ignored //
+						// //////////////////////////////////////////////////////////////////////////////// //
 
-					break
+						break
+					}
 				}
 			}
 		} catch {
@@ -391,15 +384,33 @@ class ZCoreDataStack: NSObject {
 	// else throws mutate while enumerate error
 
 	func fetch(type: String, recordName: String = kEmpty, into dbID: ZDatabaseID, onlyOne: Bool = true) -> [ZManagedObject] {
-		var       objects = [ZManagedObject]()
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-		request.predicate = fetchPredicate(type: type, recordName: recordName, into: dbID)
-		let     items     = fetchUsing(request: request, type: type, onlyOne: onlyOne)
+		var objects = [ZManagedObject]()
+		let request = fetchRequest(type: type, recordName: recordName, into: dbID)
+		if  type == kZoneType, recordName == kRootName, dbID == .everyoneID {
+			noop()
+		}
+		var items         = fetchUsing(request: request, onlyOne: false)
 		if  items.count  == 0 {
 			registerAsMissing(recordName: recordName, dbID: dbID)
 		} else {
-			for item in items {
-				objects.append(item)
+			if !onlyOne {
+				for item in items {
+					objects.append(item)
+				}
+			} else {
+				while items.count > 1 {
+					if  let object = items.last {
+						if  object.ignoreMaybe(recordName: recordName, into: dbID) {
+							items.removeLast()
+						} else {
+							objects.append(object)
+
+							break
+						}
+					} else {
+						break
+					}
+				}
 			}
 
 			let ids = objects.map { $0.objectID }
@@ -602,6 +613,13 @@ class ZCoreDataStack: NSObject {
 	func recordNamePredicate(from recordName:      String) -> NSPredicate { return NSPredicate(format:          "recordName = %@",            recordName) }
 	func       dbidPredicate(from databaseID: ZDatabaseID) -> NSPredicate { return NSPredicate(format:                "dbid = %@", databaseID.identifier) }
 
+	func fetchRequest(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> NSFetchRequest<NSFetchRequestResult> {
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+		request.predicate = fetchPredicate(type: type, recordName: recordName, into: dbID)
+
+		return request
+	}
+
 	func fetchPredicate(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> NSPredicate {
 		let             r = recordNamePredicate(from: recordName)
 		let             d =       dbidPredicate(from: dbID)
@@ -786,6 +804,7 @@ class ZCoreDataStack: NSObject {
 				if  count > extras.count {
 					FOREGROUND { [self] in
 						for extra in extras {
+							extra.unregister()
 							context.delete(extra)
 						}
 					}

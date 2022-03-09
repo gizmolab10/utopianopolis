@@ -308,7 +308,7 @@ class ZFiles: NSObject {
 	}
 
 	private func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  let       cloud  = gRemoteStorage.zRecords(for: databaseID),
+		if  let    zRecords  = gRemoteStorage.zRecords(for: databaseID),
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
@@ -325,13 +325,13 @@ class ZFiles: NSObject {
 						switch key {
 							case .date:
 								if  let date = value as? Date {
-									cloud.lastSyncDate = date
+									zRecords.lastSyncDate = date
 								}
 							case .manifest:
-								if  cloud.manifest == nil,
+								if  zRecords.manifest == nil,
 									let    subDict  = value as? ZStorageDictionary {
 									let   manifest  = ZManifest.uniqueManifest(from: subDict, in: databaseID)
-									cloud.manifest  = manifest
+									zRecords.manifest  = manifest
 								}
 							case .bookmarks:
 								if let array = value as? [ZStorageDictionary] {
@@ -347,24 +347,15 @@ class ZFiles: NSObject {
 									let    zone = Zone.uniqueZone(from: subDict, in: databaseID)
 
 									zone.updateRecordName(for: key)
-									cloud.registerZRecord(zone)
-
-									switch key {
-										case .lost:      cloud.lostAndFoundZone = zone
-										case .graph:     cloud.rootZone         = zone
-										case .trash:     cloud.trashZone        = zone
-										case .recent:    cloud.recentsZone      = zone
-										case .destroy:   cloud.destroyZone      = zone
-										case .favorites: cloud.favoritesZone    = zone
-										default: break
-									}
+									zRecords.registerZRecord(zone)
+									zRecords.setRoot(zone, for: key.rootID)
 								}
 						}
 					}
 				}
 			}
 
-			cloud.recount()
+			zRecords.recount()
 
 			isReading[index] = false
 		}

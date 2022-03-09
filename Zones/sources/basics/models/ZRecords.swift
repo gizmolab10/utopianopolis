@@ -137,7 +137,13 @@ class ZRecords: NSObject {
 	var            rootZone : Zone? {
 		didSet {
 			if  databaseID == .everyoneID {
-				noop()
+				if  let r = rootZone {
+					print(r)
+
+					if  r.zoneName == kFirstIdeaTitle, gBatches.currentOp != .oRoots {
+						noop()
+					}
+				}
 			}
 		}
 	}
@@ -150,6 +156,41 @@ class ZRecords: NSObject {
 	func recordNamesForState (_ state: ZRecordState)  -> StringsArray { return recordNamesByState[state] ?? [] }
 
 	func showRoot() { setHere(to: rootZone) }
+
+	func replaceRoot(at oldRoot: inout Zone?, with root: Zone, debug: Bool = false) {
+		let isAnEmptyRoot = (root.zoneName == nil || root.zoneName == kEmptyIdea || root.zoneName == kEmpty)
+		if  debug, isAnEmptyRoot {
+			noop()
+		}
+
+		if  let old = oldRoot, old != root {
+			if !isAnEmptyRoot {
+				old.unregister()
+				gCoreDataStack.context.delete(old)
+			} else {
+				// fetch public root zone yielded a zone with no name and no children !!!!!!
+				// no clue why. ghaaaahh!
+				print("-------------------------- isAnEmptyRoot ----------------------------")
+				gApplication?.terminate(self)
+				return
+			}
+		}
+
+		oldRoot = root
+	}
+
+	func setRoot(_ root: Zone, for rootID: ZRootID?) {
+		if  let id = rootID {
+			switch id {
+				case .favoritesID: replaceRoot(at: &favoritesZone,    with: root)
+				case .recentsID:   replaceRoot(at: &recentsZone,      with: root)
+				case .destroyID:   replaceRoot(at: &destroyZone,      with: root)
+				case .trashID:     replaceRoot(at: &trashZone,        with: root)
+				case .lostID:      replaceRoot(at: &lostAndFoundZone, with: root)
+				case .rootID:      replaceRoot(at: &rootZone,         with: root, debug: databaseID == .everyoneID)
+			}
+		}
+	}
 
 	func setHere(to zone: Zone?) {
 		if  let newHere = zone {

@@ -15,6 +15,15 @@ import Cocoa
 import UIKit
 #endif
 
+enum ZRootID: String {
+	case rootID      = "root"
+	case trashID     = "trash"
+	case destroyID   = "destroy"
+	case recentsID   = "recents"
+	case favoritesID = "favorites"
+	case lostID      = "lost and found"
+}
+
 enum ZStorageType: String {
 	case lost            = "lostAndFound"    // general
 	case bookmarks       = "bookmarks"
@@ -56,6 +65,29 @@ enum ZStorageType: String {
 	case type            = "type"
 
 	case deleted         = "deleted"         // ZManifest
+
+	var rootName: String? {
+		switch self {
+			case .favorites: return kFavoritesRootName
+			case .lost:      return kLostAndFoundName
+			case .recent:    return kRecentsRootName
+			case .trash:     return kTrashName
+			case .graph:     return kRootName
+			default:         return nil
+		}
+	}
+
+	var rootID: ZRootID? {
+		switch self {
+			case .favorites: return .favoritesID
+			case .lost:      return .lostID
+			case .recent:    return .recentsID
+			case .trash:     return .trashID
+			case .graph:     return .rootID
+			default:         return nil
+		}
+	}
+
 }
 
 @objc (ZRecord)

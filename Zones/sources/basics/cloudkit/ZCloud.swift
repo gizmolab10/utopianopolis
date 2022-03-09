@@ -163,15 +163,6 @@ class ZCloud: ZRecords {
 		onCompletion?(0)
     }
 
-	enum ZRootID: String {
-		case rootID      = "root"
-		case trashID     = "trash"
-		case destroyID   = "destroy"
-		case recentsID   = "recents"
-		case favoritesID = "favorites"
-		case lostID      = "lost and found"
-	}
-
     func establishRoots(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
 		var createFor: IntClosure?     // pre-declare so can recursively call from within it
 		var   rootIDs: [ZRootID] = [.rootID, .trashID, .lostID, .destroyID]
@@ -205,13 +196,8 @@ class ZCloud: ZRecords {
 					root.directAccess = .eProgenyWritable
 				}
 
-				switch rootID {
-					case .favoritesID: favoritesZone    = root
-					case .recentsID:   recentsZone      = root
-					case .destroyID:   destroyZone      = root
-					case .trashID:     trashZone        = root
-					case .lostID:      lostAndFoundZone = root
-					case .rootID:      rootZone         = root
+				FOREGROUND {
+					setRoot(root, for: rootID)
 				}
 
 				recurseNext()

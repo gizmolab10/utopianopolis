@@ -26,7 +26,7 @@ struct ZDetailsViewID: OptionSet {
 	static let     vSmallMap = ZDetailsViewID(rawValue: 0x0008)
 	static let    vSubscribe = ZDetailsViewID(rawValue: 0x0010)
 	static let          vAll = ZDetailsViewID(rawValue: 0x001F)
-
+	static let  vFirstHidden = ZDetailsViewID(rawValue: 0x001B)
 	static let         vLast = vSmallMap
 }
 
@@ -76,7 +76,7 @@ class ZDetailsController: ZGesturesController {
 			stackView?.isHidden = false
 
 			for id in detailIds {
-				view(for: id)?.toggleViewUpdate()
+				view(for: id)?.updateView()
 			}
 
 			stackView?.layoutAllSubviews()

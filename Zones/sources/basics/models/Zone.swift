@@ -1799,6 +1799,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		trait?.needDestroy()
 
 		if  let t = trait {
+			t.unregister()
 			gCoreDataStack.context.delete(t)
 		}
 	}
@@ -3704,19 +3705,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	func rootName(for type: ZStorageType) -> String? {
-		switch type {
-			case .favorites: return kFavoritesRootName
-			case .lost:      return kLostAndFoundName
-			case .recent:    return kRecentsRootName
-			case .trash:     return kTrashName
-			case .graph:     return kRootName
-			default:         return nil
-		}
-	}
-
 	func updateRecordName(for type: ZStorageType) {
-		if  let    name = rootName(for: type),
+		if  let    name = type.rootName,
 			recordName != name {
 
 			for child in children {

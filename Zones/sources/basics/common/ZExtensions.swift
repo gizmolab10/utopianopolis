@@ -2207,6 +2207,18 @@ extension String {
 		return components(separatedBy: ". ")
 	}
 
+	var rootID: ZRootID? {
+		switch self {
+			case          kRootName: return .rootID
+			case         kTrashName: return .trashID
+			case       kDestroyName: return .destroyID
+			case   kRecentsRootName: return .recentsID
+			case kFavoritesRootName: return .favoritesID
+			case  kLostAndFoundName: return .lostID
+			default:                 return nil
+		}
+	}
+
 	func componentsSeparatedAt(level: Int) -> StringsArray {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}

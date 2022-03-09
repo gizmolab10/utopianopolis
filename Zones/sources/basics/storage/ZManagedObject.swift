@@ -50,6 +50,14 @@ extension ZManagedObject {
 		return ZManagedObject(entityName: entityName, databaseID: dbID)
 	}
 
+	func ignoreMaybe(recordName: String = kEmpty, into dbID: ZDatabaseID) -> Bool {
+		if  recordName == kRootName, dbID == .everyoneID,
+			let zone = self as? Zone, zone.zoneName == kFirstIdeaTitle {
+			return true
+		}
+		return false
+	}
+
 }
 
 @objc(ZReferenceTransformer)
