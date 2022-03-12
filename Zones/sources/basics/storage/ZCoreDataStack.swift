@@ -15,12 +15,6 @@ import Cocoa
 import UIKit
 #endif
 
-func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
-func gSaveContext()                                                        { gCoreDataStack.saveContext() }
-let  gCoreDataStack  = ZCoreDataStack()
-var  gCoreDataIsBusy : Bool  { return gCoreDataStack.currentOpID != nil }
-let  gCoreDataURL    : URL = { return gFilesURL.appendingPathComponent("data") }()
-
 struct ZDeferral {
 	let closure : Closure?         // for deferralHappensMaybe to invoke
 	let    opID : ZCDOperationID   // so status text can show it
@@ -141,6 +135,13 @@ extension ZExistenceArray {
 	}
 }
 
+func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
+func gSaveContext()                                                        { gCoreDataStack.saveContext() }
+let  gCoreDataStack  = ZCoreDataStack()
+var  gCoreDataIsBusy : Bool  { return gCoreDataStack.currentOpID != nil }
+let  gCoreDataURL    : URL = { return gFilesURL.appendingPathComponent("data") }()
+var  gCDCurrentBackgroundContext: NSManagedObjectContext { return gCoreDataStack.context }
+
 class ZCoreDataStack: NSObject {
 
 	var existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
@@ -155,7 +156,7 @@ class ZCoreDataStack: NSObject {
 	lazy var  publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
 	lazy var privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
 	lazy var  coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
-	lazy var      context : NSManagedObjectContext        = { return persistentContainer.newBackgroundContext() }()
+	lazy var      context : NSManagedObjectContext        = { return persistentContainer.viewContext }()
 	var          isDoneOp : Bool                            { return currentOpID == nil }
 	var        statusText : String?                         { return statusOpID?.description }
 	var        statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
@@ -182,7 +183,6 @@ class ZCoreDataStack: NSObject {
 		if  gCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) {
 				FOREBACKGROUND { [self] in
-					let context = context
 					if  context.hasChanges {
 						checkCrossStore()
 
@@ -398,7 +398,7 @@ class ZCoreDataStack: NSObject {
 					objects.append(item)
 				}
 			} else {
-				while items.count > 1 {
+				while items.count > 0 {
 					if  let object = items.last {
 						if  object.ignoreMaybe(recordName: recordName, into: dbID) {
 							items.removeLast()
@@ -415,8 +415,8 @@ class ZCoreDataStack: NSObject {
 
 			let ids = objects.map { $0.objectID }
 
-			for id in ids {
-				FOREGROUND(forced: true) { [self] in
+			FOREGROUND(forced: true) { [self] in
+				for id in ids {
 					registerObject(id, recordName: recordName, dbID: dbID)
 				}
 			}
@@ -485,7 +485,7 @@ class ZCoreDataStack: NSObject {
 						makeAvailable() // before calling closure
 
 						FOREGROUND {
-							onCompletion?(ZRecordsArray.fromObjectIDs(objectIDs, in: context))
+							onCompletion?(ZRecordsArray.createFromObjectIDs(objectIDs, in: persistentContainer.viewContext))
 						}
 					}
 				}

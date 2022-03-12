@@ -47,7 +47,7 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
-		gFavorites.rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
+		rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
 
 		onCompletion?(0)
 
@@ -58,8 +58,8 @@ class ZFavorites: ZSmallMapRecords {
 
 	override func push(_ zone: Zone? = gHere) {
 		if  let pushMe = zone,
-			!findAndSetHere(asParentOf: pushMe) {
-			matchOrCreateBookmark(for:  pushMe, autoAdd: true)
+			!gFocusing.findAndSetHere(asParentOf: pushMe) {
+			matchOrCreateBookmark(for: pushMe, autoAdd: true)
 		}
 	}
 

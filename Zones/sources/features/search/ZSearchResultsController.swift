@@ -18,24 +18,32 @@ var gSearchResultsController: ZSearchResultsController? { return gControllers.co
 
 class ZSearchResultsController: ZGenericTableController {
 
-	var       filteredResults = ZRecordsDictionary()
-	var          foundRecords = ZRecordsDictionary()
+	var   filteredResultsDict = ZDBIDRecordsDictionary()
+	var      foundRecordsDict = ZDBIDRecordsDictionary()
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
 	func         zoneAt(_ row : Int) -> Zone? { return zoneFor(zRecordAt(row)) }
 	func              clear()                 { gExitSearchMode(force: false) }
 
 	func applyFilter() {
-		filteredResults = ZRecordsDictionary()
+		filteredResultsDict = ZDBIDRecordsDictionary()
 
-		for (dbID, records) in foundRecords {
-			filteredResults[dbID] = records.filter { $0.matchesFilterOptions }
+		for (dbID, records) in foundRecordsDict {
+			var matches = ZRecordsArray()
+
+			for record in records {
+				if  record.matchesFilterOptions {
+					matches.append(record)
+				}
+			}
+
+			filteredResultsDict[dbID] = matches
 		}
 	}
 
     var hasResults: Bool {
         var     result = false
-        for     results in filteredResults.values {
+        for     results in filteredResultsDict.values {
             if  results.count > 0 {
                 result = true
                 
@@ -57,7 +65,7 @@ class ZSearchResultsController: ZGenericTableController {
     var filteredResultsCount: Int {
         var count = 0
 
-        for records in filteredResults.values {
+        for records in filteredResultsDict.values {
             count += records.count
         }
 
@@ -68,8 +76,8 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK: -
 
     func sortRecords() {
-        for (mode, records) in filteredResults {
-			filteredResults[mode] = records.sorted() {
+        for (dbID, records) in filteredResultsDict {
+			filteredResultsDict[dbID] = records.sorted() {
 				if  let a = ($0 as? Zone)?.zoneName,
                     let b = ($1 as? Zone)?.zoneName {
                     return a.lowercased() < b.lowercased()
@@ -162,12 +170,13 @@ class ZSearchResultsController: ZGenericTableController {
         var   row = iRow
         var count = 0
 
-        for (dbID, records) in filteredResults {
+        for (dbID, records) in filteredResultsDict {
             row   -= count
             count  = records.count
 
-            if  row >= 0, row < count  {
-                return (dbID, records[row])
+            if  row >= 0, row < count,
+				let record = records[row].selfInCurrentBackgroundCDContext {
+                return (dbID, record)
             }
         }
 
@@ -240,7 +249,7 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
     func reset() {
-        if  gSearchResultsVisible || filteredResults.count == 0 {
+        if  gSearchResultsVisible || filteredResultsDict.count == 0 {
             clear()
         } else {
             gSignal([.sSearch])
@@ -248,13 +257,13 @@ class ZSearchResultsController: ZGenericTableController {
     }
 
 	func removeRecord(at row: Int) -> Bool {
-		if  let        (dbID, record) = identifierAndRecord(at: row) {
-			var               records = filteredResults[dbID]
-			if  let             index = records?.firstIndex(of: record) {
+		if  let            (dbID, record) = identifierAndRecord(at: row) {
+			var                   records = filteredResultsDict[dbID]
+			if  let                 index = records?.firstIndex(of: record) {
 				records?.remove(at: index)
-				filteredResults[dbID] = records
+				filteredResultsDict[dbID] = records
 
-				if  let zone = zoneFor(record) {
+				if  let              zone = zoneFor(record) {
 					zone.deleteSelf {}
 				}
 
@@ -322,23 +331,23 @@ class ZSearchResultsController: ZGenericTableController {
 			t.tableColumns[0].width = t.frame.width
 		}
 
-		if  gIsSearchMode, filteredResults.count > 0 {
+		if  gIsSearchMode, filteredResultsDict.count > 0 {
 			var dbID: ZDatabaseID?
-			var record: ZRecord?
+			var zRecord: ZRecord?
 			var total = 0
 
-			for (databaseID, records) in filteredResults {
+			for (databaseID, records) in filteredResultsDict {
 				let count  = records.count
 				total     += count
 
 				if  count == 1 {
-					record = records[0]
+					zRecord = records[0]
 					dbID   = databaseID
 				}
 			}
 
-			if total == 1 {               // not bother user if only one record found
-				resolveRecord(dbID!, record!)
+			if  total == 1 {               // not bother user if only one record found
+				resolveRecord(dbID!, zRecord!)
 			} else if total > 0 {
 				sortRecords()
 				genericTableUpdate()

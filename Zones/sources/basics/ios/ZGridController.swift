@@ -95,7 +95,7 @@ class ZGridController: UICollectionViewController {
 			case .idDown:     gMapEditor.move(up:  false, selectionOnly: selectionOnly)
 			case .idLeft:     gMapEditor.move(out: true,  selectionOnly: selectionOnly)           { complete() }
 			case .idRight:    gMapEditor.move(out: false, selectionOnly: selectionOnly)           { complete() }
-			case .idFocus:    gRecents.focus(kind: .eSelected) { gRedrawMap() }; return
+			case .idFocus:    gFocusing.focusOnGrab(kind: .eSelected) { gRedrawMap() }; return
 			case .idMove:     selectionOnly = !selectionOnly // only a toggle, does nothing else
 			case .idExtend:   break // extends = !extends // disabled for now
 			}

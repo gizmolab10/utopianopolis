@@ -143,7 +143,7 @@ class ZBreadcrumbsView : ZButtonsView {
 				gCreateCombinedEssay = saved
 			}
 
-			zone.focusOn() {
+			gFocusing.grabAndFocusOn(zone) {
 				switch (gWorkMode) {
 					case .wSearchMode:
 						gExitSearchMode()

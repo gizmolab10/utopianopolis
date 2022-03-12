@@ -83,7 +83,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var           decoratedName :             String  { return decoration + unwrappedName }
 	override var         cloudProperties :       StringsArray  { return Zone.cloudProperties }
 	override var optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
-	override var    matchesFilterOptions :               Bool  { return passesFilter && isInScope }
 	override var             isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
@@ -151,29 +150,27 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func updateRootFromParent()                                       { setRoot(parentZone?.root ?? self) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
 
-	var passesFilter: Bool {
+	override var passesFilter: Bool {
 		return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
 	}
 
-	var isInScope: Bool {
-		var maybe = false
-
-		switch databaseID {
-			case .favoritesID: return  gSearchScopeOption.contains(.fFavorites)
-			case .recentsID:   return  gSearchScopeOption.contains(.fRecent)
-			case .everyoneID:  maybe = gSearchScopeOption.contains(.fPublic)
-			case .mineID:      maybe = gSearchScopeOption.contains(.fMine)
-		}
-
+	override var isInScope: Bool {
 		if  let name = root?.recordName {
-			if  !maybe, gSearchScopeOption.contains(.fTrash) {
+			switch databaseID {
+				case .favoritesID: if gSearchScopeOption.contains(.fFavorites), name == kFavoritesRootName { return true }
+				case .recentsID:   if gSearchScopeOption.contains(.fRecent),    name == kRecentsRootName   { return true }
+				case .everyoneID:  if gSearchScopeOption.contains(.fPublic),    name == kRootName          { return true }
+				case .mineID:      if gSearchScopeOption.contains(.fMine),      name == kRootName          { return true }
+			}
+
+			if  gSearchScopeOption.contains(.fTrash) {
 				return name == kTrashName || name == kDestroyName
 			}
 		} else {
 			return gSearchScopeOption.contains(.fOrphan)
 		}
 
-		return maybe
+		return false
 	}
 
 	var visibleDoneZone: Zone? {
@@ -744,7 +741,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func unlinkParentAndMaybeNeedSave() {
 		if  parentZoneMaybe != nil ||
-				parentLink  != kNullLink {
+				(parentLink  != nil &&
+				 parentLink  != kNullLink) {
 			parentZoneMaybe  = nil
 			parentLink       = kNullLink
 		}
@@ -763,7 +761,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var parentZone: Zone? {
 		get {
-			if  isARoot {
+			if  root == self {
 				unlinkParentAndMaybeNeedSave()
 			} else  if  parentZoneMaybe == nil {
 				if  let      parentName  = parentRID {
@@ -920,34 +918,36 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func updateCoreDataRelationships() {
 		if  gIsUsingCoreData,
-			let        zID = dbid {
-			var childArray = Set<Zone>()
-			var traitArray = Set<ZTrait>()
+			let      zID = dbid {
+			var childSet = Set<Zone>()
+			var traitSet = Set<ZTrait>()
 
 			for child in children {
 				if  let cID = child.dbid,
-					zID    == cID {                // avoid cross-store relationships
-					childArray.insert(child)
+					zID    == cID,
+					let   c = child.selfInCurrentBackgroundCDContext as? Zone {                  // avoid cross-store relationships
+					childSet.insert(c)
 				}
 			}
 
 			for trait in traits.values {
 				if  let tID = trait.dbid,
-					zID    == tID {                // avoid cross-store relationships
-					traitArray.insert(trait)
+					zID    == tID,
+					let   t = trait.selfInCurrentBackgroundCDContext as? ZTrait {                // avoid cross-store relationships
+					traitSet.insert(t)
 				}
 			}
 
-			if  childArray.count > 0 {
-				setValue(childArray as NSObject, forKeyPath: kChildArray)
+			if  childSet.count > 0 {
+				setValue(childSet as NSObject, forKeyPath: kChildArray)
 			} else {
-				setValue(nil,                    forKeyPath: kChildArray)
+				setValue(nil,                  forKeyPath: kChildArray)
 			}
 
-			if  traitArray.count > 0 {
-				setValue(traitArray as NSObject, forKeyPath: kTraitArray)
+			if  traitSet.count > 0 {
+				setValue(traitSet as NSObject, forKeyPath: kTraitArray)
 			} else {
-				setValue(nil,                    forKeyPath: kTraitArray)
+				setValue(nil,                  forKeyPath: kTraitArray)
 			}
 		}
 	}
@@ -1577,7 +1577,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func       focusRecent() { focusOn() { gRelayoutMaps() } }
 	func editTraitForType(_ type: ZTraitType) { gTextEditor.edit(traitFor(type)) }
 
 	@discardableResult func edit() -> ZTextEditor? {
@@ -1800,7 +1799,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let t = trait {
 			t.unregister()
-			gCoreDataStack.context.delete(t)
+			gCDCurrentBackgroundContext.delete(t)
 		}
 	}
 
@@ -2022,7 +2021,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else if let dbID = crossLink?.databaseID {
 				gDatabaseID = dbID
 
-				gRecents.focusOnGrab {
+				gFocusing.focusOnGrab {
 					gHere.grab()
 					atArrival()
 				}
@@ -2079,7 +2078,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// ///////////////////////// //
 
 					if  let here = target { // e.g., default root favorite
-						gRecents.focusOnGrab(.eSelected) {
+						gFocusing.focusOnGrab(.eSelected) {
 							gHere = here
 
 							gHere.prepareForArrival()
@@ -2089,7 +2088,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						gHere          = here
 
 						gHere.prepareForArrival()
-						gRecents.focusOnGrab {
+						gFocusing.focusOnGrab {
 							complete(gHere, .spRelayout)
 						}
 					} else {
@@ -2133,15 +2132,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					} // else ignore: favorites id with an unresolvable bookmark target
 				}
 			}
-		}
-	}
-
-	func focusOn(_ atArrival: @escaping Closure) {
-		gHere = self // side-effect does push
-
-		grab() // so the following will work correctly
-		gRecents.focusOnGrab(.eSelected) {
-			atArrival()
 		}
 	}
 
@@ -2851,8 +2841,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// adopt recursively
 
+	func assureRoot() {
+		if  root == nil {
+			var foundRoot = self
+
+			while let p = foundRoot.parentZone {
+				foundRoot = p
+			}
+
+			if  foundRoot != self {
+				root = foundRoot
+			}
+		}
+	}
+
 	override func adopt(recursively: Bool = false) {
-		if  !isARoot, !needsDestroy {
+		if  !needsDestroy {
 			if  let p = parentZone, p != self {        // first compute parentZone
 				if !p.children.contains(self) {        // see if already adopted
 					p.addChildAndRespectOrder(self)
@@ -3354,7 +3358,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			grab() // narrow selection to just this one zone
 
 			if  self != gHere {
-				gRecents.focusOnGrab(.eSelected) {
+				gFocusing.focusOnGrab(.eSelected) {
 					gRelayoutMaps()
 				}
 			}
@@ -3618,20 +3622,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else {
 			switch key {
 				case "a":      children.alphabetize()
-				case "b":      addBookmark()
-				case "d":      duplicate()
-				case "e":      editTraitForType(.tEmail)
-				case "w":      editTraitForType(.tHyperlink)
 				case "i":      children.sortByCount()
 				case "m":      children.sortByLength()
+				case "e":      editTraitForType(.tEmail)
+				case "w":      editTraitForType(.tHyperlink)
+				case "b":      addBookmark()
+				case "d":      duplicate()
 				case "n":      showNote()
-				case "o":      importFromFile(.eSeriously) { gRelayoutMaps(for: self) }
 				case "r":      reverseChildren()
 				case "s":      gFiles.export(self, toFileAs: .eSeriously)
-				case "t":      swapWithParent { gRelayoutMaps(for: self) }
-				case "/":      focusRecent()
+				case "o":      importFromFile(.eSeriously) { gRelayoutMaps(for: self) }
+				case "t":      swapWithParent              { gRelayoutMaps(for: self) }
+				case "/":      gFocusing.grabAndFocusOn(self)     { gRelayoutMaps() }
+				case "\u{08}", kDelete: deleteSelf         { gRelayoutMaps() }
 				case kSpace:   addIdea()
-				case "\u{08}", kDelete: deleteSelf { gRelayoutMaps() }
 				default:       break
 			}
 		}

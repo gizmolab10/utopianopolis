@@ -50,37 +50,32 @@ class ZStartup: NSObject {
 				gIsReadyToShowUI = true
 
 				gDetailsController?.removeViewFromStack(for: .vSubscribe)
+				gFavorites.updateAllFavorites()
+				gRefreshPersistentWorkMode()
+				gRemoteStorage.updateRootsOfAllProjeny()
+				gRemoteStorage.recount()
+				gRefreshCurrentEssay()
+//				gProducts.fetchProductData()
 
-				gFavorites.setup { result in
-					FOREGROUND {
-						gFavorites.updateAllFavorites()
-						gRefreshPersistentWorkMode()
-						gRemoteStorage.updateRootsOfAllProjeny()
-						gRemoteStorage.recount()
-						gRefreshCurrentEssay()
-//						gProducts.fetchProductData()
+				gRefusesFirstResponder                = false
+				gMainController?.helpButton?.isHidden = false
+				gHasFinishedStartup                   = true
+				gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 
-						gRefusesFirstResponder                = false
-						gMainController?.helpButton?.isHidden = false
-						gHasFinishedStartup                   = true
-						gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
+				if  gIsStartupMode {
+					gSetMapWorkMode()
+				}
 
-						if  gIsStartupMode {
-							gSetMapWorkMode()
-						}
+				gRecents.push()
+				gHereMaybe?.grab()
+				gSignal([.sLaunchDone])
+				gSaveContext()
 
-						gRecents.push()
-						gHereMaybe?.grab()
-						gSignal([.sLaunchDone])
-						gSaveContext()
-
-						FOREGROUND(after: 0.1) { [self] in
-							requestFeedback() {
-								gTimers.stopTimer (for: .tStartup)
-								gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tHover]) // .tLicense
-								gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap, .spDataDetails])
-							}
-						}
+				FOREGROUND(after: 0.1) { [self] in
+					requestFeedback() {
+						gTimers.stopTimer (for: .tStartup)
+						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tHover]) // .tLicense
+						gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap, .spDataDetails])
 					}
 				}
 			}

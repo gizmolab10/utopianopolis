@@ -136,22 +136,24 @@ class ZRecord: ZManagedObject {
 	// MARK: - overrides
 	// MARK: -
 
-	var isAdoptable: Bool { return false }
-	var matchesFilterOptions: Bool { return true }
-	var cloudProperties: StringsArray { return ZRecord.cloudProperties }
-	var optionalCloudProperties: StringsArray { return ZRecord.optionalCloudProperties }
-	class var   cloudProperties: StringsArray { return [] }
-	class var optionalCloudProperties: StringsArray { return [] }
+	var isAdoptable          : Bool { return false }
+	var passesFilter         : Bool { return true }
+	var isInScope            : Bool { return true }
+	var matchesFilterOptions : Bool { return passesFilter && isInScope }
+	var               cloudProperties : StringsArray { return ZRecord.cloudProperties }
+	var       optionalCloudProperties : StringsArray { return ZRecord.optionalCloudProperties }
+	class var         cloudProperties : StringsArray { return [] }
+	class var optionalCloudProperties : StringsArray { return [] }
 
 	func orphan() {}
-	func adopt(recursively: Bool = false) {}
 	func maybeNeedRoot() {}
 	func debug(_ iMessage: String) {}
 	func hasMissingChildren() -> Bool { return true }
 	func hasMissingProgeny()  -> Bool { return true }
 	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
-	func unregister() { cloud?.unregisterZRecord(self) }
-	func register() { zRecords?.registerZRecord(self) }
+	func unregister() {  cloud?.unregisterZRecord(self) }
+	func register()   { zRecords?.registerZRecord(self) }
+	func adopt(recursively: Bool = false) {}
 
 	class func cloudProperties(for className: String) -> StringsArray {
 		switch className {
@@ -164,6 +166,8 @@ class ZRecord: ZManagedObject {
 
 	// MARK: - core data
 	// MARK: -
+
+	var selfInCurrentBackgroundCDContext: ZRecord? { return gCDCurrentBackgroundContext.object(with: objectID) as? ZRecord }
 
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 

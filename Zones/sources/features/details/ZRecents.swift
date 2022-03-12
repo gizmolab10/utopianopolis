@@ -9,11 +9,6 @@
 import Foundation
 import CloudKit
 
-enum ZFocusKind: Int {
-	case eSelected
-	case eEdited
-}
-
 let gRecents     = ZRecents(ZDatabaseID.recentsID)
 var gRecentsRoot : Zone? { return gRecents.rootZone }
 var gRecentsHere : Zone? { return gRecentsHereMaybe ?? gRecentsRoot }

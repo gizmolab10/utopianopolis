@@ -28,6 +28,8 @@ enum ZOperationID: Int, CaseIterable {
 
 	case oManifest           // all these are LOCAL
 	case oRoots
+	case oFavorites			 // MINE ONLY
+	case oRecents  			 // MINE ONLY
     case oHere
 	case oLoadingIdeas
 	case oWrite
@@ -39,9 +41,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oSavingLocalData    // LOCAL
 	case oResolveMissing
     case oFinishing
-	case oFavorites			 // MINE ONLY
     case oBookmarks			 // MINE ONLY
-	case oRecents  			 // MINE ONLY
 	case oResolve
 	case oAdopt
 

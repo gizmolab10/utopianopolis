@@ -35,13 +35,13 @@ typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
 
 typealias         ZTraitDictionary = [ZTraitType   : ZTrait]
 typealias        ZAssetsDictionary = [UUID         : CKAsset]
-typealias       ZRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
 typealias       ZStorageDictionary = [ZStorageType : NSObject]
 typealias     WidgetHashDictionary = [Int          : ZoneWidget]
 typealias     ZStringAnyDictionary = [String       : Any]
 typealias  ZStringObjectDictionary = [String       : NSObject]
 typealias  StringZRecordDictionary = [String       : ZRecord]
 typealias StringZRecordsDictionary = [String       : ZRecordsArray]
+typealias   ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
 typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
 
 protocol ZGeneric {
@@ -568,20 +568,6 @@ extension CKRecord {
 
         return true
     }
-
-	var matchesFilterOptions: Bool {
-		switch recordType {
-			case kZoneType:
-				let    isBookmark = self[kpZoneLink] != nil
-
-				return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
-			case kTraitType:
-				return gFilterOption.contains(.fNotes)
-			default: break
-		}
-
-		return true
-	}
 
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
@@ -1470,52 +1456,18 @@ extension CKReferencesArray {
 
 }
 
-//extension StringZRecordsDictionary {
-//
-//	mutating func appending(_ dicts: StringZRecordDictionary?) -> StringZRecordsDictionary {
-//		if  let more = dicts {
-//			for item in more {
-//				appendIfUnique(item) // calls the method below this one
-//			}
-//		}
-//
-//		return self
-//	}
-//
-//}
-
-//extension StringZRecordDictionary {
-//
-//	@discardableResult mutating func appendIfUnique(_ record: ZRecord) -> Bool { // true means record is now in dict
-//		let name = record.recordName ?? gUniqueRecordName                        // if record has no record name, create a new one, assign to record, add record and return true
-//
-//		if  let existing = self[name] {
-//			return existing == record
-//		}
-//
-//		self[name] = record
-//
-//		return true
-//	}
-//
-//	static func fromObjectIDs(_ ids: ZObjectIDsArray, in context: NSManagedObjectContext) -> StringZRecordDictionary {
-//		let records = ids.map { context.object(with: $0) as? ZRecord }
-//		var result = StringZRecordDictionary()
-//		for record in records {
-//			if  let r = record {
-//				let name = r.recordName ?? gUniqueRecordName
-//				result[name] = r
-//			}
-//		}
-//		return result
-//	}
-//
-//}
-
 extension ZRecordsArray {
 
-	static func fromObjectIDs(_ ids: ZObjectIDsArray, in context: NSManagedObjectContext) -> ZRecordsArray {
-		return ids.map { context.object(with: $0) as? ZRecord }.filter { $0 != nil }.map { $0! }
+	static func createFromObjectIDs(_ ids: ZObjectIDsArray, in context: NSManagedObjectContext) -> ZRecordsArray {
+		var zRecords = ZRecordsArray()
+
+		for  id in ids {
+			if  let zRecord = context.object(with: id) as? ZRecord {
+				zRecords.append(zRecord)
+			}
+		}
+
+		return zRecords
 	}
 
 	var recordNames: StringsArray {

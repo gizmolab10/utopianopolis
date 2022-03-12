@@ -157,18 +157,15 @@ class ZRecords: NSObject {
 
 	func showRoot() { setHere(to: rootZone) }
 
-	func replaceRoot(at oldRoot: inout Zone?, with root: Zone, debug: Bool = false) {
+	func replaceRoot(at oldRoot: inout Zone?, with root: Zone) {
 		let isAnEmptyRoot = (root.zoneName == nil || root.zoneName == kEmptyIdea || root.zoneName == kEmpty)
-		if  debug, isAnEmptyRoot {
-			noop()
-		}
 
 		if  let old = oldRoot, old != root {
 			if !isAnEmptyRoot {
 				old.unregister()
-				gCoreDataStack.context.delete(old)
+				gCDCurrentBackgroundContext.delete(old)
 			} else {
-				// fetch public root zone yielded a zone with no name and no children !!!!!!
+				// fetch root zone yielded a zone with no name and no children !!!!!!
 				// no clue why. ghaaaahh!
 				print("-------------------------- isAnEmptyRoot ----------------------------")
 				gApplication?.terminate(self)
@@ -187,7 +184,7 @@ class ZRecords: NSObject {
 				case .destroyID:   replaceRoot(at: &destroyZone,      with: root)
 				case .trashID:     replaceRoot(at: &trashZone,        with: root)
 				case .lostID:      replaceRoot(at: &lostAndFoundZone, with: root)
-				case .rootID:      replaceRoot(at: &rootZone,         with: root, debug: databaseID == .everyoneID)
+				case .rootID:      replaceRoot(at: &rootZone,         with: root)
 			}
 		}
 	}
@@ -316,7 +313,7 @@ class ZRecords: NSObject {
 		set {
 			hereRecordName = newValue?.recordName ?? rootName
 
-//			registerZRecord(newValue)
+			registerZRecord(newValue)
 		}
     }
 
@@ -479,18 +476,18 @@ class ZRecords: NSObject {
     // MARK: - registries
     // MARK: -
 
-	func appendZRecordsLookup(with iName: String, onEach: @escaping ZRecordsToZRecordsClosure) {
+	func appendZRecordsLookup(with iName: String, onEachHandful: @escaping ZRecordsToZRecordsClosure) {
 		let names = iName.components(separatedBy: kSpace).filter { $0 != kEmpty }
 
 		gCoreDataStack.searchZRecordsForNames(names, within: databaseID) { [self] (dict: StringZRecordsDictionary) in
 			for (name, zRecords) in dict {
-				let                    records = onEach(zRecords)
+				let               records = onEachHandful(zRecords)
 				zRecordsArrayLookup[name] = records
 
 				foundInSearch.append(contentsOf: records)
 			}
 
-			let _ = onEach(nil) // indicates done
+			let _ = onEachHandful(nil) // indicates done
 		}
 	}
 
@@ -920,53 +917,6 @@ class ZRecords: NSObject {
             }
         }
     }
-
-	func focusOnGrab(_ kind: ZFocusKind = .eEdited, _ NOBOOKMARK: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
-
-		// regarding grabbed/edited zone, five states:
-		// 1. is a bookmark        -> target becomes here, if in big map then do as for state 2
-		// 2. is here              -> update in small map
-		// 3. in small map         -> grab here, if grabbed then do as for state 4
-		// 4. not here, NOBOOKMARK -> change here
-		// 5. not NOBOOKMARK       -> select here, create a bookmark
-
-		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
-			atArrival()
-
-			return
-		}
-
-		let finishAndGrabHere = {
-			gSignal([.spSmallMap])
-			gHere.grab()               // NOTE: changes work mode
-			atArrival()
-		}
-
-		if  zone.isBookmark {     		// state 1
-			zone.focusOnBookmarkTarget() { object, kind in
-				gHere = object as! Zone
-
-				finishAndGrabHere()
-			}
-		} else if zone == gHere {       // state 2
-			if  let small = gCurrentSmallMapRecords,
-				!small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
-				small.matchOrCreateBookmark(for: zone, autoAdd: true)
-			}
-
-			atArrival()
-		} else if zone.isInSmallMap {   // state 3
-			finishAndGrabHere()
-		} else if NOBOOKMARK {          // state 4
-			gRecents.refocus {
-				atArrival()
-			}
-		} else {                        // state 5
-			gHere = zone
-
-			finishAndGrabHere()
-		}
-	}
 
 	// MARK: - lookups
     // MARK: -

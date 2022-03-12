@@ -18,10 +18,10 @@ let gMapEditor = ZMapEditor()
 
 enum ZReorderMenuType: String {
 	case eAlphabetical = "a"
-	case eReversed     = "r"
 	case eByLength     = "l"
-	case eBySizeOfList = "s"
 	case eByKind       = "k"
+	case eReversed     = "r"
+	case eBySizeOfList = "s"
 
 	static var activeTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind] }
 
@@ -114,7 +114,7 @@ class ZMapEditor: ZBaseEditor {
 						case kReturn:  if COMMAND { editNote(flags: flags) }
 						case kEscape:               editNote(flags: flags, useGrabbed: false)
 						case kBackspace,
-							 kDelete:  if CONTROL { focusOnTrash() }
+						kDelete:  if CONTROL { gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() } }
 						default:       return false // false means key not handled
 					}
 				}
@@ -345,7 +345,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func handleSlash(_ flags: ZEventFlags) -> Bool {                                // false means not handled here
 		if !flags.isAnyMultiple {
-			focusOrPopSmallMap(flags, kind: .eSelected)
+			gFocusing.focusOrPopSmallMap(flags, kind: .eSelected)
 
 			return true
 		} else if let controller = gHelpController {                                 // should always succeed
@@ -365,28 +365,9 @@ class ZMapEditor: ZBaseEditor {
 		let     ANY = flags.isAny
 
 		if  CONTROL {
-			focusOnTrash()
+			gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() }
 		} else if OPTION || isWindow || COMMAND {
 			delete(permanently: SPECIAL && isWindow, preserveChildren: ANY && isWindow, convertToTitledLine: SPECIAL)
-		}
-	}
-
-	// MARK: - focus
-	// MARK: -
-
-	func focusOnTrash() {
-		gTrash?.focusOn() {
-			gRelayoutMaps()
-		}
-	}
-
-	func focusOrPopSmallMap(_ flags: ZEventFlags, kind: ZFocusKind) {
-		if  flags.isControl {
-			gCurrentSmallMapRecords?.popAndUpdateCurrent()
-		} else {
-			gRecords?.focusOnGrab(kind, flags.isCommand, shouldGrab: true) { // complex grab logic
-				gRelayoutMaps()
-			}
 		}
 	}
 

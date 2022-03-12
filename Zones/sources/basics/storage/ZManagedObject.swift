@@ -24,7 +24,7 @@ typealias ZManagedObject = NSManagedObject
 extension ZManagedObject {
 
 	convenience init(entityName: String?, databaseID: ZDatabaseID) {
-		let     context = gCoreDataStack.context
+		let     context = gCDCurrentBackgroundContext
 
 		if  let    name = entityName,
 			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {

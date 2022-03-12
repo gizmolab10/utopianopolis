@@ -99,7 +99,7 @@ class ZSmallMapRecords: ZRecords {
 			}
 
 			if  gIsMapMode {
-				focusOnGrab(.eSelected) {
+				gFocusing.focusOnGrab(.eSelected) {
 					gSignal([.spRelayout])
 				}
 			} else if gCurrentEssayZone != tHere {
@@ -303,13 +303,6 @@ class ZSmallMapRecords: ZRecords {
 		}
 
 		return true
-	}
-
-	func findAndSetHere(asParentOf zone: Zone) -> Bool {
-		var found = gRecents   .findAndSetHereAsParentOfBookmarkTargeting(zone)
-		found     = gFavorites .findAndSetHereAsParentOfBookmarkTargeting(zone) || found
-
-		return found
 	}
 
 	@discardableResult func matchOrCreateBookmark(for zone: Zone, autoAdd: Bool) -> Zone {
