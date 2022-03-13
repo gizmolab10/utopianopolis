@@ -1516,9 +1516,7 @@ extension ZRecordsArray {
 		if  let  more = records {
 			var union = ZRecordsArray()
 			union.append(contentsOf: self)
-			for other in more {
-				union.appendUnique(item: other) // calls the method below this one, for stricter uniqueness
-			}
+			union.append(contentsOf: more)
 
 			return union
 		}
@@ -2578,6 +2576,10 @@ extension NSPredicate {
 
 	func and(_ predicate: NSPredicate) -> NSPredicate {
 		return NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, self])
+	}
+
+	func or(_ predicate: NSPredicate) -> NSPredicate {
+		return NSCompoundPredicate(orPredicateWithSubpredicates: [predicate, self])
 	}
 
 }

@@ -1274,7 +1274,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						deleteBookmarksClosure()
 					}
 				} else {
-					concealAllProgeny()           // strip cloggers from gExpandedZones list
+					concealAllProgeny()           // shrink gExpandedZones list
 					traverseAllProgeny { iZone in
 						if !iZone.isInTrash {
 							iZone.needDestroy()   // gets written in file

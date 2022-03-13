@@ -465,28 +465,26 @@ class ZCoreDataStack: NSObject {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
 			request.predicate = predicate.and(dbidPredicate(from: dbID))
 
-			deferUntilAvailable(for: .oSearch) {
-				FOREBACKGROUND { [self] in
-					persistentContainer.performBackgroundTask { context in
-						var objectIDs = ZObjectIDsArray()
-						do {
-							let items = try context.fetch(request)
-							for item in items {
-								if  let object = item as? ZRecord {
-									objectIDs.append(object.objectID)
-								}
+			deferUntilAvailable(for: .oSearch) { [self] in
+				persistentContainer.performBackgroundTask { context in
+					var objectIDs = ZObjectIDsArray()
+					do {
+						let items = try context.fetch(request)
+						for item in items {
+							if  let object = item as? ZRecord {
+								objectIDs.append(object.objectID)
 							}
-
-							try context.save()
-						} catch {
-							print("search fetch failed")
 						}
 
-						makeAvailable() // before calling closure
+						try context.save()
+					} catch {
+						print("search fetch failed")
+					}
 
-						FOREGROUND {
-							onCompletion?(ZRecordsArray.createFromObjectIDs(objectIDs, in: persistentContainer.viewContext))
-						}
+					makeAvailable() // before calling closure
+
+					FOREGROUND {
+						onCompletion?(ZRecordsArray.createFromObjectIDs(objectIDs, in: persistentContainer.viewContext))
 					}
 				}
 			}
@@ -637,6 +635,56 @@ class ZCoreDataStack: NSObject {
 
 		return nil
 	}
+//
+//	func searchPredicate(entityNames: StringsArray, string: String) -> NSPredicate? {
+//		var predicate: NSPredicate?
+//		for entityName in entityNames {
+//			if  let subpredicate = searchPredicate(entityName: entityName, string: string) {
+//				if  let     p = predicate {
+//					predicate = p.or(subpredicate)
+//				} else {
+//					predicate = subpredicate
+//				}
+//			}
+//		}
+//
+//		return predicate != nil ? predicate! : NSPredicate(value: true)
+//	}
+//
+//	func searchPredicate(entityName: String, strings: StringsArray) -> NSPredicate? {
+//		switch entityName {
+//			case kZoneType:  return zoneNamePredicate(from: strings)
+//			case kTraitType: return traitPredicate   (from: strings)
+//			default:         return nil
+//		}
+//	}
+//
+//	func predicateFrom(_ strings: StringsArray, _ onEach: StringToPredicateClosure) -> NSPredicate {
+//		var predicate: NSPredicate?
+//		for string in strings {
+//			let subpredicate = onEach(string)
+//
+//			if  let     p = predicate {
+//				predicate = p.or(subpredicate)
+//			} else {
+//				predicate = subpredicate
+//			}
+//		}
+//
+//		return predicate != nil ? predicate! : NSPredicate(value: true)
+//	}
+//
+//	func zoneNamePredicate(from strings: StringsArray) -> NSPredicate {
+//		return predicateFrom(strings) { string in
+//			return zoneNamePredicate(from: string)
+//		}
+//	}
+//
+//	func traitPredicate(from strings: StringsArray) -> NSPredicate {
+//		return predicateFrom(strings) { string in
+//			return traitPredicate(from: string)
+//		}
+//	}
 
 	func existencePredicate(entityName: String, recordName: String?, databaseID: ZDatabaseID) -> NSPredicate? {
 		if  let          name = recordName {
