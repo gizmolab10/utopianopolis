@@ -17,11 +17,11 @@ var gSmallMapHere       : Zone?                { return gSmallMapController?.her
 
 class ZSmallMapController: ZMapController {
 
-	override  var      hereZone : Zone?          { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
-	override  var    widgetType : ZWidgetType    { return gIsRecentlyMode ? .tRecent      : .tFavorite }
-	override  var  controllerID : ZControllerID  { return .idSmallMap }
-	override  var mapLayoutMode : ZMapLayoutMode { return .linearMode }
-	override  var      isBigMap : Bool           { return false }
+	override var       hereZone : Zone?          { return gIsRecentlyMode ?  gRecentsHere :  gFavoritesHereMaybe }
+	override var     widgetType : ZWidgetType    { return gIsRecentlyMode ? .tRecent      : .tFavorite }
+	override var   controllerID : ZControllerID  { return .idSmallMap }
+	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
+	override var canDrawWidgets : Bool           { return gSmallMapIsVisible }
 	var             isRecentMap : Bool           { return hereWidget?.widgetZone?.isInRecents ?? gIsRecentlyMode }
 
 	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {

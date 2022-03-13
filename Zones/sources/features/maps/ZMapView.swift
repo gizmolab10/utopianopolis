@@ -31,13 +31,6 @@ class ZMapView: ZView {
 	@IBOutlet var decorationsView : ZMapView?
 	override func  menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
-	var detectHovering : Bool {
-		return okayToDetectHover
-		&& !gDragging.isDragging
-		&& !gRubberband.showRubberband    // not blink rubberband or drag
-		&& !(controller?.isExemplar ?? false)
-	}
-
 	// MARK: - initialize
 	// MARK: -
 

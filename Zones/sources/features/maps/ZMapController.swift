@@ -42,17 +42,19 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var          priorScrollLocation = CGPoint.zero
 	override  var       controllerID : ZControllerID  { return .idBigMap }
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
-	var                   widgetType : ZWidgetType    { return .tBigMap }
-	var                   isExemplar : Bool           { return false }
-	var                     isBigMap : Bool           { return true }
+	var               canDrawWidgets : Bool           { return gIsMapOrEditIdeaMode || !gShowsSearchResults }
+	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
+	var                     isBigMap : Bool           { return controllerID == .idBigMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
 	var                         mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
+	var                   widgetType : ZWidgetType    { return .tBigMap }
 	var                mapPseudoView : ZPseudoView?
 	var                   hereWidget : ZoneWidget?
 	var                     rootLine : ZoneLine?
 	var                      mapView : ZMapView?
 	@IBOutlet var  mapContextualMenu : ZContextualMenu?
 	@IBOutlet var ideaContextualMenu : ZoneContextualMenu?
+	override func controllerStartup() { controllerSetup(with: gMapView) }    // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
 
 	override func controllerSetup(with iMapView: ZMapView?) {
 		if  let                     map = iMapView {
@@ -73,12 +75,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 	}
 
-	override func controllerStartup() {
-		controllerSetup(with: gMapView)                 // viewWillAppear is not called, so piggy back on viewDidLoad, which calls startup
-	}
-
 	func drawWidgets(for phase: ZDrawPhase) {
-		if  isBigMap || isExemplar || gDetailsViewIsVisible(for: .vSmallMap) {
+		if  canDrawWidgets {
 			if  phase == .pDots,
 				mode  == .linearMode {
 				rootLine?.draw(phase) // for here's drag dot

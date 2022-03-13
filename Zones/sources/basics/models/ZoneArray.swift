@@ -271,8 +271,6 @@ extension ZoneArray {
 			zones         = commonParent?.children ?? []
 		}
 
-		commonParent?.respectOrder()
-		commonParent?.children.updateOrder()
 		zones        .reverseOrder()
 		commonParent?.respectOrder()
 		gRelayoutMaps()

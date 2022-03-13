@@ -937,7 +937,7 @@ func gThrowOnUserActivity() throws {
 }
 
 func gDetailsViewIsVisible(for id: ZDetailsViewID) -> Bool {
-	return gShowDetailsView && gDetailsController?.viewIsVisible(for: id) ?? false
+	return gShowDetailsView && (gDetailsController?.viewIsVisible(for: id) ?? false)
 }
 
 func gRefreshCurrentEssay() {

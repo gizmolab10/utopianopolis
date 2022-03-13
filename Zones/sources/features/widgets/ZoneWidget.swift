@@ -124,7 +124,7 @@ class ZoneWidget: ZPseudoView {
 		return result!
 	}
 
-	override var controller: ZMapController? {
+	override var controller : ZMapController? {
 		if type.isBigMap   { return      gMapController }
 		if type.isRecent   { return gSmallMapController }
 		if type.isFavorite { return gSmallMapController }

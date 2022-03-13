@@ -58,6 +58,11 @@ class ZHelpController: ZGenericTableController {
 	let            dotsHelpData = ZHelpDotsData()
 	let             mapHelpData = ZHelpMapData()
 	var               isShowing = false
+	override func shouldHandle(_ kind: ZSignalKind) -> Bool                                              { return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false) }
+	override func handleSignal(_ object: Any?, kind: ZSignalKind)                                        { genericTableUpdate() }
+	func           showHelpFor(_ mode: ZHelpMode)                                                        { show(true, mode: mode) }   // side-effect: sets gCurrentHelpMode
+	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat                            { return helpData.rowHeight }
+	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? { return helpData.objectValueFor(row) }
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
 		switch iMode {
@@ -163,20 +168,8 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	func showHelpFor(_ mode: ZHelpMode) {
-		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
-	}
-
 	// MARK: - events
 	// MARK: -
-
-	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
-		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
-	}
-
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		genericTableUpdate()
-	}
 
 	func handleKey(_ key: String, flags: ZEventFlags) -> Bool {   // false means key not handled
 		let  COMMAND = flags.isCommand
@@ -284,14 +277,6 @@ class ZHelpController: ZGenericTableController {
 
 		return helpData.countOfRows
     }
-
-	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-		return helpData.rowHeight
-	}
-
-	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
-		return helpData.objectValueFor(row)
-	}
 
 	func tableViewSelectionIsChanging(_ notification: Notification) {
 		if  let (row, column) = clickCoordinates, column >= 0,
