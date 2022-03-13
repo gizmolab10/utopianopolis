@@ -837,9 +837,11 @@ class ZMapEditor: ZBaseEditor {
 								gFavorites.updateAllFavorites()
 							} else if c == 0 {
 								gNewOrExistingBookmark(targeting: gHere, addTo: gRecentsHere)  // assure at least one bookmark in recents (targeting here)
-							}
 
-							gHere.grab()                                 // as though user clicked on background
+								if  p.isInBigMap {
+									gHere.grab()                                               // as though user clicked on background
+								}
+							}
 						} else {
 							let z = p.children[i]
 

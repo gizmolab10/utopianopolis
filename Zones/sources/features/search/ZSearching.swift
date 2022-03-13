@@ -15,6 +15,7 @@ import Foundation
 #endif
 
 func gExitSearchMode(force: Bool = true) { if force || gIsSearchMode { gSearching.exitSearchMode() } }
+var gShowsSearchResults : Bool { return gSearching.state.isOneOf([.sList]) }
 
 enum ZSearchState: Int {
     case sEntry

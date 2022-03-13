@@ -1249,9 +1249,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				}
 			} else {
-				let deleteBookmarksClosure: Closure = { [self] in
+				let finishDeletion: Closure = { [self] in
 					if  let            p = parent, p != self {
 						p.fetchableCount = p.count       // delete alters the count
+
+						if  p.count == 0, p.isInSmallMap,
+							let g = p.parentZone {
+							gCurrentSmallMapRecords?.hereZoneMaybe = g
+
+							g.expand()
+							p.grab()
+						}
 					}
 
 					// //////////
@@ -1267,11 +1275,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				if  isInTrash {
 					moveZone(to: destroyZone) {
-						deleteBookmarksClosure()
+						finishDeletion()
 					}
 				} else if !permanently, !isInDestroy {
 					moveZone(to: trashZone) {
-						deleteBookmarksClosure()
+						finishDeletion()
 					}
 				} else {
 					concealAllProgeny()           // shrink gExpandedZones list
@@ -1286,10 +1294,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					if  cloud?.cloudUnavailable ?? true {
 						moveZone(to: destroyZone) {
-							deleteBookmarksClosure()
+							finishDeletion()
 						}
 					} else {
-						deleteBookmarksClosure()
+						finishDeletion()
 					}
 				}
 			}
