@@ -83,6 +83,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var           decoratedName :             String  { return decoration + unwrappedName }
 	override var         cloudProperties :       StringsArray  { return Zone.cloudProperties }
 	override var optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
+	override var              isBrandNew :               Bool  { return zoneName == nil || zoneName == kEmpty }
 	override var             isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
@@ -133,7 +134,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                allProgeny        :          ZoneArray  { return zones(of:               .wProgeny)  }
 	var        allNotemarkProgeny        :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
 	var        allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
-	var        all                       :          ZoneArray  { return zones(of:  .wAll) }
+	var        all                       :          ZoneArray  { return zones(of:               .wAll) }
 	var                  visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
 	var                   duplicateZones =          ZoneArray  ()
 	var                         children =          ZoneArray  ()
@@ -3639,10 +3640,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "n":      showNote()
 				case "r":      reverseChildren()
 				case "s":      gFiles.export(self, toFileAs: .eSeriously)
-				case "o":      importFromFile(.eSeriously) { gRelayoutMaps(for: self) }
-				case "t":      swapWithParent              { gRelayoutMaps(for: self) }
-				case "/":      gFocusing.grabAndFocusOn(self)     { gRelayoutMaps() }
-				case "\u{08}", kDelete: deleteSelf         { gRelayoutMaps() }
+				case "o":      importFromFile(.eSeriously)    { gRelayoutMaps(for: self) }
+				case "t":      swapWithParent                 { gRelayoutMaps(for: self) }
+				case "/":      gFocusing.grabAndFocusOn(self) { gRelayoutMaps() }
+				case "\u{08}", kDelete: deleteSelf            { gRelayoutMaps() }
 				case kSpace:   addIdea()
 				default:       break
 			}

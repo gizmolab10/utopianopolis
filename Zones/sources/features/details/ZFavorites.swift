@@ -49,8 +49,11 @@ class ZFavorites: ZSmallMapRecords {
 	func setup(_ onCompletion: IntClosure?) {
 		rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
 
-		onCompletion?(0)
+		if  gCDMigrationState != .normal {
+			rootZone?.expand()
+		}
 
+		onCompletion?(0)
 	}
 
     // MARK: - update
@@ -168,6 +171,7 @@ class ZFavorites: ZSmallMapRecords {
 					let discard = workingBookmarks[index]
 					discard.needDestroy()
 					discard.orphan()
+					gCDCurrentBackgroundContext.delete(discard)
 				}
 			}
 

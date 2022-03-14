@@ -284,15 +284,18 @@ class ZRecords: NSObject {
 		}
 
 		// detect and fix bad values
+		// bad idea to do this before progeny are added
 
-		for index in 2...3 {
-			if  references.count      > index {
-				let              name = references[index]
-				if  let          root = rootFor(index) {
-					let rootNames = root.all.map { return $0.recordName ?? kEmpty }
-					if !rootNames.contains(name) {
-						references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
-						changed           = true
+		if  gIsReadyToShowUI {
+			for index in 2...3 {
+				if  references.count  > index {
+					let          name = references[index]
+					if  let      root = rootFor(index) {
+						let rootNames = root.all.map { return $0.recordName ?? kEmpty }
+						if !rootNames.contains(name) {
+							references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
+							changed           = true
+						}
 					}
 				}
 			}
@@ -524,8 +527,8 @@ class ZRecords: NSObject {
 		var                created  = false
 		if  let            zRecord  = iRecord,
             let               name  = zRecord.recordName {
-			if  let existingRecord  = zRecordsLookup[name], name != kRootName {
-                if  existingRecord != zRecord,
+			if  let existingRecord  = zRecordsLookup[name], name != kRootName, !existingRecord.isBrandNew {
+				if  existingRecord != zRecord,
 					existingRecord.entity.name == zRecord.entity.name {
 
                     // /////////////////////////////////////

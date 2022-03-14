@@ -35,6 +35,10 @@ class ZRecents : ZSmallMapRecords {
 	func setup(_ onCompletion: IntClosure?) {
 		rootZone = Zone.uniqueZone(recordName: kRecentsRootName, in: .mineID)
 
+		if  gCDMigrationState != .normal {
+			rootZone?.expand()
+		}
+
 		onCompletion?(0)
 	}
 

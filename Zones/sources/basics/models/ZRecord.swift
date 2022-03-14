@@ -96,34 +96,35 @@ class ZRecord: ZManagedObject {
 	@NSManaged var             dbid: String?
 	@NSManaged var       recordName: String?
 	@NSManaged var modificationDate: Date?
-	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
-	var             zRecords: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
-	var                cloud: ZCloud?   { return zRecords as? ZCloud }
-	var  unwrappedRecordName: String    { return recordName ?? kEmpty }
-	var        decoratedName: String    { return recordName ?? kNoValue }
-	var        unwrappedName: String    { return recordName ?? emptyName }
-	var           typePrefix: String    { return kEmpty }
-	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var   isInPublicDatabase: Bool      { return databaseID == .everyoneID }
-	var              isAZone: Bool      { return false }
-	var         isBigMapRoot: Bool      { return recordName == kRootName }
-	var          isTrashRoot: Bool      { return recordName == kTrashName }
-	var        isDestroyRoot: Bool      { return recordName == kDestroyName }
-	var        isRecentsRoot: Bool      { return recordName == kRecentsRootName }
-	var   isLostAndFoundRoot: Bool      { return recordName == kLostAndFoundName }
-	var      isFavoritesRoot: Bool      { return recordName == kFavoritesRootName }
-	var      isFavoritesHere: Bool      { return recordName == gFavoritesHereMaybe?.recordName }
-	var        isRecentsHere: Bool      { return recordName == gRecentsHereMaybe?.recordName }
-	var       isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
-	var       isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
-	var         isAnyMapRoot: Bool      { return isSmallMapRoot  || isBigMapRoot }
-	var           needsCount: Bool      { return  hasState(.needsCount) }
-	var           needsColor: Bool      { return  hasState(.needsColor) }
-	var         needsDestroy: Bool      { return  hasState(.needsDestroy) }
-	var        needsAdoption: Bool      { return  hasState(.needsAdoption) }
-	var       needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
+	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
+	var             zRecords: ZRecords?   { return gRemoteStorage.zRecords(for: databaseID) }
+	var                cloud: ZCloud?     { return zRecords as? ZCloud }
+	var  unwrappedRecordName: String      { return recordName ?? kEmpty }
+	var        decoratedName: String      { return recordName ?? kNoValue }
+	var        unwrappedName: String      { return recordName ?? emptyName }
+	var           typePrefix: String      { return kEmpty }
+	var            emptyName: String      { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
+	var   isInPublicDatabase: Bool        { return databaseID == .everyoneID }
+	var              isAZone: Bool        { return false }
+	var           isBrandNew: Bool        { return true }
+	var         isBigMapRoot: Bool        { return recordName == kRootName }
+	var          isTrashRoot: Bool        { return recordName == kTrashName }
+	var        isDestroyRoot: Bool        { return recordName == kDestroyName }
+	var        isRecentsRoot: Bool        { return recordName == kRecentsRootName }
+	var   isLostAndFoundRoot: Bool        { return recordName == kLostAndFoundName }
+	var      isFavoritesRoot: Bool        { return recordName == kFavoritesRootName }
+	var      isFavoritesHere: Bool        { return recordName == gFavoritesHereMaybe?.recordName }
+	var        isRecentsHere: Bool        { return recordName == gRecentsHereMaybe?.recordName }
+	var       isSmallMapHere: Bool        { return isFavoritesHere || isRecentsHere }
+	var       isSmallMapRoot: Bool        { return isFavoritesRoot || isRecentsRoot }
+	var         isAnyMapRoot: Bool        { return isSmallMapRoot  || isBigMapRoot }
+	var           needsCount: Bool        { return  hasState(.needsCount) }
+	var           needsColor: Bool        { return  hasState(.needsColor) }
+	var         needsDestroy: Bool        { return  hasState(.needsDestroy) }
+	var        needsAdoption: Bool        { return  hasState(.needsAdoption) }
+	var       needsBookmarks: Bool        { return  hasState(.needsBookmarks) }
 
 	var isARoot: Bool {
 		if  recordName == nil {
