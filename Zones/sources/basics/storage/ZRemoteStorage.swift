@@ -40,7 +40,10 @@ class ZRemoteStorage: NSObject {
     var lostAndFoundZone : Zone?       { return currentRecords.lostAndFoundZone }
     var      destroyZone : Zone?       { return currentRecords.destroyZone }
     var        trashZone : Zone?       { return currentRecords.trashZone }
-    var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
+	var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
+	func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
+	func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
+	func cancel()                                { currentCloud?.currentOperation?.cancel() }
 
 	var allProgeny : ZoneArray {
 		var total = ZoneArray()
@@ -121,10 +124,12 @@ class ZRemoteStorage: NSObject {
         
         return recordsArray
     }
-    
-    func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
-    func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
-	func cancel()                                { currentCloud?.currentOperation?.cancel() }
+
+	func updateAllManifestCounts() {
+		for dbID in kAllDatabaseIDs {
+			updateManifestCount(for: dbID)
+		}
+	}
 
 	func updateManifestCount(for  dbID: ZDatabaseID) {
 		if  let r = zRecords(for: dbID) {

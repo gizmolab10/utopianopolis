@@ -28,9 +28,9 @@ enum ZOperationID: Int, CaseIterable {
 
 	case oManifest           // all these are LOCAL
 	case oRoots
-	case oFavorites			 // MINE ONLY
+	case oHere
 	case oRecents  			 // MINE ONLY
-    case oHere
+	case oFavorites			 // MINE ONLY
 	case oLoadingIdeas
 	case oWrite
 	case oDone

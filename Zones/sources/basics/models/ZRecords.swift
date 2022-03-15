@@ -134,19 +134,7 @@ class ZRecords: NSObject {
 	var         recentsZone : Zone?
 	var         destroyZone : Zone?
     var           trashZone : Zone?
-	var            rootZone : Zone? {
-		didSet {
-			if  databaseID == .everyoneID {
-				if  let r = rootZone {
-					print(r)
-
-					if  r.zoneName == kFirstIdeaTitle, gBatches.currentOp != .oRoots {
-						noop()
-					}
-				}
-			}
-		}
-	}
+	var            rootZone : Zone?
 	var               count : Int       { return 0 }
 	var       zRecordsCount : Int       { return zRecordsLookup.count }
     var         hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
@@ -426,12 +414,20 @@ class ZRecords: NSObject {
     }
 
 	func updateRootsOfAllProjeny() {
-		applyToAllRoots { zone in
-			zone?.traverseAllProgeny { zone in
+		applyToAllRoots { root in
+			root?.traverseAllProgeny { zone in
 				zone.updateRootFromParent()
 			}
 		}
 	}
+
+    func recount() {  // all progenyCounts for all progeny in all roots
+		applyToAllRoots { root in
+			root?.recount()
+		}
+
+		manifest?.count = NSNumber(value: zRecordsCount)
+    }
 
 	func applyToAllRoots(_ closure: ZoneMaybeClosure) {
 		closure(rootZone)
@@ -441,14 +437,6 @@ class ZRecords: NSObject {
 		closure(favoritesZone)
 		closure(lostAndFoundZone)
 	}
-
-    func recount() {  // all progenyCounts for all progeny in all roots
-		applyToAllRoots { zone in
-			zone?.recount()
-		}
-
-		manifest?.count = NSNumber(value: zRecordsCount)
-    }
 
     func className(for recordType: String?) -> String? {
         var     name = nil as String?

@@ -221,14 +221,9 @@ class ZCoreDataStack: NSObject {
 						loadRootZone(recordName: name, into: dbID)
 					}
 
-					load(type: kFileType,          into: dbID, onlyOne: false)
+					load(type: kFileType, into: dbID, onlyOne: false)
 
-					FOREGROUND() {
-						gRemoteStorage.updateManifestCount(for: dbID)
-						gRemoteStorage.updateRootsOfAllProjeny()
-						gRemoteStorage.recount()
-						gHereMaybe?.grab()
-						gSignal([.spRelayout, .spDataDetails, .spCrumbs])
+					FOREGROUND {
 						makeAvailable()
 						onCompletion?(0)
 					}
@@ -245,7 +240,9 @@ class ZCoreDataStack: NSObject {
 				if  let zone = object as? Zone {
 					zone.respectOrder()
 
-					zRecords.setRoot(zone, for: recordName.rootID)
+					FOREGROUND {
+						zRecords.setRoot(zone, for: recordName.rootID)
+					}
 				}
 			}
 		}

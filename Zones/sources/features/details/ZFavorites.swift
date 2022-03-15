@@ -46,11 +46,35 @@ class ZFavorites: ZSmallMapRecords {
 		}
 	}
 
+	var rootsGroupZone: Zone {
+		for zone in allProgeny {
+			if  zone.recordName == kRootsName {
+				return zone
+			}
+		}
+
+		// /////////////////////////
+		// add missing root group //
+		// /////////////////////////
+
+		let          rootsGroup = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
+		rootsGroup    .zoneName = kRootsName
+		rootsGroup.directAccess = .eReadOnly
+
+		rootsGroup.alterAttribute(.groupOwner, remove: false)
+		gFavoritesRoot?.addChildAndRespectOrder(rootsGroup)
+
+		return rootsGroup
+	}
+
 	func setup(_ onCompletion: IntClosure?) {
 		rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
 
+		updateAllFavorites()
+
 		if  gCDMigrationState != .normal {
-			rootZone?.expand()
+			rootZone?.concealAllProgeny()
+			rootsGroupZone.expand()
 		}
 
 		onCompletion?(0)
@@ -180,6 +204,7 @@ class ZFavorites: ZSmallMapRecords {
 					let          name = dbID.rawValue
 					let      bookmark = Zone.uniqueZone(recordName: name + kFavoritesSuffix, in: .mineID)
 					bookmark.zoneLink = name + kColonSeparator + kColonSeparator
+					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? name
 
 					rootsGroup.addChildAndReorder(bookmark)
 				}
@@ -188,6 +213,7 @@ class ZFavorites: ZSmallMapRecords {
 			func createRootsBookmark(named: String) {
 				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID)
 				bookmark.zoneLink = kColonSeparator + kColonSeparator + named                           // convert into a bookmark
+				bookmark.zoneName = named
 
 				rootsGroup.addChildAndReorder(bookmark)
 			}
@@ -216,27 +242,6 @@ class ZFavorites: ZSmallMapRecords {
 		}
 
 		return result
-	}
-
-	var rootsGroupZone: Zone {
-		for zone in allProgeny {
-			if  zone.recordName == kRootsName {
-				return zone
-			}
-		}
-
-		// /////////////////////////
-		// add missing root group //
-		// /////////////////////////
-
-		let          rootsGroup = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
-		rootsGroup    .zoneName = kRootsName
-		rootsGroup.directAccess = .eReadOnly
-
-		rootsGroup.alterAttribute(.groupOwner, remove: false)
-		gFavoritesRoot?.addChildAndRespectOrder(rootsGroup)
-
-		return rootsGroup
 	}
 
     // MARK: - toggle

@@ -53,6 +53,7 @@ class ZStartup: NSObject {
 				gFavorites.updateAllFavorites()
 				gRefreshPersistentWorkMode()
 				gRemoteStorage.updateRootsOfAllProjeny()
+				gRemoteStorage.updateAllManifestCounts()
 				gRemoteStorage.recount()
 				gRefreshCurrentEssay()
 //				gProducts.fetchProductData()
@@ -69,13 +70,16 @@ class ZStartup: NSObject {
 				gRecents.push()
 				gHereMaybe?.grab()
 				gSignal([.sLaunchDone])
-				gSaveContext()
 
 				FOREGROUND(after: 0.1) { [self] in
+					if  gCDMigrationState != .normal {
+						gSaveContext()
+					}
+
 					requestFeedback() {
 						gTimers.stopTimer (for: .tStartup)
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tHover]) // .tLicense
-						gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spSmallMap, .spDataDetails])
+						gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spRelayout, .spSmallMap, .spDataDetails])
 					}
 				}
 			}

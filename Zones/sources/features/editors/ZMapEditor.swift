@@ -157,7 +157,7 @@ class ZMapEditor: ZBaseEditor {
 						case "'":        gToggleSmallMapMode(OPTION)
 						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-						case "[", "]":   go(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRelayoutMaps() }
+						case "[", "]":   nextBookmark(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRelayoutMaps() }
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:       addSibling(OPTION)
@@ -622,14 +622,14 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func go(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
-		if  SHIFT || (gHere.isInAGroup && gIsFavoritesMode) {
-			gSelecting.currentMoveable.cycleToNextInGroup(!down)
-		} else {
-			let smallMap = OPTION ? gCurrentSmallMapRecords : gRecents
-
-			smallMap?.go(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
+	func nextBookmark(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
+		if (SHIFT || (gHere.isInAGroup && gIsFavoritesMode)), !OPTION, gSelecting.currentMoveable.cycleToNextInGroup(!down) {
+			return
 		}
+
+		let smallMap = OPTION ? gCurrentSmallMapRecords : gRecents
+
+		smallMap?.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
 	}
 
 	func debugAnalyze() {

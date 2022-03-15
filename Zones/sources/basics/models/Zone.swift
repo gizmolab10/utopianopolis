@@ -226,6 +226,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else {
 			result = children.filter { $0.isBookmark(of: type) }
 		}
+
 		return result
 	}
 
@@ -367,7 +368,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func isBookmark(of type: ZWorkingListType) -> Bool {
-		return bookmarkTarget != nil && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote))
+		return (bookmarkTarget != nil && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote)))
 	}
 
 	func addBookmark() {
@@ -544,8 +545,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					return b.color
 				} else if let m = colorMaybe ?? zoneColor?.color {
 					computed    = m
-				} else {
-					return parentZone?.color
+				} else if let c = parentZone?.color {
+					return c
 				}
 			}
 
@@ -1990,13 +1991,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	func cycleToNextInGroup(_ forward: Bool) {
+	@discardableResult func cycleToNextInGroup(_ forward: Bool) -> Bool {
 		guard   let   rr = groupOwner else {
 			if  self    != gHere {
 				gHere.cycleToNextInGroup(forward)
 			}
 
-			return
+			return true
 		}
 
 		if  let     r = rr.ownedGroup([]), r.count > 1,
@@ -2009,7 +2010,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gFavorites.show(zone)
 			zone.grab()
 			gRelayoutMaps()
+
+			return true
 		}
+
+		return false
 	}
 
 	// MARK: - travel / focus / move / bookmarks
@@ -2042,6 +2047,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return false
+	}
+
+	func expandGrabAndFocusOn() {
+		gHere = self
+
+		expand()
+		grab()
 	}
 
 	func focusOnBookmarkTarget(atArrival: @escaping SignalClosure) {
@@ -2088,15 +2100,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					if  let here = target { // e.g., default root favorite
 						gFocusing.focusOnGrab(.eSelected) {
-							gHere = here
-
-							gHere.prepareForArrival()
+							here.expandGrabAndFocusOn()
 							complete(gHere, .spRelayout)
 						}
 					} else if let here = gCloud?.maybeZoneForRecordName(targetRecordName) {
-						gHere          = here
-
-						gHere.prepareForArrival()
+						here.expandGrabAndFocusOn()
 						gFocusing.focusOnGrab {
 							complete(gHere, .spRelayout)
 						}
@@ -2124,21 +2132,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						complete(here, .spRelayout)
 					}
 
-					let grabHere = {
-						gHereMaybe?.prepareForArrival()
-						complete(gHereMaybe, .spRelayout)
-					}
-
 					if  there != nil {
-						gHere = there!
-
-						grabHere()
-					} else if gRecords?.databaseID != .favoritesID, // favorites does not have a cloud database
-							  let here = gCloud?.maybeZoneForRecordName(targetRecordName) {
-						gHere = here
-
-						grabHere()
+						there?.expandGrabAndFocusOn()
+					} else if let    r = gRecords, !r.databaseID.isSmallMapDB, // small maps have no lookup???
+							  let here = r.maybeZoneForRecordName(targetRecordName) {
+						here.expandGrabAndFocusOn()
 					} // else ignore: favorites id with an unresolvable bookmark target
+
+					complete(gHereMaybe, .spRelayout)
 				}
 			}
 		}
@@ -2799,14 +2800,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				array.remove(at: index)
 			}
 		}
-	}
-
-	// MARK: - state
-	// MARK: -
-
-	func prepareForArrival() {
-		expand()
-		grab()
 	}
 
 	// MARK: - children

@@ -111,11 +111,8 @@ class ZFiles: NSObject {
 		gColorfulMode = true
 		gStartupLevel = .localOkay
 		gDatabaseID   = .everyoneID
-		if  let  here = gEveryoneCloud?.rootZone {
-			gHere     = here
 
-			gHere.expand()
-		}
+		gEveryoneCloud?.rootZone?.expandGrabAndFocusOn()
 	}
 
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {

@@ -32,7 +32,7 @@ class ZSmallMapRecords: ZRecords {
 	// MARK: - cycle
 	// MARK: -
 
-	func go(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
+	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
 		if  currentBookmark == nil {
 			if  self != gRecents {
 				gToggleSmallMapMode()
@@ -41,13 +41,14 @@ class ZSmallMapRecords: ZRecords {
 			gRecents.push()
 		}
 
-		let          count = working.count
+		let          zones = working
+		let          count = zones.count
 		if  count          > 1 {            // there is no next for count == 0 or 1
 			let   maxIndex = count - 1
 			var    toIndex = down ? 0 : maxIndex
-			if  let target = currentBookmark?.bookmarkTarget {
-				for (index, bookmark) in working.enumerated() {
-					if  let b = bookmark.bookmarkTarget, b == target {
+			if  let target = currentBookmark?.zoneLink {
+				for (index, bookmark) in zones.enumerated() {
+					if  let b = bookmark.zoneLink, b == target {
 						if         down, index < maxIndex {
 							toIndex = index + 1         // go down
 						} else if !down, index > 0 {
@@ -59,7 +60,7 @@ class ZSmallMapRecords: ZRecords {
 				}
 
 				if  toIndex.isWithin(0 ... maxIndex) {
-					let newCurrent = working[toIndex]
+					let newCurrent = zones[toIndex]
 
 					if  moveCurrent {
 						moveCurrentTo(newCurrent)
@@ -132,7 +133,7 @@ class ZSmallMapRecords: ZRecords {
 	@discardableResult func pop(_ zone: Zone? = gHereMaybe) -> Bool {
 		if  workingBookmarks.count > 1,
 			let bookmark = workingBookmark(for: zone) {
-			go(down: true) {
+			nextBookmark(down: true) {
 				bookmark.deleteSelf(permanently: true) {}
 			}
 
