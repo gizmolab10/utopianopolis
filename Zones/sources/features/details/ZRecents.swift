@@ -33,13 +33,15 @@ class ZRecents : ZSmallMapRecords {
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
-		rootZone = Zone.uniqueZone(recordName: kRecentsRootName, in: .mineID)
+		FOREGROUND { [self] in               // avoid error? mutating core data while enumerating
+			rootZone = Zone.uniqueZone(recordName: kRecentsRootName, in: .mineID)
 
-		if  gCDMigrationState != .normal {
-			rootZone?.expand()
+			if  gCDMigrationState != .normal {
+				rootZone?.expand()
+			}
+
+			onCompletion?(0)
 		}
-
-		onCompletion?(0)
 	}
 
 	override func push(_ zone: Zone? = gHere) {

@@ -68,16 +68,18 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
-		rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
+		FOREGROUND { [self] in               // avoid error? mutating core data while enumerating
+			rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
 
-		updateAllFavorites()
+			updateAllFavorites()
 
-		if  gCDMigrationState != .normal {
-			rootZone?.concealAllProgeny()
-			rootsGroupZone.expand()
+			if  gCDMigrationState != .normal {
+				rootZone?.concealAllProgeny()
+				rootsGroupZone.expand()
+			}
+
+			onCompletion?(0)
 		}
-
-		onCompletion?(0)
 	}
 
     // MARK: - update
