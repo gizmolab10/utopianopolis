@@ -561,7 +561,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case .idPrint:    printView()
 				case .idHide:     grabDone()
 				case .idDelete:   if !deleteGrabbedOrSelected() { gCurrentEssayZone?.deleteEssay(); exit() }
-				case .idCancel:                                   gCurrentEssayZone?.grab();        exit()
+				case .idDiscard:                                  gCurrentEssayZone?.grab();        exit()
 				default:          break
 			}
 		}

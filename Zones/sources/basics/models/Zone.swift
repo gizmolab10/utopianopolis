@@ -536,7 +536,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return d
 	}
 
-	var color: ZColor? {
+	override var color: ZColor? {
 		get {
 			var computed: ZColor? = kDefaultIdeaColor
 
@@ -3593,7 +3593,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		FOREGROUND { [self] in
 			colorMaybe        = nil               // recompute color
 			let parent        = resolveParent
-			let done: Closure = {
+			let done: Closure = { [self] in
 				parent?.respectOrder()          // assume newly fetched zone knows its order
 
 				columnarReport("   ->", unwrappedName)

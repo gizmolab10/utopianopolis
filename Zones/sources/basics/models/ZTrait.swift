@@ -115,6 +115,8 @@ class ZTrait: ZTraitAssets {
 	// MARK: - owner
 	// MARK: -
 
+	override var isAdoptable: Bool { return ownerRID != nil }
+
 	var ownerZone: Zone? {
 		if  _ownerZone == nil {
 			_ownerZone  = gRemoteStorage.maybeZoneForRecordName(ownerRID)
@@ -123,7 +125,10 @@ class ZTrait: ZTraitAssets {
 		return _ownerZone
 	}
 
-	override var isAdoptable: Bool { return ownerRID != nil }
+	override var color: ZColor? {
+		get { return ownerZone?.color }
+		set { ownerZone?.color = newValue }
+	}
 
 	override func orphan() {
 		ownerZone?.setTraitText(nil, for: traitType)

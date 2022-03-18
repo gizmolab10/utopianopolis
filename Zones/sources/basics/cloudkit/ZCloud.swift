@@ -196,7 +196,7 @@ class ZCloud: ZRecords {
 					root.directAccess = .eProgenyWritable
 				}
 
-				FOREGROUND {
+				FOREGROUND { [self] in
 					setRoot(root, for: rootID)
 				}
 

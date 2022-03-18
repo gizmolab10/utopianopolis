@@ -190,7 +190,7 @@ class ZOperations: NSObject {
 					queue.isSuspended = true
 					lastOpStart       = Date()
 
-					invokeMultiple(for: operationID, restoreToID: saved) { iResult in
+					invokeMultiple(for: operationID, restoreToID: saved) { [self] iResult in
 
 						// /////////////////////
 						// ...unsuspend queue //

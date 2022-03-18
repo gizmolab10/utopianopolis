@@ -152,7 +152,7 @@ class ZBatches: ZOnboarding {
                 let operations = batch.allowedOperations
 				currentBatch   = batch
 
-                setupAndRun(operations) {                  // 1.
+                setupAndRun(operations) { [self] in        // 1.
                     batch.fireCompletions()                // 2.
                     maybeRemoveFirst()
                     processNextBatch()                     // recurse
@@ -269,7 +269,7 @@ class ZBatches: ZOnboarding {
                         currentDatabaseID = databaseIDs[index]      // if hung, it happened in currentDatabaseID
 
 						do {
-							try invokeOperation(for: operationID) { (iResult: Any?) in
+							try invokeOperation(for: operationID) { [self] (iResult: Any?) in
 
 								let expectedOp = iResult as? ZOperationID
 								let      error = iResult as? Error

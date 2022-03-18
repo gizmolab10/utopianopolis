@@ -18,8 +18,9 @@ var gSearchResultsController: ZSearchResultsController? { return gControllers.co
 
 class ZSearchResultsController: ZGenericTableController {
 
-	var   filteredResultsDict = ZDBIDRecordsDictionary()
 	var      foundRecordsDict = ZDBIDRecordsDictionary()
+	var   filteredResultsDict = ZDBIDRecordsDictionary()
+	var   matchHighlightColor : ZColor        { return ZColor(cgColor: ZColor.controlAccentColor.cgColor)?.lighter(by: 8.0) ?? ZColor.controlAccentColor }
 	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
 	override var controllerID : ZControllerID { return .idSearchResults }
 	func         zoneAt(_ row : Int) -> Zone? { return zoneFor(zRecordAt(row)) }
@@ -72,6 +73,18 @@ class ZSearchResultsController: ZGenericTableController {
         return count
     }
 
+	var noResultsString: NSAttributedString {
+		guard let text = searchText else { return NSAttributedString() }
+		let error = NSMutableAttributedString(string: "Unable to locate matches for: ")
+		let match = NSMutableAttributedString(string: text)
+		let range = NSRange(location: 0, length: text.length)
+
+		match.addAttribute(.backgroundColor, value: matchHighlightColor, range: range)
+		error.append(match)
+
+		return error
+	}
+
     // MARK: - content
     // MARK: -
 
@@ -110,15 +123,21 @@ class ZSearchResultsController: ZGenericTableController {
 
     #if os(OSX)
 
-    override func numberOfRows(in tableView: ZTableView) -> Int { return filteredResultsCount }
+    override func numberOfRows(in tableView: ZTableView) -> Int { max(1, filteredResultsCount) }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
+		return !hasResults ? noResultsString : attributedString(for: row, isSelected: row == tableView.selectedRow)
+	}
+
+	func attributedString(for row: Int, isSelected: Bool) -> NSAttributedString {
 		let    zRecord = zRecordAt(row)
 		var     string = kEmpty
+		var attributed = NSMutableAttributedString()
 		var     prefix = NSMutableAttributedString()
 		var       size = 0
 		if  let      z = zRecord {
 			string     = z.decoratedName
+			attributed = NSMutableAttributedString(string: string)
 			var      p = z.typePrefix
 			size       = p.length
 			if    size > 0 {
@@ -129,24 +148,28 @@ class ZSearchResultsController: ZGenericTableController {
 
 				prefix.addAttribute(.backgroundColor, value: ZColor.systemYellow, range: r)
 			}
+
+			if  let color = z.color {
+				attributed.addAttribute(.foregroundColor, value: color, range: NSRange(location: 0, length: string.length))
+			}
 		}
 
 		var result = prefix
 
-		result.append(NSMutableAttributedString(string: string))
+		result.append(attributed)
 
 		if  let searched = searchText {
 			for text in searched.components(separatedBy: kSpace) {
 				if  let ranges = string.rangesMatching(text) {				      // find all matching substring ranges
 					for range in ranges {
 						let r = range.offsetBy(size)
-						result.addAttribute(.backgroundColor, value: NSColor.systemTeal, range: r) // highlight matching substring in teal
+						result.addAttribute(.backgroundColor, value: matchHighlightColor, range: r) // highlight matching substring in teal
 					}
 				}
 			}
 		}
 
-		if  row == tableView.selectedRow {
+		if  isSelected {
 			let suffix = result
 			result     = NSMutableAttributedString(string: "• ")
 
@@ -184,19 +207,23 @@ class ZSearchResultsController: ZGenericTableController {
     }
 
     @discardableResult func resolve() -> Bool {
-        var resolved = false
+		if  !hasResults {
+			gExitSearchMode()
+
+			return true // user clicked on error report line, floundering for exit
+		}
 
         #if os(OSX)
             if  gIsSearchMode,
                 let            row = genericTableView?.selectedRow,
                 row               != -1,
                 let (dbID, record) = identifierAndRecord(at: row) {
-                resolved           = true
-				resolveRecord(dbID, record)
+                resolveRecord(dbID, record)
+				return true
             }
         #endif
 
-        return resolved
+        return false
 	}
 
 	@discardableResult func resolveRecord(_ dbID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {

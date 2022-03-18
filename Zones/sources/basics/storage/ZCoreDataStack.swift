@@ -223,7 +223,7 @@ class ZCoreDataStack: NSObject {
 
 					load(type: kFileType, into: dbID, onlyOne: false)
 
-					FOREGROUND {
+					FOREGROUND { [self] in
 						makeAvailable()
 						onCompletion?(0)
 					}
@@ -463,7 +463,7 @@ class ZCoreDataStack: NSObject {
 			request.predicate = predicate.and(dbidPredicate(from: dbID))
 
 			deferUntilAvailable(for: .oSearch) { [self] in
-				persistentContainer.performBackgroundTask { context in
+				persistentContainer.performBackgroundTask { [self] context in
 					var objectIDs = ZObjectIDsArray()
 					do {
 						let items = try context.fetch(request)
@@ -480,7 +480,7 @@ class ZCoreDataStack: NSObject {
 
 					makeAvailable() // before calling closure
 
-					FOREGROUND {
+					FOREGROUND { [self] in
 						onCompletion?(ZRecordsArray.createFromObjectIDs(objectIDs, in: persistentContainer.viewContext))
 					}
 				}
@@ -780,7 +780,7 @@ class ZCoreDataStack: NSObject {
 					do {
 						let items = try context.fetch(request)
 
-						FOREGROUND {
+						FOREGROUND { [self] in
 							for item in items {
 								if  let zRecord = item as? ZRecord {           // insert zrecord into closures
 									array.updateClosureForZRecord(zRecord, of: entityName)

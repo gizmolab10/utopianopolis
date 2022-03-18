@@ -92,10 +92,10 @@ class ZMainController: ZGesturesController {
 	}
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		let   hasResults = gSearchResultsController?.hasResults ?? false
+//		let   hasResults = gSearchResultsController?.hasResults ?? false
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
 		let   hideSearch = !isSearchMode || gSearchResultsVisible
-		let  hideResults = !isSearchMode || gIsSearchEssayMode || gIsNotSearching || gWaitingForSearchEntry || !hasResults
+		let  hideResults = !isSearchMode || gIsSearchEssayMode || gIsNotSearching || gWaitingForSearchEntry // || !hasResults
 
 		switch kind {
 			case .sSearch:

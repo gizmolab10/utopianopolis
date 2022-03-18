@@ -86,7 +86,7 @@ class ZAlerts : NSObject {
 		alert("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
             switch status {
             case .sShow:
-				alert?.showModal { choice in
+				alert?.showModal { [self] choice in
                     switch choice {
                     case .sYes:
                         openSystemPreferences()
@@ -107,7 +107,7 @@ class ZAlerts : NSObject {
 		alert("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
                 switch status {
                 case .sShow:
-						alert?.showModal { choice in
+						alert?.showModal { [self] choice in
                         switch choice {
                         case .sYes:
                             openSystemPreferences()

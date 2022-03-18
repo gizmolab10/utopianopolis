@@ -41,7 +41,7 @@ class ZSearching: NSObject {
 	var state = ZSearchState.sNot
 	var priorWorkMode: ZWorkMode?
 	var hasResults: Bool { return gSearchResultsController?.hasResults ?? false }
-	func switchToList()  { setSearchStateTo(hasResults ? .sList : .sNot) }
+	func switchToList()  { setSearchStateTo(.sList) } // hasResults ? .sList : .sNot) }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
 	var essaySearchText: String? {
@@ -50,9 +50,9 @@ class ZSearching: NSObject {
 	}
 
 	func exitSearchMode() {
-		state         = .sNot
 		priorWorkMode = gWorkMode
 		gWorkMode     = .wMapMode
+		state         = .sNot
 
 		gSignal([.sFound, .sSearch, .spRelayout])
 	}
@@ -106,7 +106,7 @@ class ZSearching: NSObject {
 				gSearchResultsController?.foundRecordsDict = combined
 
 				gSearchResultsController?.applyFilter()
-				setSearchStateTo(hasResults ? .sList : .sFind)
+				setSearchStateTo(.sList) // hasResults ? .sList : .sEntry)
 				gSignal([.sFound])
 			}
 		}

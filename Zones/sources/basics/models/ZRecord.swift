@@ -98,6 +98,7 @@ class ZRecord: ZManagedObject {
 	@NSManaged var modificationDate: Date?
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
+	var                color: ZColor?
 	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
 	var             zRecords: ZRecords?   { return gRemoteStorage.zRecords(for: databaseID) }
 	var                cloud: ZCloud?     { return zRecords as? ZCloud }

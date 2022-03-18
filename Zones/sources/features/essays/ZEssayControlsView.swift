@@ -11,7 +11,7 @@ import Foundation
 enum ZEssayButtonID : Int {
 	case idMultiple
 	case idForward
-	case idCancel
+	case idDiscard
 	case idDelete
 	case idTitles
 	case idPrint
@@ -19,7 +19,7 @@ enum ZEssayButtonID : Int {
 	case idSave
 	case idHide
 
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idCancel, .idMultiple] }
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idDiscard, .idMultiple] }
 
 	static func essayID(for button: ZTooltipButton) -> ZEssayButtonID? {
 		if  let i = gConvertFromOptionalUserInterfaceItemIdentifier(button.identifier) {
@@ -27,7 +27,7 @@ enum ZEssayButtonID : Int {
 				case "left.arrow":  return .idBack
 				case "right.arrow": return .idForward
 				case "multiple":    return .idMultiple
-				case "cancel":      return .idCancel
+				case "discard":     return .idDiscard
 				case "trash":       return .idDelete
 				case "printer":     return .idPrint
 				case "exit":        return .idHide
