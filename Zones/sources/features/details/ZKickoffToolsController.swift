@@ -89,10 +89,14 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 			var      f = flags
 
 			if  key == "y" {
-				f.isCommand = true // tweak needed because plain y otherwise cannot be typed into essays
+				f.isCommand = true       // tweak because plain y otherwise is inserted into text
 			}
 
-			gMainWindow?.handleKey(key, flags: f)    // this is so cool, ;-)
+			if  let m = gMainWindow, m.handleKey(key, flags: f) {   // this is so cool, ;-)
+				FOREGROUND(after: 0.1) {
+					gExplanation(showFor: key)
+				}
+			}
 		}
 	}
 

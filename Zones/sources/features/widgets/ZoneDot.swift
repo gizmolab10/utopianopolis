@@ -123,7 +123,7 @@ class ZoneDot: ZPseudoView {
 		let         rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
 		let         path = ZBezierPath(ovalIn: rect)
 		path.lineWidth   = CGFloat(gLineThickness * 1.2)
-		path.flatness    = 0.0001
+		path.flatness    = kDefaultFlatness
 
 		if  let     zone = widgetZone, zone.isInFavorites == gIsRecentlyMode {   // WTF?
 			path.stroke()
@@ -171,7 +171,7 @@ class ZoneDot: ZPseudoView {
 			path.append(ZBezierPath(ovalIn: rect.offsetBy(fractionY:  0.7)))
 		}
 
-		path.flatness = 0.0001
+		path.flatness = kDefaultFlatness
 
 		path.fill()
 	}

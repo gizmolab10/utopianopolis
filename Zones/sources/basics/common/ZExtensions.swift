@@ -747,8 +747,8 @@ extension CGPoint {
 		return CGPoint(x: x * fraction, y: y * fraction)
 	}
 
-	func intersectsTriangle(orientedUp: Bool, in iRect: CGRect) -> Bool {
-		return ZBezierPath.trianglePath(orientedUp: orientedUp, in: iRect).contains(self)
+	func intersectsTriangle(pointingDown: Bool, in iRect: CGRect) -> Bool {
+		return ZBezierPath.trianglePath(pointingDown: pointingDown, in: iRect).contains(self)
 	}
 
 	func intersectsCircle(in iRect: CGRect) -> Bool {
@@ -1130,7 +1130,7 @@ extension CGRect {
 		for point in selectionPoints.values {
 			let   dotRect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
 			let      path = ZBezierPath(ovalIn: dotRect)
-			path.flatness = 0.0001
+			path.flatness = kDefaultFlatness
 
 			path.stroke()
 		}
@@ -1147,16 +1147,16 @@ extension ZBezierPath {
 		ZBezierPath(rect: rect).fill()
 	}
 
-	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
-		let path = trianglePath(orientedUp: orientedUp, in: iRect)
+	static func drawTriangle(pointingDown: Bool, in iRect: CGRect, thickness: CGFloat) {
+		let path = trianglePath(pointingDown: pointingDown, in: iRect)
 
 		path.draw(thickness: thickness)
 	}
 
-	static func trianglePath(orientedUp: Bool, in iRect: CGRect) -> ZBezierPath {
+	static func trianglePath(pointingDown: Bool, in iRect: CGRect) -> ZBezierPath {
 		let path = ZBezierPath()
 
-		path.appendTriangle(orientedUp: orientedUp, in: iRect)
+		path.appendTriangle(pointingDown: pointingDown, in: iRect)
 
 		return path
 	}
@@ -1221,17 +1221,20 @@ extension ZBezierPath {
 		setLineDash(pattern, count: 2, phase: 3.0)
 	}
 
-	func appendTriangle(orientedUp: Bool, in iRect: CGRect) {
-		let yStart = orientedUp ? iRect.minY : iRect.maxY
-		let   yEnd = orientedUp ? iRect.maxY : iRect.minY
+	func appendTriangle(pointingDown: Bool, in iRect: CGRect, full: Bool = true) {
+		let yStart = pointingDown ? iRect.minY : iRect.maxY
+		let   yEnd = pointingDown ? iRect.maxY : iRect.minY
 		let    tip = CGPoint(x: iRect.midX, y: yStart)
 		let   left = CGPoint(x: iRect.minX, y: yEnd)
 		let  right = CGPoint(x: iRect.maxX, y: yEnd)
 
-		move(to: tip)
-		line(to: left)
-		line(to: right)
+		move(to: left)
 		line(to: tip)
+		line(to: right)
+
+		if  full {
+			line(to: left)
+		}
 	}
 
 	func appendCircles(orientedUp: Bool, in iRect: CGRect) -> CGRect {
@@ -3018,7 +3021,7 @@ extension ZPseudoView {
 								let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 								let           path = ZBezierPath(ovalIn: ovalRect)
 								path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
-								path     .flatness = 0.0001
+								path     .flatness = kDefaultFlatness
 
 								if  isHollow {
 									color?.setStroke()

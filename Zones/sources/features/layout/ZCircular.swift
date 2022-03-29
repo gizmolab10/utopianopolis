@@ -519,7 +519,7 @@ extension ZoneDot {
 			}
 			
 			path.lineWidth = thick
-			path .flatness = 0.0001
+			path .flatness = kDefaultFlatness
 			
 			path.stroke()
 			path.fill()

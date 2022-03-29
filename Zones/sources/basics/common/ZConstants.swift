@@ -43,6 +43,7 @@ let              kDetailsWidth = 226.0
 let             kRemoteTimeout = 10.0
 let            kSmallBatchSize = 125
 let            kFileRecordSize = 1040
+let           kDefaultFlatness = 0.00001
 let          kOneTimerInterval = 0.2
 let          kHalfDetailsWidth = kDetailsWidth / 2.0
 let       kEssayImageDotRadius = CGFloat( 5.0)

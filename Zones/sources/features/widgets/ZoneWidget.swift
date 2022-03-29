@@ -435,7 +435,7 @@ class ZoneWidget: ZPseudoView {
 		let      color = gDragging.isDragged(widgetZone) ? gActiveColor : widgetZone?.color?.withAlphaComponent(0.30)
 		let       path = selectionHighlightPath
 		path.lineWidth = CGFloat(gLineThickness * 3.5)
-		path .flatness = 0.0001
+		path .flatness = kDefaultFlatness
 		
 		switch style {
 		case .sDashed:    path.addDashes()

@@ -625,6 +625,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
+	func selectFirstNote() {
+		if  let essay = gCurrentEssay, essay.children.count > 0 {
+			let child = essay.children[0]
+			let range = child.textRange
+			setSelectedRange(range)
+		}
+	}
+
 	private func selectAndScrollTo(_ range: NSRange? = nil) {
 		var        point = CGPoint()                          // scroll to top
 		if  let    essay = gCurrentEssay,
@@ -956,7 +964,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let       path = ZBezierPath(rect: rect)
 			let    pattern : [CGFloat] = [4.0, 4.0]
 			path.lineWidth = CGFloat(gLineThickness * 3.0)
-			path.flatness  = 0.0001
+			path.flatness  = kDefaultFlatness
 
 			path.setLineDash(pattern, count: 2, phase: 4.0)
 			path.stroke()

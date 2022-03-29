@@ -93,6 +93,7 @@ class ZMapEditor: ZBaseEditor {
 			}
 
 			gTemporarilySetKey(key)
+			gExplanation()
 
             if  gIsEditIdeaMode {
 				if !gTextEditor.handleKey(iKey, flags: flags) {
@@ -682,7 +683,7 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		gControllers.swapMapAndEssay(force: .wEssayMode) {
-			gEssayView?.swapBetweenNoteAndEssay()
+			gEssayView?.selectFirstNote()
 		}
 	}
 

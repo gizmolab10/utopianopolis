@@ -6,7 +6,6 @@
 //  Copyright © 2018 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 
 // ////////////////////////////////

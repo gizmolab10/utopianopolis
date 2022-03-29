@@ -342,7 +342,7 @@ extension ZoneDot {
 		}
 
 		path.lineWidth = thickness
-		path .flatness = 0.0001
+		path .flatness = kDefaultFlatness
 
 //		absoluteFrame.drawColoredRect(.brown)
 		path.stroke()

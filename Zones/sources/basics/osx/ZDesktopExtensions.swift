@@ -856,6 +856,8 @@ extension ZTextEditor {
 				key        = key.lowercased()
 			}
 
+			gExplanation()
+
 			if  let      a = arrow {
 				gTextEditor.handleArrow(a, flags: flags)
 			} else if ANY {
