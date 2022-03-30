@@ -17,6 +17,7 @@ var gMainController : ZMainController? { return gControllers.controllerForID(.id
 class ZMainController: ZGesturesController {
 
 	override  var controllerID       : ZControllerID { return .idMain }
+	@IBOutlet var explainPopover     : ZExplanationPopover?
 	@IBOutlet var alternateLeading   : NSLayoutConstraint?
 	@IBOutlet var essayContainerView : ZView?
 	@IBOutlet var searchResultsView  : ZView?
@@ -77,7 +78,7 @@ class ZMainController: ZGesturesController {
 		if  !gIgnoreEvents {
 			if  !gIsEssayMode {
 				gMapController?.handleClickGesture(iGesture)
-			} else if let   eView = gEssayView,
+			} else if let eView = gEssayView,
 				let gesture = iGesture {
 				let      location = gesture.location(in: eView)
 
@@ -92,7 +93,6 @@ class ZMainController: ZGesturesController {
 	}
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-//		let   hasResults = gSearchResultsController?.hasResults ?? false
 		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
 		let   hideSearch = !isSearchMode || gSearchResultsVisible
 		let  hideResults = !isSearchMode || gIsSearchEssayMode || gIsNotSearching || gWaitingForSearchEntry // || !hasResults

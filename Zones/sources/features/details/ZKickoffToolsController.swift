@@ -70,15 +70,15 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsEssayMode
 		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsEssayMode
 		buttonFor(.swapDB)?     .title =  swapDBText
-		buttonFor(.sibling)?    .title =  flags.isOption   ? "parent"       : "sibling"
-		buttonFor(.up)?         .title =  expandMaybe      + "up"
-		buttonFor(.down)?       .title =  expandMaybe      + "down"
-		buttonFor(.left)?       .title =  isMixed          ? "conceal"      : "left"
-		buttonFor(.right)?      .title =  isMixed          ? "reveal"       : canTravel ? "travel" : "right"
-		buttonFor(.focus)?      .title =  canUnfocus       ? "unfocus"      : canTravel ? "travel" : gSelecting.movableIsHere ? gCurrentSmallMapName : "focus"
-		buttonFor(.tooltip)?    .title = (gShowToolTips    ? "dis"          : "en")     + "able tooltips"
-		boxFor   (.move)?       .title = (isRelocate       ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to end"  : kEmpty)
-		boxFor   (.edit)?       .title =  gIsEditing       ? "Stop Editing" : "Edit"
+		buttonFor(.sibling)?    .title =  flags.isOption ? "parent"       : "sibling"
+		buttonFor(.up)?         .title =  expandMaybe    + "up"
+		buttonFor(.down)?       .title =  expandMaybe    + "down"
+		buttonFor(.left)?       .title =  isMixed        ? "conceal"      : "left"
+		buttonFor(.right)?      .title =  isMixed        ? "reveal"       : canTravel ? "travel" : "right"
+		buttonFor(.focus)?      .title =  canUnfocus     ? "unfocus"      : canTravel ? "travel" : gSelecting.movableIsHere ? gCurrentSmallMapName : "focus"
+		buttonFor(.tooltip)?    .title = (gShowToolTips  ? "dis"          : "en")     + "able tooltips"
+		boxFor   (.move)?       .title = (isRelocate     ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to farthest"  : kEmpty)
+		boxFor   (.edit)?       .title =  gIsEditing     ? "Stop Editing" : "Edit"
 	}
 
 	@IBAction func buttonAction(_ button: ZKickoffToolButton) {
@@ -86,14 +86,25 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 
 		if  let itemID = button.kickoffToolID,
 			let    key = keyFrom(itemID) {
+			let isEdit = gIsEditIdeaMode && key.arrow != nil && flags.isCommand
 			var      f = flags
 
 			if  key == "y" {
-				f.isCommand = true       // tweak because plain y otherwise is inserted into text
+				f.isCommand = true            // tweak because plain y otherwise is inserted into text
+			}
+
+			if  isEdit {
+				f.isCommand = false           // so browse does not go to extreme
+
+				gTextEditor.stopCurrentEdit() // so browse ideas, not text
 			}
 
 			if  let m = gMainWindow, m.handleKey(key, flags: f) {   // this is so cool, ;-)
 				FOREGROUND(after: 0.1) {
+					if  isEdit {
+						gSelecting.firstGrab?.edit()
+					}
+
 					gExplanation(showFor: key)
 				}
 			}

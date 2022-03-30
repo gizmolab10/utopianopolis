@@ -29,7 +29,6 @@ class ZMapView: ZView {
 	var                  hovering : ZHovering?
 	var                controller : ZMapController?
 	@IBOutlet var decorationsView : ZMapView?
-	@IBOutlet var  explainPopover : ZExplanationPopover?
 	override func  menu(for event : ZEvent) -> ZMenu? { return gMapController?.mapContextualMenu }
 
 	// MARK: - initialize

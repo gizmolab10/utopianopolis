@@ -1444,7 +1444,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func moveSelectionInto(extreme: Bool = false, onCompletion: BoolClosure?) {
+	func browseRight(extreme: Bool = false, onCompletion: BoolClosure?) {
 		if  isBookmark {
 			invokeBookmark(onCompletion: onCompletion)
 		} else if isTraveller && fetchableCount == 0 && count == 0 {
@@ -2290,7 +2290,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.spCrumbs, .spDataDetails, .spSmallMap])
+			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .spBigMap])
 		}
 	}
 
@@ -3354,18 +3354,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func dragDotClicked(_ flags: ZEventFlags) {
 		let COMMAND = flags.isCommand
+		let  OPTION = flags.isOption
 		let   SHIFT = flags.isShift
 
 		if  COMMAND {
-			grab() // narrow selection to just this one zone
+			grab()            // narrow selection to just this one zone
 
 			if  self != gHere {
 				gFocusing.focusOnGrab(.eSelected) {
 					gRelayoutMaps()
 				}
 			}
-		} else if isGrabbed && gCurrentlyEditingWidget == nil {
-			ungrabAssuringOne()
 		} else if SHIFT {
 			addToGrabs()
 		} else {

@@ -281,6 +281,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 
 		gExitSearchMode(force: false)
+		gHideExplanation()
 
 		if  gIsDraggableMode,
 			let gesture  = iGesture as? ZPanGestureRecognizer {
@@ -306,38 +307,37 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
 
 		gExitSearchMode(force: false)
+		gHideExplanation()
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
 		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer {
 			let   location  = gesture.location(in: mapView)
-            let editWidget  = gCurrentlyEditingWidget
             var  notInEdit  = true
 
 			printDebug(.dClick, "only")
 
-			if  editWidget != nil {
+			if  let editWidget = gCurrentlyEditingWidget {
 
 				// ////////////////////////////////////////
 				// detect click inside text being edited //
 				// ////////////////////////////////////////
 
-                let textRect = editWidget!.convert(editWidget!.bounds, to: mapView)
-                notInEdit    = !textRect.contains(location)
+                let   textRect = editWidget.convert(editWidget.bounds, to: mapView)
+                notInEdit      = !textRect.contains(location)
             }
 
             if  notInEdit {
+				gTextEditor.stopCurrentEdit()
 
 				if !gIsEssayMode {
 					gSetMapWorkMode()
 				}
 
-				gTextEditor.stopCurrentEdit()
-				
 				if  let any = detectHit(at: location) {
 					if  let w = any as? ZoneWidget {
 						w.widgetZone?.grab()
 					} else if let d = any as? ZoneDot,
-						let   flags = gesture.modifiers {
+						var   flags = gesture.modifiers {
 						d.widgetZone?.dotClicked(flags, isReveal: d.isReveal)
 					}
 				} else if gIsMapMode {

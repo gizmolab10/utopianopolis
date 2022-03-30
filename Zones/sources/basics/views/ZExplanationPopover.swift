@@ -14,44 +14,39 @@ import Cocoa
 import UIKit
 #endif
 
-func gExplanation(showFor key: String? = nil) { gMapView?.explainPopover?.explain(for: key) }
+func gHideExplanation() { gExplanation() }
+func gExplanation(showFor key: String? = nil) { gMainController?.explainPopover?.explain(for: key) }
 
 class ZExplanationPopover : ZView {
 
-	@IBOutlet var      hideButton : ZButton?
-	@IBOutlet var instructionView : ZTextField?
 	@IBOutlet var       titleView : ZTextField?
-	var   key : String?
-	var  zone :   Zone? { return gSelecting.firstGrab }
-	var color :  ZColor { return zone?.color ?? kDefaultIdeaColor.lighter(by: 6.0) }
+	@IBOutlet var instructionView : ZTextField?
+	@IBOutlet var      hideButton : ZButton?
 
-	func explain(for iKey: String? = nil) {
-		key      = iKey
-		isHidden = key == nil
-
+	func explain(for key: String? = nil) {
 		if  let (t, i) = key?.titleAndInstruction {
 			applyText(t, to: titleView, isTitle: true)
 			applyText(i, to: instructionView)
+
+			isHidden = false
+		} else {
+			isHidden = true
 		}
 
 		relocate()
+		setNeedsDisplay()
 	}
 
 	func relocate() {
-		if  let     s = superview, !isHidden,
-			let  rect = zone?.widget?.pseudoTextWidget?.absoluteFrame {
-			let point = rect.centerTop
-
-			removeFromSuperview()
-			s.addSubview(self) // so is drawn in front of widget text
-
+		if  let v = gSelecting.firstGrab?.widget?.textWidget, !isHidden {
 			snp.removeConstraints()
 			snp.makeConstraints { make in
-				make.centerX.equalTo(s.snp  .left).offset( point.x)
-				make .bottom.equalTo(s.snp.bottom).offset(-point.y)
+				make .bottom.equalTo(v.snp.bottom)
+				make.centerX.equalTo(v.snp.centerX)
 			}
 		}
 	}
+
 
 	func applyText(_ text: String, to control: ZTextField?, isTitle: Bool = false) {
 		if  let c = control {
@@ -59,34 +54,37 @@ class ZExplanationPopover : ZView {
 			let r = NSRange(location: 0, length: text.length)
 
 			if  isTitle {
-				let       s = NSMutableParagraphStyle()
-				s.alignment = .center
+				let       s = kDefaultEssayTextFontSize
+				let       f = ZFont(name: "TimesNewRomanPS-BoldMT", size: s) ?? ZFont.systemFont(ofSize: s)
+				let       p = NSMutableParagraphStyle()
+				p.alignment = .center
 
-				a.addAttribute(.strokeWidth,    value: 3.0, range: r)
-				a.addAttribute(.paragraphStyle, value: s,   range: r)
+				a.addAttribute(.paragraphStyle, value: p,  range: r)
+				a.addAttribute(.font,           value: f,  range: r)
 			}
 
-			a.addAttribute(.strokeColor, value: color, range: r)
+			a.addAttribute(.foregroundColor, value: kBlackColor, range: r)
+
 			c.attributedStringValue = a
 		}
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
 		let         delta = 15.0
-		let           big = bounds.insetBy(dx: .zero, dy: delta).offsetBy(dx: .zero, dy: delta)
+		let           big = bounds.insetBy(dx: 1.0, dy: delta + 1.0).offsetBy(dx: .zero, dy: delta)
 		var         small = bounds.insetBy(dx: (big.width / 2.0) - delta, dy: delta / 1.25)
+		let          path = ZBezierPath.init(roundedRect: big, xRadius: delta, yRadius: delta)
 		small.size.height = delta * 1.25
 		let         short = small.offsetBy(dx: .zero, dy: 1.0)
-		let          path = ZBezierPath.init(roundedRect: big, xRadius: delta, yRadius: delta)
 		let         erase = ZBezierPath.trianglePath(pointingDown: true, in: short)
 		path    .flatness = kDefaultFlatness
 		path   .lineWidth = 0.7
 
 		path.appendTriangle(pointingDown: true, in: small, full: false)
 		gBackgroundColor.setFill()
-		color.setStroke()
-		path.fill()
+		kBlackColor.setStroke()
 		path.stroke()
+		path.fill()
 		erase.fill()
 		super.draw(dirtyRect)
 	}
@@ -95,13 +93,16 @@ class ZExplanationPopover : ZView {
 
 extension String {
 
-	var titleAndInstruction: (String, String) {
-		let state = gIsEditIdeaMode ? "edited" : "selected"
-		let  save = gIsEditIdeaMode ? "saves your changes and exits editing" : "begins editing"
+	var titleAndInstruction: (String, String)? {
+		if  gIsEssayMode { return nil }
+
+		let  state = gIsEditIdeaMode ? "edited" : "selected"
+		let   save = gIsEditIdeaMode ? "save your changes and exit editing" : "begin editing"
+		let plural = gSelecting.currentMapGrabs.count < 2 ? "" : "s"
 
 		switch self {
-			case "a": return ("Foo", "Bar")
-			default:  return ("Currently \(state) idea", "Arrow and modifier keys work. TAB creates a sibling idea. RETURN \(save).")
+			case "y": return nil
+			default:  return ("Currently \(state) idea\(plural)", "Press RETURN to \(save), or press TAB to edit a new sibling idea.")
 		}
 	}
 

@@ -86,6 +86,7 @@ class ZControllers: NSObject {
 		// FOREGROUND { // TODO: avoid infinite recursion (generic menu handler invoking map editor's handle key)
 		// do not use FOREGROUND: so click on small map will fully exit the essay editor
 		gTextEditor.stopCurrentEdit()
+		gHideExplanation()
 
 		gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
 

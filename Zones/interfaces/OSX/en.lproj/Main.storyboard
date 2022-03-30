@@ -847,55 +847,6 @@ CA
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="hNY-ce-nRi" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                             </customView>
-                            <customView hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ntq-Zy-gaV" customClass="ZExplanationPopover" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="87" y="74" width="275" height="153"/>
-                                <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q1p-3k-xdd">
-                                        <rect key="frame" x="18" y="124" width="239" height="16"/>
-                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="qww-39-bSR">
-                                            <font key="font" usesAppearanceFont="YES"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="D3y-QG-Yyf">
-                                        <rect key="frame" x="18" y="66" width="239" height="50"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="GKc-Xi-Ygy"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" controlSize="small" selectable="YES" title="Multiline Label" id="hcj-9F-AWd">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
-                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DiV-04-PdE">
-                                        <rect key="frame" x="20" y="39" width="235" height="19"/>
-                                        <buttonCell key="cell" type="roundRect" title="I got this. Please don't show me again." bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jfI-Bj-te6">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="cellTitle"/>
-                                        </buttonCell>
-                                    </button>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="Q1p-3k-xdd" secondAttribute="trailing" constant="20" id="08i-kB-trc"/>
-                                    <constraint firstItem="Q1p-3k-xdd" firstAttribute="top" secondItem="Ntq-Zy-gaV" secondAttribute="top" constant="20" id="BC6-Ob-NAt"/>
-                                    <constraint firstItem="Q1p-3k-xdd" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="20" id="CGu-3c-t7U"/>
-                                    <constraint firstAttribute="trailing" secondItem="D3y-QG-Yyf" secondAttribute="trailing" constant="20" id="FGc-pO-slI"/>
-                                    <constraint firstAttribute="trailing" secondItem="DiV-04-PdE" secondAttribute="trailing" constant="20" id="Gyw-Hz-9yD"/>
-                                    <constraint firstAttribute="bottom" secondItem="DiV-04-PdE" secondAttribute="bottom" constant="40" id="MRS-Jt-vLL"/>
-                                    <constraint firstItem="D3y-QG-Yyf" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="20" id="RTG-D7-mM9"/>
-                                    <constraint firstItem="DiV-04-PdE" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="20" id="VS6-7y-2yV"/>
-                                    <constraint firstItem="DiV-04-PdE" firstAttribute="top" secondItem="D3y-QG-Yyf" secondAttribute="bottom" constant="8" id="cJI-eQ-Qf0"/>
-                                    <constraint firstAttribute="width" constant="275" id="g6c-Db-Vgc"/>
-                                    <constraint firstItem="D3y-QG-Yyf" firstAttribute="top" secondItem="Q1p-3k-xdd" secondAttribute="bottom" constant="8" id="uk6-hg-wzg"/>
-                                </constraints>
-                                <connections>
-                                    <outlet property="hideButton" destination="DiV-04-PdE" id="2UZ-uN-58q"/>
-                                    <outlet property="instructionView" destination="D3y-QG-Yyf" id="53N-eL-ews"/>
-                                    <outlet property="titleView" destination="Q1p-3k-xdd" id="nJu-rc-OAM"/>
-                                </connections>
-                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="hNY-ce-nRi" secondAttribute="trailing" id="1fd-Nn-iUJ"/>
@@ -1083,6 +1034,55 @@ CA
                                     <segue destination="mSh-jO-anT" kind="embed" id="wKL-WY-7pZ"/>
                                 </connections>
                             </containerView>
+                            <customView hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ntq-Zy-gaV" customClass="ZExplanationPopover" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="88" y="74" width="275" height="153"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q1p-3k-xdd">
+                                        <rect key="frame" x="10" y="124" width="255" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="qww-39-bSR">
+                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="D3y-QG-Yyf">
+                                        <rect key="frame" x="10" y="66" width="255" height="50"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="GKc-Xi-Ygy"/>
+                                        </constraints>
+                                        <textFieldCell key="cell" controlSize="small" selectable="YES" title="Multiline Label" id="hcj-9F-AWd">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DiV-04-PdE">
+                                        <rect key="frame" x="12" y="39" width="251" height="19"/>
+                                        <buttonCell key="cell" type="roundRect" title="I got this. Please don't show me again." bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jfI-Bj-te6">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="cellTitle"/>
+                                        </buttonCell>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="Q1p-3k-xdd" secondAttribute="trailing" constant="12" id="08i-kB-trc"/>
+                                    <constraint firstItem="Q1p-3k-xdd" firstAttribute="top" secondItem="Ntq-Zy-gaV" secondAttribute="top" constant="8" id="BC6-Ob-NAt"/>
+                                    <constraint firstItem="Q1p-3k-xdd" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="12" id="CGu-3c-t7U"/>
+                                    <constraint firstAttribute="trailing" secondItem="D3y-QG-Yyf" secondAttribute="trailing" constant="12" id="FGc-pO-slI"/>
+                                    <constraint firstAttribute="trailing" secondItem="DiV-04-PdE" secondAttribute="trailing" constant="12" id="Gyw-Hz-9yD"/>
+                                    <constraint firstAttribute="bottom" secondItem="DiV-04-PdE" secondAttribute="bottom" constant="40" id="MRS-Jt-vLL"/>
+                                    <constraint firstItem="D3y-QG-Yyf" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="12" id="RTG-D7-mM9"/>
+                                    <constraint firstItem="DiV-04-PdE" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="12" id="VS6-7y-2yV"/>
+                                    <constraint firstItem="DiV-04-PdE" firstAttribute="top" secondItem="D3y-QG-Yyf" secondAttribute="bottom" constant="8" id="cJI-eQ-Qf0"/>
+                                    <constraint firstAttribute="width" constant="275" id="g6c-Db-Vgc"/>
+                                    <constraint firstItem="D3y-QG-Yyf" firstAttribute="top" secondItem="Q1p-3k-xdd" secondAttribute="bottom" constant="8" id="uk6-hg-wzg"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="hideButton" destination="DiV-04-PdE" id="2UZ-uN-58q"/>
+                                    <outlet property="instructionView" destination="D3y-QG-Yyf" id="53N-eL-ews"/>
+                                    <outlet property="titleView" destination="Q1p-3k-xdd" id="nJu-rc-OAM"/>
+                                </connections>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="1LB-o3-akz"/>
@@ -1124,8 +1124,8 @@ CA
                         <outlet property="alternateLeading" destination="fVF-7D-R74" id="yvC-gC-Taf"/>
                         <outlet property="debugView" destination="9jn-kU-BvC" id="5ub-Jm-aCW"/>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="7ha-dY-dLB"/>
-                        <outlet property="dragView" destination="37A-oF-Gav" id="04a-KE-w1g"/>
                         <outlet property="essayContainerView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>
+                        <outlet property="explainPopover" destination="Ntq-Zy-gaV" id="V6k-13-JAy"/>
                         <outlet property="hamburgerButton" destination="yl6-st-bhl" id="Q5Q-eo-IdC"/>
                         <outlet property="helpButton" destination="uYG-mD-FXW" id="8l6-k6-vrf"/>
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>

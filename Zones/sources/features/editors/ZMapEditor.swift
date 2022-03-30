@@ -93,7 +93,7 @@ class ZMapEditor: ZBaseEditor {
 			}
 
 			gTemporarilySetKey(key)
-			gExplanation()
+			gHideExplanation()
 
             if  gIsEditIdeaMode {
 				if !gTextEditor.handleKey(iKey, flags: flags) {
@@ -1323,7 +1323,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
 		if  selectionOnly {
-			moveables?.first?.moveSelectionInto(extreme: extreme, onCompletion: onCompletion)
+			moveables?.first?.browseRight(extreme: extreme, onCompletion: onCompletion)
 		} else {
 			moveables?.actuallyMoveInto(onCompletion: onCompletion)
 		}
