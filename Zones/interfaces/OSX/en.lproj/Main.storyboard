@@ -1125,6 +1125,7 @@ CA
                     </view>
                     <connections>
                         <outlet property="alternateLeading" destination="fVF-7D-R74" id="yvC-gC-Taf"/>
+                        <outlet property="controlsView" destination="whm-tf-fPZ" id="eIw-kL-BJg"/>
                         <outlet property="debugView" destination="9jn-kU-BvC" id="5ub-Jm-aCW"/>
                         <outlet property="detailView" destination="E8R-Lg-1Ha" id="7ha-dY-dLB"/>
                         <outlet property="essayContainerView" destination="xfO-CE-WwN" id="XQK-iH-MX1"/>

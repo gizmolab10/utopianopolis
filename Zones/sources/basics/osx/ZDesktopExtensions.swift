@@ -862,8 +862,8 @@ extension ZTextEditor {
 				gTextEditor.handleArrow(a, flags: flags)
 			} else if ANY {
 				switch key {
-					case kSpace:  editedZone?.addIdea()
 					case kReturn: stopCurrentEdit()
+					case kSpace:  editedZone?.addIdea()
 					case "e":     gToggleShowExplanations()
 					case "i":     showSpecialCharactersPopup()
 					case "?":     gHelpController?.show(flags: flags)
@@ -874,9 +874,9 @@ extension ZTextEditor {
 				return            editedZone?.surround(by: key) ?? false
 			} else {
 				switch key {
-					case kTab:    gSelecting.addSibling()
-					case kReturn: stopCurrentEdit()
 					case kEscape: cancel()
+					case kReturn: stopCurrentEdit()
+					case kTab:    gSelecting.addSibling()
 					case "-":     return editedZone?.convertToFromLine() ?? false
 					default:      return false // false means key not handled
 				}

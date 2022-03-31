@@ -104,6 +104,7 @@ func gToggleShowTooltips() {
 
 func gToggleShowExplanations() {
 	gShowExplanations = !gShowExplanations
+	gShowMainControls = true
 
 	gHideExplanation()
 	gSignal([.sDetails])
@@ -369,7 +370,6 @@ var gUserActivityDetected: Bool {
 var gShowExplanations : Bool {
 	get {
 		var value  = UserDefaults.standard.object(forKey: kShowExplanations) as? Bool
-
 		if  value == nil {
 			value  = true
 
@@ -386,10 +386,28 @@ var gShowExplanations : Bool {
 	}
 }
 
+var gShowMainControls : Bool {
+	get {
+		var value  = UserDefaults.standard.object(forKey: kShowMainControls) as? Bool
+		if  value == nil {
+			value  = false
+
+			UserDefaults.standard.set(false, forKey:kShowMainControls)
+			UserDefaults.standard.synchronize()
+		}
+
+		return value!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue, forKey:kShowMainControls)
+		UserDefaults.standard.synchronize()
+	}
+}
+
 var gShowToolTips : Bool {
 	get {
 		var value  = UserDefaults.standard.object(forKey: kShowToolTips) as? Bool
-
 		if  value == nil {
 			value  = true
 

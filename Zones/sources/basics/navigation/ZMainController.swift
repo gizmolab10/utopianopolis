@@ -23,6 +23,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var searchResultsView  : ZView?
 	@IBOutlet var permissionView     : ZView?
 	@IBOutlet var searchBoxView      : ZView?
+	@IBOutlet var controlsView       : ZView?
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
 	@IBOutlet var helpButton         : ZHelpButton?
@@ -63,6 +64,7 @@ class ZMainController: ZGesturesController {
 		alternateLeading?.constant = !showDetails ? .zero : 226.0
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
+		controlsView?    .isHidden = !gShowMainControls
 		hamburgerButton?    .image = hamburgerImage
 	}
 
