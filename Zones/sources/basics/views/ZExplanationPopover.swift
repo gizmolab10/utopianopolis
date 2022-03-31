@@ -23,8 +23,10 @@ class ZExplanationPopover : ZView {
 	@IBOutlet var instructionView : ZTextField?
 	@IBOutlet var      hideButton : ZButton?
 
+	@IBAction func hideButtonAction(_ sender: ZButton) { gToggleShowExplanations() }
+
 	func explain(for key: String? = nil) {
-		if  let (t, i) = key?.titleAndInstruction {
+		if  let (t, i) = key?.titleAndInstruction, gShowExplanations {
 			applyText(t, to: titleView, isTitle: true)
 			applyText(i, to: instructionView)
 
@@ -101,8 +103,8 @@ extension String {
 		let plural = gSelecting.currentMapGrabs.count < 2 ? "" : "s"
 
 		switch self {
-			case "y": return nil
-			default:  return ("Currently \(state) idea\(plural)", "Press RETURN to \(save), or press TAB to edit a new sibling idea.")
+			case "e", "y": return nil
+			default:       return ("Currently \(state) idea\(plural)", "Press RETURN to \(save), or press TAB to edit a new sibling idea.")
 		}
 	}
 

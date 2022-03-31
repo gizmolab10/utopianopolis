@@ -41,6 +41,7 @@ enum ZKickoffToolID: String {
 	case control = "control"
 	case sibling = "sibling"
 	case tooltip = "tooltip"
+	case explain = "explain"
 }
 
 class ZKickoffToolsController: ZGenericController, ZTooltips {
@@ -56,7 +57,7 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 	var        buttonsByID    = [ZKickoffToolID  :  ZKickoffToolButton]()
 	var          boxesByID    = [ZKickoffToolID  :  ZBox]()
 	func       buttonFor(_ id :  ZKickoffToolID) -> ZKickoffToolButton? { return buttonsByID[id] }
-	func          boxFor(_ id :  ZKickoffToolID) -> ZBox?              { return boxesByID  [id] }
+	func          boxFor(_ id :  ZKickoffToolID) -> ZBox?               { return boxesByID  [id] }
 
 	func updateBoxesAndButtons() {
 
@@ -70,15 +71,19 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsEssayMode
 		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsEssayMode
 		buttonFor(.swapDB)?     .title =  swapDBText
-		buttonFor(.sibling)?    .title =  flags.isOption ? "parent"       : "sibling"
-		buttonFor(.up)?         .title =  expandMaybe    + "up"
-		buttonFor(.down)?       .title =  expandMaybe    + "down"
-		buttonFor(.left)?       .title =  isMixed        ? "conceal"      : "left"
-		buttonFor(.right)?      .title =  isMixed        ? "reveal"       : canTravel ? "travel" : "right"
-		buttonFor(.focus)?      .title =  canUnfocus     ? "unfocus"      : canTravel ? "travel" : gSelecting.movableIsHere ? gCurrentSmallMapName : "focus"
-		buttonFor(.tooltip)?    .title = (gShowToolTips  ? "dis"          : "en")     + "able tooltips"
-		boxFor   (.move)?       .title = (isRelocate     ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to farthest"  : kEmpty)
-		boxFor   (.edit)?       .title =  gIsEditing     ? "Stop Editing" : "Edit"
+		buttonFor(.up)?         .title =  expandMaybe       + "up"
+		buttonFor(.down)?       .title =  expandMaybe       + "down"
+		buttonFor(.sibling)?    .title =  flags.isOption    ? "parent"       : "sibling"
+		buttonFor(.left)?       .title =  isMixed           ? "conceal"      : "left"
+		buttonFor(.right)?      .title =  isMixed           ? "reveal"       : canTravel ? "invoke" : "right"
+		buttonFor(.focus)?      .title =  canUnfocus        ? "unfocus"      : canTravel ? "invoke" : gSelecting.movableIsHere ? gCurrentSmallMapName : "focus"
+		buttonFor(.tooltip)?    .title = (gShowToolTips     ? "hide"         : "show")   + " tooltips"
+		buttonFor(.explain)?    .title = (gShowExplanations ? "hide"         : "show")   + " explains"
+		boxFor   (.move)?       .title = (isRelocate        ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to farthest"  : kEmpty)
+		boxFor   (.edit)?       .title =  gIsEditing        ? "Stop Editing" : "Edit"
+		buttonFor(.idea)?       .title =  "idea"
+		buttonFor(.note)?       .title =  "note"
+		buttonFor(.child)?      .title =  "child"
 	}
 
 	@IBAction func buttonAction(_ button: ZKickoffToolButton) {
@@ -89,20 +94,23 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 			let isEdit = gIsEditIdeaMode && key.arrow != nil && flags.isCommand
 			var      f = flags
 
-			if  key == "y" {
-				f.isCommand = true            // tweak because plain y otherwise is inserted into text
+			switch key {
+				case kSpace: if gIsEditIdeaMode { f.isControl = true }  // so child will be created
+				case "e",
+					"y":     f.isCommand = true                         // tweak because otherwise plain e / y is inserted into text
+				default:     break
 			}
 
 			if  isEdit {
-				f.isCommand = false           // so browse does not go to extreme
+				f.isCommand = false                                     // so browse does not go to extreme
 
-				gTextEditor.stopCurrentEdit() // so browse ideas, not text
+				gTextEditor.stopCurrentEdit()                           // so browse ideas, not text
 			}
 
-			if  let m = gMainWindow, m.handleKey(key, flags: f) {   // this is so cool, ;-)
+			if  let m = gMainWindow, m.handleKey(key, flags: f) {       // this is so cool, ;-)
 				FOREGROUND(after: 0.1) {
 					if  isEdit {
-						gSelecting.firstGrab?.edit()
+						gSelecting.firstGrab?.edit()                    // edit newly grabbed zone
 					}
 
 					gExplanation(showFor: key)
@@ -174,6 +182,7 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 			case .note:    return "n"
 			case .focus:   return "/"
 			case .tooltip: return "y"
+			case .explain: return "e"
 			case .sibling: return kTab
 			case .swapDB:  return kBackSlash
 			case .child:   return kSpace

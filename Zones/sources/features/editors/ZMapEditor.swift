@@ -102,6 +102,7 @@ class ZMapEditor: ZBaseEditor {
 					switch key {
 						case "a":      gCurrentlyEditingWidget?.selectAllText()
 						case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, SPLAYED)
+						case "e":      gToggleShowExplanations()
 						case "f":      gSearching.showSearch(OPTION)
 						case "k":      toggleColorized()
 						case "n":      editNote(flags: flags)
@@ -110,7 +111,7 @@ class ZMapEditor: ZBaseEditor {
 						case "/":      return handleSlash(flags)
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
-						case kTab:     addSibling(OPTION)
+						case kTab:     gSelecting.addSibling(OPTION)
 						case kSpace:   gSelecting.currentMoveable.addIdea()
 						case kReturn:  if COMMAND { editNote(flags: flags) }
 						case kEscape:               editNote(flags: flags, useGrabbed: false)
@@ -134,6 +135,7 @@ class ZMapEditor: ZBaseEditor {
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
 						case "c":        if  OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
+						case "e":        gToggleShowExplanations()
 						case "f":        gSearching.showSearch(OPTION)
 						case "h":        showTraitsPopup()
 						case "i":        grabDuplicatesAndRedraw()
@@ -161,7 +163,7 @@ class ZMapEditor: ZBaseEditor {
 						case "[", "]":   nextBookmark(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRelayoutMaps() }
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
-						case kTab:       addSibling(OPTION)
+						case kTab:       gSelecting.addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kEquals:    if COMMAND { updateFontSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRelayoutMaps() } }
 						case kBackSlash: mapControl(OPTION)
@@ -385,11 +387,6 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		gRelayoutMaps()
-	}
-
-	func addSibling(_ OPTION: Bool) {
-		gTextEditor.stopCurrentEdit()
-		gSelecting.currentMoveable.addNextAndRedraw(containing: OPTION)
 	}
 
 	func browseBreadcrumbs(_ out: Bool) {

@@ -102,6 +102,13 @@ func gToggleShowTooltips() {
 	gRelayoutMaps()
 }
 
+func gToggleShowExplanations() {
+	gShowExplanations = !gShowExplanations
+
+	gHideExplanation()
+	gSignal([.sDetails])
+}
+
 func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 	func toggle() {
 		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
@@ -357,6 +364,26 @@ var gUserActivityDetected: Bool {
 	}
 
 	return false
+}
+
+var gShowExplanations : Bool {
+	get {
+		var value  = UserDefaults.standard.object(forKey: kShowExplanations) as? Bool
+
+		if  value == nil {
+			value  = true
+
+			UserDefaults.standard.set(true, forKey:kShowExplanations)
+			UserDefaults.standard.synchronize()
+		}
+
+		return value!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue, forKey:kShowExplanations)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 var gShowToolTips : Bool {

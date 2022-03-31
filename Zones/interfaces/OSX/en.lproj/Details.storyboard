@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -847,25 +847,61 @@
             <objects>
                 <viewController id="YdN-bY-sSj" customClass="ZKickoffToolsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="MMF-wn-1M6">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="316"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="299"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <button identifier="tooltip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="1" y="280" width="288" height="33"/>
+                            <box borderType="line" title="Tooltips and Explanations" translatesAutoresizingMaskIntoConstraints="NO" id="1ID-ro-NAz">
+                                <rect key="frame" x="5" y="250" width="280" height="41"/>
+                                <view key="contentView" id="0RF-K9-32y">
+                                    <rect key="frame" x="3" y="3" width="274" height="23"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <button identifier="tooltip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-7" y="-6" width="151" height="33"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="WPU-QJ-waV"/>
+                                            </constraints>
+                                            <buttonCell key="cell" type="push" title="transitioning..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ltM-0d-32i">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="buttonAction:" target="YdN-bY-sSj" id="IK3-TD-da7"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="l1E-sz-aYZ"/>
+                                            </connections>
+                                        </button>
+                                        <button identifier="explain" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Rq-Ef-CYU" userLabel="explanations" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="131" y="-6" width="150" height="33"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="21" id="fj3-y1-qFq"/>
+                                            </constraints>
+                                            <buttonCell key="cell" type="push" title="transitioning..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pls-co-ZKe">
+                                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                <font key="font" metaFont="system"/>
+                                            </buttonCell>
+                                            <connections>
+                                                <action selector="buttonAction:" target="YdN-bY-sSj" id="6qb-oE-ASB"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="gRT-Nd-KDz"/>
+                                            </connections>
+                                        </button>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" constant="1" id="1Tk-9e-jh5"/>
+                                        <constraint firstAttribute="bottom" secondItem="0Rq-Ef-CYU" secondAttribute="bottom" constant="1" id="1qv-es-Fje"/>
+                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="leading" secondItem="8oF-qb-aFC" secondAttribute="trailing" constant="1" id="5jk-SN-CWF"/>
+                                        <constraint firstAttribute="bottom" secondItem="8oF-qb-aFC" secondAttribute="bottom" constant="1" id="8gP-O5-KOJ"/>
+                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" constant="1" id="Cra-zJ-GFW"/>
+                                        <constraint firstAttribute="trailing" secondItem="0Rq-Ef-CYU" secondAttribute="trailing" id="eRt-nA-XGU"/>
+                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="width" secondItem="0Rq-Ef-CYU" secondAttribute="width" id="k5D-c2-y2x"/>
+                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="leading" secondItem="0RF-K9-32y" secondAttribute="leading" id="zA9-z7-GKC"/>
+                                    </constraints>
+                                </view>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="WPU-QJ-waV"/>
+                                    <constraint firstAttribute="height" constant="37" id="k2S-VB-8WA"/>
                                 </constraints>
-                                <buttonCell key="cell" type="push" title="transitioning..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ltM-0d-32i">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="buttonAction:" target="YdN-bY-sSj" id="IK3-TD-da7"/>
-                                    <outlet property="controller" destination="YdN-bY-sSj" id="l1E-sz-aYZ"/>
-                                </connections>
-                            </button>
+                            </box>
                             <box identifier="add" title="Add idea as" translatesAutoresizingMaskIntoConstraints="NO" id="yWs-Kk-dmA">
-                                <rect key="frame" x="5" y="238" width="280" height="41"/>
+                                <rect key="frame" x="5" y="205" width="280" height="41"/>
                                 <view key="contentView" id="6gW-4w-OHR">
                                     <rect key="frame" x="3" y="3" width="274" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -909,7 +945,7 @@
                                 </constraints>
                             </box>
                             <box identifier="edit" title="Edit" translatesAutoresizingMaskIntoConstraints="NO" id="2K6-Dx-rco" userLabel="Edit">
-                                <rect key="frame" x="5" y="193" width="280" height="41"/>
+                                <rect key="frame" x="5" y="160" width="280" height="41"/>
                                 <view key="contentView" id="oj1-Uo-6FC">
                                     <rect key="frame" x="3" y="3" width="274" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -953,7 +989,7 @@
                                 </constraints>
                             </box>
                             <box identifier="move" title="Move" translatesAutoresizingMaskIntoConstraints="NO" id="Eo8-dK-qAb">
-                                <rect key="frame" x="5" y="104" width="280" height="85"/>
+                                <rect key="frame" x="5" y="71" width="280" height="85"/>
                                 <view key="contentView" id="dg8-AR-KhC">
                                     <rect key="frame" x="3" y="3" width="274" height="67"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1040,7 +1076,7 @@
                                 </constraints>
                             </box>
                             <box borderType="line" title="Modifier Keys" translatesAutoresizingMaskIntoConstraints="NO" id="BZ2-Au-okv">
-                                <rect key="frame" x="5" y="37" width="280" height="63"/>
+                                <rect key="frame" x="5" y="4" width="280" height="63"/>
                                 <view key="contentView" id="7JG-O0-yA8">
                                     <rect key="frame" x="3" y="3" width="274" height="45"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1113,47 +1149,30 @@
                                     <constraint firstAttribute="height" constant="59" id="cSZ-RN-IYA"/>
                                 </constraints>
                             </box>
-                            <button identifier="swapDB" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="NsX-os-IKw" userLabel="swap DB" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="1" y="1" width="288" height="33"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="7JN-4I-ODg"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="switching..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OIC-rC-BxK">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="buttonAction:" target="YdN-bY-sSj" id="86m-8t-0mc"/>
-                                    <outlet property="controller" destination="YdN-bY-sSj" id="f7y-Of-kfV"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="NsX-os-IKw" secondAttribute="bottom" constant="8" id="6gD-aU-wSD"/>
+                            <constraint firstAttribute="trailing" secondItem="1ID-ro-NAz" secondAttribute="trailing" constant="8" id="0NE-IG-CmL"/>
                             <constraint firstAttribute="trailing" secondItem="BZ2-Au-okv" secondAttribute="trailing" constant="8" id="7eV-6w-4L8"/>
-                            <constraint firstItem="NsX-os-IKw" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="Gj9-sq-i67"/>
-                            <constraint firstAttribute="trailing" secondItem="8oF-qb-aFC" secondAttribute="trailing" constant="8" id="LGR-ji-Rew"/>
                             <constraint firstItem="Eo8-dK-qAb" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="OKG-eI-oG3"/>
-                            <constraint firstItem="yWs-Kk-dmA" firstAttribute="top" secondItem="8oF-qb-aFC" secondAttribute="bottom" constant="8" id="PKv-c1-6ef"/>
+                            <constraint firstItem="1ID-ro-NAz" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" constant="8" id="Q8c-oE-VCz"/>
                             <constraint firstItem="yWs-Kk-dmA" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="QOn-Bn-5x8"/>
-                            <constraint firstAttribute="trailing" secondItem="NsX-os-IKw" secondAttribute="trailing" constant="8" id="Umi-lB-f30"/>
+                            <constraint firstItem="1ID-ro-NAz" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="UWe-Eb-foo"/>
+                            <constraint firstAttribute="bottom" secondItem="BZ2-Au-okv" secondAttribute="bottom" constant="8" id="UyC-c2-x9n"/>
                             <constraint firstItem="BZ2-Au-okv" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="WVC-Jf-tQ4"/>
                             <constraint firstAttribute="trailing" secondItem="yWs-Kk-dmA" secondAttribute="trailing" constant="8" id="ekq-Oa-RKx"/>
                             <constraint firstAttribute="trailing" secondItem="Eo8-dK-qAb" secondAttribute="trailing" constant="8" id="eqG-i6-UUk"/>
                             <constraint firstItem="BZ2-Au-okv" firstAttribute="top" secondItem="Eo8-dK-qAb" secondAttribute="bottom" constant="8" id="hkZ-Rv-Pjw"/>
                             <constraint firstItem="2K6-Dx-rco" firstAttribute="top" secondItem="yWs-Kk-dmA" secondAttribute="bottom" constant="8" id="ken-tc-TTg"/>
-                            <constraint firstItem="8oF-qb-aFC" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" constant="8" id="mIY-Kj-ghj"/>
-                            <constraint firstItem="8oF-qb-aFC" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="mnE-SR-LRe"/>
                             <constraint firstItem="Eo8-dK-qAb" firstAttribute="top" secondItem="2K6-Dx-rco" secondAttribute="bottom" constant="8" id="nRW-vR-mLU"/>
                             <constraint firstAttribute="trailing" secondItem="2K6-Dx-rco" secondAttribute="trailing" constant="8" id="pSu-4J-TY7"/>
+                            <constraint firstItem="yWs-Kk-dmA" firstAttribute="top" secondItem="1ID-ro-NAz" secondAttribute="bottom" constant="8" id="q8Q-kY-fCi"/>
                             <constraint firstItem="2K6-Dx-rco" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="t0b-qp-9b2"/>
-                            <constraint firstItem="NsX-os-IKw" firstAttribute="top" secondItem="BZ2-Au-okv" secondAttribute="bottom" constant="12" id="uIt-ce-qfn"/>
                         </constraints>
                     </view>
                 </viewController>
                 <customObject id="XNg-DL-aaz" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1232"/>
+            <point key="canvasLocation" x="-95" y="1231.5"/>
         </scene>
         <!--Subscriptions-->
         <scene sceneID="h1I-uz-EaF">

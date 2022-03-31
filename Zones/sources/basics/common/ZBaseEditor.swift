@@ -42,6 +42,7 @@ class ZBaseEditor : NSObject {
 				}
 			} else if flags.isCommand {
 				switch key {
+					case "e": gToggleShowExplanations();                  return true
 					case "h": gApplication?.hide(nil);                    return true
 					case "q": gApplication?.terminate(self);              return true
 					case "w": gApplication?.keyWindow?.orderOut(self);    return true

@@ -253,6 +253,11 @@ class ZSelecting: NSObject {
     func updateBrowsingLevel()            { gCurrentBrowseLevel = currentMoveable.level }
     func clearPaste()                     { pasteableZones = [:] }
 
+	func addSibling(_ OPTION: Bool = false) {
+		gTextEditor.stopCurrentEdit()
+		currentMoveable.addNextAndRedraw(containing: OPTION)
+	}
+
 	func updateAfterMove(_ selectionOnly: Bool = true, needsRedraw: Bool) {
 		if !selectionOnly {
 			currentMoveable.recount()

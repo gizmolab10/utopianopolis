@@ -862,18 +862,22 @@ extension ZTextEditor {
 				gTextEditor.handleArrow(a, flags: flags)
 			} else if ANY {
 				switch key {
-					case "i": showSpecialCharactersPopup()
-					case "?": gHelpController?.show(flags: flags)
-					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
-					default:  return false
+					case kSpace:  editedZone?.addIdea()
+					case kReturn: stopCurrentEdit()
+					case "e":     gToggleShowExplanations()
+					case "i":     showSpecialCharactersPopup()
+					case "?":     gHelpController?.show(flags: flags)
+					case "-":     return editedZone?.convertToFromLine() ?? false // false means key not handled
+					default:      return false
 				}
 			} else if "|<>[]{}()\'\"".contains(key) {
-				return        editedZone?.surround(by: key) ?? false
+				return            editedZone?.surround(by: key) ?? false
 			} else {
 				switch key {
-					case "-":     return editedZone?.convertToFromLine() ?? false
+					case kTab:    gSelecting.addSibling()
 					case kReturn: stopCurrentEdit()
 					case kEscape: cancel()
+					case "-":     return editedZone?.convertToFromLine() ?? false
 					default:      return false // false means key not handled
 				}
 			}

@@ -21,6 +21,7 @@ class ZContextualMenu: ZMenu {
 	func handleKey(_ key: String) {
 		switch key {
 			case "c": gMapController?.recenter()
+			case "e": gToggleShowExplanations()
 			case "k": gColorfulMode = !gColorfulMode; gSignal([.sDatum])
 			case "y": gToggleShowTooltips()
 			case kEquals,
