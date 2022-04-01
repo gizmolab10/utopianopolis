@@ -28,6 +28,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var debugView          : ZView?
 	@IBOutlet var helpButton         : ZHelpButton?
 	@IBOutlet var hamburgerButton    : ZButton?
+	@IBAction func helpButtonAction(_ button: NSButton) { gHelpController?.show() }
 
 	var hamburgerImage: ZImage? {
 		var image = kHamburgerImage
@@ -47,10 +48,6 @@ class ZMainController: ZGesturesController {
 		mainUpdate()
 	}
 
-	@IBAction func helpButtonAction(_ button: NSButton) {
-		gHelpController?.show()
-	}
-
 	@IBAction func hamburgerButtonAction(_ button: NSButton) {
 		gShowDetailsView = gDetailsViewIsHidden
 
@@ -59,13 +56,13 @@ class ZMainController: ZGesturesController {
 	}
 
 	func mainUpdate() {
-		let            showDetails = gShowDetailsView
-		hamburgerButton?  .toolTip = gConcealmentString(for: gShowDetailsView) + " detail views"
+		let            showDetails =  gShowDetailsView
 		alternateLeading?.constant = !showDetails ? .zero : 226.0
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
 		controlsView?    .isHidden = !gShowMainControls
-		hamburgerButton?    .image = hamburgerImage
+		hamburgerButton?  .toolTip =  gConcealmentString(for: gShowDetailsView) + " detail views"
+		hamburgerButton?    .image =  hamburgerImage
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {         // false means not handled

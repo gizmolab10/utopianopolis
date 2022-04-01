@@ -1,61 +1,61 @@
 {
   "images" : [
     {
-      "filename" : "eye.con-16.png",
+      "filename" : "spiral.two.blues-16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "eye.con-32.png",
+      "filename" : "spiral.two.blues-32.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "eye.con-32.png",
+      "filename" : "spiral.two.blues-32.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "eye.con-64.png",
+      "filename" : "spiral.two.blues-64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "eye.con-128.png",
+      "filename" : "spiral.two.blues-128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "eye.con-256.png",
+      "filename" : "spiral.two.blues-256.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "eye.con-256.png",
+      "filename" : "spiral.two.blues-256.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "eye.con-513.png",
+      "filename" : "spiral.two.blues-512.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "eye.con-514.png",
+      "filename" : "spiral.two.blues-512.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "eye.con-1024.png",
+      "filename" : "spiral.two.blues-1024.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"
