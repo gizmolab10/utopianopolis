@@ -130,6 +130,10 @@ class ZBreadcrumbsView : ZButtonsView {
 
 			if    zone == gHere, !gIsEssayMode, !COMMAND { return }
 
+			if  gIsEssayMode {
+				gEssayView?.save()
+			}
+
 			func displayEssay(_ asEssay: Bool = true) {
 				let            saved = gCreateCombinedEssay
 				gCreateCombinedEssay = (OPTION && asEssay)

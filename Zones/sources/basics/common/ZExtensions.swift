@@ -743,6 +743,10 @@ extension CGPoint {
 		return CGPoint(x: x + xOffset, y: y + yOffset)
 	}
 
+	func retreatBy(_ delta: CGSize) -> CGPoint { // reverse regress backslide goback
+		return CGPoint(x: x - delta.width, y: y - delta.height)
+	}
+
 	func multiplyBy(_ fraction: CGFloat) -> CGPoint {
 		return CGPoint(x: x * fraction, y: y * fraction)
 	}

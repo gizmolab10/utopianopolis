@@ -3354,7 +3354,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func dragDotClicked(_ flags: ZEventFlags) {
 		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
 		let   SHIFT = flags.isShift
 
 		if  COMMAND {

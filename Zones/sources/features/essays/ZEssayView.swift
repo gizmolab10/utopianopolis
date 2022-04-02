@@ -26,6 +26,11 @@ struct ZEssayDragDot {
 	var      note : ZNote?
 }
 
+struct ZNoteEye {
+	var    y = CGFloat.zero
+	var rect = CGRect.zero
+}
+
 enum ZEssayTitleMode: Int {
 	case sEmpty // do not change the order, storyboard and code dependencies
 	case sTitle
@@ -303,10 +308,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		drawImageResizeDots(around: attach)
-
-		if  gEssayTitleMode == .sFull {
-			drawDragDecorations()
-		}
+		drawNoteDecorations()
 	}
 
 	// MARK: - input
@@ -542,6 +544,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			return true
+		} else if let note = eyeHit(at: rect) {
+			return false
 		} else {
 			ungrabAll()
 			clearResizing()
@@ -549,6 +553,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			return false
 		}
+	}
+
+	func eyeHit(at rect: CGRect) -> ZNote? {
+		return nil
 	}
 
 	@objc func handleControlAction(_ iButton: ZTooltipButton) {
@@ -756,7 +764,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return grabbed
 	}
 
-	var dragDots:  [ZEssayDragDot] {
+	var noteEyes : [ZNoteEye] {
+		var eyes = [ZNoteEye]()
+
+		if  let essay = gCurrentEssay {
+			if  essay.isNote {
+				eyes.append(ZNoteEye())
+			} else if let zone = essay.zone {
+				var count = zone.zonesWithNotes.count
+				while count > 0 {
+					count -= 1
+					eyes.append(ZNoteEye())
+				}
+			}
+		}
+
+		return eyes
+	}
+
+	var dragDots : [ZEssayDragDot] {
 		var dots = [ZEssayDragDot]()
 
 		if  let essay = gCurrentEssay, !essay.isNote,
@@ -796,25 +822,61 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return dots
 	}
 
-	func drawDragDecorations() {
-		for (index, dot) in dragDots.enumerated() {
-			if  let     zone = dot.note?.zone {
-				let  grabbed = grabbedZones.contains(zone)
-				let extendBy = index == 0 ? kNoteIndentSpacer.length : -1        // fixes intersection computation, first and last note have altered range
-				let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
-				let   filled = selected && !hasGrabbedNote
-				let    color = dot.color
+	func drawNoteDecorations() {
+		let dots = dragDots
+		var eyes = noteEyes
+		if  dots.count > 0 {
+			for (index, dot) in dots.enumerated() {
+				if  let     note = dot.note,
+					let     zone = note.zone {
+					let  grabbed = grabbedZones.contains(zone)
+					let extendBy = index == 0 ? kNoteIndentSpacer.length : -1            // fixes intersection computation, first and last note have altered range
+					let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
+					let   filled = selected && !hasGrabbedNote
+					let    color = dot.color
+					let        y = dot.dragRect.maxY - 3.0
+					var      eye = eyes[index]
+					eye       .y = y
+					eyes[index]  = drawEye(true, eye: eye)                                // draw the eye symbol
 
-				dot.dragRect.drawColoredOval(color, filled: filled || grabbed)
+					if  gEssayTitleMode == .sFull {
+						dot.dragRect.drawColoredOval(color, filled: filled || grabbed)   // draw the drag dot
 
-				if  let lineRect = dot.lineRect {
-					drawColoredRect(lineRect, color, thickness: 0.5)
-				}
+						if  let lineRect = dot.lineRect {
+							drawColoredRect(lineRect, color, thickness: 0.5)             // draw the indent line in front of the drag dot
+						}
 
-				if  grabbed {
-					drawColoredRect(dot.textRect, color)
+						if  grabbed {
+							drawColoredRect(dot.textRect, color)                         // draw box around entire note
+						}
+					}
 				}
 			}
+		} else if let  note = gCurrentEssay,
+				  let trait = note.noteTrait,
+				  let     c = textContainer,
+				  let     l = layoutManager {
+			let        open = trait.showInEssay?.boolValue ?? true
+			let        rect = l.boundingRect(forGlyphRange: note.noteRange, in: c)
+			let           y = rect.minY + 40.0
+			var         eye = eyes[0]
+			eye.y           = y
+			eyes[0]         = drawEye(open, eye: eye)                                           // draw the eye symbol
+		}
+	}
+
+	func drawEye(_ eyeIsOpen: Bool, eye: ZNoteEye) -> ZNoteEye {
+		if  gEssayTitleMode != .sEmpty,
+			let       image  = eyeIsOpen ? kEyeImage : kEyeSlashImage {
+			var            e = eye
+			let        half  = image.size.dividedInHalf
+			let      origin  = CGPoint(x: bounds.maxX - 35.0, y: e.y).retreatBy(half)
+			let        rect  = CGRect(origin: origin, size: CGSize.zero).expandedBy(half)
+			e          .rect = rect
+
+			image.draw(in: rect)
+
+			return e
 		}
 	}
 

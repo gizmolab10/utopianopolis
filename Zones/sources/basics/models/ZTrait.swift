@@ -53,11 +53,12 @@ enum ZTraitType: String { // stored in database: do not change
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@NSManaged    var  strings : StringsArray?
-	@NSManaged    var ownerRID : String?
-	@NSManaged    var   format : String?
-	@NSManaged    var     type : String?
-	@NSManaged    var     text : String?
+	@NSManaged var     strings : StringsArray?
+	@NSManaged var    ownerRID : String?
+	@NSManaged var      format : String?
+	@NSManaged var        type : String?
+	@NSManaged var        text : String?
+	@NSManaged var showInEssay : NSNumber?
     override var unwrappedName : String { return text ?? emptyName }
 	override var decoratedName : String { return text ?? kNoValue }
 	override var    typePrefix : String { return traitType?.description ?? kEmpty }

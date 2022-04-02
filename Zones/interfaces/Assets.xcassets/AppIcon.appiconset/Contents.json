@@ -1,61 +1,61 @@
 {
   "images" : [
     {
-      "filename" : "spiral.two.blues-16.png",
+      "filename" : "blue.zigzag-16.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "16x16"
     },
     {
-      "filename" : "spiral.two.blues-32.png",
+      "filename" : "blue.zigzag-32.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "16x16"
     },
     {
-      "filename" : "spiral.two.blues-32.png",
+      "filename" : "blue.zigzag-32.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "32x32"
     },
     {
-      "filename" : "spiral.two.blues-64.png",
+      "filename" : "blue.zigzag-64.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "32x32"
     },
     {
-      "filename" : "spiral.two.blues-128.png",
+      "filename" : "blue.zigzag-128.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
-      "filename" : "spiral.two.blues-256.png",
+      "filename" : "blue.zigzag-256.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
-      "filename" : "spiral.two.blues-256.png",
+      "filename" : "blue.zigzag-256.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
-      "filename" : "spiral.two.blues-512.png",
+      "filename" : "blue.zigzag-512.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
-      "filename" : "spiral.two.blues-512.png",
+      "filename" : "blue.zigzag-512.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
-      "filename" : "spiral.two.blues-1024.png",
+      "filename" : "blue.zigzag-1024.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"

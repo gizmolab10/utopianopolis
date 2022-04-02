@@ -337,7 +337,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					if  let w = any as? ZoneWidget {
 						w.widgetZone?.grab()
 					} else if let d = any as? ZoneDot,
-						var   flags = gesture.modifiers {
+						let   flags = gesture.modifiers {
 						d.widgetZone?.dotClicked(flags, isReveal: d.isReveal)
 					}
 				} else if gIsMapMode {
