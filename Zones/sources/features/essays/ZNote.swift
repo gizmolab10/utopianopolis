@@ -33,8 +33,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }
 	var        lastTextRange : NSRange?  { return textRange }
 	var        noteTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
-	var       maybeNoteTrait : ZTrait?   { return zone?.traits  [.tNote] }
-	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
+	var       maybeNoteTrait : ZTrait?   { return zone?.maybeTraitFor(.tNote) }
+	var            noteTrait : ZTrait?   { return zone?     .traitFor(.tNote) }
 	var           recordName : String?   { return zone?.recordName }
 	var                 kind : String    { return "note" }
 	var               prefix : String    { return titleIndent }

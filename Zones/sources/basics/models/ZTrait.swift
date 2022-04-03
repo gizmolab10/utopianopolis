@@ -64,8 +64,10 @@ class ZTrait: ZTraitAssets {
 	override var    typePrefix : String { return traitType?.description ?? kEmpty }
 	override var  passesFilter : Bool   { return gFilterOption.contains(.fNotes) }
 	override var     isInScope : Bool   { return ownerZone?.isInScope ?? false }
+	var              isVisible : Bool   { get { return showInEssay?.boolValue ?? false } set { showInEssay = NSNumber(value: newValue) } }
 	var             _ownerZone : Zone?
 	var             _traitType : ZTraitType?
+	func     toggleShowInEssay()        { isVisible = !isVisible }
 
 	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
 	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }

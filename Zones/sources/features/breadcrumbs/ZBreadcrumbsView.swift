@@ -136,7 +136,7 @@ class ZBreadcrumbsView : ZButtonsView {
 
 			func displayEssay(_ asEssay: Bool = true) {
 				let            saved = gCreateCombinedEssay
-				gCreateCombinedEssay = (OPTION && asEssay)
+				gCreateCombinedEssay = (!OPTION && asEssay)
 
 				if  gCreateCombinedEssay {
 					zone.noteMaybe   = nil                // forget note so essay will be constructed

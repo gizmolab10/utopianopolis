@@ -148,6 +148,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 	override func hasMissingChildren()                   ->     Bool  { return count < fetchableCount }
 	override func orphan()                                            { parentZone?.removeChild(self) }
+	func maybeTraitFor(_ iType: ZTraitType)              -> ZTrait?   { return traits[iType] }
 	func updateRootFromParent()                                       { setRoot(parentZone?.root ?? self) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
 
