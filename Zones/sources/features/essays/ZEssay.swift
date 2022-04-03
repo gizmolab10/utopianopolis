@@ -9,8 +9,10 @@
 import Foundation
 
 class ZEssay: ZNote {
-	var essayRange: NSRange { return NSRange(location: 0, length: essayLength) }
-	override var kind: String { return "essay" }
+	var         essayRange : NSRange  { return NSRange(location: 0, length: essayLength) }
+	override var eyeIsOpen : Bool     { return essayTrait?.eyeIsOpen ?? false }
+	override var      kind : String   { return "essay" }
+	override func toggleVisibility() { essayTrait?.toggleVisibility() }
 
 	override var lastTextIsDefault: Bool {
 		if  let last = children.last,

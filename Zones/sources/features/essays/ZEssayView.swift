@@ -549,7 +549,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			return true
 		} else if let note = noteEyeHit(at: rect) {
-			note.noteTrait?.toggleShowInEssay()
+			note.toggleVisibility()
 			setNeedsDisplay()
 
 			return true
@@ -666,12 +666,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  let zone = note.zone {
 				zone.asssureIsVisible()
 			}
-		}
-	}
-
-	func scrollToGrabbed() {
-		if  let range = lastGrabbedDot?.noteRange {
-			scrollRangeToVisible(range)
 		}
 	}
 
@@ -814,7 +808,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  dots.count > 0 {
 			for (index, dot) in dots.enumerated() {
 				if  let        note = dot.note,
-					let       trait = note.maybeNoteTrait,
 					let        zone = note.zone {
 					let     grabbed = grabbedZones.contains(zone)
 					let    extendBy = index == 0 ? kNoteIndentSpacer.length : -1         // fixes intersection computation, first and last note have altered range
@@ -824,7 +817,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let           y = dot.dragRect.maxY - 3.0
 					var         eye = noteEyes[index]
 					eye          .y = y
-					noteEyes[index] = drawNoteEye(trait.isVisible, eye: eye)             // draw the eye symbol
+					noteEyes[index] = drawNoteEye(note.eyeIsOpen, eye: eye)             // draw the eye symbol
 
 					if  gEssayTitleMode == .sFull {
 						dot.dragRect.drawColoredOval(color, filled: filled || grabbed)   // draw the drag dot
@@ -840,14 +833,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 			}
 		} else if let  note = gCurrentEssay,
-				  let trait = note.maybeNoteTrait,
 				  let     c = textContainer,
 				  let     l = layoutManager {
 			let        rect = l.boundingRect(forGlyphRange: note.noteRange, in: c)
 			let           y = rect.minY + 40.0
 			var         eye = noteEyes[0]
 			eye.y           = y
-			noteEyes[0]     = drawNoteEye(trait.isVisible, eye: eye)                     // draw the eye symbol
+			noteEyes[0]     = drawNoteEye(note.eyeIsOpen, eye: eye)                     // draw the eye symbol
 		}
 	}
 
@@ -892,6 +884,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			grabbedNotes.append(note)
 			scrollToGrabbed()
+			gSignal([.sDetails])
+		}
+	}
+
+	func scrollToGrabbed() {
+		if  let range = lastGrabbedDot?.noteRange {
+			scrollRangeToVisible(range)
 		}
 	}
 

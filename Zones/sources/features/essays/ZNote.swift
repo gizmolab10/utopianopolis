@@ -35,6 +35,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var        noteTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
 	var       maybeNoteTrait : ZTrait?   { return zone?.maybeTraitFor(.tNote) }
 	var            noteTrait : ZTrait?   { return zone?     .traitFor(.tNote) }
+	var           essayTrait : ZTrait?   { return zone?     .traitFor(.tEssay) }
 	var           recordName : String?   { return zone?.recordName }
 	var                 kind : String    { return "note" }
 	var               prefix : String    { return titleIndent }
@@ -45,11 +46,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kNoteDefault }
 	var               isNote : Bool      { return isMember(of: ZNote.self) }
+	var            eyeIsOpen : Bool      { return noteTrait?.eyeIsOpen ?? false }
 	var    	            zone : Zone?
 
 	func setupChildren() {}
 	func updateNoteOffsets() {}
 	func noteIn(_ range: NSRange) -> ZNote { return self }
+	func toggleVisibility() { noteTrait?.toggleVisibility() }
 	func saveAsEssay(_ attributedString: NSAttributedString?) { saveAsNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }

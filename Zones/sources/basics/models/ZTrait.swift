@@ -58,16 +58,18 @@ class ZTrait: ZTraitAssets {
 	@NSManaged var      format : String?
 	@NSManaged var        type : String?
 	@NSManaged var        text : String?
+	@NSManaged var  showHidden : NSNumber?
 	@NSManaged var showInEssay : NSNumber?
     override var unwrappedName : String { return text ?? emptyName }
 	override var decoratedName : String { return text ?? kNoValue }
 	override var    typePrefix : String { return traitType?.description ?? kEmpty }
 	override var  passesFilter : Bool   { return gFilterOption.contains(.fNotes) }
 	override var     isInScope : Bool   { return ownerZone?.isInScope ?? false }
+	var            showsHidden : Bool   { get { return showHidden? .boolValue ?? false } set { showHidden  = NSNumber(value: newValue) } }
 	var              isVisible : Bool   { get { return showInEssay?.boolValue ?? false } set { showInEssay = NSNumber(value: newValue) } }
+	func    toggleVisibility()          { eyeIsOpen = !eyeIsOpen }
 	var             _ownerZone : Zone?
 	var             _traitType : ZTraitType?
-	func     toggleShowInEssay()        { isVisible = !isVisible }
 
 	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
 	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
@@ -113,6 +115,20 @@ class ZTrait: ZTraitAssets {
 
 	static func uniqueTrait(recordName: String?, in dbID: ZDatabaseID) -> ZTrait {
 		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
+	}
+
+	var eyeIsOpen : Bool {
+		get {
+			return traitType == .tNote ? isVisible : showsHidden
+		}
+
+		set {
+			if  traitType  == .tNote {
+				isVisible   = newValue
+			} else {
+				showsHidden = newValue
+			}
+		}
 	}
 
 	// MARK: - owner
