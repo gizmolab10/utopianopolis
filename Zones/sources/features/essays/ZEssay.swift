@@ -10,9 +10,10 @@ import Foundation
 
 class ZEssay: ZNote {
 	var         essayRange : NSRange  { return NSRange(location: 0, length: essayLength) }
-	override var eyeIsOpen : Bool     { return essayTrait?.eyeIsOpen ?? false }
 	override var      kind : String   { return "essay" }
 	override func toggleVisibility() { essayTrait?.toggleVisibility() }
+	override func toggleShowHidden() { essayTrait?.toggleShowsHidden() }
+	override func toggleNoteAndEssay() {}
 
 	override var lastTextIsDefault: Bool {
 		if  let last = children.last,
@@ -33,7 +34,7 @@ class ZEssay: ZNote {
 
 	override var essayText: NSMutableAttributedString? {
 		if  let z = zone,
-			(z.zonesWithNotes.count < 2 || !gCreateCombinedEssay) {
+			(z.zonesWithVisibleNotes.count < 2 || !gCreateCombinedEssay) {
 
 			// this is not an essay, convert it to a note
 

@@ -67,7 +67,8 @@ class ZTrait: ZTraitAssets {
 	override var     isInScope : Bool   { return ownerZone?.isInScope ?? false }
 	var            showsHidden : Bool   { get { return showHidden? .boolValue ?? false } set { showHidden  = NSNumber(value: newValue) } }
 	var              isVisible : Bool   { get { return showInEssay?.boolValue ?? false } set { showInEssay = NSNumber(value: newValue) } }
-	func    toggleVisibility()          { eyeIsOpen = !eyeIsOpen }
+	func    toggleShowsHidden()         { showsHidden = !showsHidden }
+	func    toggleVisibility()          { isVisible   = !isVisible }
 	var             _ownerZone : Zone?
 	var             _traitType : ZTraitType?
 
@@ -117,17 +118,11 @@ class ZTrait: ZTraitAssets {
 		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
 	}
 
-	var eyeIsOpen : Bool {
-		get {
-			return traitType == .tNote ? isVisible : showsHidden
-		}
-
-		set {
-			if  traitType  == .tNote {
-				isVisible   = newValue
-			} else {
-				showsHidden = newValue
-			}
+	func stateFor(_ type: ZNoteIconType) -> Bool? {
+		switch type {
+			case .tVisibility:        return isVisible
+			case .tMultiple:   return false
+			case .tShowHidden: return showsHidden
 		}
 	}
 

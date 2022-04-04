@@ -26,10 +26,57 @@ struct ZEssayDragDot {
 	var      note : ZNote?
 }
 
-struct ZNoteEye {
-	var    y = CGFloat.zero
-	var rect = CGRect .zero
-	var zone: Zone
+struct ZNoteVisibility {
+	var             y = CGFloat.zero
+	var       eyeRect = CGRect .zero
+	var     stackRect = CGRect .zero
+	var lightbulbRect = CGRect .zero
+	var          zone : Zone
+
+	func stateFor(_ type: ZNoteIconType) -> Bool? { return zone.note?.noteTrait?.stateFor(type) }
+
+ 	mutating func setRect(_ rect: CGRect, for type: ZNoteIconType) {
+		switch type {
+			case .tVisibility:       eyeRect = rect
+			case .tMultiple:       stackRect = rect
+			case .tShowHidden: lightbulbRect = rect
+		}
+	}
+
+	func rectFor(_ type: ZNoteIconType) -> CGRect {
+		switch type {
+			case .tShowHidden: return lightbulbRect
+			case .tVisibility: return       eyeRect
+			case .tMultiple:   return     stackRect
+		}
+	}
+
+}
+
+enum ZNoteIconType: Int {
+	case tVisibility
+	case tShowHidden
+	case tMultiple
+
+	static var all : [ZNoteIconType] { return [.tVisibility, .tMultiple, .tShowHidden] }
+	var forEssayOnly : Bool { return self == .tShowHidden }
+
+	var offset : CGFloat {
+		switch self {
+			case .tVisibility:       return 35.0
+			case .tMultiple:     return 60.0
+			case .tShowHidden: return 85.0
+		}
+	}
+
+	func imageForState(_ on: Bool) -> ZImage? {
+		switch self {
+			case .tVisibility:       return on ? kEyeImage       : kEyebrowImage
+			case .tMultiple:     return on ? kStackImage     : kSingleImage
+			case .tShowHidden: return on ? kLightbulbImage : kNoLightbulbImage
+		}
+	}
+
 }
 
 enum ZEssayTitleMode: Int {
@@ -81,30 +128,30 @@ enum ZEssayLinkType: String {
 
 @objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate {
-	let margin          = CGFloat(20.0)
-	var dropped         = StringsArray()
-	var noteEyes        = [ZNoteEye]()
-	var grabbedNotes    = [ZNote]()
-	var selectionRect   = CGRect()           { didSet { if selectionRect.origin == .zero { imageAttachment = nil } } }
-	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
-	var eraseAttachment : ZRangedAttachment?
-	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
-	var firstNote       : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
-	var selectedNote    : ZNote?             { return selectedNotes.last ?? gCurrentEssay }
-	var selectedZone    : Zone?              { return selectedNote?.zone }
-	var firstGrabbedNote: ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
-	var firstGrabbedZone: Zone?              { return firstGrabbedNote?.zone }
-	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
-	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
-	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
-	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var resizeDragStart : CGPoint?
-	var resizeDragRect  : CGRect?
-	var resizeDot       : ZDirection?
-	var essayRecordName : String?
+	let margin           = CGFloat(20.0)
+	var dropped          = StringsArray()
+	var noteVisibilities = [ZNoteVisibility]()
+	var grabbedNotes     = [ZNote]()
+	var selectionRect    = CGRect()           { didSet { if selectionRect.origin == .zero { imageAttachment = nil } } }
+	var imageAttachment  : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
+	var eraseAttachment  : ZRangedAttachment?
+	var grabbedZones     : [Zone]             { return grabbedNotes.map { $0.zone! } }
+	var firstNote        : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
+	var selectedNote     : ZNote?             { return selectedNotes.last ?? gCurrentEssay }
+	var selectedZone     : Zone?              { return selectedNote?.zone }
+	var firstGrabbedNote : ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
+	var firstGrabbedZone : Zone?              { return firstGrabbedNote?.zone }
+	var hasGrabbedNote   : Bool               { return grabbedNotes.count != 0 }
+	var lockedSelection  : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
+	var firstIsGrabbed   : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
+	var selectionString  : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
+	var resizeDragStart  : CGPoint?
+	var resizeDragRect   : CGRect?
+	var resizeDot        : ZDirection?
+	var essayRecordName  : String?
 
 	var selectedNotes : [ZNote] {
-		return (gCurrentEssay?.zone?.zonesWithNotes.filter {
+		return (gCurrentEssay?.zone?.zonesWithVisibleNotes.filter {
 			$0.note?.noteRange != nil &&
 			selectedRange.intersects($0.note!.noteRange.extendedBy(1))
 		}.map {
@@ -548,8 +595,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			}
 
 			return true
-		} else if let note = noteEyeHit(at: rect) {
-			note.toggleVisibility()
+		} else if let (note, type) = noteEyeHit(at: rect) {
+			note.toggleFor(type)
+			resetCurrentEssay()
 			setNeedsDisplay()
 
 			return true
@@ -768,7 +816,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let  zone = essay.zone,
 			let     l = layoutManager,
 			let     c = textContainer {
-			let zones = zone.zonesWithNotes
+			let zones = zone.zonesWithVisibleNotes
 			let level = zone.level
 			for (index, zone) in zones.enumerated() {
 				if  var note   = zone.note {
@@ -815,15 +863,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					let      filled = selected && !hasGrabbedNote
 					let       color = dot.color
 					let           y = dot.dragRect.maxY - 3.0
-					var         eye = noteEyes[index]
+					var         eye = noteVisibilities[index]
 					eye          .y = y
-					noteEyes[index] = drawNoteEye(note.eyeIsOpen, eye: eye)             // draw the eye symbol
+					noteVisibilities[index] = drawNoteVisibilityIcons(eye, isANote: index != 0)  // draw visibility icons
 
 					if  gEssayTitleMode == .sFull {
-						dot.dragRect.drawColoredOval(color, filled: filled || grabbed)   // draw the drag dot
+						dot.dragRect.drawColoredOval(color, filled: filled || grabbed)   // draw drag dot
 
 						if  let lineRect = dot.lineRect {
-							drawColoredRect(lineRect, color, thickness: 0.5)             // draw the indent line in front of the drag dot
+							drawColoredRect(lineRect, color, thickness: 0.5)             // draw indent line in front of drag dot
 						}
 
 						if  grabbed {
@@ -832,14 +880,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					}
 				}
 			}
-		} else if let  note = gCurrentEssay,
-				  let     c = textContainer,
-				  let     l = layoutManager {
-			let        rect = l.boundingRect(forGlyphRange: note.noteRange, in: c)
-			let           y = rect.minY + 40.0
-			var         eye = noteEyes[0]
-			eye.y           = y
-			noteEyes[0]     = drawNoteEye(note.eyeIsOpen, eye: eye)                     // draw the eye symbol
+		} else if let      note = gCurrentEssay, noteVisibilities.count > 0,
+				  let         c = textContainer,
+				  let         l = layoutManager {
+			let            rect = l.boundingRect(forGlyphRange: note.noteRange, in: c)
+			let               y = rect.minY + 40.0
+			var             eye = noteVisibilities[0]
+			eye.y               = y
+			noteVisibilities[0] = drawNoteVisibilityIcons(eye)                              // draw visibility icons
 		}
 	}
 
@@ -1423,39 +1471,50 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK: -
 
 	func resetNoteEyes() {
-		noteEyes.removeAll()
+		noteVisibilities.removeAll()
 
 		if  let essay = gCurrentEssay,
 			let  zone = essay.zone {
 			if  essay.isNote {
-				noteEyes.append(ZNoteEye(zone: zone))
+				noteVisibilities.append(ZNoteVisibility(zone: zone))
 			} else {
-				for child in zone.zonesWithNotes {
-					noteEyes.append(ZNoteEye(zone: child))
+				for child in zone.zonesWithVisibleNotes {
+					noteVisibilities.append(ZNoteVisibility(zone: child))
 				}
 			}
 		}
 	}
 
-	func drawNoteEye(_ eyeIsOpen: Bool, eye: ZNoteEye) -> ZNoteEye {
-		var                e = eye
+	func drawNoteVisibilityIcons(_ visibility: ZNoteVisibility, isANote: Bool = true) -> ZNoteVisibility {
+		var                v = visibility
 		if  gEssayTitleMode != .sEmpty,
-			let       image  = eyeIsOpen ? kEyeImage : kEyeSlashImage {
-			let        half  = image.size.dividedInHalf
-			let      origin  = CGPoint(x: bounds.maxX - 35.0, y: e.y).retreatBy(half)
-			let        rect  = CGRect(origin: origin, size: CGSize.zero).expandedBy(half)
-			e          .rect = rect
+			let         half = kEyeImage?.size.dividedInHalf {
+			let       origin = CGPoint(x: bounds.maxX, y: v.y).retreatBy(half)
+			let   commonRect = CGRect(origin: origin, size: CGSize.zero).expandedBy(half)
 
-			image.draw(in: rect)
+			for type in ZNoteIconType.all {
+				if !(type.forEssayOnly && isANote),
+					let    on = v.stateFor(type),
+					let image = type.imageForState(on) {
+					let  rect = commonRect.offsetBy(dx: -type.offset, dy: 0.0)
+
+					v.setRect(rect, for: type)
+					image.draw(in: rect)
+				}
+			}
 		}
 
-		return e
+		return v
 	}
 
-	func noteEyeHit(at rect: CGRect) -> ZNote? {
-		for noteEye in noteEyes {
-			if  noteEye.rect.intersects(rect) {
-				return noteEye.zone.note
+	func noteEyeHit(at rect: CGRect) -> (ZNote, ZNoteIconType)? {
+		for noteEye in noteVisibilities {
+			if  let note = noteEye.zone.note {
+				for type in ZNoteIconType.all {
+					if  noteEye.rectFor(type).intersects(rect) {
+						return (note, type)
+					}
+				}
 			}
 		}
 

@@ -126,7 +126,7 @@ class ZEssayControlsView: ZView {
 		let     isFull = mode == .sFull
 		if  let  eZone = gCurrentEssay?.zone,  // essay zones
 			let target = note.zone {           // target zone
-			let eZones = eZone.zonesWithNotes
+			let eZones = eZone.zonesWithVisibleNotes
 			let  isOne = eZones.count == 1
 			var  total = isOne ? -4 : isEmpty ? -2 : isFull ? -2 : 0
 

@@ -46,13 +46,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kNoteDefault }
 	var               isNote : Bool      { return isMember(of: ZNote.self) }
-	var            eyeIsOpen : Bool      { return noteTrait?.eyeIsOpen ?? false }
 	var    	            zone : Zone?
 
 	func setupChildren() {}
 	func updateNoteOffsets() {}
 	func noteIn(_ range: NSRange) -> ZNote { return self }
-	func toggleVisibility() { noteTrait?.toggleVisibility() }
 	func saveAsEssay(_ attributedString: NSAttributedString?) { saveAsNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
@@ -76,6 +74,21 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		}
 
 		return !unequal
+	}
+
+	// MARK: - visibility
+	// MARK: -
+	
+	func toggleVisibility() { noteTrait?.toggleVisibility() }
+	func toggleShowHidden() { noteTrait?.toggleShowsHidden() }
+	func toggleNoteAndEssay() {}
+
+	func toggleFor(_ type: ZNoteIconType) {
+		switch type {
+			case .tVisibility: toggleVisibility()
+			case .tShowHidden: toggleShowHidden()
+			case .tMultiple:   toggleNoteAndEssay()
+		}
 	}
 
 	// MARK: - persistency

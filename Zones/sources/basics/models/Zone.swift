@@ -202,6 +202,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return zones
 	}
 
+	var zonesWithVisibleNotes : ZoneArray {
+		var zones = zonesWithNotes
+
+		if  let      essay = noteMaybe,
+			let showHidden = essay.essayTrait?.showsHidden, !showHidden {
+			let   children = zones.reversed()
+
+			for child in children {
+				if  child    != self,
+					let  open = child.noteMaybe?.noteTrait?.isVisible, !open,
+					let index = zones.firstIndex(of: child) {
+
+					zones.remove(at: index)
+				}
+			}
+		}
+
+		return zones
+	}
+
 	var level: Int {
 		var level = 0
 
@@ -1822,7 +1842,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return bookmarkTarget!.currentNote
 		}
 
-		let zones = zonesWithNotes
+		let zones = zonesWithVisibleNotes
 
 		if  zones.count > 0 {
 			return ZNote(zones[0])
@@ -1848,7 +1868,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func createNote() -> ZNote? {
-		let zones = zonesWithNotes
+		let zones = zonesWithVisibleNotes
 		let count = zones.count
 		var  note : ZNote?
 
