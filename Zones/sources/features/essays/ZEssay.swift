@@ -9,11 +9,8 @@
 import Foundation
 
 class ZEssay: ZNote {
-	var         essayRange : NSRange  { return NSRange(location: 0, length: essayLength) }
-	override var      kind : String   { return "essay" }
-	override func toggleVisibility() { essayTrait?.toggleVisibility() }
-	override func toggleShowHidden() { essayTrait?.toggleShowsHidden() }
-	override func toggleNoteAndEssay() {}
+	var          essayRange : NSRange              { return NSRange(location: 0, length: essayLength) }
+	override var       kind : String               { return "essay" }
 
 	override var lastTextIsDefault: Bool {
 		if  let last = children.last,
@@ -107,12 +104,18 @@ class ZEssay: ZNote {
 	}
 
 	func traverseAndSetupChildren() {
+		let showAll = essayTrait?.showsHidden ?? false
+
 		children.removeAll()
 		zone?.traverseAllProgeny { [self] child in
-			if  child.hasTrait(for: .tNote),
-				let note = child.note,
-				!children.contains(note) {
-				children.append(note)	// do not use essayMaybe as it may not yet be initialized
+			if  child == self,
+				let note = child.note {
+				children.append(note)
+			} else if let trait = child.maybeTraitFor(.tNote),
+					  let  note = child.note, !children.contains(note) {
+				if  showAll || trait.isVisible {
+					children.append(note)	// do not use essayMaybe as it may not yet be initialized
+				}
 			}
 		}
 	}

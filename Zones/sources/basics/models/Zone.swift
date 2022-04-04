@@ -69,6 +69,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                           widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
+	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tEssay) ?? maybeTraitFor(.tNote) }
 	var                        textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kDefaultIdeaColor }
 	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
@@ -144,13 +145,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func                    toolColor() ->             ZColor? { return color?.lighter(by: 3.0) }
 	func                toggleShowing()                        { isShowing ? hide() : show() }
 	func                      recount()                        { updateAllProgenyCounts() }
-	class  func randomZone(in dbID: ZDatabaseID)         ->     Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
+	static func randomZone(in dbID: ZDatabaseID)         ->     Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 	override func hasMissingChildren()                   ->     Bool  { return count < fetchableCount }
 	override func orphan()                                            { parentZone?.removeChild(self) }
-	func maybeTraitFor(_ iType: ZTraitType)              -> ZTrait?   { return traits[iType] }
 	func updateRootFromParent()                                       { setRoot(parentZone?.root ?? self) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
+	func toggleNoteVisibilityFor(_ type: ZVisibilityIconType)         { maybeNoteOrEssayTrait?.toggleFor(type) }
+	func maybeTraitFor(_ iType: ZTraitType)              -> ZTrait?   { return traits[iType] }
 
 	override var passesFilter: Bool {
 		return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
@@ -205,9 +207,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var zonesWithVisibleNotes : ZoneArray {
 		var zones = zonesWithNotes
 
-		if  let      essay = noteMaybe,
-			let showHidden = essay.essayTrait?.showsHidden, !showHidden {
-			let   children = zones.reversed()
+		if  let showHidden = maybeTraitFor(.tEssay)?.showsHidden, !showHidden {
+			let   children = ZoneArray(zones)
 
 			for child in children {
 				if  child    != self,
@@ -1853,7 +1854,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult func createNoteMaybe() -> ZNote? {
 		if (noteMaybe == nil || !hasTrait(matchingAny: [.tNote, .tEssay])), let emptyNote = createNote() {
-			return emptyNote // might be note from "child"
+			noteMaybe = emptyNote // might be note from "child"
 		}
 
 		return noteMaybe

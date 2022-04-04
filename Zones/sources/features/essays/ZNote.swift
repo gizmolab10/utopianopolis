@@ -76,21 +76,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return !unequal
 	}
 
-	// MARK: - visibility
-	// MARK: -
-	
-	func toggleVisibility() { noteTrait?.toggleVisibility() }
-	func toggleShowHidden() { noteTrait?.toggleShowsHidden() }
-	func toggleNoteAndEssay() {}
-
-	func toggleFor(_ type: ZNoteIconType) {
-		switch type {
-			case .tVisibility: toggleVisibility()
-			case .tShowHidden: toggleShowHidden()
-			case .tMultiple:   toggleNoteAndEssay()
-		}
-	}
-
 	// MARK: - persistency
 	// MARK: -
 
