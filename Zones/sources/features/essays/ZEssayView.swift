@@ -608,55 +608,56 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func handleClick(with event: ZEvent) -> Bool { // true means do not further process this event
-		if  gIgnoreEvents {
-			return true
-		}
+		var              result = true
+		if  !gIgnoreEvents {
+			let            rect = rectFromEvent(event)
+			if  let      attach = hitTestForAttachment(in: rect) {
+				resizeDot       = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
+				resizeDragStart = rect.origin
+				imageAttachment = attach
+				result          = resizeDot != nil
 
-		let            rect = rectFromEvent(event)
-		if  let      attach = hitTestForAttachment(in: rect) {
-			resizeDot       = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
-			resizeDragStart = rect.origin
-			imageAttachment = attach
-
-			setSelectedRange(attach.range)
-			setNeedsDisplay()
-
-			return resizeDot != nil
-		} else if let   dot = dragDotHit(at: rect),
-				  let  note = dot.note {
-			if  let   index = grabbedNotes.firstIndex(of: note) {
-				grabbedNotes.remove(at: index)
-			} else {
-				if !event.modifierFlags.isShift {
-					ungrabAll()
-				}
-
-				grabbedNotes.appendUnique(item: note)
+				setSelectedRange(attach.range)
 				setNeedsDisplay()
-				gSignal([.sDetails])
+
+			} else if let   dot = dragDotHit(at: rect),
+					  let  note = dot.note {
+				if  let   index = grabbedNotes.firstIndex(of: note) {
+					grabbedNotes.remove(at: index)
+				} else {
+					if !event.modifierFlags.isShift {
+						ungrabAll()
+					}
+
+					grabbedNotes.appendUnique(item: note)
+					setNeedsDisplay()
+					gSignal([.sDetails])
+				}
+			} else if let (zone, type) = visibilityIconHit(at: rect),
+					  let        trait = zone.maybeNoteOrEssayTrait {
+				if  trait.toggleFor(type) {
+					save()
+					resetCurrentEssay()
+					setNeedsDisplay()
+				} else {
+					swapBetweenNoteAndEssay()
+				}
+			} else {
+				ungrabAll()
+				clearResizing()
+				setNeedsDisplay()
+
+				result = false
 			}
-
-			return true
-		} else if let (zone, type) = visibilityIconHit(at: rect) {
-			zone.toggleNoteVisibilityFor(type)
-			save()
-			resetCurrentEssay()
-			setNeedsDisplay()
-
-			return true
-		} else {
-			ungrabAll()
-			clearResizing()
-			setNeedsDisplay()
-
-			return false
 		}
+
+		return result
 	}
 
 	@objc func handleControlAction(_ iButton: ZTooltipButton) {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
-				case .idMultiple: swapBetweenNoteAndEssay()
+//				case .idMultiple: swapBetweenNoteAndEssay()
 				case .idForward:  save(); gCurrentSmallMapRecords?.nextBookmark(down:  true, amongNotes: true) { gRelayoutMaps() }
 				case .idBack:     save(); gCurrentSmallMapRecords?.nextBookmark(down: false, amongNotes: true) { gRelayoutMaps() }
 				case .idSave:     save()
@@ -992,7 +993,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func ungrabAll() { grabbedNotes.removeAll() }
 
 	func regrab(_ ungrabbed: ZoneArray) {
-		for zone in ungrabbed {                         // re-grab notes for set aside zones
+		for zone in ungrabbed {                       // re-grab notes for set aside zones
 			if  let note = zone.note {                // note may not be same
 				grabbedNotes.appendUnique(item: note)
 			}
@@ -1445,7 +1446,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 							} else {
 								gCreateCombinedEssay = type == .hEssay
 
-								target .asssureIsVisible()		        // for later, when user exits essay mode
+								target .asssureIsVisible()		   // for later, when user exits essay mode
 								common?.asssureIsVisible()
 								resetCurrentEssay(target.note)     // change current note to that of target
 								gSignal([.spSmallMap, .spCrumbs])

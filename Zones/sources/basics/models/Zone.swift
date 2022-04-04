@@ -151,8 +151,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func orphan()                                            { parentZone?.removeChild(self) }
 	func updateRootFromParent()                                       { setRoot(parentZone?.root ?? self) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
-	func toggleNoteVisibilityFor(_ type: ZVisibilityIconType)         { maybeNoteOrEssayTrait?.toggleFor(type) }
-	func maybeTraitFor(_ iType: ZTraitType)              -> ZTrait?   { return traits[iType] }
+	func maybeTraitFor(_ iType: ZTraitType)              ->   ZTrait? { return traits[iType] }
 
 	override var passesFilter: Bool {
 		return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
@@ -212,7 +211,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			for child in children {
 				if  child    != self,
-					let  open = child.noteMaybe?.noteTrait?.isVisible, !open,
+					let  open = child.maybeTraitFor(.tNote)?.isVisible, !open,
 					let index = zones.firstIndex(of: child) {
 
 					zones.remove(at: index)

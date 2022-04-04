@@ -69,7 +69,6 @@ class ZTrait: ZTraitAssets {
 	var              isVisible : Bool   { get { return showInEssay?.boolValue ?? false } set { showInEssay = NSNumber(value: newValue) } }
 	func    toggleShowsHidden()         { showsHidden = !showsHidden }
 	func    toggleVisibility()          { isVisible   = !isVisible }
-	func    toggleNoteAndEssay()        {}
 	var             _ownerZone : Zone?
 	var             _traitType : ZTraitType?
 
@@ -127,12 +126,14 @@ class ZTrait: ZTraitAssets {
 		}
 	}
 
-	func toggleFor(_ type: ZVisibilityIconType) {
+	func toggleFor(_ type: ZVisibilityIconType) -> Bool {
 		switch type {
 			case .tVisibility: toggleVisibility()
 			case .tShowHidden: toggleShowsHidden()
-			case .tMultiple:   toggleNoteAndEssay()
+			case .tMultiple:   return false
 		}
+
+		return true
 	}
 
 	// MARK: - owner

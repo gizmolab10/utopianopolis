@@ -9,7 +9,6 @@
 import Foundation
 
 enum ZEssayButtonID : Int {
-	case idMultiple
 	case idForward
 	case idDiscard
 	case idDelete
@@ -19,14 +18,13 @@ enum ZEssayButtonID : Int {
 	case idSave
 	case idHide
 
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idDiscard, .idMultiple] }
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idDiscard] } // , .idMultiple] }
 
 	static func essayID(for button: ZTooltipButton) -> ZEssayButtonID? {
 		if  let i = gConvertFromOptionalUserInterfaceItemIdentifier(button.identifier) {
 			switch i {
 				case "left.arrow":  return .idBack
 				case "right.arrow": return .idForward
-				case "multiple":    return .idMultiple
 				case "discard":     return .idDiscard
 				case "trash":       return .idDelete
 				case "printer":     return .idPrint
@@ -48,14 +46,12 @@ extension ZTooltipButton {
 		bezelStyle = .texturedRounded
 
 		setButtonType(.momentaryChange)
-//		updateTracking()
 	}
 }
 
 class ZEssayControlsView: ZView {
 	var           inspectorBar   : ZView?   { return gMainWindow?.inspectorBar }
 	@IBOutlet var titlesControl  : ZSegmentedControl?
-	@IBOutlet var multipleButton : ZTooltipButton?
 	@IBOutlet var backwardButton : ZTooltipButton?
 	@IBOutlet var forwardButton  : ZTooltipButton?
 	@IBOutlet var cancelButton   : ZTooltipButton?
@@ -81,7 +77,6 @@ class ZEssayControlsView: ZView {
 		let hasMultipleNotes = gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
 		backwardButton?.setEnabledAndTracking(enabled && hasMultipleNotes)
 		forwardButton? .setEnabledAndTracking(enabled && hasMultipleNotes)
-		multipleButton?.setEnabledAndTracking(enabled)
 		deleteButton?  .setEnabledAndTracking(enabled)
 		cancelButton?  .setEnabledAndTracking(enabled)
 		printButton?   .setEnabledAndTracking(enabled)

@@ -1282,7 +1282,7 @@ CA
                                 </scroller>
                             </scrollView>
                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Bm-oC-5lh" userLabel="Essay Controls View" customClass="ZEssayControlsView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="135" width="278" height="18"/>
+                                <rect key="frame" x="0.0" y="135" width="261" height="18"/>
                                 <subviews>
                                     <button identifier="left.arrow" toolTip="show previous" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RN5-Of-rTw" userLabel="left.arrow">
                                         <rect key="frame" x="-1" y="-2" width="22" height="23"/>
@@ -1380,22 +1380,8 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="sWu-zt-sYJ"/>
                                         </connections>
                                     </button>
-                                    <button identifier="multiple" toolTip="switch between showing note and essay" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="YHx-Bm-hee" userLabel="multiple" customClass="ZTooltipButton" customModule="Seriously">
-                                        <rect key="frame" x="167" y="-2" width="22" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="Mtb-N1-Ddo"/>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="ZyT-Hm-vWP"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="multiple" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="Iuj-bT-wHW">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="uW0-am-ZVq"/>
-                                        </connections>
-                                    </button>
-                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">
-                                        <rect key="frame" x="190" y="-2" width="96" height="23"/>
+                                    <segmentedControl verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">
+                                        <rect key="frame" x="167" y="-2" width="96" height="23"/>
                                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="rwX-zm-gqJ">
                                             <font key="font" metaFont="message" size="11"/>
                                             <segments>
@@ -1423,17 +1409,13 @@ CA
                                     <constraint firstItem="lZL-XS-Be7" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="L4H-iq-CWn"/>
                                     <constraint firstItem="6Bk-q7-w37" firstAttribute="leading" secondItem="M7F-Fr-RQL" secondAttribute="trailing" constant="4" id="NIG-M1-LKf"/>
                                     <constraint firstItem="M7F-Fr-RQL" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="O3u-a8-O6k"/>
-                                    <constraint firstItem="a5S-OQ-l6Y" firstAttribute="leading" secondItem="YHx-Bm-hee" secondAttribute="trailing" constant="4" id="SvM-xr-DQ9"/>
                                     <constraint firstItem="3sJ-7J-RbI" firstAttribute="leading" secondItem="j4W-F3-JHg" secondAttribute="trailing" constant="4" id="Yx9-4o-6xg"/>
                                     <constraint firstItem="3sJ-7J-RbI" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="eaH-E6-ncg"/>
                                     <constraint firstAttribute="bottom" secondItem="3sJ-7J-RbI" secondAttribute="bottom" id="fmD-6X-let"/>
-                                    <constraint firstAttribute="bottom" secondItem="YHx-Bm-hee" secondAttribute="bottom" id="fxA-zL-6UW"/>
                                     <constraint firstItem="lZL-XS-Be7" firstAttribute="leading" secondItem="RN5-Of-rTw" secondAttribute="trailing" constant="4" id="ikd-6o-UNA"/>
                                     <constraint firstItem="oEH-Lm-TYQ" firstAttribute="leading" secondItem="lZL-XS-Be7" secondAttribute="trailing" constant="4" id="mFr-Rv-7WT"/>
                                     <constraint firstAttribute="bottom" secondItem="j4W-F3-JHg" secondAttribute="bottom" id="oM6-bc-QNv"/>
-                                    <constraint firstItem="YHx-Bm-hee" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="pe2-93-Z1y"/>
                                     <constraint firstItem="a5S-OQ-l6Y" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="qEc-EM-SPW"/>
-                                    <constraint firstItem="YHx-Bm-hee" firstAttribute="leading" secondItem="6Bk-q7-w37" secondAttribute="trailing" constant="4" id="rnW-eS-FR0"/>
                                     <constraint firstItem="oEH-Lm-TYQ" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="u6L-NZ-DAD"/>
                                     <constraint firstAttribute="bottom" secondItem="M7F-Fr-RQL" secondAttribute="bottom" id="vSb-ay-J7f"/>
                                     <constraint firstItem="j4W-F3-JHg" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="vdj-Bx-Wky"/>
@@ -1447,7 +1429,6 @@ CA
                                     <outlet property="deleteButton" destination="M7F-Fr-RQL" id="YmA-ty-Ttt"/>
                                     <outlet property="forwardButton" destination="lZL-XS-Be7" id="Tjq-NG-SFK"/>
                                     <outlet property="hideButton" destination="3sJ-7J-RbI" id="Rdb-22-U0b"/>
-                                    <outlet property="multipleButton" destination="YHx-Bm-hee" id="Uku-Qz-GSC"/>
                                     <outlet property="printButton" destination="j4W-F3-JHg" id="aPU-S1-pha"/>
                                     <outlet property="saveButton" destination="oEH-Lm-TYQ" id="vyu-Au-79j"/>
                                     <outlet property="titlesControl" destination="a5S-OQ-l6Y" id="oqa-UQ-Ljr"/>
@@ -2581,7 +2562,6 @@ CA
         <image name="cancel" width="24" height="24"/>
         <image name="exit" width="26" height="26"/>
         <image name="left.arrow" width="512" height="512"/>
-        <image name="multiple" width="224" height="224"/>
         <image name="printer" width="225" height="225"/>
         <image name="right.arrow" width="512" height="512"/>
         <image name="save" width="24" height="24"/>
