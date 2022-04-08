@@ -17,65 +17,28 @@ import UIKit
 
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
-struct ZEssayDragDot {
-	var     color = kWhiteColor
-	var  dragRect = CGRect.zero
-	var  textRect = CGRect.zero
-	var  lineRect : CGRect?
-	var noteRange : NSRange?
-	var      note : ZNote?
-}
+enum ZNoteVisibilityIconType: Int {
 
-struct ZNoteVisibility {
-	var             y = CGFloat.zero
-	var       eyeRect = CGRect .zero
-	var     stackRect = CGRect .zero
-	var lightbulbRect = CGRect .zero
-	var          zone : Zone
+	case tSelf
+	case tChildren
+	case tHidden
 
-	func stateFor(_ type: ZVisibilityIconType) -> Bool? {
-		return zone.maybeNoteOrEssayTrait?.stateFor(type)
-	}
-
- 	mutating func setRect(_ rect: CGRect, for type: ZVisibilityIconType) {
-		switch type {
-			case .tVisibility:       eyeRect = rect
-			case .tMultiple:       stackRect = rect
-			case .tShowHidden: lightbulbRect = rect
-		}
-	}
-
-	func rectFor(_ type: ZVisibilityIconType) -> CGRect {
-		switch type {
-			case .tShowHidden: return lightbulbRect
-			case .tVisibility: return       eyeRect
-			case .tMultiple:   return     stackRect
-		}
-	}
-
-}
-
-enum ZVisibilityIconType: Int {
-	case tVisibility
-	case tShowHidden
-	case tMultiple
-
-	static var all : [ZVisibilityIconType] { return [.tVisibility, .tMultiple, .tShowHidden] }
-	var forEssayOnly : Bool { return self == .tShowHidden }
+	static var all : [ZNoteVisibilityIconType] { return [.tSelf, .tChildren, .tHidden] }
+	var forEssayOnly : Bool { return self != .tSelf }
 
 	var offset : CGFloat {
 		switch self {
-			case .tVisibility:       return 35.0
-			case .tMultiple:     return 60.0
-			case .tShowHidden: return 85.0
+			case .tSelf:     return 35.0
+			case .tChildren: return 60.0
+			case .tHidden:   return 85.0
 		}
 	}
 
 	func imageForState(_ on: Bool) -> ZImage? {
 		switch self {
-			case .tMultiple:   return on ? kStackImage     : kSingleImage
-			case .tVisibility: return on ? kEyeImage       : kEyebrowImage
-			case .tShowHidden: return on ? kLightbulbImage : kNoLightbulbImage
+			case .tChildren: return on ? kStackImage     : kSingleImage
+			case .tSelf:     return on ? kEyeImage       : kEyebrowImage
+			case .tHidden:   return on ? kLightbulbImage : kNoLightbulbImage
 		}
 	}
 
@@ -125,6 +88,41 @@ enum ZEssayLinkType: String {
 	}
 
 	static var all: [ZEssayLinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hFile, .hClear] }
+
+}
+
+struct ZEssayDragDot {
+	var     color = kWhiteColor
+	var  dragRect = CGRect.zero
+	var  textRect = CGRect.zero
+	var  lineRect : CGRect?
+	var noteRange : NSRange?
+	var      note : ZNote?
+}
+
+struct ZNoteVisibility {
+	var       eyeRect = CGRect .zero
+	var     stackRect = CGRect .zero
+	var lightbulbRect = CGRect .zero
+	var          zone : Zone
+
+	func stateFor(_ type: ZNoteVisibilityIconType) -> Bool? { return zone.maybeNoteOrEssayTrait?.stateFor(type) }
+
+	mutating func setRect(_ rect: CGRect, for type: ZNoteVisibilityIconType) {
+		switch type {
+			case .tSelf:         eyeRect = rect
+			case .tChildren:   stackRect = rect
+			case .tHidden: lightbulbRect = rect
+		}
+	}
+
+	func rectFor(_ type: ZNoteVisibilityIconType) -> CGRect {
+		switch type {
+			case .tSelf:     return       eyeRect
+			case .tChildren: return     stackRect
+			case .tHidden:   return lightbulbRect
+		}
+	}
 
 }
 
@@ -182,6 +180,58 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return 0
 	}
 
+	// MARK: - note visibility
+	// MARK: -
+
+	func resetVisibilities() {
+		visibilities.removeAll()
+
+		if  let essay = gCurrentEssay,
+			let  zone = essay.zone {
+			zone.updateForNotes()
+			if  !zone.hasChildNotes {
+				visibilities.append(ZNoteVisibility(zone: zone))
+			} else {
+				for child in zone.zonesWithVisibleNotes {
+					visibilities.append(ZNoteVisibility(zone: child))
+				}
+			}
+		}
+	}
+
+	func drawVisibilityIcons(for index: Int, y: CGFloat, isANote: Bool) {
+		if  gEssayTitleMode   != .sEmpty, gNoteVisibilityIcons {
+			var              v = visibilities[index]
+			for type in ZNoteVisibilityIconType.all {
+				if  !(type.forEssayOnly && isANote),
+					let     on = v.stateFor(type),
+					let  image = type.imageForState(on) {
+					let origin = CGPoint(x: bounds.maxX, y: y).offsetBy(-type.offset, .zero)
+					let   rect = CGRect(origin: origin, size: .zero).expandedBy(image.size.dividedInHalf)
+
+					v.setRect(rect, for: type)
+					image.draw(in: rect)
+				}
+			}
+
+			visibilities[index] = v
+		}
+	}
+
+	func visibilityIconHit(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
+		if  gNoteVisibilityIcons {
+			for visibility in visibilities {
+				for type in ZNoteVisibilityIconType.all {
+					if  visibility.rectFor(type).intersects(rect) {
+						return (visibility.zone, type)
+					}
+				}
+			}
+		}
+
+		return nil
+	}
+
 	// MARK: - setup
 	// MARK: -
 
@@ -223,6 +273,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func essayViewSetup() {
+		gCurrentEssay?.zone?.updateForNotes()
 		updateTextStorage()
 	}
 
@@ -232,6 +283,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			essayRecordName = nil
 			gCurrentEssay   = note
 
+			note.zone?.updateForNotes()
 			note.setupChildren()
 
 			delta           = updateTextStorage()
@@ -264,6 +316,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gControllers.swapMapAndEssay(force: .wMapMode)                            // not show blank essay
 		} else {
 			gEssayControlsView?.updateTitleSegments()
+			gCurrentEssay?.zone?.zonesWithVisibleNotes.printSelf()
 
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
@@ -370,16 +423,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let dots = dragDots
 		if  dots.count > 0 {
 			for (index, dot) in dots.enumerated() {
-				if  let            note = dot.note,
-					let            zone = note.zone {
-					let         grabbed = grabbedZones.contains(zone)
-					let        extendBy = index == 0 ? kNoteIndentSpacer.length : -1     // fixes intersection computation, first & last note have altered range
-					let        selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
-					let          filled = selected && !hasGrabbedNote
-					let           color = dot.color
-					var      visibility = visibilities[index]
-					visibility       .y = dot.dragRect.maxY - 10.0
-					visibilities[index] = drawVisibilityIcons(visibility, isANote: index != 0)  // draw visibility icons
+				if  let     note = dot.note,
+					let     zone = note.zone,
+					let    trait = zone.maybeNoteOrEssayTrait {
+					let  grabbed = grabbedZones.contains(zone)
+					let extendBy = index == 0 ? kNoteIndentSpacer.length : -1     // fixes intersection computation, first & last note have altered range
+					let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
+					let   filled = selected && !hasGrabbedNote
+					let    color = dot.color
+
+					drawVisibilityIcons(for: index, y: dot.dragRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
 
 					if  gEssayTitleMode == .sFull {
 						dot.dragRect.drawColoredOval(color, filled: filled || grabbed)   // draw drag dot
@@ -395,12 +448,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 			}
 		} else if let  note = gCurrentEssay, visibilities.count > 0,
+				  let  zone = note.zone,
 				  let     c = textContainer,
 				  let     l = layoutManager {
 			let        rect = l.boundingRect(forGlyphRange: note.noteRange, in: c)
-			var  visibility = visibilities[0]
-			visibility.y    = rect.minY + 33.0
-			visibilities[0] = drawVisibilityIcons(visibility)                              // draw visibility icons
+
+			drawVisibilityIcons(for: 0, y: rect.minY + 33.0, isANote: !zone.hasChildNotes)                              // draw visibility icons
 		}
 	}
 
@@ -591,7 +644,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		switch arrow {
 		case .left:  canRecurse = selectedRange.lowerBound > 0
-		case .right: canRecurse = selectedRange.upperBound < gCurrentEssay?.upperBoundForNoteIn(selectedRange) ?? 0
+		case .right: canRecurse = selectedRange.upperBound < gCurrentEssay?.upperBoundForLastNoteIn(selectedRange) ?? 0
 		default:     break
 		}
 
@@ -635,11 +688,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 			} else if let (zone, type) = visibilityIconHit(at: rect),
 					  let        trait = zone.maybeNoteOrEssayTrait {
-				if  trait.toggleFor(type) {
-					save()
-					resetCurrentEssay()
-					setNeedsDisplay()
-				} else {
+				trait.toggleVisibilityFor(type)
+				save()
+				resetCurrentEssay()
+				setNeedsDisplay()
+
+				if  type != .tSelf, gCurrentEssay?.zone == zone {
 					swapBetweenNoteAndEssay()
 				}
 			} else {
@@ -959,7 +1013,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gDisablePush {
 				zone.swapWithParent { [self] in
 					if  reset {
-						gCurrentEssay = ZEssay(zone)
+						gCurrentEssay = gCreateEssay(zone)
 					}
 
 					resetTextAndGrabs(grab: parent)
@@ -1011,7 +1065,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  zone         == gCurrentEssay?.zone,
 				let     first = firstGrabbedZone {
-				gCurrentEssay = ZEssay(first)
+				gCurrentEssay = gCreateEssay(first)
 			}
 		}
 
@@ -1469,87 +1523,37 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return followLinkInSelection()
 	}
 
-	// MARK: - note visibility
-	// MARK: -
-
-	func resetVisibilities() {
-		visibilities.removeAll()
-
-		if  let essay = gCurrentEssay,
-			let  zone = essay.zone {
-			if  essay.isNote {
-				visibilities.append(ZNoteVisibility(zone: zone))
-			} else {
-				for child in zone.zonesWithVisibleNotes {
-					visibilities.append(ZNoteVisibility(zone: child))
-				}
-			}
-		}
-	}
-
-	func drawVisibilityIcons(_ visibility: ZNoteVisibility, isANote: Bool = false) -> ZNoteVisibility {
-		var                  v = visibility
-		if  gEssayTitleMode   != .sEmpty {
-			for type in ZVisibilityIconType.all {
-				if  !(type.forEssayOnly && isANote),
-					let     on = v.stateFor(type),
-					let  image = type.imageForState(on) {
-				    let   half = image.size.dividedInHalf
-					let origin = CGPoint(x: bounds.maxX, y: v.y).offsetBy(-type.offset, .zero)
-					let   rect = CGRect(origin: origin, size: .zero).expandedBy(half)
-
-					v.setRect(rect, for: type)
-					image.draw(in: rect)
-				}
-			}
-		}
-
-		return v
-	}
-
-	func visibilityIconHit(at rect: CGRect) -> (Zone, ZVisibilityIconType)? {
-		for visibility in visibilities {
-			for type in ZVisibilityIconType.all {
-				if  visibility.rectFor(type).intersects(rect) {
-					return (visibility.zone, type)
-				}
-			}
-		}
-
-		return nil
-	}
-
 	// MARK: - more
 	// MARK: -
 
-	func swapBetweenNoteAndEssay() {
-		if  gCurrentEssay != nil,
-			let    zone = gCurrentEssay!.zone {
-			let   count = gCurrentEssay!.children.count
-			let toEssay = count < 2
+	func swapBetweenNoteAndEssay(_ note: ZNote? = gCurrentEssay) {
+		if  var  target = note,
+			let    zone = target.zone {
+			zone.updateForNotes()
+			let toEssay = zone.hasChildNotes && !gCreateCombinedEssay
 			let   range = selectedRange
 
-			if  toEssay, gEssayTitleMode == .sEmpty, gCurrentEssay!.essayText!.string.length > 0 {
-				gCurrentEssay!.updatedRangesFrom(textStorage)
+			if  toEssay, gEssayTitleMode == .sEmpty, target.essayText!.string.length > 0 {
+				target.updatedRangesFrom(textStorage)
 			}
 
 			save()
 
-			gCreateCombinedEssay = toEssay // toggle
+			gCreateCombinedEssay = toEssay      // toggle
 
 			if  toEssay {
-				gCurrentEssay = ZEssay(zone)
+				let        essay = gCreateEssay(zone)
 
 				zone.clearAllNotes()            // discard current essay text and all child note's text
-				resetCurrentEssay(selecting: range)
-			} else if var note = lastGrabbedDot?.note ?? selectedNote {
+				resetCurrentEssay(essay, selecting: range)
+			} else {
 				ungrabAll()
 
-				if !note.isNote {
-					note = ZNote(note.zone)
+				if !target.isNote {
+					target       = ZNote(target.zone)
 				}
 
-				resetCurrentEssay(note, selecting: range)
+				resetCurrentEssay(target, selecting: range)
 			}
 
 			gSignal([.sDetails])
@@ -1572,7 +1576,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func move(out: Bool) {
 		gCreateCombinedEssay = true
 		let            range = selectedRange()
-		let             note = gCurrentEssay?.noteIn(range)
+		let             note = gCurrentEssay?.notes(in: range).first
 		let            prior = (note?.noteOffset ?? 0) + (note?.indentCount ?? 0)
 
 		save()

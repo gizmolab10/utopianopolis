@@ -124,6 +124,7 @@ extension NSObject {
 	func              noop()                 {}
     func       performance(_ iMessage: Any?) { log(iMessage) }
 	func               bam(_ iMessage: Any?) { log("\("-".repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
+	func printSelf()                         { print(self) }
 	func printCurrentFocus()                 { gMapController?.hereWidget?.printWidget()}
 	func printCurrentEssay()                 { gEssayView?.printView() }
 	@objc func copyWithZone(_ with: NSZone) -> NSObject { return self }

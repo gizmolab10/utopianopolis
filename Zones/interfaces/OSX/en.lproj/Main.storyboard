@@ -716,7 +716,7 @@ CA
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="CGo-qd-BEC"/>
                                         </connections>
                                     </menuItem>
-                                    <menuItem title="Sort by Length" keyEquivalent="m" id="oO1-Ea-tYr">
+                                    <menuItem title="Sort by Length" keyEquivalent="l" id="oO1-Ea-tYr">
                                         <modifierMask key="keyEquivalentModifierMask"/>
                                         <connections>
                                             <action selector="genericMenuHandler:" target="4NV-a6-tte" id="6Z3-TQ-X8l"/>
@@ -818,23 +818,17 @@ CA
                                 <action selector="genericMenuHandler:" target="4NV-a6-tte" id="Rrh-ZY-RNZ"/>
                             </connections>
                         </menuItem>
-                        <menuItem title="Size" id="O1o-ir-pfp">
-                            <menu key="submenu" title="Size" id="Qdw-UT-gam">
-                                <items>
-                                    <menuItem title="Increase" keyEquivalent="=" id="qal-ZK-rV0">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="SEW-nV-4My"/>
-                                        </connections>
-                                    </menuItem>
-                                    <menuItem title="Decrease" keyEquivalent="-" id="9FZ-L5-sqc">
-                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                        <connections>
-                                            <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="Koy-1Q-tsR"/>
-                                        </connections>
-                                    </menuItem>
-                                </items>
-                            </menu>
+                        <menuItem title="Zome In" keyEquivalent="=" id="FHZ-3E-LcP">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="JWK-8O-I62"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem title="Zome out" keyEquivalent="-" id="IxO-PK-GOA">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="genericMenuHandler:" target="HLb-eX-LkY" id="gSk-I4-FSd"/>
+                            </connections>
                         </menuItem>
                     </items>
                     <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
@@ -1314,7 +1308,6 @@ CA
                                         <rect key="frame" x="47" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="bGK-SG-7dR"/>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="doS-vh-Zlc"/>
                                         </constraints>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="save" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="a6v-h8-5qw">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1327,7 +1320,6 @@ CA
                                     <button identifier="printer" toolTip="print" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j4W-F3-JHg" userLabel="printer">
                                         <rect key="frame" x="71" y="-2" width="22" height="23"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="jFY-cj-gem"/>
                                             <constraint firstAttribute="width" constant="20" id="zag-SG-G7g"/>
                                         </constraints>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="printer" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="gSL-L0-bUv">
@@ -1341,7 +1333,6 @@ CA
                                     <button identifier="exit" toolTip="save changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sJ-7J-RbI" userLabel="exit">
                                         <rect key="frame" x="95" y="-2" width="22" height="23"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="TQP-vV-Jxa"/>
                                             <constraint firstAttribute="width" constant="20" id="dbx-WR-CTS"/>
                                         </constraints>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="exit" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="rrN-Ei-4H8">
@@ -1355,7 +1346,6 @@ CA
                                     <button identifier="trash" toolTip="delete" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7F-Fr-RQL" userLabel="trash">
                                         <rect key="frame" x="119" y="-2" width="22" height="23"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="K5T-zL-AiC"/>
                                             <constraint firstAttribute="width" constant="20" id="QKc-KO-gIL"/>
                                         </constraints>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="trash" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="rPw-RL-NX6">
@@ -1370,7 +1360,6 @@ CA
                                         <rect key="frame" x="143" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="2od-Um-DWP"/>
-                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="Rwt-QH-F9F"/>
                                         </constraints>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="cancel" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="5fi-r5-fH0">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1380,8 +1369,8 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="sWu-zt-sYJ"/>
                                         </connections>
                                     </button>
-                                    <segmentedControl verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">
-                                        <rect key="frame" x="167" y="-2" width="96" height="23"/>
+                                    <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">
+                                        <rect key="frame" x="166" y="-2" width="96" height="23"/>
                                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="rwX-zm-gqJ">
                                             <font key="font" metaFont="message" size="11"/>
                                             <segments>
@@ -1403,6 +1392,7 @@ CA
                                     <constraint firstItem="6Bk-q7-w37" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="BTW-wo-P5G"/>
                                     <constraint firstItem="M7F-Fr-RQL" firstAttribute="leading" secondItem="3sJ-7J-RbI" secondAttribute="trailing" constant="4" id="BZt-c9-Gd1"/>
                                     <constraint firstItem="RN5-Of-rTw" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="DHY-Tv-9dX"/>
+                                    <constraint firstItem="a5S-OQ-l6Y" firstAttribute="leading" secondItem="6Bk-q7-w37" secondAttribute="trailing" constant="4" id="EsQ-5s-kiF"/>
                                     <constraint firstAttribute="bottom" secondItem="6Bk-q7-w37" secondAttribute="bottom" id="HG6-vN-Dkf"/>
                                     <constraint firstAttribute="trailing" secondItem="a5S-OQ-l6Y" secondAttribute="trailing" id="Hwu-Rb-vKz"/>
                                     <constraint firstAttribute="bottom" secondItem="oEH-Lm-TYQ" secondAttribute="bottom" id="Jzh-AR-BVc"/>

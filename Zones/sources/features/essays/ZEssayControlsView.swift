@@ -67,7 +67,7 @@ class ZEssayControlsView: ZView {
 			let           x = b.maxX + 4.0
 			rect    .origin = CGPoint(x: x, y: 4.0)
 			rect.size.width = 100.0
-			frame = rect
+			frame           = rect
 
 			b.addSubview(self)
 		}

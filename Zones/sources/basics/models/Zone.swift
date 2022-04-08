@@ -69,7 +69,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                           widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
-	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tEssay) ?? maybeTraitFor(.tNote) }
+	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
 	var                        textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kDefaultIdeaColor }
 	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
@@ -95,12 +95,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                  dragDotIsHidden :               Bool  { return (isSmallMapHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var               canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
-	var                      hasSiblings :               Bool  { return parentZoneMaybe?.count ?? 0 > 1 }
 	var                 hasBadRecordName :               Bool  { return recordName == nil }
 	var                    showRevealDot :               Bool  { return count > 0 || isTraveller }
 	var                    hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                    hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
+	var                    hasChildNotes :               Bool  { return zonesWithNotes.count > 1 }
 	var                     hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
+	var                      hasSiblings :               Bool  { return parentZoneMaybe?.count ?? 0 > 1 }
 	var                      isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
 	var                       linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                       isSelected :               Bool  { return gSelecting.isSelected(self) }
@@ -137,6 +138,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var        allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
 	var        all                       :          ZoneArray  { return zones(of:               .wAll) }
 	var                  visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
+	var            zonesWithVisibleNotes =          ZoneArray  ()
+	var                   zonesWithNotes =          ZoneArray  ()
 	var                   duplicateZones =          ZoneArray  ()
 	var                         children =          ZoneArray  ()
 	var                           traits =   ZTraitDictionary  ()
@@ -189,37 +192,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return done
-	}
-
-	var zonesWithNotes : ZoneArray {
-		var zones = ZoneArray()
-
-		traverseAllProgeny { zone in
-			if  zone.hasNote {
-				zones.append(zone)
-			}
-		}
-
-		return zones
-	}
-
-	var zonesWithVisibleNotes : ZoneArray {
-		var zones = zonesWithNotes
-
-		if  let showHidden = maybeTraitFor(.tEssay)?.showsHidden, !showHidden {
-			let   children = ZoneArray(zones)
-
-			for child in children {
-				if  child    != self,
-					let  open = child.maybeTraitFor(.tNote)?.isVisible, !open,
-					let index = zones.firstIndex(of: child) {
-
-					zones.remove(at: index)
-				}
-			}
-		}
-
-		return zones
 	}
 
 	var level: Int {
@@ -1853,7 +1825,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult func createNoteMaybe() -> ZNote? {
 		if (noteMaybe == nil || !hasTrait(matchingAny: [.tNote, .tEssay])), let emptyNote = createNote() {
-			noteMaybe = emptyNote // might be note from "child"
+			noteMaybe = emptyNote     // might be note from "child"
 		}
 
 		return noteMaybe
@@ -1873,7 +1845,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var  note : ZNote?
 
 		if  count > 1, gCreateCombinedEssay, zones.contains(self) {
-			note      = ZEssay(self)
+			note      = gCreateEssay(self)
 			noteMaybe = note
 
 			note?.setupChildren()
@@ -1886,6 +1858,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			zone.noteMaybe = note
 		}
 
+		updateForNotes()
+
 		return note
 	}
 
@@ -1893,11 +1867,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		for zone in zonesWithNotes {
 			zone.noteMaybe = nil
 		}
+
+		zonesWithNotes       .removeAll()
+		zonesWithVisibleNotes.removeAll()
 	}
 
 	func deleteNote() {
 		removeTrait(for: .tNote)
 		gRecents.removeBookmark(for: self)
+		updateForNotes()
 
 		noteMaybe     = nil
 		gNeedsRecount = true // trigger recount on next timer fire
@@ -1919,7 +1897,45 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gCreateCombinedEssay = false
 		gCurrentEssay        = note
 
+		updateForNotes()
 		gControllers.swapMapAndEssay(force: .wEssayMode)
+	}
+
+	func updateForNotes() {
+		updateZonesWithNotes()
+		updateZonesWithVisibleNotes()
+	}
+
+	func updateZonesWithNotes() {
+		zonesWithNotes.removeAll()
+
+		traverseAllProgeny { zone in
+			if  zone.hasNote {
+				zonesWithNotes.append(zone)
+			}
+		}
+	}
+
+	func updateZonesWithVisibleNotes() {
+		zonesWithVisibleNotes.removeAll()
+
+		if  let essayTrait = maybeNoteOrEssayTrait {
+			let showHidden = essayTrait.showsHidden
+
+			traverseProgeny { zone -> ZTraverseStatus in
+				if  let trait = zone.maybeNoteOrEssayTrait,
+					(trait.showsSelf || zone == self || showHidden) {
+
+					zonesWithVisibleNotes.append(zone)
+
+					if !trait.showsChildren, !showHidden {
+						return .eSkip
+					}
+				}
+
+				return .eContinue
+			}
+		}
 	}
 
 	// MARK: - groupOwner
@@ -2749,10 +2765,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: - children visibility
 	// MARK: -
 
-	func     hide() {    add(  to: .hide) }
-	func   expand() {    add(  to: .expand) }
-	func collapse() { remove(from: .expand) }
-	func     show() { remove(from: .hide) }
+	func     hide() {    add(  to: .mCollapsed) }
+	func   expand() {    add(  to: .mExpanded) }
+	func collapse() { remove(from: .mExpanded) }
+	func     show() { remove(from: .mCollapsed) }
 
 	func toggleChildrenVisibility() {
 		if  isExpanded {
@@ -2764,7 +2780,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var isExpanded: Bool {
 		if  let name = recordName,
-			gExpandedZones.contains(name) {
+			gExpandedIdeas.contains(name) {
 			return true
 		}
 
@@ -2781,27 +2797,27 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  let name = recordName {
-			return !gHiddenZones.contains(name)
+			return !gCollapsedIdeas.contains(name)
 		}
 
 		return true
 	}
 	
-	func add(to type: ZVisibilityType) {
+	func add(to type: ZIdeaVisibilityMode) {
 		var a = type.array
 
 		add(to: &a)
 		
-		if  type == .expand {
+		if  type == .mExpanded {
 			for child in children {
-				child.remove(from: .hide)
+				child.remove(from: .mCollapsed)
 			}
 		}
 		
 		type.setArray(a)
 	}
 	
-	func remove(from type: ZVisibilityType) {
+	func remove(from type: ZIdeaVisibilityMode) {
 		var a = type.array
 
 		remove(from: &a)
@@ -3642,15 +3658,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else {
 			switch key {
+				case "n":      showNote()
+				case "d":      duplicate()
+				case "b":      addBookmark()
+				case "r":      reverseChildren()
 				case "a":      children.alphabetize()
 				case "i":      children.sortByCount()
-				case "m":      children.sortByLength()
+				case "l":      children.sortByLength()
 				case "e":      editTraitForType(.tEmail)
-				case "w":      editTraitForType(.tHyperlink)
-				case "b":      addBookmark()
-				case "d":      duplicate()
-				case "n":      showNote()
-				case "r":      reverseChildren()
+				case "h":      editTraitForType(.tHyperlink)
 				case "s":      gFiles.export(self, toFileAs: .eSeriously)
 				case "o":      importFromFile(.eSeriously)    { gRelayoutMaps(for: self) }
 				case "t":      swapWithParent                 { gRelayoutMaps(for: self) }

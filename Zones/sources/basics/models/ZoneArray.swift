@@ -17,6 +17,8 @@ import UIKit
 
 extension ZoneArray {
 
+	func printSelf() { print(self) }
+
 	init(set: Set<Zone>) {
 		self.init()
 

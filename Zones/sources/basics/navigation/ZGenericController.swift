@@ -94,13 +94,13 @@ class ZGenericController: ZController, ZGeneric {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-		isVisible = true
+		showsSelf = true
         setupForMode()
     }
 
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
-		isVisible = false
+		showsSelf = false
 	}
 
 

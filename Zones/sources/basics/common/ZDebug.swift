@@ -19,6 +19,7 @@ var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && 
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gIsUsingCoreData }
 var     gIsUsingCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gIsUsingCoreData }
 
+var gNoteVisibilityIcons : Bool { return  gDebugModes.contains(.dNoteVisibilityIcons) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
@@ -65,6 +66,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dShowDuplicates      = ZDebugMode(rawValue: 1 <<  8) // report duplicates
 	static let dIgnoreExemption     = ZDebugMode(rawValue: 1 <<  9) // ignore user exemption
 	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 10) // super short timeout
+	static let dNoteVisibilityIcons = ZDebugMode(rawValue: 1 << 11) // note visibility icons
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 
@@ -81,6 +83,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 				(.dSubscriptionTimeout, "ignore subscription duration")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 	}
+
 }
 
 struct ZPrintMode: OptionSet, CustomStringConvertible {

@@ -44,13 +44,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
 	var          titleOffset : Int       { return titleIndent.length }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
-	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kNoteDefault }
-	var               isNote : Bool      { return isMember(of: ZNote.self) }
+	var    lastTextIsDefault : Bool      { return   maybeNoteTrait?.text == kNoteDefault }
+	var               isNote : Bool      { return !(zone?.hasChildNotes ?? false) }
 	var    	            zone : Zone?
 
 	func setupChildren() {}
 	func updateNoteOffsets() {}
-	func noteIn(_ range: NSRange) -> ZNote { return self }
+	func notes(in range: NSRange) -> [ZNote] { return [self] }
 	func saveAsEssay(_ attributedString: NSAttributedString?) { saveAsNote(attributedString) }
 	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
 	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
@@ -107,7 +107,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		if  let       zone = gRemoteStorage.maybeZoneForRecordName(id),
 			zone.hasTrait(for: .tNote) {
 
-			object = isExpanded ? ZEssay(zone) : ZNote(zone)
+			object = isExpanded ? gCreateEssay(zone) : ZNote(zone)
 
 			if  let note = object {
 				zone.noteMaybe = note
@@ -270,10 +270,12 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		textRange .location += offset
 	}
 
-	func upperBoundForNoteIn(_ range: NSRange) -> Int {
-		let note = noteIn(range)
+	func upperBoundForLastNoteIn(_ range: NSRange) -> Int? {
+		if  let note = notes(in: range).last {
+			return note.noteRange.upperBound + note.noteOffset
+		}
 
-		return note.noteRange.upperBound + note.noteOffset
+		return nil
 	}
 
 	// MARK: - mutate

@@ -58,7 +58,7 @@ class ZHelpDotsData: ZHelpData {
 		"_trait dots",			"click to edit, or select the drag dot and tap = to:",							"",
 		".b",					"email                   compose and send",										"",
 		".b",					"hyperlink            open in a browser",										"",
-		".b",					"note or essay     edit",														""
+		".b",					"note                    edit",													""
 	]
 
 }

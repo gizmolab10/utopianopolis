@@ -15,7 +15,18 @@ import Cocoa
 import UIKit
 #endif
 
+struct ZNoteVisibilityMode: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let mSelf     = ZNoteVisibilityMode(rawValue: 1 << 0)
+	static let mChildren = ZNoteVisibilityMode(rawValue: 1 << 1)
+	static let mHidden   = ZNoteVisibilityMode(rawValue: 1 << 2)
+}
+
 enum ZTraitType: String { // stored in database: do not change
+
 	case tDuration  = "!" // accumulative
 	case tMoney     = "$" //      "
 	case tAssets    = "a" // can have multiple
@@ -53,24 +64,19 @@ enum ZTraitType: String { // stored in database: do not change
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@NSManaged var     strings : StringsArray?
-	@NSManaged var    ownerRID : String?
-	@NSManaged var      format : String?
-	@NSManaged var        type : String?
-	@NSManaged var        text : String?
-	@NSManaged var  showHidden : NSNumber?
-	@NSManaged var showInEssay : NSNumber?
-    override var unwrappedName : String { return text ?? emptyName }
-	override var decoratedName : String { return text ?? kNoValue }
-	override var    typePrefix : String { return traitType?.description ?? kEmpty }
-	override var  passesFilter : Bool   { return gFilterOption.contains(.fNotes) }
-	override var     isInScope : Bool   { return ownerZone?.isInScope ?? false }
-	var            showsHidden : Bool   { get { return showHidden? .boolValue ?? false } set { showHidden  = NSNumber(value: newValue) } }
-	var              isVisible : Bool   { get { return showInEssay?.boolValue ?? false } set { showInEssay = NSNumber(value: newValue) } }
-	func    toggleShowsHidden()         { showsHidden = !showsHidden }
-	func    toggleVisibility()          { isVisible   = !isVisible }
-	var             _ownerZone : Zone?
-	var             _traitType : ZTraitType?
+	@NSManaged var      strings : StringsArray?
+	@NSManaged var     ownerRID : String?
+	@NSManaged var       format : String?
+	@NSManaged var         type : String?
+	@NSManaged var         text : String?
+	@NSManaged var   visibility : NSNumber?
+    override var  unwrappedName : String { return text ?? emptyName }
+	override var  decoratedName : String { return text ?? kNoValue }
+	override var     typePrefix : String { return traitType?.description ?? kEmpty }
+	override var   passesFilter : Bool   { return gFilterOption.contains(.fNotes) }
+	override var      isInScope : Bool   { return ownerZone?.isInScope ?? false }
+	var              _ownerZone : Zone?
+	var              _traitType : ZTraitType?
 
 	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
 	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
@@ -87,6 +93,58 @@ class ZTrait: ZTraitAssets {
 		return [#keyPath(ownerRID),
 				#keyPath(format)] +
 			super.optionalCloudProperties
+	}
+
+	// MARK: - visibility
+	// MARK: -
+
+	var     showsSelf : Bool { get { return visibilityMode?.contains(.mSelf)     ?? false } set { setVisibilityMode(.mSelf,     to: newValue) } }
+	var   showsHidden : Bool { get { return visibilityMode?.contains(.mHidden)   ?? false } set { setVisibilityMode(.mHidden,   to: newValue) } }
+	var showsChildren : Bool { get { return visibilityMode?.contains(.mChildren) ?? false } set { setVisibilityMode(.mChildren, to: newValue) } }
+
+	func setVisibilityMode(_ mode: ZNoteVisibilityMode, to: Bool) {
+		if  var v = visibilityMode {
+			if  to {
+				v.insert(mode)
+			} else {
+				v.remove(mode)
+			}
+
+			visibilityMode = v
+		} else {
+			visibilityMode = mode
+		}
+	}
+
+	var visibilityMode : ZNoteVisibilityMode? {
+		get {
+			if  let n = visibility?.intValue {
+				return ZNoteVisibilityMode(rawValue: n)
+			}
+
+			return nil
+		}
+
+		set {
+			let      n = newValue?.rawValue ?? 0
+			visibility = NSNumber(value: n)
+		}
+	}
+
+	func stateFor(_ type: ZNoteVisibilityIconType) -> Bool? {
+		switch type {
+			case .tSelf:     return showsSelf
+			case .tHidden:   return showsHidden
+			case .tChildren: return showsChildren
+		}
+	}
+
+	func toggleVisibilityFor(_ type: ZNoteVisibilityIconType) {
+		switch type {
+			case .tSelf:     showsSelf     = !showsSelf
+			case .tHidden:   showsHidden   = !showsHidden
+			case .tChildren: showsChildren = !showsChildren
+		}
 	}
 
 	// MARK: - initialize
@@ -116,24 +174,6 @@ class ZTrait: ZTraitAssets {
 
 	static func uniqueTrait(recordName: String?, in dbID: ZDatabaseID) -> ZTrait {
 		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
-	}
-
-	func stateFor(_ type: ZVisibilityIconType) -> Bool? {
-		switch type {
-			case .tVisibility: return isVisible
-			case .tMultiple:   return false
-			case .tShowHidden: return showsHidden
-		}
-	}
-
-	func toggleFor(_ type: ZVisibilityIconType) -> Bool {
-		switch type {
-			case .tVisibility: toggleVisibility()
-			case .tShowHidden: toggleShowsHidden()
-			case .tMultiple:   return false
-		}
-
-		return true
 	}
 
 	// MARK: - owner
@@ -234,17 +274,23 @@ class ZTrait: ZTraitAssets {
 
     var traitType: ZTraitType? {
         get {
-            if  _traitType == nil, type != nil {
-                _traitType  = ZTraitType(rawValue: type!)
+            if  _traitType == nil,
+				var t       = type {
+				if  t      == ZTraitType.tEssay.rawValue {
+					t       = ZTraitType.tNote .rawValue
+					type    = t
+				}
+
+				_traitType  = ZTraitType(rawValue: t)
             }
 
             return _traitType
         }
 
         set {
-            if newValue != _traitType {
-                _traitType = newValue
-                type       = newValue?.rawValue
+            if newValue    != _traitType {
+                _traitType  = newValue
+                type        = newValue?.rawValue
             }
         }
     }

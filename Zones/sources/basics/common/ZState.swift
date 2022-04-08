@@ -228,49 +228,49 @@ var gCoreDataMode : ZCoreDataMode {
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
-fileprivate var gHidden   : StringsArray?
-fileprivate var gExpanded : StringsArray?
+fileprivate var gCollapsed : StringsArray?
+fileprivate var gExpanded  : StringsArray?
 
-enum ZVisibilityType : Int {
-	case expand
-	case hide
+enum ZIdeaVisibilityMode : Int {
+	case mExpanded
+	case mCollapsed
 
 	var array : StringsArray {
 		switch self {
-		case .expand: return gExpandedZones
-		case .hide:   return gHiddenZones
+		case .mExpanded:  return gExpandedIdeas
+		case .mCollapsed: return gCollapsedIdeas
 		}
 	}
 
 	func setArray(_ array: StringsArray) {
 		switch self {
-		case .expand: gExpandedZones = array
-		case .hide:     gHiddenZones = array
+		case .mExpanded:  gExpandedIdeas  = array
+		case .mCollapsed: gCollapsedIdeas = array
 		}
 	}
 }
 
-var gHiddenZones : StringsArray {
+var gCollapsedIdeas : StringsArray {
 	get {
-		if  gHidden  == nil {
-			let value = getPreferencesString(for: kHiddenZones, defaultString: kEmpty)
-			gHidden   = value?.components(separatedBy: kColonSeparator)
+		if  gCollapsed == nil {
+			let  value  = getPreferencesString(for: kCollapsedIdeas, defaultString: kEmpty)
+			gCollapsed  = value?.components(separatedBy: kColonSeparator)
 		}
 		
-		return gHidden!
+		return gCollapsed!
 	}
 	
 	set {
-		gHidden = newValue
+		gCollapsed = newValue
 		
-		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kHiddenZones)
+		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kCollapsedIdeas)
 	}
 }
 
-var gExpandedZones : StringsArray {
+var gExpandedIdeas : StringsArray {
     get {
         if  gExpanded == nil {
-            let  value = getPreferencesString(for: kExpandedZones, defaultString: kEmpty)
+            let value  = getPreferencesString(for: kExpandedIdeas, defaultString: kEmpty)
             gExpanded  = value?.components(separatedBy: kColonSeparator)
         }
 
@@ -280,7 +280,7 @@ var gExpandedZones : StringsArray {
     set {
         gExpanded = newValue
 
-        setPreferencesString(newValue.joined(separator: kColonSeparator), for: kExpandedZones)
+        setPreferencesString(newValue.joined(separator: kColonSeparator), for: kExpandedIdeas)
     }
 }
 

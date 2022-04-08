@@ -8,9 +8,13 @@
 
 import Foundation
 
+func gCreateEssay(_ zone: Zone) -> ZEssay {
+	return ZEssay(zone)
+}
+
 class ZEssay: ZNote {
-	var          essayRange : NSRange              { return NSRange(location: 0, length: essayLength) }
-	override var       kind : String               { return "essay" }
+	var    essayRange : NSRange { return NSRange(location: 0, length: essayLength) }
+	override var kind : String  { return "essay" }
 
 	override var lastTextIsDefault: Bool {
 		if  let last = children.last,
@@ -43,7 +47,7 @@ class ZEssay: ZNote {
 			return gCurrentEssay?.noteText
 		}
 
-		traverseAndSetupChildren()
+		setupChildNotes()
 
 		var result : NSMutableAttributedString?
 		var index  = children.count
@@ -99,24 +103,14 @@ class ZEssay: ZNote {
 		children.removeAll()
 
 		if  gCreateCombinedEssay {
-			traverseAndSetupChildren()
+			setupChildNotes()
 		}
 	}
 
-	func traverseAndSetupChildren() {
-		let showAll = essayTrait?.showsHidden ?? false
-
+	func setupChildNotes() {
 		children.removeAll()
-		zone?.traverseAllProgeny { [self] child in
-			if  child == self,
-				let note = child.note {
-				children.append(note)
-			} else if let trait = child.maybeTraitFor(.tNote),
-					  let  note = child.note, !children.contains(note) {
-				if  showAll || trait.isVisible {
-					children.append(note)	// do not use essayMaybe as it may not yet be initialized
-				}
-			}
+		if  let zones = zone?.zonesWithVisibleNotes {
+			children  = zones.map { return $0.note! }
 		}
 	}
 
@@ -129,26 +123,34 @@ class ZEssay: ZNote {
 		}
 	}
 
-	override func noteIn(_ range: NSRange) -> ZNote {
+	override func notes(in range: NSRange) -> [ZNote] {
+		var result = [ZNote]()
 		for child in children {
 			if  range.intersects(child.noteRange) {
-				return child
+				result.append(child)
 			}
 		}
 
-		return self
+		return result
 	}
 
 	override func isLocked(within range: NSRange) -> Bool {
-		let note = noteIn(range)
+		let notes = notes(in: range)
 
-		if  note.zone == zone {
-			return super.isLocked(within: range)
-		} else {
-			let lockRange = range.offsetBy(-note.noteOffset)
+		for note in notes {
+			if  note.zone == zone,
+				super.isLocked(within: range) {
+				return true
+			} else {
+				let lockRange = range.offsetBy(-note.noteOffset)
 
-			return note.isLocked(within: lockRange)
+				if note.isLocked(within: lockRange) {
+					return true
+				}
+			}
 		}
+
+		return false
 	}
 
 	override func saveAsEssay(_ attributedString: NSAttributedString?) {
