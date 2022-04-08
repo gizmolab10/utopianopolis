@@ -47,7 +47,7 @@ class ZEssay: ZNote {
 			return gCurrentEssay?.noteText
 		}
 
-		setupChildNotes()
+		updateChildren()
 
 		var result : NSMutableAttributedString?
 		var index  = children.count
@@ -99,15 +99,7 @@ class ZEssay: ZNote {
 		return result
 	}
 
-	override func setupChildren() {
-		children.removeAll()
-
-		if  gCreateCombinedEssay {
-			setupChildNotes()
-		}
-	}
-
-	func setupChildNotes() {
+	override func updateChildren() {
 		children.removeAll()
 		if  let zones = zone?.zonesWithVisibleNotes {
 			children  = zones.map { return $0.note! }
@@ -135,18 +127,19 @@ class ZEssay: ZNote {
 	}
 
 	override func isLocked(within range: NSRange) -> Bool {
+		updateNoteOffsets()
+
 		let notes = notes(in: range)
 
 		for note in notes {
-			if  note.zone == zone,
-				super.isLocked(within: range) {
-				return true
-			} else {
+			if  note.zone != zone {
 				let lockRange = range.offsetBy(-note.noteOffset)
 
-				if note.isLocked(within: lockRange) {
+				if  note.isLocked(within: lockRange) {
 					return true
 				}
+			} else if  super.isLocked(within: range) {
+				return true
 			}
 		}
 

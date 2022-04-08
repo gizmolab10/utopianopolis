@@ -138,8 +138,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var        allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
 	var        all                       :          ZoneArray  { return zones(of:               .wAll) }
 	var                  visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
-	var            zonesWithVisibleNotes =          ZoneArray  ()
-	var                   zonesWithNotes =          ZoneArray  ()
 	var                   duplicateZones =          ZoneArray  ()
 	var                         children =          ZoneArray  ()
 	var                           traits =   ZTraitDictionary  ()
@@ -1848,7 +1846,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			note      = gCreateEssay(self)
 			noteMaybe = note
 
-			note?.setupChildren()
+			note?.updateChildren()
 		} else if count == 0 || !gCreateCombinedEssay {
 			note      = ZNote(self)
 			noteMaybe = note
@@ -1858,8 +1856,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			zone.noteMaybe = note
 		}
 
-		updateForNotes()
-
 		return note
 	}
 
@@ -1867,15 +1863,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		for zone in zonesWithNotes {
 			zone.noteMaybe = nil
 		}
-
-		zonesWithNotes       .removeAll()
-		zonesWithVisibleNotes.removeAll()
 	}
 
 	func deleteNote() {
 		removeTrait(for: .tNote)
 		gRecents.removeBookmark(for: self)
-		updateForNotes()
 
 		noteMaybe     = nil
 		gNeedsRecount = true // trigger recount on next timer fire
@@ -1897,45 +1889,40 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gCreateCombinedEssay = false
 		gCurrentEssay        = note
 
-		updateForNotes()
 		gControllers.swapMapAndEssay(force: .wEssayMode)
 	}
 
-	func updateForNotes() {
-		updateZonesWithNotes()
-		updateZonesWithVisibleNotes()
-	}
-
-	func updateZonesWithNotes() {
-		zonesWithNotes.removeAll()
+	var zonesWithNotes : ZoneArray {
+		var zones = ZoneArray()
 
 		traverseAllProgeny { zone in
 			if  zone.hasNote {
-				zonesWithNotes.append(zone)
+				zones.append(zone)
 			}
 		}
+
+		return zones
 	}
 
-	func updateZonesWithVisibleNotes() {
-		zonesWithVisibleNotes.removeAll()
+	var zonesWithVisibleNotes : ZoneArray {
+		var zones = [self]
 
 		if  let essayTrait = maybeNoteOrEssayTrait {
 			let showHidden = essayTrait.showsHidden
 
-			traverseProgeny { zone -> ZTraverseStatus in
-				if  let trait = zone.maybeNoteOrEssayTrait,
-					(trait.showsSelf || zone == self || showHidden) {
+			for  child in children {
+				if  let trait = child.maybeNoteOrEssayTrait, (trait.showsSelf || showHidden) {
+					zones.append(child)
 
-					zonesWithVisibleNotes.append(zone)
-
-					if !trait.showsChildren, !showHidden {
-						return .eSkip
+					if  trait.showsChildren {
+						zones.append(contentsOf: child.zonesWithVisibleNotes)
 					}
 				}
 
-				return .eContinue
 			}
 		}
+
+		return zones
 	}
 
 	// MARK: - groupOwner

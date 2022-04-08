@@ -38,7 +38,7 @@ enum ZNoteVisibilityIconType: Int {
 		switch self {
 			case .tChildren: return on ? kStackImage     : kSingleImage
 			case .tSelf:     return on ? kEyeImage       : kEyebrowImage
-			case .tHidden:   return on ? kLightbulbImage : kNoLightbulbImage
+			case .tHidden:   return on ? kLightbulbImage : kAntiLightbulbImage
 		}
 	}
 
@@ -188,7 +188,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		if  let essay = gCurrentEssay,
 			let  zone = essay.zone {
-			zone.updateForNotes()
 			if  !zone.hasChildNotes {
 				visibilities.append(ZNoteVisibility(zone: zone))
 			} else {
@@ -273,7 +272,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func essayViewSetup() {
-		gCurrentEssay?.zone?.updateForNotes()
 		updateTextStorage()
 	}
 
@@ -283,8 +281,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			essayRecordName = nil
 			gCurrentEssay   = note
 
-			note.zone?.updateForNotes()
-			note.setupChildren()
+			note.updateChildren()
 
 			delta           = updateTextStorage()
 
@@ -296,6 +293,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 					selectAndScrollTo(r.offsetBy(delta))
 				}
 			}
+
+			setNeedsDisplay()
 		}
 
 		return delta
@@ -316,7 +315,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gControllers.swapMapAndEssay(force: .wMapMode)                            // not show blank essay
 		} else {
 			gEssayControlsView?.updateTitleSegments()
-			gCurrentEssay?.zone?.zonesWithVisibleNotes.printSelf()
 
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
@@ -326,7 +324,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
 				selectAndScrollTo(restoreSelection)
 				undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
-//				gEssayControlsView?.matchTitlesControlTo(gEssayTitleMode)
 			}
 
 			essayRecordName = gCurrentEssayZone?.recordName                           // do this after altering essay zone
@@ -424,8 +421,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  dots.count > 0 {
 			for (index, dot) in dots.enumerated() {
 				if  let     note = dot.note,
-					let     zone = note.zone,
-					let    trait = zone.maybeNoteOrEssayTrait {
+					let     zone = note.zone {
 					let  grabbed = grabbedZones.contains(zone)
 					let extendBy = index == 0 ? kNoteIndentSpacer.length : -1     // fixes intersection computation, first & last note have altered range
 					let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
@@ -688,8 +684,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 			} else if let (zone, type) = visibilityIconHit(at: rect),
 					  let        trait = zone.maybeNoteOrEssayTrait {
-				trait.toggleVisibilityFor(type)
 				save()
+				trait.toggleVisibilityFor(type)
 				resetCurrentEssay()
 				setNeedsDisplay()
 
@@ -835,7 +831,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			case .eExit:  exit(); return false
 			case .eDelete:
 				FOREGROUND { [self] in                    // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
-					gCurrentEssay?.setupChildren()
+					gCurrentEssay?.updateChildren()
 					updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 				}
 			}
@@ -1529,7 +1525,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	func swapBetweenNoteAndEssay(_ note: ZNote? = gCurrentEssay) {
 		if  var  target = note,
 			let    zone = target.zone {
-			zone.updateForNotes()
 			let toEssay = zone.hasChildNotes && !gCreateCombinedEssay
 			let   range = selectedRange
 
