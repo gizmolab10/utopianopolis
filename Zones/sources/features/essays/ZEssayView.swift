@@ -567,17 +567,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func pasteTextAndMatchStyle() -> Bool {
-		let selected = selectedRange()
-		var actual = NSRange()
-		if  let string = NSPasteboard.general.string(forType: .string) {
-			let attributed = attributedSubstring(forProposedRange: selected, actualRange: &actual) ?? NSAttributedString()
-			let deleteMe = attributed.string
-			var range = NSMakeRange(0, deleteMe.length)
-			let insertMe = NSMutableAttributedString(string: string)
-			let attributes = attributed.attributes(at: 0, effectiveRange: &range)
+		if  let clipboard = NSPasteboard.general.string(forType: .string) {
+			let  insertMe = NSMutableAttributedString(string: clipboard)
 
-			insertMe.addAttributes(attributes, range: range)
-			insertText(insertMe, replacementRange: selected)
+			insertMe.addAttributes(selectedTextAttributes, range: NSMakeRange(0, clipboard.length))
+			insertText(insertMe, replacementRange: selectedRange())
 
 			return true
 		}
@@ -1542,11 +1536,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK: - more
 	// MARK: -
 
-	func swapBetweenNoteAndEssay(_ current: ZNote? = gCurrentEssay) {
-		if  var    note = current,
+	func swapBetweenNoteAndEssay() {
+		let       range = selectedRange()
+		if  var    note = gCurrentEssay?.notes(in: range).first,
 			let    zone = note.zone {
 			let toEssay = zone.hasChildNotes != gCreateCombinedEssay
-			let   range = selectedRange
 
 			if  toEssay, gEssayTitleMode == .sEmpty, note.essayText!.string.length > 0 {
 				note.updatedRangesFrom(textStorage)

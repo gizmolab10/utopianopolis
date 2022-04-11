@@ -21,10 +21,13 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 	var      inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
 
 	func revealEssayEditorInspectorBar(_ show: Bool = false) {
-		showsToolbarButton     =  show
-		inspectorBar?.isHidden = !show
-		if  show {
-			inspectorBar?.setNeedsDisplay()
+		if  let            bar  = inspectorBar,
+			bar      .isHidden ==  show {
+			bar      .isHidden  = !show
+			showsToolbarButton  =  show
+			if  show {
+				bar.setNeedsDisplay()
+			}
 		}
 	}
 
