@@ -79,7 +79,7 @@ class ZStartup: NSObject {
 					requestFeedback() {
 						gTimers.stopTimer (for: .tStartup)
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tSync, .tHover]) // .tLicense
-						gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spRelayout, .spSmallMap, .spDataDetails])
+						gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spRelayout, .spDataDetails])
 					}
 				}
 			}

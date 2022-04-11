@@ -92,12 +92,15 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let             text  = attributed.attributedSubstring(from: textRange)
 			trait      .noteText  = NSMutableAttributedString(attributedString: text)
 
-			if  gEssayTitleMode  != .sEmpty {
-				let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
-				zone?   .zoneName = name
-			}
+			if let z = zone {
+				if  gEssayTitleMode  != .sEmpty {
+					let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
+					z.setNameForSelfAndBookmarks(to: name)
+				}
 
-			zone?.updateCoreDataRelationships()
+				z.updateCoreDataRelationships()
+			}
+			gSignal([.spCrumbs, .spRelayout])
 		}
 	}
 

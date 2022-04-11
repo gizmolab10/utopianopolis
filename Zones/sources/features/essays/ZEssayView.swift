@@ -508,33 +508,34 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if COMMAND {
 			if  enabled {
 				switch key {
-				case "b":  applyToSelection(BOLD: true)
-				case "d":  convertToChild(flags)
-				case "e":  grabSelectedTextForSearch()
-				case "f":  gSearching.showSearch(OPTION)
-				case "g":  searchAgain(OPTION)
-				case "i":  showSpecialCharactersPopup()
-				case "l":  alterCase(up: false)
-				case "p":  printCurrentEssay()
-				case "s":  save()
-				case "u":  if !OPTION { alterCase(up: true) }
-				case "z":  if  SHIFT  { undoManager?.redo() } else { undoManager?.undo() }
-				default:   break
+					case "b":  applyToSelection(BOLD: true)
+					case "d":  convertToChild(flags)
+					case "e":  grabSelectedTextForSearch()
+					case "f":  gSearching.showSearch(OPTION)
+					case "g":  searchAgain(OPTION)
+					case "i":  showSpecialCharactersPopup()
+					case "l":  alterCase(up: false)
+					case "p":  printCurrentEssay()
+					case "s":  save()
+					case "u":  if !OPTION { alterCase(up: true) }
+					case "v":  if  SHIFT  { return pasteTextAndMatchStyle() }
+					case "z":  if  SHIFT  { undoManager?.redo() } else { undoManager?.undo() }
+					default:   break
 				}
 			}
 
 			switch key {
-			case "a":      selectAll(nil)
-			case "n":      swapBetweenNoteAndEssay()
-			case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
-			case "u":      if OPTION { gControllers.showEssay(forGuide:  true) }
-			case "/":      gHelpController?.show(flags: flags)
-			case "'":      gToggleSmallMapMode(OPTION)
-			case "}", "{": gCurrentSmallMapRecords?.nextBookmark(down: key == "}", amongNotes: true) { gRelayoutMaps() }
-			case "]", "[": gRecents                .nextBookmark(down: key == "]", amongNotes: true) { gRelayoutMaps() }
-			case kReturn:  if SEVERAL { grabSelectionHereDone() } else { grabDone() }
-			case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
-			default:       return false
+				case "a":      selectAll(nil)
+				case "n":      swapBetweenNoteAndEssay()
+				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
+				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) }
+				case "/":      gHelpController?.show(flags: flags)
+				case "'":      gToggleSmallMapMode(OPTION)
+				case "}", "{": gCurrentSmallMapRecords?.nextBookmark(down: key == "}", amongNotes: true) { gRelayoutMaps() }
+				case "]", "[": gRecents                .nextBookmark(down: key == "]", amongNotes: true) { gRelayoutMaps() }
+				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { grabDone() }
+				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
+				default:       return false
 			}
 
 			return true
@@ -563,6 +564,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		return !enabled
+	}
+
+	func pasteTextAndMatchStyle() -> Bool {
+		let selected = selectedRange()
+		var actual = NSRange()
+		if  let string = NSPasteboard.general.string(forType: .string) {
+			let attributed = attributedSubstring(forProposedRange: selected, actualRange: &actual) ?? NSAttributedString()
+			let deleteMe = attributed.string
+			var range = NSMakeRange(0, deleteMe.length)
+			let insertMe = NSMutableAttributedString(string: string)
+			let attributes = attributed.attributes(at: 0, effectiveRange: &range)
+
+			insertMe.addAttributes(attributes, range: range)
+			insertText(insertMe, replacementRange: selected)
+
+			return true
+		}
+
+		return false
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
@@ -1522,14 +1542,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK: - more
 	// MARK: -
 
-	func swapBetweenNoteAndEssay(_ note: ZNote? = gCurrentEssay) {
-		if  var  target = note,
-			let    zone = target.zone {
-			let toEssay = zone.hasChildNotes && !gCreateCombinedEssay
+	func swapBetweenNoteAndEssay(_ current: ZNote? = gCurrentEssay) {
+		if  var    note = current,
+			let    zone = note.zone {
+			let toEssay = zone.hasChildNotes != gCreateCombinedEssay
 			let   range = selectedRange
 
-			if  toEssay, gEssayTitleMode == .sEmpty, target.essayText!.string.length > 0 {
-				target.updatedRangesFrom(textStorage)
+			if  toEssay, gEssayTitleMode == .sEmpty, note.essayText!.string.length > 0 {
+				note.updatedRangesFrom(textStorage)
 			}
 
 			save()
@@ -1537,18 +1557,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCreateCombinedEssay = toEssay      // toggle
 
 			if  toEssay {
-				let        essay = gCreateEssay(zone)
+				let essay = gCreateEssay(zone)
 
 				zone.clearAllNotes()            // discard current essay text and all child note's text
 				resetCurrentEssay(essay, selecting: range)
 			} else {
 				ungrabAll()
 
-				if !target.isNote {
-					target       = ZNote(target.zone)
+				if !note.isNote {
+					note = ZNote(note.zone)
 				}
 
-				resetCurrentEssay(target, selecting: range)
+				resetCurrentEssay(note, selecting: range)
 			}
 
 			gSignal([.sDetails])

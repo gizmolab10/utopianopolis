@@ -129,14 +129,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var             userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
 	var                      hideDragDot :               Bool  { return isExpanded && (isSmallMapHere || (kIsPhone && (self == gHereMaybe))) }
 	var                  inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
-	var   smallMapBookmarksTargetingSelf :          ZoneArray  { return bookmarksTargetingSelf.filter { $0.isInSmallMap } }
-	var           bookmarkTargets        :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
-	var           bookmarks              :          ZoneArray  { return zones(of:  .wBookmarks) }
-	var           notemarks              :          ZoneArray  { return zones(of:  .wNotemarks) }
-	var                allProgeny        :          ZoneArray  { return zones(of:               .wProgeny)  }
-	var        allNotemarkProgeny        :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
-	var        allBookmarkProgeny        :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
-	var        all                       :          ZoneArray  { return zones(of:               .wAll) }
+	var                  bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
+	var                  bookmarks       :          ZoneArray  { return zones(of:  .wBookmarks) }
+	var                  notemarks       :          ZoneArray  { return zones(of:  .wNotemarks) }
+	var               allNotemarkProgeny :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
+	var               allBookmarkProgeny :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
+	var                       allProgeny :          ZoneArray  { return zones(of:               .wProgeny)  }
+	var                              all :          ZoneArray  { return zones(of:               .wAll) }
 	var                  visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
 	var                   duplicateZones =          ZoneArray  ()
 	var                         children =          ZoneArray  ()
@@ -235,26 +234,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return name
 	}
 
-	var traitsArray: ZRecordsArray {
-		var values = ZRecordsArray ()
-
-		for trait in traits.values {
-			values.append(trait)
-		}
-
-		return values
-	}
-
-	var traitKeys   : StringsArray {
-		var results = StringsArray()
-
-		for key in traits.keys {
-			results.append(key.rawValue)
-		}
-
-		return results
-	}
-
 	struct ZoneType: OptionSet {
 		let rawValue : Int
 
@@ -318,6 +297,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return []
+	}
+
+	func setNameForSelfAndBookmarks(to name: String) {
+		zoneName = name
+
+		for b in bookmarksTargetingSelf {
+			b.zoneName = name
+		}
 	}
 
 	var firstBookmarkTargetingSelf: Zone? {
@@ -1905,6 +1892,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var zonesWithVisibleNotes : ZoneArray {
+		if !gNoteVisibilityIcons {
+			return zonesWithNotes
+		}
+
 		var zones = [self]
 
 		if  let essayTrait = maybeNoteOrEssayTrait {
@@ -3465,6 +3456,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	var traitKeys   : StringsArray {
+		var results = StringsArray()
+
+		for key in traits.keys {
+			results.append(key.rawValue)
+		}
+
+		return results
+	}
+
 	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool, _ isDragDrop: Bool = false) -> ZDotParameters {
 		let            d = gDragging.dragLine?.parentWidget?.widgetZone
 		var            p = ZDotParameters()
@@ -3794,6 +3795,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return dict
+	}
+
+	var traitsArray: ZRecordsArray {
+		var values = ZRecordsArray ()
+
+		for trait in traits.values {
+			values.append(trait)
+		}
+
+		return values
 	}
 
 }
