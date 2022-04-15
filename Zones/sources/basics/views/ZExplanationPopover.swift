@@ -72,7 +72,7 @@ class ZExplanationPopover : ZView {
 	}
 
 	override func draw(_ dirtyRect: NSRect) {
-		let         delta = 15.0
+		let         delta = CGFloat(15.0)
 		let           big = bounds.insetBy(dx: 1.0, dy: delta + 1.0).offsetBy(dx: .zero, dy: delta)
 		var         small = bounds.insetBy(dx: (big.width / 2.0) - delta, dy: delta / 1.25)
 		let          path = ZBezierPath.init(roundedRect: big, xRadius: delta, yRadius: delta)

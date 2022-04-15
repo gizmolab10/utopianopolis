@@ -41,7 +41,7 @@ class ZPreferencesController: ZGenericController {
 		if  gDetailsViewIsVisible(for: .vPreferences) {
             let                            grabbed = gSelecting.firstSortedGrab
             countsModeControl?    .selectedSegment = gCountsMode   .rawValue
-            lineThickness?            .doubleValue = gLineThickness
+            lineThickness?            .doubleValue = Double(gLineThickness)
             fontSize?                 .doubleValue = Double(gBaseFontSize)
             horizontalSpacing?        .doubleValue = Double(gHorizontalGap)
 			circlesDisplayBox?           .isHidden = gMapLayoutMode == .linearMode
@@ -64,7 +64,7 @@ class ZPreferencesController: ZGenericController {
 
 		if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
 			switch (identifier) {
-			case  "thickness": gLineThickness = Double(value)
+			case  "thickness": gLineThickness = value
 			case "horizontal": gHorizontalGap = value
 			case  "font size":  gBaseFontSize = value
 			default:           break

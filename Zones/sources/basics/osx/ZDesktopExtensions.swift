@@ -523,7 +523,7 @@ extension ZView {
 				size            = size.swapped
 			}
 
-			let           scale = bounds.size.scaleToFit(size) * 100.0
+			let           scale = 100.0 * Double(bounds.size.scaleToFit(size))
 
 			PMSetScale(pmPageFormat, scale)
 			PMSetOrientation(pmPageFormat, orientation, false)
@@ -565,7 +565,7 @@ extension ZView {
 				make.bottom.equalToSuperview().offset(y)
 			}
 
-			x += tool.bounds.width + 3.0
+			x += 3.0 + Double(tool.bounds.width)
 			tool.isHidden = false
 		}
 	}

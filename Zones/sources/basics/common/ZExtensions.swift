@@ -1087,14 +1087,14 @@ extension CGRect {
 
 	func hitTestForResizeDot(in selectionRect: CGRect) -> ZDirection? {
 		let   points = selectionPoints
-		let     size = size.dividedInHalf      .insetEquallyBy(kEssayImageDotRadius)
+		let        s = size.dividedInHalf      .insetEquallyBy(kEssayImageDotRadius)
 
 		for (direction, point) in points {
 			var rect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
 
 			switch direction {
-				case .bottom, .top: rect = rect.expandedBy(dx: size.width, dy: .zero)    // extend width
-				case .right, .left: rect = rect.expandedBy(dx: .zero, dy: size.height)   //    "   height
+				case .bottom, .top: rect = rect.expandedBy(dx: s.width, dy:    .zero)   // extend width
+				case .right, .left: rect = rect.expandedBy(dx:   .zero, dy: s.height)   //    "   height
 				default:            break
 			}
 

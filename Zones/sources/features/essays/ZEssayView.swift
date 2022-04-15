@@ -345,6 +345,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	// MARK: -
 
 	func done() {
+		prepareToExit()
 		save()
 		exit()
 	}
@@ -1664,10 +1665,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				insertText(kEmpty, replacementRange: selectedRange)	            // remove text
 				parent.addChildNoDuplicate(child)
 				child.asssureIsVisible()
+				prepareToExit()
 				save()
-
 				child.grab()
-				done()
+				exit()
 
 				FOREGROUND {                                            // defer idea edit until after this function exits
 					child.edit()

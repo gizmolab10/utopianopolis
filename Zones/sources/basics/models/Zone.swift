@@ -1854,7 +1854,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deleteNote() {
 		removeTrait(for: .tNote)
-		gRecents.removeBookmark(for: self)
 
 		noteMaybe     = nil
 		gNeedsRecount = true // trigger recount on next timer fire
@@ -3614,21 +3613,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addToParent(_ onCompletion: ZoneMaybeClosure? = nil) {
 		FOREGROUND { [self] in
-			colorMaybe        = nil               // recompute color
-			let parent        = resolveParent
-			let done: Closure = { [self] in
-				parent?.respectOrder()          // assume newly fetched zone knows its order
-
-				columnarReport("   ->", unwrappedName)
-				onCompletion?(parent)
-			}
+			colorMaybe = nil                  // recompute color
+			let parent = resolveParent
 
 			if  let p = parent,
 				!p.children.contains(self) {
 				p.addChildNoDuplicate(self)
+				p.respectOrder()              // assume newly fetched zone knows its order
 			}
 
-			done()
+			columnarReport("   ->", unwrappedName)
+			onCompletion?(parent)
 		}
 	}
 

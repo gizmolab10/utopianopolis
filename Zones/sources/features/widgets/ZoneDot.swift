@@ -137,7 +137,7 @@ class ZoneDot: ZPseudoView {
 		if  count      > 0 {
 			let  frame = iDirtyRect.offsetEquallyBy(-0.1)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
-			let radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
+			let radius = ((Double(frame.size.height * gLineThickness) / 24.0) + 0.4)
 
 			drawTinyDots(surrounding: frame, count: count, radius: radius, color: color)
 		}
@@ -201,7 +201,7 @@ class ZoneDot: ZPseudoView {
 
 	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForBigMap: Bool = true) {
 		let   text = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
-		let factor = string == "w" ? 1.07 : 0.93
+		let factor = CGFloat(string == "w" ? 1.07 : 0.93)
 		let  width = gDotWidth * ratio
 		let   font = ZFont.boldSystemFont(ofSize: width)
 		let offset = text.sizeWithFont(font).dividedInHalf

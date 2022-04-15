@@ -706,9 +706,9 @@ var gScaling: Double {
 	}
 }
 
-var gLineThickness: Double {
+var gLineThickness: CGFloat {
 	get {
-		var value: Double? = UserDefaults.standard.object(forKey: kThickness) as? Double
+		var value: CGFloat? = UserDefaults.standard.object(forKey: kThickness) as? CGFloat
 		
 		if  value == nil {
 			value  = 1.25

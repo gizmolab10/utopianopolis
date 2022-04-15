@@ -129,9 +129,7 @@ class ZEssay: ZNote {
 	override func isLocked(within range: NSRange) -> Bool {
 		updateNoteOffsets()
 
-		let notes = notes(in: range)
-
-		for note in notes {
+		for note in notes(in: range) {
 			if  note.zone != zone {
 				let lockRange = range.offsetBy(-note.noteOffset)
 

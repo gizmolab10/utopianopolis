@@ -310,9 +310,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gHideExplanation()
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),
-		    let    gesture  = iGesture as? ZKeyClickGestureRecognizer {
-			let   location  = gesture.location(in: mapView)
-            var  notInEdit  = true
+		    let        gesture = iGesture as? ZKeyClickGestureRecognizer {
+			let       location = gesture.location(in: mapView)
+            var notEditingIdea = true
 
 			printDebug(.dClick, "only")
 
@@ -323,13 +323,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				// ////////////////////////////////////////
 
                 let   textRect = editWidget.convert(editWidget.bounds, to: mapView)
-                notInEdit      = !textRect.contains(location)
+                notEditingIdea = !textRect.contains(location)
             }
 
-            if  notInEdit {
+            if  notEditingIdea {
 				gTextEditor.stopCurrentEdit()
 
-				if !gIsEssayMode {
+				if  gIsEssayMode {
+					gEssayView?.exit()
+				} else {
 					gSetMapWorkMode()
 				}
 
