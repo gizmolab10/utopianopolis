@@ -95,7 +95,7 @@ class ZEssayControlsView: ZView {
 		titlesControl?   .isEnabled = enabled
 
 		if !isNote {
-			let image = ZImage(named: "show.drag.dot")?.resize(CGSize.squared(16.0))
+			let image = kShowDragDot?.resize(CGSize.squared(16.0))
 			titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
 			titlesControl?.setImage(image,                         forSegment: 2)
 		}

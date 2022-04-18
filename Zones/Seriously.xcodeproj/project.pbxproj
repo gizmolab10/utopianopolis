@@ -253,6 +253,7 @@
 		A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1E23E2268E00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
+		A776C245280B690600065B73 /* Essay.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A776C244280B690600065B73 /* Essay.storyboard */; };
 		A777A7AF260FAC0300361265 /* ZMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A777A7AE260FAC0300361265 /* ZMapView.swift */; };
 		A777A7B0260FAC0300361265 /* ZMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A777A7AE260FAC0300361265 /* ZMapView.swift */; };
 		A777A7B1260FAC0300361265 /* ZMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A777A7AE260FAC0300361265 /* ZMapView.swift */; };
@@ -515,7 +516,7 @@
 		0C39B3BD1F1989600091F4D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = PadZones/Info.plist; sourceTree = "<group>"; };
 		0C39B3BE1F1989600091F4D1 /* PadZones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = PadZones.entitlements; path = PadZones/PadZones.entitlements; sourceTree = "<group>"; };
 		0C39B3BF1F1989830091F4D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Zones/Info.plist; sourceTree = "<group>"; };
-		0C39B3C01F1989830091F4D1 /* Zones.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Zones.entitlements; path = Zones/Zones.entitlements; sourceTree = "<group>"; };
+		0C39B3C01F1989830091F4D1 /* Seriously.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Seriously.entitlements; path = Zones/Seriously.entitlements; sourceTree = "<group>"; };
 		0C3ECC221FA3023500F085EA /* ZUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZUser.swift; sourceTree = "<group>"; };
 		0C4118DD1FA8110200A58004 /* ZAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZAlerts.swift; sourceTree = "<group>"; };
 		0C43EFBD21010F17000976CE /* ZFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZFiles.swift; sourceTree = "<group>"; };
@@ -599,6 +600,7 @@
 		A76F9B94275ADCBB00FAF55A /* ZSliderLabelCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSliderLabelCombo.swift; sourceTree = "<group>"; };
 		A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = tutorial.idea.and.list.mov; sourceTree = "<group>"; };
 		A774ED1923E225A500080DC9 /* ZGesturesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGesturesController.swift; sourceTree = "<group>"; };
+		A776C244280B690600065B73 /* Essay.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Essay.storyboard; sourceTree = "<group>"; };
 		A777A7AE260FAC0300361265 /* ZMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMapView.swift; sourceTree = "<group>"; };
 		A77976F624996DBC00A6734B /* ZHelpDotsExemplarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpDotsExemplarController.swift; sourceTree = "<group>"; };
 		A78460E02724FAC5006A4075 /* ZPseudoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZPseudoView.swift; sourceTree = "<group>"; };
@@ -857,6 +859,7 @@
 			isa = PBXGroup;
 			children = (
 				A7245E0321729B18003D4BDA /* Details.storyboard */,
+				A776C244280B690600065B73 /* Essay.storyboard */,
 				A7245E0021729B02003D4BDA /* Main.storyboard */,
 				A746D461219F613D00123A0A /* Help.storyboard */,
 			);
@@ -897,7 +900,7 @@
 		0C39B3C41F198C8F0091F4D1 /* desktop */ = {
 			isa = PBXGroup;
 			children = (
-				0C39B3C01F1989830091F4D1 /* Zones.entitlements */,
+				0C39B3C01F1989830091F4D1 /* Seriously.entitlements */,
 				0C39B3BF1F1989830091F4D1 /* Info.plist */,
 				A7D507D0268AFA0B001CEA9F /* Products.plist */,
 			);
@@ -1330,9 +1333,6 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = Z;
-				KnownAssetTags = (
-					New,
-				);
 				LastSwiftUpdateCheck = 1250;
 				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = Zones;
@@ -1461,6 +1461,7 @@
 				A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */,
 				A7B78D3B2448EF6400DB2C14 /* everyone.seriously in Resources */,
 				A7738FE12628C3390040B9CD /* tutorial.idea.and.list.mov in Resources */,
+				A776C245280B690600065B73 /* Essay.storyboard in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
 				A746D465219F613D00123A0A /* Help.storyboard in Resources */,
 				A7245E0121729B18003D4BDA /* Details.storyboard in Resources */,
@@ -2163,7 +2164,7 @@
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Zones/Seriously.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -2215,7 +2216,7 @@
 				ASSETCATALOG_COMPILER_OPTIMIZATION = space;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = Zones/Zones.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Zones/Seriously.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
