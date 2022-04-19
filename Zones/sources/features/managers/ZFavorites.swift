@@ -69,21 +69,33 @@ class ZFavorites: ZSmallMapRecords {
 
 	func setup(_ onCompletion: IntClosure?) {
 		FOREGROUND { [self] in               // avoid error? mutating core data while enumerating
-			rootZone = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
+			rootZone = rootZone ?? Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
 
-			updateAllFavorites()
-
-			if  gCDMigrationState != .normal {
-				rootZone?.concealAllProgeny()
-				rootsGroupZone.expand()
+			if  gCDMigrationState == .firstTime {
+				updateAllFavorites() // setup roots group
 			}
 
+			if  gCDMigrationState != .normal {
+				hereZoneMaybe = rootsGroupZone
+			}
+
+
+			rootZone?.concealAllProgeny()
+			hereZoneMaybe?.expand()
 			onCompletion?(0)
 		}
 	}
 
-    // MARK: - update
+    // MARK: - mutate
     // MARK: -
+
+	func nextList(down: Bool) {
+		if  let      here = hereZoneMaybe,
+			let    parent = here.parentZone,
+			let     index = here.siblingIndex?.next(forward: down, max: parent.count - 1) {
+			hereZoneMaybe = parent.children[index]
+		}
+	}
 
 	override func push(_ zone: Zone? = gHere) {
 		if  let pushMe = zone,
@@ -91,6 +103,9 @@ class ZFavorites: ZSmallMapRecords {
 			matchOrCreateBookmark(for: pushMe, autoAdd: true)
 		}
 	}
+
+	// MARK: - update
+	// MARK: -
 
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
         if  let         zone = currentZone ?? gHereMaybe,

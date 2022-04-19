@@ -34,7 +34,7 @@ class ZStartup: NSObject {
 	}
 
 	func startupCloudAndUI() {
-		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x
+		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gCDMigrationState      = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
 		gWorkMode              = .wStartupMode
@@ -50,7 +50,6 @@ class ZStartup: NSObject {
 				gIsReadyToShowUI = true
 
 				gDetailsController?.removeViewFromStack(for: .vSubscribe)
-				gFavorites.updateAllFavorites()
 				gRefreshPersistentWorkMode()
 				gRemoteStorage.updateRootsOfAllProjeny()
 				gRemoteStorage.updateAllManifestCounts()

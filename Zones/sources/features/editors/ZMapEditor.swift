@@ -160,7 +160,7 @@ class ZMapEditor: ZBaseEditor {
 						case "'":        gToggleSmallMapMode(OPTION)
 						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-						case "[", "]":   nextBookmark(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL) { gRelayoutMaps() }
+						case "[", "]":   nextBookmark(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL, nextFavoriteList: SPLAYED) { gRelayoutMaps() }
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:       gSelecting.addSibling(OPTION)
@@ -620,14 +620,19 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func nextBookmark(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, atArrival: Closure? = nil) {
+	func nextBookmark(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, nextFavoriteList: Bool = false, atArrival: Closure? = nil) {
 		if (SHIFT || (gHere.isInAGroup && gIsFavoritesMode)), !OPTION, gSelecting.currentMoveable.cycleToNextInGroup(!down) {
 			return
 		}
 
-		let smallMap = OPTION ? gCurrentSmallMapRecords : gRecents
+		if  nextFavoriteList, gIsFavoritesMode {
+			gFavorites.nextList(down: down)
+			atArrival?()
+		} else {
+			let smallMap = OPTION ? gCurrentSmallMapRecords : gRecents
 
-		smallMap?.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
+			smallMap?.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
+		}
 	}
 
 	func debugAnalyze() {
@@ -935,15 +940,15 @@ class ZMapEditor: ZBaseEditor {
 		return false
 	}
 
-	func moveUp(_ iMoveUp: Bool, flags: ZEventFlags) {
+	func moveUp(_ up: Bool, flags: ZEventFlags) {
 		let COMMAND = flags.isCommand
 		let  OPTION = flags.isOption
 		let   SHIFT = flags.isShift
 
-		move(up: iMoveUp, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
+		moveUp(up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
 	}
 
-	func move(up: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
+	func moveUp(_ up: Bool = true, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil) {
 		priorHere     = gHere
 
 		if  let grabs = moveables {
@@ -1090,7 +1095,7 @@ class ZMapEditor: ZBaseEditor {
 					// //////////////////////////
 
 					UNDO(self) { iUndoSelf in
-						iUndoSelf.move(up: !up, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
+						iUndoSelf.moveUp(!up, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
 					}
 
 					if !selectionOnly {
@@ -1161,7 +1166,7 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	fileprivate func findChildMatching(_ grabThis: inout Zone, _ iMoveUp: Bool, _ iOffset: CGFloat?) {
+	fileprivate func findChildMatching(_ grabThis: inout Zone, _ up: Bool, _ iOffset: CGFloat?) {
 
 		// ///////////////////////////////////////////////////////////
 		// IF text is being edited by user, grab another zone whose //
@@ -1173,11 +1178,11 @@ class ZMapEditor: ZBaseEditor {
 		while grabThis.hasVisibleChildren,
 			  let length = grabThis.zoneName?.length {
 			let range = NSRange(location: length, length: 0)
-			let index = iMoveUp ? grabThis.count - 1 : 0
+			let index = up ? grabThis.count - 1 : 0
 			let child = grabThis.children[index]
 
 			if  let   offset = iOffset,
-				let anOffset = grabThis.widget?.textWidget?.offset(for: range, iMoveUp),
+				let anOffset = grabThis.widget?.textWidget?.offset(for: range, up),
 				offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
 				grabThis     = child
 			} else if let level = gCurrentBrowseLevel,
