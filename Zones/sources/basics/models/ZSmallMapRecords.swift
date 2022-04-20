@@ -32,7 +32,7 @@ class ZSmallMapRecords: ZRecords {
 	// MARK: - cycle
 	// MARK: -
 
-	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, atArrival: Closure? = nil) {
+	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false) {
 		if  currentBookmark == nil {
 			if  self != gRecents {
 				gToggleSmallMapMode()
@@ -70,8 +70,6 @@ class ZSmallMapRecords: ZRecords {
 				}
 			}
 		}
-
-		atArrival?()
 	}
 
 	func moveCurrentTo(_ iZone: Zone) {
@@ -133,9 +131,8 @@ class ZSmallMapRecords: ZRecords {
 	@discardableResult func pop(_ zone: Zone? = gHereMaybe) -> Bool {
 		if  workingBookmarks.count > 1,
 			let bookmark = workingBookmark(for: zone) {
-			nextBookmark(down: true) {
-				bookmark.deleteSelf(permanently: true) {}
-			}
+			nextBookmark(down: true)
+			bookmark.deleteSelf(permanently: true) {}
 
 			return true
 		}

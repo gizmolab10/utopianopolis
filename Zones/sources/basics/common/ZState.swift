@@ -110,7 +110,7 @@ func gToggleShowExplanations() {
 	gSignal([.sDetails])
 }
 
-func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
+func gToggleSmallMapMode(_ COMMAND: Bool = false, _ OPTION: Bool = false, forceToggle: Bool = false) {
 	func toggle() {
 		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
 
@@ -118,7 +118,7 @@ func gToggleSmallMapMode(_ OPTION: Bool = false, forceToggle: Bool = false) {
 			let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
 			let   priorID : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
 
-			gSelecting.swapGrabsFrom(priorID, toID: currentID)
+			gSelecting.swapGrabsFrom(priorID, toID: currentID, COMMAND)
 		}
 	}
 

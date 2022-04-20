@@ -398,8 +398,9 @@ class ZSelecting: NSObject {
         }
     }
 
-	func swapGrabsFrom(_ fromID: ZDatabaseID, toID: ZDatabaseID) {
-		if  let moveInto  =   toID.zRecords?.hereZoneMaybe,
+	func swapGrabsFrom(_ fromID: ZDatabaseID, toID: ZDatabaseID, _ createNewGroup: Bool = false) {
+		if  let toRecords = toID.zRecords,
+			var moveInto  = toRecords.hereZoneMaybe,
 			let fromRoot  = fromID.zRecords?.rootZone {
 			var moveThese = [Zone]()
 
@@ -407,6 +408,16 @@ class ZSelecting: NSObject {
 				if  let grabRoot = grab.root,
 					grabRoot == fromRoot {
 					moveThese.appendUnique(item: grab)
+				}
+			}
+
+			if  createNewGroup {
+				moveInto  = Zone.uniqueZoneNamed(nil, databaseID: toID)
+
+				moveInto.moveZone(to: toRecords.rootZone)
+
+				if  toID.isSmallMapDB {
+					toRecords.setHere(to: moveInto)
 				}
 			}
 

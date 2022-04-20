@@ -484,7 +484,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			switch key {
 			case "c":      grabbedZones.copyToPaste()
 			case "t":      swapWithParent()
-			case "'":      gToggleSmallMapMode(OPTION)
+			case "'":      gToggleSmallMapMode(COMMAND, OPTION)
 			case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
 			case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
 			case kEscape:  if     ANY { grabDone()                          } else { done() }
@@ -531,9 +531,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) }
 				case "/":      gHelpController?.show(flags: flags)
-				case "'":      gToggleSmallMapMode(OPTION)
-				case "}", "{": gCurrentSmallMapRecords?.nextBookmark(down: key == "}", amongNotes: true) { gRelayoutMaps() }
-				case "]", "[": gRecents                .nextBookmark(down: key == "]", amongNotes: true) { gRelayoutMaps() }
+				case "'":      gToggleSmallMapMode(COMMAND, OPTION)
+				case "}", "{": gCurrentSmallMapRecords?.nextBookmark(down: key == "}", amongNotes: true); gRelayoutMaps()
+				case "]", "[": gRecents                .nextBookmark(down: key == "]", amongNotes: true); gRelayoutMaps()
 				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { grabDone() }
 				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
 				default:       return false
@@ -723,8 +723,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
 //				case .idMultiple: swapBetweenNoteAndEssay()
-				case .idForward:  save(); gCurrentSmallMapRecords?.nextBookmark(down:  true, amongNotes: true) { gRelayoutMaps() }
-				case .idBack:     save(); gCurrentSmallMapRecords?.nextBookmark(down: false, amongNotes: true) { gRelayoutMaps() }
+				case .idForward:  save(); gCurrentSmallMapRecords?.nextBookmark(down:  true, amongNotes: true); gRelayoutMaps()
+				case .idBack:     save(); gCurrentSmallMapRecords?.nextBookmark(down: false, amongNotes: true); gRelayoutMaps()
 				case .idSave:     save()
 				case .idPrint:    printView()
 				case .idHide:     grabDone()

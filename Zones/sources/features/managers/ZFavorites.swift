@@ -73,9 +73,7 @@ class ZFavorites: ZSmallMapRecords {
 
 			if  gCDMigrationState == .firstTime {
 				updateAllFavorites() // setup roots group
-			}
 
-			if  gCDMigrationState != .normal {
 				hereZoneMaybe = rootsGroupZone
 			}
 
@@ -90,10 +88,12 @@ class ZFavorites: ZSmallMapRecords {
     // MARK: -
 
 	func nextList(down: Bool) {
-		if  let      here = hereZoneMaybe,
-			let    parent = here.parentZone,
-			let     index = here.siblingIndex?.next(forward: down, max: parent.count - 1) {
-			hereZoneMaybe = parent.children[index]
+		if  let   here = hereZoneMaybe,
+			let parent = here.parentZone,
+			let  index = here.siblingIndex?.next(forward: down, max: parent.count - 1) {
+
+			setHere(to: parent.children[index])
+			gSignal([.sDetails])
 		}
 	}
 

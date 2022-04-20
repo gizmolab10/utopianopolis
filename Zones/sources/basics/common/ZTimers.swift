@@ -28,20 +28,20 @@ enum ZTimerID : Int {
 	case tMouseZone
 	case tOperation
 	case tLicense
-	case tRecount                  // repeat forever
 	case tStartup
-	case tHover                    // repeat forever
-	case tSync                     // repeat forever
+	case tRecount                  // repeat forever
+	case tPersist                  // "
+	case tHover                    // "
 	case tKey
 
-	static let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tSync]
+	static let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tPersist]
 
 	var string: String { return "\(self)" }
 
 	var description: String? {
 		switch self {
-			case .tSync: return "saving data"
-			default:     return nil
+			case .tPersist: return "saving data"
+			default:        return nil
 		}
 	}
 
@@ -97,11 +97,10 @@ class ZTimers: NSObject {
 			var   block : Closure = {}          // do nothing by default
 
 			switch tid {
-				case .tHover:                   waitFor =  0.1
-				case .tKey:                     waitFor =  5.0
-				case .tSync:                    waitFor = 15.0              // fifteen seconds
-				case .tLicense, .tRecount:      waitFor = 60.0              // one minute
+				case .tHover:                   waitFor =  0.1              // one tenth second
 				case .tStartup, .tMouseZone:    waitFor = kOneTimerInterval // one fifth second
+				case .tKey,     .tPersist:      waitFor =  5.0              // five seconds
+				case .tLicense, .tRecount:      waitFor = 60.0              // one minute
 				default:                        break
 			}
 
@@ -116,7 +115,7 @@ class ZTimers: NSObject {
 				case .tCloudAvailable:          block = { gBatches.cloudFire() }
 				case .tRecount:                 block = { gRecountMaybe() }
 				case .tHover:                   block = { gUpdateHover() }
-				case .tSync:                    block = { gSaveContext() }
+				case .tPersist:                 block = { gSaveContext() }
 				default:                        break
 			}
 

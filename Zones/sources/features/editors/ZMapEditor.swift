@@ -157,10 +157,10 @@ class ZMapEditor: ZBaseEditor {
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
-						case "'":        gToggleSmallMapMode(OPTION)
+						case "'":        gToggleSmallMapMode(COMMAND, OPTION)
 						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-						case "[", "]":   nextBookmark(down: key == "]", SHIFT: SHIFT, OPTION: OPTION, moveCurrent: SPECIAL, nextFavoriteList: SPLAYED) { gRelayoutMaps() }
+						case "[", "]":   nextBookmark(down: key == "]", SHIFT: SHIFT, moveCurrent: SPECIAL, nextFavoriteList: SPLAYED); gRelayoutMaps()
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:       gSelecting.addSibling(OPTION)
@@ -620,18 +620,15 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func nextBookmark(down: Bool, SHIFT: Bool, OPTION: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, nextFavoriteList: Bool = false, atArrival: Closure? = nil) {
-		if (SHIFT || (gHere.isInAGroup && gIsFavoritesMode)), !OPTION, gSelecting.currentMoveable.cycleToNextInGroup(!down) {
+	func nextBookmark(down: Bool, SHIFT: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, nextFavoriteList: Bool = false) {
+		if (SHIFT || (gHere.isInAGroup && gIsFavoritesMode)), gSelecting.currentMoveable.cycleToNextInGroup(!down) {
 			return
 		}
 
 		if  nextFavoriteList, gIsFavoritesMode {
 			gFavorites.nextList(down: down)
-			atArrival?()
 		} else {
-			let smallMap = OPTION ? gCurrentSmallMapRecords : gRecents
-
-			smallMap?.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent, atArrival: atArrival)
+			gCurrentSmallMapRecords?.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent)
 		}
 	}
 
