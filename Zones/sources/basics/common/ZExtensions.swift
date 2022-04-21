@@ -2170,9 +2170,8 @@ extension String {
 			case          kRootName: return .rootID
 			case         kTrashName: return .trashID
 			case       kDestroyName: return .destroyID
-			case   kRecentsRootName: return .recentsID
-			case kFavoritesRootName: return .favoritesID
 			case  kLostAndFoundName: return .lostID
+			case kFavoritesRootName: return .favoritesID
 			default:                 return nil
 		}
 	}

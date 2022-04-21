@@ -310,7 +310,7 @@ class ZBatches: ZOnboarding {
 
 		switch identifier {
 			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
-			case .oRecents:                                                                          gRecents.setup(cloudCallback)
+//			case .oRecents:                                                                          gRecents.setup(cloudCallback)
 			case .oSavingLocalData:  gSaveContext();                                                                cloudCallback?(0)
 			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               cloudCallback?(0)
 			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                 onCompletion: cloudCallback)

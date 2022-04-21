@@ -65,7 +65,7 @@ class ZDebugController: ZGenericTableController {
 			var      string : String? = nil
 			switch columnTitle {
 				case "title": string = debugID.title
-				case "value": string = "\(gRecords?.debugValue(for: debugID) ?? 0)"
+				case "value": string = "\(gRecords.debugValue(for: debugID) ?? 0)"
 				default:      break
 			}
 

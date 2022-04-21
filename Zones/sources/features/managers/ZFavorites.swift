@@ -84,6 +84,20 @@ class ZFavorites: ZSmallMapRecords {
 		}
 	}
 
+	func object(for id: String) -> NSObject? {
+		let parts = id.components(separatedBy: kColonSeparator)
+
+		if  parts.count == 2 {
+			if  parts[0] == "note" {
+				return ZNote .object(for: parts[1], isExpanded: false)
+			} else {
+				return ZEssay.object(for: parts[1], isExpanded: true)
+			}
+		}
+
+		return nil
+	}
+
     // MARK: - mutate
     // MARK: -
 
@@ -104,6 +118,14 @@ class ZFavorites: ZSmallMapRecords {
 		}
 	}
 
+	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
+		if  let    current = currentBookmark {
+			return current.focusThrough(atArrival)
+		}
+
+		return false
+	}
+
 	// MARK: - update
 	// MARK: -
 
@@ -111,8 +133,8 @@ class ZFavorites: ZSmallMapRecords {
         if  let         zone = currentZone ?? gHereMaybe,
 			let     bookmark = whichBookmarkTargets(zone, orSpawnsIt: true),
             let       target = bookmark.bookmarkTarget,
-            (gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)),
-			!gIsRecentlyMode {
+			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
+//			!gIsRecentlyMode {
             currentBookmark = bookmark
         }
     }

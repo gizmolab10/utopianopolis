@@ -91,7 +91,7 @@ class ZSelecting: NSObject {
 		var start: Zone?
 
 		if  let zone = firstGrab {
-			start = zone.isInFavorites ? gFavoritesRoot : zone.isInRecents ? gRecentsRoot : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
+			start = zone.isInFavorites ? gFavoritesRoot : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
 		}
 
 		return start
@@ -416,7 +416,7 @@ class ZSelecting: NSObject {
 
 				moveInto.moveZone(to: toRecords.rootZone)
 
-				if  toID.isSmallMapDB {
+				if  toID.isFavoritesDB {
 					toRecords.setHere(to: moveInto)
 				}
 			}

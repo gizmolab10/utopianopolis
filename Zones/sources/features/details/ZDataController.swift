@@ -54,7 +54,7 @@ class ZDataController: ZGenericController {
     }
 
     var totalCountsText: String {
-		let   root = gRecords?.rootZone
+		let   root = gRecords.rootZone
 		let  depth = gCloud?.maxLevel ?? 0
 		let  count = (root?.progenyCount ?? 0) + 1 // add one for root
 		let suffix =    count != 1 ? "s" : kEmpty

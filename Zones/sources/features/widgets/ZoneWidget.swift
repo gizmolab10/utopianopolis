@@ -23,7 +23,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	static let tExemplar = ZWidgetType(rawValue: 1 << 0)
 	static let tFavorite = ZWidgetType(rawValue: 1 << 1)
 	static let   tBigMap = ZWidgetType(rawValue: 1 << 2)
-	static let   tRecent = ZWidgetType(rawValue: 1 << 3)
+//	static let   tRecent = ZWidgetType(rawValue: 1 << 3)
 	static let    tTrash = ZWidgetType(rawValue: 1 << 4)
 	static let    tEssay = ZWidgetType(rawValue: 1 << 5)
 	static let     tNote = ZWidgetType(rawValue: 1 << 6)
@@ -32,7 +32,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	static let     tNone = ZWidgetType(rawValue: 1 << 9)
 
 	var isBigMap:   Bool { return contains(.tBigMap) }
-	var isRecent:   Bool { return contains(.tRecent) }
+//	var isRecent:   Bool { return contains(.tRecent) }
 	var isFavorite: Bool { return contains(.tFavorite) }
 	var isExemplar: Bool { return contains(.tExemplar) }
 
@@ -43,7 +43,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 				(.tNote,        "    note"),
 				(.tEssay,       "   essay"),
 				(.tTrash,       "   trash"),
-				(.tRecent,      "  recent"),
+//				(.tRecent,      "  recent"),
 				(.tBigMap,      " big map"),
 				(.tFavorite,    "favorite"),
 				(.tExemplar,    "exemplar")]
@@ -126,7 +126,6 @@ class ZoneWidget: ZPseudoView {
 
 	override var controller : ZMapController? {
 		if type.isBigMap   { return      gMapController }
-		if type.isRecent   { return gSmallMapController }
 		if type.isFavorite { return gSmallMapController }
 		if type.isExemplar { return gHelpDotsExemplarController }
 

@@ -116,7 +116,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	func updateSize() {
 		if  let     size = textSize {
 			let   height = size.height + 1.0
-			let     hide = widgetZone?.isSmallMapHere ?? false
+			let     hide = widgetZone?.isFavoritesHere ?? false
 			let    width = hide ? .zero : size.width + 6.0
 			drawnSize    = CGSize(width: width, height: height)
 		}

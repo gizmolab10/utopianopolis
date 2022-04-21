@@ -29,7 +29,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oManifest           // all these are LOCAL
 	case oRoots
 	case oHere
-	case oRecents  			 // MINE ONLY
+//	case oRecents  			 // MINE ONLY
 	case oFavorites			 // MINE ONLY
 	case oLoadingIdeas
 	case oWrite
@@ -67,7 +67,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oFinishing] }
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
-	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oRecents, .oBookmarks, .oFavorites] }
+	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites] }
 	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
 	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
 											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }

@@ -34,11 +34,7 @@ class ZSmallMapRecords: ZRecords {
 
 	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false) {
 		if  currentBookmark == nil {
-			if  self != gRecents {
-				gToggleSmallMapMode()
-			}
-
-			gRecents.push()
+			gFavorites.push()
 		}
 
 		let          zones = working
@@ -91,8 +87,8 @@ class ZSmallMapRecords: ZRecords {
 			currentBookmark = iZone
 
 			if  alterHere {
-				gDatabaseID           = tHere.databaseID
-				gRecords?.currentHere = tHere // avoid push
+				gDatabaseID          = tHere.databaseID
+				gRecords.currentHere = tHere // avoid push
 
 				gHere.grab()
 			}
@@ -210,8 +206,6 @@ class ZSmallMapRecords: ZRecords {
 		return false
 	}
 
-	var isRecents : Bool { return databaseID == .recentsID }
-
 	var currentTargets: ZoneArray {
 		var  targets = ZoneArray()
 
@@ -279,11 +273,11 @@ class ZSmallMapRecords: ZRecords {
 			let bookmarks = gHere.bookmarksTargetingSelf
 
 			for bookmark in bookmarks {
-				if  bookmark.isInSmallMap {
+				if  bookmark.isInFavorites {
 					if  bookmark.root == rootZone {
 						grab(bookmark)
 					} else {
-						gSmallMapMode = bookmark.root?.recordName == kRecentsRootName ? .recent : .favorites
+//						gSmallMapMode = bookmark.root?.recordName == kRecentsRootName ? .recent : .favorites
 
 						bookmark.grab()
 					}

@@ -214,7 +214,7 @@ class ZCoreDataStack: NSObject {
 					var names = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
 
 					if  dbID == .mineID {
-						names.insert(contentsOf: [kRecentsRootName, kFavoritesRootName], at: 1)
+						names.insert(contentsOf: [kFavoritesRootName], at: 1)
 					}
 
 					for name in names {

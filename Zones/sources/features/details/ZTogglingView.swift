@@ -51,7 +51,7 @@ class ZTogglingView: ZView {
 		switch identity {
 			case .vKickoffTools : return "some simple tools to help get you oriented"
 			case .vPreferences  : return "preference controls"
-			case .vSmallMap     : return "\(gCurrentSmallMapName)s map"
+			case .vSmallMap     : return "favorites map"
 			case .vSubscribe    : return "license details"
 			case .vData         : return "useful data about Seriously"
 			default             : return kEmpty

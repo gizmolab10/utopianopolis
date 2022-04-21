@@ -159,7 +159,7 @@ class ZCloud: ZRecords {
         let    name = hereRecordName ?? kRootName
 		currentHere = Zone.uniqueZone(recordName: name, in: databaseID)
 
-		gRecents.push()
+		gFavorites.push()
 		onCompletion?(0)
     }
 
@@ -168,7 +168,7 @@ class ZCloud: ZRecords {
 		var   rootIDs: [ZRootID] = [.rootID, .trashID, .lostID, .destroyID]
 
 		if  databaseID == .mineID {
-			rootIDs.append(contentsOf: [.favoritesID, .recentsID])
+			rootIDs.append(contentsOf: [.favoritesID]) // , .recentsID])
 		}
 
 		createFor                = { [self] iIndex in
@@ -183,7 +183,7 @@ class ZCloud: ZRecords {
 
                 switch rootID {
 				case .favoritesID: if favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesRootName }
-				case .recentsID:   if recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsRootName }
+//				case .recentsID:   if recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsRootName }
                 case .rootID:      if rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
                 case .lostID:      if lostAndFoundZone != nil            { recurseNext(); return }
                 case .trashID:     if trashZone        != nil            { recurseNext(); return }

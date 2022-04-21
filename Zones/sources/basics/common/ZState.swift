@@ -45,8 +45,6 @@ var                gIsEditing :                    Bool { return gIsEditIdeaMode
 var          gIsHelpFrontmost :                    Bool { return gHelpWindow?.isKeyWindow ?? false }
 var         gGrabbedCanTravel :                    Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
 var       gBrowsingIsConfined :                    Bool { return gConfinementMode == .list }
-var          gIsFavoritesMode :                    Bool { return gSmallMapMode    == .favorites }
-var           gIsRecentlyMode :                    Bool { return gSmallMapMode    == .recent }
 var            gListsGrowDown :                    Bool { return gListGrowthMode  == .down }
 var           gDuplicateEvent :                    Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
 var                gIsMapMode :                    Bool { return gWorkMode == .wMapMode }
@@ -68,9 +66,7 @@ var             gUserIsExempt :                    Bool { return gIgnoreExemptio
 var               gUserIsIdle :                    Bool { return gUserActiveInWindow == nil }
 var         gCurrentEssayZone :                   Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName :                  String { return CKRecordID().recordName }
-var      gCurrentSmallMapName :                  String { return gIsRecentlyMode ? "recent" : "favorite" }
-var   gCurrentSmallMapRecords :       ZSmallMapRecords? { return gIsRecentlyMode ? gRecents : gFavorites }
-var                  gRecords :               ZRecords? { return (kIsPhone && gShowSmallMapForIOS) ? gCurrentSmallMapRecords : gRemoteStorage.currentRecords }
+var                  gRecords :                ZRecords { return (kIsPhone && gShowSmallMapForIOS) ? gFavorites : gRemoteStorage.currentRecords }
 var                 gDarkMode :          InterfaceStyle { return InterfaceStyle() }
 var            gModifierFlags :             ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
 var    gTimeSinceCurrentEvent :            TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
@@ -111,25 +107,9 @@ func gToggleShowExplanations() {
 }
 
 func gToggleSmallMapMode(_ COMMAND: Bool = false, _ OPTION: Bool = false, forceToggle: Bool = false) {
-	func toggle() {
-		gSmallMapMode = gIsRecentlyMode ? .favorites : .recent
-
-		if  OPTION {			        // if any grabs are in current small map, move them to other map
-			let currentID : ZDatabaseID = gIsRecentlyMode ? .recentsID   : .favoritesID
-			let   priorID : ZDatabaseID = gIsRecentlyMode ? .favoritesID : .recentsID
-
-			gSelecting.swapGrabsFrom(priorID, toID: currentID, COMMAND)
-		}
-	}
 
 	if !gSmallMapIsVisible {
 		gDetailsController?.showViewFor(.vSmallMap)
-
-		if  forceToggle {
-			toggle()
-		}
-	} else {
-		toggle()
 	}
 
 	gShowDetailsView = true    	// make sure the details view is visible
@@ -286,25 +266,21 @@ var gExpandedIdeas : StringsArray {
 
 var gHere: Zone {
 	get {
-		return gRecords!.currentHere
+		return gRecords.currentHere
 	}
 
 	set {
-		gDatabaseID           = newValue.databaseID
-		gRecords?.currentHere = newValue
+		gDatabaseID          = newValue.databaseID
+		gRecords.currentHere = newValue
 
 		newValue.assureAdoption()
-		gRecents.push()
-
-		if  gIsFavoritesMode {
-			gFavorites.push()
-		}
+		gFavorites.push()
 	}
 }
 
 var gHereMaybe: Zone? {
-	get { return !gHasFinishedStartup ? nil : gRecords?.hereZoneMaybe }
-    set { gRecords?.hereZoneMaybe = newValue }
+	get { return !gHasFinishedStartup ? nil : gRecords.hereZoneMaybe }
+    set { gRecords.hereZoneMaybe = newValue }
 }
 
 var gCurrentHelpMode: ZHelpMode {
@@ -568,29 +544,6 @@ var gConfinementMode: ZConfinementMode {
 
 enum ZSmallMapMode: String {
 	case favorites = "Favorites"
-	case recent    = "Recent"
-}
-
-var gSmallMapMode: ZSmallMapMode {
-	get {
-		var mode   = ZSmallMapMode.favorites // default is favorites
-		let value  = UserDefaults.standard.object(forKey: kSmallMapMode) as? String
-
-		if  let  v = value,
-			let  m = ZSmallMapMode(rawValue: v) {
-			mode   = m
-		} else {
-			UserDefaults.standard.set(mode.rawValue, forKey:kSmallMapMode)
-			UserDefaults.standard.synchronize()
-		}
-
-		return mode
-	}
-
-	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kSmallMapMode)
-		UserDefaults.standard.synchronize()
-	}
 }
 
 var gCountsMode: ZCountsMode {
@@ -913,10 +866,6 @@ var gWorkMode: ZWorkMode = .wStartupMode {
 var gCurrentEssay: ZNote? {
 	didSet {
 		setPreferencesString(gCurrentEssay?.identifier() ?? kEmpty, for: kCurrentEssay)
-
-		if  gHasFinishedStartup, // avoid creating confused recents view
-			gIsRecentlyMode {
-		}
 	}
 }
 
@@ -987,7 +936,7 @@ func gDetailsViewIsVisible(for id: ZDetailsViewID) -> Bool {
 
 func gRefreshCurrentEssay() {
 	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: kTutorialRecordName),
-		let      essay = gRecents.object(for: identifier) as? ZNote {
+		let      essay = gFavorites.object(for: identifier) as? ZNote {
 		gCurrentEssay  = essay
 	}
 }

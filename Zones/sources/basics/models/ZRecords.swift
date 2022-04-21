@@ -28,14 +28,14 @@ enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values
 	case everyoneIndex
 	case mineIndex
 	case favoritesIndex
-	case recentsIndex
+//	case recentsIndex
 
 
 	var databaseID: ZDatabaseID? {
 		switch self {
 		case .favoritesIndex: return .favoritesID
 		case .everyoneIndex:  return .everyoneID
-		case .recentsIndex:   return .recentsID
+//		case .recentsIndex:   return .recentsID
 		case .mineIndex:      return .mineID
 		}
 	}
@@ -44,18 +44,16 @@ enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values
 enum ZDatabaseID: String {
 	case favoritesID = "favorites"
 	case  everyoneID = "everyone"
-	case   recentsID = "recents"
 	case      mineID = "mine"
 
-	var isSmallMapDB: Bool { return [.favoritesID, .recentsID].contains(self) }
-	var identifier: String { return rawValue.substring(toExclusive: 1) }
-	var index:        Int? { return databaseIndex?.rawValue }
+	var isFavoritesDB: Bool { return self == .favoritesID }
+	var identifier:  String { return rawValue.substring(toExclusive: 1) }
+	var index:         Int? { return databaseIndex?.rawValue }
 
 	var zRecords: ZRecords? {
 		switch self {
 		case .favoritesID: return gFavorites
 		case  .everyoneID: return gEveryoneCloud
-		case   .recentsID: return gRecents
 		case      .mineID: return gMineCloud
 		}
 	}
@@ -80,7 +78,6 @@ enum ZDatabaseID: String {
 		switch self {
 		case .favoritesID: return .favoritesIndex
 		case  .everyoneID: return .everyoneIndex
-		case   .recentsID: return .recentsIndex
 		case      .mineID: return .mineIndex
 		}
 	}
@@ -101,7 +98,6 @@ enum ZDatabaseID: String {
 		switch id {
 		case "f": return .favoritesID
 		case "e": return .everyoneID
-		case "r": return .recentsID
 		case "m": return .mineID
 		default:  return nil
 		}
@@ -168,7 +164,7 @@ class ZRecords: NSObject {
 		if  let id = rootID {
 			switch id {
 				case .favoritesID: replaceRoot(at: &favoritesZone,    with: root)
-				case .recentsID:   replaceRoot(at: &recentsZone,      with: root)
+//				case .recentsID:   replaceRoot(at: &recentsZone,      with: root)
 				case .destroyID:   replaceRoot(at: &destroyZone,      with: root)
 				case .trashID:     replaceRoot(at: &trashZone,        with: root)
 				case .lostID:      replaceRoot(at: &lostAndFoundZone, with: root)
@@ -262,7 +258,7 @@ class ZRecords: NSObject {
 			return nil
 		}
 
-		while   references.count < 4 {
+		while   references.count < 3 {
 			let    index = references.count
 			if  let root = rootFor(index),
 				let name = root.recordName {
@@ -274,17 +270,13 @@ class ZRecords: NSObject {
 		// detect and fix bad values
 		// bad idea to do this before progeny are added
 
-		if  gIsReadyToShowUI {
-			for index in 2...3 {
-				if  references.count  > index {
-					let          name = references[index]
-					if  let      root = rootFor(index) {
-						let rootNames = root.all.map { return $0.recordName ?? kEmpty }
-						if !rootNames.contains(name) {
-							references[index] = index == 2 ? kFavoritesRootName : kRecentsRootName    // reset to default
-							changed           = true
-						}
-					}
+		if  gIsReadyToShowUI, references.count  > 2 {
+			let          name = references[2]
+			if  let      root = rootFor(2) {
+				let rootNames = root.all.map { return $0.recordName ?? kEmpty }
+				if !rootNames.contains(name) {
+					references[2] = kFavoritesRootName    // reset to default
+					changed           = true
 				}
 			}
 		}
@@ -311,7 +303,6 @@ class ZRecords: NSObject {
 	var rootName: String {
 		switch(databaseID) {
 			case .favoritesID: return kFavoritesRootName
-			case .recentsID:   return kRecentsRootName
 			default:           return kRootName
 		}
 	}
@@ -319,7 +310,6 @@ class ZRecords: NSObject {
 	var defaultRoot: Zone? {
 		switch (databaseID) {
 			case .favoritesID: return gFavoritesRoot
-			case .recentsID:   return gRecentsRoot
 			default:           return rootZone
 		}
 	}

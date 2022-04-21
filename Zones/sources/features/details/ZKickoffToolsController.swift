@@ -49,7 +49,7 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 	override var controllerID : ZControllerID { return .idStartHere }
 	var            isRelocate :   Bool { return flags.isOption  && !gIsEditing }
 	var               isMixed :   Bool { return flags.isShift   && !gIsEditing && !flags.isOption }
-	var            canUnfocus :   Bool { return flags.isControl && (gRecentsRoot?.children.count ?? 0) > 1 }
+	var            canUnfocus :   Bool { return flags.isControl && (gFavoritesRoot?.children.count ?? 0) > 1 }
 	var             canTravel :   Bool { return gIsMapMode && gGrabbedCanTravel }
 	var            swapDBText : String { return "switch to \(gIsMine ? "everyone's" : "my") ideas" }
 	var           expandMaybe : String { return isMixed ? "expand selection " : kEmpty }
@@ -76,7 +76,7 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 		buttonFor(.sibling)?    .title =  flags.isOption    ? "parent"       : "sibling"
 		buttonFor(.left)?       .title =  isMixed           ? "conceal"      : "left"
 		buttonFor(.right)?      .title =  isMixed           ? "reveal"       : canTravel ? "invoke" : "right"
-		buttonFor(.focus)?      .title =  canUnfocus        ? "unfocus"      : canTravel ? "invoke" : gSelecting.movableIsHere ? gCurrentSmallMapName : "focus"
+		buttonFor(.focus)?      .title =  canUnfocus        ? "unfocus"      : canTravel ? "invoke" : gSelecting.movableIsHere ? "favorite" : "focus"
 		buttonFor(.tooltip)?    .title = (gShowToolTips     ? "hide"         : "show")   + " tooltips"
 		buttonFor(.explain)?    .title = (gShowExplanations ? "hide"         : "show")   + " explains"
 		boxFor   (.move)?       .title = (isRelocate        ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to farthest"  : kEmpty)

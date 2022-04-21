@@ -424,10 +424,10 @@ extension ZoneArray {
 	}
 
 	func moveIntoAndGrab(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
-		if  into.isInSmallMap {
+		if  into.isInFavorites {
 			into.parentZone?.collapse()
 
-			gCurrentSmallMapRecords?.hereZoneMaybe = into
+			gFavorites.hereZoneMaybe = into
 		}
 
 		gSelecting.ungrabAll()
@@ -697,9 +697,9 @@ extension ZoneArray {
 			}
 		}
 
-		gSmallMapMode = .favorites                      // switch to favorites
+//		gSmallMapMode = .favorites                      // switch to favorites
 
-		gCurrentSmallMapRecords?.showRoot()             // point here to root, and expand
+		gFavorites.showRoot()                           // point here to root, and expand
 		groupOwner.alterAttribute(.groupOwner, remove: false)
 		gFavorites.insertAsNext(groupOwner)
 		FOREGROUND {

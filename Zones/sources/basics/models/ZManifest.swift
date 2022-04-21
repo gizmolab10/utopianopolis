@@ -15,7 +15,7 @@ import Cocoa
 import UIKit
 #endif
 
-var gManifest: ZManifest? { return gRecords?.manifest }
+var gManifest: ZManifest? { return gRecords.manifest }
 
 @objc(ZManifest)
 class ZManifest : ZRecord {

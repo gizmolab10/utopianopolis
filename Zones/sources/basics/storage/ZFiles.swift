@@ -237,7 +237,6 @@ class ZFiles: NSObject {
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  gHasFinishedStartup, // guarantee that file read finishes before this code runs
 			let           dbID = databaseID,
-			dbID              != .recentsID,
 			dbID              != .favoritesID,
 			let          cloud = gRemoteStorage.zRecords(for: dbID) {
 			var           dict = ZStorageDictionary ()
@@ -274,10 +273,6 @@ class ZFiles: NSObject {
 						dict[.favorites] = favorites as NSObject
 					}
 
-					if  let     recents  = try gRecentsRoot?.createStorageDictionary(for: .mineID) {
-						dict[.recent]    = recents as NSObject
-					}
-
 					if  let   bookmarks  = try gBookmarks.storageArray(for: .mineID) {
 						dict[.bookmarks] = bookmarks as NSObject
 					}
@@ -309,7 +304,7 @@ class ZFiles: NSObject {
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
-			let  keys: types = [.date, .manifest, .graph, .recent, .favorites, .bookmarks, .trash, .lost, .destroy ]
+			let  keys: types = [.date, .manifest, .graph, .favorites, .bookmarks, .trash, .lost, .destroy ]
 
 			if  let     data = FileManager.default.contents(atPath: path),
 				data  .count > 0,

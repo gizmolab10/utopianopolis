@@ -380,7 +380,7 @@ class ZMapEditor: ZBaseEditor {
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
 			gMapController?.toggleMaps()
-		} else if let root = gRecords?.rootZone {
+		} else if let root = gRecords.rootZone {
 			gHere = root
 
 			gHere.grab()
@@ -621,14 +621,14 @@ class ZMapEditor: ZBaseEditor {
     }
 
 	func nextBookmark(down: Bool, SHIFT: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, nextFavoriteList: Bool = false) {
-		if (SHIFT || (gHere.isInAGroup && gIsFavoritesMode)), gSelecting.currentMoveable.cycleToNextInGroup(!down) {
+		if (SHIFT || gHere.isInAGroup), gSelecting.currentMoveable.cycleToNextInGroup(!down) {
 			return
 		}
 
-		if  nextFavoriteList, gIsFavoritesMode {
+		if  nextFavoriteList {
 			gFavorites.nextList(down: down)
 		} else {
-			gCurrentSmallMapRecords?.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent)
+			gFavorites.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent)
 		}
 	}
 
@@ -819,7 +819,7 @@ class ZMapEditor: ZBaseEditor {
                     }
                 }
             } else if let grab = gSelecting.rootMostMoveable {
-				let    inSmall = grab.isInSmallMap  // these three values
+				let    inSmall = grab.isInFavorites // these three values
 				let     parent = grab.parentZone    // are out of date
 				let      index = grab.siblingIndex  // after delete zones, below
 
@@ -836,7 +836,7 @@ class ZMapEditor: ZBaseEditor {
 							if  p.isInFavorites {
 								gFavorites.updateAllFavorites()
 							} else if c == 0 {
-								gNewOrExistingBookmark(targeting: gHere, addTo: gRecentsHere)  // assure at least one bookmark in recents (targeting here)
+								gNewOrExistingBookmark(targeting: gHere, addTo: gFavoritesHere)  // assure at least one bookmark in recents (targeting here)
 
 								if  p.isInBigMap {
 									gHere.grab()                                               // as though user clicked on background
@@ -1204,7 +1204,7 @@ class ZMapEditor: ZBaseEditor {
 				return
 			}
 
-			if !SHIFT || moveable.isInSmallMap {
+			if !SHIFT || moveable.isInFavorites {
 				move(out: out, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
 					gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
 					onCompletion?() // invoke closure from essay editor
@@ -1277,7 +1277,7 @@ class ZMapEditor: ZBaseEditor {
 							return
 						}
 					} else if let gp = grandParentZone {
-						let inSmallMap = p.isInSmallMap
+						let inSmallMap = p.isInFavorites
 
 						if  inSmallMap {
 							p.collapse()
@@ -1294,7 +1294,7 @@ class ZMapEditor: ZBaseEditor {
 						} else if inSmallMap {
 							moveOut(to: gp) { reveal in
 								zone.grab()
-								gCurrentSmallMapRecords?.setHere(to: gp)
+								gFavorites.setHere(to: gp)
 								onCompletion?(reveal)
 							}
 

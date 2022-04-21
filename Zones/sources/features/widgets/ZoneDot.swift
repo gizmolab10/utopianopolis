@@ -64,7 +64,7 @@ class ZoneDot: ZPseudoView {
 		}
 
 		if !isReveal {
-			return !zone.isSmallMapHere
+			return !zone.isFavoritesHere
 		}   else {
 			return  isDragDrop       ||
 				(   zone.isTraveller ||
@@ -125,7 +125,7 @@ class ZoneDot: ZPseudoView {
 		path.lineWidth   = CGFloat(gLineThickness * 1.2)
 		path.flatness    = kDefaultFlatness
 
-		if  let     zone = widgetZone, zone.isInFavorites == gIsRecentlyMode {   // WTF?
+		if  let     zone = widgetZone, zone.isInFavorites {   // WTF?
 			path.stroke()
 		} else {
 			path.fill()

@@ -18,10 +18,10 @@ let gFocusing = ZFocusing()
 class ZFocusing : NSObject {
 
 	func findAndSetHere(asParentOf zone: Zone) -> Bool {
-		var found = gRecents   .findAndSetHereAsParentOfBookmarkTargeting(zone)
-		found     = gFavorites .findAndSetHereAsParentOfBookmarkTargeting(zone) || found
+//		var found = gRecents   .findAndSetHereAsParentOfBookmarkTargeting(zone)
+		return gFavorites .findAndSetHereAsParentOfBookmarkTargeting(zone) // || found
 
-		return found
+//		return found
 	}
 
 	func grabAndFocusOn(_ zone: Zone?, _ atArrival: @escaping Closure) {
@@ -37,7 +37,7 @@ class ZFocusing : NSObject {
 
 	func focusOrPopSmallMap(_ flags: ZEventFlags, kind: ZFocusKind) {
 		if  flags.isControl {
-			gCurrentSmallMapRecords?.popAndUpdateCurrent()
+			gFavorites.popAndUpdateCurrent()
 		} else {
 			focusOnGrab(kind, flags.isCommand, shouldGrab: true) { // complex grab logic
 				gRelayoutMaps()
@@ -73,16 +73,15 @@ class ZFocusing : NSObject {
 				finishAndGrabHere()
 			}
 		} else if zone == gHere {       // state 2
-			if  let small = gCurrentSmallMapRecords,
-				!small.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
-				small.matchOrCreateBookmark(for: zone, autoAdd: true)
+			if !gFavorites.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
+				gFavorites.matchOrCreateBookmark(for: zone, autoAdd: true)
 			}
 
 			atArrival()
-		} else if zone.isInSmallMap {   // state 3
+		} else if zone.isInFavorites {   // state 3
 			finishAndGrabHere()
 		} else if NOBOOKMARK {          // state 4
-			gRecents.refocus {
+			gFavorites.refocus {
 				atArrival()
 			}
 		} else {                        // state 5

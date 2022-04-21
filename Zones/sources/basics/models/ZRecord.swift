@@ -19,7 +19,6 @@ enum ZRootID: String {
 	case rootID      = "root"
 	case trashID     = "trash"
 	case destroyID   = "destroy"
-	case recentsID   = "recents"
 	case favoritesID = "favorites"
 	case lostID      = "lost and found"
 }
@@ -32,7 +31,6 @@ enum ZStorageType: String {
 	case minimal         = "minimal"
 	case destroy         = "destroy"
 	case userID          = "user ID"
-	case recent          = "recent"
 	case model           = "model"
 	case graph           = "graph"
 	case trash           = "trash"
@@ -70,7 +68,6 @@ enum ZStorageType: String {
 		switch self {
 			case .favorites: return kFavoritesRootName
 			case .lost:      return kLostAndFoundName
-			case .recent:    return kRecentsRootName
 			case .trash:     return kTrashName
 			case .graph:     return kRootName
 			default:         return nil
@@ -80,10 +77,9 @@ enum ZStorageType: String {
 	var rootID: ZRootID? {
 		switch self {
 			case .favorites: return .favoritesID
-			case .lost:      return .lostID
-			case .recent:    return .recentsID
 			case .trash:     return .trashID
 			case .graph:     return .rootID
+			case .lost:      return .lostID
 			default:         return nil
 		}
 	}
@@ -113,14 +109,10 @@ class ZRecord: ZManagedObject {
 	var         isBigMapRoot: Bool        { return recordName == kRootName }
 	var          isTrashRoot: Bool        { return recordName == kTrashName }
 	var        isDestroyRoot: Bool        { return recordName == kDestroyName }
-	var        isRecentsRoot: Bool        { return recordName == kRecentsRootName }
 	var   isLostAndFoundRoot: Bool        { return recordName == kLostAndFoundName }
 	var      isFavoritesRoot: Bool        { return recordName == kFavoritesRootName }
 	var      isFavoritesHere: Bool        { return recordName == gFavoritesHereMaybe?.recordName }
-	var        isRecentsHere: Bool        { return recordName == gRecentsHereMaybe?.recordName }
-	var       isSmallMapHere: Bool        { return isFavoritesHere || isRecentsHere }
-	var       isSmallMapRoot: Bool        { return isFavoritesRoot || isRecentsRoot }
-	var         isAnyMapRoot: Bool        { return isSmallMapRoot  || isBigMapRoot }
+	var         isAnyMapRoot: Bool        { return isFavoritesRoot  || isBigMapRoot }
 	var           needsCount: Bool        { return  hasState(.needsCount) }
 	var           needsColor: Bool        { return  hasState(.needsColor) }
 	var         needsDestroy: Bool        { return  hasState(.needsDestroy) }

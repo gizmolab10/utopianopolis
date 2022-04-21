@@ -230,7 +230,7 @@ class ZRemoteStorage: NSObject {
 		if  zRecords     == nil {
 			switch dbID {
 			case .favoritesID: zRecords = gFavorites
-			case .recentsID:   zRecords = gRecents
+//			case .recentsID:   zRecords = gRecents
 			default:           zRecords = ZCloud(dbID)
 			}
 			
