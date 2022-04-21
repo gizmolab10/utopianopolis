@@ -114,7 +114,7 @@ class ZMapView: ZView {
 					c.drawWidgets(for: phase)
 				}
 
-				gSmallMapController?.drawWidgets(for: phase)
+				gFavoritesController?.drawWidgets(for: phase)
 			}
 		}
 	}

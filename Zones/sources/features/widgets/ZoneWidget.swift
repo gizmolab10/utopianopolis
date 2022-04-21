@@ -125,8 +125,8 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	override var controller : ZMapController? {
-		if type.isBigMap   { return      gMapController }
-		if type.isFavorite { return gSmallMapController }
+		if type.isBigMap   { return              gMapController }
+		if type.isFavorite { return        gFavoritesController }
 		if type.isExemplar { return gHelpDotsExemplarController }
 
 		return nil
@@ -497,7 +497,7 @@ class ZoneWidget: ZPseudoView {
 		if  let prior = controller?.mapView?.frame {
 			controller?.mapView?.frame = bounds.expandedBy(dx: 40.0, dy: 40.0)
 
-			gDetailsController?.temporarilyHideView(for: .vSmallMap) {
+			gDetailsController?.temporarilyHideView(for: .vFavorites) {
 				gMapController?.layoutForCurrentScrollOffset()
 				controller?.mapView?.printView()
 			}

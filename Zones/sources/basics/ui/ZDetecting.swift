@@ -103,7 +103,7 @@ extension ZMapController {
 
 	@objc func detectHit(at location: CGPoint) -> Any? {
 		if  isBigMap,
-			let    any = gSmallMapController?.detectHit(at: location) {
+			let    any = gFavoritesController?.detectHit(at: location) {
 			return any
 		}
 

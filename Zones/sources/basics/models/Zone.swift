@@ -423,8 +423,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return results
 	}
 
+	var ancestralStrings: StringsArray {
+		return ancestralPath.map { $0.unwrappedName.capitalized }            // convert ancestors into capitalized strings
+	}
+
 	var ancestralString: String {
-		let names = ancestralPath.map { $0.unwrappedName.capitalized }             // convert ancestors into capitalized strings
+		return ancestralStrings.joined(separator: kColonSeparator)
+	}
+
+	var favoritesTitle: String {
+		var names = ancestralStrings
+
+		if  names.count > 1 {
+			names.removeFirst(1)
+		}
 
 		return names.joined(separator: kColonSeparator)
 	}

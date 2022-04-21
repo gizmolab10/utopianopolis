@@ -449,7 +449,7 @@ extension ZMapController {
 		if  let         viewG = gesture?.view,
 			let     locationM = gesture?.location(in: viewG),
 			let       widgetM = hereWidget?.widgetNearestTo(locationM) {
-			let     alternate = isBigMap ? gSmallMapController : gMapController
+			let     alternate = isBigMap ? gFavoritesController : gMapController
 			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
 				let locationA = mapPseudoView?.convertPoint(locationM, toRootPseudoView: mapViewA),
 				let   widgetA = alternate?.hereWidget?.widgetNearestTo(locationA),

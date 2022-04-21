@@ -11,7 +11,7 @@ import Foundation
 class ZHelpMapData : ZHelpData {
 
 	override var columnStrings     : [StringsArray] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
-	override var tabOffsets        : [Int]          { return [0, 20, 85] }
+	override var tabOffsets        : [Int]          { return [0, 12, 77] }
 	override var columnWidth       :  Int           { return 288 }
 	override var indexOfLastColumn :  Int           { return 3 }
 
@@ -112,7 +112,6 @@ class ZHelpMapData : ZHelpData {
 		"0SPACE", 		"create new idea in list", 							"edit-d05d18996df7",
 		"0/", 			"focus (also, manage recents/favorites)", 			"focusing-your-thinking-a53adb16bba",
 		"0\\", 			"switch to other map", 				    			"",
-		"2'", 			"switch recents with favorites",					"focusing-your-thinking-a53adb16bba",
 		"0[, ]", 		"focus on prior/next idea",         				"focusing-your-thinking-a53adb16bba",
 		"0B", 			"create a bookmark", 								"focusing-your-thinking-a53adb16bba",
 		"0C", 			"recenter the map", 								"",
@@ -127,15 +126,16 @@ class ZHelpMapData : ZHelpData {
 		"2S", 			"save to a Seriously file", 						"cloud-vs-file-f3543f7281ac",
 		"2T", 			"swap selected idea with parent", 					"parent-child-tweaks-bf067abdf461",
 		"0X", 			"move into done (creating it if missing)",			"",
-		"2",			"", 												"",
-		"2_SHIFT + KEY",												"", "",
-		"2[, ]", 		"focus on prior/next idea in group",				"",
-		"0",			"", 												"",
-		"0_SHIFT + ARROW KEY",					 						"", "",
-		"0_",			"+ COMMAND applies all the way",					"",
-		"0LEFT ", 		"hide list", 										"focusing-your-thinking-a53adb16bba",
-		"0RIGHT", 		"reveal list",	 									"focusing-your-thinking-a53adb16bba",
-		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53"
+		"1",			"", 												"",
+		"1_COMMAND + KEY", 												"", "",
+		"2ARROWS", 		"extend all the way", 								"selecting-ideas-cc2939720e53",
+		"1HYPHEN", 		"reduce font size", 								"",
+		"1EQUALS", 	    "increase font size", 								"",
+		"1/", 			"refocus current favorite", 						"focusing-your-thinking-a53adb16bba",
+		"1'", 			"switch between linear and circular",				"",
+		"1A", 			"select all ideas", 								"selecting-ideas-cc2939720e53",
+		"2D", 			"append onto parent", 								"parent-child-tweaks-bf067abdf461",
+		"2[, ]", 		"show prior/next favorites list",					"",
 	]
 
 	let mapColumnFour: StringsArray = [
@@ -151,15 +151,6 @@ class ZHelpMapData : ZHelpData {
 		"2'", 			"move ideas between small maps",					"",
 		"28",			"prefix with an arrow",								"",
 		"2S", 			"export to a outline file", 						"cloud-vs-file-f3543f7281ac",
-		"1",			"", 												"",
-		"1_COMMAND + KEY", 												"", "",
-		"2ARROWS", 		"extend all the way", 								"selecting-ideas-cc2939720e53",
-		"1HYPHEN", 		"reduce font size", 								"",
-		"1EQUALS", 	    "increase font size", 								"",
-		"1/", 			"refocus current favorite", 						"focusing-your-thinking-a53adb16bba",
-		"1'", 			"switch between linear and circular",				"",
-		"1A", 			"select all ideas", 								"selecting-ideas-cc2939720e53",
-		"2D", 			"append onto parent", 								"parent-child-tweaks-bf067abdf461",
 		"2",			"", 												"",
 		"2_COMMAND + OPTION + KEY", 									"", "",
 		"2DELETE", 		"permanently (not into trash)", 					"organize-fcdc44ac04e4",
@@ -167,6 +158,14 @@ class ZHelpMapData : ZHelpData {
 		"2D", 			"duplicate idea only (ignore its list)",			"",
 		"2O", 			"show data files in Finder", 						"cloud-vs-file-f3543f7281ac",
 		"2S", 			"save to cloud",			 						"cloud-vs-file-f3543f7281ac",
+		"2[, ]", 		"move bookmark to prior/next favorites list",		"",
+		"2",			"", 												"",
+		"2_SHIFT + KEY",												"", "",
+		"2[, ]", 		"focus on prior/next idea in group",				"",
+		"0",			"+ COMMAND applies all the way",					"",
+		"0LEFT ", 		"hide list", 										"focusing-your-thinking-a53adb16bba",
+		"0RIGHT", 		"reveal list",	 									"focusing-your-thinking-a53adb16bba",
+		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53",
 		"0",			"", 												"",
 		"0_MOUSE CLICK + MODIFIER KEY",									"", "",
 		"0COMMAND", 	"drag entire map", 								    "mouse-e21b7a63020e",

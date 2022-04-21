@@ -51,7 +51,7 @@ class ZTogglingView: ZView {
 		switch identity {
 			case .vKickoffTools : return "some simple tools to help get you oriented"
 			case .vPreferences  : return "preference controls"
-			case .vSmallMap     : return "favorites map"
+			case .vFavorites     : return "favorites map"
 			case .vSubscribe    : return "license details"
 			case .vData         : return "useful data about Seriously"
 			default             : return kEmpty
@@ -64,7 +64,7 @@ class ZTogglingView: ZView {
 				case "kickoffTools": return .vKickoffTools
 				case "preferences":  return .vPreferences
 				case "subscribe":    return .vSubscribe
-				case "smallMap":     return .vSmallMap
+				case "smallMap":     return .vFavorites
 				case "data":         return .vData
 				default:             return .vAll
 			}
@@ -116,7 +116,6 @@ class ZTogglingView: ZView {
 
 	@IBAction func extraButtonAction(_ sender: Any) {
 		switch identity {
-			case .vSmallMap:  gToggleSmallMapMode(forceToggle: true)
 			case .vSubscribe: gSubscriptionController?.toggleViews()
 			case .vData:      gMapController?.toggleMaps()
 			default:          return
@@ -129,7 +128,7 @@ class ZTogglingView: ZView {
 	fileprivate func updateTitleButton() {
 		if  gIsReadyToShowUI {
 			switch identity {
-				case .vSmallMap:  titleButton?.title = gSmallMapHere?.ancestralString ?? "gerglagaster"
+				case .vFavorites: titleButton?.title = gFavoritesHere?.favoritesTitle ?? "gerglagaster"
 				case .vData:      titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
 				case .vSubscribe: titleButton?.title = gSubscriptionController?.bannerTitle ?? kSubscribe
 				default:          titleButton?.title = titleButton?.alternateTitle ?? "gargleblaster"

@@ -106,17 +106,6 @@ func gToggleShowExplanations() {
 	gSignal([.sDetails])
 }
 
-func gToggleSmallMapMode(_ COMMAND: Bool = false, _ OPTION: Bool = false, forceToggle: Bool = false) {
-
-	if !gSmallMapIsVisible {
-		gDetailsController?.showViewFor(.vSmallMap)
-	}
-
-	gShowDetailsView = true    	// make sure the details view is visible
-
-	gSignal([.spMain, .sDetails, .spSmallMap])
-}
-
 func gLoadProgressTimes() {
 	if  let string = getPreferenceString(for: kProgressTimes) {
 		let  pairs = string.components(separatedBy: kCommaSeparator)

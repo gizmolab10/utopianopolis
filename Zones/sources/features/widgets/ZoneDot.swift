@@ -113,7 +113,7 @@ class ZoneDot: ZPseudoView {
     // MARK: - draw
     // MARK: -
 
-	func drawSmallMapSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let       radius = parameters.sideDotRadius
 		let   tinyRadius =     radius * 0.7
 		let tinyDiameter = tinyRadius * 2.0
@@ -125,11 +125,7 @@ class ZoneDot: ZPseudoView {
 		path.lineWidth   = CGFloat(gLineThickness * 1.2)
 		path.flatness    = kDefaultFlatness
 
-		if  let     zone = widgetZone, zone.isInFavorites {   // WTF?
-			path.stroke()
-		} else {
-			path.fill()
-		}
+		path.fill()
 	}
 
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
@@ -281,7 +277,7 @@ class ZoneDot: ZPseudoView {
 
 			color.setFill()
 			color.setStroke()
-			drawSmallMapSideDot(in: iDirtyRect, parameters)
+			drawFavoriteSideDot(in: iDirtyRect, parameters)
 		} else if  isLinearMode,
 			gCountsMode == .dots,
 			parameters.isReveal,

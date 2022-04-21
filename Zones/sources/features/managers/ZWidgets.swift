@@ -20,7 +20,7 @@ class ZWidgets: NSObject {
     var currentlyEditedWidget : ZoneWidget?     { return widgetForZone(gTextEditor.currentlyEditedZone) }
     var  currentMovableWidget : ZoneWidget?     { return widgetForZone(gSelecting.currentMoveable) }
     var  firstGrabbableWidget : ZoneWidget?     { return widgetForZone(gSelecting.firstSortedGrab) }
-    var        visibleWidgets : ZoneWidgetArray { return gHere.visibleWidgets + (gSmallMapHere?.visibleWidgets ?? []) }
+    var        visibleWidgets : ZoneWidgetArray { return gHere.visibleWidgets + (gFavoritesHere?.visibleWidgets ?? []) }
 
 	func clearAll() {
 		bigMapWidgets  .clear()

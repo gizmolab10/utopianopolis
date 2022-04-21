@@ -13,7 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vKickoffTools, .vData, .vPreferences, .vSmallMap]
+private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vKickoffTools, .vData, .vPreferences, .vFavorites]
 
 struct ZDetailsViewID: OptionSet {
 	let rawValue : Int
@@ -23,11 +23,11 @@ struct ZDetailsViewID: OptionSet {
 	static let  vPreferences = ZDetailsViewID(rawValue: 0x0001)
 	static let         vData = ZDetailsViewID(rawValue: 0x0002)
 	static let vKickoffTools = ZDetailsViewID(rawValue: 0x0004)
-	static let     vSmallMap = ZDetailsViewID(rawValue: 0x0008)
+	static let    vFavorites = ZDetailsViewID(rawValue: 0x0008)
 	static let    vSubscribe = ZDetailsViewID(rawValue: 0x0010)
 	static let          vAll = ZDetailsViewID(rawValue: 0x001F)
 	static let  vFirstHidden = ZDetailsViewID(rawValue: 0x001B)
-	static let         vLast = vSmallMap
+	static let         vLast = vFavorites
 }
 
 class ZDetailsController: ZGesturesController {

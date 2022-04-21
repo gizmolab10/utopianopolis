@@ -109,6 +109,15 @@ enum ZHelpType: String {
 	case hBasic     = "0"
 	case hIntermed  = "1"
 	case hUnderline = "_"
+
+	var isVisibleForCurrentMode: Bool {
+		switch gCurrentHelpMode {
+			case .basicMode:  return self == .hBasic
+			case .middleMode: return self == .hBasic || self == .hIntermed
+			case .proMode:    return self == .hBasic || self == .hIntermed || self == .hPro
+			default:          return false
+		}
+	}
 }
 
 enum ZFillType: String {
@@ -129,7 +138,7 @@ class ZHelpData: NSObject {
 	var tabOffsets        : [Int]          { return [0, 20, 85] } // default for graph shortcuts
 	var columnWidth       :  Int           { return 580 }         // "
 	var indexOfLastColumn :  Int           { return 1 }           // "
-	var stringsPerRow     :  Int           { return 3 }
+	var stringsPerColumn  :  Int           { return 3 }
 	var isPro             :  Bool          { return gCurrentHelpMode == .proMode }
 	var isDots            :  Bool          { return gCurrentHelpMode == .dotMode }
 	var isBasic           :  Bool          { return gCurrentHelpMode == .basicMode }
@@ -157,7 +166,7 @@ class ZHelpData: NSObject {
 
 		for column in 0...indexOfLastColumn {
 			let a = strippedStrings[column]
-			let c = a.count / stringsPerRow
+			let c = a.count / stringsPerColumn
 			count = max(count, c)
 		}
 
@@ -170,7 +179,7 @@ class ZHelpData: NSObject {
 		var values : [Int] = []
 
 		for _ in 0...indexOfLastColumn {
-			for index in 0..<stringsPerRow {
+			for index in 0..<stringsPerColumn {
 				values.append(offset + tabOffsets[index])
 			}
 
@@ -202,7 +211,7 @@ class ZHelpData: NSObject {
 
 	func strings(for row: Int, column: Int) -> (String, String, String) {
 		let strings = strippedStrings[column]
-		let index   = row * stringsPerRow
+		let index   = row * stringsPerColumn
 		if  index   > (strings.count - 2) {
 			return (kEmpty, kEmpty, kEmpty)
 		}
@@ -224,10 +233,10 @@ class ZHelpData: NSObject {
 		for column in 0...indexOfLastColumn {
 			var       prepared = StringsArray()
 			let     rawStrings = columnStrings[column]
-			let          limit = rawStrings.count / stringsPerRow
+			let          limit = rawStrings.count / stringsPerColumn
 			var            row = 0
 			while          row < limit {
-				let      index = row * stringsPerRow
+				let      index = row * stringsPerColumn
 				let      first = rawStrings[index]
 				let     second = rawStrings[index + 1]
 				let      third = rawStrings[index + 2]
@@ -382,13 +391,18 @@ class ZHelpData: NSObject {
 
 	func url(for row: Int, column: Int) -> String? {
 		let m = "https://medium.com/@sand_74696/"
-		let (_, _, url) = strings(for: row, column: column)
+		let (first, _, url) = strings(for: row, column: column)
+		let (_, types) = extractTypes(from: first)
 
-		if  url.isHyphen || url.isEmpty {
-			return nil
+		if  !url.isHyphen, !url.isEmpty {
+			for type in types {
+				if  type.isVisibleForCurrentMode {
+					return m + url
+				}
+			}
 		}
 
-		return m + url
+		return nil
 	}
 
 }

@@ -284,7 +284,7 @@ class ZSmallMapRecords: ZRecords {
 
 					gShowDetailsView = true
 
-					gDetailsController?.showViewFor(.vSmallMap)
+					gDetailsController?.showViewFor(.vFavorites)
 					gSignal([.spMain, .sDetails, .spRelayout])
 
 					return true

@@ -2385,7 +2385,7 @@ DQ
         <!--Small Map-->
         <scene sceneID="fRz-nE-ecT">
             <objects>
-                <viewController title="favorites" id="SUz-Nq-f3E" userLabel="Small Map" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="favorites" id="SUz-Nq-f3E" userLabel="Small Map" customClass="ZFavoritesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kOn-SC-u0e">
                         <rect key="frame" x="0.0" y="0.0" width="121" height="1"/>
                         <autoresizingMask key="autoresizingMask"/>

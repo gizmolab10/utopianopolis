@@ -1,5 +1,5 @@
 //
-//  ZSmallMapController.swift
+//  ZFavoritesController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/5/20.
@@ -12,10 +12,9 @@ import Cocoa
 import UIKit
 #endif
 
-var gSmallMapController : ZSmallMapController? { return gControllers.controllerForID(.idSmallMap) as? ZSmallMapController }
-var gSmallMapHere       : Zone?                { return gSmallMapController?.hereZone }
+var gFavoritesController : ZFavoritesController? { return gControllers.controllerForID(.idSmallMap) as? ZFavoritesController }
 
-class ZSmallMapController: ZMapController {
+class ZFavoritesController: ZMapController {
 
 	override var       hereZone : Zone?          { return gFavoritesHereMaybe }
 	override var     widgetType : ZWidgetType    { return .tFavorite }

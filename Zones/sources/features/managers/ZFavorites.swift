@@ -101,12 +101,31 @@ class ZFavorites: ZSmallMapRecords {
     // MARK: - mutate
     // MARK: -
 
-	func nextList(down: Bool) {
-		if  let   here = hereZoneMaybe,
+	var bookmarkToMove: Zone? {
+
+		func bookmarkToMove(is bookmark: Zone?) -> Zone? {
+			if  let b = bookmark,
+				let p = b.parentZone, p == hereZoneMaybe {
+				return b
+			}
+
+			return nil
+		}
+
+		return bookmarkToMove(is: gSelecting.currentMoveableMaybe) ?? bookmarkToMove(is: currentBookmark)
+	}
+
+	func nextList(down: Bool, moveCurrent: Bool = false) {
+		if  var   here = hereZoneMaybe,
 			let parent = here.parentZone,
 			let  index = here.siblingIndex?.next(forward: down, max: parent.count - 1) {
+			here       = parent.children[index]
 
-			setHere(to: parent.children[index])
+			if  let b = bookmarkToMove, moveCurrent {
+				b.moveZone(to: here)
+			}
+
+			setHere(to: here)
 			gSignal([.sDetails])
 		}
 	}

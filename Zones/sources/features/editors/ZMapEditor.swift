@@ -157,10 +157,9 @@ class ZMapEditor: ZBaseEditor {
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
 						case "-":        return handleHyphen(COMMAND, OPTION)
-						case "'":        gToggleSmallMapMode(COMMAND, OPTION)
 						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
-						case "[", "]":   nextBookmark(down: key == "]", SHIFT: SHIFT, moveCurrent: SPECIAL, nextFavoriteList: SPLAYED); gRelayoutMaps()
+						case "[", "]":   nextBookmark(down: key == "]", flags: flags)
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:       gSelecting.addSibling(OPTION)
@@ -620,16 +619,22 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func nextBookmark(down: Bool, SHIFT: Bool, moveCurrent: Bool = false, amongNotes: Bool = false, nextFavoriteList: Bool = false) {
-		if (SHIFT || gHere.isInAGroup), gSelecting.currentMoveable.cycleToNextInGroup(!down) {
+	func nextBookmark(down: Bool, flags: ZEventFlags) {
+		let COMMAND = flags.isCommand
+		let  OPTION = flags.isOption
+		let   SHIFT = flags.isShift
+
+		if (SHIFT || gHere.isInAGroup), gSelecting.currentMoveable.cycleToNextInGroup(down) {
 			return
 		}
 
-		if  nextFavoriteList {
-			gFavorites.nextList(down: down)
+		if  COMMAND {
+			gFavorites    .nextList(down: down, moveCurrent: OPTION)
 		} else {
-			gFavorites.nextBookmark(down: down, amongNotes: amongNotes, moveCurrent: moveCurrent)
+			gFavorites.nextBookmark(down: down, moveCurrent: OPTION)
 		}
+
+		gRelayoutMaps()
 	}
 
 	func debugAnalyze() {
