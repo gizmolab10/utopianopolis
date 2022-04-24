@@ -308,8 +308,8 @@ struct ZToken {
 		array.append("\(date.timeIntervalSinceReferenceDate)")
 		array.append("\(state.rawValue)")
 		array.append("\(type .rawValue)")
-		array.append(transactionID ?? "-")
-		array.append(value         ?? "-")
+		array.append(transactionID ?? kHyphen)
+		array.append(value         ?? kHyphen)
 
 		return array.joined(separator: kColonSeparator)
 	}
@@ -338,8 +338,8 @@ extension String {
 			let        date = Date(timeIntervalSinceReferenceDate: dateValue)
 			let       state = ZSubscriptionState(rawValue: stateValue) ?? .sExpired
 			let        type = ZProductType      (rawValue:  typeValue) ?? .pFree
-			let       value : String? = valueString == "-" ? nil : valueString
-			let     xtranID : String? = idString == "-" ? nil : idString
+			let       value : String? = valueString == kHyphen ? nil : valueString
+			let     xtranID : String? =    idString == kHyphen ? nil : idString
 
 			return ZToken(date: date, type: type, state: state, transactionID: xtranID, value: value)
 		}

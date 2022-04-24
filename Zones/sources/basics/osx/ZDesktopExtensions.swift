@@ -867,7 +867,7 @@ extension ZTextEditor {
 					case "e":     gToggleShowExplanations()
 					case "i":     showSpecialCharactersPopup()
 					case "?":     gHelpController?.show(flags: flags)
-					case "-":     return editedZone?.convertToFromLine() ?? false // false means key not handled
+					case kHyphen: return editedZone?.convertToFromLine() ?? false // false means key not handled
 					default:      return false
 				}
 			} else if "|<>[]{}()\'\"".contains(key) {
@@ -877,7 +877,7 @@ extension ZTextEditor {
 					case kEscape: cancel()
 					case kReturn: stopCurrentEdit()
 					case kTab:    gSelecting.addSibling()
-					case "-":     return editedZone?.convertToFromLine() ?? false
+					case kHyphen: return editedZone?.convertToFromLine() ?? false
 					default:      return false // false means key not handled
 				}
 			}

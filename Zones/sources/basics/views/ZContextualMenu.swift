@@ -25,7 +25,7 @@ class ZContextualMenu: ZMenu {
 			case "k": gColorfulMode = !gColorfulMode; gSignal([.sDatum])
 			case "y": gToggleShowTooltips()
 			case kEquals,
-				 "-": gMapEditor.updateFontSize(up: key == kEquals)
+				 kHyphen: gMapEditor.updateFontSize(up: key == kEquals)
 			default:  break
 		}
 	}

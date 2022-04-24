@@ -124,7 +124,7 @@ extension NSObject {
 
 	func              noop()                 {}
     func       performance(_ iMessage: Any?) { log(iMessage) }
-	func               bam(_ iMessage: Any?) { log("\("-".repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
+	func               bam(_ iMessage: Any?) { log("\(kHyphen.repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
 	func printSelf()                         { print(self) }
 	func printCurrentFocus()                 { gMapController?.hereWidget?.printWidget()}
 	func printCurrentEssay()                 { gEssayView?.printView() }
@@ -2029,7 +2029,7 @@ extension String {
     var   asciiValue:  UInt32  { return asciiArray[0] }
 	var  smartStripped: String { return substring(fromInclusive: 4).spacesStripped }
     var           length: Int  { return unicodeScalars.count }
-	var         isHyphen: Bool { return self == "-" }
+	var         isHyphen: Bool { return self == kHyphen }
     var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
     var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
     var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }

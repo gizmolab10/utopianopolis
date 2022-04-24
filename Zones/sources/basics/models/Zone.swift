@@ -1638,7 +1638,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  recordName != nil {
 
 			let isBadLink: StringToBooleanClosure = { iString -> Bool in
-				let badLinks = [kEmpty, "-", "not"]
+				let badLinks = [kEmpty, kHyphen, "not"]
 
 				return iString == nil || badLinks.contains(iString!)
 			}

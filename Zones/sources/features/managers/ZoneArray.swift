@@ -316,8 +316,8 @@ extension ZoneArray {
 
 		alterOrdering { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in
-				let aLength = a.zoneName?.widthForFont(font) ?? 0
-				let bLength = b.zoneName?.widthForFont(font) ?? 0
+				let aLength = a.widget?.textWidget?.text?.widthForFont(font) ?? 0.0
+				let bLength = b.widget?.textWidget?.text?.widthForFont(font) ?? 0.0
 
 				return iBackwards ? (aLength > bLength) : (aLength < bLength)
 			}

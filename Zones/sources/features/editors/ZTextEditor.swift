@@ -124,11 +124,11 @@ class ZTextPack: NSObject {
 			if  threshold < text.length,
 				!type.contains(.tExemplar),
 				!type.contains(.tBigMap) || !isLinear {                       // is in small map
-				let  isLine = text[0] == "-"
+				let  isLine = text[0] == kHyphen
 				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 6) // shorten to fit (in small map area or in circles)
 
 				if !isLine {
-					text.append("...")
+					text.append(kEllipsis)
 				}
 			}
 		}

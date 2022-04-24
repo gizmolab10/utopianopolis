@@ -156,20 +156,20 @@ class ZMapEditor: ZBaseEditor {
 						case "8":        if  OPTION { prefix(with: kSoftArrow, withParentheses: false) } // option-8 is a dot
 						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
-						case "-":        return handleHyphen(COMMAND, OPTION)
 						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   nextBookmark(down: key == "]", flags: flags)
-						case kCommaSeparator,
-							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
 						case kTab:       gSelecting.addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
-						case kEquals:    if COMMAND { updateFontSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRelayoutMaps() } }
-						case kBackSlash: mapControl(OPTION)
-						case kBackspace,
-							 kDelete:    handleDelete(flags, isWindow)
 						case kReturn:    if COMMAND { editNote(flags: flags) } else { editIdea(OPTION) }
 						case kEscape:    editNote(flags: flags, useGrabbed: false)
+						case kBackSlash: mapControl(OPTION)
+						case kHyphen:    return handleHyphen(COMMAND, OPTION)
+						case kCommaSeparator,
+							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
+						case kEquals:    if COMMAND { updateFontSize(up: true) } else { gSelecting.firstSortedGrab?.invokeTravel() { reveal in gRelayoutMaps() } }
+						case kBackspace,
+							 kDelete:    handleDelete(flags, isWindow)
 						default:         return false // indicate key was not handled
 					}
                 }

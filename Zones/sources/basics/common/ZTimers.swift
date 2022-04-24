@@ -201,7 +201,7 @@ class ZTimers: NSObject {
 							gSignal([.spDataDetails]) // show change in timer status
 						} catch {
 							startTimer()
-							debug("-")
+							debug(kHyphen)
 						}
 					}
 				}
