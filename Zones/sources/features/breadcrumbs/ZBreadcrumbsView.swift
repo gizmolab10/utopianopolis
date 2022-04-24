@@ -90,7 +90,7 @@ class ZBreadcrumbsView : ZButtonsView {
 		super.setupAndRedraw()   // side effect: updates clipped, used below
 
 		layer?.backgroundColor  = kClearColor.cgColor
-		clipCrumbsButton?.image = !clipped ? nil : kTriangleImage?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		clipCrumbsButton?.image = !clipped ? nil : kDownImage?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
 	}
 
 	override func draw(_ iDirtyRect: NSRect) {

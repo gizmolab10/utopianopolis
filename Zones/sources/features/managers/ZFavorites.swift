@@ -118,7 +118,7 @@ class ZFavorites: ZSmallMapRecords {
 	func nextList(down: Bool, moveCurrent: Bool = false) {
 		if  var   here = hereZoneMaybe,
 			let parent = here.parentZone,
-			let  index = here.siblingIndex?.next(forward: down, max: parent.count - 1) {
+			let  index = here.siblingIndex?.next(forward: !down, max: parent.count - 1) {
 			here       = parent.children[index]
 
 			if  let b = bookmarkToMove, moveCurrent {

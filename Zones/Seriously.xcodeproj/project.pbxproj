@@ -310,9 +310,6 @@
 		A7B48AA523E0E80C00654DBD /* ZoneTextWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */; };
 		A7B48AA623E0E80C00654DBD /* ZoneTextWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */; };
 		A7B48AA723E0E80C00654DBD /* ZoneTextWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */; };
-		A7B48AA823E0E80C00654DBD /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */; };
-		A7B48AA923E0E80C00654DBD /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */; };
-		A7B48AAA23E0E80C00654DBD /* ZToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */; };
 		A7B48AAE23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */; };
 		A7B48AAF23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */; };
 		A7B48AB123E0E80C00654DBD /* ZoneDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B48A8723E0E80C00654DBD /* ZoneDot.swift */; };
@@ -620,7 +617,6 @@
 		A7B48A7E23E0E80C00654DBD /* ZoneWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneWindow.swift; sourceTree = "<group>"; };
 		A7B48A8223E0E80C00654DBD /* ZLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZLineView.swift; sourceTree = "<group>"; };
 		A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneTextWidget.swift; sourceTree = "<group>"; };
-		A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZToggleButton.swift; sourceTree = "<group>"; };
 		A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneSegmentedControl.swift; sourceTree = "<group>"; };
 		A7B48A8723E0E80C00654DBD /* ZoneDot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneDot.swift; sourceTree = "<group>"; };
 		A7B48A8823E0E80C00654DBD /* ZGridCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZGridCell.swift; sourceTree = "<group>"; };
@@ -726,7 +722,6 @@
 				0C39B22B1F182EBB0091F4D1 /* ZDetailsController.swift */,
 				A793722D25BE2EE0008C98AE /* ZKickoffToolsController.swift */,
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
-				A7B48A8423E0E80C00654DBD /* ZToggleButton.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 			);
 			path = details;
@@ -1551,7 +1546,6 @@
 				A706443B246F720700F90B86 /* ZMapControlsView.swift in Sources */,
 				A7B48AB423E0E80C00654DBD /* ZGridCell.swift in Sources */,
 				A7D2D647248F119A00F652B0 /* ZHelpEssayData.swift in Sources */,
-				A7B48AA823E0E80C00654DBD /* ZToggleButton.swift in Sources */,
 				A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */,
 				A7B78D42244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */,
 				A76F9B91275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */,
@@ -1761,7 +1755,6 @@
 				A76243B027EE8DB80007EDC1 /* ZExplanationPopover.swift in Sources */,
 				A78A6E0423B02164000F581F /* ZEssayController.swift in Sources */,
 				A7A4B52824E08E710092D6E0 /* ZStartup.swift in Sources */,
-				A7B48AAA23E0E80C00654DBD /* ZToggleButton.swift in Sources */,
 				0C39B31E1F182EBB0091F4D1 /* ZRecord.swift in Sources */,
 				A7D2D65B2492B55900F652B0 /* ZHelpButtonsView.swift in Sources */,
 				A7EE245725292B03003BF3C0 /* ZFavoritesController.swift in Sources */,
@@ -1876,7 +1869,6 @@
 				0C39B2B71F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B3141F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				A7DF7DBD247AFE2800F03060 /* ZRubberband.swift in Sources */,
-				A7B48AA923E0E80C00654DBD /* ZToggleButton.swift in Sources */,
 				A74DBDED244E179700DF751A /* ZContextualMenu.swift in Sources */,
 				0C43EFDE21010F62000976CE /* ZBatches.swift in Sources */,
 				A7B78D3E244B768400DB2C14 /* ZTraitAssets.swift in Sources */,

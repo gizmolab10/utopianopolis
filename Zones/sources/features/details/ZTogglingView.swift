@@ -16,36 +16,23 @@ import Foundation
 
 class ZBannerButton : ZButton {
 	@IBOutlet var togglingView : ZTogglingView? // point back at the container (specific stack view)
-	var                     on : Bool { return togglingView?.hideHideable ?? false }
-	var          offStateImage : ZImage?
-	var           onStateImage : ZImage?
-
-	func setup() {
-		imagePosition = .imageLeft
-		onStateImage  = kTriangleImage?.resize(CGSize(width: 11, height: 12))
-		offStateImage = onStateImage?.imageRotatedByDegrees(180.0)
-	}
-
-	func updateImageForState() {
-		image = on ? onStateImage : offStateImage
-	}
-
 }
 
 class ZTogglingView: ZView {
 
-	@IBOutlet var      spinner : ZProgressIndicator?
-	@IBOutlet var  titleButton : ZBannerButton?
-	@IBOutlet var  extraButton : ZButton?
-    @IBOutlet var hideableView : ZView?
-	@IBOutlet var   bannerView : ZView?
+	@IBOutlet var         spinner : ZProgressIndicator?
+	@IBOutlet var   titleTrailing : NSLayoutConstraint?
+	@IBOutlet var     titleButton : ZBannerButton?
+	@IBOutlet var switchingButton : ZButton?
+	@IBOutlet var      downButton : ZButton?
+	@IBOutlet var        upButton : ZButton?
+    @IBOutlet var    hideableView : ZView?
+	@IBOutlet var      bannerView : ZView?
 
     // MARK: - identity
     // MARK: -
 
-	var kind: String? {
-		return gConvertFromOptionalUserInterfaceItemIdentifier(identifier)
-	}
+	var kind: String? { return gConvertFromOptionalUserInterfaceItemIdentifier(identifier) }
 
 	var toolTipText: String {
 		switch identity {
@@ -84,8 +71,6 @@ class ZTogglingView: ZView {
             } else {
                 gHiddenDetailViewIDs.remove(identity)
             }
-
-			titleButton?.updateImageForState()
         }
     }
 
@@ -103,7 +88,6 @@ class ZTogglingView: ZView {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-		titleButton?.setup()
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
@@ -114,10 +98,11 @@ class ZTogglingView: ZView {
 		updateView()
     }
 
-	@IBAction func extraButtonAction(_ sender: Any) {
+	@IBAction func buttonAction(_ button: ZButton) {
 		switch identity {
 			case .vSubscribe: gSubscriptionController?.toggleViews()
 			case .vData:      gMapController?.toggleMaps()
+			case .vFavorites: goAccordingTo(button)
 			default:          return
 		}
 
@@ -125,31 +110,53 @@ class ZTogglingView: ZView {
 		gSignal([.sDetails])
 	}
 
+	fileprivate func goAccordingTo(_ button: ZButton) {
+		switch button {
+			case   upButton: gFavorites.nextList(down: false)
+			case downButton: gFavorites.nextList(down: true)
+			default:         break
+		}
+	}
+
 	fileprivate func updateTitleButton() {
 		if  gIsReadyToShowUI {
+			let  suffix = hideHideable ? " (click to show)" : kEmpty
+			var message = kEmpty
 			switch identity {
-				case .vFavorites: titleButton?.title = gFavoritesHere?.favoritesTitle ?? "gerglagaster"
-				case .vData:      titleButton?.title = gDatabaseID.userReadableString.capitalized + " Data"
-				case .vSubscribe: titleButton?.title = gSubscriptionController?.bannerTitle ?? kSubscribe
-				default:          titleButton?.title = titleButton?.alternateTitle ?? "gargleblaster"
+				case .vFavorites:    message = gFavoritesHere?.favoritesTitle ?? "Gerglagaster"
+				case .vData:         message = gDatabaseID.userReadableString.capitalized + " Data"
+				case .vSubscribe:    message = gSubscriptionController?.bannerTitle ?? kSubscribe
+				case .vPreferences:  message = "Preferences"
+				case .vKickoffTools: message = "Kickoff Tools"
+				default:             message = "Gargleblaster"
 			}
 
-			titleButton?.updateImageForState()
+			titleButton?.title = message + suffix
 		}
 	}
 
 	func updateView() {
 		updateColors()
+		updateButtons()
 		updateSpinner()
 		updateTitleButton()
 		updateHideableView()
 	}
 
 	func updateColors() {
-		zlayer              .backgroundColor =      kClearColor.cgColor
-		hideableView?.zlayer.backgroundColor =      kClearColor.cgColor
-		titleButton? .zlayer.backgroundColor =     gAccentColor.cgColor
-		extraButton? .zlayer.backgroundColor = gDarkAccentColor.cgColor
+		zlayer                 .backgroundColor =      kClearColor.cgColor
+		hideableView?   .zlayer.backgroundColor =      kClearColor.cgColor
+		titleButton?    .zlayer.backgroundColor =     gAccentColor.cgColor
+		switchingButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
+		downButton?     .zlayer.backgroundColor = gDarkAccentColor.cgColor
+		upButton?       .zlayer.backgroundColor = gDarkAccentColor.cgColor
+	}
+
+	func updateButtons() {
+		let              hidden = hideHideable || gFavoritesRoot == gFavoritesHere
+		titleTrailing?.constant = hidden ? 1.0 : 41.0
+		downButton?   .isHidden = hidden
+		upButton?     .isHidden = hidden
 	}
 
 	func updateSpinner() {

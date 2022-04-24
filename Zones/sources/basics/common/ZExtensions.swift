@@ -32,6 +32,7 @@ typealias         CKRecordIDsArray = [CKRecordID]
 typealias         ZSignalKindArray = [ZSignalKind]
 typealias        CKReferencesArray = [CKReference]
 typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
+typealias     ZManagedObjectsArray = [NSManagedObject]
 
 typealias         ZTraitDictionary = [ZTraitType   : ZTrait]
 typealias        ZAssetsDictionary = [UUID         : CKAsset]

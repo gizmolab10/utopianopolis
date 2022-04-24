@@ -745,8 +745,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  root == self {
 				unlinkParentAndMaybeNeedSave()
 			} else  if  parentZoneMaybe == nil {
-				if  let      parentName  = parentRID {
-					parentZoneMaybe      = cloud?.maybeZoneForRecordName(parentName)
+				if  let      recordName  = parentRID {
+					parentZoneMaybe      = cloud?.maybeZoneForRecordName(recordName)
 				} else if let      zone  = parentLink?.maybeZone {
 					parentZoneMaybe      = zone
 				}
@@ -774,7 +774,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 						if  parentLink   != newParentLink {
 							parentLink    = newParentLink  // references don't work across dbs
-							parentRID     = nil
+							parentRID     = kNullParent
 						}
 					}
 				}
@@ -840,6 +840,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return super.convertFromCoreData(visited: visited) // call super, too
 	}
 
+	static var oops = 0
+
 	override func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray {
 		var      converted = StringsArray()
 		var              v = visited ?? StringsArray()
@@ -849,7 +851,32 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  let        set = mutableSetValue(forKeyPath: kChildArray) as? Set<Zone>, set.count > 0 {
-			let childArray = ZoneArray(set: set)
+			var childArray = ZoneArray(set: set)
+			let     needed = fetchableCount - childArray.count
+
+			// workaround a new  (@#$$!@@)  apple bug with core data relationships
+			//
+			// the childArray is sometimes incomplete
+			// never seen this before
+			// nothing useful turned up in net grovelling
+			// hence this
+			//
+			// which kinda works, but has a problem
+			// fetches extra ideas, deleted long ago or something ???
+
+			if  needed > 0, databaseID == .mineID,
+				let       name = recordName,
+			    let      zones = gCoreDataStack.fetchChildrenOf(name, in: .mineID) {
+				let      still = fetchableCount - zones.count
+				fetchableCount = zones.count
+				childArray     = zones
+
+				if  still > 0 {
+					Zone.oops += 1
+
+					print("\(Zone.oops) \(needed) \(still) \(self)")
+				}
+			}
 
 			for child in childArray {
 				let c = child.convertFromCoreData(visited: v)
@@ -882,10 +909,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			for trait in traitArray {
 				trait.convertFromCoreData(visited: [])
-
-				if  trait.dbid != dbid {
-					noop()
-				}
 
 				if  let type = trait.traitType,
 					!hasTrait(for: type) {
@@ -2899,7 +2922,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  relation == .upon {
 			return validIndex(from: gListsGrowDown ? nil : 0)
 		} else {
-			return siblingIndex! + relation.rawValue
+			return siblingIndex ?? 0 + relation.rawValue
 		}
 	}
 
@@ -3326,7 +3349,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				iChild.addToGrabs()
 			}
 		} else {
-			if  count == 0 {
+			if  count == 0 || !isExpanded {
 				if  let parent = parentZone {
 					parent.selectAll(progeny: progeny)
 				}
