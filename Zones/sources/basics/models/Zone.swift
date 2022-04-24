@@ -1294,6 +1294,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							iZone.orphan()
 							gManifest?.smartAppend(iZone)
 							gFavorites.pop(iZone)  // avoid getting stuck on a zombie
+							gCDCurrentBackgroundContext.delete(iZone)
 						}
 					}
 
@@ -3205,8 +3206,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  appliedID                != dbid {
 			traverseAllProgeny { iZone in
 				if  appliedID        != iZone.dbid {
-					iZone.unregister()
-
 					let newParentZone = iZone.parentZone        // (1) grab new parent zone asssigned during a previous traverse (2, below)
 					iZone       .dbid = appliedID               // must happen BEFORE record assignment
 

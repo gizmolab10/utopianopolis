@@ -539,9 +539,12 @@ class ZRecords: NSObject {
 
     func unregisterZRecord(_ zRecord: ZRecord?) {
 		unregisterRecordName(zRecord?.recordName)
-		removeFromLocalSearchIndex(nameOf: zRecord as? Zone)
-        gBookmarks.forget(zRecord as? Zone)
-    }
+
+		if  let zone = zRecord as? Zone {
+			removeFromLocalSearchIndex(nameOf: zone)
+			gBookmarks.forget(zone)
+		}
+	}
 
     func removeDuplicates() {
         for duplicate in duplicates {

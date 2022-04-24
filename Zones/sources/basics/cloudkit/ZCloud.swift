@@ -158,7 +158,6 @@ class ZCloud: ZRecords {
         let    name = hereRecordName ?? kRootName
 		currentHere = Zone.uniqueZone(recordName: name, in: databaseID)
 
-//		gFavorites.push()
 		onCompletion?(0)
     }
 

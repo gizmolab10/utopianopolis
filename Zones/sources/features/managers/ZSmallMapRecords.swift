@@ -149,17 +149,6 @@ class ZSmallMapRecords: ZRecords {
 		gRelayoutMaps()
 	}
 
-	func findAndSetHereAsParentOfBookmarkTargeting(_ target: Zone) -> Bool {
-		if  let  bookmark = bookmarkTargeting(target),
-			let    parent = bookmark.parentZone {
-			hereZoneMaybe = parent
-
-			return true
-		}
-
-		return false
-	}
-
 	func insertAsNext(_ zone: Zone) {
 		if  let           r = rootZone {
 			currentBookmark = zone

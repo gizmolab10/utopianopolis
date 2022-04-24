@@ -17,13 +17,6 @@ let gFocusing = ZFocusing()
 
 class ZFocusing : NSObject {
 
-	func findAndSetHere(asParentOf zone: Zone) -> Bool {
-//		var found = gRecents   .findAndSetHereAsParentOfBookmarkTargeting(zone)
-		return gFavorites .findAndSetHereAsParentOfBookmarkTargeting(zone) // || found
-
-//		return found
-	}
-
 	func grabAndFocusOn(_ zone: Zone?, _ atArrival: @escaping Closure) {
 		if  let z = zone {
 			gHere = z // side-effect does push
