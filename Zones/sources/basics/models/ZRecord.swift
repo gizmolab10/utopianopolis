@@ -97,7 +97,6 @@ class ZRecord: ZManagedObject {
 	var                color: ZColor?
 	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
 	var             zRecords: ZRecords?   { return gRemoteStorage.zRecords(for: databaseID) }
-	var                cloud: ZCloud?     { return zRecords as? ZCloud }
 	var  unwrappedRecordName: String      { return recordName ?? kEmpty }
 	var        decoratedName: String      { return recordName ?? kNoValue }
 	var        unwrappedName: String      { return recordName ?? emptyName }
@@ -145,8 +144,8 @@ class ZRecord: ZManagedObject {
 	func hasMissingChildren() -> Bool { return true }
 	func hasMissingProgeny()  -> Bool { return true }
 	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
-	func unregister() {  cloud?.unregisterZRecord(self) }
-	func register()   { zRecords?.registerZRecord(self) }
+	func unregister() { zRecords?.unregisterZRecord(self) }
+	func register()   { zRecords?  .registerZRecord(self) }
 	func adopt(recursively: Bool = false) {}
 
 	class func cloudProperties(for className: String) -> StringsArray {
@@ -222,17 +221,17 @@ class ZRecord: ZManagedObject {
 		// temporarily overrides subsequent calls to temporarily ignore needs //
 		// ////////////////////////////////////////////////////////////////// //
 
-		let         saved = cloud?.ignoreNone ?? false
-		cloud?.ignoreNone = true
+		let            saved = zRecords?.ignoreNone ?? false
+		zRecords?.ignoreNone = true
 		closure()
-		cloud?.ignoreNone = saved
+		zRecords?.ignoreNone = saved
 	}
 
 	// MARK: - needs
 	// MARK: -
 
 	func temporarilyMarkNeeds(_ closure: Closure) {
-		cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
+		zRecords?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
 	}
 
 	func temporarilyIgnoreNeeds(_ closure: Closure) {
@@ -241,7 +240,7 @@ class ZRecord: ZManagedObject {
 		// temporarily causes set needs to have no effect //
 		// ////////////////////////////////////////////// //
 
-		cloud?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
+		zRecords?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
 	}
 
 	func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {

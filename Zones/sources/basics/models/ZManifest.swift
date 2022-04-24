@@ -127,7 +127,7 @@ class ZManifest : ZRecord {
         
         if  let deletedsArray = dict[.deleted] as? [ZStorageDictionary] {
             for d in deletedsArray {
-                cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
+				zRecords?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
                     smartAppend(d)
                 }
             }

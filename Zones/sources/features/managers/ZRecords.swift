@@ -133,13 +133,12 @@ class ZRecords: NSObject {
 	var            rootZone : Zone?
 	var               count : Int       { return 0 }
 	var       zRecordsCount : Int       { return zRecordsLookup.count }
+	var    cloudUnavailable : Bool      { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
     var         hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
 	var          allProgeny : ZoneArray { return rootZone?.all ?? [] }
 
 	func countBy                      (type: String)  -> Int?     { return recordNamesByType[type]?.count }
 	func recordNamesForState (_ state: ZRecordState)  -> StringsArray { return recordNamesByState[state] ?? [] }
-
-	func showRoot() { setHere(to: rootZone) }
 
 	func replaceRoot(at oldRoot: inout Zone?, with root: Zone) {
 		let isAnEmptyRoot = (root.zoneName == nil || root.zoneName == kEmptyIdea || root.zoneName == kEmpty)
@@ -170,24 +169,6 @@ class ZRecords: NSObject {
 				case .lostID:      replaceRoot(at: &lostAndFoundZone, with: root)
 				case .rootID:      replaceRoot(at: &rootZone,         with: root)
 			}
-		}
-	}
-
-	func setHere(to zone: Zone?) {
-		if  let newHere = zone {
-			hereZoneMaybe?.collapse()
-
-			hereZoneMaybe = newHere
-
-			hereZoneMaybe?.expand()
-		}
-	}
-
-	func show(_ zone: Zone) {
-		let bookmarks = allProgeny.intersection(zone.bookmarksTargetingSelf)
-		if  bookmarks.count > 0,
-			let parent = bookmarks[0].parentZone {
-			setHere(to: parent)
 		}
 	}
 

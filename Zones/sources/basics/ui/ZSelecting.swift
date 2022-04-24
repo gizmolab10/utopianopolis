@@ -416,8 +416,8 @@ class ZSelecting: NSObject {
 
 				moveInto.moveZone(to: toRecords.rootZone)
 
-				if  toID.isFavoritesDB {
-					toRecords.setHere(to: moveInto)
+				if  gFavorites == toRecords {
+					gFavorites.setHere(to: moveInto)
 				}
 			}
 

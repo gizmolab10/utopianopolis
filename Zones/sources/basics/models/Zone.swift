@@ -63,9 +63,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                             root :               Zone?
 	var                       groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
 	var                   bookmarkTarget :               Zone? { return crossLink as? Zone }
-	var                      destroyZone :               Zone? { return cloud?.destroyZone }
-	var                        trashZone :               Zone? { return cloud?.trashZone }
-	var                         manifest :          ZManifest? { return cloud?.manifest }
+	var                      destroyZone :               Zone? { return zRecords?.destroyZone }
+	var                        trashZone :               Zone? { return zRecords?.trashZone }
+	var                         manifest :          ZManifest? { return zRecords?.manifest }
 	var                           widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
@@ -746,7 +746,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				unlinkParentAndMaybeNeedSave()
 			} else  if  parentZoneMaybe == nil {
 				if  let      recordName  = parentRID {
-					parentZoneMaybe      = cloud?.maybeZoneForRecordName(recordName)
+					parentZoneMaybe      = zRecords?.maybeZoneForRecordName(recordName)
 				} else if let      zone  = parentLink?.maybeZone {
 					parentZoneMaybe      = zone
 				}
@@ -1290,13 +1290,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					traverseAllProgeny { iZone in
 						if !iZone.isInTrash {
 							iZone.needDestroy()    // gets written in file
+							iZone.unregister()
 							iZone.orphan()
 							gManifest?.smartAppend(iZone)
 							gFavorites.pop(iZone)  // avoid getting stuck on a zombie
 						}
 					}
 
-					if  cloud?.cloudUnavailable ?? true {
+					if  zRecords?.cloudUnavailable ?? true {
 						moveZone(to: destroyZone) {
 							finishDeletion()
 						}
@@ -1454,9 +1455,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if isInBigMap {
 			addAGrab(extreme: extreme, onCompletion: onCompletion)
 		} else if let next = gListsGrowDown ? children.last : children.first {
-			parentZone?.collapse()
-			setAsSmallMapHereZone()
-			expand()
+			gFavorites.setHere(to: self)
 			next.grab()
 			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
 		}
@@ -1486,8 +1485,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					p.expand()
 				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
 					g.concealAllProgeny()
-					g.expand()
-					g.setAsSmallMapHereZone()
+					gFavorites.setHere(to: g)
 					// FUBAR: parent sometimes disappears!!!!!!!!!
 				} else if p.isARoot {
 					onCompletion?(true)
@@ -2117,8 +2115,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					t.grab()
 				} else {
 					gHere = t
-
-					gFavorites.push()
 				}
 
 				gShowSmallMapForIOS = targetDBID.isFavoritesDB
@@ -2253,12 +2249,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func setAsSmallMapHereZone() {
-		if  let r = root, r.isFavoritesRoot {
-			gFavorites.hereZoneMaybe = self
-		}
-	}
-
 	func revealSiblings(untilReaching iAncestor: Zone) {
 		[self].recursivelyRevealSiblings(untilReaching: iAncestor) { iZone in
 			if     iZone != self {
@@ -2309,7 +2299,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				child.grab()
 
 				if  zone.isInFavorites { // narrow, so hide former here and ignore extreme
-					zone.setAsSmallMapHereZone()
+					gFavorites.setHere(to: zone)
 				} else if extreme {
 					zone = child
 
@@ -3764,7 +3754,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
 			for childDict: ZStorageDictionary in childrenDicts {
 				let child = Zone.uniqueZone(from: childDict, in: iDatabaseID)
-				cloud?.temporarilyIgnoreAllNeeds() {        // prevent needsSave caused by child's parent intentionally not being in childDict
+				zRecords?.temporarilyIgnoreAllNeeds() {        // prevent needsSave caused by child's parent intentionally not being in childDict
 					addChildNoDuplicate(child, at: nil)
 				}
 			}
@@ -3776,7 +3766,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for  traitStore:  ZStorageDictionary in traitsStore {
 				let trait = ZTrait.uniqueTrait(from: traitStore, in: iDatabaseID)
 
-				cloud?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait intentionally not being in traits
+				zRecords?.temporarilyIgnoreAllNeeds {       // prevent needsSave caused by trait intentionally not being in traits
 					addTrait(trait)
 				}
 

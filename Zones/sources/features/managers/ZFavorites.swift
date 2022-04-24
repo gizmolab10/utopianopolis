@@ -71,12 +71,11 @@ class ZFavorites: ZSmallMapRecords {
 		FOREGROUND { [self] in               // avoid error? mutating core data while enumerating
 			rootZone = rootZone ?? Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
 
-			if  gCDMigrationState == .firstTime {
-				updateAllFavorites() // setup roots group
+			updateAllFavorites() // setup roots group
 
+			if  gCDMigrationState == .firstTime {
 				hereZoneMaybe = rootsGroupZone
 			}
-
 
 			rootZone?.concealAllProgeny()
 			hereZoneMaybe?.expand()
@@ -121,7 +120,7 @@ class ZFavorites: ZSmallMapRecords {
 			let  index = here.siblingIndex?.next(forward: !down, max: parent.count - 1) {
 			here       = parent.children[index]
 
-			if  let b = bookmarkToMove, moveCurrent {
+			if  let  b = bookmarkToMove, moveCurrent {
 				b.moveZone(to: here)
 			}
 
@@ -145,15 +144,33 @@ class ZFavorites: ZSmallMapRecords {
 		return false
 	}
 
+	func setHere(to zone: Zone?) {
+		if  let here = zone {
+			rootZone?.concealAllProgeny()
+
+			hereZoneMaybe = here
+
+			here.expand()
+		}
+	}
+
+	func show(_ zone: Zone) {
+		let bookmarks = allProgeny.intersection(zone.bookmarksTargetingSelf)
+		if  bookmarks.count > 0,
+			let parent = bookmarks[0].parentZone {
+			setHere(to: parent)
+		}
+	}
+
+	func showRoot() { setHere(to: rootZone) }
+
 	// MARK: - update
 	// MARK: -
 
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
-        if  let         zone = currentZone ?? gHereMaybe,
-			let     bookmark = whichBookmarkTargets(zone, orSpawnsIt: true),
-            let       target = bookmark.bookmarkTarget,
-			(gHere == target || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
-//			!gIsRecentlyMode {
+        if  let        zone = currentZone ?? gHereMaybe,
+			let    bookmark = bookmarkTargeting(zone, orSpawnsIt: true),
+            let      target = bookmark.bookmarkTarget, (target == gHere || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
             currentBookmark = bookmark
         }
     }
@@ -209,7 +226,8 @@ class ZFavorites: ZSmallMapRecords {
 						} else {
 							hasDuplicate   = true
 						}
-					} else if let     dbID = bookmark.linkDatabaseID, bookmark.linkIsRoot {
+					} else if let     dbID = bookmark.linkDatabaseID, bookmark.linkIsRoot,
+							  let        p = bookmark.parentZone, p == rootsGroup {
 						if !hasDatabaseIDs.contains(dbID) {
 							hasDatabaseIDs.append(dbID)
 						} else {
@@ -301,14 +319,5 @@ class ZFavorites: ZSmallMapRecords {
 
 		return result
 	}
-
-    // MARK: - toggle
-    // MARK: -
-
-    func delete(_ favorite: Zone) {
-        favorite.moveZone(to: favorite.trashZone)
-        gBookmarks.forget(favorite)
-        updateAllFavorites()
-    }
 
 }

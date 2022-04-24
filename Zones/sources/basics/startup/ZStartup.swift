@@ -66,7 +66,6 @@ class ZStartup: NSObject {
 					gSetMapWorkMode()
 				}
 
-				gFavorites.push()
 				gHereMaybe?.grab()
 				gSignal([.sLaunchDone])
 

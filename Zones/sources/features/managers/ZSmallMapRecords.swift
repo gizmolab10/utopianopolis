@@ -111,12 +111,8 @@ class ZSmallMapRecords: ZRecords {
 		return target == nil ? workingBookmarks.first : targeting(target!, in: workingBookmarks, orSpawnsIt: false)
 	}
 
-	func whichBookmarkTargets(_ target: Zone, orSpawnsIt: Bool) -> Zone? {
+	func bookmarkTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> Zone? {
 		return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
-	}
-
-	func bookmarkTargeting(_ target: Zone) -> Zone? {
-		return whichBookmarkTargets(target, orSpawnsIt: false)
 	}
 
 	// MARK: - pop and push
@@ -185,7 +181,7 @@ class ZSmallMapRecords: ZRecords {
 
 		// locate and make bookmark of target visible and mark it
 
-		if  let b = whichBookmarkTargets(target, orSpawnsIt: false) {
+		if  let b = bookmarkTargeting(target, orSpawnsIt: false) {
 			makeVisibleAndMarkInSmallMap(b)
 		}
 	}

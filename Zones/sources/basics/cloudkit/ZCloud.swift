@@ -16,7 +16,6 @@ class ZCloud: ZRecords {
 	var    addedToLevels = [Int : ZRecordsArray] ()
 	var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
 	var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
-	var cloudUnavailable :         Bool { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
 	var    isRemembering :         Bool = false
 	var currentOperation : CKOperation?
 	var currentPredicate : NSPredicate?
@@ -159,7 +158,7 @@ class ZCloud: ZRecords {
         let    name = hereRecordName ?? kRootName
 		currentHere = Zone.uniqueZone(recordName: name, in: databaseID)
 
-		gFavorites.push()
+//		gFavorites.push()
 		onCompletion?(0)
     }
 
