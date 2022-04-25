@@ -106,15 +106,16 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawDragLineAndDot() {
-		let rect = draggingDotAbsoluteFrame
+		let  rect = draggingDotAbsoluteFrame
+		let color = gActiveColor
 
 		if  !rect.hasZeroSize {
 			dragDot?.absoluteFrame = rect
 
-			gActiveColor.setFill()
-			gActiveColor.setStroke()
+			color.setFill()
+			color.setStroke()
 			ZBezierPath(ovalIn: rect.insetEquallyBy(gLineThickness)).fill()
-			drawLine(using: gActiveColor)
+			drawLine(using: color)
 		}
 	}
 

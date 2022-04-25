@@ -20,14 +20,15 @@ class ZBannerButton : ZButton {
 
 class ZTogglingView: ZView {
 
-	@IBOutlet var         spinner : ZProgressIndicator?
-	@IBOutlet var   titleTrailing : NSLayoutConstraint?
-	@IBOutlet var     titleButton : ZBannerButton?
-	@IBOutlet var switchingButton : ZButton?
-	@IBOutlet var      downButton : ZButton?
-	@IBOutlet var        upButton : ZButton?
-    @IBOutlet var    hideableView : ZView?
-	@IBOutlet var      bannerView : ZView?
+	@IBOutlet var          spinner : ZProgressIndicator?
+	@IBOutlet var trailingToUpDown : NSLayoutConstraint?
+	@IBOutlet var  trailingToSuper : NSLayoutConstraint?
+	@IBOutlet var      titleButton : ZBannerButton?
+	@IBOutlet var  switchingButton : ZButton?
+	@IBOutlet var       downButton : ZButton?
+	@IBOutlet var         upButton : ZButton?
+    @IBOutlet var     hideableView : ZView?
+	@IBOutlet var       bannerView : ZView?
 
     // MARK: - identity
     // MARK: -
@@ -112,8 +113,8 @@ class ZTogglingView: ZView {
 
 	fileprivate func goAccordingTo(_ button: ZButton) {
 		switch button {
-			case   upButton: gFavorites.nextList(down: false)
-			case downButton: gFavorites.nextList(down: true)
+			case   upButton: gFavorites.showNextList(down: false)
+			case downButton: gFavorites.showNextList(down: true)
 			default:         break
 		}
 	}
@@ -153,10 +154,16 @@ class ZTogglingView: ZView {
 	}
 
 	func updateButtons() {
-		let              hidden = hideHideable || gFavoritesRoot == gFavoritesHere
-		titleTrailing?.constant = hidden ? 1.0 : 41.0
-		downButton?   .isHidden = hidden
-		upButton?     .isHidden = hidden
+		let                 hidden =  hideHideable || gFavoritesRoot == gFavoritesHere
+		upButton?        .isHidden =  hidden
+		downButton?      .isHidden =  hidden
+		trailingToSuper? .isActive =  hidden
+		trailingToUpDown?.isActive = !hidden
+
+		if !hidden {
+			downButton?.title = gFavorites.nextList(down:  true)?.unwrappedName ?? kEmpty
+			upButton?  .title = gFavorites.nextList(down: false)?.unwrappedName ?? kEmpty
+		}
 	}
 
 	func updateSpinner() {

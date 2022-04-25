@@ -114,27 +114,33 @@ class ZFavorites: ZSmallMapRecords {
 		return bookmarkToMove(is: gSelecting.currentMoveableMaybe) ?? bookmarkToMove(is: currentBookmark)
 	}
 
-	func nextList(down: Bool, moveCurrent: Bool = false) {
-		if  var   here = hereZoneMaybe {
-			func trye() {
+	func nextList(down: Bool) -> Zone? {
+		if  var here = hereZoneMaybe {
+			while true {
 				if  let parent = here.parentZone,
-				    let  index = here.siblingIndex?.next(forward: !down, max: parent.count - 1) {
+					let  index = here.siblingIndex?.next(forward: !down, max: parent.count - 1) {
 					here       = parent.children[index]
 
-					if  here.count == 0 {
-						trye()
-					} else {
-						if  let  b = bookmarkToMove, moveCurrent {
-							b.moveZone(to: here)
-						}
-
-						setHere(to: here)
-						gSignal([.sDetails])
+					if  here.count != 0 {
+						return here
 					}
+				} else {
+					return nil
 				}
 			}
+		}
 
-			trye()
+		return nil
+	}
+
+	func showNextList(down: Bool, moveCurrent: Bool = false) {
+		if  let  here = nextList(down: down) {
+			if  let b = bookmarkToMove, moveCurrent {
+				b.moveZone(to: here)
+			}
+
+			setHere(to: here)
+			gSignal([.sDetails])
 		}
 	}
 

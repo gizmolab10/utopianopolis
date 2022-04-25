@@ -629,7 +629,7 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		if  COMMAND {
-			gFavorites    .nextList(down: down, moveCurrent: OPTION)
+			gFavorites    .showNextList(down: down, moveCurrent: OPTION)
 		} else {
 			gFavorites.nextBookmark(down: down, moveCurrent: OPTION)
 		}

@@ -13,7 +13,7 @@ let gDragging = ZDragging()
 class ZDragging: NSObject {
 
 	var draggedZones =         ZoneArray()
-	var dropRelation :         ZRelation? { didSet { dropKind = dropRelation?.lineCurve } }
+	var dropRelation :         ZRelation?
 	var debugIndices : NSMutableIndexSet?
 	var  dropIndices : NSMutableIndexSet?
 	var   dropWidget :        ZoneWidget?
@@ -51,6 +51,7 @@ class ZDragging: NSObject {
 		dropCrumb    = nil
 		dragPoint    = nil
 		dragLine     = nil
+		dropKind     = nil
 	}
 
 	func cleanupAfterDrag() {   // cursor exited view, remove drag cruft

@@ -380,7 +380,8 @@ extension ZDragging {
 	}
 
 	func linearDropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
-		let            totalGrabs = draggedZones + gSelecting.currentMapGrabs
+		var            totalGrabs = draggedZones
+		totalGrabs.appendUnique(contentsOf: gSelecting.currentMapGrabs)
 		if  let   (widget, point) = controller.linearNearestWidget(by: iGesture, locatedInBigMap: controller.isBigMap),
 			var       nearestZone = widget?.widgetZone, !totalGrabs.contains(nearestZone),
 			var     nearestWidget = widget {
@@ -412,12 +413,13 @@ extension ZDragging {
 					dropWidget    = nearestWidget
 					dragPoint     = point
 					dragLine      = nearestWidget.createDragLine()
+					dropKind      = relationToNearest.lineCurve
+
+					print("\(dropKind!) \(widget!)")
 
 					if  nearestIndex > 0, neitherOnNorHere {
 						dropIndices?.add(nearestIndex - 1)
 					}
-
-//					debug("\(relationToNearest) ")
 				} else {
 					var dropAt: Int?       = nearestIndex
 					if  nearestZone.isBookmark {
