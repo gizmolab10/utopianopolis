@@ -21,8 +21,6 @@ class ZBannerButton : ZButton {
 class ZTogglingView: ZView {
 
 	@IBOutlet var          spinner : ZProgressIndicator?
-	@IBOutlet var trailingToUpDown : NSLayoutConstraint?
-	@IBOutlet var  trailingToSuper : NSLayoutConstraint?
 	@IBOutlet var      titleButton : ZBannerButton?
 	@IBOutlet var  switchingButton : ZButton?
 	@IBOutlet var       downButton : ZButton?
@@ -40,7 +38,7 @@ class ZTogglingView: ZView {
 		switch identity {
 			case .vKickoffTools : return "some simple tools to help get you oriented"
 			case .vPreferences  : return "preference controls"
-			case .vFavorites     : return "favorites map"
+			case .vFavorites    : return "favorites map"
 			case .vSubscribe    : return "license details"
 			case .vData         : return "useful data about Seriously"
 			default             : return kEmpty
@@ -154,14 +152,23 @@ class ZTogglingView: ZView {
 	}
 
 	func updateFavoritesButtons() {
-		let                 hidden =  hideHideable
-		upDownView?      .isHidden =  hidden
-		trailingToSuper? .isActive =  hidden
-		trailingToUpDown?.isActive = !hidden
+		if  identity == .vFavorites {
+			let           hidden = hideHideable
+			upDownView?.isHidden = hidden
 
-		if !hidden {
-			downButton?.title = gFavorites.nextList(down:  true)?.unwrappedName ?? kEmpty
-			upButton?  .title = gFavorites.nextList(down: false)?.unwrappedName ?? kEmpty
+			if !hidden {
+				downButton?.title = gFavorites.nextList(down:  true)?.unwrappedName ?? kEmpty
+				upButton?  .title = gFavorites.nextList(down: false)?.unwrappedName ?? kEmpty
+			}
+
+			titleButton?.snp.removeConstraints()
+			titleButton?.snp.makeConstraints{ make in
+				if  hidden {
+					make.right.equalToSuperview()
+				} else if let v = upDownView {
+					make.right.equalTo(v)
+				}
+			}
 		}
 	}
 

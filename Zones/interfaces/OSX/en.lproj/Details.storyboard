@@ -144,28 +144,29 @@
         <scene sceneID="Tae-az-4mZ">
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="3157"/>
+                    <view key="view" wantsLayer="YES" id="3tA-Ue-bZS">
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="3177"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
-                            <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="1" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8Rr-Cx-GFK" userLabel="Instructions">
+                                <rect key="frame" x="6" y="3157" width="222" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="17" id="Roe-Xb-nbO"/>
+                                </constraints>
+                                <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="left" title="Click buttons below to show / hide" id="zr0-ds-SdJ">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
                                 <rect key="frame" x="0.0" y="2" width="226" height="3155"/>
                                 <subviews>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8Rr-Cx-GFK" userLabel="Instructions">
-                                        <rect key="frame" x="4" y="3135" width="224" height="17"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="17" id="Roe-Xb-nbO"/>
-                                        </constraints>
-                                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="left" title="Click buttons below to show / hide" id="zr0-ds-SdJ">
-                                            <font key="font" metaFont="system" size="11"/>
-                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                        </textFieldCell>
-                                    </textField>
                                     <customView identifier="subscribe" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="2983" width="226" height="151"/>
+                                        <rect key="frame" x="0.0" y="2979" width="226" height="176"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
-                                                <rect key="frame" x="0.0" y="40" width="226" height="19"/>
+                                                <rect key="frame" x="0.0" y="65" width="226" height="19"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ay8-Kf-2wF" userLabel="Subscription Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="1" y="-1" width="163" height="19"/>
@@ -205,9 +206,8 @@
                                                     <constraint firstItem="ay8-Kf-2wF" firstAttribute="leading" secondItem="avu-F1-Lm0" secondAttribute="leading" constant="1" id="wLf-Jv-QBP"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ytv-8G-7v7" userLabel="Subscription Hideable">
-                                                <rect key="frame" x="51" y="-50" width="225" height="150"/>
-                                                <autoresizingMask key="autoresizingMask"/>
+                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ytv-8G-7v7" userLabel="Subscription Hideable">
+                                                <rect key="frame" x="51" y="-25" width="225" height="150"/>
                                                 <connections>
                                                     <segue destination="8OT-8w-eeZ" kind="embed" id="4Ds-kQ-EQn"/>
                                                 </connections>
@@ -216,6 +216,8 @@
                                         <constraints>
                                             <constraint firstItem="avu-F1-Lm0" firstAttribute="top" secondItem="t4I-OM-7sJ" secondAttribute="top" id="DDp-N9-WRf"/>
                                             <constraint firstAttribute="trailing" secondItem="avu-F1-Lm0" secondAttribute="trailing" id="LrJ-hg-fcf"/>
+                                            <constraint firstItem="ytv-8G-7v7" firstAttribute="top" secondItem="avu-F1-Lm0" secondAttribute="bottom" constant="1" id="PgZ-P1-P4q"/>
+                                            <constraint firstAttribute="bottom" secondItem="ytv-8G-7v7" secondAttribute="bottom" id="hbK-Y3-O2l"/>
                                             <constraint firstItem="avu-F1-Lm0" firstAttribute="leading" secondItem="t4I-OM-7sJ" secondAttribute="leading" id="xKh-Au-U7T"/>
                                         </constraints>
                                         <connections>
@@ -226,7 +228,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="kickoffTools" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Kickoff Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1828" width="226" height="1154"/>
+                                        <rect key="frame" x="0.0" y="1825" width="226" height="1154"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Kickoff Tools Banner">
                                                 <rect key="frame" x="0.0" y="611" width="226" height="21"/>
@@ -275,7 +277,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="data" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="M2W-8y-R0e" userLabel="Data View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1777" width="226" height="50"/>
+                                        <rect key="frame" x="0.0" y="1775" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwW-xc-XIh" userLabel="Data Banner">
                                                 <rect key="frame" x="0.0" y="77" width="226" height="19"/>
@@ -349,7 +351,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="preferences" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9j5-fI-wCz" userLabel="Preferences View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="51" width="226" height="1725"/>
+                                        <rect key="frame" x="0.0" y="50" width="226" height="1725"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ul6-QC-jDi" userLabel="Preferences Banner">
                                                 <rect key="frame" x="0.0" y="201" width="226" height="19"/>
@@ -413,7 +415,7 @@
                                                         </connections>
                                                     </button>
                                                     <customView horizontalHuggingPriority="251" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="b88-zM-8k7" userLabel="Up Down View">
-                                                        <rect key="frame" x="68" y="0.0" width="157" height="18"/>
+                                                        <rect key="frame" x="188" y="0.0" width="37" height="18"/>
                                                         <subviews>
                                                             <button horizontalHuggingPriority="252" verticalHuggingPriority="750" horizontalCompressionResistancePriority="748" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Favorites Down">
                                                                 <rect key="frame" x="0.0" y="-1" width="18" height="19"/>
@@ -452,16 +454,14 @@
                                                 <constraints>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="leading" secondItem="s1s-Ki-o6t" secondAttribute="leading" constant="1" id="3GW-Kk-gBt"/>
                                                     <constraint firstItem="b88-zM-8k7" firstAttribute="top" secondItem="s1s-Ki-o6t" secondAttribute="top" id="3KY-AB-euJ"/>
-                                                    <constraint firstAttribute="trailing" secondItem="3bx-6i-bTg" secondAttribute="trailing" constant="1" identifier="hidden" id="ExW-hQ-6bR"/>
                                                     <constraint firstAttribute="trailing" secondItem="b88-zM-8k7" secondAttribute="trailing" constant="1" id="GKy-xD-SMj"/>
                                                     <constraint firstAttribute="height" constant="18" id="J3l-tS-SXi"/>
                                                     <constraint firstAttribute="bottom" secondItem="3bx-6i-bTg" secondAttribute="bottom" id="Ncv-go-AFU"/>
-                                                    <constraint firstItem="b88-zM-8k7" firstAttribute="leading" secondItem="3bx-6i-bTg" secondAttribute="trailing" constant="1" identifier="visible" id="aN5-ha-hEW"/>
                                                     <constraint firstItem="3bx-6i-bTg" firstAttribute="top" secondItem="s1s-Ki-o6t" secondAttribute="top" id="coo-d4-q1A"/>
                                                     <constraint firstAttribute="bottom" secondItem="b88-zM-8k7" secondAttribute="bottom" id="qVh-s4-WhC"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView hidden="YES" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Small Map Hideable">
+                                            <containerView hidden="YES" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="n0Y-Iw-0NV" userLabel="Favorites Hideable">
                                                 <rect key="frame" x="0.0" y="0.0" width="226" height="31"/>
                                             </containerView>
                                         </subviews>
@@ -479,23 +479,17 @@
                                             <outlet property="downButton" destination="zUL-Q6-aba" id="COi-CG-gx2"/>
                                             <outlet property="hideableView" destination="n0Y-Iw-0NV" id="Q6s-o8-Vgy"/>
                                             <outlet property="titleButton" destination="3bx-6i-bTg" id="exk-Jc-pw4"/>
-                                            <outlet property="trailingToSuper" destination="ExW-hQ-6bR" id="7CA-7V-6gU"/>
-                                            <outlet property="trailingToUpDown" destination="aN5-ha-hEW" id="GTJ-6t-7fz"/>
                                             <outlet property="upButton" destination="Jor-km-2fV" id="bwX-pw-REI"/>
                                             <outlet property="upDownView" destination="b88-zM-8k7" id="sUJ-US-h7q"/>
                                         </connections>
                                     </customView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="t4I-OM-7sJ" firstAttribute="top" secondItem="8Rr-Cx-GFK" secondAttribute="bottom" constant="1" id="3gK-ve-ClE"/>
                                     <constraint firstItem="M2W-8y-R0e" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="5vd-TT-dHx"/>
-                                    <constraint firstItem="8Rr-Cx-GFK" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" constant="6" id="Bg7-Lf-XdE"/>
-                                    <constraint firstItem="8Rr-Cx-GFK" firstAttribute="top" secondItem="1wo-H2-e9s" secondAttribute="top" constant="3" id="Cam-KH-9p5"/>
                                     <constraint firstAttribute="trailing" secondItem="M2W-8y-R0e" secondAttribute="trailing" id="EcM-C6-7RL"/>
                                     <constraint firstAttribute="trailing" secondItem="dSG-o4-XPL" secondAttribute="trailing" id="GJx-2V-I5b"/>
                                     <constraint firstItem="dSG-o4-XPL" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="MHM-KA-Rpi"/>
                                     <constraint firstItem="9j5-fI-wCz" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="NFa-oz-tCT"/>
-                                    <constraint firstAttribute="trailing" secondItem="8Rr-Cx-GFK" secondAttribute="trailing" id="NZm-ss-TM4"/>
                                     <constraint firstItem="t4I-OM-7sJ" firstAttribute="leading" secondItem="1wo-H2-e9s" secondAttribute="leading" id="Rob-5B-qeA"/>
                                     <constraint firstAttribute="trailing" secondItem="Utx-K3-0a0" secondAttribute="trailing" id="U64-S6-3bt"/>
                                     <constraint firstAttribute="trailing" secondItem="t4I-OM-7sJ" secondAttribute="trailing" id="Z3l-fc-CRO"/>
@@ -508,10 +502,8 @@
                                     <integer value="1000"/>
                                     <integer value="1000"/>
                                     <integer value="1000"/>
-                                    <integer value="1000"/>
                                 </visibilityPriorities>
                                 <customSpacing>
-                                    <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
                                     <real value="3.4028234663852886e+38"/>
@@ -522,9 +514,12 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" id="1WF-pU-wVa"/>
-                            <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="BzS-D9-Aca"/>
+                            <constraint firstItem="8Rr-Cx-GFK" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="3" id="Faj-S0-5Kx"/>
+                            <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="8Rr-Cx-GFK" secondAttribute="bottom" id="LPh-9w-ep0"/>
                             <constraint firstAttribute="trailing" secondItem="1wo-H2-e9s" secondAttribute="trailing" id="NxT-zU-3MZ"/>
+                            <constraint firstItem="8Rr-Cx-GFK" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" constant="8" id="OeB-0m-K3M"/>
                             <constraint firstAttribute="bottom" secondItem="1wo-H2-e9s" secondAttribute="bottom" constant="2" id="gIv-Hg-KHJ"/>
+                            <constraint firstAttribute="trailing" secondItem="8Rr-Cx-GFK" secondAttribute="trailing" id="kLC-Gq-ujQ"/>
                         </constraints>
                     </view>
                     <connections>
