@@ -74,7 +74,7 @@ class ZEssayControlsView: ZView {
 	}
 
 	func enableEssayControls(_ enabled: Bool) {
-		let hasMultipleNotes = gFavorites.workingNotemarks.count ?? 0 > 1
+		let hasMultipleNotes = gFavorites.workingNotemarks.count > 1
 		backwardButton?.setEnabledAndTracking(enabled && hasMultipleNotes)
 		forwardButton? .setEnabledAndTracking(enabled && hasMultipleNotes)
 		deleteButton?  .setEnabledAndTracking(enabled)

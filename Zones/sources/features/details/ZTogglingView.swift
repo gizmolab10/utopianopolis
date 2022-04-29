@@ -27,8 +27,9 @@ class ZTogglingView: ZView {
 	@IBOutlet var  switchingButton : ZButton?
 	@IBOutlet var       downButton : ZButton?
 	@IBOutlet var         upButton : ZButton?
-    @IBOutlet var     hideableView : ZView?
+	@IBOutlet var       upDownView : ZView?
 	@IBOutlet var       bannerView : ZView?
+	@IBOutlet var     hideableView : ZView?
 
     // MARK: - identity
     // MARK: -
@@ -121,24 +122,23 @@ class ZTogglingView: ZView {
 
 	fileprivate func updateTitleButton() {
 		if  gIsReadyToShowUI {
-			let  suffix = hideHideable ? " (click to show)" : kEmpty
-			var message = kEmpty
+			var                      title = kEmpty
 			switch identity {
-				case .vFavorites:    message = gFavoritesHere?.favoritesTitle ?? "Gerglagaster"
-				case .vData:         message = gDatabaseID.userReadableString.capitalized + " Data"
-				case .vSubscribe:    message = gSubscriptionController?.bannerTitle ?? kSubscribe
-				case .vPreferences:  message = "Preferences"
-				case .vKickoffTools: message = "Kickoff Tools"
-				default:             message = "Gargleblaster"
+				case .vData:         title = gDatabaseID.userReadableString.capitalized + " Data"
+				case .vFavorites:    title = gFavoritesHere?.favoritesTitle ?? "Gerglagaster"
+				case .vSubscribe:    title = gSubscriptionController?.bannerTitle ?? kSubscribe
+				case .vPreferences:  title = "Preferences"
+				case .vKickoffTools: title = "Kickoff Tools"
+				default:             title = "Gargleblaster"
 			}
 
-			titleButton?.title = message + suffix
+			titleButton?.title =     title
 		}
 	}
 
 	func updateView() {
 		updateColors()
-		updateButtons()
+		updateFavoritesButtons()
 		updateSpinner()
 		updateTitleButton()
 		updateHideableView()
@@ -153,10 +153,9 @@ class ZTogglingView: ZView {
 		upButton?       .zlayer.backgroundColor = gDarkAccentColor.cgColor
 	}
 
-	func updateButtons() {
-		let                 hidden =  hideHideable || gFavoritesRoot == gFavoritesHere
-		upButton?        .isHidden =  hidden
-		downButton?      .isHidden =  hidden
+	func updateFavoritesButtons() {
+		let                 hidden =  hideHideable
+		upDownView?      .isHidden =  hidden
 		trailingToSuper? .isActive =  hidden
 		trailingToUpDown?.isActive = !hidden
 

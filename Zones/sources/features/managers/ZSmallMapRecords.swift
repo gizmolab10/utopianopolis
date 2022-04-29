@@ -26,6 +26,7 @@ class ZSmallMapRecords: ZRecords {
 
 	var currentBookmark  : Zone?
 	var working          : ZoneArray { return  gIsEssayMode ? workingNotemarks : workingBookmarks }
+	var workingGroups    : ZoneArray { return  rootZone?.allGroups ?? [] }
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
 	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
 

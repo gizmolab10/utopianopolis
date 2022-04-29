@@ -36,7 +36,8 @@ struct ZWorkingListType: OptionSet {
 	static let wBookmarks = ZWorkingListType(rawValue: 1 << 0)
 	static let wNotemarks = ZWorkingListType(rawValue: 1 << 1)
 	static let   wProgeny = ZWorkingListType(rawValue: 1 << 2)
-	static let       wAll = ZWorkingListType(rawValue: 1 << 3)
+	static let    wGroups = ZWorkingListType(rawValue: 1 << 3)
+	static let       wAll = ZWorkingListType(rawValue: 1 << 4)
 }
 
 @objc (Zone)
@@ -130,6 +131,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var               allNotemarkProgeny :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
 	var               allBookmarkProgeny :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
 	var                       allProgeny :          ZoneArray  { return zones(of:               .wProgeny)  }
+	var                        allGroups :          ZoneArray  { return zones(of:               .wGroups)  }
 	var                              all :          ZoneArray  { return zones(of:               .wAll) }
 	var                  visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
 	var                   duplicateZones =          ZoneArray  ()
@@ -204,6 +206,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if type.contains(.wProgeny) {
 			traverseAllProgeny { iZone in
 				if  iZone.isBookmark(of: type) {
+					result.append(iZone)
+				}
+			}
+		} else if type.contains(.wGroups) {
+			traverseAllProgeny { iZone in
+				if  iZone.count > 1 {
 					result.append(iZone)
 				}
 			}

@@ -115,22 +115,14 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func nextList(down: Bool) -> Zone? {
-		if  var here = hereZoneMaybe {
-			while true {
-				if  let parent = here.parentZone,
-					let  index = here.siblingIndex?.next(forward: !down, max: parent.count - 1) {
-					here       = parent.children[index]
-
-					if  here.count != 0 {
-						return here
-					}
-				} else {
-					return nil
-				}
-			}
+		if  let   here = hereZoneMaybe,
+			let  zones = rootZone?.allGroups,
+			let fIndex = zones.firstIndex(of: here),
+			let nIndex = fIndex.next(forward: down, max: zones.count - 1) {
+			return zones[nIndex]
 		}
 
-		return nil
+		return rootZone
 	}
 
 	func showNextList(down: Bool, moveCurrent: Bool = false) {
