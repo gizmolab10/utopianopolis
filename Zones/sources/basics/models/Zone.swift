@@ -2921,7 +2921,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  relation == .upon {
 			return validIndex(from: gListsGrowDown ? nil : 0)
 		} else {
-			return siblingIndex ?? 0 + relation.rawValue
+			return (siblingIndex ?? 0) + relation.rawValue
 		}
 	}
 

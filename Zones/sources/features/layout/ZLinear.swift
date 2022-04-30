@@ -382,7 +382,8 @@ extension ZDragging {
 	func linearDropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
 		var            totalGrabs = draggedZones
 		totalGrabs.appendUnique(contentsOf: gSelecting.currentMapGrabs)
-		if  let   (widget, point) = controller.linearNearestWidget(by: iGesture, locatedInBigMap: controller.isBigMap),
+		if  let           gesture = iGesture,
+			let   (widget, point) = controller.linearNearestWidget(by: gesture, locatedInBigMap: controller.isBigMap),
 			var       nearestZone = widget?.widgetZone, !totalGrabs.contains(nearestZone),
 			var     nearestWidget = widget {
 			let relationToNearest = controller.relationOf(point, to: nearestWidget)
@@ -402,12 +403,30 @@ extension ZDragging {
 			let        spawnCycle = nearestZone.spawnCycle
 			let       isForbidden = gIsEssayMode && nearestZone.isInBigMap
 			let            isNoop = spawnCycle || (sameIndex && nearestIsParent) || nearestIndex < 0 || isForbidden
-			let            isDone = iGesture?.isDone ?? false
+			var dropAt:      Int? = nearestIndex
+
+			if  nearestZone.isBookmark {
+				dropAt            = gListsGrowDown ? nil : 0
+			} else if nearestIsParent,
+					  draggedFromIndex  != nil,
+					  draggedFromIndex! <= nearestIndex {
+				dropAt!          -= 1
+			}
 
 			gMapController?.setNeedsDisplay() // draw drag line and dot
 
+//			print("\(dropAt ?? -1) \(relationToNearest) \(nearestZone)")
+//
+//			if  relationToNearest == .below, !isNoop {
+//				noop()
+//			}
+
 			if  !isNoop {
-				if  !isDone {
+				if  gesture.isDone {
+					dropOnto(nearestZone, at: dropAt, iGesture)
+
+					return true
+				} else {
 					dropRelation  = relationToNearest
 					dropIndices   = NSMutableIndexSet(index: nearestIndex)
 					dropWidget    = nearestWidget
@@ -415,24 +434,9 @@ extension ZDragging {
 					dragLine      = nearestWidget.createDragLine()
 					dropKind      = relationToNearest.lineCurve
 
-					print("\(dropKind!) \(widget!)")
-
 					if  nearestIndex > 0, neitherOnNorHere {
 						dropIndices?.add(nearestIndex - 1)
 					}
-				} else {
-					var dropAt: Int?       = nearestIndex
-					if  nearestZone.isBookmark {
-						dropAt             = gListsGrowDown ? nil : 0
-					} else if nearestIsParent,
-						draggedFromIndex  != nil,
-						draggedFromIndex! <= nearestIndex {
-						dropAt!           -= 1
-					}
-
-					dropOnto(nearestZone, at: dropAt, iGesture)
-
-					return true
 				}
 			}
 		}

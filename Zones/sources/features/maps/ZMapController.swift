@@ -388,8 +388,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
             } else if  y > maxY {
                 relation = .above
 			}
-
-//			print("\(relation) \(widget!)")
 		}
 
         return relation
