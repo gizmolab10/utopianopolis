@@ -415,12 +415,6 @@ extension ZDragging {
 
 			gMapController?.setNeedsDisplay() // draw drag line and dot
 
-//			print("\(dropAt ?? -1) \(relationToNearest) \(nearestZone)")
-//
-//			if  relationToNearest == .below, !isNoop {
-//				noop()
-//			}
-
 			if  !isNoop {
 				if  gesture.isDone {
 					dropOnto(nearestZone, at: dropAt, iGesture)

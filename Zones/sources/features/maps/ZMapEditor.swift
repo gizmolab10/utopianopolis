@@ -667,9 +667,9 @@ class ZMapEditor: ZBaseEditor {
 
 	func editNote(flags: ZEventFlags, useGrabbed: Bool = true) {
 		if !gIsEssayMode {
-			let             OPTION = flags.isOption
-			let            SPECIAL = flags.exactlySpecial
-			gCreateCombinedEssay   = !OPTION				             // default is multiple, OPTION drives it to single
+			let            OPTION  = flags.isOption
+			let           SPECIAL  = flags.exactlySpecial
+			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple, OPTION drives it to single
 
 			if  let grab = gSelecting.firstGrab {
 				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)

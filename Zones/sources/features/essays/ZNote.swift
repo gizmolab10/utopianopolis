@@ -80,7 +80,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func saveAsNote(_ attributedString: NSAttributedString?) {
-		if  let            trait  = maybeNoteTrait,
+		if  let            trait  = noteTrait,
 			let       attributed  = attributedString {
 			let            delta  = attributed.string.length - textRange.upperBound
 			autoDelete            = false

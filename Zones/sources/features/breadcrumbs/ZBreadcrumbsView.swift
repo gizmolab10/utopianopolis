@@ -131,7 +131,7 @@ class ZBreadcrumbsView : ZButtonsView {
 			if    zone == gHere, !gIsEssayMode, !COMMAND { return }
 
 			if  gIsEssayMode {
-				gEssayView?.exit()
+				gEssayView?.done()
 			}
 
 			func displayEssay(_ asEssay: Bool = true) {

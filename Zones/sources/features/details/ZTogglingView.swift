@@ -164,9 +164,9 @@ class ZTogglingView: ZView {
 			titleButton?.snp.removeConstraints()
 			titleButton?.snp.makeConstraints{ make in
 				if  hidden {
-					make.right.equalToSuperview()
+					make.right.equalToSuperview() .offset(-1.0)
 				} else if let v = upDownView {
-					make.right.equalTo(v)
+					make.right.equalTo(v.snp.left).offset(-1.0)
 				}
 			}
 		}

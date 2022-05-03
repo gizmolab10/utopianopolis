@@ -372,6 +372,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func grabSelectionHereDone() {
+		save()
+
 		if  let zone = selectedZone {
 			gHere = zone
 
@@ -482,14 +484,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		} else if  hasGrabbedNote {
 			switch key {
-			case "c":      grabbedZones.copyToPaste()
-			case "t":      swapWithParent()
-			case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
-			case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
-			case kEscape:  if     ANY { grabDone()                          } else { done() }
-			case kReturn:  if     ANY { grabDone() }
-			case kDelete:  deleteGrabbedOrSelected()
-			default:       return false
+				case "c":      grabbedZones.copyToPaste()
+				case "t":      swapWithParent()
+				case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
+				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
+				case kEscape:  save(); if ANY { grabDone()                      } else { done() }
+				case kReturn:  save(); if ANY { grabDone() }
+				case kDelete:  deleteGrabbedOrSelected()
+				default:       return false
 			}
 
 			return true
@@ -528,10 +530,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "a":      selectAll(nil)
 				case "n":      swapBetweenNoteAndEssay()
 				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
-				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) }
+				case "u":      if OPTION { gControllers.showEssay(forGuide: true) }
 				case "/":      gHelpController?.show(flags: flags)
 				case "]", "[": gFavorites.nextBookmark(down: key == "]", amongNotes: true); gRelayoutMaps()
-				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { grabDone() }
+				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
 				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
 				default:       return false
 			}
@@ -565,10 +567,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func pasteTextAndMatchStyle() -> Bool {
-		if  let clipboard = NSPasteboard.general.string(forType: .string) {
-			let  insertMe = NSMutableAttributedString(string: clipboard)
+		if  let  clipboard = NSPasteboard.general.string(forType: .string) {
+			let   insertMe = NSMutableAttributedString(string: clipboard)
+			var attributes = selectedTextAttributes
 
-			insertMe.addAttributes(selectedTextAttributes, range: NSMakeRange(0, clipboard.length))
+			if  let   back = attributes[.backgroundColor] as? ZColor, back == .selectedTextBackgroundColor {
+				attributes[.backgroundColor] = nil
+			}
+
+			if  let   fore = attributes[.foregroundColor] as? ZColor, fore == .selectedTextColor {
+				attributes[.foregroundColor] = nil
+			}
+
+			insertMe.addAttributes(attributes, range: NSMakeRange(0, clipboard.length))
 			insertText(insertMe, replacementRange: selectedRange())
 
 			return true
@@ -720,8 +731,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
 //				case .idMultiple: swapBetweenNoteAndEssay()
-				case .idForward:  save(); gFavorites.nextBookmark(down:  true, amongNotes: true); gRelayoutMaps()
-				case .idBack:     save(); gFavorites.nextBookmark(down: false, amongNotes: true); gRelayoutMaps()
+				case .idForward:  nextBookmark(down:  true)
+				case .idBack:     nextBookmark(down: false)
 				case .idSave:     save()
 				case .idPrint:    printView()
 				case .idHide:     grabDone()
@@ -730,6 +741,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				default:          break
 			}
 		}
+	}
+
+	func nextBookmark(down: Bool) {
+		save()
+		gFavorites.nextBookmark(down: down, amongNotes: true)
 	}
 
 	override func mouseDown(with event: ZEvent) {
@@ -1538,7 +1554,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let       range = selectedRange()
 		if  var    note = gCurrentEssay?.notes(in: range).first,
 			let    zone = note.zone {
-			let toEssay = zone.hasChildNotes != gCreateCombinedEssay
+			let toEssay = zone.hasChildNotes == gCreateCombinedEssay
 
 			if  toEssay, gEssayTitleMode == .sEmpty, note.essayText!.string.length > 0 {
 				note.updatedRangesFrom(textStorage)

@@ -38,7 +38,7 @@ class ZSmallMapRecords: ZRecords {
 			gFavorites.push()
 		}
 
-		let          zones = working
+		let          zones = amongNotes ? workingNotemarks : working
 		let          count = zones.count
 		if  count          > 1 {            // there is no next for count == 0 or 1
 			let   maxIndex = count - 1
