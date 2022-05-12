@@ -24,7 +24,8 @@ func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
 
 class ZSmallMapRecords: ZRecords {
 
-	var currentBookmark  : Zone?
+	var currentRecent    : Zone?
+	var currentFavorite  : Zone?
 	var working          : ZoneArray { return  gIsEssayMode ? workingNotemarks : workingBookmarks }
 	var workingGroups    : ZoneArray { return  rootZone?.allGroups ?? [] }
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
@@ -33,17 +34,19 @@ class ZSmallMapRecords: ZRecords {
 	// MARK: - cycle
 	// MARK: -
 
-	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false) {
-		if  currentBookmark == nil {
+	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, withinRecents: Bool = false) {
+		if  currentFavorite == nil {
 			gFavorites.push()
 		}
 
-		let          zones = amongNotes ? workingNotemarks : working
+		let        recents = gFavorites.recentsGroupZone.children
+		let       notNotes = withinRecents ? recents.count > 0 ? recents : working : working
+		let          zones = amongNotes ? workingNotemarks : notNotes
 		let          count = zones.count
 		if  count          > 1 {            // there is no next for count == 0 or 1
 			let   maxIndex = count - 1
 			var    toIndex = down ? 0 : maxIndex
-			if  let target = currentBookmark?.zoneLink {
+			if  let target = currentFavorite?.zoneLink {
 				for (index, bookmark) in zones.enumerated() {
 					if  let b = bookmark.zoneLink, b == target {
 						if         down, index < maxIndex {
@@ -71,8 +74,8 @@ class ZSmallMapRecords: ZRecords {
 
 	func moveCurrentTo(_ iZone: Zone) {
 		if  let parent = iZone.parentZone,
-			let      p = currentBookmark?.parentZone, p == parent,
-			let   from = currentBookmark?.siblingIndex,
+			let      p = currentFavorite?.parentZone, p == parent,
+			let   from = currentFavorite?.siblingIndex,
 			let     to = iZone.siblingIndex {
 			parent.moveChildIndex(from: from, to: to)
 		}
@@ -85,7 +88,7 @@ class ZSmallMapRecords: ZRecords {
 		}
 
 		if  let       tHere = iZone?.bookmarkTarget {
-			currentBookmark = iZone
+			currentFavorite = iZone
 
 			if  alterHere {
 				gDatabaseID          = tHere.databaseID
@@ -134,12 +137,12 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	func popAndUpdateCurrent() {
-		if  let       index = currentBookmark?.siblingIndex,
-			let    children = currentBookmark?.parentZone?.children,
+		if  let       index = currentFavorite?.siblingIndex,
+			let    children = currentFavorite?.parentZone?.children,
 			let        next = children.next(from: index, forward: false),
 			pop() {
-			currentBookmark = next
-			if  let    here = currentBookmark?.bookmarkTarget {
+			currentFavorite = next
+			if  let    here = currentFavorite?.bookmarkTarget {
 				gHere       = here
 
 				gHere.grab()
@@ -152,7 +155,7 @@ class ZSmallMapRecords: ZRecords {
 
 	func insertAsNext(_ zone: Zone) {
 		if  let           r = rootZone {
-			currentBookmark = zone
+			currentFavorite = zone
 			let      cIndex = r.children.firstIndex(of: zone) ?? 0
 			let       index = cIndex.next(forward: gListsGrowDown, max: r.count - 1)
 
@@ -223,11 +226,11 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 
-	@discardableResult func updateCurrentBookmark() -> Zone? {
+	@discardableResult func updateCurrentFavorite() -> Zone? {
 		if  let bookmark = computedCurrrentBookmark {
-			currentBookmark = bookmark
+			currentFavorite = bookmark
 
-			return currentBookmark
+			return currentFavorite
 		}
 
 		return nil
@@ -248,7 +251,7 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func swapBetweenBookmarkAndTarget(doNotGrab: Bool = true) -> Bool {
-		if  let cb = currentBookmark,
+		if  let cb = currentFavorite,
 			cb.isGrabbed {
 			cb.bookmarkTarget?.grab() // grab target in big map
 		} else if doNotGrab {
@@ -263,8 +266,6 @@ class ZSmallMapRecords: ZRecords {
 					if  bookmark.root == rootZone {
 						grab(bookmark)
 					} else {
-//						gSmallMapMode = bookmark.root?.recordName == kRecentsRootName ? .recent : .favorites
-
 						bookmark.grab()
 					}
 
@@ -281,19 +282,6 @@ class ZSmallMapRecords: ZRecords {
 		}
 
 		return true
-	}
-
-	@discardableResult func matchOrCreateBookmark(for zone: Zone, autoAdd: Bool) -> Zone {
-		if  zone.isBookmark, let root = rootZone, zone.root == root {
-			return zone
-		}
-
-		let          target = zone.bookmarkTarget ?? zone
-		if  let    bookmark = bookmarkTargeting(target) {
-			return bookmark
-		}
-
-		return gNewOrExistingBookmark(targeting: zone, addTo: autoAdd ? currentHere : nil)
 	}
 
 }

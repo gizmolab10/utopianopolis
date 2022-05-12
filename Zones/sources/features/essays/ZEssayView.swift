@@ -532,7 +532,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide: true) }
 				case "/":      gHelpController?.show(flags: flags)
-				case "]", "[": gFavorites.nextBookmark(down: key == "]", amongNotes: true); gRelayoutMaps()
+				case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
 				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
 				default:       return false

@@ -127,7 +127,6 @@ class ZRecords: NSObject {
     var            manifest : ZManifest?
     var    lostAndFoundZone : Zone?
 	var       favoritesZone : Zone?
-	var         recentsZone : Zone?
 	var         destroyZone : Zone?
     var           trashZone : Zone?
 	var            rootZone : Zone?
@@ -163,7 +162,6 @@ class ZRecords: NSObject {
 		if  let id = rootID {
 			switch id {
 				case .favoritesID: replaceRoot(at: &favoritesZone,    with: root)
-//				case .recentsID:   replaceRoot(at: &recentsZone,      with: root)
 				case .destroyID:   replaceRoot(at: &destroyZone,      with: root)
 				case .trashID:     replaceRoot(at: &trashZone,        with: root)
 				case .lostID:      replaceRoot(at: &lostAndFoundZone, with: root)
@@ -339,7 +337,6 @@ class ZRecords: NSObject {
 			case .dZones:      return zRecords(of:  kZoneType)
 			case .dLost:       return lostAndFoundZone?  .all
 			case .dFavorites:  return favoritesZone?     .all
-			case .dRecents:    return recentsZone?       .all
 			case .dDestroy:    return destroyZone?       .all
 			case .dTrash:      return trashZone?         .all
 			case .dProgeny:    return allProgeny
@@ -404,7 +401,6 @@ class ZRecords: NSObject {
 		closure(rootZone)
 		closure(trashZone)
 		closure(destroyZone)
-		closure(recentsZone)
 		closure(favoritesZone)
 		closure(lostAndFoundZone)
 	}

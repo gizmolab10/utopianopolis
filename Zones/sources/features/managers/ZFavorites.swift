@@ -67,6 +67,28 @@ class ZFavorites: ZSmallMapRecords {
 		return rootsGroup
 	}
 
+	var recentsGroupZone: Zone {
+		for zone in allProgeny {
+			if  zone.recordName == kRecentsName {
+				return zone
+			}
+		}
+
+		// /////////////////////////
+		// add missing root group //
+		// /////////////////////////
+
+		let          recentsGroup = Zone.uniqueZone(recordName: kRecentsName, in: .mineID)
+		recentsGroup    .zoneName = kRecentsName
+		recentsGroup.directAccess = .eReadOnly
+
+		recentsGroup.collapse()
+		recentsGroup.alterAttribute(.groupOwner, remove: false)
+		gFavoritesRoot?.addChildAndRespectOrder(recentsGroup)
+
+		return recentsGroup
+	}
+
 	func setup(_ onCompletion: IntClosure?) {
 		FOREGROUND { [self] in               // avoid error? mutating core data while enumerating
 			rootZone = rootZone ?? Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
@@ -111,7 +133,19 @@ class ZFavorites: ZSmallMapRecords {
 			return nil
 		}
 
-		return bookmarkToMove(is: gSelecting.currentMoveableMaybe) ?? bookmarkToMove(is: currentBookmark)
+		return bookmarkToMove(is: gSelecting.currentMoveableMaybe) ?? bookmarkToMove(is: currentFavorite)
+	}
+
+	func nextBookmark(down: Bool, flags: ZEventFlags) {
+		let COMMAND = flags.isCommand
+		let  OPTION = flags.isOption
+		let   SHIFT = flags.isShift
+
+		if  COMMAND {
+			showNextList(down: down, moveCurrent: OPTION)
+		} else {
+			nextBookmark(down: down, moveCurrent: OPTION, withinRecents: SHIFT)
+		}
 	}
 
 	func nextList(down: Bool) -> Zone? {
@@ -137,17 +171,34 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	override func push(_ zone: Zone? = gHere) {
-		if  let target = zone {
-			if  let parent = bookmarkTargeting(target)?.parentZone {
-				setHere(to: parent)
-			} else {
-				matchOrCreateBookmark(for: target, autoAdd: true)
+		if  let target         = zone {
+			var bookmark       = bookmarkTargeting(target)
+			if  bookmark      == nil {
+				bookmark       = matchOrCreateBookmark(for: target, addToRecents: false)
+			}
+
+			if  bookmark      != nil, !bookmark!     .isInRecentsGroup,
+				hereZoneMaybe != nil, !hereZoneMaybe!.isInRecentsGroup {
+				ZBookmarks.newOrExistingBookmark(targeting: target, addTo: recentsGroupZone)
 			}
 		}
 	}
 
+	@discardableResult func matchOrCreateBookmark(for zone: Zone, addToRecents: Bool) -> Zone {
+		if  zone.isBookmark, let root = rootZone, zone.root == root {
+			return zone
+		}
+
+		let          target = zone.bookmarkTarget ?? zone
+		if  let    bookmark = bookmarkTargeting(target) {
+			return bookmark
+		}
+
+		return ZBookmarks.newOrExistingBookmark(targeting: zone, addTo: addToRecents ? recentsGroupZone : nil)
+	}
+
 	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-		if  let    current = currentBookmark {
+		if  let    current = currentFavorite {
 			return current.focusThrough(atArrival)
 		}
 
@@ -180,8 +231,8 @@ class ZFavorites: ZSmallMapRecords {
     func updateCurrentFavorite(_ currentZone: Zone? = nil) {
         if  let        zone = currentZone ?? gHereMaybe,
 			let    bookmark = bookmarkTargeting(zone, orSpawnsIt: true),
-            let      target = bookmark.bookmarkTarget, (target == gHere || !(currentBookmark?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
-            currentBookmark = bookmark
+            let      target = bookmark.bookmarkTarget, (target == gHere || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
+            currentFavorite = bookmark
         }
     }
     
@@ -201,14 +252,14 @@ class ZFavorites: ZSmallMapRecords {
 		// call every time favorites MIGHT be altered //
 		// /////////////////////////////////////////////
 
-		if  let        bookmarks = rootZone?.allBookmarkProgeny {
-			let       rootsGroup = rootsGroupZone
-			var   hasDatabaseIDs = [ZDatabaseID] ()
-			var         discards = IndexPath()
-			var      testedSoFar = ZoneArray ()
-			var   missingDestroy = true
-			var     missingTrash = true
-			var      missingLost = true
+		if  let      bookmarks = rootZone?.allBookmarkProgeny {
+			let     rootsGroup = rootsGroupZone
+			var hasDatabaseIDs = [ZDatabaseID] ()
+			var       discards = IndexPath()
+			var    testedSoFar = ZoneArray ()
+			var missingDestroy = true
+			var   missingTrash = true
+			var    missingLost = true
 
 			// //////////////////////////////////
 			// detect ids which have bookmarks //

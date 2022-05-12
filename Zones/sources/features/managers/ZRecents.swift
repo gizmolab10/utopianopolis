@@ -54,7 +54,7 @@ class ZRecents : ZSmallMapRecords {
 				matchOrCreateBookmark(for: pushMe, autoAdd: true)
 			}
 
-			updateCurrentBookmark()
+			updateCurrentFavorite()
 		}
 	}
 
@@ -76,7 +76,7 @@ class ZRecents : ZSmallMapRecords {
 	// MARK: -
 
 	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-		if  let    current = currentBookmark {
+		if  let    current = currentFavorite {
 			return current.focusThrough(atArrival)
 		}
 

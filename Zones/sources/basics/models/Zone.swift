@@ -89,7 +89,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
-	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentBookmark }
+	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                  dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var               canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
@@ -114,6 +114,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                      isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                    isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
 	var                 isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
+	var                 isInRecentsGroup :               Bool  { return spawnedBy(gFavorites.recentsGroupZone) }
 	var                   isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                   spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                       spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
@@ -358,7 +359,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				revealParentAndSiblings()
 			}
 
-			gNewOrExistingBookmark(targeting: self, addTo: parentZone).grab()
+			ZBookmarks.newOrExistingBookmark(targeting: self, addTo: parentZone).grab()
 			gRelayoutMaps()
 		}
 	}
@@ -2072,7 +2073,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.expand()
 				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKind) in
-					gFavorites.updateCurrentBookmark()
+					gFavorites.updateCurrentFavorite()
 					atArrival()
 				}
 
@@ -2115,7 +2116,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var there: Zone?
 
 			if  isInFavorites {
-				gFavorites.currentBookmark = self
+				gFavorites.currentFavorite = self
 			}
 
 			if  let t = target, t.spawnedBy(gHereMaybe) {
@@ -2428,7 +2429,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					var bookmark = grab
 
 					if  toFavorites && !bookmark.isInFavorites && !bookmark.isBookmark && !bookmark.isInTrash && !STAYHERE {
-						bookmark = gFavorites.matchOrCreateBookmark(for: bookmark, autoAdd: false)
+						bookmark = gFavorites.matchOrCreateBookmark(for: bookmark, addToRecents: false)
 					} else if bookmark.databaseID != into.databaseID {    // being moved to the other db
 						if  bookmark.parentZone == nil || !bookmark.parentZone!.children.contains(bookmark) || !COPY {
 							bookmark.needDestroy()                        // is not a child within its parent and should be tossed

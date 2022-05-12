@@ -67,7 +67,7 @@ class ZFocusing : NSObject {
 			}
 		} else if zone == gHere {       // state 2
 			if !gFavorites.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
-				gFavorites.matchOrCreateBookmark(for: zone, autoAdd: true)
+				gFavorites.matchOrCreateBookmark(for: zone, addToRecents: true)
 			}
 
 			atArrival()

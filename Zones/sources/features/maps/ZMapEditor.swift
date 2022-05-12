@@ -620,21 +620,11 @@ class ZMapEditor: ZBaseEditor {
     }
 
 	func nextBookmark(down: Bool, flags: ZEventFlags) {
-		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
-		let   SHIFT = flags.isShift
-
-		if (SHIFT || gHere.isInAGroup), gSelecting.currentMoveable.cycleToNextInGroup(down) {
-			return
+		if !flags.exactlySplayed ||
+		   !gSelecting.currentMoveable.cycleToNextInGroup(down) {
+			gFavorites.nextBookmark(down: down, flags: flags)
+			gRelayoutMaps()
 		}
-
-		if  COMMAND {
-			gFavorites    .showNextList(down: down, moveCurrent: OPTION)
-		} else {
-			gFavorites.nextBookmark(down: down, moveCurrent: OPTION)
-		}
-
-		gRelayoutMaps()
 	}
 
 	func debugAnalyze() {
@@ -841,7 +831,7 @@ class ZMapEditor: ZBaseEditor {
 							if  p.isInFavorites {
 								gFavorites.updateAllFavorites()
 							} else if c == 0 {
-								gNewOrExistingBookmark(targeting: gHere, addTo: gFavoritesHere)  // assure at least one bookmark in recents (targeting here)
+								ZBookmarks.newOrExistingBookmark(targeting: gHere, addTo: gFavoritesHere)  // assure at least one bookmark in recents (targeting here)
 
 								if  p.isInBigMap {
 									gHere.grab()                                               // as though user clicked on background

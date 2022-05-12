@@ -181,7 +181,6 @@ class ZCloud: ZRecords {
 
                 switch rootID {
 				case .favoritesID: if favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesRootName }
-//				case .recentsID:   if recentsZone      != nil || !isMine { recurseNext(); return } else { name = kRecentsRootName }
                 case .rootID:      if rootZone         != nil            { recurseNext(); return } else { name = kFirstIdeaTitle }
                 case .lostID:      if lostAndFoundZone != nil            { recurseNext(); return }
                 case .trashID:     if trashZone        != nil            { recurseNext(); return }

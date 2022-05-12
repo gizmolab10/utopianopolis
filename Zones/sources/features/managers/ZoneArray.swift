@@ -693,7 +693,7 @@ extension ZoneArray {
 				child.orphan()                          // move from current parent
 				groupOwner.addChildNoDuplicate(child)   // into groupOwner
 			} else {
-				gNewOrExistingBookmark(targeting: child, addTo: groupOwner)
+				ZBookmarks.newOrExistingBookmark(targeting: child, addTo: groupOwner)
 			}
 		}
 

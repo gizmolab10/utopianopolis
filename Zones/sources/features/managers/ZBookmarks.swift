@@ -16,51 +16,55 @@ import Foundation
 
 let gBookmarks = ZBookmarks()
 
-// MARK: - designated bookmark creator
-// MARK: -
-
-@discardableResult func gNewOrExistingBookmark(targeting target: Zone, addTo parent: Zone?) -> Zone {
-	if  let    match = parent?.children.intersection(target.bookmarksTargetingSelf), match.count > 0 {
-		return match[0]  // s bookmark for the target already exists, do nothing
-	}
-
-	if  target.isBookmark, target.parentZone == parent, parent != nil {
-		return target    // it already exists, do nothing
-	}
-
-	var bookmark: Zone
-
-	if  target.isBookmark {
-		bookmark = target.deepCopy(dbID: .mineID)                               // zone  is a bookmark, pass a deep copy
-	} else {
-		bookmark = Zone.uniqueZoneNamed(target.zoneName, databaseID: .mineID) // zone not a bookmark, bookmark it
-		bookmark.crossLink = target
-	}
-
-	if  let p = parent {
-		p.addChildNoDuplicate(bookmark, at: target.siblingIndex)
-	}
-
-	gBookmarks.addToReverseLookup(bookmark)
-
-	return bookmark
-}
-
 class ZBookmarks: NSObject {
 
-    var reverseLookup = [ZDatabaseID : [String : ZoneArray]] ()
+	var reverseLookup = [ZDatabaseID : [String : ZoneArray]] ()
 
-    var allBookmarks: ZoneArray {
-        var bookmarks = ZoneArray ()
+	var allBookmarks: ZoneArray {
+		var bookmarks = ZoneArray ()
 
-        for dict in reverseLookup.values {
-            for zones in dict.values {
-                bookmarks += zones
-            }
-        }
+		for dict in reverseLookup.values {
+			for zones in dict.values {
+				bookmarks += zones
+			}
+		}
 
-        return bookmarks
-    }
+		return bookmarks
+	}
+
+	// MARK: - designated bookmark creator
+	// MARK: -
+
+	@discardableResult static func newBookmark(targeting target: Zone) -> Zone {
+		var bookmark: Zone
+
+		if  target.isBookmark {
+			bookmark = target.deepCopy(dbID: .mineID)                               // zone  is a bookmark, pass a deep copy
+		} else {
+			bookmark = Zone.uniqueZoneNamed(target.zoneName, databaseID: .mineID) // zone not a bookmark, bookmark it
+			bookmark.crossLink = target
+		}
+
+		gBookmarks.addToReverseLookup(bookmark)
+
+		return bookmark
+	}
+
+	@discardableResult static func newOrExistingBookmark(targeting target: Zone, addTo parent: Zone?) -> Zone {
+		if  let    match = parent?.children.intersection(target.bookmarksTargetingSelf), match.count > 0 {
+			return match[0]  // bookmark for the target already exists, do nothing
+		}
+
+		if  target.isBookmark, target.parentZone == parent, parent != nil {
+			return target    // it already exists, do nothing
+		}
+
+		let bookmark = newBookmark(targeting: target)
+
+		parent?.addChildNoDuplicate(bookmark, at: target.siblingIndex)
+
+		return bookmark
+	}
 
 	// MARK: - forget
 	// MARK: -

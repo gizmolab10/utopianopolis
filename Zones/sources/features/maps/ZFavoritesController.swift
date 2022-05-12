@@ -53,7 +53,7 @@ class ZFavoritesController: ZMapController {
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gSmallMapIsVisible {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()
-			gFavorites.updateCurrentBookmark()
+			gFavorites.updateCurrentFavorite()
 			super.handleSignal(iSignalObject, kind: kind)
 		}
 	}
