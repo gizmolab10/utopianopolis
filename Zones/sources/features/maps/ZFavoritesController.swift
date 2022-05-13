@@ -12,13 +12,13 @@ import Cocoa
 import UIKit
 #endif
 
-var gFavoritesController : ZFavoritesController? { return gControllers.controllerForID(.idSmallMap) as? ZFavoritesController }
+var gFavoritesController : ZFavoritesController? { return gControllers.controllerForID(.idFavorites) as? ZFavoritesController }
 
 class ZFavoritesController: ZMapController {
 
 	override var       hereZone : Zone?          { return gFavoritesHereMaybe }
 	override var     widgetType : ZWidgetType    { return .tFavorite }
-	override var   controllerID : ZControllerID  { return .idSmallMap }
+	override var   controllerID : ZControllerID  { return .idFavorites }
 	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override var canDrawWidgets : Bool           { return gSmallMapIsVisible }
 
@@ -53,7 +53,7 @@ class ZFavoritesController: ZMapController {
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gSmallMapIsVisible {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()
-			gFavorites.updateCurrentFavorite()
+			gFavorites.updateCurrentBookmark()
 			super.handleSignal(iSignalObject, kind: kind)
 		}
 	}

@@ -134,7 +134,7 @@ class ZTogglingView: ZView {
 		}
 	}
 
-	func updateView() {
+	func updateView() { // gSignal for .sDetails goes here
 		updateColors()
 		updateFavoritesButtons()
 		updateSpinner()

@@ -31,8 +31,8 @@ class ZGenericController: ZController, ZGeneric {
 			 .idMain:    return [.sResize, .spStartupStatus]
 		case .idActions: return [.sResize, .sSearch, .sFound]
 		case .idPreferences,
-			 .idSmallMap,
-			 .idBigMap,
+			 .idFavorites,
+			 .idMap,
 			 .idCrumbs:  return [.sData]             // ignore the signal from the end of process next batch
 		default: break
 		}
@@ -44,8 +44,8 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 			case .idHelpEssayIntroduction, .idHelpEssayGraphicals,
 					.idHelpDots:   return [.sData, .sDatum, .sAppearance, .spRelayout, .spMain]
-			case .idBigMap:        return [.sData, .sDatum, .sAppearance, .spRelayout, .sResize,            .sLaunchDone, .spBigMap]
-			case .idSmallMap:      return [.sData, .sDatum, .sAppearance, .spRelayout, .sResize, .sDetails, .sLaunchDone, .spSmallMap]
+			case .idMap:           return [.sData, .sDatum, .sAppearance, .spRelayout, .sResize,            .sLaunchDone, .spMap]
+			case .idFavorites:     return [.sData, .sDatum, .sAppearance, .spRelayout, .sResize, .sDetails, .sLaunchDone, .spFavorites]
 			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences,        .sDetails]
 			case .idNote:          return [.sEssay,         .sAppearance]             // ignore the signal from the end of process next batch
 			case .idSearchResults: return [.sFound]

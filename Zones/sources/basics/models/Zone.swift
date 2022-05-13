@@ -89,6 +89,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
+	var                  isCurrentRecent :               Bool  { return self == gFavorites.currentRecent }
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                  dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
@@ -114,7 +115,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                      isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                    isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
 	var                 isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
-	var                 isInRecentsGroup :               Bool  { return spawnedBy(gFavorites.recentsGroupZone) }
+	var                isInFavoritesHere :               Bool  { return spawnedByOrEquals(gFavorites.currentHere) }
+	var                 isInRecentsGroup :               Bool  { return spawnedByOrEquals(gFavorites.recentsGroupZone) }
 	var                   isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                   spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                       spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
@@ -1467,7 +1469,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if let next = gListsGrowDown ? children.last : children.first {
 			gFavorites.setHere(to: self)
 			next.grab()
-			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+			gSignal([.spCrumbs, .spDataDetails, .spFavorites, .sDetails])
 		}
 	}
 
@@ -1503,7 +1505,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				p.grab()
-				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+				gSignal([.spCrumbs, .spDataDetails, .spFavorites, .sDetails])
 			}
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
@@ -2073,7 +2075,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.expand()
 				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKind) in
-					gFavorites.updateCurrentFavorite()
+					gFavorites.updateCurrentBookmark()
 					atArrival()
 				}
 
@@ -2117,9 +2119,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  isInFavorites {
 				gFavorites.currentFavorite = self
+			} else if isInRecentsGroup {
+				gFavorites.currentRecent   = self
 			}
 
-			if  let t = target, t.spawnedBy(gHereMaybe) {
+			if  let t = target, t.spawnedByOrEquals(gHereMaybe) {
 				if !t.isGrabbed {
 					t.asssureIsVisible()
 					t.grab()
@@ -2268,7 +2272,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gSignal([.spSmallMap, .spRelayout])
+				gSignal([.spFavorites, .spRelayout])
 			}
 		}
 	}
@@ -2322,7 +2326,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .spBigMap])
+			gSignal([.spCrumbs, .spDataDetails, .spFavorites, .spMap])
 		}
 	}
 
@@ -2543,6 +2547,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	func spawnedByOrEquals(_ iZone: Zone?) -> Bool { return self == iZone || spawnedBy(iZone) }
 	func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
 	func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
@@ -3491,7 +3496,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showAccess     = hasAccessDecoration
 		p.hasTargetNote  = t?.hasNote ?? false
 		p.isGroupOwner   = g == self || g == t
-		p.showSideDot    = isCurrentFavorite
+		p.showSideDot    = isCurrentFavorite || isCurrentRecent
 		p.isDragged      = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil
 		p.verticleOffset = offsetFromMiddle / (Double(gHorizontalGap) - 27.0) * 4.0
 		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount

@@ -268,12 +268,6 @@ class ZSelecting: NSObject {
         gFavorites.updateFavoritesAndRedraw(needsRedraw: needsRedraw)
     }
 
-	func maybeClearBrowsingLevel() {
-		if  currentMapGrabs.count == 0 {
-			gCurrentBrowseLevel = nil
-		}
-	}
-
 	func respectOrder(for zones: ZoneArray) -> ZoneArray {
 		return zones.sorted { (a, b) -> Bool in
 			return a.order < b.order || a.level < b.level // compare levels from multiple parents
@@ -311,7 +305,6 @@ class ZSelecting: NSObject {
     func ungrab(_ iZone: Zone?) {
         if let zone = iZone, let index = currentMapGrabs.firstIndex(of: zone) {
 			currentMapGrabs.remove(at: index)
-            maybeClearBrowsingLevel()
 			zone.updateToolTips()
         }
     }
@@ -322,12 +315,12 @@ class ZSelecting: NSObject {
 
 		for zone in all {
 			if !more.contains(zone) {
-				zone.ungrab()
+				ungrab(zone)
 			}
 		}
 
 		if  more.count > 0 {
-			hasNewGrab = more[0]
+			updateCousinList(for: more[0])
 		}
 
 		for zone in more {
@@ -357,10 +350,10 @@ class ZSelecting: NSObject {
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
 		if  let zones = iZones {
 			ungrabAll(retaining: zones)
-			gSignal([.spCrumbs, .spPreferences])                // so color wells and breadcrumbs are updated
+			gSignal([.spCrumbs, .sDetails, .spFavorites, .spPreferences])                // so color wells and breadcrumbs are updated
 
             if  updateBrowsingLevel,
-                let 		  level = iZones?.rootMost?.level {
+                let 		  level = zones.rootMost?.level {
                 gCurrentBrowseLevel = level
             }
         }

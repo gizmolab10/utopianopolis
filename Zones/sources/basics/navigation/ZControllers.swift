@@ -18,19 +18,19 @@ enum ZControllerID: Int {
 	case idPreferences
 	case idDebugAngles
 	case idStartHere
-    case idSmallMap
+    case idFavorites
 	case idHelpDots
 	case idControls
 	case idStartup
     case idDetails
     case idActions   // iPhone
-	case idBigMap
     case idSearch
 	case idCrumbs
 	case idDebug
 	case idLink
 	case idNote
 	case idMain
+	case idMap
 }
 
 enum ZSignalKind: Int {
@@ -52,9 +52,9 @@ enum ZSignalKind: Int {
 	case spMain
 	case spDebug
 	case spCrumbs
-	case spBigMap         // only relayout big map
-	case spSmallMap       // only relayout small map
+	case spMap            // only relayout main map
 	case spRelayout       // only relayout both maps
+	case spFavorites      // only relayout favorites map
 	case spDataDetails    // only update the data view in details
 	case spPreferences
 	case spSubscription
@@ -97,7 +97,7 @@ class ZControllers: NSObject {
 			gSignal([.spRelayout])
 		}
 
-		gSignal([.sSwap, .spCrumbs, .spSmallMap])
+		gSignal([.sSwap, .spCrumbs, .spFavorites])
 
 		closure?()
 	}
@@ -126,9 +126,9 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idSmallMap,
+				case .idFavorites,
 					 .idDetails,
-					 .idBigMap: return kClearColor      // so rubberband is visible on both map and favorites
+					 .idMap: return kClearColor      // so rubberband is visible on both map and favorites
 				case .idNote:   return .white           // override dark mode, otherwise essay view looks like crap
 				default:        return gBackgroundColor // respects dark mode
 			}
@@ -165,16 +165,16 @@ class ZControllers: NSObject {
                     }
                     
 					switch (regarding, cid) {  // these non-default cases send a signal only to the one corresponding controller
+						case (.spMap,          .idMap):          closure()
 						case (.spMain,         .idMain):         closure()
 						case (.spDebug,        .idDebug):        closure()
 						case (.spCrumbs,       .idCrumbs):       closure()
-						case (.spBigMap,       .idBigMap):       closure()
-						case (.spSmallMap,     .idSmallMap):     closure()
+						case (.spFavorites,    .idFavorites):    closure()
 						case (.spDataDetails,  .idDataDetails):  closure()
 						case (.spPreferences,  .idPreferences):  closure()
 						case (.spSubscription, .idSubscription): closure()
 						default:
-							let     mapCIDs : [ZControllerID] = [.idBigMap,  .idSmallMap]
+							let     mapCIDs : [ZControllerID] = [.idMap,  .idFavorites]
 							let startupCIDs : [ZControllerID] = [.idStartup, .idHelpDots]
 
 							switch regarding {

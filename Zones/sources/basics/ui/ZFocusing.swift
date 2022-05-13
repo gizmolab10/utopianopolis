@@ -54,7 +54,7 @@ class ZFocusing : NSObject {
 		}
 
 		let finishAndGrabHere = {
-			gSignal([.spSmallMap])
+			gSignal([.spFavorites])
 			gHere.grab()               // NOTE: changes work mode
 			atArrival()
 		}
@@ -71,7 +71,7 @@ class ZFocusing : NSObject {
 			}
 
 			atArrival()
-		} else if zone.isInFavorites {   // state 3
+		} else if zone.isInFavorites {  // state 3
 			finishAndGrabHere()
 		} else if NOBOOKMARK {          // state 4
 			gFavorites.refocus {

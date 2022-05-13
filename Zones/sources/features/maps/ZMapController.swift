@@ -14,7 +14,7 @@ import SnapKit
     import UIKit
 #endif
 
-var gMapController    : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
+var gMapController    : ZMapController? { return gControllers.controllerForID(.idMap) as? ZMapController }
 var gMapView          : ZMapView?       { return gMapController?.view as? ZMapView }
 var gLinesAndDotsView : ZMapView?       { return gMapView?.decorationsView }
 
@@ -40,11 +40,11 @@ enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	var          priorScrollLocation = CGPoint.zero
-	override  var       controllerID : ZControllerID  { return .idBigMap }
+	override  var       controllerID : ZControllerID  { return .idMap }
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	var               canDrawWidgets : Bool           { return gIsMapOrEditIdeaMode || !gShowsSearchResults }
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
-	var                     isBigMap : Bool           { return controllerID == .idBigMap }
+	var                     isBigMap : Bool           { return controllerID == .idMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
 	var                         mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
 	var                   widgetType : ZWidgetType    { return .tBigMap }
@@ -132,7 +132,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gToggleDatabaseID()
 		gHere.grab()
 		gHere.expand()
-		gFavorites.updateCurrentFavorite()
+		gFavorites.updateCurrentBookmark()
 	}
 
 	func recenter(_ SPECIAL: Bool = false) {

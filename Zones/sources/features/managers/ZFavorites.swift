@@ -172,7 +172,8 @@ class ZFavorites: ZSmallMapRecords {
 
 	override func push(_ zone: Zone? = gHere) {
 		if  let target         = zone {
-			var bookmark       = bookmarkTargeting(target)
+			let bookmarks      = bookmarksTargeting(target)
+			var bookmark       = bookmarks == nil || bookmarks!.count == 0 ? nil : bookmarks![0]
 			if  bookmark      == nil {
 				bookmark       = matchOrCreateBookmark(for: target, addToRecents: false)
 			}
@@ -180,6 +181,8 @@ class ZFavorites: ZSmallMapRecords {
 			if  bookmark      != nil, !bookmark!     .isInRecentsGroup,
 				hereZoneMaybe != nil, !hereZoneMaybe!.isInRecentsGroup {
 				ZBookmarks.newOrExistingBookmark(targeting: target, addTo: recentsGroupZone)
+
+				currentRecent  = bookmark
 			}
 		}
 	}
@@ -189,9 +192,9 @@ class ZFavorites: ZSmallMapRecords {
 			return zone
 		}
 
-		let          target = zone.bookmarkTarget ?? zone
-		if  let    bookmark = bookmarkTargeting(target) {
-			return bookmark
+		let           target = zone.bookmarkTarget ?? zone
+		if  let    bookmarks = bookmarksTargeting(target), bookmarks.count > 0 {
+			return bookmarks[0]
 		}
 
 		return ZBookmarks.newOrExistingBookmark(targeting: zone, addTo: addToRecents ? recentsGroupZone : nil)
@@ -227,14 +230,6 @@ class ZFavorites: ZSmallMapRecords {
 
 	// MARK: - update
 	// MARK: -
-
-    func updateCurrentFavorite(_ currentZone: Zone? = nil) {
-        if  let        zone = currentZone ?? gHereMaybe,
-			let    bookmark = bookmarkTargeting(zone, orSpawnsIt: true),
-            let      target = bookmark.bookmarkTarget, (target == gHere || !(currentFavorite?.bookmarkTarget?.spawnedBy(gHere) ?? false)) {
-            currentFavorite = bookmark
-        }
-    }
     
     func updateFavoritesAndRedraw(needsRedraw: Bool = true, _ onCompletion: Closure? = nil) {
         if  updateAllFavorites() || needsRedraw {

@@ -231,7 +231,7 @@ extension ZoneArray {
 				b.order = o
 			}
 
-			gSelecting.hasNewGrab = gSelecting.currentMoveable
+			gSelecting.updateCousinList(for: gSelecting.currentMoveable)
 		}
 	}
 
@@ -345,7 +345,7 @@ extension ZoneArray {
 				gRelayoutMaps()
 			}
 
-			gSelecting.hasNewGrab = gSelecting.currentMoveable
+			gSelecting.updateCousinList(for: gSelecting.currentMoveable)
 		}
 	}
 
@@ -626,7 +626,8 @@ extension ZoneArray {
 		}
 	}
 
-	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool) -> Zone? {
+	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool) -> ZoneArray {
+		var intersection = ZoneArray()
 		for target in iTargets {
 			if  let                dbid = target.dbid {
 				for zone in self {
@@ -634,14 +635,14 @@ extension ZoneArray {
 						dbid           == zoneTarget.dbid {
 
 						if  zoneTarget == target || (orSpawnsIt && target.spawnedBy(zoneTarget)) {
-							return zone
+							intersection.append(zone)
 						}
 					}
 				}
 			}
 		}
 
-		return nil
+		return intersection
 	}
 
 	func recursivelyRevealSiblings(untilReaching iAncestor: Zone, onCompletion: ZoneClosure?) {

@@ -511,7 +511,7 @@ class ZMapEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-			gSignal([.spMain, .sDetails, .spBigMap])
+			gSignal([.spMain, .sDetails, .spMap])
         } else if COMMA {
 			gDetailsController?.displayPreferences()
         } else if gIsEditIdeaMode {
@@ -995,7 +995,7 @@ class ZMapEditor: ZBaseEditor {
 				}
 			}
 		} else if let    parent = rootMostParent {
-			let     targetZones = doCousinJump ? gSelecting.cousinList : parent.children
+			let     targetZones = doCousinJump ? gSelecting.cousinList : parent.children // FUBAR : cousin list is empty
 			let     targetCount = targetZones.count
 			let       targetMax = targetCount - 1
 

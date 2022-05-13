@@ -1527,7 +1527,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 								target .asssureIsVisible()		   // for later, when user exits essay mode
 								common?.asssureIsVisible()
 								resetCurrentEssay(target.note)     // change current note to that of target
-								gSignal([.spSmallMap, .spCrumbs])
+								gSignal([.spFavorites, .spCrumbs])
 							}
 						}
 
@@ -1589,8 +1589,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			let      note = notemark.bookmarkTarget?.note {
 			gCurrentEssay = note
 
-			gFavorites.setAsCurrent(notemark)
-			gSignal([.spSmallMap, .spCrumbs])
+			gFavorites.setAsCurrent(notemark, makeVisible: true)
+			gSignal([.spFavorites, .spCrumbs])
 
 			updateTextStorage()
 		}
