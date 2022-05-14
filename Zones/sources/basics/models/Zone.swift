@@ -71,7 +71,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
 	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
-	var                        textColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kDefaultIdeaColor }
+	var                      widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kDefaultIdeaColor }
 	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
@@ -524,6 +524,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return d
+	}
+
+	var textColor: ZColor? {
+		if  gDragging.isDragged(self) {
+			return gActiveColor
+		} else if let color = widgetColor {
+			if  widget?.controller?.mapLayoutMode == .circularMode {
+				return color.invertedBlackAndWhite
+			} else {
+				return color
+			}
+		}
+
+		return nil
+	}
+
+	var highlightColor: ZColor? {
+		return gDragging.isDragged(self) ? gActiveColor : (widget?.controller?.mapLayoutMode == .circularMode) ? color : color?.withAlphaComponent(0.3)
 	}
 
 	override var color: ZColor? {

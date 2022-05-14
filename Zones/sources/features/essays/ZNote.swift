@@ -149,7 +149,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let offset = NSNumber(floatLiteral: Double(kDefaultEssayTitleFontSize) / 7.0)
 			result     = [.font : kEssayTitleFont, .paragraphStyle : paragraphStyle, .baselineOffset : offset]
 
-			if  let  c = z.textColor {
+			if  let  c = z.widgetColor {
 				result?[.foregroundColor] = c
 			}
 		}
@@ -161,7 +161,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		var result = titleAttributes
 		let light  = CGFloat((indentCount > 1) ? 4.0 : 20.0)
 		if  let  z = zone,
-			let  c = z.textColor?.lighter(by: light) {
+			let  c = z.widgetColor?.lighter(by: light) {
 			result?[.foregroundColor] = c
 		}
 

@@ -130,6 +130,18 @@ extension ZoneWidget {
 		absoluteHitRect = rect
 	}
 
+	// MARK: - draw
+	// MARK: -
+
+	func drawInterior(_ color: ZColor) {
+		let       path = selectionHighlightPath
+		path.lineWidth = CGFloat(gLineThickness * 3.5)
+		path .flatness = kDefaultFlatness
+
+		color.setFill()
+		path.fill()
+	}
+
 	// MARK: - traverse
 	// MARK: -
 	

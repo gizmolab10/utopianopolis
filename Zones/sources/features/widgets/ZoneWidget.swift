@@ -431,7 +431,7 @@ class ZoneWidget: ZPseudoView {
 			return
 		}
 
-		let      color = gDragging.isDragged(widgetZone) ? gActiveColor : widgetZone?.color?.withAlphaComponent(0.30)
+		let      color = widgetZone?.highlightColor
 		let       path = selectionHighlightPath
 		path.lineWidth = CGFloat(gLineThickness * 3.5)
 		path .flatness = kDefaultFlatness
@@ -478,6 +478,11 @@ class ZoneWidget: ZPseudoView {
 						if  style != .sNone {
 							drawSelectionHighlight(style)
 						}
+					}
+
+					if  controller?.mapLayoutMode == .circularMode,
+						let color = zone.widgetColor?.withAlphaComponent(0.30) {
+						drawInterior(color)
 					}
 
 //					debugDraw(isHovering || tHovering)

@@ -315,7 +315,14 @@ extension ZColor {
         
         return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
     }
-    
+
+	var invertedBlackAndWhite: ZColor {
+		let b = brightnessComponent < 0.5 ? 1.0 : 0.0
+		let s = saturationComponent < 0.5 ? 1.0 : 0.0
+
+		return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
+	}
+
 }
 
 extension CGRect {

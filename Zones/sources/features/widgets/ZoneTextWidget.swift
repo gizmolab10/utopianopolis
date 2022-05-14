@@ -50,8 +50,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     func updateTextColor() {
 		if  gDragging.isDragged(widgetZone) {
 			textColor = gActiveColor
-		} else if let   zone = widgetZone {
-			textColor = zone.textColor
+		} else if let color = widgetZone?.textColor {
+			textColor = color
         }
     }
 
