@@ -490,6 +490,21 @@ var gEmailTypesSent: String {
     }
 }
 
+var gMapRotationAngle : CGFloat {
+	get {
+		let  angle = CGFloat.zero
+		let string = getPreferenceString(for: kMapRotationAngle) { return angle.stringTo(precision: 2) }
+
+		return string?.floatValue ?? angle
+	}
+
+	set {
+		let string = newValue.description
+
+		setPreferencesString(string, for: kMapRotationAngle)
+	}
+}
+
 var gScrollOffset: CGPoint {
 	get {
 		let  point = CGPoint.zero

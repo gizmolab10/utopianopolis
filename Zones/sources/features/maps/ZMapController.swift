@@ -208,25 +208,35 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		}
     }
 
+	var mapOrigin: CGPoint? {
+		if  let  mapSize = mapView?.frame.size.dividedInHalf {
+			let   bigMap = gScrollOffset.offsetBy(-gDotHeight, 22.0)
+			let smallMap = CGPoint(x: -12.0, y: -6.0)
+			let exemplar = CGPoint(x: .zero, y: -6.0)
+			var   offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
+			if  !kIsPhone {
+				offset.y = -offset.y    // default values are in iphone coordinates whereas y coordination is opposite in non-iphone devices
+			}
+
+			return (isBigMap ? CGPoint(mapSize) : .zero) + offset
+		}
+
+		return nil
+	}
+
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
 		gWidgets.removeTooltipsFromAllWidgets(for: self)
 		gRemoveAllTracking()
 
-		if  let     widget = hereWidget,
-			let    mapSize = mapView?.frame.size.dividedInHalf {
-			let     bigMap = gScrollOffset.offsetBy(-gDotHeight, 22.0)
-			let   smallMap = CGPoint(x: -12.0, y: -6.0)
-			let   exemplar = CGPoint(x: .zero, y: -6.0)
-			var     offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
-			if  !kIsPhone {
-				offset.y = -offset.y    // default values are in iphone coordinates whereas y coordination is opposite in non-iphone devices
+		if  let   widget = hereWidget,
+			var   origin = mapOrigin {
+			let     size = widget.drawnSize.dividedInHalf
+			if  isBigMap {
+				origin   = origin - size
 			}
-			let widgetSize = widget.drawnSize.dividedInHalf
-			let  mapOrigin = CGPoint(mapSize - widgetSize)
-			let     origin = (isBigMap ? mapOrigin : .zero) + offset
-			widget  .frame = CGRect(origin: origin, size: widgetSize)
+			widget.frame = CGRect(origin: origin, size: size)
 
 			widget.grandRelayout()
 			detectHover()

@@ -11,7 +11,7 @@ import CloudKit
 
 #if os(OSX)
 
-    import Cocoa
+import Cocoa
 
 let kIsDesktop                   = true
 let kIsPhone                     = false
@@ -19,7 +19,7 @@ let kUnselectBrightness: CGFloat = 0.93
 
 #elseif os(iOS)
 
-    import UIKit
+import UIKit
 
 let kIsDesktop                   = false
 let kIsPhone                     = UIDevice.current.userInterfaceIdiom == .phone
@@ -214,10 +214,11 @@ let           kHereRecordNames = "here record ids"
 let           kCurrentFavorite = "current favorite"
 let           kClipBreadcrumbs = "clip breadcrumbs"
 let           kConfinementMode = "confinement mode"
-let          kShowExplanations = "show explanations"
-let          kShowMainControls = "show main controls"
 let          kOrignalImageName = "original image name"
+let          kMapRotationAngle = "map rotation angle"
 let          kAssumeAllFetched = "assume all fetched"
+let          kShowMainControls = "show main controls"
+let          kShowExplanations = "show explanations"
 let          kLostAndFoundName = "lost and found"
 let          kManifestRootName = "manifest"
 let          kExemplarRootName = "exemplar"
