@@ -2719,6 +2719,7 @@ extension ZGestureRecognizer {
     @objc var isShiftDown:   Bool { return false }
     @objc var isOptionDown:  Bool { return false }
     @objc var isCommandDown: Bool { return false }
+	@objc var isControlDown: Bool { return false }
 	var       isDone:        Bool { return [.ended, .cancelled, .failed, .possible].contains(state) }
 
     func cancel() {

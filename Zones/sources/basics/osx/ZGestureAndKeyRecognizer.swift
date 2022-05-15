@@ -21,6 +21,7 @@ class ZPanGestureRecognizer : NSPanGestureRecognizer {
     override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }
     override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
     override var isCommandDown: Bool { return modifiers?.contains(.command) ?? false }
+	override var isControlDown: Bool { return modifiers?.contains(.control)   ?? false }
 
     override open func reset() {
         modifiers = nil
@@ -42,6 +43,7 @@ class ZKeyClickGestureRecognizer: ZClickGestureRecognizer {
     override var isShiftDown:   Bool { return modifiers?.contains(.shift)   ?? false }
     override var isOptionDown:  Bool { return modifiers?.contains(.option)  ?? false }
     override var isCommandDown: Bool { return modifiers?.contains(.command) ?? false }
+	override var isControlDown: Bool { return modifiers?.contains(.control) ?? false }
 
     override open func reset() {
         modifiers = nil

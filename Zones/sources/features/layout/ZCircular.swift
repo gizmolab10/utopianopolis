@@ -225,9 +225,14 @@ extension ZWidgets {
 
 	static func ringRadius(at level: Int) -> CGFloat {
 		let increment = gCircleIdeaRadius + gDotHeight
-		let  multiple = CGFloat(level) * 1.7
+		let places    = placesCount(at: level)
+		var radius    = CGFloat(level) * 1.8 * increment
+		let needs     = CGFloat(places) * increment / k2PI
+		if  needs     > radius {
+			radius    = needs
+		}
 
-		return gDotHalfWidth + multiple * increment
+		return gDotHalfWidth + radius
 	}
 
 	static func maxVisibleChildren(at level: Int) -> Int {
@@ -519,11 +524,16 @@ extension ZoneDot {
 		if  let     l = line,
 			let     p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
 			let     z = l .childWidget?.widgetZone {
+			let  bold = z.siblingIndex == 0
 			var angle = l.dotToDotAngle + CGFloat((z.isShowing && p.isExpanded) ? .zero : kPI)
-			let thick = CGFloat(gLineThickness * 2.0)
+			var thick = CGFloat(gLineThickness * 2.0)
 			let  rect = iDirtyRect.insetEquallyBy(thick)
 			var  path = ZBezierPath()
-			
+
+			if  bold {
+				thick = 4.0
+			}
+
 			if  parameters.isReveal {
 				path  = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
 			} else {
