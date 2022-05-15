@@ -508,6 +508,13 @@ var gScrollOffset: CGPoint {
 enum ZConfinementMode: String {
 	case list = "List"
 	case all  = "All"
+
+	var next: ZConfinementMode {
+		switch self {
+			case .list: return .all
+			default:    return .list
+		}
+	}
 }
 
 var gConfinementMode: ZConfinementMode {
@@ -711,6 +718,13 @@ var gBaseFontSize: CGFloat {
 enum ZListGrowthMode: String {
 	case down = "Down"
 	case up   = "Up"
+
+	var next: ZListGrowthMode {
+		switch self {
+			case .down: return .up
+			default:    return .down
+		}
+	}
 }
 
 var gListGrowthMode: ZListGrowthMode {

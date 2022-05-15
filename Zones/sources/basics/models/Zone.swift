@@ -71,7 +71,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
 	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
-	var                      widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kDefaultIdeaColor }
+	var                      widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kBlackColor }
 	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
@@ -530,7 +530,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  gDragging.isDragged(self) {
 			return gActiveColor
 		} else if let color = widgetColor {
-			if  widget?.controller?.mapLayoutMode == .circularMode {
+			if  widget?.isCircularMode ?? false {
 				return color.invertedBlackAndWhite
 			} else {
 				return color
@@ -541,7 +541,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var highlightColor: ZColor? {
-		return gDragging.isDragged(self) ? gActiveColor : (widget?.controller?.mapLayoutMode == .circularMode) ? color : color?.withAlphaComponent(0.3)
+		return gDragging.isDragged(self) ? gActiveColor : (widget?.isCircularMode ?? true) ? color : color?.withAlphaComponent(0.3)
 	}
 
 	override var color: ZColor? {
@@ -549,8 +549,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var computed: ZColor? = kDefaultIdeaColor
 
 			if  gColorfulMode {
-				if  let       b = bookmarkTarget {
-					return b.color
+				if  let       t = bookmarkTarget {
+					return t.color
 				} else if let m = colorMaybe ?? zoneColor?.color {
 					computed    = m
 				} else if let c = parentZone?.color {

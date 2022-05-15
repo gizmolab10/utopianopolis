@@ -119,13 +119,13 @@ class ZTextPack: NSObject {
 		if !isEditing,
 			let         w = widget {
 			let  isLinear = w.isLinearMode
-			let threshold = isLinear ? 18 : 8
+			let threshold = isLinear ? 18 : 20
 			let      type = w.type
 			if  threshold < text.length,
 				!type.contains(.tExemplar),
-				!type.contains(.tBigMap) || !isLinear {                       // is in small map
+				!type.contains(.tBigMap) || !isLinear {                       // is in favorites or is circular
 				let  isLine = text[0] == kHyphen
-				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 6) // shorten to fit (in small map area or in circles)
+				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 10) // shorten to fit (in small map area or in circles)
 
 				if !isLine {
 					text.append(kEllipsis)

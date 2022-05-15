@@ -94,10 +94,9 @@ class ZControllers: NSObject {
 			gEssayControlsView?.updateTitlesControlAndMode()
 		} else {
 			gMainWindow?.revealEssayEditorInspectorBar(false)
-			gSignal([.spRelayout])
 		}
 
-		gSignal([.sSwap, .spCrumbs, .spFavorites])
+		gSignal([.sSwap, .spRelayout, .spCrumbs, .spFavorites])
 
 		closure?()
 	}

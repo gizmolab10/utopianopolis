@@ -157,8 +157,8 @@ class ZTogglingView: ZView {
 			upDownView?.isHidden = hidden
 
 			if !hidden {
-				downButton?.title = gFavorites.nextList(down:  true)?.unwrappedName ?? kEmpty
-				upButton?  .title = gFavorites.nextList(down: false)?.unwrappedName ?? kEmpty
+				downButton?.title = gFavorites.nextList(down:  true)?.unwrappedName.capitalized ?? kEmpty
+				upButton?  .title = gFavorites.nextList(down: false)?.unwrappedName.capitalized ?? kEmpty
 			}
 
 			titleButton?.snp.removeConstraints()

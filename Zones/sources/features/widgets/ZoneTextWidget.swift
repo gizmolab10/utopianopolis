@@ -50,6 +50,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     func updateTextColor() {
 		if  gDragging.isDragged(widgetZone) {
 			textColor = gActiveColor
+		} else if gIsEssayMode, widgetZone?.isInBigMap ?? true {
+			textColor = kClearColor
 		} else if let color = widgetZone?.textColor {
 			textColor = color
         }
@@ -223,8 +225,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     }
 
     override func draw(_ iDirtyRect: CGRect) {
-		if  gIsEssayMode, widgetZone?.isInBigMap ?? true { return }
-        updateTextColor()
+		updateTextColor()
         super.draw(iDirtyRect)
 
 		if  isHovering {

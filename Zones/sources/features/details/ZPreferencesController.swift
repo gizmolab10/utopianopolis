@@ -94,17 +94,17 @@ class ZPreferencesController: ZGenericController {
     }
 
     @IBAction func clearColorAction(_ button: ZButton) {
-        if  let     grab = gSelecting.firstSortedGrab {
-            if let color = grab.colorMaybe {
+        if  let     zone  = gSelecting.firstSortedGrab {
+            if  let color = zone.colorMaybe {
                 UNDO(self) { iUndoSelf in
-                    grab.color = color
+                    zone.color = color
 
-					gRelayoutMaps(for: grab)
+					gRelayoutMaps(for: zone)
                 }
             }
             
-            grab.clearColor()
-			gRelayoutMaps(for: grab)
+            zone.clearColor()
+			gRelayoutMaps(for: zone)
         }
     }
 

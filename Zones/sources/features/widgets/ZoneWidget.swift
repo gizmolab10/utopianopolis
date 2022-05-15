@@ -418,12 +418,13 @@ class ZoneWidget: ZPseudoView {
 
 		init(rawValue: Int) { self.rawValue = rawValue }
 
-		static let sUltraThin = ZHighlightStyle(rawValue: 1 << 0)
-		static let sDashed    = ZHighlightStyle(rawValue: 1 << 1)
-		static let sMedium    = ZHighlightStyle(rawValue: 1 << 2)
-		static let sThick     = ZHighlightStyle(rawValue: 1 << 3)
-		static let sThin      = ZHighlightStyle(rawValue: 1 << 4)
-		static let sNone      = ZHighlightStyle([])
+		static let sThickDashed = ZHighlightStyle(rawValue: 1 << 0)
+		static let sUltraThin   = ZHighlightStyle(rawValue: 1 << 1)
+		static let sDashed      = ZHighlightStyle(rawValue: 1 << 2)
+		static let sMedium      = ZHighlightStyle(rawValue: 1 << 3)
+		static let sThick       = ZHighlightStyle(rawValue: 1 << 4)
+		static let sThin        = ZHighlightStyle(rawValue: 1 << 5)
+		static let sNone        = ZHighlightStyle([])
 	}
 
 	func drawSelectionHighlight(_ style: ZHighlightStyle) {
@@ -437,11 +438,13 @@ class ZoneWidget: ZPseudoView {
 		path .flatness = kDefaultFlatness
 		
 		switch style {
-		case .sDashed:    path.addDashes()
-		case .sMedium:    path.lineWidth *= 0.7
-		case .sThin:      path.lineWidth *= 0.5
-		case .sUltraThin: path.lineWidth *= 0.2
-		default:          break
+			case .sThick:       path.lineWidth *= 1.5
+			case .sThickDashed: path.lineWidth *= 1.5; fallthrough
+			case .sDashed:      path.addDashes()
+			case .sMedium:      path.lineWidth *= 0.7
+			case .sThin:        path.lineWidth *= 0.5
+			case .sUltraThin:   path.lineWidth *= 0.2
+			default:            break
 		}
 
 		color?.setStroke()
@@ -467,20 +470,22 @@ class ZoneWidget: ZPseudoView {
 					if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
 						var style = ZHighlightStyle.sNone
 						
-						if        isEditing      { style = .sDashed
+						if        isEditing      { style = .sThickDashed
 						} else if tHovering      {
 							if    isCircularMode { style = .sDashed
-							} else               { style = .sThin      }
+							} else               { style = .sThin        }
 						} else if isGrabbed      { style = .sThick
-						} else if isHovering     { style = .sMedium
-						} else if ringIdeas      { style = .sUltraThin }
+						} else if isHovering     {
+							if    isCircularMode { style = .sDashed
+							} else               { style = .sMedium      }
+						} else if ringIdeas      { style = .sUltraThin   }
 
 						if  style != .sNone {
 							drawSelectionHighlight(style)
 						}
 					}
 
-					if  controller?.mapLayoutMode == .circularMode,
+					if  controller?.inCircularMode ?? false,
 						let color = zone.widgetColor?.withAlphaComponent(0.30) {
 						drawInterior(color)
 					}

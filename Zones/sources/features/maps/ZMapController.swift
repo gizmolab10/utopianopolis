@@ -42,6 +42,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var          priorScrollLocation = CGPoint.zero
 	override  var       controllerID : ZControllerID  { return .idMap }
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
+	var                 inLinearMode : Bool           { return mode == .linearMode }
+	var               inCircularMode : Bool           { return mode == .circularMode }
 	var               canDrawWidgets : Bool           { return gIsMapOrEditIdeaMode || !gShowsSearchResults }
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
 	var                     isBigMap : Bool           { return controllerID == .idMap }
@@ -77,8 +79,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func drawWidgets(for phase: ZDrawPhase) {
 		if  canDrawWidgets {
-			if  phase == .pDots,
-				mode  == .linearMode {
+			if  phase == .pDots, inLinearMode {
 				rootLine?.draw(phase) // for here's drag dot
 			}
 
@@ -86,8 +87,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				widget.draw(phase)
 			}
 
-			if  phase == .pLines,
-				mode  == .circularMode,
+			if  phase == .pLines, inCircularMode,
 				gCirclesDisplayMode.contains(.cRings) {
 				circularDrawLevelRings()      // now, draw level rings
 			}

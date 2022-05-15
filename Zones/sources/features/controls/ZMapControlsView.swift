@@ -65,9 +65,9 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 	@objc private func handleButtonPress(_ button: ZButton) {
 		if  let    type = button.modeButtonType {
 			switch type {
-			case .tLayout:  gMapLayoutMode   = (gMapLayoutMode == .circularMode) ? .linearMode : .circularMode
-			case .tConfine: gConfinementMode = gBrowsingIsConfined               ? .all        : .list
-			case .tGrowth:  gListGrowthMode  = gListsGrowDown                    ? .up         : .down
+				case .tLayout:  gMapLayoutMode   = gMapLayoutMode  .next
+				case .tGrowth:  gListGrowthMode  = gListGrowthMode .next
+				case .tConfine: gConfinementMode = gConfinementMode.next
 			}
 		}
 
