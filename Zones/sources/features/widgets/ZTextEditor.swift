@@ -113,11 +113,11 @@ class ZTextPack: NSObject {
         self.setup(for: iZRecord)
     }
 
-    func updateText(isEditing: Bool = false) {
+	func updateText(isEditing: Bool = false) {
 		var          text = isEditing ? unwrappedName : textWithSuffix
 
-		if !isEditing,
-			let         w = widget {
+		if  !isEditing,
+		    let         w = widget {
 			let  isLinear = w.isLinearMode
 			let threshold = isLinear ? 18 : 20
 			let      type = w.type
