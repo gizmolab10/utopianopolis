@@ -505,10 +505,10 @@ var gMapRotationAngle : CGFloat {
 	}
 }
 
-var gScrollOffset: CGPoint {
+var gMapOffset: CGPoint {
 	get {
 		let  point = CGPoint.zero
-		let string = getPreferenceString(for: kScrollOffsetKey) { return NSStringFromPoint(point) }
+		let string = getPreferenceString(for: kMapOffsetKey) { return NSStringFromPoint(point) }
 		
 		return string?.cgPoint ?? point
 	}
@@ -516,7 +516,7 @@ var gScrollOffset: CGPoint {
 	set {
 		let string = NSStringFromPoint(newValue)
 		
-		setPreferencesString(string, for: kScrollOffsetKey)
+		setPreferencesString(string, for: kMapOffsetKey)
 	}
 }
 

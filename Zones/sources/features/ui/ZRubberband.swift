@@ -12,9 +12,8 @@ let gRubberband = ZRubberband()
 
 class ZRubberband: NSObject {
 	var rubberbandPreGrabs = ZoneArray ()
-	var rubberbandStart    = CGPoint.zero
 	var showRubberband     : Bool { return rubberbandRect != nil && rubberbandRect != .zero }
-	func clearRubberband()        { rubberbandStart = .zero }
+	func clearRubberband()        { gDragging.dragStart = .zero }
 
 	var rubberbandRect: CGRect? { // wrapper with new value logic
 		didSet {
@@ -27,8 +26,8 @@ class ZRubberband: NSObject {
 	}
 
 	@discardableResult func setRubberbandExtent(to extent: CGPoint) -> Bool { // true means rect was set
-		if  rubberbandStart != .zero {
-			rubberbandRect   = CGRect(start: rubberbandStart, extent: extent)
+		if  gDragging.dragStart != .zero {
+			rubberbandRect       = CGRect(start: gDragging.dragStart, extent: extent)
 
 			return true
 		}
@@ -50,10 +49,7 @@ class ZRubberband: NSObject {
 		}
 	}
 
-	func rubberbandStartEvent(_ location: CGPoint, _ iGesture: ZGestureRecognizer?) {
-		rubberbandStart = location
-
-		gDragging.draggedZones.removeAll()
+	func rubberbandStartEvent(_ iGesture: ZGestureRecognizer?) {
 
 		// ///////////////////
 		// detect SHIFT key //

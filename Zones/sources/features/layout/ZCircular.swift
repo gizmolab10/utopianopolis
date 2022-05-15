@@ -294,9 +294,10 @@ extension ZWidgets {
 		}
 
 		if  let widget = found {
+			let oAngle = widget.placeAngle
 			let   sign = CGFloat(dAngle >= 0 ? 1 : -1)
 			let iAngle = widget.incrementAngle * sign / 2.0
-			let tAngle = (widget.placeAngle + iAngle).confine(within: CGFloat(k2PI))
+			let tAngle = (oAngle + iAngle).confine(within: CGFloat(k2PI))
 
 			return (widget, tAngle)
 		}
@@ -314,14 +315,14 @@ extension ZoneWidgetArray {
 	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
 		if  let vFrame = controller?.mapPseudoView?.frame {
 			let radius = ZWidgets.ringRadius(at: level)
-			let offset = CGPoint(x: gScrollOffset.x - gDotHeight, y: -gScrollOffset.y - 22.0)
+			let offset = CGPoint(x: gMapOffset.x - gDotHeight, y: -gMapOffset.y - 22.0)
 			let center = vFrame.center + offset
 
 			for w in self {
 				if  absolute {
 					w.relayoutAbsoluteFrame(relativeTo: controller)
 				} else if w.linesLevel > 0 {
-					let   angle = w.placeAngle
+					let   angle = w.placeAngle + gMapRotationAngle
 					let rotated = CGPoint(x: .zero, y: radius).rotate(by: Double(angle))
 					let  origin = center + rotated
 					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(gCircleIdeaRadius)

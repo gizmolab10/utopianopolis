@@ -12,6 +12,8 @@ let gDragging = ZDragging()
 
 class ZDragging: NSObject {
 
+	var   startAngle =       CGFloat.zero
+	var    dragStart =       CGPoint.zero
 	var draggedZones =         ZoneArray()
 	var dropRelation :         ZRelation?
 	var debugIndices : NSMutableIndexSet?
@@ -73,12 +75,15 @@ class ZDragging: NSObject {
 			gTextEditor.stopCurrentEdit(forceCapture: true, andRedraw: false) // so drag and rubberband do not lose user's changes
 
 			if  flags.isCommand && !flags.isOption {          // shift background
-				controller.scrollEvent(move: state == .changed,  to: location)
+				controller.offsetEvent(move: state == .changed,  to: location)
 			} else if !draggedZones.isEmpty {
 				dropMaybeGesture(gesture, in: controller)     // logic for drawing the drop dot, and for dropping dragged idea
-			} else if state == .changed,                      // enlarge rubberband
-				gRubberband.setRubberbandExtent(to: location) {
-				gRubberband.updateGrabs()
+			} else if state == .changed {
+				if  flags.isControl {
+					controller.rotationEvent(location)
+				} else if gRubberband.setRubberbandExtent(to: location) {  // enlarge rubberband
+					gRubberband.updateGrabs()
+				}
 			} else if ![.began, .cancelled].contains(state) { // drag ended or failed
 				gRubberband.rubberbandRect = nil              // erase rubberband
 
@@ -94,7 +99,11 @@ class ZDragging: NSObject {
 					dragStartEvent(dot, gesture)              // start dragging a drag dot
 				}
 			} else {                                          // begin drag
-				gRubberband.rubberbandStartEvent(location, gesture)
+				dragStart  = location
+				startAngle = gMapRotationAngle
+
+				draggedZones.removeAll()
+				gRubberband.rubberbandStartEvent(gesture)
 				gMainWindow?.makeFirstResponder(gMapView)
 			}
 

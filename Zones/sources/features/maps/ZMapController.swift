@@ -39,7 +39,7 @@ enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
-	var          priorScrollLocation = CGPoint.zero
+	var          priorLocation = CGPoint.zero
 	override  var       controllerID : ZControllerID  { return .idMap }
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	var                 inLinearMode : Bool           { return mode == .linearMode }
@@ -136,9 +136,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func recenter(_ SPECIAL: Bool = false) {
-		gScaling      = 1.0
-		gScrollOffset = !SPECIAL ? .zero : CGPoint(x: kHalfDetailsWidth, y: .zero)
-		
+		gScaling          = 1.0
+		gMapOffset     = !SPECIAL ? .zero : CGPoint(x: kHalfDetailsWidth, y: .zero)
+		gMapRotationAngle = .zero
+
 		layoutForCurrentScrollOffset()
 	}
 
@@ -210,7 +211,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	var mapOrigin: CGPoint? {
 		if  let  mapSize = mapView?.frame.size.dividedInHalf {
-			let   bigMap = gScrollOffset.offsetBy(-gDotHeight, 22.0)
+			let   bigMap = gMapOffset.offsetBy(-gDotHeight, 22.0)
 			let smallMap = CGPoint(x: -12.0, y: -6.0)
 			let exemplar = CGPoint(x: .zero, y: -6.0)
 			var   offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
@@ -275,14 +276,24 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gRemoveAllTracking() // fix fluttery cursor !!!!!!!!
 	}
 
-	func scrollEvent(move: Bool, to location: CGPoint) {
+	func offsetEvent(move: Bool, to location: CGPoint) {
 		if  move {
-			gScrollOffset = CGPoint(x: gScrollOffset.x + location.x - priorScrollLocation.x, y: gScrollOffset.y + priorScrollLocation.y - location.y)
+			gMapOffset = CGPoint(x: gMapOffset.x + location.x - priorLocation.x, y: gMapOffset.y + priorLocation.y - location.y)
 
 			layoutForCurrentScrollOffset()
 		}
 
-		priorScrollLocation = location
+		priorLocation = location
+	}
+
+	func rotationEvent(_ location: CGPoint) {
+		if  let        origin = mapOrigin {
+			let      endAngle = (location            - origin).angle
+			let    startAngle = (gDragging.dragStart - origin).angle
+			gMapRotationAngle = gDragging.startAngle - startAngle + endAngle
+
+			layoutForCurrentScrollOffset()
+		}
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled

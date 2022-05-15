@@ -1160,7 +1160,6 @@
 				A7DF4867249B19C6008B35AC /* startup */,
 				0C43EFBC21010F17000976CE /* storage */,
 				A796A7BC2686715A00B36F5D /* subscribe */,
-				A745ED0826AF4DE10013D1A4 /* ui */,
 				0C39B2851F182EBB0091F4D1 /* views */,
 			);
 			path = basics;
@@ -1179,6 +1178,7 @@
 				A76243B227EF96890007EDC1 /* managers */,
 				A7DF4865249B1860008B35AC /* maps */,
 				A7DF4868249B1A3E008B35AC /* search */,
+				A745ED0826AF4DE10013D1A4 /* ui */,
 				A7DF486D249C10F0008B35AC /* widgets */,
 			);
 			path = features;

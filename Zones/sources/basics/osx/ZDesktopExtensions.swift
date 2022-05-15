@@ -592,8 +592,8 @@ extension ZMapView {
             updateMagnification(with: event)
         } else {
             let     multiply = CGFloat(1.5 * gScaling)
-            gScrollOffset.x += event.deltaX * multiply
-            gScrollOffset.y += event.deltaY * multiply
+            gMapOffset.x += event.deltaX * multiply
+            gMapOffset.y += event.deltaY * multiply
         }
         
         gMapController?.layoutForCurrentScrollOffset()
