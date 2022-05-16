@@ -28,12 +28,13 @@ class ZDragging: NSObject {
 	var    debugKind :        ZLineCurve?
 	var    dragIndex :               Int? { return (draggedZones.count == 0) ? nil : draggedZones[0].siblingIndex }
 	var   isDragging :               Bool { return !draggedZones.isEmpty }
+	var  showRotator :               Bool { return current != dragStart && !gRubberband.showRubberband && gMapController?.inCircularMode ?? false }
 
 	func isDragged(_ zone: Zone?) -> Bool { return gDragging.dragLine != nil && zone != nil && gDragging.draggedZones.contains(zone!) }
 	func restartGestureRecognitiono()     { dropWidget?.controller?.restartGestureRecognition() }
 
-	func drawMapRotationLine() {
-		if  let origin = gMapController?.mapOrigin, current != .zero {
+	func drawRotator() {
+		if  let origin = gMapController?.mapOrigin, showRotator {
 			let    ray = current - origin
 			let radius = CGSize(ray).hypotenuse
 			let   line = ZBezierPath.linePath   (start: origin,  length: 5000.0, angle: gMapRotationAngle + kHalfPI)
