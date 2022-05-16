@@ -55,7 +55,8 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		} else if let tColor = widgetZone?.textColor,
 				  let wColor = widgetZone?.lighterColor?.invertedBlackAndWhite,
 				  let isLinear = widget?.isLinearMode {
-			textColor = isLinear ? tColor : wColor
+			let plain = !gDisplayIdeasWithCircles
+			textColor = (isLinear || plain) ? tColor : wColor
         }
     }
 

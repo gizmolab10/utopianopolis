@@ -105,7 +105,7 @@ extension ZoneWidget {
 		if  let z = widgetZone {
 			if  z.count      != 0 {
 				for child in childrenWidgets {
-					let cRect = child.absoluteHitRect
+					let cRect = child.absoluteFrame
 					if  cRect.hasSize {
 						rect  = rect.union(cRect)
 					}
@@ -119,7 +119,9 @@ extension ZoneWidget {
 						}
 					}
 				}
-			} else if let p = parentLine?.dragDot {
+			}
+
+			if  let       p = parentLine?.dragDot {
 				let pRect   = p.absoluteFrame
 				if  pRect.hasSize {
 					rect    = rect.union(pRect)
@@ -224,12 +226,14 @@ extension ZWidgets {
 	}
 
 	static func ringRadius(at level: Int) -> CGFloat {
-		let increment = gCircleIdeaRadius + gDotHeight
-		let places    = placesCount(at: level)
-		var radius    = CGFloat(level) * 1.8 * increment
-		let needs     = CGFloat(places) * increment / k2PI
-		if  needs     > radius {
-			radius    = needs
+		let  increment = gCircleIdeaRadius + gDotHeight
+		let     places = placesCount(at: level)
+		var     radius = CGFloat(level) * 1.8 * increment
+		if  gDisplayIdeasWithCircles {
+			let  needs = CGFloat(places) * increment / k2PI
+			if  radius < needs {
+				radius = needs
+			}
 		}
 
 		return gDotHalfWidth + radius
@@ -491,9 +495,9 @@ extension ZoneDot {
 				let      angle = lineVector.angle
 				let   position = ZPosition.position(for: Double(angle))
 				let  expansion = gDotSize(forReveal: false, forBigMap: isBigMap).dividedInHalf
-				let   halfSize = frame.size.dividedInHalf.expandedBy(.zero, gDotHalfWidth / 2.0)
-				let      width = halfSize.width
-				let     height = halfSize.height
+				let   halfSize = frame.size.dividedInHalf
+				let      width = halfSize.width + (gDotWidth * 0.75)
+				let     height = halfSize.height + gDotHalfWidth
 				let     offset = width * ratioForAngle(angle)
 				var     center = frame.center
 
@@ -516,7 +520,7 @@ extension ZoneDot {
 		if  let     l = line,
 			let     p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
 			let     z = l .childWidget?.widgetZone {
-			let  bold = z.siblingIndex == 0
+			let  bold = z.siblingIndex == 0 && p.isExpanded
 			var angle = l.dotToDotAngle + CGFloat((z.isShowing && p.isExpanded) ? .zero : kPI)
 			var thick = CGFloat(gLineThickness * 2.0)
 			let  rect = iDirtyRect.insetEquallyBy(thick)

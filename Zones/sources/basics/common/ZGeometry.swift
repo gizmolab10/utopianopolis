@@ -23,8 +23,8 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 var        gBigFontSize : CGFloat { return gBaseFontSize + kFontDelta } // 13 ... 28
 var      gSmallFontSize : CGFloat { return gBigFontSize  * kSmallMapReduction }
 var   gCircleIdeaRadius : CGFloat { return gDotHeight * 2.2 }
-var       gDotHalfWidth : CGFloat { return gDotWidth / 2.0 }
 var           gDotWidth : CGFloat { return gDotHeight * kDragDotReduction }
+var       gDotHalfWidth : CGFloat { return gDotWidth / 2.0 }
 var          gDotHeight : CGFloat { return (gBaseFontSize / kDotFactor) + kFontDelta + 2.0 }
 
 func gDotSize(forReveal: Bool)                  -> CGSize  { return CGSize(width: forReveal ? gDotHeight : gDotWidth, height: gDotHeight) }

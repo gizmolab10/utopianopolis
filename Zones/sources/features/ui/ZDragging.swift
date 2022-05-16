@@ -39,13 +39,16 @@ class ZDragging: NSObject {
 			let radius = CGSize(ray).hypotenuse
 			let   line = ZBezierPath.linePath   (start: origin,  length: 5000.0, angle: gMapRotationAngle + kHalfPI)
 			let circle = ZBezierPath.circlePath(origin: origin,  radius: radius)
+			let   knob = ZBezierPath.circlePath(origin: current, radius: 5.0)
 			circle.lineWidth = 0.6
 			line  .lineWidth = 0.6
 
 			gActiveColor.setStroke()
+			gActiveColor.setFill()
 			circle.addDashes()
 			circle.stroke()
 			line  .stroke()
+			knob  .fill()
 		}
 	}
 

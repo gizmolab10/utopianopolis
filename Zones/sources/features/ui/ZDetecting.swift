@@ -70,13 +70,13 @@ extension ZoneWidget {
 			if  let            d = parentLine?.dragDot,   d.absoluteHitRect.contains(location) {
 				return         d
 			} else if isCircularMode {
-				if                                            highlightRect.contains(location) {
-					return     self // widget
-				}
 				for line in childrenLines {
 					if  let    r = line.revealDot,        r.absoluteHitRect.contains(location) {
 						return r
 					}
+				}
+				if                                            highlightRect.contains(location) {
+					return     self // widget
 				}
 			}
 			if  let            s = sharedRevealDot,       s.absoluteHitRect.contains(location) {
