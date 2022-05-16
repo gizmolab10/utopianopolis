@@ -317,10 +317,11 @@ extension ZColor {
     }
 
 	var invertedBlackAndWhite: ZColor {
-		let b = brightnessComponent < 0.5 ? 1.0 : 0.0
-		let s = saturationComponent < 0.5 ? 1.0 : 0.0
+		if  brightnessComponent < 0.5 {
+			return kWhiteColor
+		}
 
-		return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
+		return kBlackColor
 	}
 
 }

@@ -122,14 +122,7 @@ class ZMapView: ZView {
 	func drawDrag(_ iDirtyRect: CGRect) {
 		gRubberband.draw()
 		gDragging.dragLine?.drawDragLineAndDot()
+		gDragging.drawMapRotationLine()
 	}
-//
-//	@objc override func printView() {
-//		gDetailsController?.temporarilyHideView(for: .vSmallMap) {
-//			super.printView()
-//		}
-//		
-//		gRelayoutMaps()
-//	}
 
 }

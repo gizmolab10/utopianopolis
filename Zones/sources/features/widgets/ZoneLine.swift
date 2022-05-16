@@ -98,7 +98,7 @@ class ZoneLine: ZPseudoView {
 			return
 		}
 
-		if  highlight {
+		if  highlight, rect.size.hypotenuse > 30.0 {     // needs to be long enough to show as dashes
 			path.addDashes()
 		}
 

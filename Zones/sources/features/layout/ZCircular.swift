@@ -386,15 +386,7 @@ extension ZoneLine {
 	}
 
 	func circularStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let   path = ZBezierPath()
-		let  start = iRect.origin
-		let radius = iRect.size.hypotenuse
-		let    end = CGPoint(x: .zero, y: radius).rotate(by: Double(dotToDotAngle)).offsetBy(start)
-
-		path.move(to: start)
-		path.line(to: end)
-
-		return path
+		return ZBezierPath.linePath(start: iRect.origin, length: iRect.size.hypotenuse, angle: dotToDotAngle)
 	}
 
 	func circularUpdateLineSize() {

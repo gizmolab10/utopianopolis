@@ -698,12 +698,10 @@ extension ZoneArray {
 			}
 		}
 
-//		gSmallMapMode = .favorites                      // switch to favorites
-
 		gFavorites.showRoot()                           // point here to root, and expand
 		groupOwner.alterAttribute(.groupOwner, remove: false)
 		gFavorites.insertAsNext(groupOwner)
-		FOREGROUND {
+		FOREGROUND(after: 0.1) {
 			gRelayoutMaps()
 			groupOwner.edit()
 		}

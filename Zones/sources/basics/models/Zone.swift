@@ -72,6 +72,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
 	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
 	var                      widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kBlackColor }
+	var                        textColor :             ZColor? { return isDragged ? gActiveColor : widgetColor }
+	var                     lighterColor :             ZColor? { return color?.withAlphaComponent(0.3) }
+	var                   highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
 	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
@@ -88,6 +91,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var             isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
+	var                        isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
 	var                  isCurrentRecent :               Bool  { return self == gFavorites.currentRecent }
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
@@ -524,24 +528,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return d
-	}
-
-	var textColor: ZColor? {
-		if  gDragging.isDragged(self) {
-			return gActiveColor
-		} else if let color = widgetColor {
-			if  widget?.isCircularMode ?? false {
-				return color.invertedBlackAndWhite
-			} else {
-				return color
-			}
-		}
-
-		return nil
-	}
-
-	var highlightColor: ZColor? {
-		return gDragging.isDragged(self) ? gActiveColor : (widget?.isCircularMode ?? true) ? color : color?.withAlphaComponent(0.3)
 	}
 
 	override var color: ZColor? {

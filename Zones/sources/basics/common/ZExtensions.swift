@@ -796,9 +796,9 @@ extension CGSize {
 	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
 	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
 	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
-	func isLargerThan(_ other: CGSize)               -> Bool   { return hypotenuse > other.hypotenuse }
-	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint { return CGPoint(lhs) - rhs }
-	public static func squared(_ length: CGFloat)    -> CGSize { return CGSize(width: length, height: length) }
+	func isLargerThan(_ other: CGSize)                -> Bool   { return hypotenuse > other.hypotenuse }
+	public static func - (lhs: CGSize, rhs: CGPoint)  -> CGPoint { return CGPoint(lhs) - rhs }
+	public static func squared(_ length: CGFloat)     -> CGSize { return CGSize(width: length, height: length) }
 	func tadd(width: CGFloat, height: CGFloat)        -> CGSize { return self + CGSize(width: width, height: height) }
 	func absoluteDifferenceInDiagonals(relativeTo other: CGSize) -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
 	func multiplyBy(_ fraction: CGFloat)             -> CGSize { return CGSize(width: width * fraction, height: height * fraction) }
@@ -1004,6 +1004,10 @@ extension CGRect {
         return set
     }
 
+	func offsetBy(_ offset: CGPoint) -> CGRect {
+		return offsetBy(dx: offset.x, dy: offset.y)
+	}
+
 	func offsetBy(_ size: CGSize) -> CGRect {
 		return offsetBy(dx: size.width, dy: size.height)
 	}
@@ -1173,6 +1177,12 @@ extension ZBezierPath {
 		path.draw(thickness: thickness)
 	}
 
+	static func circlePath(origin: CGPoint, radius: CGFloat) -> ZBezierPath {
+		let rect = CGRect.zero.offsetBy(origin).expandedEquallyBy(radius)
+
+		return circlePath(in: rect)
+	}
+
 	static func circlePath(in iRect: CGRect) -> ZBezierPath {
 		return ZBezierPath(ovalIn: iRect)
 	}
@@ -1217,6 +1227,16 @@ extension ZBezierPath {
 
 		path.transform(using: AffineTransform(rotationByRadians: angle))
 		path.transform(using: AffineTransform(translationByX: origin.x, byY: origin.y))
+
+		return path
+	}
+
+	static func linePath(start: CGPoint, length: CGFloat, angle: CGFloat) -> ZBezierPath {
+		let path = ZBezierPath()
+		let  end = CGPoint(x: .zero, y: length).rotate(by: Double(angle)).offsetBy(start)
+
+		path.move(to: start)
+		path.line(to: end)
 
 		return path
 	}

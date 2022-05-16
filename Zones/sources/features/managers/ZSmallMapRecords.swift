@@ -141,10 +141,9 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
-		if  workingBookmarks.count > 1,
-			let zone = iZone,
-			let bookmarks = workingBookmarks(for: zone) {
-			nextBookmark(down: true)
+		if  let zone = iZone,
+			let bookmarks = workingBookmarks(for: zone),
+			workingBookmarks.count > 1 {
 			for bookmark in bookmarks {
 				bookmark.deleteSelf(permanently: true) {}
 			}

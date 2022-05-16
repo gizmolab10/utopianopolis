@@ -39,7 +39,7 @@ enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 
 class ZMapController: ZGesturesController, ZScrollDelegate {
 
-	var          priorLocation = CGPoint.zero
+	var                priorLocation = CGPoint.zero
 	override  var       controllerID : ZControllerID  { return .idMap }
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	var                 inLinearMode : Bool           { return mode == .linearMode }
@@ -291,6 +291,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			let      endAngle = (location            - origin).angle
 			let    startAngle = (gDragging.dragStart - origin).angle
 			gMapRotationAngle = gDragging.startAngle - startAngle + endAngle
+			gDragging.current = location
 
 			layoutForCurrentScrollOffset()
 		}

@@ -52,8 +52,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 			textColor = gActiveColor
 		} else if gIsEssayMode, widgetZone?.isInBigMap ?? true {
 			textColor = kClearColor
-		} else if let color = widgetZone?.textColor {
-			textColor = color
+		} else if let tColor = widgetZone?.textColor,
+				  let wColor = widgetZone?.lighterColor?.invertedBlackAndWhite,
+				  let isLinear = widget?.isLinearMode {
+			textColor = isLinear ? tColor : wColor
         }
     }
 

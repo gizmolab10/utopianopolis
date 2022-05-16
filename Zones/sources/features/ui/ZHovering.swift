@@ -50,8 +50,10 @@ class ZHovering: NSObject {
 
 		if  let       d = p as? ZoneDot {
 			dot         = d
+//			print("dot    \(d.widgetZone!)")
 		} else if let w = p as? ZoneWidget {
 			widget      = w
+//			print("widget \(w.widgetZone!)")
 		} else {
 			return
 		}

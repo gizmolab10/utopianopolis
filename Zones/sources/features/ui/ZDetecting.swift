@@ -71,7 +71,7 @@ extension ZoneWidget {
 				return         d
 			} else if isCircularMode {
 				if                                            highlightRect.contains(location) {
-					return     self
+					return     self // widget
 				}
 				for line in childrenLines {
 					if  let    r = line.revealDot,        r.absoluteHitRect.contains(location) {

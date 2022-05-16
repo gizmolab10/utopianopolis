@@ -14,6 +14,7 @@ class ZDragging: NSObject {
 
 	var   startAngle =       CGFloat.zero
 	var    dragStart =       CGPoint.zero
+	var      current =       CGPoint.zero
 	var draggedZones =         ZoneArray()
 	var dropRelation :         ZRelation?
 	var debugIndices : NSMutableIndexSet?
@@ -30,6 +31,22 @@ class ZDragging: NSObject {
 
 	func isDragged(_ zone: Zone?) -> Bool { return gDragging.dragLine != nil && zone != nil && gDragging.draggedZones.contains(zone!) }
 	func restartGestureRecognitiono()     { dropWidget?.controller?.restartGestureRecognition() }
+
+	func drawMapRotationLine() {
+		if  let origin = gMapController?.mapOrigin, current != .zero {
+			let    ray = current - origin
+			let radius = CGSize(ray).hypotenuse
+			let   line = ZBezierPath.linePath   (start: origin,  length: 5000.0, angle: gMapRotationAngle + kHalfPI)
+			let circle = ZBezierPath.circlePath(origin: origin,  radius: radius)
+			circle.lineWidth = 0.6
+			line  .lineWidth = 0.6
+
+			gActiveColor.setStroke()
+			circle.addDashes()
+			circle.stroke()
+			line  .stroke()
+		}
+	}
 
 	// MARK: - drag
 	// MARK: -
@@ -57,6 +74,8 @@ class ZDragging: NSObject {
 	}
 
 	func cleanupAfterDrag() {   // cursor exited view, remove drag cruft
+		startAngle = .zero
+		current    = .zero
 		dropCrumb?.highlight(false)
 		gRubberband.clearRubberband()
 		clearDragAndDrop()
@@ -99,6 +118,7 @@ class ZDragging: NSObject {
 					dragStartEvent(dot, gesture)              // start dragging a drag dot
 				}
 			} else {                                          // begin drag
+				current    = location
 				dragStart  = location
 				startAngle = gMapRotationAngle
 
