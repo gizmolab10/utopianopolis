@@ -339,7 +339,7 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	func traverseAllVisibleWidgetProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
-		traverseAllWidgetProgeny { widget in
+		traverseAllWidgetProgeny(inReverse: inReverse) { widget in
 			if  let zone = widget.widgetZone, zone.isVisible {
 				block(widget)
 			}
@@ -498,9 +498,10 @@ class ZoneWidget: ZPseudoView {
     }
 
 	func debugDraw(_ extraThick: Bool = false) {
-		absoluteDragHitRect.drawColoredRect(.green, radius: .zero, thickness: extraThick ? 5.0 : 1.0)
-//		highlightRect.drawColoredRect(.blue,  radius: .zero)
-//		absoluteFrame.drawColoredRect(.red,   radius: .zero)
+		if isLinearMode { return }
+		absoluteHitRect.drawColoredRect(.green, thickness: extraThick ? 5.0 : 1.0)
+//		highlightRect  .drawColoredRect(.blue)
+		absoluteFrame  .drawColoredRect(.red,   thickness: extraThick ? 5.0 : 1.0)
 //		childrenView?.absoluteFrame.drawColoredRect(.orange)
 	}
 

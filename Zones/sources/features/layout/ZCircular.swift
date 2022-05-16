@@ -105,7 +105,7 @@ extension ZoneWidget {
 		if  let z = widgetZone {
 			if  z.count      != 0 {
 				for child in childrenWidgets {
-					let cRect = child.absoluteFrame
+					let cRect = child.absoluteHitRect
 					if  cRect.hasSize {
 						rect  = rect.union(cRect)
 					}
