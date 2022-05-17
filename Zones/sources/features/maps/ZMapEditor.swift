@@ -243,7 +243,11 @@ class ZMapEditor: ZBaseEditor {
     }
 
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-        if !gIsMapOrEditIdeaMode && !gIsEssayMode {
+		if  gIsEditIdeaMode {
+			return true
+		}
+
+		if !gIsMapMode && !gIsEssayMode {
             return false
         }
 		
@@ -407,15 +411,6 @@ class ZMapEditor: ZBaseEditor {
 		var grabs = gSelecting.simplifiedGrabs // convert to mutable, otherwise can't invoke duplicate
 
 		grabs.duplicate()
-	}
-
-	func updateFontSize(up: Bool) {
-		let     delta = CGFloat(up ? 1 : -1)
-		var      size = gBaseFontSize + delta
-		size          = size.confineBetween(low: .zero, high: 15.0)
-		gBaseFontSize = size
-
-		gSignal([.spRelayout, .spPreferences])
 	}
 
 	func addDashedLine(onCompletion: Closure? = nil) {

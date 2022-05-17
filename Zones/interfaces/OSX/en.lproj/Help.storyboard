@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="olH-Ix-aMb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="19529"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -39,7 +40,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9Aa-9c-eI8">
                                     <rect key="frame" x="0.0" y="0.0" width="1152" height="825"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" id="H0M-2O-9lo">
                                             <rect key="frame" x="0.0" y="0.0" width="1184" height="825"/>
@@ -392,42 +393,45 @@
                         <rect key="frame" x="0.0" y="0.0" width="601" height="476"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="EIu-cm-elS" userLabel="Buttons Explanation View">
-                                <rect key="frame" x="101" y="242" width="400" height="150"/>
+                            <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EIu-cm-elS" userLabel="Buttons Explanation View">
+                                <rect key="frame" x="101" y="210" width="400" height="182"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy">
-                                        <rect key="frame" x="0.0" y="112" width="400" height="38"/>
-                                        <imageCell key="cell" controlSize="small" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="essay.controls" id="pms-Zt-RAa"/>
-                                    </imageView>
-                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
-                                        <rect key="frame" x="-2" y="0.0" width="404" height="112"/>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
+                                        <rect key="frame" x="-2" y="0.0" width="404" height="134"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
                                             <font key="font" metaFont="label" size="11"/>
-                                            <string key="title">    1                2            3            4           5          6                         7
+                                            <mutableString key="title">           1               2          3         4         5          6                           7
 
-1 &amp; 2  first two buttons take you to prior and next note/essay (respectively)
-   3     erase content of all, or grabbed notes
+1 &amp; 2  arrows take you to prior and next note/essay
+   3     erase content of all, or grabbed notes, and exit editing
    4     discard all changes and exit editing    5     save all changes and exit editing
    6     save all changes and resume editing
-   7     toggle visibility of titles (idea text)</string>
+   7     adjust visibility of titles (idea text) and grab dots</mutableString>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy">
+                                        <rect key="frame" x="0.0" y="142" width="400" height="40"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="40" id="dwW-94-QMT"/>
+                                        </constraints>
+                                        <imageCell key="cell" controlSize="large" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="essay.controls" id="pms-Zt-RAa"/>
+                                    </imageView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="OcL-aA-JRC" firstAttribute="top" secondItem="uVC-WT-hfy" secondAttribute="bottom" id="04r-Ja-bng"/>
-                                    <constraint firstAttribute="trailing" secondItem="uVC-WT-hfy" secondAttribute="trailing" id="5rM-LN-Uaw"/>
                                     <constraint firstAttribute="bottom" secondItem="OcL-aA-JRC" secondAttribute="bottom" id="COy-MR-kAF"/>
                                     <constraint firstAttribute="width" constant="400" id="Cfd-gX-1lF"/>
-                                    <constraint firstItem="uVC-WT-hfy" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="top" id="KkK-rD-Lmz"/>
-                                    <constraint firstItem="uVC-WT-hfy" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" id="Mc6-BW-qQS"/>
+                                    <constraint firstItem="uVC-WT-hfy" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" id="RK2-ZO-VlI"/>
                                     <constraint firstAttribute="trailing" secondItem="OcL-aA-JRC" secondAttribute="trailing" id="VKI-OY-BQr"/>
                                     <constraint firstItem="OcL-aA-JRC" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" id="XrZ-WS-rtu"/>
+                                    <constraint firstItem="uVC-WT-hfy" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="top" id="fCe-J9-mL5"/>
+                                    <constraint firstAttribute="trailing" secondItem="uVC-WT-hfy" secondAttribute="trailing" id="hkn-kA-4p1"/>
                                 </constraints>
                             </customView>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="p1n-xy-ora">
-                                <rect key="frame" x="15" y="194" width="571" height="28"/>
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p1n-xy-ora">
+                                <rect key="frame" x="15" y="174" width="571" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" id="Lsu-2X-LiW">
                                     <font key="font" metaFont="label" size="11"/>
                                     <string key="title">A grabbed note (inside an essay) has a rounded rectangle surrounding it and the drag dot is filled (see below). You can grab or ungrab a note by clicking on its drag dot.</string>
@@ -435,8 +439,8 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga">
-                                <rect key="frame" x="97" y="82" width="407" height="100"/>
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga">
+                                <rect key="frame" x="97" y="66" width="407" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="JYh-DR-oiw"/>
                                     <constraint firstAttribute="width" constant="407" id="rlV-fW-sN0"/>
@@ -478,7 +482,7 @@ The essay editor has a typical toolbar with some special added buttons:</string>
         </scene>
     </scenes>
     <resources>
-        <image name="essay.controls" width="408" height="38"/>
+        <image name="essay.controls" width="261" height="26"/>
         <image name="grabbed.note" width="480" height="196"/>
         <image name="typical.note" width="738" height="198"/>
     </resources>

@@ -146,11 +146,9 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
-		if  let         next = mode {
-			let  isKeyWindow = gHelpWindow?.isKeyWindow ?? false
-			let         same = gCurrentHelpMode == next
-			let       doShow = !same || !isKeyWindow
-			let         show = iShow ?? doShow
+		if  let        next = mode,
+			let isKeyWindow = gHelpWindow?.isKeyWindow {
+			let        show = iShow ?? !isKeyWindow
 
 			if !show  {
 				gHelpWindow?.close()

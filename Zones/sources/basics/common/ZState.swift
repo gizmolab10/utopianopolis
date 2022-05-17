@@ -714,7 +714,7 @@ var gBaseFontSize: CGFloat {
 		var value: CGFloat? = UserDefaults.standard.object(forKey: kFontSize) as? CGFloat
 
 		if  value == nil {
-			value  = 4.0
+			value  = kDefaultFontSize
 
 			UserDefaults.standard.set(value, forKey:kFontSize)
 			UserDefaults.standard.synchronize()

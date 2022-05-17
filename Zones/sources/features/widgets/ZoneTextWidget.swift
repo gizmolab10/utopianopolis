@@ -25,7 +25,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
 	override var preferredFont : ZFont   { return ((widget?.type.isBigMap ?? true) && (widget?.isLinearMode ?? false)) ? gBigFont : gSmallFont }
     var             widgetZone : Zone?   { return  widget?.widgetZone }
-	var               textSize : CGSize? { return text?.sizeWithFont(preferredFont) }
 	var             controller : ZMapController? { return widget?.controller }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
@@ -119,10 +118,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
 	func updateSize() {
-		if  let     size = textSize {
-			let   height = size.height + 1.0
+		if  let     size = text?.sizeWithFont(preferredFont) {
 			let     hide = widgetZone?.isFavoritesHere ?? false
 			let    width = hide ? .zero : size.width + 6.0
+			let   height = size.height + 1.0
 			drawnSize    = CGSize(width: width, height: height)
 		}
 	}

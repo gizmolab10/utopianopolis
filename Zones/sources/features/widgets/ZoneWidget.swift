@@ -474,10 +474,10 @@ class ZoneWidget: ZPseudoView {
 						} else if tHovering      {
 							if    isCircularMode { style = .sDashed
 							} else               { style = .sThin        }
-						} else if isGrabbed      { style = .sThick
 						} else if isHovering     {
 							if    isCircularMode { style = .sDashed
 							} else               { style = .sMedium      }
+						} else if isGrabbed      { style = .sThick
 						} else if ringIdeas      { style = .sUltraThin   }
 
 						if  style != .sNone {

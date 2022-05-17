@@ -15,10 +15,11 @@ var gHelpDotsExemplarController : ZHelpDotsExemplarController? { return gControl
 
 class ZHelpDotsExemplarController : ZMapController {
 
-	override  var   controllerID : ZControllerID { return .idHelpDots }
-	override  var     widgetType : ZWidgetType   { return .tExemplar }
-	override  var canDrawWidgets : Bool          { return true }
-	override  var       hereZone : Zone?         { return rootZone }
+	override  var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
+	override  var   controllerID : ZControllerID  { return .idHelpDots }
+	override  var     widgetType : ZWidgetType    { return .tExemplar }
+	override  var canDrawWidgets : Bool           { return true }
+	override  var       hereZone : Zone?          { return rootZone }
 	var                 rootZone : Zone?
 	@IBOutlet var       topLabel : ZTextField?
 	@IBOutlet var    bottomLabel : ZTextField?
