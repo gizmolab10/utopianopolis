@@ -351,7 +351,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func handleSlash(_ flags: ZEventFlags) -> Bool {                                // false means not handled here
 		if !flags.isAnyMultiple {
-			gFocusing.focusOrPopSmallMap(flags, kind: .eSelected)
+			gFocusing.pushPopFavorite(flags, kind: .eSelected)
 
 			return true
 		} else if let controller = gHelpController {                                 // should always succeed

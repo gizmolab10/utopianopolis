@@ -92,6 +92,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
 	var                        isDragged :               Bool  { return gDragging.isDragged(self) }
+	var                       isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
 	var                  isCurrentRecent :               Bool  { return self == gFavorites.currentRecent }
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
@@ -534,6 +535,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		get {
 			var computed: ZColor? = kDefaultIdeaColor
 
+			if  zoneName == "chris", isInFavorites {
+				noop()
+			}
+
 			if  gColorfulMode {
 				if  let       t = bookmarkTarget {
 					return t.color
@@ -797,6 +802,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	var nextSiblingIndex : Int? {
+		if  let    index = siblingIndex {
+			return index + (gListsGrowDown ? 1 : 0)
+		}
+
+		return nil
+	}
+
 	var siblingIndex: Int? {
 		if  let  siblings = parentZone?.children {
 			if  let index = siblings.firstIndex(of: self) {
@@ -808,14 +821,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				}
 			}
-		}
-
-		return nil
-	}
-
-	var insertionIndex: Int? {
-		if let index = siblingIndex {
-			return index + (gListsGrowDown ? 1 : 0)
 		}
 
 		return nil

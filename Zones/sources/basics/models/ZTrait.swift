@@ -51,7 +51,7 @@ enum ZTraitType: String { // stored in database: do not change
 
 	var description: String? {
 		switch self {
-			case .tHyperlink: return "LINK"
+			case .tHyperlink: return "HYPERLINK"
 			case .tEmail:     return "EMAIL"
 			case .tEssay:     return "ESSAY"
 			case .tNote:      return "NOTE"

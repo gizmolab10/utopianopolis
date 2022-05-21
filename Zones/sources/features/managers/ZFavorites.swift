@@ -170,19 +170,36 @@ class ZFavorites: ZSmallMapRecords {
 		}
 	}
 
-	override func push(_ zone: Zone? = gHere) {
-		if  let target         = zone {
-			let bookmarks      = bookmarksTargeting(target)
-			var bookmark       = bookmarks == nil || bookmarks!.count == 0 ? nil : bookmarks![0]
-			if  bookmark      == nil {
-				bookmark       = matchOrCreateBookmark(for: target, addToRecents: false)
+	var current : Zone? {
+		if  let here  = hereZoneMaybe {
+			if  here == recentsGroupZone {
+				return currentRecent
 			}
 
-			if  bookmark      != nil, !bookmark!     .isInRecentsGroup,
-				hereZoneMaybe != nil, !hereZoneMaybe!.isInRecentsGroup {
-				ZBookmarks.newOrExistingBookmark(targeting: target, addTo: recentsGroupZone)
+			return currentFavorite
+		}
 
-				currentRecent  = bookmark
+		return nil
+	}
+
+	override func push(_ zone: Zone? = gHere) {
+		if  let target          = zone {
+			let bookmarks       = favoritesTargeting(target)
+			var bookmark        = bookmarks?.firstUndeleted
+			if  bookmark       == nil {
+				bookmark        = ZBookmarks.newBookmark(targeting: target)
+				let index       = current?.nextSiblingIndex
+
+				hereZoneMaybe?.addChildNoDuplicate(bookmark, at: index)
+			}
+
+			if  bookmark       != nil, !bookmark!.isInRecentsGroup {
+				let index       = currentRecent?.nextSiblingIndex
+				currentFavorite = bookmark
+				bookmark        = ZBookmarks.newBookmark(targeting: target)
+				currentRecent   = bookmark
+
+				recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
 			}
 		}
 	}
@@ -193,7 +210,7 @@ class ZFavorites: ZSmallMapRecords {
 		}
 
 		let           target = zone.bookmarkTarget ?? zone
-		if  let    bookmarks = bookmarksTargeting(target), bookmarks.count > 0 {
+		if  let    bookmarks = favoritesTargeting(target), bookmarks.count > 0 {
 			return bookmarks[0]
 		}
 

@@ -123,7 +123,7 @@ class ZSmallMapRecords: ZRecords {
 		return targeting(target, in: workingBookmarks, orSpawnsIt: false)
 	}
 
-	func bookmarksTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
+	func favoritesTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
 		return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
 	}
 
@@ -198,7 +198,7 @@ class ZSmallMapRecords: ZRecords {
 
 		// locate and make bookmark of target visible and mark it
 
-		if  let bookmarks = bookmarksTargeting(target, orSpawnsIt: false) {
+		if  let bookmarks = favoritesTargeting(target, orSpawnsIt: false) {
 			for bookmark in bookmarks {
 				makeVisibleAndMarkInSmallMap(bookmark)
 			}
@@ -297,15 +297,10 @@ class ZSmallMapRecords: ZRecords {
 			let bookmarks = gHere.bookmarksTargetingSelf
 
 			for bookmark in bookmarks {
-				if  bookmark.isInFavorites {
-					if  bookmark.root == rootZone {
-						grab(bookmark)
-					} else {
-						bookmark.grab()
-					}
-
+				if  bookmark.isInFavorites, !bookmark.isDeleted {
 					gShowDetailsView = true
 
+					bookmark.grab()
 					gDetailsController?.showViewFor(.vFavorites)
 					gSignal([.spMain, .sDetails, .spRelayout])
 

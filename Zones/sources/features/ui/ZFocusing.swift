@@ -28,7 +28,7 @@ class ZFocusing : NSObject {
 		}
 	}
 
-	func focusOrPopSmallMap(_ flags: ZEventFlags, kind: ZFocusKind) {
+	func pushPopFavorite(_ flags: ZEventFlags, kind: ZFocusKind) {
 		if  flags.isControl {
 			gFavorites.popAndUpdateCurrent()
 		} else {

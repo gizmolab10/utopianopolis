@@ -1032,7 +1032,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			gNeedsRecount = true
 			let    parent = zone.parentZone                  // get the parent before we swap
-			let     reset = parent == firstNote?.zone   // check if current esssay should change
+			let     reset = parent == firstNote?.zone        // check if current esssay should change
 
 			gDisablePush {
 				zone.swapWithParent { [self] in

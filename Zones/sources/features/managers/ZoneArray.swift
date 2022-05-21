@@ -626,12 +626,22 @@ extension ZoneArray {
 		}
 	}
 
+	var firstUndeleted : Zone? {
+		for zone in self {
+			if !zone.isDeleted {
+				return zone
+			}
+		}
+
+		return nil
+	}
+
 	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool) -> ZoneArray {
 		var intersection = ZoneArray()
 		for target in iTargets {
 			if  let                dbid = target.dbid {
 				for zone in self {
-					if  let  zoneTarget = zone.bookmarkTarget,
+					if  let  zoneTarget = zone.bookmarkTarget, !zone.isDeleted,
 						dbid           == zoneTarget.dbid {
 
 						if  zoneTarget == target || (orSpawnsIt && target.spawnedBy(zoneTarget)) {
