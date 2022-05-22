@@ -15,7 +15,7 @@ import UIKit
 #endif
 
 enum ZModeButtonType: String {
-	case tLayout  = "layout```````"
+	case tLayout  = "layout"
 	case tConfine = "browse"
 	case tGrowth  = "grow"
 }
@@ -24,8 +24,9 @@ var gMapControlsView : ZMapControlsView? { return gControlsController?.mapContro
 
 class ZMapControlsView : ZButtonsView, ZTooltips {
 
-	override  var centered          : Bool { return true }
+	override  var           centered : Bool { return true }
 	override  var distributedEqually : Bool { return true }
+	override  var  verticalLineIndex : Int? { return 1 }
 
 	override func setupButtons() {
 		removeButtons()
@@ -78,6 +79,25 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 		updateButtonTitlesAndColors()
 		setupAndRedraw()
 		updateTooltips()
+	}
+
+	override func draw(_ iDirtyRect: NSRect) {
+		super.draw(iDirtyRect)
+
+		if  buttons.count > 2 {
+			let first = buttons[0].frame
+			let  next = buttons[1].frame
+			let width = next.minX - first.maxX
+			let  size = CGSize(width: width, height: frame.height)
+			let  edge = CGSize(width:   1.0, height: frame.height)
+			let   gap = CGRect(origin: CGPoint(x: first.maxX, y: .zero),       size: size)
+			let  left = CGRect(origin: .zero,                                  size: edge)
+			let right = CGRect(origin: CGPoint(x: frame.maxX - 1.0, y: .zero), size: edge)
+
+			gap  .drawCenteredVerticalLine()
+			left .drawCenteredVerticalLine()
+			right.drawCenteredVerticalLine()
+		}
 	}
 
 }

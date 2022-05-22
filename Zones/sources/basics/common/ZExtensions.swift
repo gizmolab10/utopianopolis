@@ -1111,6 +1111,16 @@ extension CGRect {
 		return nil
 	}
 
+	func drawCenteredVerticalLine(thickness: CGFloat = 0.5) {
+		let rect = centeredVerticalLine(thick: thickness)
+		let path = ZBezierPath(rect: rect)
+
+		path.setClip()
+		kBlackColor.setFill()
+		path.fill()
+
+	}
+
 	func drawColoredRect(_ color: ZColor, radius: CGFloat = 0.0, thickness: CGFloat = 0.5) {
 		let       path = ZBezierPath(roundedRect: self, xRadius: radius, yRadius: radius)
 		path.lineWidth = thickness
