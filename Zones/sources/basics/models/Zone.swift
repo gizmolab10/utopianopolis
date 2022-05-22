@@ -2560,13 +2560,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
 	func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
-	func spawnedByAny(of iZones: ZoneArray) -> Bool {
+	func spawnedByAny(of zones: ZoneArray) -> Bool {
 		var wasSpawned = false
 
-		if  iZones.count > 0 {
+		if  zones.count > 0 {
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self,
-					iZones.contains(iAncestor) {
+					zones.contains(iAncestor) {
 					wasSpawned = true
 
 					return .eStop

@@ -1292,7 +1292,7 @@ extension ZBezierPath {
 		let  insetRatio = 0.35
 		let      radius = Double(iRect.width) * insetRatio
 		let    bigAngle = k2PI /  6.0 // one sixth of a circle
-		let  smallAngle = k2PI / 30.0 // one thirtieth
+		let  smallAngle = k2PI / 30.0 // one thirtieth of a circle
 		let innerVector = CGPoint(x: radius,       y: 0.0)
 		let outerVector = CGPoint(x: radius * 1.5, y: 0.0)
 		var  controlOne = CGPoint.zero

@@ -100,32 +100,28 @@ extension ZoneWidget {
 	}
 
 	func circularRelayoutAbsoluteHitRect() {
-		var rect  = absoluteFrame
+		var rect  = highlightRect
 
-		if  let z = widgetZone {
-			if  z.count      != 0 {
-				for child in childrenWidgets {
-					let cRect = child.absoluteHitRect
-					if  cRect.hasSize {
-						rect  = rect.union(cRect)
-					}
-				}
+		for child in childrenWidgets {
+			let cRect = child.absoluteHitRect
+			if  cRect.hasSize {
+				rect  = rect.union(cRect)
+			}
+		}
 
-				for line in childrenLines {
-					if  let drag  = line.dragDot {
-						let dRect = drag.absoluteFrame
-						if  dRect.hasSize {
-							rect  = rect.union(dRect)
-						}
-					}
+		for line in childrenLines {
+			if  let drag  = line.dragDot {
+				let dRect = drag.absoluteFrame
+				if  dRect.hasSize {
+					rect  = rect.union(dRect)
 				}
 			}
+		}
 
-			if  let       p = parentLine?.dragDot {
-				let pRect   = p.absoluteFrame
-				if  pRect.hasSize {
-					rect    = rect.union(pRect)
-				}
+		if  let       p = parentLine?.dragDot {
+			let pRect   = p.absoluteFrame
+			if  pRect.hasSize {
+				rect    = rect.union(pRect)
 			}
 		}
 
@@ -428,6 +424,14 @@ extension ZoneDot {
 		return .zero
 	}
 
+	@discardableResult func circularUpdateDotDrawnSize() -> CGSize {
+		linearUpdateDotDrawnSize()
+
+//		drawnSize = drawnSize.multiplyBy(1.4)
+
+		return drawnSize
+	}
+
 	func circularUpdateDotAbsoluteFrame() {
 		if  let          l = line,
 			let     center = l.parentWidget?.frame.center,
@@ -542,6 +546,8 @@ extension ZoneDot {
 			
 			path.stroke()
 			path.fill()
+
+//			absoluteHitRect.drawColoredRect(.red)
 		}
 	}
 

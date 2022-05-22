@@ -84,7 +84,7 @@ class ZHovering: NSObject {
 
 extension ZMapView {
 
-	var detectHovering : Bool {
+	var shouldDetectHovering : Bool {
 		return okayToDetectHover
 		&& !gDragging.isDragging
 		&& !gRubberband.showRubberband    // not blink rubberband or drag
@@ -99,7 +99,7 @@ extension ZMapView {
 	@discardableResult func detectHover() -> Bool {
 		var     hoverDetected = false
 		if  let      location = currentMouseLocation,
-			let             h = hovering, detectHovering {
+			let             h = hovering, shouldDetectHovering {
 			if  let       any = controller?.detectHit(at: location) {
 				hoverDetected = h.declareHover(any)
 			} else {

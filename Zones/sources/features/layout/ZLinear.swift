@@ -319,6 +319,13 @@ extension ZoneDot {
 		return false
 	}
 
+	@discardableResult func linearUpdateDotDrawnSize() -> CGSize {
+		let inBig = widget?.type.isBigMap ?? true
+		drawnSize = gDotSize(forReveal: isReveal, forBigMap: inBig)
+
+		return drawnSize
+	}
+
 	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, .zero)
 		absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
@@ -344,7 +351,6 @@ extension ZoneDot {
 		path.lineWidth = thickness
 		path .flatness = kDefaultFlatness
 
-//		absoluteFrame.drawColoredRect(.brown)
 		path.stroke()
 		path.fill()
 	}

@@ -239,7 +239,7 @@ class ZSmallMapRecords: ZRecords {
 		return targets
 	}
 
-	var computedCurrrentBookmarks: ZoneArray? {
+	var bookmarksTargetingHere: ZoneArray? {
 		if  let bookmarks = rootZone?.allBookmarkProgeny, bookmarks.count > 0 {
 			let matches   = bookmarks.whoseTargetIntersects(with: currentTargets, orSpawnsIt: false)
 			if  matches.count > 0 {
@@ -251,7 +251,7 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	func updateCurrentBookmark() {
-		if  let bookmarks = computedCurrrentBookmarks {
+		if  let bookmarks = bookmarksTargetingHere {
 			for bookmark in bookmarks {
 				setCurrentBookmark(bookmark)
 			}
@@ -286,18 +286,18 @@ class ZSmallMapRecords: ZRecords {
 
 	@discardableResult func swapBetweenBookmarkAndTarget(doNotGrab: Bool = true) -> Bool {
 		if  let cb = currentFavorite,
-			cb.isGrabbed {
+			cb.isGrabbed {            // grabbed in small map, so ...
 			cb.bookmarkTarget?.grab() // grab target in big map
 		} else if doNotGrab {
 			return false
-		} else if let bookmarks = computedCurrrentBookmarks {
-			grab(bookmarks)
-			gDetailsController?.showViewFor(.vFavorites)   // favorites current {recent, favorite, here} each need to be updated
+//		} else if let bookmarks = bookmarksTargetingHere {
+//			grab(bookmarks)
+//			gDetailsController?.showViewFor(.vFavorites)   // favorites current {recent, favorite, here} each need to be updated
 		} else {
 			let bookmarks = gHere.bookmarksTargetingSelf
 
 			for bookmark in bookmarks {
-				if  bookmark.isInFavorites, !bookmark.isDeleted {
+				if !bookmark.isDeleted, bookmark.spawnedBy(hereZoneMaybe) {
 					gShowDetailsView = true
 
 					bookmark.grab()

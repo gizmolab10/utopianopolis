@@ -102,6 +102,13 @@ extension ZoneDot {
 		}
 	}
 
+	@discardableResult func updateDotDrawnSize() -> CGSize {
+		switch mode {
+			case .linearMode:   return   linearUpdateDotDrawnSize()
+			case .circularMode: return circularUpdateDotDrawnSize()
+		}
+	}
+
 	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		switch mode {
 			case .linearMode:     linearDrawMainDot(in: iDirtyRect, using: parameters)

@@ -88,13 +88,6 @@ class ZoneDot: ZPseudoView {
 	// MARK: - initialization
 	// MARK: -
 
-	@discardableResult func updateDotDrawnSize() -> CGSize {
-		let inBig = widget?.type.isBigMap ?? true
-		drawnSize = gDotSize(forReveal: isReveal, forBigMap: inBig)
-
-		return drawnSize
-	}
-
     func setupForWidget(_ w: ZoneWidget?, asReveal: Bool) {
         isReveal = asReveal
         widget   = w

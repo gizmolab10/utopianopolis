@@ -499,10 +499,10 @@ class ZoneWidget: ZPseudoView {
 
 	func debugDraw(_ extraThick: Bool = false) {
 		if isLinearMode { return }
-		absoluteHitRect.drawColoredRect(.green, thickness: extraThick ? 5.0 : 1.0)
-//		highlightRect  .drawColoredRect(.blue)
-		absoluteFrame  .drawColoredRect(.red,   thickness: extraThick ? 5.0 : 1.0)
-//		childrenView?.absoluteFrame.drawColoredRect(.orange)
+		absoluteHitRect            .drawColoredRect(.green,  thickness: extraThick ? 5.0 : 1.0)
+		highlightRect              .drawColoredRect(.blue,   thickness: extraThick ? 5.0 : 1.0)
+		absoluteFrame              .drawColoredRect(.red,    thickness: extraThick ? 5.0 : 1.0)
+//		childrenView?.absoluteFrame.drawColoredRect(.orange, thickness: extraThick ? 5.0 : 1.0)
 	}
 
 	func printWidget() {
