@@ -182,24 +182,42 @@ class ZFavorites: ZSmallMapRecords {
 		return nil
 	}
 
-	override func push(_ zone: Zone? = gHere) {
-		if  let target          = zone {
-			let bookmarks       = favoritesTargeting(target)
-			var bookmark        = bookmarks?.firstUndeleted
-			if  bookmark       == nil {
-				bookmark        = ZBookmarks.newBookmark(targeting: target)
-				let index       = current?.nextSiblingIndex
-
-				hereZoneMaybe?.addChildNoDuplicate(bookmark, at: index)
+	func maybeSetCurrentWithinHere(_ zone: Zone) -> Bool {
+		if  let here = hereZoneMaybe, zone.spawnedBy(here) {
+			if  here.isInRecentsGroup {
+				currentRecent   = zone
+			} else {
+				currentFavorite = zone
 			}
 
-			if  bookmark       != nil, !bookmark!.isInRecentsGroup {
-				let index       = currentRecent?.nextSiblingIndex
-				currentFavorite = bookmark
-				bookmark        = ZBookmarks.newBookmark(targeting: target)
-				currentRecent   = bookmark
+			return true
+		}
 
-				recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
+		return false // current was not altered
+	}
+
+	override func push(_ zone: Zone? = gHere) {
+		if  let target            = zone {
+			let bookmarks         = favoritesTargeting(target)
+			if  let existing      = bookmarks?.firstUndeleted,
+				maybeSetCurrentWithinHere(existing) {
+
+				return
+			}
+
+			var bookmark          = ZBookmarks.newBookmark(targeting: target)
+			let index             = current?.nextSiblingIndex
+			if  let here          = hereZoneMaybe {
+				currentFavorite   = bookmark
+				here.addChildNoDuplicate(bookmark, at: index)
+
+				if !here.isInRecentsGroup {
+					let index     = currentRecent?.nextSiblingIndex
+					bookmark      = ZBookmarks.newBookmark(targeting: target)
+					currentRecent = bookmark
+
+					recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
+				}
 			}
 		}
 	}
