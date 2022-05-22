@@ -210,13 +210,6 @@ class ZoneDot: ZPseudoView {
 
 			fillColor.setFill()
 			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
-		} else if parameters.typeOfTrait != kEmpty {
-
-			// ///////////////// //
-			// TRAIT DECORATIONS //
-			// ///////////////// //
-
-			drawTraitDecoration(in: iDirtyRect, string: parameters.typeOfTrait, color: fillColor)
 		}
 	}
 
@@ -233,12 +226,23 @@ class ZoneDot: ZPseudoView {
 
 		drawMainDot(in: iDirtyRect, using: parameters) // needed for dots help view
 
+		if  parameters.typeOfTrait != kEmpty, controller?.inCircularMode != isReveal {
+
+			// ///////////////// //
+			// TRAIT DECORATIONS //
+			// ///////////////// //
+
+			let fillColor = parameters.filled ? gBackgroundColor : parameters.color
+
+			drawTraitDecoration(in: iDirtyRect, string: parameters.typeOfTrait, color: fillColor)
+		}
+
 		if  parameters.isReveal {
 			drawRevealDotDecorations(iDirtyRect, parameters)
 		} else {
 			decorationFillColor.setFill()
 
-			if  parameters.isGrouped {
+			if  parameters.isGrouped, controller?.inCircularMode == false {
 
 				// //////////////////// //
 				// GROUPING DECORATIONS //

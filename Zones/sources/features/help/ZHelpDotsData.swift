@@ -17,20 +17,20 @@ class ZHelpDotsData: ZHelpData {
 	override var columnStrings : [StringsArray] { return [dotsColumnOne, dotsColumnTwo] }
 	override var tabOffsets    : [Int]          { return [0, 20, 150] }
 	override var boldFont      :  ZFont         { return kLargeBoldFont }
-	override var rowHeight     :  CGFloat       { return 22.0 }
+	override var rowHeight     :  CGFloat       { return 21.0 }
 
 	let dotsColumnOne: StringsArray = dotsPrefixArray + [
 		"",						"",																				"",
 		"!DRAG DOT",			"click to select, deselect or drag",											"",
 		"",						"",																				"",
-		"_drag dot",			"filled dot indicates idea is selected, or cursor is hovering over",			"",
+		"_filled dot indicates idea is selected, or cursor is hovering over",								"",	"",
 		".b",					"editable",																		"",
 		".b",					"not editable",																	"",
 		".b",					"only the ideas in all its sublists are editable",								"",
 		".b",					"owner of a favorites group",													"",
 		".b",					"member of a favorites group",													"",
 		"",						"",																				"",
-		"_appears only in the favorite and recent lists",													"",	"",
+		"_appears only in favorites",																		"",	"",
 		".b",					"this bookmark's target is current focus",										""
 	]
 
@@ -39,6 +39,7 @@ class ZHelpDotsData: ZHelpData {
 		"!REVEAL DOT",			"click to conceal, reveal or activate",											"",
 		"",						"",																				"",
 		"_no dot indicates nothing to reveal (no list, note, email or hyperlink)",							"", "",
+		"_filled dot indicates list is hidden, or cursor is hovering over",									"",	"",
 		"",						"",																				"",
 		"_when list is visible","click to hide list",															"",
 		".e",					"points to the left",															"",
