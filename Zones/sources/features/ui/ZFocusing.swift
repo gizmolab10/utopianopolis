@@ -32,20 +32,20 @@ class ZFocusing : NSObject {
 		if  flags.isControl {
 			gFavorites.popAndUpdateCurrent()
 		} else {
-			focusOnGrab(kind, flags.isCommand, shouldGrab: true) { // complex grab logic
+			focusOnGrab(kind, flags, shouldGrab: true) { // complex grab logic
 				gRelayoutMaps()
 			}
 		}
 	}
 
-	func focusOnGrab(_ kind: ZFocusKind = .eEdited, _ NOBOOKMARK: Bool = false, shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
+	func focusOnGrab(_ kind: ZFocusKind = .eEdited, _ flags: ZEventFlags = ZEventFlags(), shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
 
 		// regarding grabbed/edited zone, five states:
 		// 1. is a bookmark        -> target becomes here, if in big map then do as for state 2
 		// 2. is here              -> update in small map
 		// 3. in small map         -> grab here, if grabbed then do as for state 4
-		// 4. not here, NOBOOKMARK -> change here
-		// 5. not NOBOOKMARK       -> select here, create a bookmark
+		// 4. not here, COMMAND    -> change here
+		// 5. not COMMAND          -> select here, create a bookmark
 
 		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
 			atArrival()
@@ -66,14 +66,14 @@ class ZFocusing : NSObject {
 				finishAndGrabHere()
 			}
 		} else if zone == gHere {       // state 2
-			if !gFavorites.swapBetweenBookmarkAndTarget(doNotGrab: !shouldGrab) {
+			if !gFavorites.swapBetweenBookmarkAndTarget(flags, doNotGrab: !shouldGrab) {
 				gFavorites.matchOrCreateBookmark(for: zone, addToRecents: true)
 			}
 
 			atArrival()
 		} else if zone.isInFavorites {  // state 3
 			finishAndGrabHere()
-		} else if NOBOOKMARK {          // state 4
+		} else if flags.isCommand {             // state 4
 			gFavorites.refocus {
 				atArrival()
 			}

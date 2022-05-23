@@ -219,7 +219,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else if type.contains(.wGroups) {
 			traverseAllProgeny { iZone in
-				if  iZone.count > 1 {
+				if  iZone != self, iZone.count > 1 {
 					result.append(iZone)
 				}
 			}
@@ -2084,7 +2084,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.expand()
 				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKind) in
-					gFavorites.updateCurrentBookmark()
+					gFavorites.updateCurrentWithBookmarksTargetingHere()
 					atArrival()
 				}
 

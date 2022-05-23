@@ -149,11 +149,12 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func nextList(down: Bool) -> Zone? {
-		if  let   here = hereZoneMaybe,
-			let  zones = rootZone?.allGroups,
-			let fIndex = zones.firstIndex(of: here),
-			let nIndex = fIndex.next(forward: down, max: zones.count - 1) {
-			return zones[nIndex]
+		if  let  here = hereZoneMaybe,
+			let zones = rootZone?.allGroups {
+			let index = zones.firstIndex(of: here) ?? 0
+			if  let n = index.next(forward: down, max: zones.count - 1) {
+				return zones[n]
+			}
 		}
 
 		return rootZone
@@ -196,29 +197,31 @@ class ZFavorites: ZSmallMapRecords {
 		return false // current was not altered
 	}
 
-	override func push(_ zone: Zone? = gHere) {
-		if  let target              = zone {
-			let bookmarks           = favoritesTargeting(target)
-			if  let existing        = bookmarks?.firstUndeleted,
+	override func push(_ zone: Zone?  = gHere) {
+		if  let target            = zone {
+			let bookmarks         = favoritesTargeting(target)
+			if  let existing      = bookmarks?.firstUndeleted,
 				maybeSetCurrentWithinHere(existing) {
 
 				return
 			}
 
-			var bookmark            = ZBookmarks.newBookmark(targeting: target)
-			let index               = current?.nextSiblingIndex
-			if  let here            = hereZoneMaybe {
+			var bookmark          = ZBookmarks.newBookmark(targeting: target)
+			let index             = current?.nextSiblingIndex
+			if  let here          = hereZoneMaybe {
 				here.addChildNoDuplicate(bookmark, at: index)
 				gBookmarks.addToReverseLookup(bookmark)
+//				setCurrent(bookmark)
 
-				if !here.isInRecentsGroup {
-					let index       = currentRecent?.nextSiblingIndex
-					currentFavorite = bookmark
-					bookmark        = ZBookmarks.newBookmark(targeting: target)
-					currentRecent   = bookmark
+				if  !here.isInRecentsGroup,
+					let b         = bookmarks?.intersection(recentsGroupZone.children) {
+					if  b.count  == 0 {
+						let index = currentRecent?.nextSiblingIndex
+						bookmark  = ZBookmarks.newBookmark(targeting: target)
 
-					recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
-					gBookmarks.addToReverseLookup(bookmark)
+						recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
+						gBookmarks.addToReverseLookup(bookmark)
+					}
 				}
 			}
 		}

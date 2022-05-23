@@ -82,8 +82,8 @@ extension ZoneWidget {
 
 	func updateAllDotFrames() {
 		for line in childrenLines {
-			line  .dragDot?.circularUpdateDragDotAbsoluteFrame()
-			line.revealDot?.circularUpdateDotAbsoluteFrame()
+			line.revealDot?.circularUpdateDotAbsoluteFrame()     // start of line
+			line  .dragDot?.circularUpdateDragDotAbsoluteFrame() // end of line
 
 		}
 	}
@@ -206,7 +206,8 @@ extension ZWidgets {
 			}
 
 			if  level  < 0 {
-				return total
+				let multiple = 10
+				return (total + multiple * maxVisibleChildren(at: iLevel)) / (multiple + 1)   // average
 			}
 		}
 	}
@@ -222,17 +223,19 @@ extension ZWidgets {
 	}
 
 	static func ringRadius(at level: Int) -> CGFloat {
-		let  increment = gCircleIdeaRadius + gDotHeight
-		let     places = placesCount(at: level)
-		var     radius = CGFloat(level) * 1.8 * increment
-		if  gDisplayIdeasWithCircles {
+		let  increment = gCircleIdeaRadius * 2.0 + gDotHeight * 1.5
+		var     radius = increment + gDotHalfWidth
+
+		// need to do this tweak at every level
+
+		for l in 1..<level {
+			let places = placesCount(at: l)
 			let  needs = CGFloat(places) * increment / k2PI
-			if  radius < needs {
-				radius = needs
-			}
+			let  delta = (needs > increment) ? needs : increment
+			radius    += delta
 		}
 
-		return gDotHalfWidth + radius
+		return radius
 	}
 
 	static func maxVisibleChildren(at level: Int) -> Int {
@@ -433,11 +436,16 @@ extension ZoneDot {
 	}
 
 	func circularUpdateDotAbsoluteFrame() {
-		if  let          l = line,
+		if  let          l = line, (isReveal || l.parentWidget?.widgetZone?.isExpanded ?? false),
 			let     center = l.parentWidget?.frame.center,
 			let lineVector = l.parentToChildVector {
 			let  hypotenuse = dotHypotenuse
 			let      length = lineVector.length
+
+			if  length == 0.0 {
+				return
+			}
+
 			let       width = isReveal ? gDotHeight : gDotWidth
 			let        size = CGSize(width: width, height: gDotWidth).dividedInHalf
 			let     divisor = isReveal ? hypotenuse : (length - hypotenuse)
@@ -447,6 +455,10 @@ extension ZoneDot {
 			l       .length = hypotenuse
 			absoluteFrame   = CGRect(origin: origin, size: drawnSize)
 			absoluteHitRect = absoluteFrame
+
+			if  absoluteFrame.containsNAN {
+				noop()
+			}
 
 			updateTooltips()
 		}
@@ -515,6 +527,10 @@ extension ZoneDot {
 				absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(expansion)
 				absoluteHitRect = absoluteFrame
 
+				if  absoluteFrame.containsNAN {
+					noop()
+				}
+
 				updateTooltips()
 			}
 		}
@@ -543,7 +559,7 @@ extension ZoneDot {
 			
 			path.lineWidth = thick
 			path .flatness = kDefaultFlatness
-			
+
 			path.stroke()
 			path.fill()
 
@@ -567,7 +583,7 @@ extension ZMapController {
 				let  color = gAccentColor.withAlpha(0.2)
 				level     += 1
 
-				rect.drawColoredCircle(color, thickness: gDotHeight)
+				rect.drawColoredCircle(color, thickness: gDotHeight, dashes: true)
 			}
 		}
 	}

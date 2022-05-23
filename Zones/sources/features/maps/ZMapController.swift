@@ -132,12 +132,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gToggleDatabaseID()
 		gHere.grab()
 		gHere.expand()
-		gFavorites.updateCurrentBookmark()
+		gFavorites.updateCurrentWithBookmarksTargetingHere()
 	}
 
 	func recenter(_ SPECIAL: Bool = false) {
 		gScaling          = 1.0
-		gMapOffset     = !SPECIAL ? .zero : CGPoint(x: kHalfDetailsWidth, y: .zero)
+		gMapOffset        = !SPECIAL ? .zero : CGPoint(x: kHalfDetailsWidth, y: .zero)
 		gMapRotationAngle = .zero
 
 		layoutForCurrentScrollOffset()

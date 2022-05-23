@@ -1129,9 +1129,13 @@ extension CGRect {
 		path.stroke()
 	}
 
-	func drawColoredOval(_ color: ZColor, thickness: CGFloat = 0.5, filled: Bool = false) {
+	func drawColoredOval(_ color: ZColor, thickness: CGFloat = 0.5, filled: Bool = false, dashes: Bool = false) {
 		let       oval = ZBezierPath(ovalIn: self)
 		oval.lineWidth = thickness
+
+		if  dashes {
+			oval.addDashes()
+		}
 
 		color.setStroke()
 		oval.stroke()
@@ -1142,8 +1146,8 @@ extension CGRect {
 		}
 	}
 
-	func drawColoredCircle(_ color: ZColor, thickness: CGFloat = 0.5, filled: Bool = false) {
-		squareCentered.drawColoredOval(color, thickness: thickness, filled: filled)
+	func drawColoredCircle(_ color: ZColor, thickness: CGFloat = 0.5, filled: Bool = false, dashes: Bool = false) {
+		squareCentered.drawColoredOval(color, thickness: thickness, filled: filled, dashes: dashes)
 	}
 
 	func drawImageResizeDots() {
