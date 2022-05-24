@@ -110,18 +110,18 @@ extension ZoneWidget {
 		}
 
 		for line in childrenLines {
-			if  let drag  = line.dragDot {
-				let dRect = drag.absoluteFrame
-				if  dRect.hasSize {
-					rect  = rect.union(dRect)
+			if  let reveal = line.revealDot {
+				let rRect = reveal.absoluteHitRect
+				if  rRect.hasSize {
+					rect  = rect.union(rRect)
 				}
 			}
 		}
 
-		if  let       p = parentLine?.dragDot {
-			let pRect   = p.absoluteFrame
-			if  pRect.hasSize {
-				rect    = rect.union(pRect)
+		if  let    drag = parentLine?.dragDot {
+			let dRect   = drag.absoluteHitRect
+			if  dRect.hasSize {
+				rect    = rect.union(dRect)
 			}
 		}
 
@@ -163,6 +163,9 @@ extension ZoneWidget {
 			traverseAllVisibleWidgetProgeny(inReverse: true) { widget in
 				widget.circularUpdateHighlightRect()
 				widget.updateAllDotFrames()
+			}
+
+			traverseAllVisibleWidgetProgeny(inReverse: true) { widget in
 				widget.circularRelayoutAbsoluteHitRect()
 			}
 		}
@@ -456,10 +459,6 @@ extension ZoneDot {
 			absoluteFrame   = CGRect(origin: origin, size: drawnSize)
 			absoluteHitRect = absoluteFrame
 
-			if  absoluteFrame.containsNAN {
-				noop()
-			}
-
 			updateTooltips()
 		}
 	}
@@ -526,10 +525,6 @@ extension ZoneDot {
 
 				absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(expansion)
 				absoluteHitRect = absoluteFrame
-
-				if  absoluteFrame.containsNAN {
-					noop()
-				}
 
 				updateTooltips()
 			}

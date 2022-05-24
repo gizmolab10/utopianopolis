@@ -80,7 +80,7 @@ class ZMapView: ZView {
 	// MARK: -
 
 	func debugDraw() {
-		bounds                 .insetEquallyBy(1.5).drawColoredRect(.blue)
+		bounds                .insetEquallyBy(1.5).drawColoredRect(.blue)
 		decorationsView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)
 		superview?.drawBox(in: self, with:                          .orange)
 	}
