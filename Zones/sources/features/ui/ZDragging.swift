@@ -37,14 +37,15 @@ class ZDragging: NSObject {
 		if  let origin = gMapController?.mapOrigin, showRotator {
 			let    ray = current - origin
 			let radius = CGSize(ray).hypotenuse
+			let  color = gActiveColor.lighter(by: 3.0)
 			let   line = ZBezierPath.linePath   (start: origin,  length: 5000.0, angle: gMapRotationAngle + kHalfPI)
 			let circle = ZBezierPath.circlePath(origin: origin,  radius: radius)
 			let   knob = ZBezierPath.circlePath(origin: current, radius: 5.0)
-			circle.lineWidth = 0.6
-			line  .lineWidth = 0.6
+			circle.lineWidth = 3.0
+			line  .lineWidth = 2.0
 
-			gActiveColor.setStroke()
 			gActiveColor.setFill()
+			color .setStroke()
 			circle.addDashes()
 			circle.stroke()
 			line  .stroke()

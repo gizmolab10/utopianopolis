@@ -110,14 +110,6 @@ class ZTogglingView: ZView {
 		gSignal([.sDetails])
 	}
 
-	fileprivate func goAccordingTo(_ button: ZButton) {
-		switch button {
-			case   upButton: gFavorites.showNextList(down: false)
-			case downButton: gFavorites.showNextList(down: true)
-			default:         break
-		}
-	}
-
 	fileprivate func updateTitleButton() {
 		if  gIsReadyToShowUI {
 			var                      title = kEmpty
@@ -149,6 +141,14 @@ class ZTogglingView: ZView {
 		switchingButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 		downButton?     .zlayer.backgroundColor = gDarkAccentColor.cgColor
 		upButton?       .zlayer.backgroundColor = gDarkAccentColor.cgColor
+	}
+
+	fileprivate func goAccordingTo(_ button: ZButton) {
+		switch button {
+			case   upButton: gFavorites.showNextList(down: true)
+			case downButton: gFavorites.showNextList(down: false)
+			default:         break
+		}
 	}
 
 	func updateFavoritesButtons() {
