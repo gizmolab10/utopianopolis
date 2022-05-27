@@ -511,7 +511,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			if  enabled {
 				switch key {
 					case "b":  applyToSelection(BOLD: true)
-					case "d":  convertToChild(flags)
+					case "d":  convertToChild(flags); return true
 					case "e":  grabSelectedTextForSearch()
 					case "f":  gSearching.showSearch(OPTION)
 					case "g":  searchAgain(OPTION)
@@ -530,7 +530,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				case "a":      selectAll(nil)
 				case "n":      swapBetweenNoteAndEssay()
 				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
-				case "u":      if OPTION { gControllers.showEssay(forGuide: true) }
+				case "u":      if OPTION { gControllers.showEssay(forGuide: true) } else { return false }
 				case "/":      gHelpController?.show(flags: flags)
 				case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
@@ -542,22 +542,24 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		} else if CONTROL {
 			if  enabled {
 				switch key {
-				case "d":  convertToChild(flags)
-				case "w":  showLinkPopup()
-				default:   break
+					case "d": convertToChild(flags)
+					case "w": showLinkPopup()
+					default:  return false
 				}
+
+				return true
 			}
 
 			switch key {
-			case "/":      popNoteAndUpdate()
-			default:       return false
+				case "/": popNoteAndUpdate()
+				default:  return false
 			}
 
 			return true
 		} else if OPTION, enabled {
 			switch key {
-			case "d":      convertToChild(flags)
-			default:       return false
+				case "d": convertToChild(flags)
+				default:  return false
 			}
 
 			return true
@@ -1675,15 +1677,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				child(named: text,   withText: kNoteDefault)
 			} else {
 				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text
-				insertText(kEmpty, replacementRange: selectedRange)	            // remove text
+				insertText(kEmpty, replacementRange: selectedRange)	        // remove text
 				parent.addChildNoDuplicate(child)
 				child.asssureIsVisible()
 				prepareToExit()
 				save()
 				child.grab()
 				exit()
+				gRelayoutMaps()
 
-				FOREGROUND {                                            // defer idea edit until after this function exits
+				FOREGROUND(after: 0.001) {       // defer idea edit until after this function exits
 					child.edit()
 				}
 			}

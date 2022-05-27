@@ -465,9 +465,9 @@
     <resources>
         <image name="cancel" width="24" height="24"/>
         <image name="exit" width="26" height="26"/>
-        <image name="left.arrow" width="512" height="512"/>
+        <image name="left.arrow" width="860" height="785"/>
         <image name="printer" width="225" height="225"/>
-        <image name="right.arrow" width="512" height="512"/>
+        <image name="right.arrow" width="860" height="785"/>
         <image name="save" width="24" height="24"/>
         <image name="settings" width="800" height="800"/>
         <image name="show.drag.dot" width="512" height="512"/>

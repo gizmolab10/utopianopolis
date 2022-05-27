@@ -490,7 +490,7 @@ class ZoneWidget: ZPseudoView {
 						drawInterior(color)
 					}
 
-//					debugDraw(isHovering || tHovering)
+//		`			debugDraw(isHovering || tHovering)
 				}
 			}
 		}

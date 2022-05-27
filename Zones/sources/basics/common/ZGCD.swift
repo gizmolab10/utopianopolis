@@ -13,12 +13,12 @@ let gFOREGROUND = DispatchQueue.main
 let gBACKGROUND = DispatchQueue.global(qos: .background)
 
 func FOREGROUND(forced: Bool = false, after seconds: Double? = nil, _ closure: @escaping Closure) {
-    if  Thread.isMainThread {
-        closure()
-	} else if let after = seconds {
+    if let after = seconds {
 		let when = DispatchWallTime.now() + Double(Int64(after * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
 
 		gFOREGROUND.asyncAfter(wallDeadline: when) { closure() }
+	} else if  Thread.isMainThread {
+		closure()
 	} else if forced {
 		gFOREGROUND .sync { closure() }
     } else {
