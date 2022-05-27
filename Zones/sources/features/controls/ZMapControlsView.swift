@@ -89,14 +89,14 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 			let  next = buttons[1].frame
 			let width = next.minX - first.maxX
 			let  size = CGSize(width: width, height: frame.height)
-			let  edge = CGSize(width:   1.0, height: frame.height)
+//			let  edge = CGSize(width:   1.0, height: frame.height)
 			let   gap = CGRect(origin: CGPoint(x: first.maxX, y: .zero),       size: size)
-			let  left = CGRect(origin: .zero,                                  size: edge)
-			let right = CGRect(origin: CGPoint(x: frame.maxX - 1.0, y: .zero), size: edge)
+//			let  left = CGRect(origin: .zero,                                  size: edge)
+//			let right = CGRect(origin: CGPoint(x: frame.maxX - 1.0, y: .zero), size: edge)
 
 			gap  .drawCenteredVerticalLine()
-			left .drawCenteredVerticalLine()
-			right.drawCenteredVerticalLine()
+//			left .drawCenteredVerticalLine()
+//			right.drawCenteredVerticalLine()
 		}
 	}
 

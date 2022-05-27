@@ -60,7 +60,7 @@ class ZSearching: NSObject {
 	func setSearchStateTo(_ iState: ZSearchState) {
 		state = iState
 
-		gControlsController?     .stateDidChange()
+		gControlsController?     .searchStateDidChange()
 		gSearchBarController?    .stateDidChange()
 		gSearchResultsController?.stateDidChange()
 

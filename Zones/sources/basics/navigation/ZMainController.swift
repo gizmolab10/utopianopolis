@@ -27,6 +27,8 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
 	@IBOutlet var helpButton         : ZHelpButton?
+	@IBOutlet var searchButton       : ZButton?
+	@IBOutlet var dismissButton      : ZButton?
 	@IBOutlet var hamburgerButton    : ZButton?
 	@IBAction func helpButtonAction(_ button: NSButton) { gHelpController?.show() }
 
@@ -53,6 +55,19 @@ class ZMainController: ZGesturesController {
 
 		gMapView?.removeAllTextViews(ofType: .small)
 		gSignal([.spMain, .sDetails, .spRelayout])
+	}
+
+	@IBAction func searchButtonAction(_ sender: ZButton) {
+		gSearching.showSearch()
+	}
+
+	@IBAction func dismissButtonAction(_ sender: ZButton) {
+		gSearchBarController?.endSearch()
+	}
+
+	func searchStateDidChange() {
+		searchButton? .isHidden = !gIsNotSearching
+		dismissButton?.isHidden =  gIsNotSearching
 	}
 
 	func mainUpdate() {

@@ -17,29 +17,26 @@ class ZControlsController: ZGenericController {
 	@IBOutlet var searchScopeControl  : ZSegmentedControl?
 	@IBOutlet var searchFilterControl : ZSegmentedControl?
 	@IBOutlet var searchOptionsView   : ZView?
-	@IBOutlet var dismissButton       : ZButton?
-	@IBOutlet var searchButton        : ZButton?
 
-	@IBAction func search(_ sender: ZButton) { gSearching.showSearch() }
-	func updateOptionView() { stateDidChange() }
+	func updateOptionView() { searchStateDidChange() }
 
 	override func controllerSetup(with mapView: ZMapView?) {
 		searchOptionsView?.zlayer.backgroundColor = kWhiteColor.cgColor
 
-		stateDidChange()
+		searchStateDidChange()
 	}
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		mapControlsView?.setupAndRedraw()
 		filterDidChange()
 		scopeDidChange()
-		stateDidChange()
+		searchStateDidChange()
 	}
 
-	func stateDidChange() {
-		searchOptionsView?.isHidden =  gIsNotSearching || gIsSearchEssayMode
-		dismissButton?    .isHidden =  gIsNotSearching
-		searchButton?     .isHidden = !gIsNotSearching
+	func searchStateDidChange() {
+		searchOptionsView?.isHidden = gIsNotSearching || gIsSearchEssayMode
+
+		gMainController?.searchStateDidChange() // moved dismiss button to main controller
 	}
 
 	func scopeDidChange() {
@@ -105,10 +102,6 @@ class ZControlsController: ZGenericController {
 		gSearchBarController?.updateSearchBox(allowSearchToEnd: false)
 		gSearchResultsController?.applyFilter()
 		gSearchResultsController?.genericTableUpdate()
-	}
-
-	@IBAction func dismissAction(_ sender: ZButton) {
-		gSearchBarController?.endSearch()
 	}
 
 	func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool { // false means not handled

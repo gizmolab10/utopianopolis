@@ -39,12 +39,13 @@ class ZButtonsView : ZView {
 
 	func layoutButtons() {
 		var  prior : ZButton?
+		let  plain = verticalLineIndex == nil
 		let  array = buttons
 		let  count = array.count
 		let    max = count - 1
-		let    gap = 3.0
-		let margin = 4.0
-		let  extra = verticalLineIndex == nil ? 0.0 : 4.0
+		let margin = plain ? 4.0 : 1.0
+		let    gap = plain ? 3.0 : 8.0
+		let  extra = plain ? 0.0 : 8.0
 		let  total = bounds.size.width - CGFloat(gap * Double(max)) - CGFloat(margin * 2.0) - extra
 		var  width = total / CGFloat(count) // use this value when distributing equally
 
