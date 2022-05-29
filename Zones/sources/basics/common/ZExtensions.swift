@@ -1597,7 +1597,6 @@ extension NSRange {
 
 	func insetBy   (_ inset:  Int)    -> NSRange { return NSRange(location:  inset + location, length: length - (inset * 2)) }
 	func offsetBy  (_ offset: Int)    -> NSRange { return NSRange(location: offset + location, length: length) }
-	func contains  (_ other: NSRange) ->    Bool { return inclusiveIntersection(other) == other }
 	func intersects(_ other: NSRange) ->    Bool { return intersection(other) != nil }
 
 	func extendedBy(_ increment: Int) -> NSRange {

@@ -94,7 +94,7 @@ class ZRecord: ZManagedObject {
 	@NSManaged var modificationDate: Date?
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
-	var                color: ZColor?
+	var                color: ZColor?    // overridden by Zone and ZTrait (latter grabs from its ownerZone)
 	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
 	var             zRecords: ZRecords?   { return gRemoteStorage.zRecords(for: databaseID) }
 	var  unwrappedRecordName: String      { return recordName ?? kEmpty }

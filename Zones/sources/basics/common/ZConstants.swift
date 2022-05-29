@@ -238,6 +238,7 @@ let        kSubscriptionSecret = "2325a18fb3654ba38b1b8e292611d89d"
 let        kTutorialRecordName = "essay:96689264-EB25-49CC-9324-913BA5CEBD56"
 let        kDefaultRecordNames = kRootName + kColonSeparator + kRootName + kColonSeparator + kFavoritesRootName
 let       kCloudDriveIsEnabled = "cloud drive is enabled"
+let       kCreateCombinedEssay = "create combined essay"
 let       kProductionEmailSent = "production email sent"
 let       kShowMySubscriptions = "show my subscriptions"
 let      kSmallMapIsVisibleKey = "small map is visible"

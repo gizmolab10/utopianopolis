@@ -266,6 +266,7 @@ class ZSelecting: NSObject {
 		updateBrowsingLevel()
         updateCousinList()
         gFavorites.updateFavoritesAndRedraw(needsRedraw: needsRedraw)
+		gSignal([.sDetails])
     }
 
 	func respectOrder(for zones: ZoneArray) -> ZoneArray {

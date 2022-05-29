@@ -12,7 +12,6 @@ import CloudKit
 var  gTextEditorHandlesArrows                           = false
 var   gIsEditingStateChanging                           = false
 var    gRefusesFirstResponder                           = false
-var      gCreateCombinedEssay 		                    = false
 var       gHasFinishedStartup                           = false
 var       gIsExportingToAFile                           = false
 var       gProgressTimesReady                           = false
@@ -286,6 +285,17 @@ var gCurrentHelpMode: ZHelpMode {
 	}
 }
 
+var gUserActivityDetected: Bool {
+	if  let w = gUserActiveInWindow {
+		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
+		gInterruptionCount += 1
+
+		return true
+	}
+
+	return false
+}
+
 var gTemporaryFullTitleMode : Bool {
 	get { return getPreferencesBool(   for: kTemporaryFullTitleMode, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kTemporaryFullTitleMode) }
@@ -321,72 +331,24 @@ var gShowSmallMapForIOS : Bool {
 	set { setPreferencesBool(newValue, for: kShowSmallMap) }
 }
 
-var gUserActivityDetected: Bool {
-	if  let w = gUserActiveInWindow {
-		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
-		gInterruptionCount += 1
-
-		return true
-	}
-
-	return false
-}
-
 var gShowExplanations : Bool {
-	get {
-		var value  = UserDefaults.standard.object(forKey: kShowExplanations) as? Bool
-		if  value == nil {
-			value  = true
-
-			UserDefaults.standard.set(true, forKey:kShowExplanations)
-			UserDefaults.standard.synchronize()
-		}
-
-		return value!
-	}
-
-	set {
-		UserDefaults.standard.set(newValue, forKey:kShowExplanations)
-		UserDefaults.standard.synchronize()
-	}
+	get { return getPreferencesBool(   for: kShowExplanations, defaultBool: true) }
+	set { setPreferencesBool(newValue, for: kShowExplanations) }
 }
 
 var gShowMainControls : Bool {
-	get {
-		var value  = UserDefaults.standard.object(forKey: kShowMainControls) as? Bool
-		if  value == nil {
-			value  = false
+	get { return getPreferencesBool(   for: kShowMainControls, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kShowMainControls) }
+}
 
-			UserDefaults.standard.set(false, forKey:kShowMainControls)
-			UserDefaults.standard.synchronize()
-		}
-
-		return value!
-	}
-
-	set {
-		UserDefaults.standard.set(newValue, forKey:kShowMainControls)
-		UserDefaults.standard.synchronize()
-	}
+var gCreateCombinedEssay : Bool {
+	get { return getPreferencesBool(   for: kCreateCombinedEssay, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kCreateCombinedEssay) }
 }
 
 var gShowToolTips : Bool {
-	get {
-		var value  = UserDefaults.standard.object(forKey: kShowToolTips) as? Bool
-		if  value == nil {
-			value  = true
-
-			UserDefaults.standard.set(true, forKey:kShowToolTips)
-			UserDefaults.standard.synchronize()
-		}
-
-		return value!
-	}
-
-	set {
-		UserDefaults.standard.set(newValue, forKey:kShowToolTips)
-		UserDefaults.standard.synchronize()
-	}
+	get { return getPreferencesBool(   for: kShowToolTips, defaultBool: true) }
+	set { setPreferencesBool(newValue, for: kShowToolTips) }
 }
 
 enum ZStartupLevel: Int {

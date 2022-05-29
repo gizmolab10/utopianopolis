@@ -118,7 +118,7 @@ class ZEssay: ZNote {
 	override func notes(in range: NSRange) -> [ZNote] {
 		var result = [ZNote]()
 		for child in children {
-			if  range.intersects(child.noteRange) {
+			if  range.inclusiveIntersection(child.noteRange) != nil {
 				result.append(child)
 			}
 		}
@@ -145,7 +145,8 @@ class ZEssay: ZNote {
 	}
 
 	override func saveAsEssay(_ attributedString: NSAttributedString?) {
-		if  let attributed = attributedString {
+		if  let attributed = attributedString, needsSave {
+			needsSave      = false
 			for child in children {
 				let range  = child.noteRange
 
@@ -159,13 +160,13 @@ class ZEssay: ZNote {
 	}
 
 	override func shouldAlterEssay(in range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
-		let inside = range.contains(essayRange)
+		let  exact = range.inclusiveIntersection(essayRange) == essayRange
 		var result = ZAlterationType.eLock
 		var adjust = 0
 		var offset : Int?
 
-		let examine = { (note: ZNote) in
-			if  inside {
+		let examine = { [self] (note: ZNote) in
+			if  exact {
 				adjust        -= note.noteRange.length
 
 				note.zone?.deleteNote()
@@ -175,6 +176,7 @@ class ZEssay: ZNote {
 				if  alter     != .eLock {
 					result     = .eAlter
 					adjust    +=  delta
+					needsSave  = true
 
 					if  alter == .eDelete {
 						offset = note.noteOffset
@@ -191,7 +193,7 @@ class ZEssay: ZNote {
 			}
 		}
 
-		if  inside {
+		if  exact {
 			result = .eExit
 		} else if let o = offset {
 			result = .eDelete

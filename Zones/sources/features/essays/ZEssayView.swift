@@ -856,9 +856,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		if  let replacementLength = replacement?.length,
 			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength) {
 			switch result {
-			case .eAlter:         break
-			case .eLock:          return false
-			case .eExit:  exit(); return false
+			case .eAlter:        break
+			case .eLock:         return false
+			case .eExit: exit(); return false
 			case .eDelete:
 				FOREGROUND { [self] in                    // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 					gCurrentEssay?.updateChildren()
@@ -1556,7 +1556,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		let       range = selectedRange()
 		if  var    note = gCurrentEssay?.notes(in: range).first,
 			let    zone = note.zone {
-			let toEssay = zone.hasChildNotes == gCreateCombinedEssay
+			let noChild = note.children.count == 0
+			let toEssay = noChild || !gCreateCombinedEssay
 
 			if  toEssay, gEssayTitleMode == .sEmpty, note.essayText!.string.length > 0 {
 				note.updatedRangesFrom(textStorage)
