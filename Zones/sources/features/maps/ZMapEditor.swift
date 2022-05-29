@@ -138,17 +138,16 @@ class ZMapEditor: ZBaseEditor {
 						case "e":        gToggleShowExplanations()
 						case "f":        gSearching.showSearch(OPTION)
 						case "h":        showTraitsPopup()
-						case "i":        grabDuplicatesAndRedraw()
+						case "i":        showMutateTextPopup()
 						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()
-						case "l":        alterCase(up: false)
 						case "n":        editNote(flags: flags)
 						case "o":        moveable.importFromFile(OPTION ? .eOutline : SPLAYED ? .eCSV : .eSeriously) { gRelayoutMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
 						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
-						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
+						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) }
 						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
 						case "x":        return handleX(flags)
@@ -294,6 +293,21 @@ class ZMapEditor: ZBaseEditor {
 
 	// MARK: - handlers
 	// MARK: -
+
+	@objc func handleMutateTextPopupMenu(_ iItem: ZMenuItem) {
+		handleMutateTextKey(iItem.keyEquivalent)
+	}
+
+	@objc func handleMutateTextKey(_ key: String) {
+		if  let type  = ZMutateTextMenuType(rawValue: key) {
+			UNDO(self) { iUndoSelf in
+				iUndoSelf.handleMutateTextKey(key)
+			}
+
+			gSelecting.simplifiedGrabs.applyMutator(type)
+			gRelayoutMaps()
+		}
+	}
 
 	@objc func handleTraitsPopupMenu(_ iItem: ZMenuItem) {
 		handleTraitsKey(iItem.keyEquivalent)
@@ -478,6 +492,15 @@ class ZMapEditor: ZBaseEditor {
 		gSelecting.rootMostMoveable?.addNext(with: kLineOfDashes) { iChild in
 			iChild.grab()
 			onCompletion?()
+		}
+	}
+
+	func showMutateTextPopup() {
+		if  let widget = gSelecting.currentMoveable.widget?.textWidget {
+			let   menu = ZMenu.mutateTextPopup(target: self, action: #selector(handleMutateTextPopupMenu(_:)))
+			let  point = CGPoint(x: -30.0, y: 30.0)
+
+			menu.popUp(positioning: nil, at: point, in: widget)
 		}
 	}
 

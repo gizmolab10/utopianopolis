@@ -379,7 +379,7 @@ class ZHelpData: NSObject {
 		appendTab()
 
 		let    length = (first.length + second.length)
-		let   isShort = (first == "SHIFT + KEY")  // length is 10, but still too short
+		let   isShort = (first == "ARROW KEY")  // length is 8, but still too short
 		let threshold = (helpMode == .essayMode) || isShort ? 12 : 6
 
 		if  length < threshold {                  // short string: needs an extra tab

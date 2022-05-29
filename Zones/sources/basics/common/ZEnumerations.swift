@@ -42,6 +42,24 @@ enum ZOutlineLevelType: String {
     }
 }
 
+enum ZMutateTextMenuType: String {
+	case eCapitalize = "c"
+	case eLower      = "l"
+	case eUpper      = "u"
+	case eCancel     = "."
+
+	static var allTypes: [ZMutateTextMenuType] { return [.eCapitalize, .eLower, .eUpper, .eCancel] 	}
+
+	var title: String {
+		switch self {
+			case .eCapitalize: return "capitalize"
+			case .eLower:      return "lowercase"
+			case .eUpper:      return "uppercase"
+			case .eCancel:     return "cancel"
+		}
+	}
+}
+
 enum ZSpecialCharactersMenuType: String {
 	case eCommand   = "c"
 	case eOption    = "o"

@@ -717,4 +717,10 @@ extension ZoneArray {
 		}
 	}
 
+	func applyMutator(_ type: ZMutateTextMenuType) {
+		for zone in self {
+			zone.applyMutator(type)
+		}
+	}
+
 }

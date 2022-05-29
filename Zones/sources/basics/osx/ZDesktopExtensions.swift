@@ -825,7 +825,7 @@ extension ZoneTextWidget {
 extension ZTextEditor {
     
     func fullResign()  { assignAsFirstResponder (nil) }
-	
+
 	func showSpecialCharactersPopup() {
 		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:)))
 		let point = CGPoint(x: -165.0, y: -60.0)
@@ -944,6 +944,25 @@ extension ZMenu {
 		if  type != .eCancel {
 			item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
 		}
+
+		return item
+	}
+
+	static func mutateTextPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "change text")
+
+		for type in ZMutateTextMenuType.allTypes {
+			menu.addItem(mutateTextItem(type: type, target: target, action: action))
+		}
+
+		return menu
+	}
+
+	static func mutateTextItem(type: ZMutateTextMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
+		let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+		item.isEnabled = true
+		item.target    = target
+		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
 
 		return item
 	}

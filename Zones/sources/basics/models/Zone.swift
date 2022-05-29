@@ -1721,6 +1721,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+
+	func applyMutator(_ type: ZMutateTextMenuType) {
+		switch type {
+			case .eCapitalize: zoneName = zoneName?.capitalized
+			case .eLower:      zoneName = zoneName?.lowercased()
+			case .eUpper:      zoneName = zoneName?.uppercased()
+			case .eCancel:     break
+		}
+	}
+	
 	// MARK: - traits
 	// MARK: -
 
