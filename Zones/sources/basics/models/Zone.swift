@@ -3126,7 +3126,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+	func generationalGoal(_ show: Bool, extreme: Bool = false) -> Int? {
 		var goal: Int?
 
 		if !show {
@@ -3137,12 +3137,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			goal = lowest + 1
 		}
 
+		return goal
+	}
+
+	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+		let goal = generationalGoal(show, extreme: extreme)
+
 		generationalUpdate(show: show, to: goal) {
 			gRelayoutMaps(for: self)
 		}
 	}
 
-	func generationalUpdate(show: Bool, to iLevel: Int? = nil, onCompletion: Closure?) {
+	func generationalUpdate(show: Bool, to iLevel: Int? = nil, onCompletion: Closure? = nil) {
 		recursiveUpdate(show, to: iLevel) {
 
 			// ////////////////////////////////////////////////////////
@@ -3156,10 +3162,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func recursiveUpdate(_ show: Bool, to iLevel: Int?, onCompletion: Closure?) {
 		if !show && isGrabbed && (count == 0 || !isExpanded) {
 
-			// ///////////////////////////////
-			// COLLAPSE OUTWARD INTO PARENT //
-			// ///////////////////////////////
+			// ///////////////////////// //
+			// COLLAPSE LEFT INTO PARENT //
+			// ///////////////////////// //
 
+//			if  let l = iLevel, level > l {
 			concealAllProgeny()
 
 			revealParentAndSiblings()

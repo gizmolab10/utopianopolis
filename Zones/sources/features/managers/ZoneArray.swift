@@ -18,6 +18,7 @@ import UIKit
 extension ZoneArray {
 
 	func printSelf() { print(self) }
+	func grab() { gSelecting.ungrabAll(retaining: self) }
 
 	init(set: Set<Zone>) {
 		self.init()
@@ -721,6 +722,41 @@ extension ZoneArray {
 		for zone in self {
 			zone.applyMutator(type)
 		}
+	}
+
+	func generationalGoal(_ show: Bool, extreme: Bool = false) -> Int? {
+		var goal = 0
+
+		if  show && extreme {
+			return Int.max
+		}
+
+		for zone in self {
+			if !show {
+				let g = extreme ? zone.level : zone.highestExposed - 1
+				if  g > goal {
+					goal = g
+				}
+			} else if let lowest = zone.lowestExposed, lowest + 1 > goal {
+				goal = lowest + 1
+			}
+		}
+
+		return goal
+	}
+
+	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
+		let goal = generationalGoal(show, extreme: extreme)
+
+		for zone in self {
+			zone.generationalUpdate(show: show, to: goal)
+		}
+
+		if  gHere.isExpanded {
+			grab()
+		}
+
+		gRelayoutMaps(for: self)
 	}
 
 }

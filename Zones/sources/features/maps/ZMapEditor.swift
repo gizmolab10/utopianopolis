@@ -1231,7 +1231,7 @@ class ZMapEditor: ZBaseEditor {
 				if  OPTION {
 					browseBreadcrumbs(out)
 				} else {
-					moveable.applyGenerationally(!out, extreme: COMMAND)
+					gSelecting.currentMapGrabs.applyGenerationally(!out, extreme: COMMAND)
 				}
 			}
 		}
