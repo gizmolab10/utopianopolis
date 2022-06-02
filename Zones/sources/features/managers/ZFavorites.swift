@@ -206,12 +206,12 @@ class ZFavorites: ZSmallMapRecords {
 				return
 			}
 
-			var bookmark          = ZBookmarks.newBookmark(targeting: target)
-			let index             = current?.nextSiblingIndex
 			if  let here          = hereZoneMaybe {
+				var bookmark      = ZBookmarks.newBookmark(targeting: target)
+				let index         = current?.nextSiblingIndex
 				here.addChildNoDuplicate(bookmark, at: index)
 				gBookmarks.addToReverseLookup(bookmark)
-//				setCurrent(bookmark)
+				setCurrent(bookmark)
 
 				if  !here.isInRecentsGroup,
 					let b         = bookmarks?.intersection(recentsGroupZone.children) {

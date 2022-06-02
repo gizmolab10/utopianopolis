@@ -138,7 +138,7 @@ extension ZoneWidget {
 		let extra        = CGSize(width: deltaX, height: .zero)
 		for child in childrenWidgets {
 			if  let zone = child.widgetZone, zone.isVisible {
-				rect     = rect.union(child.absoluteFrame)
+				rect     = rect.union(child.absoluteHitRect)
 			}
 		}
 		absoluteHitRect  = rect.expandedBy(extra).offsetBy(extra)

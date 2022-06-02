@@ -1568,20 +1568,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			gCreateCombinedEssay = toEssay      // toggle
 
 			if  toEssay {
-				let essay = gCreateEssay(zone)
-
 				zone.clearAllNotes()            // discard current essay text and all child note's text
-				resetCurrentEssay(essay, selecting: range)
+
+				note = gCreateEssay(zone)       // create a new essay from the zone
 			} else {
 				ungrabAll()
 
 				if !note.isNote {
-					note = ZNote(note.zone)
+					note = ZNote(note.zone)     // convert essay to note
 				}
-
-				resetCurrentEssay(note, selecting: range)
 			}
 
+			resetCurrentEssay(note, selecting: range)
 			gSignal([.sDetails])
 		}
 	}

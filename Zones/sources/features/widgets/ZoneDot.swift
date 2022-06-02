@@ -295,7 +295,7 @@ class ZoneDot: ZPseudoView {
 			let p = widgetZone?.plainDotParameters(isFilled, isReveal, isDragDrop) {
 
 //			if  isCircularMode, gdebugdraw {
-//				hitRect.drawColoredRect(.red, radius: 2.0, thickness: 1.0)
+//				absoluteHitRect.drawColoredRect(.blue, radius: 2.0, thickness: 1.0)
 //			}
 			
 			drawDot      (rect, p)

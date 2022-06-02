@@ -358,7 +358,7 @@
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Jzv-og-1RG" userLabel="Preferences Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="1" y="-1" width="224" height="19"/>
-                                                        <buttonCell key="cell" type="roundRect" title="Preferences" bezelStyle="roundedRect" alignment="left" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
+                                                        <buttonCell key="cell" type="roundRect" title="Display Preferences" bezelStyle="roundedRect" alignment="left" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="TVl-I9-b5f">
                                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                             <font key="font" metaFont="cellTitle"/>
                                                         </buttonCell>
@@ -534,12 +534,12 @@
         <scene sceneID="n3v-Vu-MZq">
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="279"/>
+                    <view key="view" misplaced="YES" id="Ngb-Ew-NGG">
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="283"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="none" title="circles show for" translatesAutoresizingMaskIntoConstraints="NO" id="EBA-0Z-ZoM">
-                                <rect key="frame" x="5" y="236" width="280" height="35"/>
+                                <rect key="frame" x="5" y="8" width="280" height="35"/>
                                 <view key="contentView" id="bZ5-d7-EXq">
                                     <rect key="frame" x="0.0" y="0.0" width="280" height="20"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -568,40 +568,8 @@
                                     <constraint firstAttribute="height" constant="31" id="ISZ-w9-xNH"/>
                                 </constraints>
                             </box>
-                            <box autoresizesSubviews="NO" borderType="none" title="list lengths show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
-                                <rect key="frame" x="5" y="197" width="280" height="35"/>
-                                <view key="contentView" id="5gJ-xh-VlV">
-                                    <rect key="frame" x="0.0" y="0.0" width="280" height="20"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <subviews>
-                                        <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="1" y="-1" width="278" height="21"/>
-                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
-                                                <font key="font" metaFont="message" size="11"/>
-                                                <segments>
-                                                    <segment label="hidden"/>
-                                                    <segment label="dots" selected="YES" tag="1"/>
-                                                    <segment label="numbers"/>
-                                                    <segment label="totals"/>
-                                                </segments>
-                                            </segmentedCell>
-                                            <connections>
-                                                <action selector="segmentedControlAction:" target="Naq-se-Exq" id="ajO-VV-Ru0"/>
-                                            </connections>
-                                        </segmentedControl>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="hRI-S8-ys7" firstAttribute="leading" secondItem="5gJ-xh-VlV" secondAttribute="leading" constant="3" id="YmR-pV-tLh"/>
-                                        <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" id="h83-pb-w7Y"/>
-                                        <constraint firstAttribute="trailing" secondItem="hRI-S8-ys7" secondAttribute="trailing" constant="3" id="o6Y-Mh-jz7"/>
-                                    </constraints>
-                                </view>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="31" id="Oqg-X2-PkA"/>
-                                </constraints>
-                            </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150" userLabel="colors">
-                                <rect key="frame" x="5" y="100" width="280" height="93"/>
+                                <rect key="frame" x="5" y="143" width="280" height="93"/>
                                 <view key="contentView" id="rb6-oU-fw8">
                                     <rect key="frame" x="3" y="3" width="274" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -732,7 +700,7 @@
                                 </view>
                             </box>
                             <box borderType="line" title="map" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="4" width="280" height="92"/>
+                                <rect key="frame" x="5" y="47" width="280" height="92"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="3" y="3" width="274" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -847,21 +815,53 @@
                                     </constraints>
                                 </view>
                             </box>
+                            <box autoresizesSubviews="NO" borderType="none" title="list lengths show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
+                                <rect key="frame" x="5" y="240" width="280" height="35"/>
+                                <view key="contentView" id="5gJ-xh-VlV">
+                                    <rect key="frame" x="0.0" y="0.0" width="280" height="20"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
+                                            <rect key="frame" x="1" y="-1" width="278" height="21"/>
+                                            <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
+                                                <font key="font" metaFont="message" size="11"/>
+                                                <segments>
+                                                    <segment label="hidden"/>
+                                                    <segment label="dots" selected="YES" tag="1"/>
+                                                    <segment label="numbers"/>
+                                                    <segment label="totals"/>
+                                                </segments>
+                                            </segmentedCell>
+                                            <connections>
+                                                <action selector="segmentedControlAction:" target="Naq-se-Exq" id="ajO-VV-Ru0"/>
+                                            </connections>
+                                        </segmentedControl>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="hRI-S8-ys7" firstAttribute="leading" secondItem="5gJ-xh-VlV" secondAttribute="leading" constant="3" id="YmR-pV-tLh"/>
+                                        <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" id="h83-pb-w7Y"/>
+                                        <constraint firstAttribute="trailing" secondItem="hRI-S8-ys7" secondAttribute="trailing" constant="3" id="o6Y-Mh-jz7"/>
+                                    </constraints>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="31" id="Oqg-X2-PkA"/>
+                                </constraints>
+                            </box>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="4bu-dm-ncy"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
+                            <constraint firstAttribute="bottom" secondItem="EBA-0Z-ZoM" secondAttribute="bottom" constant="12" id="BkH-85-3z1"/>
+                            <constraint firstItem="EBA-0Z-ZoM" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="8" id="JMN-HL-pxS"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="Jes-2S-tC8"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="K7u-1l-PFu"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
                             <constraint firstAttribute="trailing" secondItem="EBA-0Z-ZoM" secondAttribute="trailing" constant="8" id="e5O-Pm-TJ2"/>
-                            <constraint firstItem="EBA-0Z-ZoM" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="ggY-D9-VdD"/>
-                            <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="EBA-0Z-ZoM" secondAttribute="bottom" constant="8" id="kyI-2w-6Zs"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
                             <constraint firstItem="EBA-0Z-ZoM" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xME-sO-pw1"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xTu-eG-2S7"/>
-                            <constraint firstAttribute="bottom" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="8" id="xuu-B1-kHr"/>
                         </constraints>
                     </view>
                     <connections>
@@ -880,7 +880,7 @@
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1816"/>
+            <point key="canvasLocation" x="-95" y="1895.5"/>
         </scene>
         <!--Kickoff Tools Controller-->
         <scene sceneID="uRy-JP-y7m">
