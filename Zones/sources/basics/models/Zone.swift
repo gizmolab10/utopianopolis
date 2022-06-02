@@ -325,19 +325,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var crossLink: ZRecord? {
 		get {
 			if  crossLinkMaybe == nil {
-				if  zoneLink == kTrashLink {
-					return gTrash
+				if  zoneLink?.contains("Optional(") ?? false {    // repair consequences of an old, but now fixed, bookmark bug
+					zoneLink   = zoneLink?.replacingOccurrences(of: "Optional(\"", with: kEmpty).replacingOccurrences(of: "\")", with: kEmpty)
 				}
+			}
 
-				if  zoneLink == kLostAndFoundLink {
-					return gLostAndFound
-				}
-
-				if  zoneLink?.contains("Optional(") ?? false { // repair consequences of an old, but now fixed, bookmark bug
-					zoneLink = zoneLink?.replacingOccurrences(of: "Optional(\"", with: kEmpty).replacingOccurrences(of: "\")", with: kEmpty)
-				}
-
-				crossLinkMaybe = zoneLink?.maybeZone
+			if  let l = zoneLink {
+				crossLinkMaybe = l.maybeZone
 			}
 
 			return crossLinkMaybe
@@ -534,10 +528,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var color: ZColor? {
 		get {
 			var computed: ZColor? = kDefaultIdeaColor
-
-			if  zoneName == "chris", isInFavorites {
-				noop()
-			}
 
 			if  gColorfulMode {
 				if  let       t = bookmarkTarget {

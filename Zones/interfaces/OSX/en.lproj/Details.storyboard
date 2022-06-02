@@ -534,7 +534,7 @@
         <scene sceneID="n3v-Vu-MZq">
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="Ngb-Ew-NGG">
+                    <view key="view" id="Ngb-Ew-NGG">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="283"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>

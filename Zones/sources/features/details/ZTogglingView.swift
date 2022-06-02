@@ -117,7 +117,7 @@ class ZTogglingView: ZView {
 				case .vData:         title = gDatabaseID.userReadableString.capitalized + " Data"
 				case .vFavorites:    title = gFavoritesHere?.favoritesTitle ?? "Gerglagaster"
 				case .vSubscribe:    title = gSubscriptionController?.bannerTitle ?? kSubscribe
-				case .vPreferences:  title = "Preferences"
+				case .vPreferences:  title = "Display Preferences"
 				case .vKickoffTools: title = "Kickoff Tools"
 				default:             title = "Gargleblaster"
 			}
