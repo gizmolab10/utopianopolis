@@ -19,6 +19,8 @@ import UIKit
 enum ZUserAccess: Int {
     case eNormal
     case eFull
+
+	var number : NSNumber { return NSNumber(value: rawValue) }
 }
 
 enum ZSentEmailType: String {
@@ -36,11 +38,11 @@ class ZUser : ZRecord {
 
 	var access: ZUserAccess {
 		if  isExempt {
-			writeAccess  = NSNumber(value: ZUserAccess.eFull.rawValue)
+			writeAccess  = ZUserAccess.eFull.number
 		}
 		
 		if  writeAccess == nil {
-			writeAccess  = NSNumber(value: ZUserAccess.eNormal.rawValue)
+			writeAccess  = ZUserAccess.eNormal.number
 		}
 		
 		return ZUserAccess(rawValue: writeAccess!.intValue)!

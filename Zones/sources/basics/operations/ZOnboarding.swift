@@ -32,7 +32,7 @@ class ZOnboarding : ZOperations {
 
     var          user : ZUser?
 	var    macAddress : String?
-	var hasFullAccess : Bool { return !gDebugAccess && (user?.access ?? .eNormal) == .eFull }
+	var hasFullAccess : Bool { return (user?.access ?? .eNormal) == .eFull }
 
     // MARK: - internals
     // MARK: -

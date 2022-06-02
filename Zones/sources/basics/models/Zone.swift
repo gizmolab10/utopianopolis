@@ -974,7 +974,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return t.userHasDirectOwnership
 		}
 
-		return !isTrashRoot && !isFavoritesRoot && !isLostAndFoundRoot && !gPrintModes.contains(.dAccess) && (databaseID == .mineID || zoneAuthor == gAuthorID || gHasFullAccess)
+		return !isTrashRoot && !isFavoritesRoot && !isLostAndFoundRoot && (databaseID == .mineID || zoneAuthor == gAuthorID || gHasFullAccess)
 	}
 
 	var directAccess: ZoneAccess {
