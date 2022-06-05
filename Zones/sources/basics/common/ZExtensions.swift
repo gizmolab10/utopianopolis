@@ -1090,7 +1090,7 @@ extension CGRect {
 		return delta > 0
 	}
 
-	func hitTestForResizeDot(in selectionRect: CGRect) -> ZDirection? {
+	func hitTestForResizeDot(in testRect: CGRect) -> ZDirection? {
 		let   points = selectionPoints
 		let        s = size.dividedInHalf      .insetEquallyBy(kEssayImageDotRadius)
 
@@ -1103,7 +1103,7 @@ extension CGRect {
 				default:            break
 			}
 
-			if  selectionRect.intersects(rect) {
+			if  testRect.intersects(rect) {
 				return direction
 			}
 		}

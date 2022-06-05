@@ -63,13 +63,13 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 
 		// provide useful hits about how behavior changes with work mode and modifier keys
 
-		buttonFor(.control)?.isEnabled = !gIsSearchMode
-		buttonFor(.option)? .isEnabled = !gIsSearchMode
-		buttonFor(.shift)?  .isEnabled = !gIsSearchMode
+		buttonFor(.control)?.isEnabled = !gIsSearching
+		buttonFor(.option)? .isEnabled = !gIsSearching
+		buttonFor(.shift)?  .isEnabled = !gIsSearching
 		buttonFor(.focus)?  .isEnabled =  gIsMapMode
 		buttonFor(.note)?   .isEnabled = !gIsEditIdeaMode
-		boxFor   (.edit)?    .isHidden =  gIsSearchMode || gIsEssayMode
-		boxFor   (.add)?     .isHidden =  gIsSearchMode || gIsEssayMode
+		boxFor   (.edit)?    .isHidden =  gIsSearching || gIsEssayMode
+		boxFor   (.add)?     .isHidden =  gIsSearching || gIsEssayMode
 		buttonFor(.swapDB)?     .title =  swapDBText
 		buttonFor(.up)?         .title =  expandMaybe       + "up"
 		buttonFor(.down)?       .title =  expandMaybe       + "down"

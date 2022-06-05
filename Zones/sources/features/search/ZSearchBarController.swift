@@ -14,11 +14,16 @@ import Foundation
     import UIKit
 #endif
 
+protocol ZSearcher {
+	func performSearch(for searchString: String, closure: Closure?)
+}
+
 var gSearchBarController: ZSearchBarController? { return gControllers.controllerForID(.idSearch) as? ZSearchBarController }
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 	@IBOutlet var    searchBox : ZSearchField?
+	@IBOutlet var      spinner : ZProgressIndicator?
 	override  var controllerID : ZControllerID { return .idSearch }
 	var    activeSearchBoxText : String?       { return searchBox?.text?.searchable }
 
@@ -47,7 +52,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	// MARK: -
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		if  gIsSearchMode {
+		if  gIsSearching {
 			gSearching.setSearchStateTo(.sEntry)
 		}
 	}
@@ -56,7 +61,8 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		#if os(OSX)
 		if  searchBoxIsFirstResponder {
 			searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
-		} else if gIsSearchEssayMode {
+		} else if gIsResultsMode {
+		} else if gIsEssayMode {
 			gEssayView?.handleArrow(arrow, flags: flags)
 		}
 		#endif
@@ -76,7 +82,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		let   isEntry = state == .sEntry
 		let    isList = state == .sList
 
-		if (gIsSearchEssayMode && !isInBox) || (key == "g" && COMMAND) {
+		if (gIsEssayMode && !isInBox) || (key == "g" && COMMAND) {
 			gEssayView?.handleKey(key, flags: flags)
 		} else if  isList && !isInBox {
 			return gSearchResultsController?.handleEvent(event)
@@ -110,7 +116,14 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		if  let text = activeSearchBoxText,
 			text.length > 0,
 			![kEmpty, kSpace, "  "].contains(text) {
-			gSearching.performSearch(for: text)
+
+			if  let searcher: ZSearcher = gIsEssayMode ? gEssayView : gSearching {
+				spinner?.startAnimating()
+				searcher.performSearch(for: text) {
+					self.spinner?.stopAnimating()
+				}
+			}
+
 		} else if allowSearchToEnd {
 			endSearch()
 		}

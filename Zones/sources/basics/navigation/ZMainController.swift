@@ -74,7 +74,7 @@ class ZMainController: ZGesturesController {
 		let            showDetails =  gShowDetailsView
 		alternateLeading?.constant = !showDetails ? .zero : 226.0
 		detailView?      .isHidden = !showDetails
-		debugView?       .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
+		debugView?       .isHidden = !gDebugInfo || [.wResultsMode, .wEssayMode].contains(gWorkMode)
 		controlsView?    .isHidden = !gShowMainControls
 		hamburgerButton?  .toolTip =  gConcealmentString(for: gShowDetailsView) + " detail views"
 		hamburgerButton?    .image =  hamburgerImage
@@ -107,9 +107,9 @@ class ZMainController: ZGesturesController {
 	}
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		let isSearchMode = gIsSearchMode || gIsSearchEssayMode
+		let isSearchMode = gIsSearching
 		let   hideSearch = !isSearchMode || gSearchResultsVisible
-		let  hideResults = !isSearchMode || gIsSearchEssayMode || gIsNotSearching || gWaitingForSearchEntry // || !hasResults
+		let  hideResults = !isSearchMode || gIsNotSearching || gWaitingForSearchEntry
 
 		switch kind {
 			case .sSearch:

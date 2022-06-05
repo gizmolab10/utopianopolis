@@ -34,7 +34,7 @@ class ZControlsController: ZGenericController {
 	}
 
 	func searchStateDidChange() {
-		searchOptionsView?.isHidden = gIsNotSearching || gIsSearchEssayMode
+		searchOptionsView?.isHidden = gIsNotSearching
 
 		gMainController?.searchStateDidChange() // moved dismiss button to main controller
 	}

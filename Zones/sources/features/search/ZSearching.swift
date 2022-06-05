@@ -14,8 +14,8 @@ import Foundation
     import UIKit
 #endif
 
-func gExitSearchMode(force: Bool = true) { if force || gIsSearchMode { gSearching.exitSearchMode() } }
-var gShowsSearchResults : Bool { return gSearching.state.isOneOf([.sList]) }
+func gExitSearchMode(force: Bool = true) { if force || gIsSearching { gSearching.exitSearchMode() } }
+var  gShowsSearchResults  : Bool { return gSearching.state.isOneOf([.sList]) }
 
 enum ZSearchState: Int {
     case sEntry
@@ -36,11 +36,10 @@ enum ZSearchState: Int {
 
 let gSearching = ZSearching()
 
-class ZSearching: NSObject {
+class ZSearching: NSObject, ZSearcher {
 
-	var state = ZSearchState.sNot
-	var priorWorkMode: ZWorkMode?
-	var hasResults: Bool { return gSearchResultsController?.hasResults ?? false }
+	var         state = ZSearchState.sNot
+	var    hasResults : Bool { return gSearchResultsController?.hasResults ?? false }
 	func switchToList()  { setSearchStateTo(.sList) } // hasResults ? .sList : .sNot) }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
@@ -50,11 +49,13 @@ class ZSearching: NSObject {
 	}
 
 	func exitSearchMode() {
-		priorWorkMode = gWorkMode
-		gWorkMode     = .wMapMode
-		state         = .sNot
+		state = .sNot
 
 		gSignal([.sFound, .sSearch, .spRelayout])
+
+		if  gIsEssayMode {
+			gMainWindow?.makeFirstResponder(gEssayView)
+		}
 	}
 
 	func setSearchStateTo(_ iState: ZSearchState) {
@@ -71,21 +72,13 @@ class ZSearching: NSObject {
 
 	func showSearch(_ OPTION: Bool = false) {
 //		if  gProducts.hasEnabledSubscription {
-			priorWorkMode = nil
-			gWorkMode     = .wSearchMode
-			gSignal([OPTION ? .sFound : .sSearch])
+		state = .sEntry
+
+		gSignal([OPTION ? .sFound : .sSearch])
 //		}
 	}
 
-	func performSearch(for searchString: String) {
-		if  gIsSearchEssayMode {
-			gEssayView?.performSearch(for: searchString)
-		} else {
-			performGlobalSearch(for: searchString)
-		}
-	}
-
-	func performGlobalSearch(for searchString: String) {
+	func performSearch(for searchString: String, closure: Closure?) {
 		var combined = ZDBIDRecordsDictionary()
 
 		for cloud in gRemoteStorage.allClouds {
@@ -102,9 +95,10 @@ class ZSearching: NSObject {
 					}
 				}
 
-				combined[dbID]                         = results
+				combined[dbID]                             = results
 				gSearchResultsController?.foundRecordsDict = combined
 
+				closure?()
 				gSearchResultsController?.applyFilter()
 				setSearchStateTo(.sList) // hasResults ? .sList : .sEntry)
 				gSignal([.sFound])

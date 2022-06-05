@@ -76,11 +76,11 @@ class ZBaseEditor : NSObject {
 			!matchesPrevious(event) {
 			previousEvent  = event
 			
-			if  gHelpWindow?.isKeyWindow ?? false {
+			if         gHelpWindow?.isKeyWindow ?? false {
 				return gHelpController?.handleEvent(event) // better to detect here than in ZEvents.localMonitor
-			}
-
-			if  handleKey(event.key, flags: event.modifierFlags, isWindow: isWindow) {
+			} else if  gIsSearching {
+				return gSearching.handleEvent(event)
+			} else if  handleKey(event.key, flags: event.modifierFlags, isWindow: isWindow) {
 				return nil
 			}
 		}

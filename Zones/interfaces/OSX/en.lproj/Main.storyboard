@@ -1214,15 +1214,21 @@ CA
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </searchFieldCell>
                             </searchField>
+                            <progressIndicator hidden="YES" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Lgp-gv-Jfw">
+                                <rect key="frame" x="20" y="15" width="16" height="16"/>
+                            </progressIndicator>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="bct-LL-Igg" secondAttribute="trailing" constant="20" id="8Dj-DB-JIO"/>
+                            <constraint firstItem="Lgp-gv-Jfw" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="8Ea-hk-eT0"/>
+                            <constraint firstItem="Lgp-gv-Jfw" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="20" id="jRA-8c-FdX"/>
                             <constraint firstItem="bct-LL-Igg" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="2" id="k59-Lm-2Cw"/>
                             <constraint firstItem="bct-LL-Igg" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="neh-h0-Oac"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="searchBox" destination="bct-LL-Igg" id="SjG-U2-qS7"/>
+                        <outlet property="spinner" destination="Lgp-gv-Jfw" id="OXr-rq-qhh"/>
                     </connections>
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -2365,7 +2371,7 @@ DQ
                                             <constraint firstAttribute="height" constant="13" id="cnb-Bz-45J"/>
                                         </constraints>
                                         <segmentedCell key="cell" controlSize="mini" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
-                                            <font key="font" metaFont="system" size="9"/>
+                                            <font key="font" metaFont="miniSystem"/>
                                             <segments>
                                                 <segment label="public"/>
                                                 <segment label="mine" selected="YES" tag="1"/>

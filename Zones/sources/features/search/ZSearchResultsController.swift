@@ -214,7 +214,7 @@ class ZSearchResultsController: ZGenericTableController {
 		}
 
         #if os(OSX)
-            if  gIsSearchMode,
+            if  gIsSearching,
                 let            row = genericTableView?.selectedRow,
                 row               != -1,
                 let (dbID, record) = identifierAndRecord(at: row) {
@@ -358,7 +358,7 @@ class ZSearchResultsController: ZGenericTableController {
 			t.tableColumns[0].width = t.frame.width
 		}
 
-		if  gIsSearchMode, filteredResultsDict.count > 0 {
+		if  gIsSearching, filteredResultsDict.count > 0 {
 			var dbID: ZDatabaseID?
 			var zRecord: ZRecord?
 			var total = 0

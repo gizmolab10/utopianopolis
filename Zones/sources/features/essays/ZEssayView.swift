@@ -127,7 +127,7 @@ struct ZNoteVisibility {
 }
 
 @objc (ZEssayView)
-class ZEssayView: ZTextView, ZTextViewDelegate {
+class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	let margin           = CGFloat(20.0)
 	var dropped          = StringsArray()
 	var visibilities     = [ZNoteVisibility]()
@@ -801,9 +801,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			super.setSelectedRange(common)
 
-			if  let               rect  = rectForRange(common),
-				selectedRange.location != 0 {
-				selectionRect           = rect
+			if  let      rect = rectForRange(common) {
+				selectionRect = rect
 			}
 		}
 	}
@@ -1297,13 +1296,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		gSearching.essaySearchText = selectionString
 	}
 
-	func performSearch(for searchString: String) {
+	func performSearch(for searchString: String, closure: Closure?) {
 		gSearching.essaySearchText = searchString
 
-		searchAgain(false)
+		searchAgain(false, closure: closure)
 	}
 
-	func searchAgain(_ OPTION: Bool) {
+	func searchAgain(_ OPTION: Bool, closure: Closure? = nil) {
 	    let    seek = gSearching.essaySearchText
 		var  offset = selectedRange.upperBound + 1
 		let    text = gCurrentEssay?.essayText?.string
@@ -1316,10 +1315,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			offset  = 0
 		}
 
+		closure?()
+
 		if  matches != nil,
 			matches!.count > 0 {
-			scrollToVisible(selectionRect)
+			gMainWindow?.makeFirstResponder(self)
 			setSelectedRange(matches![0].offsetBy(offset))
+			scrollToVisible(selectionRect.expandedEquallyBy(100.0))
 		}
 	}
 
