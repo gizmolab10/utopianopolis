@@ -75,10 +75,10 @@ class ZEvents: ZGeneric {
 					}
 
 					switch gWorkMode {
-						case .wResultsMode:             return gSearching      .handleEvent(event)
-						case .wEssayMode:               return gEssayEditor    .handleEvent(event, isWindow: isWindow)
-						case .wMapMode, .wEditIdeaMode: return gMapEditor      .handleEvent(event, isWindow: isWindow)
-						default:                        return gHelpController?.handleEvent(event) ?? event
+						case .wResultsMode:             return gSearchBarController?.handleEvent(event)
+						case .wEssayMode:               return gEssayEditor         .handleEvent(event, isWindow: isWindow)
+						case .wMapMode, .wEditIdeaMode: return gMapEditor           .handleEvent(event, isWindow: isWindow)
+						default:                        return gHelpController?     .handleEvent(event) ?? event
 					}
 				}
 

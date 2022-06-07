@@ -26,10 +26,13 @@ class ZBreadcrumbs: NSObject {
 	}
 
 	var crumbTipZone: Zone? {
+		if  gIsSearching {
+			return gSearchResultsController?.selectedResult
+		}
+
 		switch gWorkMode {
 			case .wMapMode:      return gSelecting.firstGrab?.crumbTipZone
 			case .wEssayMode:    return gEssayView?.firstGrabbedNote?.zone ?? gCurrentEssayZone
-			case .wResultsMode:  return gSearchResultsController?.selectedResult
 			case .wEditIdeaMode: return gCurrentlyEditingWidget?.widgetZone
 			default:             return nil
 		}

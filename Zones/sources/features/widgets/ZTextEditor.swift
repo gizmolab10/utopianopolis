@@ -318,7 +318,7 @@ class ZTextEditor: ZTextView {
 				if  let t = zone.widget?.textWidget {
 					t.enableUndo()
 					t.controller?.createAndLayoutWidgets(for: zone, .spRelayout)       // relayout and draw widget and its children
-					t.becomeFirstResponder()
+					assignAsFirstResponder(t)
 				}
 
 				if  let at = setOffset ?? gCurrentMouseDownLocation {
@@ -487,7 +487,7 @@ class ZTextEditor: ZTextView {
                             currentEdit = e // restore after capture sets it to nil
 
                             gSelecting.ungrabAll()
-                            e?.textWidget?.becomeFirstResponder()
+							assignAsFirstResponder(e?.textWidget)
                         }
                     } // else widgets are wrong
 

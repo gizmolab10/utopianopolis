@@ -105,22 +105,24 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 // Helper function inserted by Swift 4.2 migrator.
 func gConvertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
     guard let input = input else { return nil }
-    return input.rawValue
+
+	return input.rawValue
 }
 
 func gConvertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceItemIdentifier {
+
 	return NSUserInterfaceItemIdentifier(rawValue: string)
+
 }
 
 extension NSObject {
-    func assignAsFirstResponder(_ responder: NSResponder?) {
-        if  let window = gMainWindow,
-            ![window, responder].contains(window.firstResponder) {
-            window.makeFirstResponder(responder)
-        }
+
+	func assignAsFirstResponder(_ responder: NSResponder?) {
+		gMainWindow?.makeFirstResponder(responder)
 	}
 	
 	func showTopLevelFunctions() {}
+
 }
 
 extension NSIndexSet {

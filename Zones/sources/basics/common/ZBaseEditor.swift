@@ -79,7 +79,7 @@ class ZBaseEditor : NSObject {
 			if         gHelpWindow?.isKeyWindow ?? false {
 				return gHelpController?.handleEvent(event) // better to detect here than in ZEvents.localMonitor
 			} else if  gIsSearching {
-				return gSearching.handleEvent(event)
+				return gSearchBarController?.handleEvent(event)
 			} else if  handleKey(event.key, flags: event.modifierFlags, isWindow: isWindow) {
 				return nil
 			}
@@ -112,7 +112,7 @@ class ZBaseEditor : NSObject {
 
 	func reopenMainWindow() {
 		gMainWindow?.makeKeyAndOrderFront(self)
-		gMainWindow?.makeFirstResponder(gMapView)
+		assignAsFirstResponder(gMapView)
 		gSignal([.spRelayout])
 	}
 

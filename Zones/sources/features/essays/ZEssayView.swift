@@ -319,7 +319,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
 			if  (shouldOverwrite || restoreSelection != nil),
-				let text = gCurrentEssay?.essayText {
+				let                 text = gCurrentEssay?.essayText {
+				gCurrentEssay?.needsSave = true
+
 				discardPriorText()
 				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
 				selectAndScrollTo(restoreSelection)
@@ -330,7 +332,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			delegate        = self 					    	                          // set delegate after discarding prior and injecting current text
 
 			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(self)                                 // show cursor and respond to key input
+				assignAsFirstResponder(self)                                 // show cursor and respond to key input
 				gMainWindow?.setupEssayInspectorBar()
 
 				gEssayControlsView?.setupAllEssayControls()
@@ -1319,7 +1321,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 		if  matches != nil,
 			matches!.count > 0 {
-			gMainWindow?.makeFirstResponder(self)
+			assignAsFirstResponder(self)
 			setSelectedRange(matches![0].offsetBy(offset))
 			scrollToVisible(selectionRect.expandedEquallyBy(100.0))
 		}
@@ -1699,6 +1701,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let replacement = up ? text.uppercased() : text.lowercased()
 
 			insertText(replacement, replacementRange: selectedRange)
+			setSelectionNeedsSaving()
 		}
 	}
 
@@ -1728,6 +1731,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let bold = ZFont(descriptor: desc, size: font.pointSize) as Any
 
 			textStorage?.setAttributes([.font : bold], range: selectedRange)
+			setSelectionNeedsSaving()
+		}
+	}
+
+	func setSelectionNeedsSaving() {
+		for note in selectedNotes {
+			note.needsSave = true
 		}
 	}
 

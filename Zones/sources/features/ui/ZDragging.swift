@@ -129,7 +129,7 @@ class ZDragging: NSObject {
 
 				draggedZones.removeAll()
 				gRubberband.rubberbandStartEvent(gesture)
-				gMainWindow?.makeFirstResponder(gMapView)
+				assignAsFirstResponder(gMapView)
 			}
 
 			gMapController?.setNeedsDisplay()
@@ -153,7 +153,7 @@ class ZDragging: NSObject {
 			draggedZones = gSelecting.currentMapGrabs
 
 			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(gMapView)
+				assignAsFirstResponder(gMapView)
 			}
 		}
 	}

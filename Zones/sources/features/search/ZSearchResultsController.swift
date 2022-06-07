@@ -269,9 +269,9 @@ class ZSearchResultsController: ZGenericTableController {
 		}
 	}
 
-	func stateDidChange() {
+	func searchStateDidChange() {
 		if  gSearchResultsVisible {
-			genericTableView?.becomeFirstResponder()
+			assignAsFirstResponder(genericTableView)
 		}
 	}
 

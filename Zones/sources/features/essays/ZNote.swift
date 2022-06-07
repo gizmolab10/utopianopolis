@@ -338,7 +338,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 		noteOffset += adjustment
 
-		if  result == .eAlter {
+		if  result != .eLock {
 			needsSave = true
 		}
 

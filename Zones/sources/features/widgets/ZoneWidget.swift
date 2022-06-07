@@ -452,7 +452,7 @@ class ZoneWidget: ZPseudoView {
 	}
 
     override func draw(_ phase: ZDrawPhase) {
-		if (gIsMapOrEditIdeaMode || !type.isBigMap || !gShowsSearchResults),
+		if (gIsMapOrEditIdeaMode || !type.isBigMap || !gSearchResultsVisible),
 			let zone = widgetZone {
 
 			switch phase {

@@ -54,7 +54,7 @@ class ZSearching: NSObject, ZSearcher {
 		gSignal([.sFound, .sSearch, .spRelayout])
 
 		if  gIsEssayMode {
-			gMainWindow?.makeFirstResponder(gEssayView)
+			assignAsFirstResponder(gEssayView)
 		}
 	}
 
@@ -62,8 +62,8 @@ class ZSearching: NSObject, ZSearcher {
 		state = iState
 
 		gControlsController?     .searchStateDidChange()
-		gSearchBarController?    .stateDidChange()
-		gSearchResultsController?.stateDidChange()
+		gSearchBarController?    .searchStateDidChange()
+		gSearchResultsController?.searchStateDidChange()
 
 		if  state == .sFind {
 			gSignal([.sSearch])

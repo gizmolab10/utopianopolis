@@ -558,8 +558,8 @@ extension ZTextEditor {
 	func showSpecialCharactersPopup() {}
 
     func fullResign()  {
-        assignAsFirstResponder (nil) // ios broken?
-        gMapController?.mobileKeyInput?.becomeFirstResponder()
+        assignAsFirstResponder(nil) // ios broken?
+		assignAsFirstResponder(gMapController?.mobileKeyInput)
 	}
 	
 }

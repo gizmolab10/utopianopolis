@@ -27,6 +27,12 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	override  var controllerID : ZControllerID { return .idSearch }
 	var    activeSearchBoxText : String?       { return searchBox?.text?.searchable }
 
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		spinner?.zlayer.backgroundColor = gBackgroundColor.cgColor
+	}
+
 	var searchBoxIsFirstResponder : Bool {
 		#if os(OSX)
 		if  let    first  = searchBox?.window?.firstResponder {
@@ -37,13 +43,13 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		return false
 	}
 
-	func stateDidChange() {
+	func searchStateDidChange() {
 		switch gSearching.state {
 			case .sList:
 				searchBox?.isHidden = true
 			case .sEntry, .sFind:
 				searchBox?.isHidden = false
-				searchBox?.becomeFirstResponder()
+				assignAsFirstResponder(searchBox)
 			default: break
 		}
 	}
@@ -52,7 +58,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	// MARK: -
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
-		if  gIsSearching {
+		if  gIsSearching, !gWaitingForSearchEntry {
 			gSearching.setSearchStateTo(.sEntry)
 		}
 	}
@@ -73,24 +79,27 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		let     flags = event.modifierFlags
 		let   COMMAND = flags.isCommand
 		let       key = string[string.startIndex].description
-		let  isReturn = key == kReturn
-		let     isTab = key == kTab
 		let       isF = key == "f"
+		let     isTab = key == kTab
+		let  isReturn = key == kReturn
 		let    isExit = kExitKeys.contains(key)
-		let     state = gSearching.state
+		let    isList = gSearchResultsVisible
+		let   isEntry = gWaitingForSearchEntry
 		let   isInBox = searchBoxIsFirstResponder
-		let   isEntry = state == .sEntry
-		let    isList = state == .sList
 
 		if (gIsEssayMode && !isInBox) || (key == "g" && COMMAND) {
 			gEssayView?.handleKey(key, flags: flags)
-		} else if  isList && !isInBox {
-			return gSearchResultsController?.handleEvent(event)
+		} else if isList, !isInBox {
+			if !isF {
+				return gSearchResultsController?.handleEvent(event)
+			}
+
+			gSearching.setSearchStateTo(.sEntry)
 		} else if isReturn, isInBox {
 			updateSearchBox()
-		} else if  key == "a" && COMMAND {
+		} else if  key == "a", COMMAND {
             searchBox?.selectAllText()
-        } else if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
+        } else if isExit || (isReturn && isEntry) || (isF && COMMAND) {
             endSearch()
 		} else if isTab {
 			gSearching.switchToList()

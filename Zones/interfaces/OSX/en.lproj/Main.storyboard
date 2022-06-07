@@ -1215,13 +1215,13 @@ CA
                                 </searchFieldCell>
                             </searchField>
                             <progressIndicator hidden="YES" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Lgp-gv-Jfw">
-                                <rect key="frame" x="20" y="15" width="16" height="16"/>
+                                <rect key="frame" x="8" y="15" width="16" height="16"/>
                             </progressIndicator>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="bct-LL-Igg" secondAttribute="trailing" constant="20" id="8Dj-DB-JIO"/>
                             <constraint firstItem="Lgp-gv-Jfw" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="8Ea-hk-eT0"/>
-                            <constraint firstItem="Lgp-gv-Jfw" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="20" id="jRA-8c-FdX"/>
+                            <constraint firstItem="Lgp-gv-Jfw" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="8" id="jRA-8c-FdX"/>
                             <constraint firstItem="bct-LL-Igg" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="2" id="k59-Lm-2Cw"/>
                             <constraint firstItem="bct-LL-Igg" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="neh-h0-Oac"/>
                         </constraints>

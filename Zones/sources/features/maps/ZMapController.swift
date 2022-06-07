@@ -44,7 +44,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	var                 inLinearMode : Bool           { return mode == .linearMode }
 	var               inCircularMode : Bool           { return mode == .circularMode }
-	var               canDrawWidgets : Bool           { return gIsMapOrEditIdeaMode || !gShowsSearchResults }
+	var               canDrawWidgets : Bool           { return gIsMapOrEditIdeaMode || !gSearchResultsVisible }
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
 	var                     isBigMap : Bool           { return controllerID == .idMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
@@ -103,7 +103,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     @IBOutlet weak var mobileKeyInput: ZMobileKeyInput?
     
     func platformSetup() {
-        mobileKeyInput?.becomeFirstResponder()
+		assignAsFirstResponder(mobileKeyInput)
     }
 
     #if false

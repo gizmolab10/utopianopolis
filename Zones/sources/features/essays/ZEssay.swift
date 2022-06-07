@@ -176,7 +176,6 @@ class ZEssay: ZNote {
 				if  alter     != .eLock {
 					result     = .eAlter
 					adjust    +=  delta
-					needsSave  = true
 
 					if  alter == .eDelete {
 						offset = note.noteOffset
