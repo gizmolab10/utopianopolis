@@ -49,7 +49,7 @@ class ZSearching: NSObject, ZSearcher {
 	}
 
 	func exitSearchMode() {
-		state = .sNot
+		state = .sNot // don't call setSearchStateTo (below), it has unwanted side-effects
 
 		gSignal([.sFound, .sSearch, .spRelayout])
 
@@ -72,7 +72,7 @@ class ZSearching: NSObject, ZSearcher {
 
 	func showSearch(_ OPTION: Bool = false) {
 //		if  gProducts.hasEnabledSubscription {
-		state = .sEntry
+		state = .sEntry // don't call setSearchStateTo, it has unwanted side-effects
 
 		gSignal([OPTION ? .sFound : .sSearch])
 //		}

@@ -1246,7 +1246,7 @@ extension Zone {
 
 extension ZoneLine {
 
-	func lineRect(for kind: ZLineCurve?) -> CGRect {
+	func lineRect(for kind: ZLineCurveKind?) -> CGRect {
 		switch mode {
 		case .linearMode:   return   linearLineRect(for: kind)
 		case .circularMode: return circularLineRect()
@@ -1263,7 +1263,7 @@ extension ZoneLine {
 		return .zero
 	}
 
-    func linearLineRect(for kind: ZLineCurve?) -> CGRect {
+    func linearLineRect(for kind: ZLineCurveKind?) -> CGRect {
 		var                 rect = CGRect.zero
         if  kind                != nil,
 			let      sourceFrame = revealDot?.absoluteFrame,
@@ -1290,7 +1290,7 @@ extension ZoneLine {
         return rect
     }
 
-    func curvedLinePath(in iRect: CGRect, kind: ZLineCurve) -> ZBezierPath {
+    func curvedLinePath(in iRect: CGRect, kind: ZLineCurveKind) -> ZBezierPath {
         let        isAbove = kind == .above
         var           rect = iRect
 

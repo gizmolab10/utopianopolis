@@ -25,7 +25,7 @@ enum ZRelation: Int {
 	case below = 1
     case upon  = 2
 
-	var lineCurve: ZLineCurve {
+	var lineCurveKind: ZLineCurveKind {
 		switch self {
 		case .upon:  return .straight
 		case .above: return .above

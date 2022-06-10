@@ -281,7 +281,7 @@ extension ZoneLine {
 		return path
 	}
 
-	func linearLineKind(for delta: CGFloat) -> ZLineCurve {
+	func linearLineKind(for delta: CGFloat) -> ZLineCurveKind {
 		let   threshold =  CGFloat(2.0)
 		if        delta >  threshold {
 			return .above
@@ -292,9 +292,9 @@ extension ZoneLine {
 		return .straight
 	}
 
-	func linearLineKind(to targetRect: CGRect) -> ZLineCurve? {
-		let toggleRect = revealDot?.absoluteFrame ?? .zero
-		let      delta = targetRect.midY - toggleRect.midY
+	func linearLineKind(to targetRect: CGRect) -> ZLineCurveKind? {
+		let  rect = revealDot?.absoluteFrame ?? .zero
+		let delta = targetRect.midY - rect.midY
 
 		return linearLineKind(for: delta)
 	}
@@ -393,8 +393,7 @@ extension ZDragging {
 			var       nearestZone = widget?.widgetZone, !totalGrabs.contains(nearestZone),
 			var     nearestWidget = widget {
 			let relationToNearest = controller.relationOf(point, to: nearestWidget)
-			let      aboveOrBelow = relationToNearest != .upon
-			let  neitherOnNorHere = aboveOrBelow && !nearestWidget.isHere
+			let  neitherOnNorHere = !nearestWidget.isHere && (relationToNearest != .upon)
 			let  draggedFromIndex = (draggedZones.count < 1) ? nil : draggedZones[0].siblingIndex
 			let      nearestIndex = nearestZone.indexInRelation(relationToNearest)
 			let         sameIndex = draggedFromIndex == nearestIndex || draggedFromIndex == nearestIndex - 1
@@ -432,7 +431,7 @@ extension ZDragging {
 					dropWidget    = nearestWidget
 					dragPoint     = point
 					dragLine      = nearestWidget.createDragLine()
-					dropKind      = relationToNearest.lineCurve
+					dropKind      = relationToNearest.lineCurveKind
 
 					if  nearestIndex > 0, neitherOnNorHere {
 						dropIndices?.add(nearestIndex - 1)

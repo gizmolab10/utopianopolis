@@ -27,7 +27,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          indentCount = 0
 	var           noteOffset = 0
 	var           autoDelete = false		// true means delete this note on exit from essay mode
-	var            needsSave = false
 	var             children = [ZNote]()
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
@@ -80,12 +79,16 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	// MARK: - persistency
 	// MARK: -
 
+	var needsSave : Bool {
+		get { return zone?.maybeNoteOrEssayTrait?.needsSave ?? false }
+		set { zone?.maybeNoteOrEssayTrait?.needsSave = newValue }
+	}
+
 	func saveAsNote(_ attributedString: NSAttributedString?) {
 		if  let            trait  = noteTrait, needsSave,
 			let       attributed  = attributedString {
 			let            delta  = attributed.string.length - textRange.upperBound
 			autoDelete            = false
-			needsSave             = false
 
 			if  delta != 0 {
 				textRange.length += delta      // correct text range, to avoid out of range for substring, on next line
@@ -102,6 +105,9 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 				z.updateCoreDataRelationships()
 			}
+
+			needsSave = false
+
 			gSignal([.spCrumbs, .spRelayout])
 		}
 	}

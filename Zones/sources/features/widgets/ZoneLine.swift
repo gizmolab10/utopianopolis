@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ZLineCurve: Int {
+enum ZLineCurveKind: Int {
 	case below    = -1
 	case straight =  0
 	case above    =  1
@@ -56,7 +56,7 @@ class ZoneLine: ZPseudoView {
 		}
 	}
 
-	var lineKind : ZLineCurve {
+	var lineKind : ZLineCurveKind {
 		if  isLinearMode,
 			let     dot = dragDot,
 			let    zone = parentWidget?.widgetZone, zone.count > 1,
@@ -64,7 +64,7 @@ class ZoneLine: ZPseudoView {
 			return kind
 		}
 
-		if  let    line = gDragging.dragLine, line == self,
+		if  self       == gDragging.dragLine,
 			let    kind = gDragging.dropKind {
 			return kind
 		}
@@ -72,7 +72,7 @@ class ZoneLine: ZPseudoView {
 		return .straight
 	}
 	
-	func linePath(in iRect: CGRect, kind: ZLineCurve?, isDragLine: Bool = false) -> ZBezierPath {
+	func linePath(in iRect: CGRect, kind: ZLineCurveKind?, isDragLine: Bool = false) -> ZBezierPath {
 		if  let    k = kind {
 			switch k {
 				case .straight: return straightLinePath(in: iRect, isDragLine)
@@ -114,12 +114,15 @@ class ZoneLine: ZPseudoView {
 		let  rect = draggingDotAbsoluteFrame
 		let color = gActiveColor
 
-		if  !rect.hasZeroSize {
+		if  !rect.hasZeroSize,
+			let relation = controller?.relationOf(rect.center, to: gDragging.dropWidget) {
+			gDragging.dropRelation = relation
+			gDragging.dropKind     = relation.lineCurveKind
 			dragDot?.absoluteFrame = rect
 
 			color.setFill()
 			color.setStroke()
-			ZBezierPath(ovalIn: rect.insetEquallyBy(gLineThickness)).fill()
+			ZBezierPath(ovalIn: rect.insetEquallyBy(gLineThickness)).fill() // draw dot
 			drawLine(using: color)
 		}
 	}

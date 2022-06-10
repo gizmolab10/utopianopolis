@@ -884,7 +884,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  still > 0 {
 					Zone.oops += 1
 
-					print("\(Zone.oops) \(needed) \(still) \(self)")
+					print("\(Zone.oops) \(needed) \(still) \(self) Zone:updateFromCoreDataHierarchyRelationships")
 				}
 			}
 

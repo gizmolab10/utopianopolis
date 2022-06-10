@@ -146,7 +146,6 @@ class ZEssay: ZNote {
 
 	override func saveAsEssay(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString, needsSave {
-			needsSave      = false
 			for child in children {
 				let range  = child.noteRange
 
@@ -156,6 +155,8 @@ class ZEssay: ZNote {
 					child.saveAsNote(substring)
 				}
 			}
+
+			needsSave = false
 		}
 	}
 
@@ -165,7 +166,7 @@ class ZEssay: ZNote {
 		var adjust = 0
 		var offset : Int?
 
-		let examine = { [self] (note: ZNote) in
+		let examine = { (note: ZNote) in
 			if  exact {
 				adjust        -= note.noteRange.length
 

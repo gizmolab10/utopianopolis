@@ -82,7 +82,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		let       isF = key == "f"
 		let     isTab = key == kTab
 		let  isReturn = key == kReturn
-		let    isExit = kExitKeys.contains(key)
+		let  isEscape = key == kEscape
 		let    isList = gSearchResultsVisible
 		let   isEntry = gWaitingForSearchEntry
 		let   isInBox = searchBoxIsFirstResponder
@@ -97,9 +97,9 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			gSearching.setSearchStateTo(.sEntry)
 		} else if isReturn, isInBox {
 			updateSearchBox()
-		} else if  key == "a", COMMAND {
+		} else if COMMAND, key == "a" {
             searchBox?.selectAllText()
-        } else if isExit || (isReturn && isEntry) || (isF && COMMAND) {
+        } else if isEscape || (isReturn && isEntry) || (COMMAND && isF) {
             endSearch()
 		} else if isTab {
 			gSearching.switchToList()
@@ -107,7 +107,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			handleArrow(arrow, with: flags)
 		} else {
 			if !isReturn, isEntry {
-				gSearching.state = .sFind
+				gSearching.state = .sFind // don't call setSearchStateTo, it has unwanted side-effects
 			}
             
             return event

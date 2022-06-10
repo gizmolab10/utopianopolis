@@ -115,8 +115,8 @@ class ZTogglingView: ZView {
 			var                      title = kEmpty
 			switch identity {
 				case .vData:         title = gDatabaseID.userReadableString.capitalized + " Data"
-				case .vFavorites:    title = gFavoritesHere?.favoritesTitle ?? "Gerglagaster"
 				case .vSubscribe:    title = gSubscriptionController?.bannerTitle ?? kSubscribe
+				case .vFavorites:    title = favoritesTitle
 				case .vPreferences:  title = "Display Preferences"
 				case .vKickoffTools: title = "Kickoff Tools"
 				default:             title = "Gargleblaster"
@@ -149,6 +149,10 @@ class ZTogglingView: ZView {
 			case downButton: gFavorites.showNextList(down: false)
 			default:         break
 		}
+	}
+
+	var favoritesTitle: String {
+		return hideHideable ? "Favorites" : gFavoritesHere?.favoritesTitle ?? "Gerglagaster"
 	}
 
 	func updateFavoritesButtons() {

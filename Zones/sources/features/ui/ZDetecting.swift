@@ -48,7 +48,7 @@ extension ZoneWidget {
 		if  !visited.contains(self),
 			absoluteDragHitRect.contains(point) {
 
-			if  let name = widgetZone?.zoneName, name == "stay-centered is broken" {
+			if  let name = widgetZone?.zoneName, name == "drag line wrong" {
 				noop()
 			}
 

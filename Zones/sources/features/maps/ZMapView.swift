@@ -122,7 +122,7 @@ class ZMapView: ZView {
 	func drawDrag(_ iDirtyRect: CGRect) {
 		gRubberband.draw()
 		gDragging.dragLine?.drawDragLineAndDot()
-		gDragging.drawRotator()
+		gDragging.drawRotator()    // for rotating around here in star view
 	}
 
 }

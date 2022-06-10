@@ -24,8 +24,8 @@ class ZDragging: NSObject {
 	var    dropCrumb : ZBreadcrumbButton?
 	var    dragPoint :           CGPoint?
 	var     dragLine :          ZoneLine?
-	var     dropKind :        ZLineCurve?
-	var    debugKind :        ZLineCurve?
+	var     dropKind :        ZLineCurveKind?
+	var    debugKind :        ZLineCurveKind?
 	var    dragIndex :               Int? { return (draggedZones.count == 0) ? nil : draggedZones[0].siblingIndex }
 	var   isDragging :               Bool { return !draggedZones.isEmpty }
 	var  showRotator :               Bool { return current != dragStart && !gRubberband.showRubberband && gMapController?.inCircularMode ?? false }

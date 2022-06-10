@@ -752,10 +752,6 @@ extension ZoneArray {
 			zone.generationalUpdate(show: show, to: goal)
 		}
 
-		if  gHere.isExpanded {
-			grab()
-		}
-
 		gRelayoutMaps(for: self)
 	}
 
