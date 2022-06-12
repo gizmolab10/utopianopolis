@@ -222,9 +222,11 @@ extension NSObject {
         })
     }
 
-	func showThesaurus(for string: String = kEmpty) {
-		let url = NSURL(string: "https://www.thesaurus.com/browse/\(string)")
-		url?.open()
+	func showThesaurus(for iString: String? = kEmpty) {
+		if  let string = iString {
+			let    url = NSURL(string: "https://www.thesaurus.com/browse/\(string)")
+			url?.open()
+		}
 	}
 
     func openBrowserForFocusWebsite() {

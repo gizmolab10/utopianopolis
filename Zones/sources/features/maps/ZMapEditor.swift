@@ -107,7 +107,7 @@ class ZMapEditor: ZBaseEditor {
 						case "k":      toggleColorized()
 						case "n":      editNote(flags: flags)
 						case "p":      printCurrentFocus()
-						case "t":      if COMMAND, let string = gCurrentlySelectedText { showThesaurus(for: string) }
+						case "t":      if SPECIAL { gCurrentlyEditingWidget?.swapWithParent() } else if COMMAND { showThesaurus(for: gCurrentlySelectedText) } 
 						case "/":      return handleSlash(flags)
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
@@ -144,7 +144,7 @@ class ZMapEditor: ZBaseEditor {
 						case "n":        editNote(flags: flags)
 						case "o":        moveable.importFromFile(OPTION ? .eOutline : SPLAYED ? .eCSV : .eSeriously) { gRelayoutMaps() }
 						case "p":        printCurrentFocus()
-						case "r":        if     ANY { gNeedsRecount = true } else { showReorderPopup() }
+						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
 						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) }
@@ -153,7 +153,7 @@ class ZMapEditor: ZBaseEditor {
 						case "x":        return handleX(flags)
 						case "z":        if  !SHIFT { gUndoManager.undo() } else { gUndoManager.redo() }
 						case "8":        if  OPTION { prefix(with: kSoftArrow, withParentheses: false) } // option-8 is a dot
-						case "#":        if gSelecting.hasMultipleGrab { prefix(with: key) } else { debugAnalyze() }
+						case "#":        if gSelecting.hasMultipleGrabs { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
 						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
@@ -656,6 +656,13 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		print(" total: \(count)")
+	}
+
+	func reverseWordsInZoneName() {
+		let zone = gSelecting.currentMoveable
+		if  zone.reverseWordsInZoneName() {
+			gRelayoutMaps(for: zone)
+		}
 	}
 
 	// MARK: - edit text

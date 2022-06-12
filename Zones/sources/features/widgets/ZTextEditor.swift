@@ -28,16 +28,6 @@ class ZTextPack: NSObject {
     var             widget :     ZoneWidget? { return packedZone?.widget }
     var   adequatelyPaused :           Bool  { return Date().timeIntervalSince(createdAt) > 0.1 }
 
-    var displayType: String {
-        if  let        trait = packedTrait {
-            return     trait.emptyName
-        } else if let  zone  = packedZone {
-            return     zone.emptyName
-        }
-
-        return kNoValue
-    }
-
 	var emptyName: String {
 		if  let        trait = packedTrait {
 			return     trait  .emptyName
@@ -59,7 +49,7 @@ class ZTextPack: NSObject {
     }
 
     var textWithSuffix: String {
-        var   result = displayType
+        var   result = emptyName
 
         if  let zone = packedZone {
             result   = zone.unwrappedNameWithEllipses
@@ -160,7 +150,7 @@ class ZTextPack: NSObject {
     }
 
     func capture(_ iText: String?) {
-		if  let text           = iText == displayType ? nil : iText {
+		if  let text           = iText == emptyName ? nil : iText {
 			if  let     trait  = packedTrait {                             // traits take logical priority
 				trait.ownerZone?.setTraitText(text, for: trait.traitType)
 			} else if let zone = packedZone {                              // ignore zone if editing a trait, above
@@ -180,8 +170,8 @@ class ZTextPack: NSObject {
         if  let components = iText?.components(separatedBy: "  (") {
             newText        = components[0]
 
-            if  newText == displayType || newText == kEmpty {
-                newText  = nil
+            if  newText   == emptyName || newText == kEmpty {
+                newText    = nil
             }
         }
 

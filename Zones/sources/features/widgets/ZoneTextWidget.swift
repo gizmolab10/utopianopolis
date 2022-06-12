@@ -191,7 +191,20 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
             gTextEditor.assign(t, to: widgetZone)
             updateGUI()
         }
-    }
+	}
+
+	func swapWithParent() {
+		if  let  zone = widgetZone,
+			let saved = text {
+			let range = gTextEditor.selectedRange
+			zone.swapWithParent {
+				gRelayoutMaps(for: zone) {
+					zone.zoneName = saved
+					zone.editAndSelect(range: range)
+				}
+			}
+		}
+	}
 
     func extractTitleOrSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var      extract = extractedTitle

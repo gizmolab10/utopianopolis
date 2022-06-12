@@ -95,8 +95,9 @@ class ZRecord: ZManagedObject {
 	var       _tooltipRecord: Any?
 	var    writtenModifyDate: Date?
 	var                color: ZColor?    // overridden by Zone and ZTrait (latter grabs from its ownerZone)
-	var           databaseID: ZDatabaseID { return ZDatabaseID.convert(from: dbid)! }
-	var             zRecords: ZRecords?   { return gRemoteStorage.zRecords(for: databaseID) }
+	var      maybeDatabaseID: ZDatabaseID? { return ZDatabaseID.convert(from: dbid) }
+	var           databaseID: ZDatabaseID { return maybeDatabaseID! }
+	var             zRecords: ZRecords?   { return gRemoteStorage.zRecords(for: maybeDatabaseID) }
 	var  unwrappedRecordName: String      { return recordName ?? kEmpty }
 	var        decoratedName: String      { return recordName ?? kNoValue }
 	var        unwrappedName: String      { return recordName ?? emptyName }

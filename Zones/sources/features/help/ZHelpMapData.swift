@@ -67,6 +67,7 @@ class ZHelpMapData : ZHelpData {
 		"2_COMMAND + OPTION + KEY", 									"", "",
 		"2COMMA", 		"toggle lists grow up/down", 						"",
 		"2 ", 			"(and) move idea up/down", 							"organize-fcdc44ac04e4",
+		"2T", 			"swap selected idea with parent", 					"parent-child-tweaks-bf067abdf461",
 		"2",			 												"", "",
 		"1_CONTROL + KEY", 												"", "",
 		"1SPACE", 		"create new idea in list", 							"edit-d05d18996df7",

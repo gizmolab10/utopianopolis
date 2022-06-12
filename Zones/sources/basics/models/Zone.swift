@@ -1720,6 +1720,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			case .eCancel:     break
 		}
 	}
+
+	func reverseWordsInZoneName() -> Bool {
+		if  let words = zoneName?.components(separatedBy: kSpace), words.count > 1 {
+			zoneName = words.reversed().joined(separator: kSpace)
+
+			return true
+		}
+
+		return false
+	}
 	
 	// MARK: - traits
 	// MARK: -
