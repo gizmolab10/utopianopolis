@@ -185,13 +185,27 @@ extension ZoneArray {
 		return candidate
 	}
 
+	mutating func respectOrderAndLevel() {
+		sort { (a, b) -> Bool in
+			if  a.level == b.level {
+				return a.order < b.order
+			} else {
+				return a.level < b.level // compare levels from multiple parents
+			}
+		}
+	}
+
+	mutating func respectOrder() {
+		sort { (a, b) -> Bool in
+			return a.order < b.order
+		}
+	}
+
 	mutating func duplicate() {
 		var duplicated = ZoneArray ()
 		var    indices = [Int] ()
 
-		sort { (a, b) -> Bool in
-			return a.order < b.order
-		}
+		respectOrder()
 
 		forEach { zone in
 			if  let     index = zone.siblingIndex {
@@ -418,13 +432,13 @@ extension ZoneArray {
 	func actuallyMoveInto(onCompletion: BoolClosure?) {
 		if  let into = appropriateParent {
 			into.expand()
-			moveIntoAndGrab(into, onCompletion: onCompletion)
+			moveIntoAndGrab(into, horizontal: true, onCompletion: onCompletion)
 		} else {
 			onCompletion?(true)
 		}
 	}
 
-	func moveIntoAndGrab(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, onCompletion: BoolClosure?) {
+	func moveIntoAndGrab(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, onCompletion: BoolClosure?) {
 		if  into.isInFavorites {
 			into.parentZone?.collapse()
 
@@ -433,7 +447,7 @@ extension ZoneArray {
 
 		gSelecting.ungrabAll()
 
-		let zones = gListsGrowDown ? self : reversed()
+		let zones = (gListsGrowDown || !horizontal) ? self : reversed()
 
 		for     zone in zones {
 			if  zone != into {
@@ -441,7 +455,7 @@ extension ZoneArray {
 					zone.orphan()
 				}
 
-				into.addChildAndReorder(zone, at: iIndex)
+				into.addChildAndUpdateOrder(zone, at: iIndex)
 				zone.addToGrabs()
 			}
 		}

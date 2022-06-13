@@ -378,7 +378,7 @@ class ZFavorites: ZSmallMapRecords {
 					bookmark.zoneLink = name + kColonSeparator + kColonSeparator
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? name
 
-					rootsGroup.addChildAndReorder(bookmark)
+					rootsGroup.addChildAndUpdateOrder(bookmark)
 				}
 			}
 
@@ -387,7 +387,7 @@ class ZFavorites: ZSmallMapRecords {
 				bookmark.zoneLink = kColonSeparator + kColonSeparator + named                           // convert into a bookmark
 				bookmark.zoneName = named
 
-				rootsGroup.addChildAndReorder(bookmark)
+				rootsGroup.addChildAndUpdateOrder(bookmark)
 			}
 
 			// //////////////////////////////////////////////

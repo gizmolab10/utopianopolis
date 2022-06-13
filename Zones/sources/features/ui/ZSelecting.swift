@@ -269,12 +269,6 @@ class ZSelecting: NSObject {
 		gSignal([.sDetails])
     }
 
-	func respectOrder(for zones: ZoneArray) -> ZoneArray {
-		return zones.sorted { (a, b) -> Bool in
-			return a.order < b.order || a.level < b.level // compare levels from multiple parents
-		}
-	}
-
 	func handleDuplicates(_ COMMAND: Bool) {
 		let grabs = simplifiedGrabs
 
@@ -343,8 +337,7 @@ class ZSelecting: NSObject {
             !currentMapGrabs.contains(zone) {
 			currentMapGrabs.append(zone)
 			zone.updateToolTips()
-
-			currentMapGrabs = respectOrder(for: currentMapGrabs)
+			currentMapGrabs.respectOrderAndLevel()
         }
     }
 

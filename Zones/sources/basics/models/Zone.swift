@@ -1132,9 +1132,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  containing {
-				zones.sort { (a, b) -> Bool in
-					return a.order < b.order
-				}
+				zones.respectOrder()
 			}
 
 			if  self  == gHere {
@@ -1224,7 +1222,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			ungrab()
-			addChildAndReorder(newIdea, at: iIndex, { addedChild in onCompletion?(newIdea) } )
+			addChildAndUpdateOrder(newIdea, at: iIndex, { addedChild in onCompletion?(newIdea) } )
 		}
 	}
 
@@ -1379,7 +1377,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			self.orphan() // in case parent was restored
 		}
 
-		into.addChildAndReorder(self, at: iIndex) { addedChild in
+		into.addChildAndUpdateOrder(self, at: iIndex) { addedChild in
 
 			if !addedChild.isInTrash { // so grab won't disappear
 				addedChild.grab()
@@ -2400,9 +2398,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		// case 4
 
-		zones.sort { (a, b) -> Bool in
-			return a.order < b.order
-		}
+		zones.respectOrder()
 
 		// ///////////////////
 		// prepare for UNDO //
@@ -2416,7 +2412,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		UNDO(self) { iUndoSelf in
 			for (child, (parent, index)) in restore {
 				child.orphan()
-				parent.addChildAndReorder(child, at: index)
+				parent.addChildAndUpdateOrder(child, at: index)
 			}
 
 			iUndoSelf.UNDO(self) { iUndoUndoSelf in
@@ -2471,7 +2467,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 
 					bookmark.orphan()
-					into.addChildAndReorder(bookmark, at: iIndex)
+					into.addChildAndUpdateOrder(bookmark, at: iIndex)
 					bookmark.recursivelyApplyDatabaseID(into.databaseID)
 					gBookmarks.addToReverseLookup(bookmark)
 				}
@@ -2933,9 +2929,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		respectOrder()
 	}
 
-	func addChildAndReorder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: ZoneClosure? = nil) {
+	func addChildAndUpdateOrder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: ZoneClosure? = nil) {
 		if  isBookmark {
-			bookmarkTarget?.addChildAndReorder(iChild, at: iIndex, afterAdd)
+			bookmarkTarget?.addChildAndUpdateOrder(iChild, at: iIndex, afterAdd)
 		} else if let child = iChild,
 			addChildNoDuplicate(child, at: iIndex, afterAdd) != nil {
 			children.updateOrder() // also marks children need save
@@ -2980,7 +2976,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let n = d.popLast() {     // pop next from duplicates
 
 			orphan()
-			p.addChildAndReorder(n, at: i)  // swap it into this zones sibling index
+			p.addChildAndUpdateOrder(n, at: i)  // swap it into this zones sibling index
 		}
 	}
 
@@ -3303,9 +3299,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func respectOrder() {
-		children.sort { (a, b) -> Bool in
-			return a.order < b.order
-		}
+		children.respectOrder()
 	}
 
 	func isChild(of iParent: Zone?) -> Bool {
@@ -3716,7 +3710,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		let zone = Zone.uniqueZoneNamed(name, recordName: nil, databaseID: databaseID)
 
-		addChildAndReorder(zone)
+		addChildAndUpdateOrder(zone)
 
 		return zone
 	}

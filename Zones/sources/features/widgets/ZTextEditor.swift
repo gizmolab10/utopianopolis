@@ -440,8 +440,10 @@ class ZTextEditor: ZTextView {
             }
         } else if currentlyEditedZone?.children.count ?? 0 > 0 {
             quickStopCurrentEdit()
-            gMapEditor.moveInto { reveal in
-                editAtOffset(.zero)
+            gMapEditor.moveInto { [self] reveal in
+				gRelayoutMaps(for: currentlyEditedZone) {
+					editAtOffset(.zero)
+				}
             }
         }
     }

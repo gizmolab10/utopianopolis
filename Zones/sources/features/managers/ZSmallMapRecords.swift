@@ -60,7 +60,8 @@ class ZSmallMapRecords: ZRecords {
 		let          zones = amongNotes ? workingNotemarks : notNotes
 		let          count = zones.count
 		if  count          > 1 {            // there is no next for count == 0 or 1
-			let   maxIndex = count - 1
+			let     adjust = moveCurrent ? 2 : 1
+			let   maxIndex = count - adjust
 			var    toIndex = down ? 0 : maxIndex
 			let    current = current(mustBeRecents: withinRecents)
 			if  let target = current?.zoneLink {
@@ -69,7 +70,7 @@ class ZSmallMapRecords: ZRecords {
 						if       !down, index > 0 {
 							toIndex   = index - 1         // go up
 						} else if down, index < maxIndex {
-							toIndex   = index + 1         // go down
+							toIndex   = index + adjust    // go down
 						}
 
 						break

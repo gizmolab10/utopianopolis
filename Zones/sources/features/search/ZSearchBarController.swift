@@ -45,10 +45,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 	func searchStateDidChange() {
 		switch gSearching.state {
-			case .sList:
-				searchBox?.isHidden = true
 			case .sEntry, .sFind:
-				searchBox?.isHidden = false
 				assignAsFirstResponder(searchBox)
 			default: break
 		}

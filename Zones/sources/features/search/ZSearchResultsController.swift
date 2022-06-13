@@ -123,10 +123,10 @@ class ZSearchResultsController: ZGenericTableController {
 
     #if os(OSX)
 
-    override func numberOfRows(in tableView: ZTableView) -> Int { max(1, filteredResultsCount) }
+	override func numberOfRows(in tableView: ZTableView) -> Int { max(gIsSearching ? 0 : 1, filteredResultsCount) }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		return !hasResults ? noResultsString : attributedString(for: row, isSelected: row == tableView.selectedRow)
+		return !hasResults ? gIsSearching ? nil : noResultsString : attributedString(for: row, isSelected: row == tableView.selectedRow)
 	}
 
 	func attributedString(for row: Int, isSelected: Bool) -> NSAttributedString {
@@ -347,7 +347,7 @@ class ZSearchResultsController: ZGenericTableController {
 	// MARK: -
 
 	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-		gSearching.setSearchStateTo(.sList)
+		gSearching.switchToList()
 		tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
 		gSignal([.spCrumbs])
 		return true

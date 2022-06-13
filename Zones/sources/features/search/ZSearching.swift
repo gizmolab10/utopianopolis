@@ -40,7 +40,7 @@ class ZSearching: NSObject, ZSearcher {
 
 	var         state = ZSearchState.sNot
 	var    hasResults : Bool { return gSearchResultsController?.hasResults ?? false }
-	func switchToList()  { setSearchStateTo(.sList) } // hasResults ? .sList : .sNot) }
+	func switchToList()  { setSearchStateTo(.sList) }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
 	var essaySearchText: String? {
@@ -65,7 +65,7 @@ class ZSearching: NSObject, ZSearcher {
 		gSearchBarController?    .searchStateDidChange()
 		gSearchResultsController?.searchStateDidChange()
 
-		if  state == .sFind {
+		if  state.isOneOf([.sFind, .sEntry]) {
 			gSignal([.sSearch])
 		}
 	}
@@ -100,7 +100,7 @@ class ZSearching: NSObject, ZSearcher {
 
 				closure?()
 				gSearchResultsController?.applyFilter()
-				setSearchStateTo(.sList) // hasResults ? .sList : .sEntry)
+				switchToList()
 				gSignal([.sFound])
 			}
 		}
