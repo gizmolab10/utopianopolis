@@ -234,12 +234,9 @@ extension NSObject {
     }
 
     func sendEmailBugReport() {
-        "mailto:sand@gizmolab.com?subject=Regarding Seriously".openAsURL()
+        let url = kMailTo + "sand@gizmolab.com?subject=Regarding Seriously"
 
-//		let service = NSSharingService(named: NSSharingService.Name.composeEmail)
-//		service?.recipients = ["sand@gizmolab.com"]
-//		service?.subject = "Reporting an error"
-//		service?.perform(withItems: ["Something happened"])
+		url.openAsURL()
 	}
 
     // MARK: - JSON

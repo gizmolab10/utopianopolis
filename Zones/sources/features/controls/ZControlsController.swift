@@ -45,9 +45,8 @@ class ZControlsController: ZGenericController {
 		searchScopeControl?.setSelected(o.contains(.fPublic),    forSegment: 0)
 		searchScopeControl?.setSelected(o.contains(.fMine),      forSegment: 1)
 		searchScopeControl?.setSelected(o.contains(.fTrash),     forSegment: 2)
-		searchScopeControl?.setSelected(o.contains(.fRecent),    forSegment: 3)
-		searchScopeControl?.setSelected(o.contains(.fFavorites), forSegment: 4)
-		searchScopeControl?.setSelected(o.contains(.fOrphan),    forSegment: 5)
+		searchScopeControl?.setSelected(o.contains(.fFavorites), forSegment: 3)
+		searchScopeControl?.setSelected(o.contains(.fOrphan),    forSegment: 4)
 	}
 
 	func filterDidChange() {
@@ -63,7 +62,7 @@ class ZControlsController: ZGenericController {
 
 		for index in 0..<sender.segmentCount {
 			if  sender.isSelected(forSegment: index) {
-				let option = ZSearchScopeOption(rawValue: Int(2.0 ** Double(index)))
+				let option = ZSearchScopeOption(rawValue: Int(1 << index))
 				options.insert(option)
 			}
 		}

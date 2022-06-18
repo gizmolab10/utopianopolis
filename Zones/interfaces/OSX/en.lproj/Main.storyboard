@@ -2366,7 +2366,7 @@ DQ
                                         </connections>
                                     </segmentedControl>
                                     <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
-                                        <rect key="frame" x="45" y="3" width="196" height="16"/>
+                                        <rect key="frame" x="61" y="3" width="180" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="13" id="cnb-Bz-45J"/>
                                         </constraints>
@@ -2376,8 +2376,7 @@ DQ
                                                 <segment label="public"/>
                                                 <segment label="mine" selected="YES" tag="1"/>
                                                 <segment label="trash"/>
-                                                <segment label="recent"/>
-                                                <segment label="fave"/>
+                                                <segment label="favorites"/>
                                                 <segment label="orphan"/>
                                             </segments>
                                         </segmentedCell>

@@ -44,7 +44,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	var                 inLinearMode : Bool           { return mode == .linearMode }
 	var               inCircularMode : Bool           { return mode == .circularMode }
-	var               canDrawWidgets : Bool           { return gIsMapOrEditIdeaMode || !gSearchResultsVisible }
+	var               canDrawWidgets : Bool           { return gCanDrawWidgets } // overridden by help dots controller
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
 	var                     isBigMap : Bool           { return controllerID == .idMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
@@ -83,7 +83,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				rootLine?.draw(phase) // for here's drag dot
 			}
 
-			hereWidget?.traverseAllWidgetProgeny() { widget in
+			if  hereZone?.widget != hereWidget {
+				noop()
+			}
+
+			hereZone?.widget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}
 

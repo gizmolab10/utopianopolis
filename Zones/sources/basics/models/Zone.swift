@@ -75,7 +75,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                        textColor :             ZColor? { return isDragged ? gActiveColor : widgetColor }
 	var                     lighterColor :             ZColor? { return color?.withAlphaComponent(0.3) }
 	var                   highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
-	var                        emailLink :             String? { return email == nil ? nil : "mailTo:\(email!)" }
+	var                        emailLink :             String? { return email == nil ? nil : kMailTo + email! }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                            count :                Int  { return children.count }
@@ -114,6 +114,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                         hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
 	var                         hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                          hasNote :               Bool  { return hasTrait(for: .tNote) }
+	var                   hasNoteOrEssay :               Bool  { return hasTrait(matchingAny: [.tNote, .tEssay]) }
 	var                        isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
 	var                       isInBigMap :               Bool  { return root?.isBigMapRoot       ?? false }
 	var                       isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
@@ -732,8 +733,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func unlinkParentAndMaybeNeedSave() {
 		if  parentZoneMaybe != nil ||
-				(parentLink  != nil &&
-				 parentLink  != kNullLink) {
+				(parentLink != nil &&
+				 parentLink != kNullLink) {   // what about parentRID?
 			parentZoneMaybe  = nil
 			parentLink       = kNullLink
 		}
@@ -754,11 +755,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		get {
 			if  root == self {
 				unlinkParentAndMaybeNeedSave()
-			} else  if  parentZoneMaybe == nil {
-				if  let      recordName  = parentRID {
-					parentZoneMaybe      = zRecords?.maybeZoneForRecordName(recordName)
-				} else if let      zone  = parentLink?.maybeZone {
-					parentZoneMaybe      = zone
+			} else if parentZoneMaybe == nil {
+				if let         zone = parentLink?.maybeZone {
+					parentZoneMaybe = zone
+				} else if let parentRecordName = parentRID,
+						  recordName != parentRecordName { // noop (remain nil) when parentRID equals record name
+					parentZoneMaybe = zRecords?.maybeZoneForRecordName(parentRecordName)
 				}
 			}
 
@@ -1860,7 +1862,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func createNoteMaybe() -> ZNote? {
-		if (noteMaybe == nil || !hasTrait(matchingAny: [.tNote, .tEssay])), let emptyNote = createNote() {
+		if (noteMaybe == nil || !hasNoteOrEssay), let emptyNote = createNote() {
 			noteMaybe = emptyNote     // might be note from "child"
 		}
 
@@ -2244,7 +2246,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func invokeEssay() -> Bool { // false means not handled
-		if  hasNote {
+		if  hasNoteOrEssay {
 			gCreateCombinedEssay = true
 			gCurrentEssay        = note
 

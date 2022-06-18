@@ -55,6 +55,7 @@ var              gIsSearching :                    Bool { return gSearching.stat
 var           gIsNotSearching :                    Bool { return gSearching.state == .sNot }
 var     gSearchResultsVisible :                    Bool { return gSearching.state == .sList }
 var    gWaitingForSearchEntry :                    Bool { return gSearching.state == .sEntry }
+var           gCanDrawWidgets :                    Bool { return gIsMapOrEditIdeaMode || !gSearchResultsVisible }
 var      gIsMapOrEditIdeaMode :                    Bool { return gIsMapMode || gIsEditIdeaMode }
 var          gCanSaveWorkMode :                    Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode :                    Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
@@ -416,13 +417,13 @@ struct ZSearchScopeOption: OptionSet {
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let    fPublic = ZSearchScopeOption(rawValue: 1 << 0)
+//	static let    fShared = ZSearchScopeOption(rawValue: 1 << 1)
 	static let      fMine = ZSearchScopeOption(rawValue: 1 << 1)
 	static let     fTrash = ZSearchScopeOption(rawValue: 1 << 2)
-	static let    fRecent = ZSearchScopeOption(rawValue: 1 << 3)
-	static let fFavorites = ZSearchScopeOption(rawValue: 1 << 4)
-	static let    fOrphan = ZSearchScopeOption(rawValue: 1 << 5)
+	static let fFavorites = ZSearchScopeOption(rawValue: 1 << 3)
+	static let    fOrphan = ZSearchScopeOption(rawValue: 1 << 4)
 	static let      fNone = ZSearchScopeOption([])
-	static let       fAll = ZSearchScopeOption(rawValue: 7)
+	static let       fAll = ZSearchScopeOption(rawValue: 0x11)
 }
 
 var gSearchScopeOption: ZSearchScopeOption {
