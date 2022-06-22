@@ -2057,20 +2057,21 @@ extension NSTextAttachment {
 }
 
 extension String {
-    var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
-    var   asciiValue:  UInt32  { return asciiArray[0] }
-	var  smartStripped: String { return substring(fromInclusive: 4).spacesStripped }
-    var           length: Int  { return unicodeScalars.count }
-	var         isHyphen: Bool { return self == kHyphen }
-    var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
-    var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
-    var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
-	var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
-	var  containsNonTabs: Bool { return filter{ $0 != kTab.first}.count != 0 }
-    var       isOpposite: Bool { return "]}>)".contains(self) }
-	var     isDashedLine: Bool { return contains(kHalfLineOfDashes) }
-	var      isValidLink: Bool { return components != nil }
-	var components: StringsArray? { return components(separatedBy: kColonSeparator) }
+    var        asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
+    var        asciiValue:  UInt32  { return asciiArray[0] }
+	var       smartStripped: String { return substring(fromInclusive: 4).spacesStripped }
+	var   components: StringsArray? { return components(separatedBy: kColonSeparator) }
+    var                length:  Int { return unicodeScalars.count }
+	var              isHyphen: Bool { return self == kHyphen }
+    var               isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
+    var        isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
+    var               isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
+	var      containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
+	var       containsNonTabs: Bool { return filter{ $0 != kTab.first}.count != 0 }
+    var            isOpposite: Bool { return "]}>)".contains(self) }
+	var          isDashedLine: Bool { return contains(kHalfLineOfDashes) }
+	var           isValidLink: Bool { return components != nil }
+	var  containsLineEndOrTab: Bool { return hasMatchIn(kLineEndingsAndTabArray) }
 
     var opposite: String {
 		switch self {
@@ -2207,6 +2208,20 @@ extension String {
 			case kFavoritesRootName: return .favoritesID
 			default:                 return nil
 		}
+	}
+
+	func hasMatchIn(_ array: StringsArray) -> Bool {
+		var index = array.count - 1
+
+		while index >= 0 {
+			if  contains(array[index]) {
+				return true
+			}
+
+			index -= 1
+		}
+
+		return false
 	}
 
 	func componentsSeparatedAt(level: Int) -> StringsArray {

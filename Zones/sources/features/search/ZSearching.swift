@@ -15,23 +15,13 @@ import Foundation
 #endif
 
 func gExitSearchMode(force: Bool = true) { if force || gIsSearching { gSearching.exitSearchMode() } }
-var  gShowsSearchResults  : Bool { return gSearching.state.isOneOf([.sList]) }
+var  gShowsSearchResults  : Bool { return gSearching.state == .sList }
 
 enum ZSearchState: Int {
     case sEntry
     case sFind
     case sList
     case sNot
-    
-    func isOneOf(_ states: [ZSearchState]) -> Bool {
-        for state in states {
-            if self == state {
-                return true
-            }
-        }
-        
-        return false
-    }
 }
 
 let gSearching = ZSearching()
@@ -40,7 +30,6 @@ class ZSearching: NSObject, ZSearcher {
 
 	var         state = ZSearchState.sNot
 	var    hasResults : Bool { return gSearchResultsController?.hasResults ?? false }
-	func switchToList()  { setSearchStateTo(.sList) }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
 	var essaySearchText: String? {
@@ -65,8 +54,11 @@ class ZSearching: NSObject, ZSearcher {
 		gSearchBarController?    .searchStateDidChange()
 		gSearchResultsController?.searchStateDidChange()
 
-		if  state.isOneOf([.sFind, .sEntry]) {
-			gSignal([.sSearch])
+		switch state {
+			case .sList:          gSignal([.sFound])
+			case .sFind, .sEntry: assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBox)
+
+			default: break
 		}
 	}
 
@@ -98,10 +90,12 @@ class ZSearching: NSObject, ZSearcher {
 				combined[dbID]                             = results
 				gSearchResultsController?.foundRecordsDict = combined
 
-				closure?()
-				gSearchResultsController?.applyFilter()
-				switchToList()
-				gSignal([.sFound])
+				if  let c = gSearchResultsController {
+					c.applyFilter()
+					setSearchStateTo(.sList)
+				}
+
+				closure?() // hide spinner
 			}
 		}
 	}

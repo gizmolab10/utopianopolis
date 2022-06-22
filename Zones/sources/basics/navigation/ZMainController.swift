@@ -120,7 +120,7 @@ class ZMainController: ZGesturesController {
         }
 
 		permissionView?   .isHidden = !gIsStartupMode
-		searchBoxView?    .isHidden =  gIsNotSearching || gSearchResultsVisible
+		searchBoxView?    .isHidden =  gIsNotSearching || (gSearchResultsVisible && gSearchResultsController?.hasResults ?? false)
 		searchResultsView?.isHidden =  gIsNotSearching || gWaitingForSearchEntry || gIsEssayMode
 
 		mainUpdate()

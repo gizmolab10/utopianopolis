@@ -95,7 +95,7 @@ class ZDebugController: ZGenericTableController {
 		return nil
 	}
 
-	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+	func tableView(_ tableView: ZTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		if  tableColumn?.title == "thing" {
 			return thing(for: row)
 		} else if let string = self.tableView(tableView, objectValueFor: tableColumn, row: row) as? String {

@@ -99,7 +99,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
         } else if isEscape || (isReturn && isEntry) || (COMMAND && isF) {
             endSearch()
 		} else if isTab {
-			gSearching.switchToList()
+			gSearching.setSearchStateTo(.sList)
 		} else if let arrow = key.arrow {
 			handleArrow(arrow, with: flags)
 		} else {
@@ -125,8 +125,8 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 			if  let searcher: ZSearcher = gIsEssayMode ? gEssayView : gSearching {
 				spinner?.startAnimating()
-				searcher.performSearch(for: text) {
-					self.spinner?.stopAnimating()
+				searcher.performSearch(for: text) { [self] in
+					spinner?.stopAnimating()
 				}
 			}
 

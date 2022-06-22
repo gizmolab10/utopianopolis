@@ -1194,7 +1194,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func acquireZones(_ zones: ZoneArray, at iIndex: Int? = nil) {
 		expand()
 
-		for     zone in zones {
+		for     zone in zones.reversed() {
 			if  zone != self {
 				zone.orphan()
 				addChildNoDuplicate(zone, at: iIndex)
@@ -2453,7 +2453,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						bookmark = gFavorites.matchOrCreateBookmark(for: bookmark, addToRecents: false)
 					} else if bookmark.databaseID != into.databaseID {    // being moved to the other db
 						if  bookmark.parentZone == nil || !bookmark.parentZone!.children.contains(bookmark) || !COPY {
-							bookmark.needDestroy()                        // is not a child within its parent and should be tossed
+							bookmark.needDestroy()                        // in wrong DB ... is not a child within its parent
 							bookmark.orphan()
 						}
 

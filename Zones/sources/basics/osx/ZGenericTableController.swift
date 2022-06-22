@@ -18,7 +18,7 @@ import UIKit
 class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableViewDataSource {
     
     @IBOutlet var tableHeight: NSLayoutConstraint?
-    @IBOutlet var genericTableView: NSTableView?
+    @IBOutlet var genericTableView: ZTableView?
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -30,7 +30,7 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
 		}
 	}
 
-    func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
+    func numberOfRows(in tableView: ZTableView) -> Int { return 1 }
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) { genericTableUpdate() }
 	var rowHeight: CGFloat { return genericTableView?.rowHeight ?? 17.0 }
 

@@ -76,13 +76,13 @@ class ZoneDot: ZPseudoView {
 		var     filled = false
 		if  let zone   = widgetZone {
 			if  isReveal {
-				filled = (!zone.isExpanded || (zone.isTraveller && zone.count == 0)) && isLinearMode
+				filled = ((!zone.isExpanded || (zone.isTraveller && zone.count == 0)) && isLinearMode) != isHovering
 			} else {
-				filled =   zone.isGrabbed
+				filled =   zone.isGrabbed   || isHovering
 			}
 		}
 
-		return  filled != isHovering
+		return  filled
 	}
 
 	// MARK: - initialization
@@ -215,6 +215,10 @@ class ZoneDot: ZPseudoView {
 
 	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
+
+		if  isHovering {
+			noop()
+		}
 
 		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
 			gActiveColor.setStroke()

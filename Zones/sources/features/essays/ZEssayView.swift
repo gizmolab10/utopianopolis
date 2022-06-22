@@ -243,6 +243,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		usesInspectorBar     = true
 		allowsImageEditing   = true
 		displaysLinkToolTips = true
+		isAutomaticSpellingCorrectionEnabled = false
 		textContainerInset   = NSSize(width: margin, height: margin)
 
 		resetForDarkMode()
@@ -319,8 +320,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
 			if  (shouldOverwrite || restoreSelection != nil),
-				let                 text = gCurrentEssay?.essayText {
-				gCurrentEssay?.needsSave = true
+				let text = gCurrentEssay?.essayText {
 
 				discardPriorText()
 				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
@@ -855,7 +855,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		setNeedsDisplay()        // so dots selecting image will be redrawn
 
 		if  let replacementLength = replacement?.length,
-			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength) {
+			let         hasReturn = replacement?.containsLineEndOrTab,
+			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn) {
 			switch result {
 			case .eAlter:        break
 			case .eLock:         return false

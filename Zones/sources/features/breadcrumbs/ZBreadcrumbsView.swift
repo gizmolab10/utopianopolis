@@ -135,16 +135,13 @@ class ZBreadcrumbsView : ZButtonsView {
 			}
 
 			func displayEssay(_ asEssay: Bool = true) {
-				let            saved = gCreateCombinedEssay
-				gCreateCombinedEssay = (!OPTION && asEssay)
+				gCreateCombinedEssay = !OPTION && asEssay
 
 				if  gCreateCombinedEssay {
-					zone.noteMaybe   = nil                // forget note so essay will be constructed
+					zone.noteMaybe = nil                    // forget note so essay will be constructed
 				}
 
-				gEssayView?.resetCurrentEssay(zone.note)  // note creates an essay when gCreateCombinedEssay is true
-
-				gCreateCombinedEssay = saved
+				gEssayView?.resetCurrentEssay(zone.note)    // note creates an essay when gCreateCombinedEssay is true
 			}
 
 			gFocusing.grabAndFocusOn(zone) {

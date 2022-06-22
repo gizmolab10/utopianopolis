@@ -61,7 +61,7 @@ class ZHelpController: ZGenericTableController {
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool                   { return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false) }
 	override func handleSignal(_ object: Any?, kind: ZSignalKind)             { genericTableUpdate() }
 	func           showHelpFor(_ mode: ZHelpMode)                             { show(true, mode: mode) }   // side-effect: sets gCurrentHelpMode
-	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat { return helpData.rowHeight }
+	func tableView(_ tableView: ZTableView, heightOfRow row: Int) -> CGFloat { return helpData.rowHeight }
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? { return helpData.objectValueFor(row) }
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {

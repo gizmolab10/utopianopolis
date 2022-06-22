@@ -123,10 +123,10 @@ class ZSearchResultsController: ZGenericTableController {
 
     #if os(OSX)
 
-	override func numberOfRows(in tableView: ZTableView) -> Int { max(gIsSearching ? 0 : 1, filteredResultsCount) }
+	override func numberOfRows(in tableView: ZTableView) -> Int { max(gSearchResultsVisible ? 1 : 0, filteredResultsCount) }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		return !hasResults ? gIsSearching ? nil : noResultsString : attributedString(for: row, isSelected: row == tableView.selectedRow)
+		return !hasResults ? gSearchResultsVisible ? noResultsString : nil : attributedString(for: row, isSelected: row == tableView.selectedRow)
 	}
 
 	func attributedString(for row: Int, isSelected: Bool) -> NSAttributedString {
@@ -179,10 +179,10 @@ class ZSearchResultsController: ZGenericTableController {
 		return result
 	}
 
-    #else
+    #else // ios
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int            { return filteredResultsCount }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
+    func tableView(_ tableView: ZTableView, numberOfRowsInSection section: Int) -> Int            { return filteredResultsCount }
+    func tableView(_ tableView: ZTableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
 
     #endif
 
@@ -271,6 +271,7 @@ class ZSearchResultsController: ZGenericTableController {
 
 	func searchStateDidChange() {
 		if  gSearchResultsVisible {
+			genericTableView?.reloadData()
 			assignAsFirstResponder(genericTableView)
 		}
 	}
@@ -347,7 +348,7 @@ class ZSearchResultsController: ZGenericTableController {
 	// MARK: -
 
 	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
-		gSearching.switchToList()
+		gSearching.setSearchStateTo(.sList)
 		tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
 		gSignal([.spCrumbs])
 		return true

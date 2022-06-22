@@ -470,13 +470,13 @@ class ZoneWidget: ZPseudoView {
 						var style = ZHighlightStyle.sNone
 						
 						if        isEditing      { style = .sThickDashed
+						} else if isGrabbed      { style = .sThick
 						} else if tHovering      {
 							if    isCircularMode { style = .sDashed
 							} else               { style = .sThin        }
 						} else if isHovering     {
 							if    isCircularMode { style = .sDashed
 							} else               { style = .sMedium      }
-						} else if isGrabbed      { style = .sThick
 						} else if isCircularMode { style = .sUltraThin   }
 
 						if  style != .sNone {

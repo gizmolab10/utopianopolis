@@ -97,7 +97,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			let             text  = attributed.attributedSubstring(from: textRange)
 			trait      .noteText  = NSMutableAttributedString(attributedString: text)
 
-			if let z = zone {
+			if  let z                 = zone {
 				if  gEssayTitleMode  != .sEmpty {
 					let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: kEmpty)
 					z.setNameForSelfAndBookmarks(to: name)
@@ -314,7 +314,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	// N.B. mutates title range
 
-	func shouldAlterNote(inRange: NSRange, replacementLength: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
+	func shouldAlterNote(inRange: NSRange, replacementLength: Int, adjustment: Int = 0, hasReturn: Bool = false) -> (ZAlterationType, Int) {
 		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
@@ -332,7 +332,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 					result              = .eAlter
 				}
 
-				if  titleRange  .length > 0,
+				if  titleRange  .length > 0, !hasReturn,
 					let  titleIntersect = range.inclusiveIntersection(titleRange) {
 					delta               = replacementLength - titleIntersect.length
 					titleRange .length += delta
@@ -351,8 +351,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return 	(result, delta)
 	}
 
-	func shouldAlterEssay(in range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
-		var (result, delta) = shouldAlterNote(inRange: range, replacementLength: replacementLength)
+	func shouldAlterEssay(in range: NSRange, replacementLength: Int, hasReturn: Bool = false) -> (ZAlterationType, Int) {
+		var (result, delta) = shouldAlterNote(inRange: range, replacementLength: replacementLength, hasReturn: hasReturn)
 
 		if  result == .eDelete {
 			result  = .eExit
