@@ -34,6 +34,7 @@ class ZPreferencesController: ZGenericController {
 	@IBOutlet var              fontSize : ZSlider?
 	@IBOutlet var         lineThickness : ZSlider?
 	@IBOutlet var     horizontalSpacing : ZSlider?
+	@IBOutlet var    colorfulModeButton : ZButton?
 	@IBOutlet var      clearColorButton : ZButton?
     override  var          controllerID : ZControllerID { return .idPreferences }
 
@@ -50,6 +51,7 @@ class ZPreferencesController: ZGenericController {
 			zoneColorBox?                   .color =   grabbed?.color ?? kDefaultIdeaColor
 			activeMineColorBox?             .color = gActiveColor
 			backgroundColorBox?             .color = gAccentColor
+			colorfulModeButton?             .title = gColorfulMode ? "colorful" : "monochrome"
 
 			circlesDisplayControl?.selectSegments(from: gCirclesDisplayMode.indexSet)
             view.setAllSubviewsNeedDisplay()
@@ -91,9 +93,15 @@ class ZPreferencesController: ZGenericController {
 
 			gSignal([.sDatum])
         }
-    }
+	}
 
-    @IBAction func clearColorAction(_ button: ZButton) {
+	@IBAction func colorfulModeAction(_ button: ZButton) {
+		gColorfulMode = !gColorfulMode
+
+		gSignal([.spRelayout, .spPreferences, .spFavorites])
+	}
+
+	@IBAction func clearColorAction(_ button: ZButton) {
         if  let     zone  = gSelecting.firstSortedGrab {
             if  let color = zone.colorMaybe {
                 UNDO(self) { iUndoSelf in

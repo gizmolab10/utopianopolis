@@ -37,7 +37,7 @@ class ZTogglingView: ZView {
 	var toolTipText: String {
 		switch identity {
 			case .vKickoffTools : return "some simple tools to help get you oriented"
-			case .vPreferences  : return "preference controls"
+			case .vPreferences  : return "display preferences"
 			case .vFavorites    : return "favorites map"
 			case .vSubscribe    : return "license details"
 			case .vData         : return "useful data about Seriously"

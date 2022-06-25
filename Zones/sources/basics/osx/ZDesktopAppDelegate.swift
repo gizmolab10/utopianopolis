@@ -97,7 +97,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 		switch gWorkMode {
 			case .wEditIdeaMode,
 				 .wMapMode:    return gMapEditor
-//			case .wEssayMode:  return gEssayEditor
+			case .wEssayMode:  return gEssayEditor
 			default: 	       return nil
 		}
 	}
@@ -111,3 +111,4 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
     }
 
 }
+
