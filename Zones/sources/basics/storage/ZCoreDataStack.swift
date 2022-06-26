@@ -519,11 +519,12 @@ class ZCoreDataStack: NSObject {
 	lazy var privateDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: privateURL)
 		desc.configuration                = "Cloud"
+
+		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+
 		if  gIsUsingCloudKit {
 			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
 			desc.cloudKitContainerOptions = options
-
-			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 		}
 
 		return desc
@@ -532,12 +533,13 @@ class ZCoreDataStack: NSObject {
 	lazy var publicDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: publicURL)
 		desc.configuration                = "Cloud"
-		if  gIsUsingCloudKit {
-//			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
-//			options.databaseScope         = CKDatabase.Scope.public // default is private
-//			desc.cloudKitContainerOptions = options
 
-			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+
+		if  gIsUsingCloudKit {
+			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
+//			options.databaseScope         = CKDatabase.Scope.public // default is private. needs osx v11.0
+			desc.cloudKitContainerOptions = options
 		}
 
 		return desc

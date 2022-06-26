@@ -118,7 +118,7 @@ class ZTogglingView: ZView {
 				case .vSubscribe:    title = gSubscriptionController?.bannerTitle ?? kSubscribe
 				case .vFavorites:    title = favoritesTitle
 				case .vPreferences:  title = "Display Preferences"
-				case .vKickoffTools: title = "Kickoff Tools"
+				case .vKickoffTools: title = "Start with These"
 				default:             title = "Gargleblaster"
 			}
 
