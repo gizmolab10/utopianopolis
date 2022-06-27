@@ -651,6 +651,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			handlePlainArrow(arrow)
 		}
 
+		if  lockedSelection {
+			handlePlainArrow(arrow)
+		}
+
 		setNeedsDisplay() // to update which drag dot is filled
 	}
 
@@ -946,7 +950,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let level = zone.level
 			for (index, zone) in zones.enumerated() {
 				if  var note   = zone.note {
-					if  index == 0 { //,           // huh?
+					if  index == 0 { // huh?
 						note   = essay
 					}
 

@@ -38,13 +38,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var           essayTrait : ZTrait?   { return zone?     .traitFor(.tEssay) }
 	var           recordName : String?   { return zone?.recordName }
 	var                 kind : String    { return "note" }
-	var               prefix : String    { return titleIndent }
 	var               suffix : String    { return kTab }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
-	var          titleOffset : Int       { return titleIndent.length }
-	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
-	var    lastTextIsDefault : Bool      { return   maybeNoteTrait?.text == kNoteDefault }
+	var      fullTitleOffset : Int       { return noteOffset + titleRange.location }
+	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kNoteDefault }
 	var               isNote : Bool      { return !(zone?.hasChildNotes ?? false) }
 	var    	            zone : Zone?
 
@@ -142,10 +140,14 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	var paragraphStyle: NSMutableParagraphStyle {
-		let tabStop = NSTextTab(textAlignment: .right, location: 6000.0, options: [:])
-		let paragraph = NSMutableParagraphStyle()
+	var titleParagraphStyle: NSMutableParagraphStyle {
+		let        tabStop = NSTextTab(textAlignment: .right, location: 6000.0, options: [:])
+		let      paragraph = NSMutableParagraphStyle()
 		paragraph.tabStops = [tabStop]
+
+		if  gEssayTitleMode == .sFull {
+			paragraph.firstLineHeadIndent = titleIndent.sizeWithFont(kEssayTitleFont).width
+		}
 
 		return paragraph
 	}
@@ -155,7 +157,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 		if	let      z = zone {
 			let offset = NSNumber(floatLiteral: Double(kDefaultEssayTitleFontSize) / 7.0)
-			result     = [.font : kEssayTitleFont, .paragraphStyle : paragraphStyle, .baselineOffset : offset]
+			result     = [.font : kEssayTitleFont, .paragraphStyle : titleParagraphStyle, .baselineOffset : offset]
 
 			if  let  c = z.widgetColor {
 				result?[.foregroundColor] = c
@@ -192,12 +194,12 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 			result = NSMutableAttributedString(attributedString: text)
 
 			if  gEssayTitleMode != .sEmpty {
-				var        title = name + suffix
+				let        title = name + suffix
 				var   attributes = titleAttributes
 
-				if  indentCount != 0, gEssayTitleMode == .sFull {
-					title        = prefix + title
-				}
+//				if  indentCount != 0, gEssayTitleMode == .sFull {
+//					title        = title
+//				}
 
 				if  let        z = zone, z.colorized,
 					let    color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
@@ -224,7 +226,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		let      space = kNoteIndentSpacer.length
 		let      tween = suffix.length + kNoteSeparator.length
 		let      extra = indentCount - 2
-		let      start = titleOffset
+		let      start = 0
 		var      total = 0
 
 		if  isEmpty {
@@ -249,16 +251,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func updatedRangesFrom(_ fromText: NSAttributedString?) -> (NSAttributedString, String)? {
-		let   onlyTitle = gEssayTitleMode == .sTitle
 		let     noTitle = gEssayTitleMode == .sEmpty
 		if  let    text = fromText,
-			let    name =   noTitle ? kEmpty : zone?.zoneName {
-			let  indent = onlyTitle ? kEmpty : titleIndent
+			let    name = noTitle ? kEmpty : zone?.zoneName {
 			let unicode = name.contains("􀅇") // it is two bytes
 			let tLength = noTitle ? 0 :   name.length
-			let iOffset = noTitle ? 0 : indent.length
-			let tOffset = noTitle ? 0 : iOffset + tLength + kBlankLine.length + (unicode ? 2 : 1)
-			titleRange  = NSRange(location: iOffset, length: tLength)
+			let tOffset = noTitle ? 0 : tLength + kBlankLine.length + (unicode ? 2 : 1)
+			titleRange  = NSRange(location: 0,       length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
 

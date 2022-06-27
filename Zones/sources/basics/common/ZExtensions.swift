@@ -1669,6 +1669,7 @@ extension NSMutableParagraphStyle {
 
 	var string: String {
 		var result = kAlignment + gSeparatorAt(level: 3) + "\(alignment.rawValue)"
+		let indent = firstLineHeadIndent
 		let  lists = textLists
 
 		if  let stops = tabStops {
@@ -1677,6 +1678,11 @@ extension NSMutableParagraphStyle {
 			for stop in stops {
 				result.append(gSeparatorAt(level: 3) + stop.string)
 			}
+		}
+
+		if  indent > 0.0 {
+			result.append(gSeparatorAt(level: 2) + kIndent)
+			result.append(gSeparatorAt(level: 3) + "\(indent.roundedToNearestInt)")
 		}
 
 		result.append(gSeparatorAt(level: 2) + kLists)
@@ -1705,9 +1711,14 @@ extension NSMutableParagraphStyle {
 			if  count > 1 {
 				switch subparts[0] {
 					case kAlignment:
-						if  let     raw = subparts[1].integerValue,
-							let       a = NSTextAlignment(rawValue: raw) {
-							alignment   = a
+						if  let   raw = subparts[1].integerValue,
+							let     a = NSTextAlignment(rawValue: raw) {
+							alignment = a
+						}
+					case kIndent:
+						if  let             raw = subparts[1].integerValue {
+							let          indent = CGFloat(raw)
+							firstLineHeadIndent = indent
 						}
 					case kLists:
 						var       lists = [NSTextList]()
