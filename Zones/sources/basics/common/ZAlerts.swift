@@ -67,7 +67,7 @@ class ZAlerts : NSObject {
         } else if let nsError = iError as? NSError {
             let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? kEmpty
 
-            alert(message, waitForIt) { alert, status in
+            alertWithClosure(message, waitForIt) { alert, status in
 				alert?.showModal { choice in
                     closure?(choice)
                 }
@@ -83,7 +83,7 @@ class ZAlerts : NSObject {
     func alertNoInternet(_ onCompletion: @escaping Closure) {
         let message = "In System Preferences, please enable network access"
 
-		alert("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
+		alertWithClosure("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
             switch status {
             case .sShow:
 				alert?.showModal { [self] choice in
@@ -104,7 +104,7 @@ class ZAlerts : NSObject {
     func alertSystemPreferences(_ onCompletion: @escaping Closure) {
         let message = "In System Preferences, please \n  1. click on iCloud,\n  2. sign in,\n  3. turn on iCloud drive"
 
-		alert("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
+		alertWithClosure("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
                 switch status {
                 case .sShow:
 						alert?.showModal { [self] choice in

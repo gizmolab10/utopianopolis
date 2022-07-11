@@ -141,13 +141,14 @@ class ZMapEditor: ZBaseEditor {
 						case "i":        showMutateTextPopup()
 						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()
+						case "l":        alterCase(up: false)
 						case "n":        editNote(flags: flags)
 						case "o":        moveable.importFromFile(OPTION ? .eOutline : SPLAYED ? .eCSV : .eSeriously) { gRelayoutMaps() }
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
 						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
-						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) }
+						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
 						case "x":        return handleX(flags)
@@ -241,6 +242,15 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
+	override func invalidMenuItemAlert(_ menuItem: ZMenuItem) -> ZAlert? {
+		let     type = menuType(for: menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
+		let subtitle = type != .eTravel ? "is not editable" : "cannot be activated"
+		let   prefix = type != .eParent ? kEmpty : "parent of "
+		let selected = "selected item "
+
+		return gAlerts.alert("Menu item disabled", prefix + selected + subtitle, "OK", nil, nil, nil)
+	}
+
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
 		if  gIsEditIdeaMode {
 			return true
@@ -255,10 +265,9 @@ class ZMapEditor: ZBaseEditor {
 		}
 
         let  type = menuType(for: key, flags)
-        var valid = !gIsEditIdeaMode
+        var valid = true
 
-        if  valid,
-			type  	    != .eAlways {
+        if  type  	    != .eAlways {
             let     undo = undoManager
             let   select = gSelecting
             let   wGrabs = select.writableGrabsCount
@@ -284,7 +293,7 @@ class ZMapEditor: ZBaseEditor {
             case .eRedo:      valid = undo.canRedo
             case .eTravel:    valid = mover.isTraveller
             case .eCloud:     valid = gHasInternet && (gCloudStatusIsActive || gCloudStatusIsAvailable)
-            default:          break // .eAlways goes here
+            default:          break
             }
         }
 

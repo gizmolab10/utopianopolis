@@ -102,13 +102,17 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 		}
 	}
     
-    @IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
-		if  let item = iItem,
-			let    e = workingEditor,
-			e.validateMenuItem(item) {
-			e  .handleMenuItem(item)
+	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
+		if  let   item = iItem,
+			let editor = workingEditor {
+			if  editor.validateMenuItem(item) {
+				editor.handleMenuItem(item)
+			} else if gCDMigrationState != .normal,
+					  let alert = editor.invalidMenuItemAlert(item) {
+				alert.runModal()
+			}
 		}
-    }
+	}
 
 }
 

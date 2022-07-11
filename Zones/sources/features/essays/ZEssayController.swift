@@ -33,6 +33,8 @@ class ZEssayController : ZGesturesController, ZScrollDelegate {
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gIsEssayMode {
+			essayView?.essayRecordName = nil // force shouldOverwrite to true
+
 			essayView?.updateTextStorage()
 		}
 	}

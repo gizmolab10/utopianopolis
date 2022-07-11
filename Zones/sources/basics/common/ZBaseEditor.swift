@@ -66,6 +66,8 @@ class ZBaseEditor : NSObject {
 		}
 	}
 
+	func invalidMenuItemAlert(_ menuItem: ZMenuItem) -> ZAlert? { return nil }
+
 	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
 		return isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
 	}

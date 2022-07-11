@@ -162,8 +162,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
 			current.essayLength != 0,
-			let i                = gCurrentEssayZone?.recordName,
-			i                   == essayRecordName {	// been here before
+			current.recordName  == essayRecordName {	// been here before
 
 			return false						// has not yet been saved. don't overwrite
 		}

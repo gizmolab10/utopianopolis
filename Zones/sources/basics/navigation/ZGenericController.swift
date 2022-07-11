@@ -43,11 +43,11 @@ class ZGenericController: ZController, ZGeneric {
 	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
 			case .idHelpEssayIntroduction, .idHelpEssayGraphicals,
-					.idHelpDots:   return [.sData, .sDatum, .sAppearance, .spRelayout, .spMain]
-			case .idMap:           return [.sData, .sDatum, .sAppearance, .spRelayout, .sResize,            .sLaunchDone, .spMap]
-			case .idFavorites:     return [.sData, .sDatum, .sAppearance, .spRelayout, .sResize, .sDetails, .sLaunchDone, .spFavorites]
-			case .idPreferences:   return [.sData, .sDatum, .sAppearance, .spPreferences,        .sDetails]
-			case .idNote:          return [.sEssay,         .sAppearance]             // ignore the signal from the end of process next batch
+					.idHelpDots:   return [.sDatum, .sAppearance, .sData, .spRelayout, .spMain]
+			case .idMap:           return [.sDatum, .sAppearance, .sData, .spRelayout, .sResize,            .sLaunchDone, .spMap]
+			case .idFavorites:     return [.sDatum, .sAppearance, .sData, .spRelayout, .sResize, .sDetails, .sLaunchDone, .spFavorites]
+			case .idPreferences:   return [.sDatum, .sAppearance, .sData, .spPreferences,        .sDetails]
+			case .idNote:          return [.sDatum, .sAppearance, .sEssay]      // ignore the signal from the end of process next batch
 			case .idSearchResults: return [.sFound]
 			case .idSearch:        return [.sSearch]
 			case .idStartup:       return [.spStartupStatus]

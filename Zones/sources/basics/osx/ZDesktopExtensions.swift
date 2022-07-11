@@ -686,14 +686,14 @@ extension ZAlerts {
     }
 
 	func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, alertWidth width: CGFloat? = nil, _ closure: AlertStatusClosure? = nil) {
-		alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage, width) { alert, status in
+		alertWithClosure(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage, width) { iAlert, status in
             switch status {
             case .sShow:
-                alert?.showModal { status in
-                    let window = alert?.window
+					iAlert?.showModal { status in
+                    let window = iAlert?.window
                     
                     gApplication?.abortModal()
-                    window?.orderOut(alert)
+                    window?.orderOut(iAlert)
                     closure?(status)
                 }
             default:
@@ -702,34 +702,40 @@ extension ZAlerts {
         }
     }
 
-	func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
-        FOREGROUND {
-            let             a = ZAlert()
-            a    .messageText = iMessage
-            a.informativeText = iExplain ?? kEmpty
-            
-            a.addButton(withTitle: iOKTitle)
-            
-            if  let cancel = iCancelTitle {
-                a.addButton(withTitle: cancel)
-            }
-            
-            if  let image = iImage {
-                let size = image.size
-                let frame = NSMakeRect(50, 50, size.width, size.height)
-                a.accessoryView = NSImageView(image: image)
-                a.accessoryView?.frame = frame
-                a.layout()
-            } else if let     w = width {
-				let       frame = CGRect(x: .zero, y: .zero, width: w, height: .zero)
-				a.accessoryView = ZView(frame: frame)
-				a.layout()
-			}
-            
-            closure?(a, .sShow)
-        }
-    }
-    
+	func alertWithClosure(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
+		FOREGROUND { [self] in
+			let a = alert(iMessage, iExplain, iOKTitle, iCancelTitle, iImage, width)
+
+			closure?(a, .sShow)
+		}
+	}
+
+	func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil) -> ZAlert {
+		let             a = ZAlert()
+		a    .messageText = iMessage
+		a.informativeText = iExplain ?? kEmpty
+
+		a.addButton(withTitle: iOKTitle)
+
+		if  let cancel = iCancelTitle {
+			a.addButton(withTitle: cancel)
+		}
+
+		if  let image = iImage {
+			let size = image.size
+			let frame = NSMakeRect(50, 50, size.width, size.height)
+			a.accessoryView = NSImageView(image: image)
+			a.accessoryView?.frame = frame
+			a.layout()
+		} else if let     w = width {
+			let       frame = CGRect(x: .zero, y: .zero, width: w, height: .zero)
+			a.accessoryView = ZView(frame: frame)
+			a.layout()
+		}
+
+		return a
+	}
+
 }
 
 extension ZTextField {
@@ -1292,14 +1298,18 @@ extension ZoneLine {
 
     func curvedLinePath(in iRect: CGRect, kind: ZLineCurveKind) -> ZBezierPath {
         let        isAbove = kind == .above
+		let     aboveDelta = gDotHalfHeight / 7.0
+		let     belowDelta =     gDotHeight * 0.85
         var           rect = iRect
 
         if  isAbove {
-            rect.origin.y -= rect.height + gDotHalfHeight    // do this first. height is altered below
-        }
+            rect.origin.y -= rect.height + aboveDelta    // do this first. height is altered below
+		} else if kind == .below {
+			rect.origin.y += gDotHalfHeight / 4.0
+		}
 
 		rect.size   .width = rect.width  * 2.0 + gDotHalfWidth
-		rect.size  .height = rect.height * 2.0 + (isAbove ? gDotHalfHeight : gDotHeight)
+		rect.size  .height = rect.height * 2.0 + (isAbove ? aboveDelta : belowDelta)
 
 		ZBezierPath.setClip(to: iRect)
 

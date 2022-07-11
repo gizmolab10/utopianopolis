@@ -153,7 +153,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="Roe-Xb-nbO"/>
                                 </constraints>
-                                <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="left" title="Click buttons below to show / hide" id="zr0-ds-SdJ">
+                                <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="left" title="Click left-side buttons below to show / hide" id="zr0-ds-SdJ">
                                     <font key="font" metaFont="smallSystem"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -1261,7 +1261,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="raV-jm-PNg">
-                                                <rect key="frame" x="75" y="1" width="140" height="32"/>
+                                                <rect key="frame" x="76" y="1" width="139" height="32"/>
                                                 <buttonCell key="cell" type="push" title="How do I Cancel?" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mme-M7-oqI">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>

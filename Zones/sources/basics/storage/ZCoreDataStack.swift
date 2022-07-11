@@ -151,16 +151,17 @@ class ZCoreDataStack: NSObject {
 	let          localURL = gCoreDataURL.appendingPathComponent("local.store")
 	let         publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
 	let        privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
-	lazy var        model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }()
-	lazy var   localStore : NSPersistentStore?            = { return persistentStore(for: localURL) }()
-	lazy var  publicStore : NSPersistentStore?            = { return persistentStore(for: publicURL) }()
-	lazy var privateStore : NSPersistentStore?            = { return persistentStore(for: privateURL) }()
-	lazy var  coordinator : NSPersistentStoreCoordinator? = { return persistentContainer.persistentStoreCoordinator }()
-	lazy var      context : NSManagedObjectContext        = { return persistentContainer.viewContext }()
-	var          isDoneOp : Bool                            { return currentOpID == nil }
-	var        statusText : String?                         { return statusOpID?.description }
-	var        statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
+	lazy var        model : NSManagedObjectModel           = { return NSManagedObjectModel.mergedModel(from: nil)! }()
+	lazy var   localStore : NSPersistentStore?             = { return persistentStore(for: localURL) }()
+	lazy var  publicStore : NSPersistentStore?             = { return persistentStore(for: publicURL) }()
+	lazy var privateStore : NSPersistentStore?             = { return persistentStore(for: privateURL) }()
+	lazy var  coordinator : NSPersistentStoreCoordinator?  = { return persistentContainer.persistentStoreCoordinator }()
+	lazy var      context : NSManagedObjectContext         = { return persistentContainer.viewContext }()
+	var          isDoneOp : Bool                             { return currentOpID == nil }
+	var        statusText : String?                          { return statusOpID?.description }
+	var        statusOpID : ZCDOperationID?                  { return currentOpID ?? deferralStack.first?.opID }
 	var       currentOpID : ZCDOperationID?
+	func persistentStore(for url: URL) -> NSPersistentStore? { return coordinator?.persistentStore(for: url) }
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
 		if  gIsUsingCoreData {
@@ -363,6 +364,7 @@ class ZCoreDataStack: NSObject {
 
 	func fetchUsing(request: NSFetchRequest<NSFetchRequestResult>, onlyOne: Bool = true) -> ZManagedObjectsArray {
 		var   objects = ZManagedObjectsArray()
+
 		do {
 			let items = try context.fetch(request)
 			for item in items {
@@ -497,10 +499,6 @@ class ZCoreDataStack: NSObject {
 
 	// MARK: - internals
 	// MARK: -
-
-	func persistentStore(for url: URL) -> NSPersistentStore? {
-		return persistentContainer.persistentStoreCoordinator.persistentStore(for: url)
-	}
 
 	func persistentStore(for databaseID: ZDatabaseID) -> NSPersistentStore? {
 		switch databaseID {
@@ -863,10 +861,10 @@ class ZCoreDataStack: NSObject {
 				let extras = zRecords.filter() { $0 != zRecord }
 
 				if  count > extras.count {
-					FOREGROUND { [self] in
+					FOREGROUND {
 						for extra in extras {
 							extra.unregister()
-							context.delete(extra)
+							gCDCurrentBackgroundContext.delete(extra)
 						}
 					}
 				}

@@ -298,13 +298,6 @@ CQ
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="J8e-mE-hJU"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="zvI-vS-GQE"/>
-                                                    <menuItem title="Switch between Recents and Favorites" keyEquivalent="'" id="EOp-0B-lbw">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="hYt-2W-4Vx"/>
-                                                        </connections>
-                                                    </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="aEl-vF-NGF"/>
                                                     <menuItem title="Switch to Other Graph" keyEquivalent="\" id="pe6-aY-Rdr">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
@@ -337,12 +330,49 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="I1u-hB-yzQ"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem title="Convert to/from titled line" tag="10" keyEquivalent="-" id="Cpq-n3-AiR">
+                                                    <menuItem title="Edit Note" tag="10" keyEquivalent="n" id="KX8-xe-d82">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="LQ0-du-Ruk"/>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="gbV-eN-qrQ"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Edit Hyperlink / Email" tag="10" keyEquivalent="h" id="bWk-ri-pFn">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="eXC-Pb-Mtt"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem isSeparatorItem="YES" id="uVR-Bl-7cX"/>
+                                                    <menuItem title="Convert To or From" id="ZXh-X5-IIS">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <menu key="submenu" title="Convert To or From" id="Cj2-7q-YT1">
+                                                            <items>
+                                                                <menuItem title="Upper case" tag="10" keyEquivalent="u" id="jbq-Gu-VhP">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="zZ1-cG-dfs"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Lower case" tag="10" keyEquivalent="l" id="69c-UK-Jjd">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="4Ig-Ib-pSE"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Color Text" keyEquivalent="k" id="522-SJ-ZBd">
+                                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="7r9-J2-enY"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                                <menuItem title="Titled line" tag="10" keyEquivalent="-" id="cXI-An-xer">
+                                                                    <connections>
+                                                                        <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="khx-zQ-eY3"/>
+                                                                    </connections>
+                                                                </menuItem>
+                                                            </items>
+                                                        </menu>
+                                                    </menuItem>
                                                     <menuItem title="Select All (Children / Siblings)" keyEquivalent="a" id="KFq-Lb-Zy0">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="u7b-oc-cGS"/>
@@ -354,30 +384,11 @@ DQ
                                                             <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="e1R-yp-0IC"/>
                                                         </connections>
                                                     </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="04E-yE-Www"/>
-                                                    <menuItem title="Reveal &amp; Edit Hyperlink / Email" tag="10" keyEquivalent="h" id="bGY-Q2-2NU">
+                                                    <menuItem isSeparatorItem="YES" id="wWO-Wx-jZI"/>
+                                                    <menuItem title="Sort Menu" keyEquivalent="r" id="F8R-WL-ovc">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                         <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="Tr6-4K-PYH"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Reveal &amp; Edit Note" tag="10" keyEquivalent="n" id="KX8-xe-d82">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="gbV-eN-qrQ"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="Reveal Sort Menu" keyEquivalent="r" id="Ryh-sT-7Zr">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="6f1-O7-8ws"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem isSeparatorItem="YES" id="8J3-uW-wpI"/>
-                                                    <menuItem title="Color Text" keyEquivalent="k" id="DCB-ck-TIL">
-                                                        <modifierMask key="keyEquivalentModifierMask"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="a3k-pM-Zhl"/>
+                                                            <action selector="genericMenuHandler:" target="Voe-Tx-rLC" id="QJr-8S-82k"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Enumerate" keyEquivalent="3" id="mH6-ai-0bn">
@@ -613,7 +624,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Seriously" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="967" y="297"/>
+            <point key="canvasLocation" x="927" y="175"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -1588,7 +1599,7 @@ CA
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="w8s-R4-Cto">
-                                <rect key="frame" x="112" y="20" width="155" height="24"/>
+                                <rect key="frame" x="113" y="20" width="154" height="24"/>
                                 <subviews>
                                     <button identifier="cancel" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gr8-OU-8kq">
                                         <rect key="frame" x="-5" y="-5" width="76" height="32"/>
@@ -1604,7 +1615,7 @@ Gw
                                         </connections>
                                     </button>
                                     <button identifier="apply" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2tL-oS-kZx">
-                                        <rect key="frame" x="90" y="-5" width="70" height="32"/>
+                                        <rect key="frame" x="90" y="-5" width="69" height="32"/>
                                         <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3Ky-Zt-VtF">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -1798,7 +1809,7 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <button identifier="continue" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eJt-eS-JWW">
-                                                        <rect key="frame" x="180" y="-7" width="90" height="32"/>
+                                                        <rect key="frame" x="181" y="-7" width="89" height="32"/>
                                                         <buttonCell key="cell" type="push" title="Continue" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KhS-Fu-AAZ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
