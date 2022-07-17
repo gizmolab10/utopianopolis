@@ -27,7 +27,7 @@ class ZPseudoView: NSObject {
 	var absoluteHitRect = CGRect.zero
 	var          bounds = CGRect.zero
 	var           frame = CGRect.zero
-	var       drawnSize = CGSize.zero { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
+	var       drawnSize = CGSize.zero     { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
 	var      identifier = NSUserInterfaceItemIdentifier("")
 	var  subpseudoviews = [ZPseudoView] ()
 	var superpseudoview : ZPseudoView?
