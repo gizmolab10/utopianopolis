@@ -140,19 +140,19 @@ class ZRecords: NSObject {
 	func recordNamesForState (_ state: ZRecordState)  -> StringsArray { return recordNamesByState[state] ?? [] }
 
 	func replaceRoot(at oldRoot: inout Zone?, with root: Zone) {
-		let isAnEmptyRoot = (root.zoneName == nil || root.zoneName == kEmptyIdea || root.zoneName == kEmpty)
-
 		if  let old = oldRoot, old != root {
-			if !isAnEmptyRoot {
-				old.unregister()
-				gCDCurrentBackgroundContext.delete(old)
-			} else {
-				// fetch root zone yielded a zone with no name and no children !!!!!!
+			if  (root.zoneName == nil || root.zoneName == kEmptyIdea || root.zoneName == kEmpty) {
+				// fetch root zone yielded a zone with no name !!!!!!
 				// no clue why. ghaaaahh!
 				print("-------------------------- isAnEmptyRoot ----------------------------")
-				gApplication?.terminate(self)
-				return
+				root.zoneName = kFirstIdeaTitle
+//				gApplication?.terminate(self)
+//				return
+//			} else {
 			}
+
+			old.unregister()
+			gCDCurrentBackgroundContext.delete(old)
 		}
 
 		oldRoot = root
@@ -886,12 +886,12 @@ class ZRecords: NSObject {
 	func    maybeZRecordForRecordID (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }
 
 	func maybeZRecordForRecordName (_ recordName: String?, trackMissing: Bool = true) -> ZRecord? {
-		if  let r = recordName {
-			if  let record = zRecordsLookup[r] {
+		if  let name = recordName {
+			if  let record = zRecordsLookup[name] {
 				return record
 			}
 
-			let found = gCoreDataStack.find(type: kZoneType, recordName: r, in: databaseID, trackMissing: trackMissing)
+			let found = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing)
 			if  found.count > 0 {
 				return found[0] as? ZRecord
 			}

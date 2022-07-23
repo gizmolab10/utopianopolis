@@ -181,7 +181,7 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func saveContext() {
-		if  gCanSave, gIsReadyToShowUI {
+		if  gCanSave, gIsReadyToShowUI { // , !gIsUsingCloudKit, false {
 			deferUntilAvailable(for: .oSave) {
 				FOREBACKGROUND { [self] in
 					if  context.hasChanges {
@@ -208,7 +208,7 @@ class ZCoreDataStack: NSObject {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) {
-				FOREBACKGROUND { [self] in
+				FOREGROUND { [self] in
 					load(type: kManifestType, into: dbID, onlyOne: false)
 
 					gProgressTimesReady = true
@@ -516,7 +516,7 @@ class ZCoreDataStack: NSObject {
 
 	lazy var privateDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: privateURL)
-		desc.configuration                = "Cloud"
+		desc.configuration                = "Private"
 
 		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 
@@ -530,13 +530,13 @@ class ZCoreDataStack: NSObject {
 
 	lazy var publicDescription: NSPersistentStoreDescription = {
 		let                          desc = NSPersistentStoreDescription(url: publicURL)
-		desc.configuration                = "Cloud"
+		desc.configuration                = "Public"
 
 		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 
 		if  gIsUsingCloudKit {
 			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: kCloudID)
-//			options.databaseScope         = CKDatabase.Scope.public // default is private. needs osx v11.0
+			options.databaseScope         = CKDatabase.Scope.public // default is private. needs osx v11.0
 			desc.cloudKitContainerOptions = options
 		}
 
@@ -562,7 +562,15 @@ class ZCoreDataStack: NSObject {
 				fatalError("Unresolved error \(error), \(error.userInfo)")
 			}
 		}
-		
+
+		if  gIsUsingCloudKit {
+			do {
+				try container.initializeCloudKitSchema()
+			} catch {
+				print(error)
+			}
+		}
+
 		container.viewContext.automaticallyMergesChangesFromParent = true
 		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .overwriteMergePolicyType)
 

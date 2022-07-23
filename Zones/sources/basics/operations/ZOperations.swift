@@ -172,44 +172,46 @@ class ZOperations: NSObject {
 
         for operationID in operationIDs + [.oFinishing] {
 			let blockOperation = BlockOperation { [self] in
+				FOREGROUND {
 
-                // /////////////////////////////////////////////////////////////
-                // ignore operations that are not local when have no internet //
-                // /////////////////////////////////////////////////////////////
+					// /////////////////////////////////////////////////////////////
+					// ignore operations that are not local when have no internet //
+					// /////////////////////////////////////////////////////////////
 
-				if  !operationID.isLocal && !gCloudStatusIsActive {
-					onCompletion()
-				} else {
-					currentOp         = operationID            // if hung, it happened inside this op
+					if  !operationID.isLocal && !gCloudStatusIsActive {
+						onCompletion()
+					} else {
+						currentOp         = operationID            // if hung, it happened inside this op
 
-					// ////////////////////////////////////////////////////
-					// susend queue until operation calls its closure... //
-					// ////////////////////////////////////////////////////
+						// ////////////////////////////////////////////////////
+						// susend queue until operation calls its closure... //
+						// ////////////////////////////////////////////////////
 
-					queue.isSuspended = true
-					lastOpStart       = Date()
+						queue.isSuspended = true
+						lastOpStart       = Date()
 
-					invokeMultiple(for: operationID, restoreToID: saved) { [self] iResult in
+						invokeMultiple(for: operationID, restoreToID: saved) { [self] iResult in
 
-						// /////////////////////
-						// ...unsuspend queue //
-						// /////////////////////
+							// /////////////////////
+							// ...unsuspend queue //
+							// /////////////////////
 
-						queue.isSuspended = false
+							queue.isSuspended = false
 
-						if  currentOp == .oFinishing {
+							if  currentOp == .oFinishing {
 
-							// //////////// //
-							// end of batch //
-							// //////////// //
+								// //////////// //
+								// end of batch //
+								// //////////// //
 
-							onCompletion()
-						} else {
-							setProgressTime(for: operationID)
+								onCompletion()
+							} else {
+								setProgressTime(for: operationID)
+							}
 						}
 					}
 				}
-            }
+			}
 
             add(blockOperation)
         }

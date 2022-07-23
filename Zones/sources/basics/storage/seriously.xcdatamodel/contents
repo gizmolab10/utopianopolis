@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21C52" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="SPreferences" representedClassName="SPreferences" syncable="YES"/>
     <entity name="SState" representedClassName="SState" syncable="YES">
         <attribute name="expandedIdeas" optional="YES" attributeType="String"/>
@@ -65,7 +65,11 @@
         <attribute name="sentEmailType" optional="YES" attributeType="String"/>
         <attribute name="writeAccess" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
-    <configuration name="Cloud" usedWithCloudKit="YES">
+    <configuration name="Local">
+        <memberEntity name="SState"/>
+        <memberEntity name="SPreferences"/>
+    </configuration>
+    <configuration name="Private" usedWithCloudKit="YES">
         <memberEntity name="ZManifest"/>
         <memberEntity name="Zone"/>
         <memberEntity name="ZTrait"/>
@@ -73,9 +77,13 @@
         <memberEntity name="ZUser"/>
         <memberEntity name="ZFile"/>
     </configuration>
-    <configuration name="Local">
-        <memberEntity name="SState"/>
-        <memberEntity name="SPreferences"/>
+    <configuration name="Public" usedWithCloudKit="YES">
+        <memberEntity name="ZManifest"/>
+        <memberEntity name="Zone"/>
+        <memberEntity name="ZTrait"/>
+        <memberEntity name="ZTraitAssets"/>
+        <memberEntity name="ZUser"/>
+        <memberEntity name="ZFile"/>
     </configuration>
     <elements>
         <element name="SPreferences" positionX="-141.64697265625" positionY="295.1240997314453" width="128" height="43"/>
