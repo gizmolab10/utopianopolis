@@ -568,11 +568,7 @@ class ZCoreDataStack: NSObject {
 			}
 		}
 
-<<<<<<< HEAD
-		if  gIsUsingCloudKit {
-=======
 		if  gIsUsingCloudKit, gCDMigrationState != .normal {
->>>>>>> 6215bfa7 (records now saved into cloud kit db. bug: all records are duplicated)
 			do {
 				try container.initializeCloudKitSchema()
 			} catch {
