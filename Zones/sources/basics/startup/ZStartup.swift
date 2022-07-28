@@ -34,8 +34,15 @@ class ZStartup: NSObject {
 	}
 
 	func startupCloudAndUI() {
+<<<<<<< HEAD
 		gCoreDataMode.insert(.dCloudKit)
 		gDebugModes.remove(.dWriteFiles)
+=======
+
+		gCoreDataMode.insert(.dCloudKit)
+		gDebugModes.remove(.dWriteFiles)
+
+>>>>>>> 6215bfa7 (records now saved into cloud kit db. bug: all records are duplicated)
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gCDMigrationState      = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime

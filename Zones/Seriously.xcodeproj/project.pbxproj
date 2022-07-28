@@ -898,9 +898,11 @@
 			isa = PBXGroup;
 			children = (
 				A700F94D24AFBFFB009C87AA /* seriously.xcdatamodel */,
+				0C43EFCD21010F62000976CE /* ZCloud.swift */,
 				A700F94824AFBE8F009C87AA /* ZCoreDataStack.swift */,
 				0C43EFBD21010F17000976CE /* ZFiles.swift */,
 				A7E44A2A2558CD6A00DA4B13 /* ZManagedObject.swift */,
+				0C39B2331F182EBB0091F4D1 /* ZReachability.swift */,
 				0C43EFCA21010F62000976CE /* ZRemoteStorage.swift */,
 			);
 			path = storage;
@@ -910,10 +912,8 @@
 			isa = PBXGroup;
 			children = (
 				0C43EFCC21010F62000976CE /* ZBatches.swift */,
-				0C43EFCD21010F62000976CE /* ZCloud.swift */,
 				0C43EFC821010F62000976CE /* ZOnboarding.swift */,
 				0C43EFCB21010F62000976CE /* ZOperations.swift */,
-				0C39B2331F182EBB0091F4D1 /* ZReachability.swift */,
 			);
 			path = operations;
 			sourceTree = "<group>";

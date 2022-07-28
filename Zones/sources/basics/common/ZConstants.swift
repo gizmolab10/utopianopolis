@@ -137,7 +137,11 @@ let                   kNewLine = "\n"
 let                   kNoValue = "empty"
 let                   kScaling = "scaling"
 let                   kUnknown = "unknown"
+<<<<<<< HEAD
 let                   kCloudID = "iCloud.com.seriously.test"
+=======
+let                   kCloudID = "iCloud.com.seriously.test2"
+>>>>>>> 6215bfa7 (records now saved into cloud kit db. bug: all records are duplicated)
 let                  kUserType = "ZUser"
 let                  kWorkMode = "working mode"
 let                  kFontSize = "font size"

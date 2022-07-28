@@ -169,7 +169,9 @@ class ZCoreDataStack: NSObject {
 			request.predicate = dbidPredicate(from: databaseID)
 
 			do {
-				return try context.count(for: request) > 10
+				let flag = try context.count(for: request) > 10
+
+				return flag
 			} catch {
 			}
 		}
@@ -239,10 +241,13 @@ class ZCoreDataStack: NSObject {
 
 			for object in fetched {
 				if  let zone = object as? Zone {
+					let oid = object.objectID
 					zone.respectOrder()
 
 					FOREGROUND {
-						zRecords.setRoot(zone, for: recordName.rootID)
+						if  let root = self.context.object(with: oid) as? Zone {
+							zRecords.setRoot(root, for: recordName.rootID)
+						}
 					}
 				}
 			}
@@ -563,7 +568,11 @@ class ZCoreDataStack: NSObject {
 			}
 		}
 
+<<<<<<< HEAD
 		if  gIsUsingCloudKit {
+=======
+		if  gIsUsingCloudKit, gCDMigrationState != .normal {
+>>>>>>> 6215bfa7 (records now saved into cloud kit db. bug: all records are duplicated)
 			do {
 				try container.initializeCloudKitSchema()
 			} catch {

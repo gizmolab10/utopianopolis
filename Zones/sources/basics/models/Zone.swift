@@ -879,19 +879,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  needed > 0, databaseID == .mineID,
 				let       name = recordName,
 			    let      zones = gCoreDataStack.fetchChildrenOf(name, in: .mineID) {
-				let      still = fetchableCount - zones.count
+//				let      still = fetchableCount - zones.count
 				fetchableCount = zones.count
 				childArray     = zones
 
-				if  still > 0 {
-					Zone.oops += 1
-
-					print("\(Zone.oops) \(needed) \(still) \(self) Zone:updateFromCoreDataHierarchyRelationships")
-				}
+//				if  still > 0 {
+//					Zone.oops += 1
+//
+//					print("\(Zone.oops) \(needed) \(still) \(self) Zone:updateFromCoreDataHierarchyRelationships")
+//				}
 			}
 
 			for child in childArray {
-				let c = child.convertFromCoreData(visited: v)
+				let strings = child.convertFromCoreData(visited: v)
 
 				if  child.dbid != dbid {
 					noop()
@@ -899,10 +899,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				if  let name = child.recordName,
 					(visited == nil || !visited!.contains(name)) {
-					converted.append(contentsOf: c)
+					converted.append(contentsOf: strings)
+					let cid = child.objectID
 					FOREGROUND { [self] in
-						addChildNoDuplicate(child, updateCoreData: false) // not update core data, it already exists
-						child.register() // need to wait until after child has a parent so bookmarks will be registered properly
+						if  let zone = gCoreDataStack.context.object(with: cid) as? Zone {
+							addChildNoDuplicate(zone, updateCoreData: false) // not update core data, it already exists
+							zone.register() // need to wait until after child has a parent so bookmarks will be registered properly
+						}
 					}
 				}
 			}

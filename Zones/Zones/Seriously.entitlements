@@ -8,7 +8,11 @@
 	<string>Development</string>
 	<key>com.apple.developer.icloud-container-identifiers</key>
 	<array>
+<<<<<<< HEAD
 		<string>iCloud.com.seriously.test</string>
+=======
+		<string>iCloud.com.seriously.test2</string>
+>>>>>>> 6215bfa7 (records now saved into cloud kit db. bug: all records are duplicated)
 	</array>
 	<key>com.apple.developer.icloud-services</key>
 	<array>

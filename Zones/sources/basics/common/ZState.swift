@@ -380,7 +380,7 @@ var gAuthorID: String? {    // persist for file read on launch
 }
 
 var gUserRecordName: String? {    // persist for file read on launch
-    get { return getPreferenceString(    for: kUserRecordName) }
+	get { return getPreferenceString(    for: kUserRecordName) }
     set { setPreferencesString(newValue, for: kUserRecordName) }
 }
 

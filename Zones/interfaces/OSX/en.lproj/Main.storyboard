@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -102,12 +101,6 @@
                                                     <menuItem title="From Seriously File ..." keyEquivalent="o" id="oOd-mA-5D1">
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="OI6-tT-JiO"/>
-                                                        </connections>
-                                                    </menuItem>
-                                                    <menuItem title="From CSV File ..." keyEquivalent="o" id="EK9-JA-KQC">
-                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
-                                                        <connections>
-                                                            <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="HNj-kn-9Yl"/>
                                                         </connections>
                                                     </menuItem>
                                                 </items>
