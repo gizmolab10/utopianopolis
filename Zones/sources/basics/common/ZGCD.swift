@@ -17,7 +17,7 @@ func FOREGROUND(forced: Bool = false, after seconds: Double? = nil, _ closure: @
 		let when = DispatchWallTime.now() + Double(Int64(after * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
 
 		gFOREGROUND.asyncAfter(wallDeadline: when) { closure() }
-	} else if  Thread.isMainThread {
+	} else if Thread.isMainThread {
 		closure()
 	} else if forced {
 		gFOREGROUND .sync { closure() }

@@ -79,13 +79,13 @@ class ZSearching: NSObject, ZSearcher {
 				let   dbID  = cloud.databaseID
 				var results = combined[dbID] ?? ZRecordsArray()
 
-				results.append(contentsOf: cloud.foundInSearch)
-
-				for record in results {
+				for record in cloud.foundInSearch {
 					if  let zone = record as? Zone {
 						zone.assureRoot()
 					}
 				}
+
+				results.append(contentsOf: cloud.foundInSearch)
 
 				combined[dbID]                             = results
 				gSearchResultsController?.foundRecordsDict = combined

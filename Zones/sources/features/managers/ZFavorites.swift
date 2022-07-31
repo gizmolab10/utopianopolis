@@ -148,9 +148,26 @@ class ZFavorites: ZSmallMapRecords {
 		}
 	}
 
+	var allGroups: ZoneArray? {
+		if  var zones = rootZone?.allGroups {
+			zones.appendUnique(item: rootZone)
+			return zones
+		}
+
+		return nil
+	}
+
+	var hideUpDownView: Bool {
+		if  let zones = allGroups {
+			return zones.count < 1
+		}
+
+		return true
+	}
+
 	func nextList(down: Bool) -> Zone? {
 		if  let  here = hereZoneMaybe,
-			let zones = rootZone?.allGroups {
+			let zones = allGroups {
 			let index = zones.firstIndex(of: here) ?? 0
 			if  let n = index.next(forward: down, max: zones.count - 1) {
 				return zones[n]

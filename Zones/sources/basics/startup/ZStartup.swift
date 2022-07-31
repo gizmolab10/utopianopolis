@@ -43,6 +43,10 @@ class ZStartup: NSObject {
 		gCDMigrationState      = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
 		gWorkMode              = .wStartupMode
 
+		if  gCDMigrationState != .normal {
+			gHereRecordNames = kDefaultRecordNames
+		}
+
 		gRemoteStorage.clear()
 		gMainWindow?.revealEssayEditorInspectorBar(false)
 		gSearching.setSearchStateTo(.sNot)

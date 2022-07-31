@@ -43,16 +43,13 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
     var hasResults: Bool {
-        var     result = false
         for     results in filteredResultsDict.values {
             if  results.count > 0 {
-                result = true
-                
-                break
+				return true
             }
         }
         
-        return result
+        return false
     }
 
 	var selectedResult: Zone? {

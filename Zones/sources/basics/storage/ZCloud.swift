@@ -155,8 +155,13 @@ class ZCloud: ZRecords {
 	}
 
     func establishHere(_ onCompletion: IntClosure?) {
-        let    name = hereRecordName ?? kRootName
-		currentHere = Zone.uniqueZone(recordName: name, in: databaseID)
+		if  let name  = hereRecordName {
+			if  name == kRootName, let root = rootZone {
+				currentHere = root
+			} else {
+				currentHere = Zone.uniqueZone(recordName: name, in: databaseID)
+			}
+		}
 
 		onCompletion?(0)
     }

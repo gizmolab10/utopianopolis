@@ -62,6 +62,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                   crossLinkMaybe :            ZRecord?
 	var                  parentZoneMaybe :               Zone?
 	var                             root :               Zone?
+	var                          getRoot :               Zone  { return parentZone?.getRoot ?? self }
 	var                       groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
 	var                   bookmarkTarget :               Zone? { return crossLink as? Zone }
 	var                      destroyZone :               Zone? { return zRecords?.destroyZone }
@@ -155,15 +156,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	static func object(for id: String, isExpanded: Bool) -> NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
 	override func hasMissingChildren()                   ->     Bool  { return count < fetchableCount }
 	override func orphan()                                            { parentZone?.removeChild(self) }
-	func updateRootFromParent()                                       { setRoot(parentZone?.root ?? self) }
+	func updateRootFromParent()                                       { setRoot(getRoot) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
 	func maybeTraitFor(_ iType: ZTraitType)              ->   ZTrait? { return traits[iType] }
+
 
 	override var passesFilter: Bool {
 		return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
 	}
 
 	override var isInScope: Bool {
+		if  root == nil {
+			updateRootFromParent()
+		}
+
 		if  let name = root?.recordName {
 			switch databaseID {
 				case .favoritesID: if gSearchScopeOption.contains(.fFavorites), name == kFavoritesRootName { return true }
@@ -197,13 +203,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var level: Int {
-		var level = 0
+		var value  = 0
 
 		parentZone?.traverseAllAncestors { ancestor in
-			level += 1
+			value += 1
 		}
 
-		return level
+		return value
 	}
 
 	func zones(of type: ZWorkingListType) -> ZoneArray {
@@ -220,7 +226,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else if type.contains(.wGroups) {
 			traverseAllProgeny { iZone in
-				if  iZone != self, iZone.count > 1 {
+				if  iZone != self, iZone.count > 0 {
 					result.append(iZone)
 				}
 			}
@@ -1577,7 +1583,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func importFile(from path: String, type: ZExportType = .eSeriously, onCompletion: Closure?) {
-			if  let     data = FileManager.default.contents(atPath: path),
+			if  let data = FileManager.default.contents(atPath: path),
 				data.count > 0 {
 				var zone: Zone?
 

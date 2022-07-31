@@ -36,7 +36,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			gApplication?.registerForRemoteNotifications(matching: .badge)
             gStartup.startupCloudAndUI()
             gEvents.controllerSetup(with: nil)
-			gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { _ in
+			gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { note in
 				print("remove local data and fetch user data")
 			}
 

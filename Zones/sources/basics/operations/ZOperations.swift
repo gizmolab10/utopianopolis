@@ -172,7 +172,7 @@ class ZOperations: NSObject {
 
         for operationID in operationIDs + [.oFinishing] {
 			let blockOperation = BlockOperation { [self] in
-				FOREGROUND {
+				FOREGROUND { [self] in
 
 					// /////////////////////////////////////////////////////////////
 					// ignore operations that are not local when have no internet //

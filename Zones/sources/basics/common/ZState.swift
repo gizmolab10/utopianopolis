@@ -516,10 +516,6 @@ var gConfinementMode: ZConfinementMode {
 	}
 }
 
-enum ZSmallMapMode: String {
-	case favorites = "Favorites"
-}
-
 var gCountsMode: ZCountsMode {
 	get {
 		let value  = UserDefaults.standard.object(forKey: kCountsMode) as? Int

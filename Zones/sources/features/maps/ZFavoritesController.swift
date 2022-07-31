@@ -20,10 +20,10 @@ class ZFavoritesController: ZMapController {
 	override var     widgetType : ZWidgetType    { return .tFavorite }
 	override var   controllerID : ZControllerID  { return .idFavorites }
 	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
-	override var canDrawWidgets : Bool           { return gSmallMapIsVisible }
+	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }
 
 	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-		if  gHasFinishedStartup, gSmallMapIsVisible {
+		if  gHasFinishedStartup, gFavoritesAreVisible {
 			super.createAndLayoutWidgets(for: iZone, kind)
 		}
 	}
@@ -51,7 +51,7 @@ class ZFavoritesController: ZMapController {
 
 
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
-		if  gSmallMapIsVisible {  // don't send signal to a hidden controller
+		if  gFavoritesAreVisible {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()
 			gFavorites.updateCurrentWithBookmarksTargetingHere()
 			super.handleSignal(iSignalObject, kind: kind)

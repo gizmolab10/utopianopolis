@@ -157,7 +157,7 @@ class ZTogglingView: ZView {
 
 	func updateFavoritesButtons() {
 		if  identity == .vFavorites {
-			let           hidden = hideHideable
+			let           hidden = hideHideable || gFavorites.hideUpDownView
 			upDownView?.isHidden = hidden
 
 			if !hidden {

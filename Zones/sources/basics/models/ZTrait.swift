@@ -59,6 +59,14 @@ enum ZTraitType: String { // stored in database: do not change
 		}
 	}
 
+	var isEssayOrNote: Bool {
+		switch self {
+			case .tNote,
+				 .tEssay: return true
+			default:      return false
+		}
+	}
+
 }
 
 @objc(ZTrait)
@@ -73,7 +81,7 @@ class ZTrait: ZTraitAssets {
     override var  unwrappedName : String { return text ?? emptyName }
 	override var  decoratedName : String { return text ?? kNoValue }
 	override var     typePrefix : String { return traitType?.description ?? kEmpty }
-	override var   passesFilter : Bool   { return gFilterOption.contains(.fNotes) }
+	override var   passesFilter : Bool   { return gFilterOption.contains(.fNotes) && (traitType?.isEssayOrNote ?? false) }
 	override var      isInScope : Bool   { return ownerZone?.isInScope ?? false }
 	var               needsSave = false
 	var              _ownerZone : Zone?

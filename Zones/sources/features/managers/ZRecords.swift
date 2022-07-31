@@ -24,18 +24,15 @@ enum ZRecordState: String {
     case needsWritable  = "writable"
 }
 
-enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values are persisted
+enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values are persisted everywhere
 	case everyoneIndex
 	case mineIndex
 	case favoritesIndex
-//	case recentsIndex
-
 
 	var databaseID: ZDatabaseID? {
 		switch self {
 		case .favoritesIndex: return .favoritesID
 		case .everyoneIndex:  return .everyoneID
-//		case .recentsIndex:   return .recentsID
 		case .mineIndex:      return .mineID
 		}
 	}
@@ -146,12 +143,10 @@ class ZRecords: NSObject {
 				// no clue why. ghaaaahh!
 				print("-------------------------- isAnEmptyRoot ----------------------------")
 				root.zoneName = kFirstIdeaTitle
-//				gApplication?.terminate(self)
-//				return
-//			} else {
 			}
 
 			old.unregister()
+			root.register()
 			gCDCurrentBackgroundContext.delete(old)
 		}
 
@@ -196,7 +191,7 @@ class ZRecords: NSObject {
 		// nothing has yet been registered, so return a default of 100
 		// doing so will give a better behavior to the launch progress bar
 
-		let count = zRecordsLookup.count
+		let count = zRecordsCount
 
 		return count > 1 ? count : 100
 	}
@@ -255,7 +250,7 @@ class ZRecords: NSObject {
 				let rootNames = root.all.map { return $0.recordName ?? kEmpty }
 				if !rootNames.contains(name) {
 					references[2] = kFavoritesRootName    // reset to default
-					changed           = true
+					changed       = true
 				}
 			}
 		}
@@ -495,7 +490,7 @@ class ZRecords: NSObject {
 					return false
 				}
             } else {
-                zRecordsLookup[name] = zRecord
+				zRecordsLookup[name] = zRecord
 				created              = true
 
 				registerByType(zRecord)

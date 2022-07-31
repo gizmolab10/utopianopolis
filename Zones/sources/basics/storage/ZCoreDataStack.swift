@@ -356,7 +356,7 @@ class ZCoreDataStack: NSObject {
 
 	func find(type: String, recordName: String, in dbID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> ZManagedObjectsArray {
 		let           dbid = dbID == .everyoneID ? dbID : .mineID
-		if  let     object = fetchedRegistry[dbid]?[recordName], !object.ignoreMaybe(recordName: recordName, into: dbid) {
+		if  let     object = fetchedRegistry[dbid]?[recordName], !object.isPublicRootDefault(recordName: recordName, into: dbid) {
 			return [object]
 		}
 
@@ -376,6 +376,11 @@ class ZCoreDataStack: NSObject {
 				if  let object = item as? ZManagedObject {
 
 					objects.append(object)
+
+//					if  let        zRecord = object as? ZRecord,
+//						let       ckRecord = persistentContainer.record(for: object.objectID) {
+//						zRecord.recordName = ckRecord.recordID.recordName
+//					}
 
 					if  onlyOne {
 
@@ -414,7 +419,7 @@ class ZCoreDataStack: NSObject {
 			} else {
 				while items.count > 0 {
 					if  let object = items.last {
-						if  object.ignoreMaybe(recordName: recordName, into: dbID) {
+						if  object.isPublicRootDefault(recordName: recordName, into: dbID) {
 							items.removeLast()
 						} else {
 							objects.append(object)
@@ -482,12 +487,12 @@ class ZCoreDataStack: NSObject {
 					do {
 						let items = try context.fetch(request)
 						for item in items {
-							if  let object = item as? ZRecord {
+							if  let object = item as? ZManagedObject {
 								objectIDs.append(object.objectID)
 							}
 						}
 
-						try context.save()
+//						try context.save()
 					} catch {
 						print("search fetch failed")
 					}
