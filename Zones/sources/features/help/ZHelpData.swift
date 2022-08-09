@@ -17,7 +17,7 @@ import UIKit
 enum ZHelpDotType: String {
 	case one        = "single"
 	case ten        = "10"
-	case has        = "has"
+	case has        = "in"
 	case note       = "note"
 	case drag       = "editable"
 	case three      = "3"

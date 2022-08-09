@@ -1549,15 +1549,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return zone
 	}
 
-	func importCSV(from data: Data, kumuFlavor: Bool = false) -> Zone {
+	func importCSV(from data: Data, kumuFlavor: Bool = false) {
 		let   rows = data.extractCSV()
 		var titles = [String : Int]()
-		let first = rows[0]
+		let  first = rows[0]
 		for (index, title) in first.enumerated() {
 			titles[title] = index
 		}
-
-		let top = childWithName("Press Conference")
 
 		for (index, row) in rows.enumerated() {
 			if  index     != 0,
@@ -1566,20 +1564,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				row.count  > tIndex {
 				let   name = row[nIndex]
 				let   type = row[tIndex]
-				let  child = top  .childWithName(type)
-				let   zone = child.childWithName(name)
+				let  child =       childWithName(type)
+				let gChild = child.childWithName(name)
 
-				if  let dIndex = titles["Description"] {
-					let   text = row[dIndex]
-					let  trait = ZTrait.uniqueTrait(recordName: nil, in: databaseID)
+				if  let      dIndex = titles["Description"] {
+					let       trait = ZTrait.uniqueTrait(recordName: nil, in: databaseID)
+					let        text = row[dIndex]
+					trait     .text = text
 					trait.traitType = .tNote
-					trait.text = text
-					zone.addTrait(trait)
+
+					gChild.addTrait(trait)
 				}
 			}
 		}
-
-		return top
 	}
 
 	func importFile(from path: String, type: ZExportType = .eSeriously, onCompletion: Closure?) {
@@ -1589,7 +1586,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				switch type {
 					case .eSeriously: zone = importSeriously(from: data)
-					default:          zone = importCSV      (from: data, kumuFlavor: true)
+					default:                 importCSV      (from: data, kumuFlavor: true)
 				}
 
 				if  let z = zone {
@@ -1908,7 +1905,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return note
 	}
 
-	func clearAllNotes() {     // discard current essay text and all child note's text
+	func clearAllNoteMaybes() {       // discard current essay text and all child note's text
 		for zone in zonesWithNotes {
 			zone.noteMaybe = nil
 		}
@@ -1918,14 +1915,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		removeTrait(for: .tNote)
 
 		noteMaybe     = nil
-		gNeedsRecount = true // trigger recount on next timer fire
+		gNeedsRecount = true          // trigger recount on next timer fire
 	}
 
 	func deleteEssay() {
 		if  let c = note?.children {
 			for child in c {
 				if  let z = child.zone, z != self {
-					z.deleteEssay()
+					z.deleteEssay()   // recurse
 				}
 			}
 		}

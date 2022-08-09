@@ -529,6 +529,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			switch key {
 				case "a":      selectAll(nil)
+				case "j":      revealEmptyNotes(OPTION)
 				case "n":      swapBetweenNoteAndEssay()
 				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide: true) } else { return false }
@@ -536,6 +537,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
 				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
+				case kDelete:  deleteGrabbedOrSelected()
 				default:       return false
 			}
 
@@ -737,7 +739,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	@objc func handleControlAction(_ iButton: ZTooltipButton) {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
-//				case .idMultiple: swapBetweenNoteAndEssay()
 				case .idForward:  nextBookmark(down:  true)
 				case .idBack:     nextBookmark(down: false)
 				case .idSave:     save()
@@ -1034,7 +1035,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		    let note = firstGrabbedNote,
 			let zone = note.zone {
 			save()
-			gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
+			gCurrentEssayZone?.clearAllNoteMaybes()            // discard current essay text and all child note's text
 			ungrabAll()
 
 			gNeedsRecount = true
@@ -1065,7 +1066,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		}
 
-		if  let zone = selectedNotes.last?.zone {
+		if  let  zone = selectedNotes.last?.zone,
+			let count = gCurrentEssay?.zone?.zonesWithNotes.count, count > 1 {
 			zone.deleteNote()
 			resetTextAndGrabs()
 
@@ -1107,8 +1109,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		let     grabbed = willRegrab(grab)              // includes logic for optional grab parameter
 		essayRecordName = nil                           // so shouldOverwrite will return true
 
-		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
-		updateTextStorage()                                  // assume text has been altered: re-assemble it
+		gCurrentEssayZone?.clearAllNoteMaybes()              // discard current essay text and all child note's text
+		updateTextStorage()                             // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
 		gSignal([.spCrumbs, .sDetails])
@@ -1560,6 +1562,33 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// MARK: - more
 	// MARK: -
 
+	func revealEmptyNotes(_ conceal: Bool = false) {
+		if  let essay = gCurrentEssay,
+			let  zone = essay.zone {
+			gCreateCombinedEssay = false              // so createNote does the right thing
+
+			zone.traverseAllProgeny { child in
+				if  conceal {
+					if  let string = child.maybeTraitFor(.tNote)?.text,
+						string == kNoteDefault {
+						child.deleteNote()
+					}
+				} else {
+					if !child.hasNoteOrEssay {
+						child.setTraitText(kNoteDefault, for: .tNote)  // create an empty note trait, add to child
+					}
+				}
+			}
+
+			zone.clearAllNoteMaybes()                 // discard current essay text and all child note's text
+
+			gCreateCombinedEssay = true               // so gCreateEssay does the right thing
+			gCurrentEssay        = gCreateEssay(zone) // create a new essay from the zone
+
+			resetCurrentEssay(gCurrentEssay)
+		}
+	}
+
 	func swapBetweenNoteAndEssay() {
 		let       range = selectedRange()
 		if  var    note = gCurrentEssay?.notes(in: range).first,
@@ -1576,7 +1605,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			gCreateCombinedEssay = toEssay      // toggle
 
 			if  toEssay {
-				zone.clearAllNotes()            // discard current essay text and all child note's text
+				zone.clearAllNoteMaybes()            // discard current essay text and all child note's text
 
 				note = gCreateEssay(zone)       // create a new essay from the zone
 			} else {

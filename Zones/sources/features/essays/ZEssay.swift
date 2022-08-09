@@ -39,7 +39,7 @@ class ZEssay: ZNote {
 
 			// this is not an essay, convert it to a note
 
-			z.clearAllNotes()
+			z.clearAllNoteMaybes()
 
 			gCreateCombinedEssay = false
 			gCurrentEssay = ZNote(z)

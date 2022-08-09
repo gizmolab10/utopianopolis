@@ -15,7 +15,7 @@ class ZHelpEssayData: ZHelpData {
 	override var noTabPrefix   :  String        { return "                    " }
 	override var columnStrings : [StringsArray] { return [essayColumnOne, essayColumnTwo] }
 	override var tabOffsets    : [Int]          { return [0, 20, 180] }
-	override var rowHeight     :  CGFloat       { return 14.55 }
+	override var rowHeight     :  CGFloat       { return 14.0 }
 
 	let essayColumnOne: StringsArray = essayPrefixArray + [
 		"",																								"",	"",
@@ -23,10 +23,9 @@ class ZHelpEssayData: ZHelpData {
 		"",																								"",	"",
 		"_drag dot",					"filled dot indicates note contains cursor or is grabbed",			"",
 		".b",							"click to grab or ungrab the note",									"",
-		"0        ",					"double-click to toggle between note and essay",					"",
 		"",																								"",	"",
-		"_reveal dot",					"in maps: COMMAND-click it to edit the note or essay, when it ...",	"",
-		".f",							"has two tiny dots inside",											"",
+		"_reveal dot",					"two tiny dots inside indicates a note or essay",					"",
+		".f",							"in maps: COMMAND-click it to edit the note or essay",				"",
 		"",																								"",	""
 	]
 
@@ -50,6 +49,7 @@ class ZHelpEssayData: ZHelpData {
 		"!KEYS, WHEN NO NOTES ARE GRABBED",			 													"", "",
 		"",																								"",	"",
 		"_COMMAND + KEY", 																				"", "",
+		"0J",							"add missing boilerplate notes (use OPTION to remove them)",		"",
 		"0N",							"save changes and toggle between essay and note",					"",
 		"",																								"",	"",
 		"",																								"",	"",
