@@ -98,7 +98,7 @@ class ZControlsController: ZGenericController {
 	}
 
 	func searchOptionsDidChange() {
-		gSearchBarController?.updateSearchBox(allowSearchToEnd: false)
+		gSearchBarController?.updateSearchBar(allowSearchToEnd: false)
 		gSearchResultsController?.applyFilter()
 		gSearchResultsController?.genericTableUpdate()
 	}

@@ -21,7 +21,7 @@ class ZSearchResultsController: ZGenericTableController {
 	var      foundRecordsDict = ZDBIDRecordsDictionary()
 	var   filteredResultsDict = ZDBIDRecordsDictionary()
 	var   matchHighlightColor : ZColor        { return ZColor(cgColor: ZColor.controlAccentColor.cgColor)?.lighter(by: 8.0) ?? ZColor.controlAccentColor }
-	var            searchText : String?       { return gSearchBarController?.activeSearchBoxText }
+	var            searchText : String?       { return gSearchBarController?.activeSearchBarText }
 	override var controllerID : ZControllerID { return .idSearchResults }
 	func         zoneAt(_ row : Int) -> Zone? { return zoneFor(zRecordAt(row)) }
 	func              clear()                 { gExitSearchMode(force: false) }

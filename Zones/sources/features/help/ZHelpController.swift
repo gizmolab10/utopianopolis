@@ -135,9 +135,9 @@ class ZHelpController: ZGenericTableController {
 				nextMode = .basicMode
 			} else if flags.exactlySplayed {
 				nextMode = .essayMode
-			} else if flags.exactlyUnusual {
+			} else if flags.exactlyOtherSpecial {
 				nextMode = .dotMode
-			} else if flags.exactlyAll {
+			} else if flags.isAll {
 				nextMode = .proMode
 			}
 		}

@@ -338,7 +338,7 @@ extension ZoneDot {
 		let  thickness = CGFloat(gLineThickness) * 2.0
 		var       path = ZBezierPath()
 
-		if  parameters.isReveal {
+		if  parameters.isReveal && parameters.childCount > 0 {
 			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
 		} else {
 			path       = ZBezierPath                (ovalIn: iDirtyRect.insetEquallyBy(thickness))

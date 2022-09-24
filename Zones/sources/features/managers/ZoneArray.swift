@@ -787,7 +787,7 @@ extension ZoneArray {
 
 		if  !url.isEmpty {
 			let addresses = url.components(separatedBy: kMailTo).dropFirst()
-			let csv = addresses.joined(separator: ",")
+			let csv = addresses.joined(separator: kCommaSeparator)
 			url = kMailTo.appending(csv)
 			url.openAsURL()
 		}

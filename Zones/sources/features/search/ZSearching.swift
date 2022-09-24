@@ -33,8 +33,8 @@ class ZSearching: NSObject, ZSearcher {
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
 	var essaySearchText: String? {
-		get { return gSearchBarController?.searchBox?.text }
-		set { gSearchBarController?.searchBox?.text = newValue }
+		get { return gSearchBarController?.searchBar?.text }
+		set { gSearchBarController?.searchBar?.text = newValue }
 	}
 
 	func exitSearchMode() {
@@ -56,7 +56,7 @@ class ZSearching: NSObject, ZSearcher {
 
 		switch state {
 			case .sList:          gSignal([.sFound])
-			case .sFind, .sEntry: assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBox)
+			case .sFind, .sEntry: assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBar)
 
 			default: break
 		}

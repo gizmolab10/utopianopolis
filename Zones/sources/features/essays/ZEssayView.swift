@@ -1698,18 +1698,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let   dbID = parent.databaseID
 
 			func child(named name: String, withText: String) {
-				let child = Zone.uniqueZoneNamed(name, databaseID: dbID)   	// create new (to be child) zone from text
+				let child = Zone.uniqueZoneNamed(name, databaseID: dbID)   	// create new zone from text
 
-				parent.addChildNoDuplicate(child)
+				parent.addChildNoDuplicate(child)                           // add as new child of parent
 				child.setTraitText(text, for: .tNote)                       // create note from text in the child
 				gCurrentEssayZone?.createNote()
 
 				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.noteTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 			}
 
-			if        flags.exactlyUnusual {
+			if        flags.exactlyOtherSpecial {
 				child(named: "idea", withText: text)
-			} else if flags.isOption || flags.exactlySplayed {
+			} else if flags.isAll {
 				child(named: text,   withText: kNoteDefault)
 			} else {
 				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text

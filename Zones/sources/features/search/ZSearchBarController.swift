@@ -22,10 +22,10 @@ var gSearchBarController: ZSearchBarController? { return gControllers.controller
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-	@IBOutlet var    searchBox : ZSearchField?
+	@IBOutlet var    searchBar : ZSearchField?
 	@IBOutlet var      spinner : ZProgressIndicator?
 	override  var controllerID : ZControllerID { return .idSearch }
-	var    activeSearchBoxText : String?       { return searchBox?.text?.searchable }
+	var    activeSearchBarText : String?       { return searchBar?.text?.searchable }
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -33,10 +33,10 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		spinner?.zlayer.backgroundColor = gBackgroundColor.cgColor
 	}
 
-	var searchBoxIsFirstResponder : Bool {
+	var searchBarIsFirstResponder : Bool {
 		#if os(OSX)
-		if  let    first  = searchBox?.window?.firstResponder {
-			return first == searchBox?.currentEditor()
+		if  let    first  = searchBar?.window?.firstResponder {
+			return first == searchBar?.currentEditor()
 		}
 		#endif
 
@@ -46,7 +46,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	func searchStateDidChange() {
 		switch gSearching.state {
 			case .sEntry, .sFind:
-				assignAsFirstResponder(searchBox)
+				assignAsFirstResponder(searchBar)
 			default: break
 		}
 	}
@@ -62,8 +62,8 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
 		#if os(OSX)
-		if  searchBoxIsFirstResponder {
-			searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
+		if  searchBarIsFirstResponder {
+			searchBar?.currentEditor()?.handleArrow(arrow, with: flags)
 		} else if gIsResultsMode {
 		} else if gIsEssayMode {
 			gEssayView?.handleArrow(arrow, flags: flags)
@@ -81,30 +81,30 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		let  isReturn = key == kReturn
 		let  isEscape = key == kEscape
 		let    isList = gSearchResultsVisible
-		let   isEntry = gWaitingForSearchEntry
-		let   isInBox = searchBoxIsFirstResponder
+		let isWaiting = gWaitingForSearchEntry
+		let   isInBar = searchBarIsFirstResponder
 
-		if (gIsEssayMode && !isInBox) || (key == "g" && COMMAND) {
+		if (gIsEssayMode && !isInBar) || (key == "g" && COMMAND) {
 			gEssayView?.handleKey(key, flags: flags)
-		} else if isList, !isInBox {
+		} else if isList, !isInBar {
 			if !isF {
 				return gSearchResultsController?.handleEvent(event)
 			}
 
 			gSearching.setSearchStateTo(.sEntry)
-		} else if isReturn, isInBox {
-			updateSearchBox()
+		} else if (isReturn && isInBar) || (COMMAND && isF) {
+			updateSearchBar()
 		} else if COMMAND, key == "a" {
-            searchBox?.selectAllText()
-        } else if isEscape || (isReturn && isEntry) || (COMMAND && isF) {
+            searchBar?.selectAllText()
+        } else if isEscape || (isReturn && isWaiting) {
             endSearch()
 		} else if isTab {
 			gSearching.setSearchStateTo(.sList)
 		} else if let arrow = key.arrow {
 			handleArrow(arrow, with: flags)
 		} else {
-			if !isReturn, isEntry {
-				gSearching.state = .sFind // don't call setSearchStateTo, it has unwanted side-effects
+			if !isReturn, isWaiting {
+				gSearching.state = .sFind    // don't call setSearchStateTo, it has unwanted side-effects
 			}
             
             return event
@@ -114,12 +114,12 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
     }
 
     func endSearch() {
-        searchBox?.resignFirstResponder()
+        searchBar?.resignFirstResponder()
 		gExitSearchMode()
     }
 
-	func updateSearchBox(allowSearchToEnd: Bool = true) {
-		if  let text = activeSearchBoxText,
+	func updateSearchBar(allowSearchToEnd: Bool = true) {
+		if  let text = activeSearchBarText,
 			text.length > 0,
 			![kEmpty, kSpace, "  "].contains(text) {
 

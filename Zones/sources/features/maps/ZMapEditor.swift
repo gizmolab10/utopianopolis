@@ -80,7 +80,7 @@ class ZMapEditor: ZBaseEditor {
 			let  OPTION = flags.isOption
 			var   SHIFT = flags.isShift
 			let     ANY = flags.isAny
-			let     ALL = flags.exactlyAll
+			let     ALL = flags.isAll
 
             if  key    != key.lowercased() {
                 key     = key.lowercased()
@@ -1038,7 +1038,7 @@ class ZMapEditor: ZBaseEditor {
 			// ////////////////////
 
 			if  let       index = targetZones.firstIndex(of: rootMost) {
-				var     toIndex = index + (up ? -1 : 1)
+				var     toIndex = index + (up ? -1 : 1)   // TODO: need to account for essay mode when not all children are visible
 				var  allGrabbed = true
 				var soloGrabbed = false
 				var     hasGrab = false
@@ -1127,7 +1127,7 @@ class ZMapEditor: ZBaseEditor {
 					if !selectionOnly {
 						moveClosure(originalGrabs)
 					} else if !growSelection {
-						findChildMatching(&grabThis, up, iOffset) // TODO: should look at siblings, not children
+						findChildMatching(&grabThis, up, iOffset)    // TODO: should look at siblings, not children
 						grabThis.grab(updateBrowsingLevel: false)
 
 						if !hereIsGrabbed && forcedResponse == nil {

@@ -2323,26 +2323,28 @@ extension String {
     }
 
     var color: ZColor? {
-		if  self == kEmpty {
+		if  self == kEmpty {        // special case
 			return nil
 		} else {
             let pairs = components(separatedBy: kCommaSeparator)
-            var   red = 0.0
-            var  blue = 0.0
-            var green = 0.0
+			var green = 0.0
+			var  blue = 0.0
+			var   red = 0.0
 
-            for pair in pairs {
-                let values = pair.components(separatedBy: kColonSeparator)
-                let  value = Double(values[1])!
-                let    key = values[0]
+			if  pairs.count > 2 {
+				for pair in pairs {
+					let values = pair.components(separatedBy: kColonSeparator)
+					let  value = Double(values[1])!
+					let    key = values[0]
 
-				switch key {
-					case   "red":   red = value
-					case  "blue":  blue = value
-					case "green": green = value
-					default:      break
+					switch key {
+						case "green": green = value
+						case  "blue":  blue = value
+						case   "red":   red = value
+						default:              break
+					}
 				}
-            }
+			}
 
             return ZColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
         }

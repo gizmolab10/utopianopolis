@@ -22,7 +22,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var essayContainerView : ZView?
 	@IBOutlet var searchResultsView  : ZView?
 	@IBOutlet var permissionView     : ZView?
-	@IBOutlet var searchBoxView      : ZView?
+	@IBOutlet var searchBarView      : ZView?
 	@IBOutlet var controlsView       : ZView?
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
@@ -109,7 +109,7 @@ class ZMainController: ZGesturesController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		switch kind {
 			case .sSearch:
-				assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBox)
+				assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBar)
 			case .sSwap:
 				gRefusesFirstResponder       = true          // prevent the exit from essay from beginning an edit
 				essayContainerView?.isHidden = !gIsEssayMode
@@ -120,7 +120,7 @@ class ZMainController: ZGesturesController {
         }
 
 		permissionView?   .isHidden = !gIsStartupMode
-		searchBoxView?    .isHidden =  gIsNotSearching || (gSearchResultsVisible && gSearchResultsController?.hasResults ?? false)
+		searchBarView?    .isHidden =  gIsNotSearching || (gSearchResultsVisible && gSearchResultsController?.hasResults ?? false)
 		searchResultsView?.isHidden =  gIsNotSearching || gWaitingForSearchEntry || gIsEssayMode
 
 		mainUpdate()
