@@ -486,6 +486,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else if  hasGrabbedNote {
 			switch key {
 				case "c":      grabbedZones.copyToPaste()
+				case "n":      setGrabbedZoneAsCurrentEssay()
 				case "t":      swapWithParent()
 				case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
 				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
@@ -1051,6 +1052,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					resetTextAndGrabs(grab: parent)
 				}
 			}
+		}
+	}
+
+	func setGrabbedZoneAsCurrentEssay() {
+		if  let      note = firstGrabbedNote {
+			gCurrentEssay = note
+
+			ungrabAll()
+			resetTextAndGrabs()
 		}
 	}
 

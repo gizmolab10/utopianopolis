@@ -89,12 +89,11 @@ class ZMainController: ZGesturesController {
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  !gIgnoreEvents {
+		if  let         gesture = iGesture, !gIgnoreEvents {
 			if  !gIsEssayMode {
 				gMapController?.handleClickGesture(iGesture)
-			} else if let eView = gEssayView,
-				let gesture = iGesture {
-				let      location = gesture.location(in: eView)
+			} else if let eView = gEssayView {
+				let    location = gesture.location(in: eView)
 
 				if  location.x < .zero {				// is gesture located outside essay view?
 					eView.save()

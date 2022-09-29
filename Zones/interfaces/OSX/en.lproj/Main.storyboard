@@ -913,7 +913,7 @@ CA
                                     <constraint firstAttribute="trailing" secondItem="cYx-gW-vNV" secondAttribute="trailing" id="rde-p1-TdC"/>
                                 </constraints>
                             </customView>
-                            <containerView id="vVa-lj-l9p" userLabel="Small Map Container View">
+                            <containerView id="vVa-lj-l9p" userLabel="Favorites Container View">
                                 <rect key="frame" x="0.0" y="0.0" width="451" height="300"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <connections>
@@ -992,7 +992,7 @@ CA
                                                     <segue destination="auf-AV-5qA" kind="embed" id="9wH-w7-oo9"/>
                                                 </connections>
                                             </containerView>
-                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Box View">
+                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Bar View">
                                                 <rect key="frame" x="0.0" y="0.0" width="198" height="44"/>
                                                 <connections>
                                                     <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
@@ -1199,7 +1199,7 @@ CA
                         <outlet property="hamburgerButton" destination="yl6-st-bhl" id="Q5Q-eo-IdC"/>
                         <outlet property="helpButton" destination="uYG-mD-FXW" id="8l6-k6-vrf"/>
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
-                        <outlet property="searchBoxView" destination="58m-fY-Oaa" id="ZNB-Vt-Hng"/>
+                        <outlet property="searchBarView" destination="58m-fY-Oaa" id="hjR-i2-r49"/>
                         <outlet property="searchButton" destination="RjV-tY-a8J" id="c5P-Qf-wOO"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
                     </connections>
@@ -1237,7 +1237,7 @@ CA
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="searchBox" destination="bct-LL-Igg" id="SjG-U2-qS7"/>
+                        <outlet property="searchBar" destination="bct-LL-Igg" id="j4R-SR-DD9"/>
                         <outlet property="spinner" destination="Lgp-gv-Jfw" id="OXr-rq-qhh"/>
                     </connections>
                 </viewController>
@@ -2425,10 +2425,10 @@ DQ
             </objects>
             <point key="canvasLocation" x="986" y="468"/>
         </scene>
-        <!--Small Map-->
+        <!--Favorites Map-->
         <scene sceneID="fRz-nE-ecT">
             <objects>
-                <viewController title="favorites" id="SUz-Nq-f3E" userLabel="Small Map" customClass="ZFavoritesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="favorites" id="SUz-Nq-f3E" userLabel="Favorites Map" customClass="ZFavoritesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kOn-SC-u0e">
                         <rect key="frame" x="0.0" y="0.0" width="121" height="1"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -2587,7 +2587,7 @@ CA
                     </items>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="435" y="949"/>
+            <point key="canvasLocation" x="290.5" y="969.5"/>
         </scene>
     </scenes>
     <resources>
