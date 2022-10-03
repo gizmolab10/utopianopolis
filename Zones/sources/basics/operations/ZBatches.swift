@@ -27,6 +27,7 @@ enum ZBatchID: Int {
 		switch self {
 			case .bSync,
 				 .bStartUp,
+				 .bBookmarks,
 				 .bNewAppleID: return false
 			default:           return true
 		}

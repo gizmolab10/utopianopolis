@@ -1317,7 +1317,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						}
 					}
 
-					if  zRecords?.cloudUnavailable ?? true {
+					if  zRecords?.cloudUnavailable ?? true, !gIsUsingCoreData {
 						moveZone(to: destroyZone) {
 							finishDeletion()
 						}
