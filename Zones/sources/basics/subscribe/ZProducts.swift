@@ -116,7 +116,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 
 	func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
 		products = response.products
-		gSubscriptionController?.rowsChanged = true
+		gSubscriptionDidChange  = true
 
 		gSignal([.spSubscription])                 // update subscription controller
 	}

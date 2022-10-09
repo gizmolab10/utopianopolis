@@ -15,6 +15,7 @@ import UIKit
 #endif
 
 var gSubscriptionController : ZSubscriptionController? { return gControllers.controllerForID(.idSubscription) as? ZSubscriptionController }
+var gSubscriptionDidChange  = true
 
 class ZSubscriptionController: ZGenericController {
 
@@ -27,7 +28,6 @@ class ZSubscriptionController: ZGenericController {
 	override  var controllerID : ZControllerID { return .idSubscription }
 	var               rows : Int    { return gProducts.products.count }
 	var        bannerTitle : String { return gShowMySubscriptions ? kSubscription : kSubscribe }
-	var        rowsChanged = true
 
 	func toggleViews() {
 		gShowMySubscriptions = !gShowMySubscriptions
@@ -50,8 +50,8 @@ class ZSubscriptionController: ZGenericController {
 			dateLabel?       .text = gProducts.expires
 			statusLabel?     .text = gProducts.status
 //			cancelButton?.isHidden = !(gProducts.zToken?.type.isAutoRenew ?? false)
-		} else if rowsChanged {
-			rowsChanged = false
+		} else if gSubscriptionDidChange  {
+			gSubscriptionDidChange  = false
 			var prior: ZSubscriptionButton?
 			buttonsView?.removeAllSubviews()
 			for index in 0..<rows {

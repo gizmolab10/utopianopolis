@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -223,6 +222,7 @@
                                         <connections>
                                             <outlet property="bannerView" destination="avu-F1-Lm0" id="gKQ-bm-DuD"/>
                                             <outlet property="hideableView" destination="ytv-8G-7v7" id="Qa7-FI-NVq"/>
+                                            <outlet property="switchConstraint" destination="8kL-HJ-A4d" id="sdp-Ll-QdY"/>
                                             <outlet property="switchingButton" destination="F7N-nT-7sJ" id="REj-tR-dfm"/>
                                             <outlet property="titleButton" destination="ay8-Kf-2wF" id="V94-TH-8Dc"/>
                                         </connections>

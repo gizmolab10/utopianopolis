@@ -19,9 +19,10 @@ var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && 
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gIsUsingCoreData }
 var     gIsUsingCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gIsUsingCoreData }
 
+var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var gNoteVisibilityIcons : Bool { return  gDebugModes.contains(.dNoteVisibilityIcons) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
-var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
+var    gUseSubscriptions : Bool { return  gDebugModes.contains(.dUseSubscriptions) }
 var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
 var         gDebugAngles : Bool { return  gDebugModes.contains(.dDebugAngles) }
 var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
@@ -65,8 +66,9 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dShowDestroy         = ZDebugMode(rawValue: 1 <<  7) // add destroy bookmark to favorites
 	static let dShowDuplicates      = ZDebugMode(rawValue: 1 <<  8) // report duplicates
 	static let dIgnoreExemption     = ZDebugMode(rawValue: 1 <<  9) // ignore user exemption
-	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 10) // super short timeout
-	static let dNoteVisibilityIcons = ZDebugMode(rawValue: 1 << 11) // note visibility icons
+	static let dUseSubscriptions    = ZDebugMode(rawValue: 1 << 10) // incorporate subscriptions
+	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 11) // super short timeout
+	static let dNoteVisibilityIcons = ZDebugMode(rawValue: 1 << 12) // note visibility icons
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 

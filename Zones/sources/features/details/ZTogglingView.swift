@@ -20,6 +20,7 @@ class ZBannerButton : ZButton {
 
 class ZTogglingView: ZView {
 
+	@IBOutlet var switchConstraint : NSLayoutConstraint?
 	@IBOutlet var          spinner : ZProgressIndicator?
 	@IBOutlet var      titleButton : ZBannerButton?
 	@IBOutlet var  switchingButton : ZButton?
@@ -29,10 +30,11 @@ class ZTogglingView: ZView {
 	@IBOutlet var       bannerView : ZView?
 	@IBOutlet var     hideableView : ZView?
 
+	var favoritesTitle : String  { return hideHideable ? "Favorites" : gFavoritesHere?.favoritesTitle ?? "Gerglagaster" }
+	var kind           : String? { return gConvertFromOptionalUserInterfaceItemIdentifier(identifier) }
+
     // MARK: - identity
     // MARK: -
-
-	var kind: String? { return gConvertFromOptionalUserInterfaceItemIdentifier(identifier) }
 
 	var toolTipText: String {
 		switch identity {
@@ -78,7 +80,7 @@ class ZTogglingView: ZView {
 		hideHideable = !hideHideable
 	}
 
-    // MARK: - update UI
+    // MARK: - events
     // MARK: -
 
 	@IBAction func toggleAction(_ sender: Any) {
@@ -110,6 +112,9 @@ class ZTogglingView: ZView {
 		gSignal([.sDetails])
 	}
 
+	// MARK: - update UI
+	// MARK: -
+
 	fileprivate func updateTitleButton() {
 		if  gIsReadyToShowUI {
 			var                      title = kEmpty
@@ -126,9 +131,17 @@ class ZTogglingView: ZView {
 		}
 	}
 
+	func updateTitleBarButtons() {
+		switch identity {
+			case .vFavorites: updateFavoritesButtons()
+			case .vSubscribe: updateSubscribeSwitch()
+			default: break
+		}
+	}
+
 	func updateView() { // gSignal for .sDetails goes here
 		updateColors()
-		updateFavoritesButtons()
+		updateTitleBarButtons()
 		updateSpinner()
 		updateTitleButton()
 		updateHideableView()
@@ -151,27 +164,26 @@ class ZTogglingView: ZView {
 		}
 	}
 
-	var favoritesTitle: String {
-		return hideHideable ? "Favorites" : gFavoritesHere?.favoritesTitle ?? "Gerglagaster"
+	func updateSubscribeSwitch() {
+		switchingButton? .isHidden = !gUseSubscriptions
+		switchConstraint?.constant = hideHideable ? 0.0 : 60.0
 	}
 
 	func updateFavoritesButtons() {
-		if  identity == .vFavorites {
-			let           hidden = hideHideable || gFavorites.hideUpDownView
-			upDownView?.isHidden = hidden
+		let           hidden = hideHideable || gFavorites.hideUpDownView
+		upDownView?.isHidden = hidden
 
-			if !hidden {
-				downButton?.title = gFavorites.nextList(down: false)?.unwrappedName.capitalized ?? kEmpty
-				upButton?  .title = gFavorites.nextList(down:  true)?.unwrappedName.capitalized ?? kEmpty
-			}
+		if !hidden {
+			downButton?.title = gFavorites.nextList(down: false)?.unwrappedName.capitalized ?? kEmpty
+			upButton?  .title = gFavorites.nextList(down:  true)?.unwrappedName.capitalized ?? kEmpty
+		}
 
-			titleButton?.snp.removeConstraints()
-			titleButton?.snp.makeConstraints{ make in
-				if  hidden {
-					make.right.equalToSuperview() .offset(-1.0)
-				} else if let v = upDownView {
-					make.right.equalTo(v.snp.left).offset(-1.0)
-				}
+		titleButton?.snp.removeConstraints()
+		titleButton?.snp.makeConstraints{ make in
+			if  hidden {
+				make.right.equalToSuperview() .offset(-1.0)
+			} else if let v = upDownView {
+				make.right.equalTo(v.snp.left).offset(-1.0)
 			}
 		}
 	}
