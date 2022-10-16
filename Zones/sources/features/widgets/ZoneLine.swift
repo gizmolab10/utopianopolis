@@ -90,16 +90,11 @@ class ZoneLine: ZPseudoView {
 
 		let       kind = lineKind
 		let       rect = lineRect(for: kind)
-		let  highlight = childWidget?.widgetZone?.siblingIndex == 0 && isCircularMode
 		let       path = linePath(in: rect, kind: kind)
-		path.lineWidth = CGFloat(highlight ? 2.0 : gLineThickness)
+		path.lineWidth = gLineThickness
 
 		if  rect.hasZeroSize {
 			return
-		}
-
-		if  highlight, rect.size.hypotenuse > 30.0 {     // needs to be long enough to show as dashes
-			path.addDashes()
 		}
 
 		if  let b = controller?.mapView?.bounds, isCircularMode {

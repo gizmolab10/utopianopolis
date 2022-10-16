@@ -434,7 +434,7 @@ class ZoneWidget: ZPseudoView {
 
 		let      color = widgetZone?.highlightColor
 		let       path = selectionHighlightPath
-		path.lineWidth = CGFloat(gLineThickness * 3.5)
+		path.lineWidth = CGFloat(gLineThickness * 2.5)
 		path .flatness = kDefaultFlatness
 		
 		switch style {

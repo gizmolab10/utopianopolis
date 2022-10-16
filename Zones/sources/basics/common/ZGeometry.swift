@@ -26,7 +26,7 @@ var          gDotHeight : CGFloat { return (gBaseFontSize / kDotFactor) + kFontD
 var           gDotWidth : CGFloat { return gDotHeight * kDragDotReduction }
 var   gCircleIdeaRadius : CGFloat { return gDotHeight * 2.2 }
 var      gDotHalfHeight : CGFloat { return gDotHeight / 2.0 }
-var    gDotQuarterWidth : CGFloat { return gDotWidth  / 4.0 }
+var     gDotEighthWidth : CGFloat { return gDotWidth  / 8.0 }
 var       gDotHalfWidth : CGFloat { return gDotWidth  / 2.0 }
 
 func gDotSize(forReveal: Bool)                  -> CGSize  { return CGSize(width: forReveal ? gDotHeight : gDotWidth, height: gDotHeight) }

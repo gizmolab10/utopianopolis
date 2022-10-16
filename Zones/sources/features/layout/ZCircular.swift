@@ -137,7 +137,7 @@ extension ZoneWidget {
 
 	func drawInterior(_ color: ZColor) {
 		let       path = selectionHighlightPath
-		path.lineWidth = CGFloat(gLineThickness * 3.5)
+		path.lineWidth = CGFloat(gLineThickness * 2.5)
 		path .flatness = kDefaultFlatness
 
 		color.setFill()
@@ -436,7 +436,7 @@ extension ZoneDot {
 	}
 
 	func circularUpdateDotAbsoluteFrame() {
-		if  let           l = line, (isReveal || l.parentWidget?.widgetZone?.isExpanded ?? false),
+		if  let           l = line,
 			let     pCenter = l.parentWidget?.absoluteCenter,
 			let  lineVector = l.parentToChildVector {
 			let betweenDots = lineVector.length
@@ -446,8 +446,9 @@ extension ZoneDot {
 			}
 
 			let   acrossDot = dotHypotenuse
-			let  multiplier = isReveal ? acrossDot / betweenDots : 1.0
-			let   dotOffset = lineVector * multiplier
+			let     divisor = isReveal ? acrossDot : (betweenDots - acrossDot)
+			let       ratio = divisor / betweenDots
+			let   dotOffset = lineVector * ratio
 			let   dotCenter = pCenter + dotOffset
 			absoluteFrame   = CGRect(center: dotCenter, size: drawnSize)
 			absoluteHitRect = absoluteFrame
@@ -508,9 +509,9 @@ extension ZoneDot {
 			let      angle = lineVector.angle
 			let   position = ZPosition.position(for: Double(angle))
 			let  expansion = gDotSize(forReveal: false, forBigMap: isBigMap).dividedInHalf
-			let   halfSize = frame.size.dividedInHalf
-			let      width = halfSize .width + gDotQuarterWidth
-			let     height = halfSize.height + gDotQuarterWidth
+			let   halfSize = frame.size.dividedInHalf.expandedEquallyBy(gDotEighthWidth)
+			let     height = halfSize.height
+			let      width = halfSize.width
 			let     offset = width * ratioForAngle(angle)
 			var     center = frame.center
 
@@ -532,15 +533,10 @@ extension ZoneDot {
 		if  let     l = line,
 			let     p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
 			let     z = l .childWidget?.widgetZone {
-			let  bold = z.siblingIndex == 0 && p.isExpanded
 			var angle = l.dotToDotAngle + CGFloat((z.isShowing && p.isExpanded) ? .zero : kPI)
-			var thick = CGFloat(gLineThickness * 2.0)
+			let thick = CGFloat(gLineThickness * 2.0)
 			let  rect = iDirtyRect.insetEquallyBy(thick)
 			var  path = ZBezierPath()
-
-			if  bold {
-				thick = 4.0
-			}
 
 			if  parameters.isReveal {
 				path  = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
