@@ -110,7 +110,7 @@ class ZoneLine: ZPseudoView {
 		path.stroke()
 	}
 
-	func drawDragLineAndDot() {
+	func drawDraggedLineAndDot() {
 		let  rect = draggingDotAbsoluteFrame
 		let color = gActiveColor
 

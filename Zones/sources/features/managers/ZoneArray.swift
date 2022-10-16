@@ -83,7 +83,7 @@ extension ZoneArray {
 
 	func orderLimits() -> (start: Double, end: Double) {
 		var start = 1.0
-		var   end = 0.0
+		var   end = Double.zero
 
 		forEach { zone in
 			let  order = zone.order
@@ -331,8 +331,8 @@ extension ZoneArray {
 
 		alterOrdering { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in
-				let aLength = a.widget?.textWidget?.text?.widthForFont(font) ?? 0.0
-				let bLength = b.widget?.textWidget?.text?.widthForFont(font) ?? 0.0
+				let aLength = a.widget?.textWidget?.text?.widthForFont(font) ?? .zero
+				let bLength = b.widget?.textWidget?.text?.widthForFont(font) ?? .zero
 
 				return iBackwards ? (aLength > bLength) : (aLength < bLength)
 			}

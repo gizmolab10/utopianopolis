@@ -1259,8 +1259,8 @@ extension ZoneLine {
 	}
 
 	func circularLineRect() -> CGRect {
-		if  let origin = revealDot?.absoluteFrame.center,
-			let center = dragDot?.absoluteFrame.center {
+		if  let origin = revealDot?.absoluteCenter,
+			let center =   dragDot?.absoluteCenter {
 			let   size = CGSize(center - origin).absSize
 			return CGRect(origin: origin, size: size)
 		}

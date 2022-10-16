@@ -657,7 +657,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				updateInstanceProperties()
 
 				if  zoneOrder == nil {
-					zoneOrder = NSNumber(value: 0.0)
+					zoneOrder = NSNumber(value: Double.zero)
 				}
 			}
 

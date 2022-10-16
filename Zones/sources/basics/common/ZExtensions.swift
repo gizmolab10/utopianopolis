@@ -377,7 +377,7 @@ extension Int {
 		var angles             = [Double]()
 		if  self              > 0 {
 			let         isEven = self % 2 == 0
-			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
+			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? .zero : 0.5)
 			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-self) // negative means clockwise in osx (counterclockwise in ios)
 
 			for index in 0 ... self - 1 {
@@ -795,20 +795,20 @@ extension CGSize {
 	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
 	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
 	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
-	func isLargerThan(_ other: CGSize)                -> Bool   { return hypotenuse > other.hypotenuse }
-	public static func - (lhs: CGSize, rhs: CGPoint)  -> CGPoint { return CGPoint(lhs) - rhs }
-	public static func squared(_ length: CGFloat)     -> CGSize { return CGSize(width: length, height: length) }
-	func tadd(width: CGFloat, height: CGFloat)        -> CGSize { return self + CGSize(width: width, height: height) }
-	func absoluteDifferenceInDiagonals(relativeTo other: CGSize) -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
-	func multiplyBy(_ fraction: CGFloat)             -> CGSize { return CGSize(width: width * fraction, height: height * fraction) }
-	func multiplyBy(_ fraction: CGSize)              -> CGSize { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
-	func fraction(_ delta: CGSize)                   -> CGSize { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
-	func expandedEquallyBy(_ expansion: CGFloat)     -> CGSize { return insetEquallyBy(-expansion) }
-	func    insetEquallyBy(_     inset: CGFloat)     -> CGSize { return insetBy(inset, inset) }
-	func expandedBy(_ x: CGFloat, _ y: CGFloat)      -> CGSize { return insetBy(-x, -y) }
-	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
-	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize { return CGSize(width: width + x, height: height + y).absSize }
-	func offsetBy(_ delta: CGSize)                   -> CGSize { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
+	func isLargerThan(_ other: CGSize)               -> Bool    { return hypotenuse > other.hypotenuse }
+	public static func squared(_ length: CGFloat)    -> CGSize  { return CGSize(width: length, height: length) }
+	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint { return CGPoint(lhs) - rhs }
+	func hypotenuse(relativeTo other: CGSize)        -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
+	func tadd(width: CGFloat, height: CGFloat)       -> CGSize  { return self + CGSize(width: width, height: height) }
+	func multiplyBy(_ fraction: CGFloat)             -> CGSize  { return CGSize(width: width * fraction, height: height * fraction) }
+	func multiplyBy(_ fraction: CGSize)              -> CGSize  { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
+	func fraction(_ delta: CGSize)                   -> CGSize  { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
+	func expandedEquallyBy(_ expansion: CGFloat)     -> CGSize  { return insetEquallyBy(-expansion) }
+	func    insetEquallyBy(_     inset: CGFloat)     -> CGSize  { return insetBy(inset, inset) }
+	func expandedBy(_ x: CGFloat, _ y: CGFloat)      -> CGSize  { return insetBy(-x, -y) }
+	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize  { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
+	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize  { return CGSize(width: width + x, height: height + y).absSize }
+	func offsetBy(_ delta: CGSize)                   -> CGSize  { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
 
 	func scaleToFit(_ other: CGSize) -> CGFloat {
 		let horizontal = other.width / width
@@ -886,7 +886,7 @@ extension CGSize {
 		let a = Double(width)  / 2.0
 		let b = Double(height) / 2.0
 		let c = sqrt((b * b * cos(angle) * cos(angle)) + (a * a * sin(angle) * sin(angle)))
-		let l = a * b / c // (𝑏cos(𝜃))2+(𝑎sin(𝜃))2
+		let l = a * b / c // (𝑏*cos(𝜃))2+(𝑎*sin(𝜃))2
 
 		return l
 	}
@@ -960,17 +960,24 @@ extension CGRect {
 		var r = CGRect(origin: origin, size: size)
 		let h = size.height
 		let w = size.width
-		if  h < 0.0 {
+		if  h < .zero {
 			r.size.height = -h
 			r.origin.y   +=  h
 		}
 
-		if  w < 0.0 {
+		if  w < .zero {
 			r.size.width  = -w
 			r.origin.x   +=  w
 		}
 
 		return r
+	}
+
+	public init(center: CGPoint, size: CGSize) {
+		self.init()
+
+		origin    = center - size.dividedInHalf
+		self.size = size
 	}
 
 	func printRect(_ message: String = kEmpty) {
@@ -1011,7 +1018,7 @@ extension CGRect {
 		return offsetBy(dx: size.width, dy: size.height)
 	}
 
-    func offsetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
+    func offsetBy(fractionX: CGFloat = .zero, fractionY: CGFloat = .zero) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
         
@@ -1033,7 +1040,7 @@ extension CGRect {
 	func   offsetEquallyBy(_        offset: CGFloat) -> CGRect { return offsetBy(dx: offset, dy: offset) }
 	func      centeredRect(       diameter: CGFloat) -> CGRect { return centeredEquallyAround(center, diameter: diameter) }
 
-	func insetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
+	func insetBy(fractionX: CGFloat = .zero, fractionY: CGFloat = .zero) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
 
@@ -1120,7 +1127,7 @@ extension CGRect {
 
 	}
 
-	func drawColoredRect(_ color: ZColor, radius: CGFloat = 0.0, thickness: CGFloat = 0.5) {
+	func drawColoredRect(_ color: ZColor, radius: CGFloat = .zero, thickness: CGFloat = 0.5) {
 		let       path = ZBezierPath(roundedRect: self, xRadius: radius, yRadius: radius)
 		path.lineWidth = thickness
 
@@ -1277,11 +1284,11 @@ extension ZBezierPath {
 	}
 
 	func appendCircles(orientedUp: Bool, in iRect: CGRect) -> CGRect {
-		let   rect = iRect.offsetBy(fractionX: 0.0, fractionY: orientedUp ? 0.1 : -0.1)
-		var    top = rect.insetBy(fractionX: 0.0, fractionY: 0.375)  // shrink to one-fifth size
-		let middle = top.offsetBy(dx: 0.0, dy: top.midY - rect.midY)
-		let bottom = top.offsetBy(dx: 0.0, dy: top.maxY - rect.maxY) // move to bottom
-		top        = top.offsetBy(dx: 0.0, dy: top.minY - rect.minY) // move to top
+		let   rect = iRect.offsetBy(fractionX: .zero, fractionY: orientedUp ? 0.1 : -0.1)
+		var    top = rect.insetBy(fractionX: .zero, fractionY: 0.375)  // shrink to one-fifth size
+		let middle = top.offsetBy(dx: .zero, dy: top.midY - rect.midY)
+		let bottom = top.offsetBy(dx: .zero, dy: top.maxY - rect.maxY) // move to bottom
+		top        = top.offsetBy(dx: .zero, dy: top.minY - rect.minY) // move to top
 
 		appendOval(in: top)
 		appendOval(in: middle)
@@ -1297,7 +1304,7 @@ extension ZBezierPath {
 	}
 
 	func appendBloatedTriangle(in iRect: CGRect, aimedRight: Bool) {
-		appendBloatedTriangle(in: iRect, startAngle: aimedRight ? 0.0 : kPI)
+		appendBloatedTriangle(in: iRect, startAngle: aimedRight ? .zero : kPI)
 	}
 
 	func appendBloatedTriangle(in iRect: CGRect, startAngle: Double) {
@@ -1306,12 +1313,12 @@ extension ZBezierPath {
 		let      radius = Double(iRect.width) * insetRatio
 		let    bigAngle = k2PI /  6.0 // one sixth of a circle
 		let  smallAngle = k2PI / 30.0 // one thirtieth of a circle
-		let innerVector = CGPoint(x: radius,       y: 0.0)
-		let outerVector = CGPoint(x: radius * 1.5, y: 0.0)
+		let innerVector = CGPoint(x: radius,       y: .zero)
+		let outerVector = CGPoint(x: radius * 1.5, y: .zero)
 		var  controlOne = CGPoint.zero
 		var  controlTwo = CGPoint.zero
 		var       point = CGPoint.zero
-		var       index = 0.0
+		var       index = Double.zero
 
 		func rotatePoints() {
 			let   angle = index * bigAngle + startAngle
@@ -1646,7 +1653,7 @@ extension NSTextTab {
 	}
 
 	convenience init(string: String) {
-		var location: CGFloat = 0.0
+		var location: CGFloat = .zero
 		var alignment = NSTextAlignment.natural
 
 		let parts = string.componentsSeparatedAt(level: 5)
@@ -1680,7 +1687,7 @@ extension NSMutableParagraphStyle {
 			}
 		}
 
-		if  indent > 0.0 {
+		if  indent > .zero {
 			result.append(gSeparatorAt(level: 2) + kIndent)
 			result.append(gSeparatorAt(level: 3) + "\(indent.roundedToNearestInt)")
 		}
@@ -2288,7 +2295,7 @@ extension String {
 		let bounds = within.rectWithFont(font)
 		let xDelta = offset(using: font, for: iRange, atStart: atStart)
         
-        return bounds.offsetBy(dx: xDelta, dy: 0.0)
+        return bounds.offsetBy(dx: xDelta, dy: .zero)
     }
 
     func offset(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGFloat {
@@ -2299,7 +2306,7 @@ extension String {
         let          width = selection     .sizeWithFont(font).width
         let     startWidth = startSelection.sizeWithFont(font).width
         
-        return startWidth + (atStart ? 0.0 : width)    // move down, use right side of selection
+        return startWidth + (atStart ? .zero : width)    // move down, use right side of selection
     }
 
 	var integerValue: Int? {
@@ -2327,9 +2334,9 @@ extension String {
 			return nil
 		} else {
             let pairs = components(separatedBy: kCommaSeparator)
-			var green = 0.0
-			var  blue = 0.0
-			var   red = 0.0
+			var green = Double.zero
+			var  blue = Double.zero
+			var   red = Double.zero
 
 			if  pairs.count > 2 {
 				for pair in pairs {
@@ -2944,7 +2951,7 @@ extension ZView {
 		}
 	}
 
-    func drawBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
+    func drawBorder(thickness: CGFloat, inset: CGFloat = .zero, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius
         zlayer.borderWidth  = thickness
         zlayer.borderColor  = color
@@ -3052,7 +3059,7 @@ extension ZPseudoView {
 					if  iCount     > 0 {
 						let isEven = iCount % 2 == 0
 						let fullCircle = k2PI
-						let startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : kPI)
+						let startAngle = fullCircle / 4.0 * ((clockwise ? .zero : 1.0) * (oneSet ? (isEven ? .zero : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? .zero : kPI)
 						let angles = iCount.anglesArray(startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
 
 						for (index, angle) in angles.enumerated() {

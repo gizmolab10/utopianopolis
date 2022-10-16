@@ -88,7 +88,7 @@ class ZOperations: NSObject {
 	var         currentOp = ZOperationID.oStartingUp
 	var   onCloudResponse :      AnyClosure?
     var       lastOpStart :            Date?
-	var        opDuration :    TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? 0.0) }
+	var        opDuration :    TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? .zero) }
 	var      shouldCancel :            Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
 	var     debugTimeText :          String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
 	var     operationText :          String  { return currentOp.description }
@@ -236,7 +236,7 @@ class ZOperations: NSObject {
 
 
 	private func getAccumulatedProgressTime(untilExcluding op: ZOperationID) -> Double {
-		var sum = 0.0
+		var sum = Double.zero
 
 		if  gAssureProgressTimesAreLoaded() {
 			let opValue = op.rawValue

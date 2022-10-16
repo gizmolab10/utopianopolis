@@ -18,9 +18,9 @@ import UIKit
 let gStartup = ZStartup()
 
 class ZStartup: NSObject {
-	var       prior = 0.0
+	var       prior = Double.zero
 	let   startedAt = Date()
-	var elapsedTime = 0.0
+	var elapsedTime = Double.zero
 	
 	var oneTimerIntervalHasElapsed : Bool {
 		let lapse       = Date().timeIntervalSince(startedAt)

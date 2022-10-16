@@ -13,7 +13,7 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vKickoffTools, .vData, .vPreferences, .vFavorites]
+private let  detailIds : [ZDetailsViewID] = [.vKickoffTools, .vData, .vPreferences, .vFavorites]
 
 struct ZDetailsViewID: OptionSet {
 	let rawValue : Int

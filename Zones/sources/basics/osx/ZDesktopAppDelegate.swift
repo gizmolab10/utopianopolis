@@ -39,7 +39,6 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { note in
 				print("remove local data and fetch user data")
 			}
-
         }
     }
 

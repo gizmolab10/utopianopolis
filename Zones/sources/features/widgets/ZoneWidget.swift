@@ -484,7 +484,7 @@ class ZoneWidget: ZPseudoView {
 						}
 					}
 
-					if  gDisplayIdeasWithCircles,
+					if  gDrawCirclesAroundIdeas,
 						controller?.inCircularMode ?? false,
 						let color = zone.lighterColor {
 						drawInterior(color)

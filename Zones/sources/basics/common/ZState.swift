@@ -59,7 +59,7 @@ var           gCanDrawWidgets :                    Bool { return gIsMapOrEditIde
 var      gIsMapOrEditIdeaMode :                    Bool { return gIsMapMode || gIsEditIdeaMode }
 var          gCanSaveWorkMode :                    Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode :                    Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
-var  gDisplayIdeasWithCircles :                    Bool { return gCirclesDisplayMode.contains(.cIdeas) }
+var   gDrawCirclesAroundIdeas :                    Bool { return gCirclesDisplayMode.contains(.cIdeas) }
 var      gDetailsViewIsHidden :                    Bool { return gMainController?.detailView?.isHidden ?? true }
 var           gMapIsResponder :                    Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
 var             gUserIsExempt :                    Bool { return gIgnoreExemption ? false  : gUser?.isExempt ?? false } // discard this?
@@ -142,7 +142,7 @@ var gTotalTime : Double {
 		return gProgressTimes.values.reduce(0, +)
 	}
 
-	return 0.0
+	return .zero
 }
 
 func gSetProgressTime(opInt: Int, value: Double?) {
@@ -948,11 +948,11 @@ func recordEmailSent(for type: ZSentEmailType) {
 // MARK: - internals
 // MARK: -
 
-func getPreferencesFloat(for key: String, defaultFloat: CGFloat = 0.0) -> CGFloat {
+func getPreferencesFloat(for key: String, defaultFloat: CGFloat = .zero) -> CGFloat {
 	return getPreferenceString(for: key) { return "\(defaultFloat)" }?.floatValue ?? defaultFloat
 }
 
-func setPreferencesFloat(_ iFloat: CGFloat = 0.0, for key: String) {
+func setPreferencesFloat(_ iFloat: CGFloat = .zero, for key: String) {
 	setPreferencesString("\(iFloat)", for: key)
 }
 

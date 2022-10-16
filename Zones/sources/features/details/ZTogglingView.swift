@@ -166,7 +166,7 @@ class ZTogglingView: ZView {
 
 	func updateSubscribeSwitch() {
 		switchingButton? .isHidden = !gUseSubscriptions
-		switchConstraint?.constant = hideHideable ? 0.0 : 60.0
+		switchConstraint?.constant = hideHideable ? .zero : 60.0
 	}
 
 	func updateFavoritesButtons() {

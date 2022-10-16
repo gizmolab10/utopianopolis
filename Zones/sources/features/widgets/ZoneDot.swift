@@ -23,7 +23,7 @@ enum ZDecorationType: Int {
 struct  ZDotParameters {
 
 	var childCount     = 0
-	var verticleOffset = 0.0
+	var verticleOffset = Double.zero
 	var sideDotRadius  = 4.0
 	var typeOfTrait    = kEmpty
 	var isDrop         = false
@@ -298,9 +298,9 @@ class ZoneDot: ZPseudoView {
 		if  rect.hasSize, dotIsVisible,
 			let p = widgetZone?.plainDotParameters(isFilled, isReveal, isDragDrop) {
 
-//			if  isCircularMode, gdebugdraw {
-//				absoluteHitRect.drawColoredRect(.blue, radius: 2.0, thickness: 1.0)
-//			}
+			if  isCircularMode, gDebugDraw {
+				absoluteHitRect.drawColoredRect(.blue, radius: 2.0, thickness: 1.0)
+			}
 			
 			drawDot      (rect, p)
 			drawAroundDot(rect, p)

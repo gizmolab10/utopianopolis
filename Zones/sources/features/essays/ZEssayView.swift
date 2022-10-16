@@ -1268,7 +1268,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	func rectForUnclippedRangedAttachment(_ attach: ZRangedAttachment, orientedFrom direction: ZDirection) -> CGRect? {      // return nil if image is clipped
 		if  let image       = attach.attachment.cellImage,
 			var rect        = rectForRangedAttachment(attach) {
-			if  rect.size.absoluteDifferenceInDiagonals(relativeTo: image.size) > 2.0 {
+			if  rect.size.hypotenuse(relativeTo: image.size) > 2.0 {
 				let  yDelta = image.size.height - rect.height
 				rect  .size = image.size
 				switch direction {

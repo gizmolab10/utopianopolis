@@ -456,8 +456,8 @@ extension ZMapController {
 				let   widgetA = alternate?.hereWidget?.widgetNearestTo(locationA),
 				let  dragDotM = widgetM.parentLine?.dragDot,
 				let  dragDotA = widgetA.parentLine?.dragDot {
-				let   vectorM = dragDotM.absoluteFrame.center - locationM
-				let   vectorA = dragDotA.absoluteFrame.center - locationM
+				let   vectorM = dragDotM.absoluteCenter - locationM
+				let   vectorA = dragDotA.absoluteCenter - locationM
 				let   lengthM = vectorM.length
 				let   lengthA = vectorA.length
 
