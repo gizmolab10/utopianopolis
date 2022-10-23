@@ -240,7 +240,7 @@ class ZSmallMapRecords: ZRecords {
 		} else if let here = gHereMaybe {
 			targets.append(here)
 
-			if  let grab = gSelecting.firstGrab,
+			if  let grab = gSelecting.firstGrab(),
 				!targets.contains(grab) {
 				targets.append(grab)
 			}

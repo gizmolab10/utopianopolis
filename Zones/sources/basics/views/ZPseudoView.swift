@@ -56,13 +56,7 @@ class ZPseudoView: NSObject {
 				absoluteView?.removeToolTip(t)
 			}
 
-			if  toolTip   != nil {
-				toolTipTag = absoluteView?.addToolTip(absoluteFrame, owner: self, userData: nil)
-			} else {
-				toolTipTag = nil
-			}
-
-			absoluteView?.addTracking(for: absoluteFrame)
+			toolTipTag = (toolTip == nil) ? nil : absoluteView?.addToolTip(absoluteFrame, owner: self, userData: nil)
 		}
 	}
 

@@ -131,14 +131,18 @@ extension NSObject {
 	@objc func copyWithZone(_ with: NSZone) -> NSObject { return self }
 	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
 
-	var selfInQuotes : String { return "\"\(self)\"" }
+	var        selfInQuotes : String { return "\"\(self)\"" }
+	var          debugTitle : String { return zClassInitial + kSpace + debugName }
+	@objc var     debugName : String { return description }
+	@objc var zClassInitial : String { return zClassName[0] }
 
-	var zClassName: String {
-		var parts = className.components(separatedBy: kDotSeparator)
-		let  name = parts[1].substring(fromInclusive: 1).unCamelcased.uppercased()
-		parts     = name.components(separatedBy: kSpace).dropLast()
+	@objc var zClassName: String {
+		let parts = className.components(separatedBy: kDotSeparator)
+		let index = parts.count == 1 ? 0 : 1
+		let  name = parts[index].unCamelcased.uppercased()
+		let names = name.components(separatedBy: kSpace).dropFirst()
 
-		return parts.joined(separator: kSpace)
+		return names.joined(separator: kSpace)
 	}
 
 	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {

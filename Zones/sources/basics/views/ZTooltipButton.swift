@@ -18,10 +18,10 @@ class ZTooltipButton: ZButton, ZTooltips {
 
 	var originalBackgroundColor: ZColor?
 
-	override var isEnabled: Bool {
-		get { return super.isEnabled }
-		set { super.isEnabled = newValue; updateTooltips() }
-	}
+//	override var isEnabled: Bool {
+//		get { return super.isEnabled }
+//		set { super.isEnabled = newValue; updateTooltips() }
+//	}
 
 	override var size: CGSize {
 		var result = frame.size

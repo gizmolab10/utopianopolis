@@ -23,27 +23,18 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	static let tExemplar = ZWidgetType(rawValue: 1 << 0)
 	static let tFavorite = ZWidgetType(rawValue: 1 << 1)
 	static let   tBigMap = ZWidgetType(rawValue: 1 << 2)
-//	static let   tRecent = ZWidgetType(rawValue: 1 << 3)
-	static let    tTrash = ZWidgetType(rawValue: 1 << 4)
-	static let    tEssay = ZWidgetType(rawValue: 1 << 5)
-	static let     tNote = ZWidgetType(rawValue: 1 << 6)
-	static let     tIdea = ZWidgetType(rawValue: 1 << 7)
-	static let     tLost = ZWidgetType(rawValue: 1 << 8)
-	static let     tNone = ZWidgetType(rawValue: 1 << 9)
+	static let     tNote = ZWidgetType(rawValue: 1 << 3)
+	static let     tIdea = ZWidgetType(rawValue: 1 << 4)
+	static let     tNone = ZWidgetType(rawValue: 1 << 5)
 
 	var isBigMap:   Bool { return contains(.tBigMap) }
-//	var isRecent:   Bool { return contains(.tRecent) }
 	var isFavorite: Bool { return contains(.tFavorite) }
 	var isExemplar: Bool { return contains(.tExemplar) }
 
 	var description: String {
 		return [(.tNone,        "    none"),
-				(.tLost,        "    lost"),
 				(.tIdea,        "    idea"),
 				(.tNote,        "    note"),
-				(.tEssay,       "   essay"),
-				(.tTrash,       "   trash"),
-//				(.tRecent,      "  recent"),
 				(.tBigMap,      " big map"),
 				(.tFavorite,    "favorite"),
 				(.tExemplar,    "exemplar")]
@@ -77,7 +68,7 @@ class ZWidgetObject: NSObject {
 	var note: ZNote?
 	var zone: Zone?
 
-	var type: ZWidgetType? {
+	var widgetType: ZWidgetType? {
 		return note == nil ? (zone == nil ? nil : .tIdea) : (zone == nil ? .tNote : [.tNote, .tIdea])
 	}
 }
@@ -96,7 +87,7 @@ class ZoneWidget: ZPseudoView {
 	var      sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var         parentWidget :      ZoneWidget?
-	var         mapReduction :         CGFloat  { return type.isBigMap ? 1.0 : kSmallMapReduction }
+	var         mapReduction :         CGFloat  { return widgetType.isBigMap ? 1.0 : kSmallMapReduction }
 	override var description :          String  { return widgetZone?       .description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?       .hideDragDot ?? false }
@@ -110,14 +101,14 @@ class ZoneWidget: ZPseudoView {
 		}
 	}
 
-	var type : ZWidgetType {
+	var widgetType : ZWidgetType {
 		var result    = widgetZone?.widgetType
 
 		if  result   == nil {
 			result    = .tBigMap
 		}
 
-		if  let oType = widgetObject.type {
+		if  let oType = widgetObject.widgetType {
 			result?.insert(oType)
 		}
 
@@ -125,9 +116,9 @@ class ZoneWidget: ZPseudoView {
 	}
 
 	override var controller : ZMapController? {
-		if type.isBigMap   { return              gMapController }
-		if type.isFavorite { return        gFavoritesController }
-		if type.isExemplar { return gHelpDotsExemplarController }
+		if widgetType.isBigMap   { return              gMapController }
+		if widgetType.isFavorite { return        gFavoritesController }
+		if widgetType.isExemplar { return gHelpDotsExemplarController }
 
 		return nil
 	}
@@ -452,7 +443,7 @@ class ZoneWidget: ZPseudoView {
 	}
 
     override func draw(_ phase: ZDrawPhase) {
-		if (gCanDrawWidgets || !type.isBigMap),
+		if (gCanDrawWidgets || !widgetType.isBigMap),
 			let zone = widgetZone {
 
 			switch phase {

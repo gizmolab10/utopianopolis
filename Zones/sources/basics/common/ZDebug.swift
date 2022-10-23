@@ -113,12 +113,13 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let  dCross = ZPrintMode(rawValue: 1 << 17) // core data cross store relationships
 	static let  dNotes = ZPrintMode(rawValue: 1 << 18) // essays
 	static let  dExist = ZPrintMode(rawValue: 1 << 19) // core data existence check
-	static let dImages = ZPrintMode(rawValue: 1 << 20) // "
-	static let dAccess = ZPrintMode(rawValue: 1 << 21) // write lock
-	static let dRemote = ZPrintMode(rawValue: 1 << 22) // arrival from cloud
-	static let dWidget = ZPrintMode(rawValue: 1 << 23) // lookup, hit tests
-	static let dTimers = ZPrintMode(rawValue: 1 << 24) // assure completion
-	static let dLevels = ZPrintMode(rawValue: 1 << 25) // fetching depth
+	static let  dTrack = ZPrintMode(rawValue: 1 << 20) // tool tip tracking
+	static let dImages = ZPrintMode(rawValue: 1 << 21) // "
+	static let dAccess = ZPrintMode(rawValue: 1 << 22) // write lock
+	static let dRemote = ZPrintMode(rawValue: 1 << 23) // arrival from cloud
+	static let dWidget = ZPrintMode(rawValue: 1 << 24) // lookup, hit tests
+	static let dTimers = ZPrintMode(rawValue: 1 << 25) // assure completion
+	static let dLevels = ZPrintMode(rawValue: 1 << 26) // fetching depth
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 
@@ -141,6 +142,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dCross,  "  cross"),
 				(.dClick,  "  click"),
 				(.dExist,  "  exist"),
+				(.dTrack,  "  track"),
 				(.dFetch,  "fetched"),
 				(.dAccess, " access"),
 				(.dWidget, " widget"),

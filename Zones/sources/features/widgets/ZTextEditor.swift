@@ -110,7 +110,7 @@ class ZTextPack: NSObject {
 		    let         w = widget {
 			let  isLinear = w.isLinearMode
 			let threshold = isLinear ? 18 : 20
-			let      type = w.type
+			let      type = w.widgetType
 			if  threshold < text.length,
 				!type.contains(.tExemplar),
 				!type.contains(.tBigMap) || !isLinear {                       // is in favorites or is circular

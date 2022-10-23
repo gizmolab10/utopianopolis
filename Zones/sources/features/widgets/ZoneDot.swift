@@ -50,13 +50,15 @@ class ZoneDot: ZPseudoView {
     // MARK: - properties
     // MARK: -
 
-	var                line : ZoneLine?
-	weak var         widget : ZoneWidget?
-	override var controller : ZMapController? { return widget?.controller }
-	var     dragDotIsHidden : Bool            { return widgetZone?.dragDotIsHidden ?? true }
-    var          widgetZone : Zone?           { return widget?.widgetZone }
-	var               ratio : CGFloat         { return widget?.mapReduction ?? 1.0 }
-	var            isReveal = true
+	var                   line : ZoneLine?
+	weak var            widget : ZoneWidget?
+	var                  ratio : CGFloat         { return widget?.mapReduction ?? 1.0 }
+	var             widgetZone : Zone?           { return widget?.widgetZone }
+	override var    controller : ZMapController? { return widget?.controller }
+	override var zClassInitial : String          { return isReveal ? "R" : "D" }
+	override var     debugName : String          { return widgetZone?.zoneName ?? kUnknown }
+	var        dragDotIsHidden : Bool            { return widgetZone?.dragDotIsHidden ?? true }
+	var               isReveal = true
 
 	var dotIsVisible: Bool {
 		guard let zone = widgetZone else {

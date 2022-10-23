@@ -118,7 +118,7 @@ extension ZoneWidget {
 			if  absolute {
 				c.relayoutAbsoluteFrame(relativeTo: controller)
 			} else if let tFrame = pseudoTextWidget?.frame {
-				let    reduction = type.isBigMap ? 0.8 : kSmallMapReduction / 1.5
+				let    reduction = widgetType.isBigMap ? 0.8 : kSmallMapReduction / 1.5
 				let            x = tFrame.maxX + dotPlusGap * reduction
 				let       origin = CGPoint(x: x, y: .zero)
 				let       cFrame = CGRect(origin: origin, size: c.drawnSize)
@@ -320,7 +320,7 @@ extension ZoneDot {
 	}
 
 	@discardableResult func linearUpdateDotDrawnSize() -> CGSize {
-		let inBig = widget?.type.isBigMap ?? true
+		let inBig = widget?.widgetType.isBigMap ?? true
 		drawnSize = gDotSize(forReveal: isReveal, forBigMap: inBig)
 
 		return drawnSize
@@ -330,8 +330,6 @@ extension ZoneDot {
 		let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, .zero)
 		absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
 		absoluteHitRect = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
-
-		updateTooltips()
 	}
 
 	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {

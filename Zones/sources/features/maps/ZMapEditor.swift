@@ -425,7 +425,7 @@ class ZMapEditor: ZBaseEditor {
 			}
 
 			gSelecting.grab(last)
-			gSelecting.firstGrab?.asssureIsVisible()
+			gSelecting.firstGrab()?.asssureIsVisible()
 			gRelayoutMaps(for: here)
 		}
 	}
@@ -695,7 +695,7 @@ class ZMapEditor: ZBaseEditor {
 			let           SPECIAL  = flags.exactlySpecial
 			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple, OPTION drives it to single
 
-			if  let grab = gSelecting.firstGrab {
+			if  let grab = gSelecting.firstGrab() {
 				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
 					gCurrentEssay  = grab.note
 				}

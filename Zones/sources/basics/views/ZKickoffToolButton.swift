@@ -14,6 +14,8 @@ class ZKickoffToolButton: ZTooltipButton {
 	var downTitle = kEmpty
 	var   upTitle = kEmpty
 
+	override var debugName: String { return title }
+
 	override func awakeFromNib() {
 		downTitle = alternateTitle.isEmpty ? title : alternateTitle
 		upTitle   = title

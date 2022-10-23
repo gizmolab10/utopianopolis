@@ -10,8 +10,9 @@ import Foundation
 
 class ZBreadcrumbButton: ZTooltipButton {
 
-	var         zone : Zone = gHere
-	var currentEvent : ZEvent?
+	var               zone = gHere
+	var       currentEvent : ZEvent?
+	override var debugName : String { return zone.debugName }
 
 	override func mouseDown(with event: ZEvent) {
 		currentEvent = event

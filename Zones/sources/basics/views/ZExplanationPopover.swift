@@ -40,7 +40,7 @@ class ZExplanationPopover : ZView {
 	}
 
 	func relocate() {
-		if  let v = gSelecting.firstGrab?.widget?.textWidget, !isHidden {
+		if  let v = gSelecting.firstGrab()?.widget?.textWidget, !isHidden {
 			snp.removeConstraints()
 			snp.makeConstraints { make in
 				make .bottom.equalTo(v.snp.bottom)

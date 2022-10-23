@@ -452,8 +452,6 @@ extension ZoneDot {
 			let   dotCenter = pCenter + dotOffset
 			absoluteFrame   = CGRect(center: dotCenter, size: drawnSize)
 			absoluteHitRect = absoluteFrame
-
-			updateTooltips()
 		}
 	}
 
@@ -524,8 +522,6 @@ extension ZoneDot {
 
 			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(expansion)
 			absoluteHitRect = absoluteFrame
-
-			updateTooltips()
 		}
 	}
 

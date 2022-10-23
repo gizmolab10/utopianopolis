@@ -23,9 +23,10 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
-	override var preferredFont : ZFont   { return ((widget?.type.isBigMap ?? true) && (widget?.isLinearMode ?? false)) ? gBigFont : gSmallFont }
-    var             widgetZone : Zone?   { return  widget?.widgetZone }
-	var             controller : ZMapController? { return widget?.controller }
+	override var     debugName : String          { return   widgetZone?.zoneName ?? kUnknown }
+	override var preferredFont : ZFont           { return ((widget?.widgetType.isBigMap ?? true) && (widget?.isLinearMode ?? false)) ? gBigFont : gSmallFont }
+    var             widgetZone : Zone?           { return   widget?.widgetZone }
+	var             controller : ZMapController? { return   widget?.controller }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
 	var              drawnSize = CGSize.zero

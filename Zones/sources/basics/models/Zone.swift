@@ -83,6 +83,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                         dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
 	var                      clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
 	override var               emptyName :             String  { return kEmptyIdea }
+	override var               debugName :             String  { return zoneName ?? kUnknown }
 	override var             description :             String  { return decoratedName }
 	override var           unwrappedName :             String  { return zoneName ?? (isFavoritesRoot ? kFavoritesRootName : emptyName) }
 	override var           decoratedName :             String  { return decoration + unwrappedName }
@@ -98,7 +99,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                  isCurrentRecent :               Bool  { return self == gFavorites.currentRecent }
 	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
-	var                  dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.type.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
+	var                  dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var               canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
 	var                 hasBadRecordName :               Bool  { return recordName == nil }
 	var                    showRevealDot :               Bool  { return count > 0 || isTraveller }
@@ -159,7 +160,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func updateRootFromParent()                                       { setRoot(getRoot) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
 	func maybeTraitFor(_ iType: ZTraitType)              ->   ZTrait? { return traits[iType] }
-
 
 	override var passesFilter: Bool {
 		return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)

@@ -77,10 +77,9 @@ class ZSelecting: NSObject {
     var         lastGrab : Zone      { return  lastGrab() }
     var   lastSortedGrab : Zone      { return  lastGrab(using: sortedGrabs) }
     var  firstSortedGrab : Zone?     { return firstGrab(using: sortedGrabs) }
-	var        firstGrab : Zone?     { return firstGrab() }
 	var       hasNewGrab : Zone?
-    var       cousinList : ZoneArray { get { maybeNewGrabUpdate(); return _cousinList }                               set { _cousinList     = newValue }}
-	var      sortedGrabs : ZoneArray { get { updateSortedGrabs();  return _sortedGrabs }                              set { _sortedGrabs    = newValue }}
+    var       cousinList : ZoneArray { get { updateCousinListForNewGrab(); return _cousinList }                       set { _cousinList     = newValue }}
+	var      sortedGrabs : ZoneArray { get { updateSortedGrabs();          return _sortedGrabs }                      set { _sortedGrabs    = newValue }}
 	var     currentGrabs : ZoneArray { get { return gIsEssayMode ? gEssayView?.grabbedZones ?? [] : currentMapGrabs } set { currentMapGrabs = newValue }}
     var  currentMapGrabs = ZoneArray ()
     var     _sortedGrabs = ZoneArray ()
@@ -90,7 +89,7 @@ class ZSelecting: NSObject {
 	var traversalStart : Zone? {
 		var start: Zone?
 
-		if  let zone = firstGrab {
+		if  let zone = firstGrab() {
 			start = zone.isInFavorites ? gFavoritesRoot : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
 		}
 
@@ -183,7 +182,7 @@ class ZSelecting: NSObject {
     }
 
     var grabbedColor: ZColor? {
-        get { return firstGrab?.color }
+        get { return firstGrab()?.color }
         set {
             for grab in currentMapGrabs {
 				let  colorized = grab.colorized
@@ -298,9 +297,10 @@ class ZSelecting: NSObject {
     }
 
     func ungrab(_ iZone: Zone?) {
-        if let zone = iZone, let index = currentMapGrabs.firstIndex(of: zone) {
+        if  let  zone = iZone,
+			let index = currentMapGrabs.firstIndex(of: zone) {
 			currentMapGrabs.remove(at: index)
-			zone.updateToolTips()
+//			zone.updateToolTips()
         }
     }
 
@@ -321,7 +321,7 @@ class ZSelecting: NSObject {
 		for zone in more {
 			if !currentMapGrabs.contains(zone) {
 				currentMapGrabs.append(zone)
-				zone.updateToolTips()
+//				zone.updateToolTips()
 			}
 		}
 	}
@@ -336,7 +336,7 @@ class ZSelecting: NSObject {
         if  let zone = iZone,
             !currentMapGrabs.contains(zone) {
 			currentMapGrabs.append(zone)
-			zone.updateToolTips()
+//			zone.updateToolTips()
 			currentMapGrabs.respectOrderAndLevel()
         }
     }
@@ -354,11 +354,11 @@ class ZSelecting: NSObject {
     }
     
     func firstGrab(using: ZoneArray? = nil) -> Zone? {
-		let   grabs = (using == nil || using!.count == 0) ? currentGrabs : using!
-		var grabbed = grabs.first
+		let grabs    = (using == nil || using!.count == 0) ? currentGrabs : using!
+		var grabbed  = grabs.first
 
         if  grabbed == nil || grabbed!.recordName == nil {
-            grabbed = currentMoveableMaybe ?? gHereMaybe
+            grabbed  = currentMoveableMaybe ?? gHereMaybe
         }
         
         return grabbed
@@ -418,8 +418,8 @@ class ZSelecting: NSObject {
     // MARK: -
 
     
-    func maybeNewGrabUpdate() {
-        if  let   grab = hasNewGrab ?? firstGrab {
+    func updateCousinListForNewGrab() {
+        if  let   grab = hasNewGrab ?? firstGrab() {
             hasNewGrab = nil
 
             updateCousinList(for: grab)

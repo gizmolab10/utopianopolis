@@ -170,7 +170,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
     func createWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize { return }
 
-		printDebug(.dSpeed, "\(zClassName) layoutWidgets")
+		printDebug(.dSpeed, "\(zClassName) createWidgets")
 
 		var specificIndex:    Int?
 		let specificView           = mapPseudoView
@@ -181,7 +181,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gTextCapturing             = false
         if  let               zone = iZone as? Zone,
             let             widget = zone.widget,
-			widget.type           == zone.widgetType {
+			widget.widgetType           == zone.widgetType {
             specificWidget         = widget
             specificIndex          = zone.siblingIndex
             recursing              = [.sData, .spRelayout].contains(kind)
@@ -229,21 +229,24 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		return nil
 	}
 
+	func clearAllTooltips() {
+		gWidgets.removeTooltipsFromAllWidgets(for: self)
+		gRemoveAllTracking()
+	}
+
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		gWidgets.removeTooltipsFromAllWidgets(for: self)
-		gRemoveAllTracking()
+		clearAllTooltips()
 
 		if  let   widget = hereWidget,
-			var   origin = mapOrigin {
+			let  mOrigin = mapOrigin {
 			let     size = widget.drawnSize.dividedInHalf
-			if  isBigMap {
-				origin   = origin - size
-			}
+			let   origin = isBigMap ? mOrigin - size : mOrigin
 			widget.frame = CGRect(origin: origin, size: size)
 
 			widget.grandRelayout()
+			gWidgets.updateToolTips()
 			detectHover()
 			setNeedsDisplay()
 		}

@@ -147,16 +147,21 @@ extension Zone {
 	}
 
 	func dotTooltipText(_ isReveal: Bool) -> String? {
-		if  let   name = zoneName {
-			let target = (count == 0 && isTraveller && isReveal && !isBookmark ) ? kEmpty : "\"\(name)\""
-			let  plain =  count == 0 ? kEmpty : gConcealmentString(for: isExpanded) + " list for "
-			let  extra = !isReveal   ? kEmpty : !isBookmark ? kEmpty : "target of "
-			let  title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
-			let reveal = isBookmark  ? "change focus to " : plain
-			let   drag = isGrabbed   ? "drag " : "select or drag "
-			let action = isReveal    ? reveal : drag
-			let suffix = isReveal    ? revealTipSuffix : kEmpty
-			let   text = title + action + extra + target + suffix
+		if  let    name = zoneName {
+			let  noName = count == 0 && isTraveller && isReveal && !isBookmark
+			let   plain = count == 0  ? kEmpty   : gConcealmentString(for: isExpanded) + " list for "
+			let  target = noName      ? kEmpty   : "\"\(name)\""
+			let   extra = !isReveal   ? kEmpty   : !isBookmark ? kEmpty : "target of "
+			let    drag = (isGrabbed  ? kEmpty   : "select or ") + "drag "
+			let  reveal = !isBookmark ? plain    : "change focus to "
+			let  action =  isReveal   ? reveal   : drag
+			let  suffix =  isReveal   ? revealTipSuffix : kEmpty
+			let   title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
+			let    text = title + action + extra + target + suffix
+
+			if  !isReveal, zoneName == "vital" {
+				print(drag)
+			}
 
 			return text
 		}
@@ -183,8 +188,8 @@ extension ZoneWidget {
 
 extension ZoneDot {
 
-	var toolTipIsHidden: Bool { return !gShowToolTips || !dotIsVisible }
-	func updateTooltips() { toolTip = toolTipIsHidden ? nil : widgetZone?.dotTooltipText(isReveal) }
+	var toolTipIsVisible: Bool { return gShowToolTips && dotIsVisible }
+	func updateTooltips() { toolTip = nil; if toolTipIsVisible { toolTip = widgetZone?.dotTooltipText(isReveal) } }
 
 }
 
@@ -211,7 +216,7 @@ extension ZoneTextWidget {
 			toolTip  = "Idea text\n\nedit \"\(name)\""
 		}
 
-		updateTracking()
+//		updateTracking() // needed because text field is a subview of the map, not the text widget
 	}
 
 }
@@ -236,6 +241,14 @@ extension WidgetHashDictionary {
 }
 
 extension ZWidgets {
+
+	func updateToolTips() {
+		if let widgets = allWidgets(for: .tIdea) {
+			for widget in widgets {
+				widget.updateToolTips()
+			}
+		}
+	}
 
 	func removeTooltipsFromAllWidgets(for controller: ZMapController) {
 		if  let type = controller.hereZone?.widgetType {

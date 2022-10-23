@@ -136,8 +136,13 @@ var gTrackedAreas = [ZTrackedArea]()
 
 func gRemoveAllTracking() {
 	while gTrackedAreas.count > 0 {
-		let  tracked = gTrackedAreas.removeFirst()
-		if  let area = tracked.area {
+		let   tracked = gTrackedAreas.removeFirst()
+		if  let  area = tracked.area,
+			let owner = area.owner as? NSObject {
+			if  owner.debugName == "vital", owner.zClassInitial == "D" {
+				printDebug(.dTrack, "remove \(owner.debugTitle)")
+			}
+
 			tracked.view?.removeTrackingArea(area)
 		}
 	}
@@ -145,42 +150,58 @@ func gRemoveAllTracking() {
 
 extension ZView {
 
-	func addTracking(for rect: CGRect, clearFirst: Bool = false) {
-		if  clearFirst {
-			gRemoveAllTracking()
-		}
-
-		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeAlways, .inVisibleRect, .cursorUpdate]
-		let    area = NSTrackingArea(rect:rect, options: options, owner: self, userInfo: nil)
+	func addTracking(for owner: NSObject, in rect: CGRect) {
+		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow, .cursorUpdate]
+		let    area = NSTrackingArea(rect:rect, options: options, owner: owner, userInfo: nil)
 		let tracked = ZTrackedArea(self, area)
 
+//		addTrackingArea(area)
 		gTrackedAreas.append(tracked)
-		addTrackingArea(area)
+		if  owner.debugName == "vital", owner.zClassInitial == "D" {
+			printDebug(.dTrack, "append \(owner.debugTitle)")
+		}
+	}
+
+	func removeAllTracking() {
+		var indices = [Int]()
+
+		for area in trackingAreas {
+			removeTrackingArea(area)
+		}
+
+		for (index, area) in gTrackedAreas.enumerated() {
+			if  let owner = area.area?.owner,
+				self === owner {
+				indices.append(index)
+			}
+		}
+
+		for index in indices.reversed() {
+			gTrackedAreas.remove(at: index)
+		}
 	}
 
 }
 
 extension ZTooltipButton {
 
-	func updateTracking() { addTracking(for: frame) }
+	func updateTracking() { addTracking(for: self, in: frame) }
 
 }
 
 extension ZoneTextWidget {
 
-	func updateTracking() { addTracking(for: frame) }
+	func updateTracking() { addTracking(for: self, in: frame) }
 
 }
 
 extension ZMapView {
 
-	func updateTracking() {
-		addTracking(for: frame, clearFirst: true)
-	}
+	func updateTracking() { addTracking(for: self, in: frame) }
 
 	override func updateTrackingAreas() {
 		super.updateTrackingAreas()
-		addTracking(for: bounds)
+		addTracking(for: self, in: bounds)
 	}
 
 	override func mouseExited(with event: ZEvent) {

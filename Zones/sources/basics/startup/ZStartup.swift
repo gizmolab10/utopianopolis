@@ -42,6 +42,8 @@ class ZStartup: NSObject {
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gCDMigrationState      = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
 		gWorkMode              = .wStartupMode
+		gPrintModes            = [.dTrack]
+		gMainWindow?.acceptsMouseMovedEvents = true
 
 		if  gCDMigrationState != .normal {
 			gHereRecordNames = kDefaultRecordNames
