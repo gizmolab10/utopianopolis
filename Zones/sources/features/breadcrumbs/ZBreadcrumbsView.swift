@@ -76,7 +76,7 @@ class ZBreadcrumbsView : ZButtonsView {
 			attributed.addAttributes(attributes, range: range)
 			button.setButtonType(.momentaryPushIn)
 			button.updateTracking()
-			button.updateTooltips()
+			button.updateToolTips()
 			buttons.append(button)
 
 			button.attributedTitle = attributed

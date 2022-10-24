@@ -20,7 +20,7 @@ class ZTooltipButton: ZButton, ZTooltips {
 
 //	override var isEnabled: Bool {
 //		get { return super.isEnabled }
-//		set { super.isEnabled = newValue; updateTooltips() }
+//		set { super.isEnabled = newValue; updateToolTips() }
 //	}
 
 	override var size: CGSize {

@@ -578,7 +578,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				result = b.colorized
 			} else {
 				traverseAncestors { iChild -> (ZTraverseStatus) in
-					if iChild.color != originalColor {
+					if  iChild.color != originalColor {
 						return .eStop
 					}
 

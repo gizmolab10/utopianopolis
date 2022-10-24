@@ -46,7 +46,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 
 	override func updateButtons() {
 		updateButtonTitlesAndColors()
-		updateTooltips()
+		updateToolTips()
 	}
 
 	func updateButtonTitlesAndColors() {
@@ -78,7 +78,7 @@ class ZMapControlsView : ZButtonsView, ZTooltips {
 	func controlsUpdate() {
 		updateButtonTitlesAndColors()
 		setupAndRedraw()
-		updateTooltips()
+		updateToolTips()
 	}
 
 	override func draw(_ iDirtyRect: NSRect) {

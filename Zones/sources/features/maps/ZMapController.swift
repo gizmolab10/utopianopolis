@@ -230,7 +230,14 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func clearAllTooltips() {
-		gWidgets.removeTooltipsFromAllWidgets(for: self)
+		view.traverseHierarchy() { subview in
+			if  let s = subview as? ZView {
+				s.toolTip = nil
+			}
+
+			return .eContinue
+		}
+
 		gRemoveAllTracking()
 	}
 

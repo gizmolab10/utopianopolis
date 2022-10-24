@@ -152,6 +152,9 @@
 		A70CAD422609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */; };
 		A70E648527B6F4FB003C457E /* ZApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E648427B6F4FB003C457E /* ZApplication.swift */; };
 		A70E648C27B73352003C457E /* ZHelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E648B27B73352003C457E /* ZHelpWindowController.swift */; };
+		A70E8202290611AC00E66963 /* ZTraverse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E8201290611AC00E66963 /* ZTraverse.swift */; };
+		A70E8203290611AC00E66963 /* ZTraverse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E8201290611AC00E66963 /* ZTraverse.swift */; };
+		A70E8204290611AC00E66963 /* ZTraverse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E8201290611AC00E66963 /* ZTraverse.swift */; };
 		A711059725BB620500D051E9 /* ZTraitArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A711059625BB620500D051E9 /* ZTraitArray.swift */; };
 		A711059825BB620500D051E9 /* ZTraitArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A711059625BB620500D051E9 /* ZTraitArray.swift */; };
 		A711059925BB620500D051E9 /* ZTraitArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A711059625BB620500D051E9 /* ZTraitArray.swift */; };
@@ -545,6 +548,7 @@
 		A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpEssayIntroductionController.swift; sourceTree = "<group>"; };
 		A70E648427B6F4FB003C457E /* ZApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZApplication.swift; sourceTree = "<group>"; };
 		A70E648B27B73352003C457E /* ZHelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpWindowController.swift; sourceTree = "<group>"; };
+		A70E8201290611AC00E66963 /* ZTraverse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraverse.swift; sourceTree = "<group>"; };
 		A711059625BB620500D051E9 /* ZTraitArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraitArray.swift; sourceTree = "<group>"; };
 		A711059C25BB95E400D051E9 /* ZSmallMapRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSmallMapRecords.swift; sourceTree = "<group>"; };
 		A713DC4827B064D500058F51 /* ZEssayControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssayControlsView.swift; sourceTree = "<group>"; };
@@ -1016,6 +1020,7 @@
 				0C43EFC921010F62000976CE /* ZRecords.swift */,
 				A711059C25BB95E400D051E9 /* ZSmallMapRecords.swift */,
 				A711059625BB620500D051E9 /* ZTraitArray.swift */,
+				A70E8201290611AC00E66963 /* ZTraverse.swift */,
 				0C39B24A1F182EBB0091F4D1 /* ZWidgets.swift */,
 			);
 			path = managers;
@@ -1531,6 +1536,7 @@
 				A78460F127289E7D006A4075 /* ZoneLine.swift in Sources */,
 				0C4118DE1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				A7229FAF23B84B4300FA2841 /* ZNote.swift in Sources */,
+				A70E8202290611AC00E66963 /* ZTraverse.swift in Sources */,
 				A7B48AB123E0E80C00654DBD /* ZoneDot.swift in Sources */,
 				A7CC53AF267FD07300370BC0 /* ZSubscriptionController.swift in Sources */,
 				A7D507CC2688F2BA001CEA9F /* ZProducts.swift in Sources */,
@@ -1666,6 +1672,7 @@
 				A786C6F325DF5F9F00B23FBF /* ZDebugController.swift in Sources */,
 				A7D2D649248F119A00F652B0 /* ZHelpEssayData.swift in Sources */,
 				0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */,
+				A70E8204290611AC00E66963 /* ZTraverse.swift in Sources */,
 				A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */,
 				A741C78C27DC0A0D00149200 /* ZFocusing.swift in Sources */,
 				0C6CAE211F88308E001960F7 /* ZSearching.swift in Sources */,
@@ -1783,6 +1790,7 @@
 				0C39B28D1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				A7D2D648248F119A00F652B0 /* ZHelpEssayData.swift in Sources */,
 				A764067923F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
+				A70E8203290611AC00E66963 /* ZTraverse.swift in Sources */,
 				A7CC53B0267FD07300370BC0 /* ZSubscriptionController.swift in Sources */,
 				A7D507CD2688F2BA001CEA9F /* ZProducts.swift in Sources */,
 				A700F94F24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,

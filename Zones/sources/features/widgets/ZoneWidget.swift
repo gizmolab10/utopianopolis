@@ -74,7 +74,7 @@ class ZWidgetObject: NSObject {
 }
 
 @objc (ZoneWidget)
-class ZoneWidget: ZPseudoView {
+class ZoneWidget: ZPseudoView, ZTooltips {
 
 	var        highlightRect =     CGRect.zero
 	let         widgetObject =   ZWidgetObject()

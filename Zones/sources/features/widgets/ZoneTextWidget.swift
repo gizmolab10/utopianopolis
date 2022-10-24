@@ -74,7 +74,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
             isEditable             = widgetZone?.userCanWrite ?? false
         #endif
 
-		updateTooltips()
+		updateToolTips()
     }
 
 	override func menu(for event: ZEvent) -> ZMenu? {
@@ -86,7 +86,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
 	func updateText(isEditing: Bool = false) {
 		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
-		updateTooltips()
+		updateToolTips()
 	}
 
 	func updateChildrenViewDrawnSizesOfAllAncestors() {
@@ -107,7 +107,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
     func updateGUI() {
-		updateTooltips()
+		updateToolTips()
 		updateChildrenViewDrawnSizesOfAllAncestors()
 		controller?.layoutForCurrentScrollOffset()
     }
@@ -243,10 +243,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     override func draw(_ iDirtyRect: CGRect) {
 		updateTextColor()
         super.draw(iDirtyRect)
-
-		if  isHovering {
-			noop()
-		}
 
 		if  !isFirstResponder,
 			gIsMapOrEditIdeaMode,

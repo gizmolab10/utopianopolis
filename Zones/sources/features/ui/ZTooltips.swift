@@ -16,7 +16,7 @@ enum ZControlType {
 
 @objc protocol ZTooltips {
 
-	@objc func updateTooltips()
+	@objc func updateToolTips()
 
 }
 
@@ -109,7 +109,7 @@ extension ZBox {
 
 extension ZKickoffToolsController {
 
-	func updateTooltips() {
+	func updateToolTips() {
 		view.applyToAllSubviews { subview in
 			if  let     button = subview as? ZKickoffToolButton {
 				button.toolTip = button.tooltipString
@@ -152,7 +152,7 @@ extension Zone {
 			let   plain = count == 0  ? kEmpty   : gConcealmentString(for: isExpanded) + " list for "
 			let  target = noName      ? kEmpty   : "\"\(name)\""
 			let   extra = !isReveal   ? kEmpty   : !isBookmark ? kEmpty : "target of "
-			let    drag = (isGrabbed  ? kEmpty   : "select or ") + "drag "
+			let    drag = (isSelected ? kEmpty   : "select or ") + "drag "
 			let  reveal = !isBookmark ? plain    : "change focus to "
 			let  action =  isReveal   ? reveal   : drag
 			let  suffix =  isReveal   ? revealTipSuffix : kEmpty
@@ -160,7 +160,7 @@ extension Zone {
 			let    text = title + action + extra + target + suffix
 
 			if  !isReveal, zoneName == "vital" {
-				print(drag)
+				print(isSelected)
 			}
 
 			return text
@@ -176,11 +176,11 @@ extension Zone {
 extension ZoneWidget {
 
 	func updateToolTips() {
-		textWidget?.updateTooltips()
-		parentLine?.dragDot?.updateTooltips()
+		textWidget?.updateToolTips()
+		parentLine?.dragDot?.updateToolTips()
 
 		for child in childrenLines {
-			child.revealDot?.updateTooltips()
+			child.revealDot?.updateToolTips()
 		}
 	}
 
@@ -189,13 +189,13 @@ extension ZoneWidget {
 extension ZoneDot {
 
 	var toolTipIsVisible: Bool { return gShowToolTips && dotIsVisible }
-	func updateTooltips() { toolTip = nil; if toolTipIsVisible { toolTip = widgetZone?.dotTooltipText(isReveal) } }
+	func updateToolTips() { toolTip = nil; if toolTipIsVisible { toolTip = widgetZone?.dotTooltipText(isReveal) } }
 
 }
 
 extension ZBannerButton {
 
-	func updateTooltips() {
+	func updateToolTips() {
 		toolTip = nil
 
 		if  gShowToolTips,
@@ -208,7 +208,7 @@ extension ZBannerButton {
 
 extension ZoneTextWidget {
 
-	func updateTooltips() {
+	func updateToolTips() {
 		toolTip = nil
 
 		if  gShowToolTips,
@@ -266,7 +266,7 @@ extension ZWidgets {
 
 extension ZMapControlsView {
 
-	func updateTooltips() {
+	func updateToolTips() {
 		for button in buttons {
 			button.toolTip = nil
 
@@ -293,13 +293,13 @@ extension ZMapControlsView {
 
 extension ZTooltipButton {
 
-	func updateTooltips() {}
+	func updateToolTips() {}
 
 }
 
 extension ZBreadcrumbButton {
 
-	override func updateTooltips() {
+	override func updateToolTips() {
 		toolTip = nil
 
 		if  gShowToolTips {

@@ -48,17 +48,15 @@ class ZHovering: NSObject {
 	func setHover(on p: ZPseudoView) {
 		clear()
 
+		var isHovering  = true
 		if  let       d = p as? ZoneDot {
 			dot         = d
-//			print("dot    \(d.widgetZone!)")
 		} else if let w = p as? ZoneWidget {
 			widget      = w
-//			print("widget \(w.widgetZone!)")
 		} else {
-			return
+			isHovering  = false
 		}
-
-		p   .isHovering = true
+		p.isHovering    = isHovering // isHovering affects draw (e.g., filled or dashed outline)
 	}
 
 	func setHover(on t: ZoneTextWidget) {
