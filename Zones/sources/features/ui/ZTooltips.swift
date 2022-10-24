@@ -159,9 +159,9 @@ extension Zone {
 			let   title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
 			let    text = title + action + extra + target + suffix
 
-			if  !isReveal, zoneName == "vital" {
-				print(isSelected)
-			}
+//			if  !isReveal, zoneName == "vital" {
+//				print(isSelected)
+//			}
 
 			return text
 		}

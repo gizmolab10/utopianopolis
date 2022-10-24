@@ -155,7 +155,6 @@ extension ZView {
 		let    area = NSTrackingArea(rect:rect, options: options, owner: owner, userInfo: nil)
 		let tracked = ZTrackedArea(self, area)
 
-//		addTrackingArea(area)
 		gTrackedAreas.append(tracked)
 		if  owner.debugName == "vital", owner.zClassInitial == "D" {
 			printDebug(.dTrack, "append \(owner.debugTitle)")
