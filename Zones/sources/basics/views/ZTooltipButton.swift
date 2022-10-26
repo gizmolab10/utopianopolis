@@ -1,5 +1,5 @@
 //
-//  ZTooltipButton.swift
+//  ZToolTipButton.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 3/13/21.
@@ -14,14 +14,9 @@ import Cocoa
 import UIKit
 #endif
 
-class ZTooltipButton: ZButton, ZTooltips {
+class ZToolTipButton: ZButton, ZToolTips {
 
 	var originalBackgroundColor: ZColor?
-
-//	override var isEnabled: Bool {
-//		get { return super.isEnabled }
-//		set { super.isEnabled = newValue; updateToolTips() }
-//	}
 
 	override var size: CGSize {
 		var result = frame.size

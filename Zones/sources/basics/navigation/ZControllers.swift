@@ -35,30 +35,31 @@ enum ZControllerID: Int {
 
 enum ZSignalKind: Int {
 	case sAll
-	case sData       // relayout all ideas
-	case sSwap       // between notes and map
-    case sDatum      // redraw single idea
+	case sData            // relayout all ideas
+	case sSwap            // between notes and map
+    case sDatum           // redraw single idea
     case sError
-	case sEssay      // ???
+	case sEssay           // redraw titles in essays (indent, drag dot)
     case sFound
-	case sResize     // resize window
+	case sResize          // resize window
 	case sSearch
-	case sDetails    // recompute and display all details except small map
+	case sDetails         // recompute and display all details except small map
+	case sToolTips        // remove and reassign all tool tips
 	case sLaunchDone
     case sAppearance
 
-	// these are filtered below, in signalFor
+	// the following are sent to one (* or two) specific controller(s)
 
-	case spMain
-	case spDebug
-	case spCrumbs
-	case spMap            // only relayout main map
-	case spRelayout       // only relayout both maps
-	case spFavorites      // only relayout favorites map
-	case spDataDetails    // only update the data view in details
+	case spMap            // relayout main map
+	case spRelayout       // relayout both maps *
+	case spFavorites      // relayout favorites map
+	case spDataDetails    // update the data view in details
 	case spPreferences
 	case spSubscription
-	case spStartupStatus
+	case spStartupStatus  // startup and help *
+	case spCrumbs
+	case spDebug
+	case spMain
 }
 
 let gControllers = ZControllers()
@@ -163,7 +164,7 @@ class ZControllers: NSObject {
                         signalObject.closure(object, regarding)
                     }
                     
-					switch (regarding, cid) {  // these non-default cases send a signal only to the one corresponding controller
+					switch (regarding, cid) {  // these non-default cases send a signal only to the one (or two) corresponding controller)s)
 						case (.spMap,          .idMap):          closure()
 						case (.spMain,         .idMain):         closure()
 						case (.spDebug,        .idDebug):        closure()

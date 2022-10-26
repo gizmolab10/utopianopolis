@@ -23,7 +23,7 @@ class ZFavoritesController: ZMapController {
 	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }
 
 	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-		if  gHasFinishedStartup, gFavoritesAreVisible {
+		if  gHasFinishedStartup, gFavoritesAreVisible, (gMapController?.shouldHandle(kind) ?? false) {
 			super.createAndLayoutWidgets(for: iZone, kind)
 		}
 	}

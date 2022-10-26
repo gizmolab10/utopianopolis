@@ -12,13 +12,21 @@ typealias ZTraverseArray           = [ZTraverse]
 typealias ZTraverseToStatusClosure = (ZTraverse) -> (ZTraverseStatus)
 
 protocol ZTraverse {
-
-	var nextGeneration : ZTraverseArray { get }
-
-	func traverseHierarchy(_ closure: ZTraverseToStatusClosure) -> ZTraverseStatus
+	var  nextGeneration : ZTraverseArray { get }
+	@discardableResult func traverseHierarchy(inReverse : Bool, _ closure: ZTraverseToStatusClosure) -> ZTraverseStatus
 }
 
-func staticTraverseHierarchy(from: ZTraverse, _ block: ZTraverseToStatusClosure) -> ZTraverseStatus {
+extension ZPseudoView : ZTraverse {
+	var  nextGeneration : [ZTraverse] { return subpseudoviews }
+	@discardableResult func traverseHierarchy(inReverse : Bool = false, _ block: ZTraverseToStatusClosure) -> ZTraverseStatus { return staticTraverseHierarchy(inReverse: inReverse, from: self, block) }
+}
+
+extension ZView : ZTraverse {
+	var  nextGeneration : [ZTraverse] { return subviews }
+	@discardableResult func traverseHierarchy(inReverse : Bool = false, _ block: ZTraverseToStatusClosure) -> ZTraverseStatus { return staticTraverseHierarchy(inReverse: inReverse, from: self, block) }
+}
+
+func staticTraverseHierarchy(inReverse : Bool = false, from: ZTraverse, _ block: ZTraverseToStatusClosure) -> ZTraverseStatus {
 	var status = block(from)
 
 	if  status == .eContinue {
@@ -33,18 +41,4 @@ func staticTraverseHierarchy(from: ZTraverse, _ block: ZTraverseToStatusClosure)
 	}
 
 	return status
-}
-
-extension ZPseudoView {
-	var nextGeneration : [ZTraverse] { return subpseudoviews }
-	@discardableResult func traverseHierarchy(_ block: ZTraverseToStatusClosure) -> ZTraverseStatus { staticTraverseHierarchy(from: self, block) }
-
-}
-
-extension ZView : ZTraverse {
-
-	var nextGeneration : [ZTraverse] { return subviews }
-
-	@discardableResult func traverseHierarchy(_ block: ZTraverseToStatusClosure) -> ZTraverseStatus { staticTraverseHierarchy(from: self, block) }
-
 }

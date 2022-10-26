@@ -40,11 +40,11 @@ enum ZKickoffToolID: String {
 	case command = "command"
 	case control = "control"
 	case sibling = "sibling"
-	case tooltip = "tooltip"
+	case toolTip = "toolTip"
 	case explain = "explain"
 }
 
-class ZKickoffToolsController: ZGenericController, ZTooltips {
+class ZKickoffToolsController: ZGenericController, ZToolTips {
 
 	override var controllerID : ZControllerID { return .idStartHere }
 	var            isRelocate :   Bool { return flags.isOption  && !gIsEditing }
@@ -77,7 +77,7 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 		buttonFor(.left)?       .title =  isMixed           ? "conceal"      : "left"
 		buttonFor(.right)?      .title =  isMixed           ? "reveal"       : canTravel ? "invoke" : "right"
 		buttonFor(.focus)?      .title =  canUnfocus        ? "unfocus"      : canTravel ? "invoke" : gSelecting.movableIsHere ? "favorite" : "focus"
-		buttonFor(.tooltip)?    .title = (gShowToolTips     ? "hide"         : "show")   + " tooltips"
+		buttonFor(.toolTip)?    .title = (gShowToolTips     ? "hide"         : "show")   + " toolTips"
 		buttonFor(.explain)?    .title = (gShowExplanations ? "hide"         : "show")   + " explains"
 		boxFor   (.move)?       .title = (isRelocate        ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to farthest"  : kEmpty)
 		boxFor   (.edit)?       .title =  gIsEditing        ? "Stop Editing" : "Edit"
@@ -181,7 +181,7 @@ class ZKickoffToolsController: ZGenericController, ZTooltips {
 		switch from {
 			case .note:    return "n"
 			case .focus:   return "/"
-			case .tooltip: return "y"
+			case .toolTip: return "y"
 			case .explain: return "e"
 			case .sibling: return kTab
 			case .swapDB:  return kBackSlash

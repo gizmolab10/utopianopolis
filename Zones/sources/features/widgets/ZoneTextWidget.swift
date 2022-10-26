@@ -21,7 +21,7 @@ enum ZTextType: Int {
     case suffix
 }
 
-class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
+class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTips, ZGeneric {
 
 	override var     debugName : String          { return   widgetZone?.zoneName ?? kUnknown }
 	override var preferredFont : ZFont           { return ((widget?.widgetType.isBigMap ?? true) && (widget?.isLinearMode ?? false)) ? gBigFont : gSmallFont }
@@ -107,9 +107,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
     func updateGUI() {
-		updateToolTips()
 		updateChildrenViewDrawnSizesOfAllAncestors()
 		controller?.layoutForCurrentScrollOffset()
+		updateToolTips()
     }
 
 	func setText(_ iText: String?) {

@@ -163,6 +163,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
+		clearAllToolTips()
 		createWidgets(for: iZone, kind)
 		layoutForCurrentScrollOffset()
 	}
@@ -229,7 +230,24 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		return nil
 	}
 
-	func clearAllTooltips() {
+	func replaceToolTips() {
+		clearAllToolTips()
+		updateAllToolTips()
+	}
+
+	func updateAllToolTips() {
+		view.traverseHierarchy() { subview in
+			if  let s = subview as? ZToolTips {
+				s.updateToolTips()
+			}
+
+			return .eContinue
+		}
+
+		gWidgets.updateToolTips()
+	}
+
+	func clearAllToolTips() {
 		view.traverseHierarchy() { subview in
 			if  let s = subview as? ZView {
 				s.toolTip = nil
@@ -237,14 +255,14 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 			return .eContinue
 		}
-
-		gRemoveAllTracking()
 	}
 
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		clearAllTooltips()
+		clearAllToolTips()
+		gRemoveAllTracking()
+
 
 		if  let   widget = hereWidget,
 			let  mOrigin = mapOrigin {
@@ -253,7 +271,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			widget.frame = CGRect(origin: origin, size: size)
 
 			widget.grandRelayout()
-			gWidgets.updateToolTips()
+			gWidgets.updateToolTips() // potentially all new widgets (and their dots): regenerate all their tool tips
 			detectHover()
 			setNeedsDisplay()
 		}
@@ -264,11 +282,14 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
     override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  !gDeferringRedraw, gIsReadyToShowUI {
-			if  kind == .sResize {
-				resize()
-				layoutForCurrentScrollOffset()
-			} else {
-				createAndLayoutWidgets(for: iSignalObject, kind)
+			switch kind {
+				case .sResize:
+					resize()
+					layoutForCurrentScrollOffset()
+				case .sToolTips:
+					replaceToolTips()
+				default:
+					createAndLayoutWidgets(for: iSignalObject, kind)
 			}
 		}
 	}

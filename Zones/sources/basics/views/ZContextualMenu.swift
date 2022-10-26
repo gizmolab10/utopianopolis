@@ -23,7 +23,7 @@ class ZContextualMenu: ZMenu {
 			case "c": gMapController?.recenter()
 			case "e": gToggleShowExplanations()
 			case "k": gColorfulMode = !gColorfulMode; gSignal([.sDatum])
-			case "y": gToggleShowTooltips()
+			case "y": gToggleShowToolTips()
 			case kEquals,
 				 kHyphen: gMapEditor.updateFontSize(up: key == kEquals)
 			default:  break

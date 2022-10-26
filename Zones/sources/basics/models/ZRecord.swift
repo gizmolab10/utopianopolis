@@ -92,7 +92,7 @@ class ZRecord: ZManagedObject {
 	@NSManaged var             dbid: String?
 	@NSManaged var       recordName: String?
 	@NSManaged var modificationDate: Date?
-	var       _tooltipRecord: Any?
+	var       _toolTipRecord: Any?
 	var    writtenModifyDate: Date?
 	var                color: ZColor?    // overridden by Zone and ZTrait (latter grabs from its ownerZone)
 	var      maybeDatabaseID: ZDatabaseID? { return ZDatabaseID.convert(from: dbid) }

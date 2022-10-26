@@ -737,7 +737,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return result
 	}
 
-	@objc func handleControlAction(_ iButton: ZTooltipButton) {
+	@objc func handleControlAction(_ iButton: ZToolTipButton) {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
 				case .idForward:  nextBookmark(down:  true)
@@ -781,7 +781,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else if let   dot = dragDotHit(at: rect) {
 			if  let    note = dot.note {
 				let grabbed = grabbedNotes.contains(note)
-				toolTip     = note.tooltipString(grabbed: grabbed)
+				toolTip     = note.toolTipString(grabbed: grabbed)
 			}
 
 			NSCursor.arrow.set()

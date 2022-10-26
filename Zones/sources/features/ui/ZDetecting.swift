@@ -182,7 +182,7 @@ extension ZView {
 
 }
 
-extension ZTooltipButton {
+extension ZToolTipButton {
 
 	func updateTracking() { addTracking(for: self, in: frame) }
 

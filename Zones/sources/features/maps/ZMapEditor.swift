@@ -985,10 +985,11 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func moveUp(_ up: Bool = true, _ originalGrabs: ZoneArray, selectionOnly: Bool = true, extreme: Bool = false, growSelection: Bool = false, targeting iOffset: CGFloat? = nil, forcedResponse: ZSignalKindArray? = nil, onCompletion: SignalArrayClosure? = nil) {
-		var       response = forcedResponse ?? [ZSignalKind.spRelayout]
-		let   doCousinJump = !gBrowsingIsConfined
-		let  hereIsGrabbed = gHereMaybe != nil && originalGrabs.contains(gHereMaybe!)
-		guard let rootMost = originalGrabs.rootMost(goingUp: up) else {
+		let minimalResponse : ZSignalKindArray = [.spDataDetails, .spCrumbs, .sToolTips]
+		var        response = forcedResponse ?? [ZSignalKind.spRelayout]
+		let    doCousinJump = !gBrowsingIsConfined
+		let   hereIsGrabbed = gHereMaybe != nil && originalGrabs.contains(gHereMaybe!)
+		guard  let rootMost = originalGrabs.rootMost(goingUp: up) else {
 			onCompletion?([.sData])
 
 			return
@@ -1017,7 +1018,7 @@ class ZMapEditor: ZBaseEditor {
 
 					if  recurse {
 						if !hereIsGrabbed {
-							response = [.spDataDetails, .spCrumbs]
+							response = minimalResponse
 						}
 
 						gSelecting.updateCousinList()
@@ -1131,7 +1132,7 @@ class ZMapEditor: ZBaseEditor {
 						grabThis.grab(updateBrowsingLevel: false)
 
 						if !hereIsGrabbed && forcedResponse == nil {
-							response = [.spDataDetails, .spCrumbs]
+							response = minimalResponse
 						}
 					} else if !grabThis.isGrabbed || extreme {
 						var grabThese = [grabThis]
@@ -1156,7 +1157,7 @@ class ZMapEditor: ZBaseEditor {
 						gSelecting.addMultipleGrabs(grabThese)
 
 						if !hereIsGrabbed && forcedResponse == nil {
-							response = [.spDataDetails, .spCrumbs]
+							response = minimalResponse
 						}
 					}
 				} else if doCousinJump,

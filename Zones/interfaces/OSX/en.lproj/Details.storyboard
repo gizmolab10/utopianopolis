@@ -906,13 +906,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="290" height="299"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <box borderType="line" title="Tooltips and Explanations" translatesAutoresizingMaskIntoConstraints="NO" id="1ID-ro-NAz">
+                            <box borderType="line" title="ToolTips and Explanations" translatesAutoresizingMaskIntoConstraints="NO" id="1ID-ro-NAz">
                                 <rect key="frame" x="5" y="250" width="280" height="41"/>
                                 <view key="contentView" id="0RF-K9-32y">
                                     <rect key="frame" x="3" y="3" width="274" height="23"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <button identifier="tooltip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                        <button identifier="toolTip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="-7" y="-6" width="151" height="33"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="WPU-QJ-waV"/>

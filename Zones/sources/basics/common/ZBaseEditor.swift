@@ -46,7 +46,7 @@ class ZBaseEditor : NSObject {
 					case "h": gApplication?.hide(nil);                    return true
 					case "q": gApplication?.terminate(self);              return true
 					case "w": gApplication?.keyWindow?.orderOut(self);    return true
-					case "y": gToggleShowTooltips();                      return true
+					case "y": gToggleShowToolTips();                      return true
 					case "'": gToggleLayoutMode();                        return true
 					default:  break
 				}

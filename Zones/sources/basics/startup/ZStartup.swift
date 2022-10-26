@@ -42,8 +42,8 @@ class ZStartup: NSObject {
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gCDMigrationState      = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
 		gWorkMode              = .wStartupMode
-		gPrintModes            = [.dTrack]
-		gMainWindow?.acceptsMouseMovedEvents = true
+		gPrintModes            = []
+		gMainWindow?.acceptsMouseMovedEvents = true // so hover detection works
 
 		if  gCDMigrationState != .normal {
 			gHereRecordNames = kDefaultRecordNames

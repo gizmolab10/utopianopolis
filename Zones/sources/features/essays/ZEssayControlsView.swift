@@ -20,7 +20,7 @@ enum ZEssayButtonID : Int {
 
 	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idDiscard] } // , .idMultiple] }
 
-	static func essayID(for button: ZTooltipButton) -> ZEssayButtonID? {
+	static func essayID(for button: ZToolTipButton) -> ZEssayButtonID? {
 		if  let i = gConvertFromOptionalUserInterfaceItemIdentifier(button.identifier) {
 			switch i {
 				case "left.arrow":  return .idBack
@@ -39,7 +39,7 @@ enum ZEssayButtonID : Int {
 
 }
 
-extension ZTooltipButton {
+extension ZToolTipButton {
 	func setEnabledAndTracking(_ enabled: Bool) {
 		isEnabled  = enabled
 		isBordered = true
@@ -52,14 +52,14 @@ extension ZTooltipButton {
 class ZEssayControlsView: ZView {
 	var           inspectorBar   : ZView?   { return gMainWindow?.inspectorBar }
 	@IBOutlet var titlesControl  : ZSegmentedControl?
-	@IBOutlet var backwardButton : ZTooltipButton?
-	@IBOutlet var forwardButton  : ZTooltipButton?
-	@IBOutlet var cancelButton   : ZTooltipButton?
-	@IBOutlet var deleteButton   : ZTooltipButton?
-	@IBOutlet var printButton    : ZTooltipButton?
-	@IBOutlet var hideButton     : ZTooltipButton?
-	@IBOutlet var saveButton     : ZTooltipButton?
-	@IBAction func handleButtonAction(_ iButton: ZTooltipButton) { gEssayView?.handleControlAction(iButton) }
+	@IBOutlet var backwardButton : ZToolTipButton?
+	@IBOutlet var forwardButton  : ZToolTipButton?
+	@IBOutlet var cancelButton   : ZToolTipButton?
+	@IBOutlet var deleteButton   : ZToolTipButton?
+	@IBOutlet var printButton    : ZToolTipButton?
+	@IBOutlet var hideButton     : ZToolTipButton?
+	@IBOutlet var saveButton     : ZToolTipButton?
+	@IBAction func handleButtonAction(_ iButton: ZToolTipButton) { gEssayView?.handleControlAction(iButton) }
 
 	func setupAllEssayControls() {
 		if  let           b = inspectorBar, !b.subviews.contains(self) {

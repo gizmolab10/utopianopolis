@@ -20,7 +20,7 @@ enum ZDrawPhase: String {
 	case pDots       = "d"
 }
 
-class ZPseudoView: NSObject, ZTraverse {
+class ZPseudoView: NSObject {
 
 	var      isHovering = false
 	var   absoluteFrame = CGRect.zero

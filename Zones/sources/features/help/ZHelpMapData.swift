@@ -27,7 +27,7 @@ class ZHelpMapData : ZHelpData {
 		"2RETURN", 		"begin/end editing note", 							"",
 		"0COMMA", 		"show / hide preferences", 							"help-inspector-view-c360241147f2",
 		"0P", 			"print the map (or this window)",   				"",
-		"0Y",			"enable/disable tooltips",							"",
+		"0Y",			"enable/disable toolTips",							"",
 		"2",			 												"", "",
 		"2_CONTROL + KEY", 												"", "",
 		"2COMMA", 		"toggle lists grow up/down", 						"",

@@ -91,7 +91,7 @@ func gToggleLayoutMode() {
 	gSignal([.sAll, .spRelayout, .spPreferences])
 }
 
-func gToggleShowTooltips() {
+func gToggleShowToolTips() {
 	gShowToolTips = !gShowToolTips
 
 	gSignal([.sDetails])
