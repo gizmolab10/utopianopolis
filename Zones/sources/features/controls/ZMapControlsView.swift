@@ -15,9 +15,9 @@ import UIKit
 #endif
 
 enum ZModeButtonType: String {
-	case tLayout  = "layout"
-	case tConfine = "browse"
-	case tGrowth  = "grow"
+	case tLayout  = "layout" // tree / linear
+	case tConfine = "browse" // down / up
+	case tGrowth  = "grow"   // list / all
 }
 
 var gMapControlsView : ZMapControlsView? { return gControlsController?.mapControlsView }
@@ -72,7 +72,8 @@ class ZMapControlsView : ZButtonsView, ZToolTips {
 			}
 		}
 
-		gSignal([.sDetails, .spCrumbs, .spRelayout])
+		gTextEditor.stopCurrentEdit(forceCapture: true) // don't discard user's work
+		gSignal([.sDetails, .spCrumbs])
 	}
 
 	func controlsUpdate() {

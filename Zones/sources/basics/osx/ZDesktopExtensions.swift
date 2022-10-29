@@ -805,13 +805,12 @@ extension ZoneTextWidget {
 	override func textDidEndEditing(_ notification: Notification) {
 		if !gIsEditingStateChanging,
 			gIsEditIdeaMode,
-			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
-            let        value = number.intValue
-			let        flags = gModifierFlags
-			let      isShift = flags.isShift
-            var key: String?
+			let number = notification.userInfo?["NSTextMovement"] as? NSNumber {
+            let  value = number.intValue
+			let  flags = gModifierFlags
+            var    key : String?
 
-            gTextEditor.stopCurrentEdit(forceCapture: isShift)
+			gTextEditor.stopCurrentEdit(forceCapture: true, andRedraw: false)
 
             switch value {
             case NSBacktabTextMovement: key = kSpace
