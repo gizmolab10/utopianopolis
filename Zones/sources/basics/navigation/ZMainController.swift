@@ -22,14 +22,15 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var essayContainerView : ZView?
 	@IBOutlet var searchResultsView  : ZView?
 	@IBOutlet var permissionView     : ZView?
+	@IBOutlet var experimentView     : ZView?
 	@IBOutlet var searchBarView      : ZView?
 	@IBOutlet var controlsView       : ZView?
 	@IBOutlet var detailView         : ZView?
 	@IBOutlet var debugView          : ZView?
-	@IBOutlet var helpButton         : ZHelpButton?
 	@IBOutlet var searchButton       : ZButton?
 	@IBOutlet var dismissButton      : ZButton?
 	@IBOutlet var hamburgerButton    : ZButton?
+	@IBOutlet var helpButton         : ZHelpButton?
 	@IBAction func helpButtonAction(_ button: NSButton) { gHelpController?.show() }
 
 	var hamburgerImage: ZImage? {

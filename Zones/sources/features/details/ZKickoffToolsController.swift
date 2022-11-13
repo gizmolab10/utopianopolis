@@ -44,7 +44,7 @@ enum ZKickoffToolID: String {
 	case explain = "explain"
 }
 
-class ZKickoffToolsController: ZGenericController, ZToolTips {
+class ZKickoffToolsController: ZGenericController, ZToolTipper {
 
 	override var controllerID : ZControllerID { return .idStartHere }
 	var            isRelocate :   Bool { return flags.isOption  && !gIsEditing }

@@ -177,7 +177,7 @@ class ZFavorites: ZSmallMapRecords {
 		return rootZone
 	}
 
-	func showNextList(down: Bool, moveCurrent: Bool = false) {
+	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false) -> Zone? {
 		if  let  here = nextList(down: down) {
 			if  let b = bookmarkToMove, moveCurrent {
 				b.moveZone(to: here)
@@ -185,7 +185,11 @@ class ZFavorites: ZSmallMapRecords {
 
 			setHere(to: here)
 			gSignal([.sDetails])
+
+			return here
 		}
+
+		return nil
 	}
 
 	var current : Zone? {

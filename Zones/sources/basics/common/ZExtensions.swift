@@ -699,6 +699,7 @@ extension CGPoint {
 	var length                   : CGFloat { return sqrt(x * x + y * y) }
 	var angle                    : CGFloat { return atan2(y, x) }
 	var dividedInHalf            : CGPoint { return multiplyBy(0.5) }
+	var inverted                 : CGPoint { return CGPoint(x: -x, y: -y) }
 
 	public static func equaled(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 

@@ -334,18 +334,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	@objc func handleReorderPopupMenu(_ iItem: ZMenuItem) {
-		handleReorderKey(iItem.keyEquivalent, iItem.keyEquivalentModifierMask == .shift)
-	}
-
-	@objc func handleReorderKey(_ key: String, _ reversed: Bool) {
-		if  let type  = ZReorderMenuType(rawValue: key) {
-			UNDO(self) { iUndoSelf in
-				iUndoSelf.handleReorderKey(key, !reversed)
-			}
-
-			gSelecting.simplifiedGrabs.sortBy(type, reversed)
-			gRelayoutMaps()
-		}
+		gSelecting.simplifiedGrabs.sortAccordingToKey(iItem.keyEquivalent, iItem.keyEquivalentModifierMask == .shift)
 	}
 
 	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {

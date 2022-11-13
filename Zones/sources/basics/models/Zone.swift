@@ -1475,8 +1475,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if isInBigMap {
 			addAGrab(extreme: extreme, onCompletion: onCompletion)
 		} else if let next = gListsGrowDown ? children.last : children.first {
-			gFavorites.setHere(to: self)
 			next.grab()
+			gFavorites.setHere(to: self)
+			gFavorites.updateFavoritesAndRedraw(needsRedraw: true)
 			gSignal([.spCrumbs, .spDataDetails, .spFavorites, .sDetails])
 		}
 	}
@@ -2227,6 +2228,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@discardableResult func invokeBookmark(_ COMMAND: Bool = false, onCompletion: BoolClosure?) -> Bool { // false means not traveled
 		if  let target = bookmarkTarget {
 			if  COMMAND, target.invokeEssay() { // first, check if target has an essay
+				onCompletion?(false)
+			} else if target.isInFavorites {
+				gFavorites.setHere(to: target)
+				gFavorites.updateFavoritesAndRedraw(needsRedraw: true)
 				onCompletion?(false)
 			} else {
 				if  gIsEssayMode {
@@ -3689,17 +3694,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "n":      showNote()
 				case "d":      duplicate()
 				case "b":      addBookmark()
-				case "r":      reverseChildren()
-				case "a":      children.alphabetize()
-				case "i":      children.sortByCount()
-				case "l":      children.sortByLength()
 				case "e":      editTraitForType(.tEmail)
 				case "h":      editTraitForType(.tHyperlink)
 				case "s":      gFiles.export(self, toFileAs: .eSeriously)
-				case "o":      importFromFile(.eSeriously)    { gRelayoutMaps(for: self) }
-				case "t":      swapWithParent                 { gRelayoutMaps(for: self) }
-				case "/":      gFocusing.grabAndFocusOn(self) { gRelayoutMaps() }
-				case "\u{08}", kDelete: deleteSelf            { gRelayoutMaps() }
+				case "a", "l",
+					"r":	   children.sortAccordingToKey(key); gRelayoutMaps(for: self)
+				case "o":      importFromFile(.eSeriously)     { gRelayoutMaps(for: self) }
+				case "t":      swapWithParent                  { gRelayoutMaps(for: self) }
+				case "/":      gFocusing.grabAndFocusOn(self)  { gRelayoutMaps() }
+				case "\u{08}", kDelete: deleteSelf             { gRelayoutMaps() }
 				case kSpace:   addIdea()
 				default:       break
 			}

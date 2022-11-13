@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZToolTipButton: ZButton, ZToolTips {
+class ZToolTipButton: ZButton, ZToolTipper {
 
 	var originalBackgroundColor: ZColor?
 

@@ -24,8 +24,6 @@ class ZTogglingView: ZView {
 	@IBOutlet var          spinner : ZProgressIndicator?
 	@IBOutlet var      titleButton : ZBannerButton?
 	@IBOutlet var  switchingButton : ZButton?
-	@IBOutlet var       downButton : ZButton?
-	@IBOutlet var         upButton : ZButton?
 	@IBOutlet var       upDownView : ZView?
 	@IBOutlet var       bannerView : ZView?
 	@IBOutlet var     hideableView : ZView?
@@ -104,7 +102,6 @@ class ZTogglingView: ZView {
 		switch identity {
 			case .vSubscribe: gSubscriptionController?.toggleViews()
 			case .vData:      gMapController?.toggleMaps()
-			case .vFavorites: goAccordingTo(button)
 			default:          return
 		}
 
@@ -132,10 +129,8 @@ class ZTogglingView: ZView {
 	}
 
 	func updateTitleBarButtons() {
-		switch identity {
-			case .vFavorites: updateFavoritesButtons()
-			case .vSubscribe: updateSubscribeSwitch()
-			default: break
+		if  identity == .vSubscribe {
+			updateSubscribeSwitch()
 		}
 	}
 
@@ -152,40 +147,11 @@ class ZTogglingView: ZView {
 		hideableView?   .zlayer.backgroundColor =      kClearColor.cgColor
 		titleButton?    .zlayer.backgroundColor =     gAccentColor.cgColor
 		switchingButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
-		downButton?     .zlayer.backgroundColor = gDarkAccentColor.cgColor
-		upButton?       .zlayer.backgroundColor = gDarkAccentColor.cgColor
-	}
-
-	fileprivate func goAccordingTo(_ button: ZButton) {
-		switch button {
-			case   upButton: gFavorites.showNextList(down: true)
-			case downButton: gFavorites.showNextList(down: false)
-			default:         break
-		}
 	}
 
 	func updateSubscribeSwitch() {
 		switchingButton? .isHidden = !gUseSubscriptions
 		switchConstraint?.constant = hideHideable ? .zero : 60.0
-	}
-
-	func updateFavoritesButtons() {
-		let           hidden = hideHideable || gFavorites.hideUpDownView
-		upDownView?.isHidden = hidden
-
-		if !hidden {
-			downButton?.title = gFavorites.nextList(down: false)?.unwrappedName.capitalized ?? kEmpty
-			upButton?  .title = gFavorites.nextList(down:  true)?.unwrappedName.capitalized ?? kEmpty
-		}
-
-		titleButton?.snp.removeConstraints()
-		titleButton?.snp.makeConstraints{ make in
-			if  hidden {
-				make.right.equalToSuperview() .offset(-1.0)
-			} else if let v = upDownView {
-				make.right.equalTo(v.snp.left).offset(-1.0)
-			}
-		}
 	}
 
 	func updateSpinner() {

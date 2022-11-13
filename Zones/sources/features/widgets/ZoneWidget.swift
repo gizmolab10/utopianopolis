@@ -74,7 +74,7 @@ class ZWidgetObject: NSObject {
 }
 
 @objc (ZoneWidget)
-class ZoneWidget: ZPseudoView, ZToolTips {
+class ZoneWidget: ZPseudoView, ZToolTipper {
 
 	var        highlightRect =     CGRect.zero
 	let         widgetObject =   ZWidgetObject()
@@ -496,15 +496,20 @@ class ZoneWidget: ZPseudoView, ZToolTips {
 	}
 
 	func printWidget() {
-		if  let prior = controller?.mapView?.frame {
-			controller?.mapView?.frame = bounds.expandedBy(dx: 40.0, dy: 40.0)
+		if  let   mapView = controller?.mapView {
+			let   current = frame.expandedEquallyBy(40.0).offsetBy(dx: 15.0, dy: 22.0)
+			let     prior = mapView.frame
+			let    offset = gMapOffset
+			mapView.frame = current
+			gMapOffset    = .zero
 
 			gDetailsController?.temporarilyHideView(for: .vFavorites) {
-				gMapController?.layoutForCurrentScrollOffset()
-				controller?.mapView?.printView()
+				gRelayoutMaps()
+				mapView.printView()
 			}
 
-			controller?.mapView?.frame = prior
+			mapView.frame = prior
+			gMapOffset    = offset
 
 			gRelayoutMaps()
 		}

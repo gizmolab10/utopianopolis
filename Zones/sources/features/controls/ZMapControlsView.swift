@@ -22,7 +22,7 @@ enum ZModeButtonType: String {
 
 var gMapControlsView : ZMapControlsView? { return gControlsController?.mapControlsView }
 
-class ZMapControlsView : ZButtonsView, ZToolTips {
+class ZMapControlsView : ZButtonsView, ZToolTipper {
 
 	override  var           centered : Bool { return true }
 	override  var distributedEqually : Bool { return true }

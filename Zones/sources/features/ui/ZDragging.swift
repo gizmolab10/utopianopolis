@@ -79,10 +79,12 @@ class ZDragging: NSObject {
 	}
 
 	func cleanupAfterDrag() {   // cursor exited view, remove drag cruft
+		let   view = gDetailsController?.view(for: .vFavorites) as? ZFavoritesTogglingView
 		startAngle = .zero
 		current    = .zero
 		dropCrumb?.highlight(false)
 		gRubberband.clearRubberband()
+		view?.unhighlightUpDownButtons()
 		clearDragAndDrop()
 		gMapController?.setNeedsDisplay() // erase drag: line and dot
 	}
@@ -177,14 +179,33 @@ class ZDragging: NSObject {
 	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) {
 		cleanupAfterDrag()
 
-		if  dropMaybeOntoCrumbButton(iGesture, in: controller) ||
-			dropMaybeOntoWidget     (iGesture, in: controller) {
+		if  dropMaybeOntoFavoritesButton(iGesture, in: controller) ||
+			dropMaybeOntoCrumbButton    (iGesture, in: controller) ||
+			dropMaybeOntoWidget         (iGesture, in: controller) {
 		}
 
 		if  iGesture?.isDone ?? false {
 			controller.restartGestureRecognition()
 			gSignal([.sDatum, .spPreferences, .spCrumbs]) // so color well gets updated
 		}
+	}
+
+	func dropMaybeOntoFavoritesButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+		if  let location = iGesture?.location(in: controller.view),
+		    let     view = gDetailsController?.view(for: .vFavorites) as? ZFavoritesTogglingView,
+			let     down = view.detectUpDownButton(at: location, inView: controller.view) {
+			let   isDone = iGesture?.isDone ?? false
+
+			if  !isDone {
+				view.highlightUpDownButton(down)
+			} else if let parent = gFavorites.showNextList(down: down) {
+				gDragging.draggedZones.moveIntoAndGrab(parent) { flag in }   // move dragged zone into this newly focused list
+			}
+
+			return true
+		}
+
+		return false
 	}
 
 	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop

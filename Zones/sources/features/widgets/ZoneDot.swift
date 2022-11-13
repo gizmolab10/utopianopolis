@@ -45,7 +45,7 @@ struct  ZDotParameters {
 }
 
 @objc (ZoneDot)
-class ZoneDot: ZPseudoView, ZToolTips {
+class ZoneDot: ZPseudoView, ZToolTipper {
 
     // MARK: - properties
     // MARK: -

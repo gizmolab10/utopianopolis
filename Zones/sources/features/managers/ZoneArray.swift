@@ -266,35 +266,46 @@ extension ZoneArray {
 		gRelayoutMaps()
 	}
 
-	func sortBy(_ type: ZReorderMenuType, _ iBackwards: Bool) {
-		switch type {
-			case .eAlphabetical: alphabetize   (iBackwards)
-			case .eBySizeOfList: sortByCount   (iBackwards)
-			case .eByLength:     sortByLength  (iBackwards)
-			case .eByKind:       sortByZoneType(iBackwards)
-			case .eReversed:     reverse()
+	func sortBy(_ type: ZReorderMenuType, _ iBackwards: Bool = false, inParent: Zone? = nil) {
+		if  let parent = inParent {
+			switch type {
+				case .eReversed:     reverse       (parent)
+				case .eAlphabetical: alphabetize   (parent, iBackwards)
+				case .eBySizeOfList: sortByCount   (parent, iBackwards)
+				case .eByLength:     sortByLength  (parent, iBackwards)
+				case .eByKind:       sortByZoneType(parent, iBackwards)
+			}
+		} else {
+			let parents = parentsAndChildren
+
+			for (parent, children) in parents {
+				children.sortBy(type, iBackwards, inParent: parent)
+			}
 		}
 	}
 
-	func reverse() {
-		var        zones  = self
-		let commonParent  = zones.commonParent
-
-		if  commonParent == nil {
-			return
+	func sortAccordingToKey(_ key: String, _ reversed: Bool = false) {
+		if  let type  = ZReorderMenuType(rawValue: key) {
+			sortBy(type, reversed)
 		}
-
-		if  zones.count  == 1 {
-			zones         = commonParent?.children ?? []
-		}
-
-		zones        .reverseOrder()
-		commonParent?.respectOrder()
-		gRelayoutMaps()
 	}
 
-	func alphabetize(_ iBackwards: Bool = false) {
-		alterOrdering { iZones -> (ZoneArray) in
+	func reverse(_ parent: Zone) {
+		alterOrdering(inParent: parent) { iZones -> (ZoneArray) in
+			var result = ZoneArray()
+			var  index = 0
+
+			while index < count {
+				result.append(self[count - index - 1])
+				index        += 1
+			}
+
+			return result
+		}
+	}
+
+	func alphabetize(_ parent: Zone, _ iBackwards: Bool = false) {
+		alterOrdering(inParent: parent) { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in
 				let aName = a.unwrappedName
 				let bName = b.unwrappedName
@@ -304,8 +315,8 @@ extension ZoneArray {
 		}
 	}
 
-	func sortByCount(_ iBackwards: Bool = false) {
-		alterOrdering { iZones -> (ZoneArray) in
+	func sortByCount(_ parent: Zone, _ iBackwards: Bool = false) {
+		alterOrdering(inParent: parent) { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in
 				let aCount = a.count
 				let bCount = b.count
@@ -315,8 +326,8 @@ extension ZoneArray {
 		}
 	}
 
-	func sortByZoneType(_ iBackwards: Bool = false) {
-		alterOrdering { iZones -> (ZoneArray) in
+	func sortByZoneType(_ parent: Zone, _ iBackwards: Bool = false) {
+		alterOrdering(inParent: parent) { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in
 				let aType = a.zoneType.rawValue
 				let bType = b.zoneType.rawValue
@@ -326,10 +337,10 @@ extension ZoneArray {
 		}
 	}
 
-	func sortByLength(_ iBackwards: Bool = false) {
+	func sortByLength(_ parent: Zone, _ iBackwards: Bool = false) {
 		let font = gBigFont
 
-		alterOrdering { iZones -> (ZoneArray) in
+		alterOrdering(inParent: parent) { iZones -> (ZoneArray) in
 			return iZones.sorted { (a, b) -> Bool in
 				let aLength = a.widget?.textWidget?.text?.widthForFont(font) ?? .zero
 				let bLength = b.widget?.textWidget?.text?.widthForFont(font) ?? .zero
@@ -339,46 +350,54 @@ extension ZoneArray {
 		}
 	}
 
-	func alterOrdering(_ iBackwards: Bool = false, with sortClosure: ZonesToZonesClosure) {
-		if  var parent = commonParent ?? first {
-			var  zones = self
+	var parentsAndChildren : [Zone : ZoneArray] {
+		var parents =        [Zone : ZoneArray]()
 
-			if  count == 1, first != nil {
-				parent = first!
-				zones  = parent.children
+		for zone in self {
+			if  let   parent = zone.parentZoneMaybe {
+				var children = parents[parent] ?? ZoneArray()
+
+				children.append(zone)
+
+				parents[parent] = children
 			}
+		}
 
-			parent.children.updateOrder()
+		return parents
+	}
 
-			if  zones.count > 1 {
-				let (start, end) = zones.orderLimits()
-				zones            = sortClosure(zones)
+	mutating func replace(_ zones: ZoneArray) {
+		var indices = IndexPath()
+		var new = 0
 
-				zones.updateOrdering(start: start, end: end)
-				parent.respectOrder()
-				parent.children.updateOrder()
-				gRelayoutMaps()
+		for zone in zones {
+			if  let index = firstIndex(of: zone) {
+				indices.append(index)
 			}
+		}
 
-			gSelecting.updateCousinList(for: gSelecting.currentMoveable)
+		indices.sort()
+
+		for old in indices {
+			self[old] = zones[new]
+			new      += 1
 		}
 	}
 
-	var commonParent: Zone? {
-		let candidate = first?.parentZone
+	func alterOrdering(_ iBackwards: Bool = false, inParent: Zone, with sort: ZonesToZonesClosure) {
+		inParent.children.updateOrder()
 
-		if  count == 1 {
-			return first
+		if  count > 1 {
+			let (start, end) = orderLimits()
+			let        zones = sort(self)
+
+			zones.updateOrdering(start: start, end: end)
+			inParent.children.replace(zones)
+			inParent.respectOrder()
+			inParent.children.updateOrder()
+			gSelecting.updateCousinList(for: gSelecting.currentMoveable)
+			gRelayoutMaps()
 		}
-
-		for zone in self {
-			if  let parent = zone.parentZone, parent != candidate {   // not all of the grabbed zones share the same parent
-				return nil
-			}
-		}
-
-		return candidate
-
 	}
 
 	var first: Zone? {

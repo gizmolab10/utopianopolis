@@ -14,9 +14,10 @@ enum ZControlType {
 	case eToolTips
 }
 
-@objc protocol ZToolTips {
+@objc protocol ZToolTipper {
 
 	@objc func updateToolTips()
+//	var toolTip: String? { get set }
 
 }
 
@@ -299,7 +300,7 @@ extension ZMapControlsView {
 
 extension ZToolTipButton {
 
-	func updateToolTips() {}
+	@objc func updateToolTips() {}
 
 }
 

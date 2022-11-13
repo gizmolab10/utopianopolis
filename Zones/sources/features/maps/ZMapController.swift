@@ -237,7 +237,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	func updateAllToolTips() {
 		view.traverseHierarchy() { subview in
-			if  let s = subview as? ZToolTips {
+			if  let s = subview as? ZToolTipper {
 				s.updateToolTips()
 			}
 

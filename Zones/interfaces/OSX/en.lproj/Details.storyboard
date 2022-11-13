@@ -386,7 +386,7 @@
                                             <outlet property="titleButton" destination="Jzv-og-1RG" id="hSD-AO-alL"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="smallMap" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="smallMap" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZFavoritesTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Favorites Banner">
@@ -406,8 +406,8 @@
                                                     <customView horizontalHuggingPriority="251" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="b88-zM-8k7" userLabel="Up Down View">
                                                         <rect key="frame" x="188" y="0.0" width="37" height="18"/>
                                                         <subviews>
-                                                            <button horizontalHuggingPriority="252" verticalHuggingPriority="750" horizontalCompressionResistancePriority="748" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Favorites Down">
-                                                                <rect key="frame" x="0.0" y="-1" width="18" height="19"/>
+                                                            <button horizontalHuggingPriority="252" verticalHuggingPriority="750" horizontalCompressionResistancePriority="748" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zUL-Q6-aba" userLabel="Favorites Up">
+                                                                <rect key="frame" x="19" y="-1" width="18" height="19"/>
                                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xW1-68-JpA">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="cellTitle"/>
@@ -417,8 +417,8 @@
                                                                     <action selector="buttonAction:" target="Utx-K3-0a0" id="xJI-uq-D92"/>
                                                                 </connections>
                                                             </button>
-                                                            <button horizontalHuggingPriority="252" verticalHuggingPriority="750" horizontalCompressionResistancePriority="747" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jor-km-2fV" userLabel="Favorites Up">
-                                                                <rect key="frame" x="19" y="-1" width="18" height="19"/>
+                                                            <button horizontalHuggingPriority="252" verticalHuggingPriority="750" horizontalCompressionResistancePriority="747" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jor-km-2fV" userLabel="Favorites Down">
+                                                                <rect key="frame" x="0.0" y="-1" width="18" height="19"/>
                                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="n1c-QP-pCO">
                                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                                     <font key="font" metaFont="cellTitle"/>
@@ -430,13 +430,13 @@
                                                             </button>
                                                         </subviews>
                                                         <constraints>
+                                                            <constraint firstItem="Jor-km-2fV" firstAttribute="leading" secondItem="b88-zM-8k7" secondAttribute="leading" id="5Oj-7D-gNp"/>
                                                             <constraint firstItem="zUL-Q6-aba" firstAttribute="top" secondItem="b88-zM-8k7" secondAttribute="top" id="5R8-ee-nNP"/>
+                                                            <constraint firstItem="zUL-Q6-aba" firstAttribute="leading" secondItem="Jor-km-2fV" secondAttribute="trailing" constant="1" id="8np-kH-LBK"/>
                                                             <constraint firstAttribute="bottom" secondItem="Jor-km-2fV" secondAttribute="bottom" id="OxZ-gW-6Sf"/>
                                                             <constraint firstAttribute="bottom" secondItem="zUL-Q6-aba" secondAttribute="bottom" id="dXf-fX-i6g"/>
-                                                            <constraint firstItem="Jor-km-2fV" firstAttribute="leading" secondItem="zUL-Q6-aba" secondAttribute="trailing" constant="1" id="khL-XZ-C5R"/>
-                                                            <constraint firstAttribute="trailing" secondItem="Jor-km-2fV" secondAttribute="trailing" id="njx-0P-rNU"/>
-                                                            <constraint firstItem="zUL-Q6-aba" firstAttribute="leading" secondItem="b88-zM-8k7" secondAttribute="leading" id="sGZ-ri-rgo"/>
                                                             <constraint firstItem="Jor-km-2fV" firstAttribute="top" secondItem="b88-zM-8k7" secondAttribute="top" id="vB9-MF-1Ia"/>
+                                                            <constraint firstAttribute="trailing" secondItem="zUL-Q6-aba" secondAttribute="trailing" id="yP0-eC-Uqb"/>
                                                         </constraints>
                                                     </customView>
                                                 </subviews>
@@ -465,10 +465,10 @@
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="s1s-Ki-o6t" id="33f-CI-SSo"/>
-                                            <outlet property="downButton" destination="zUL-Q6-aba" id="COi-CG-gx2"/>
+                                            <outlet property="downButton" destination="Jor-km-2fV" id="RzW-1R-X2f"/>
                                             <outlet property="hideableView" destination="n0Y-Iw-0NV" id="Q6s-o8-Vgy"/>
                                             <outlet property="titleButton" destination="3bx-6i-bTg" id="exk-Jc-pw4"/>
-                                            <outlet property="upButton" destination="Jor-km-2fV" id="bwX-pw-REI"/>
+                                            <outlet property="upButton" destination="zUL-Q6-aba" id="Qnp-ni-7s8"/>
                                             <outlet property="upDownView" destination="b88-zM-8k7" id="sUJ-US-h7q"/>
                                         </connections>
                                     </customView>
