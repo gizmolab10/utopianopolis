@@ -30,7 +30,7 @@ class ZDragging: NSObject {
 	var   isDragging :               Bool { return !draggedZones.isEmpty }
 	var  showRotator :               Bool { return current != dragStart && !gRubberband.showRubberband && gMapController?.inCircularMode ?? false }
 
-	func isDragged(_ zone: Zone?) -> Bool { return gDragging.dragLine != nil && zone != nil && gDragging.draggedZones.contains(zone!) }
+	func isDragged(_ zone: Zone?) -> Bool { return dragLine != nil && zone != nil && draggedZones.contains(zone!) }
 	func restartGestureRecognitiono()     { dropWidget?.controller?.restartGestureRecognition() }
 
 	func drawRotator() {
@@ -199,7 +199,13 @@ class ZDragging: NSObject {
 			if  !isDone {
 				view.highlightUpDownButton(down)
 			} else if let parent = gFavorites.showNextList(down: down) {
-				gDragging.draggedZones.moveIntoAndGrab(parent) { flag in }   // move dragged zone into this newly focused list
+				var zones = draggedZones
+
+				if  controller.isBigMap {
+					zones = draggedZones.map { $0.isBookmark ? $0 : gFavorites.matchOrCreateBookmark(for: $0, addToRecents: false) }
+				}
+
+				zones.moveIntoAndGrab(parent) { flag in }   // move dragged zone into the new focused list
 			}
 
 			return true

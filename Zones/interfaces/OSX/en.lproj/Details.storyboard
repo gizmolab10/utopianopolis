@@ -144,17 +144,17 @@
             <objects>
                 <viewController id="YaQ-0g-PCb" customClass="ZDetailsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="3tA-Ue-bZS">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="3177"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="3370"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="2" width="226" height="3172"/>
+                                <rect key="frame" x="0.0" y="2" width="226" height="3365"/>
                                 <subviews>
-                                    <customView identifier="subscribe" hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="2979" width="226" height="193"/>
+                                    <customView identifier="subscribe" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="3265" width="226" height="100"/>
                                         <subviews>
-                                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
-                                                <rect key="frame" x="0.0" y="65" width="226" height="19"/>
+                                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
+                                                <rect key="frame" x="0.0" y="82" width="226" height="18"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ay8-Kf-2wF" userLabel="Subscription Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="1" y="-1" width="163" height="19"/>
@@ -194,17 +194,22 @@
                                                     <constraint firstItem="ay8-Kf-2wF" firstAttribute="leading" secondItem="avu-F1-Lm0" secondAttribute="leading" constant="1" id="wLf-Jv-QBP"/>
                                                 </constraints>
                                             </customView>
-                                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ytv-8G-7v7" userLabel="Subscription Hideable">
-                                                <rect key="frame" x="51" y="-8" width="225" height="150"/>
+                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="ytv-8G-7v7" userLabel="Subscription Hideable">
+                                                <rect key="frame" x="1" y="0.0" width="225" height="81"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="81" id="WXf-zO-VFx"/>
+                                                </constraints>
                                                 <connections>
-                                                    <segue destination="8OT-8w-eeZ" kind="embed" id="4Ds-kQ-EQn"/>
+                                                    <segue destination="8OT-8w-eeZ" kind="embed" id="HRH-si-TMC"/>
                                                 </connections>
                                             </containerView>
                                         </subviews>
                                         <constraints>
                                             <constraint firstItem="avu-F1-Lm0" firstAttribute="top" secondItem="t4I-OM-7sJ" secondAttribute="top" id="DDp-N9-WRf"/>
+                                            <constraint firstItem="ytv-8G-7v7" firstAttribute="leading" secondItem="t4I-OM-7sJ" secondAttribute="leading" constant="1" id="Fna-jc-FBU"/>
                                             <constraint firstAttribute="trailing" secondItem="avu-F1-Lm0" secondAttribute="trailing" id="LrJ-hg-fcf"/>
                                             <constraint firstItem="ytv-8G-7v7" firstAttribute="top" secondItem="avu-F1-Lm0" secondAttribute="bottom" constant="1" id="PgZ-P1-P4q"/>
+                                            <constraint firstAttribute="trailing" secondItem="ytv-8G-7v7" secondAttribute="trailing" id="SMC-qa-8sh"/>
                                             <constraint firstAttribute="bottom" secondItem="ytv-8G-7v7" secondAttribute="bottom" id="hbK-Y3-O2l"/>
                                             <constraint firstItem="avu-F1-Lm0" firstAttribute="leading" secondItem="t4I-OM-7sJ" secondAttribute="leading" id="xKh-Au-U7T"/>
                                         </constraints>
@@ -217,10 +222,10 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="kickoffTools" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Kickoff Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1825" width="226" height="1347"/>
+                                        <rect key="frame" x="0.0" y="1825" width="226" height="1440"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Kickoff Tools Banner">
-                                                <rect key="frame" x="0.0" y="611" width="226" height="21"/>
+                                                <rect key="frame" x="0.0" y="704" width="226" height="21"/>
                                                 <subviews>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uxs-aX-Fhe" userLabel="Kickoff Tools Title" customClass="ZBannerButton" customModule="Seriously" customModuleProvider="target">
                                                         <rect key="frame" x="1" y="-1" width="224" height="19"/>
@@ -245,7 +250,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Kickoff Tools Hideable">
-                                                <rect key="frame" x="0.0" y="504" width="226" height="300"/>
+                                                <rect key="frame" x="0.0" y="597" width="226" height="300"/>
                                                 <connections>
                                                     <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
                                                 </connections>
@@ -1228,18 +1233,18 @@
                                 <rect key="frame" x="0.0" y="0.0" width="290" height="81"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="dLO-Ko-BEx">
-                                        <rect key="frame" x="0.0" y="1" width="290" height="80"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="290" height="81"/>
                                         <subviews>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="LMu-5O-o9h">
-                                                <rect key="frame" x="6" y="58" width="278" height="14"/>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="LMu-5O-o9h">
+                                                <rect key="frame" x="6" y="59" width="278" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="OfC-14-FUY">
                                                     <font key="font" metaFont="message" size="11"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                 </textFieldCell>
                                             </textField>
-                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7TP-X8-yTZ">
-                                                <rect key="frame" x="6" y="36" width="278" height="14"/>
+                                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="7TP-X8-yTZ">
+                                                <rect key="frame" x="6" y="37" width="278" height="14"/>
                                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="7k9-np-EMp">
                                                     <font key="font" metaFont="message" size="11"/>
                                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1247,7 +1252,10 @@
                                                 </textFieldCell>
                                             </textField>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="raV-jm-PNg">
-                                                <rect key="frame" x="76" y="1" width="139" height="32"/>
+                                                <rect key="frame" x="76" y="0.0" width="139" height="34"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="22" id="IaT-pa-bEL"/>
+                                                </constraints>
                                                 <buttonCell key="cell" type="push" title="How do I Cancel?" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="mme-M7-oqI">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                     <font key="font" metaFont="system"/>
@@ -1258,30 +1266,32 @@
                                             </button>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstItem="7TP-X8-yTZ" firstAttribute="top" secondItem="LMu-5O-o9h" secondAttribute="bottom" constant="8" id="1ei-rY-yAs"/>
-                                            <constraint firstItem="raV-jm-PNg" firstAttribute="top" secondItem="7TP-X8-yTZ" secondAttribute="bottom" constant="8" id="Fcs-pP-wpJ"/>
                                             <constraint firstItem="LMu-5O-o9h" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="L47-PQ-byt"/>
-                                            <constraint firstAttribute="bottom" secondItem="raV-jm-PNg" secondAttribute="bottom" constant="8" id="NgS-rG-Zwl"/>
                                             <constraint firstItem="7TP-X8-yTZ" firstAttribute="leading" secondItem="dLO-Ko-BEx" secondAttribute="leading" constant="8" id="TH1-3y-Xje"/>
+                                            <constraint firstAttribute="bottom" secondItem="raV-jm-PNg" secondAttribute="bottom" constant="7" id="V2x-AS-vFo"/>
+                                            <constraint firstItem="raV-jm-PNg" firstAttribute="top" secondItem="7TP-X8-yTZ" secondAttribute="bottom" constant="8" id="YoZ-tg-1Dj"/>
+                                            <constraint firstItem="LMu-5O-o9h" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="8" id="ZDa-H9-FLx"/>
                                             <constraint firstItem="raV-jm-PNg" firstAttribute="centerX" secondItem="dLO-Ko-BEx" secondAttribute="centerX" id="d4U-sf-BKJ"/>
                                             <constraint firstAttribute="trailing" secondItem="LMu-5O-o9h" secondAttribute="trailing" constant="8" id="g02-Ji-O7I"/>
-                                            <constraint firstItem="LMu-5O-o9h" firstAttribute="top" secondItem="dLO-Ko-BEx" secondAttribute="top" constant="8" id="g13-cN-ccT"/>
                                             <constraint firstAttribute="trailing" secondItem="7TP-X8-yTZ" secondAttribute="trailing" constant="8" id="mf4-il-qq2"/>
+                                            <constraint firstItem="7TP-X8-yTZ" firstAttribute="top" secondItem="LMu-5O-o9h" secondAttribute="bottom" constant="8" id="qyl-c3-7hf"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="m4R-cN-QaR">
                                         <rect key="frame" x="0.0" y="0.0" width="290" height="81"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="81" id="pCe-pa-9fT"/>
+                                        </constraints>
                                     </customView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="dLO-Ko-BEx" firstAttribute="top" secondItem="1ff-Zq-eZn" secondAttribute="top" id="2to-7h-98B"/>
                                     <constraint firstAttribute="trailing" secondItem="dLO-Ko-BEx" secondAttribute="trailing" id="DYF-VG-NZx"/>
                                     <constraint firstItem="m4R-cN-QaR" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="E7Z-e7-MIu"/>
-                                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="dLO-Ko-BEx" secondAttribute="bottom" id="Fd4-ZT-k3e"/>
-                                    <constraint firstItem="dLO-Ko-BEx" firstAttribute="centerY" secondItem="1ff-Zq-eZn" secondAttribute="centerY" id="JFZ-um-2ce"/>
                                     <constraint firstAttribute="bottom" secondItem="m4R-cN-QaR" secondAttribute="bottom" id="KlV-Fj-Eo1"/>
-                                    <constraint firstItem="dLO-Ko-BEx" firstAttribute="top" relation="greaterThanOrEqual" secondItem="1ff-Zq-eZn" secondAttribute="top" id="NNU-ge-15J"/>
                                     <constraint firstItem="dLO-Ko-BEx" firstAttribute="leading" secondItem="1ff-Zq-eZn" secondAttribute="leading" id="feq-dk-vKc"/>
                                     <constraint firstAttribute="trailing" secondItem="m4R-cN-QaR" secondAttribute="trailing" id="jj1-hx-9uM"/>
+                                    <constraint firstAttribute="bottom" secondItem="dLO-Ko-BEx" secondAttribute="bottom" id="sFb-Ed-VjV"/>
                                     <constraint firstItem="m4R-cN-QaR" firstAttribute="top" secondItem="1ff-Zq-eZn" secondAttribute="top" id="wEn-XP-pzR"/>
                                 </constraints>
                             </customView>
@@ -1303,7 +1313,7 @@
                 </viewController>
                 <customObject id="xup-2U-YzY" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="973"/>
+            <point key="canvasLocation" x="-95" y="979"/>
         </scene>
     </scenes>
 </document>

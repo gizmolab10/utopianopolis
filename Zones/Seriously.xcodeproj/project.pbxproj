@@ -732,6 +732,7 @@
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 				A7290E7D2920DD8F00716109 /* ZFavoritesTogglingView.swift */,
+				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
 			);
 			path = details;
 			sourceTree = "<group>";
@@ -785,7 +786,7 @@
 			path = osx;
 			sourceTree = "<group>";
 		};
-		0C39B2541F182EBB0091F4D1 /* models */ = {
+		0C39B2541F182EBB0091F4D1 /* data */ = {
 			isa = PBXGroup;
 			children = (
 				0C39B25B1F182EBB0091F4D1 /* ZAction.swift */,
@@ -793,12 +794,14 @@
 				A70064DC22484808004E3A8D /* ZManifest.swift */,
 				A706444A247222A500F90B86 /* ZNode.swift */,
 				0C39B25D1F182EBB0091F4D1 /* Zone.swift */,
+				A7D507CB2688F2BA001CEA9F /* ZProducts.swift */,
+				A7D507D2269151B6001CEA9F /* ZReceipt.swift */,
 				0C39B25E1F182EBB0091F4D1 /* ZRecord.swift */,
 				0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */,
 				A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */,
 				0C3ECC221FA3023500F085EA /* ZUser.swift */,
 			);
-			path = models;
+			path = data;
 			sourceTree = "<group>";
 		};
 		0C39B2851F182EBB0091F4D1 /* views */ = {
@@ -1089,16 +1092,6 @@
 			path = controls;
 			sourceTree = "<group>";
 		};
-		A796A7BC2686715A00B36F5D /* subscribe */ = {
-			isa = PBXGroup;
-			children = (
-				A7D507CB2688F2BA001CEA9F /* ZProducts.swift */,
-				A7D507D2269151B6001CEA9F /* ZReceipt.swift */,
-				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
-			);
-			path = subscribe;
-			sourceTree = "<group>";
-		};
 		A79F0237262CC5D000E87742 /* test */ = {
 			isa = PBXGroup;
 			children = (
@@ -1162,14 +1155,13 @@
 			isa = PBXGroup;
 			children = (
 				0C39B22E1F182EBB0091F4D1 /* common */,
+				0C39B2541F182EBB0091F4D1 /* data */,
 				0C39B2361F182EBB0091F4D1 /* ios */,
-				0C39B2541F182EBB0091F4D1 /* models */,
 				A7EE245425292985003BF3C0 /* navigation */,
 				0C43EFC621010F62000976CE /* operations */,
 				0C39B23E1F182EBB0091F4D1 /* osx */,
 				A7DF4867249B19C6008B35AC /* startup */,
 				0C43EFBC21010F17000976CE /* storage */,
-				A796A7BC2686715A00B36F5D /* subscribe */,
 				0C39B2851F182EBB0091F4D1 /* views */,
 			);
 			path = basics;

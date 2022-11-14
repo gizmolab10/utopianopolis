@@ -19,15 +19,14 @@ var gSubscriptionDidChange  = true
 
 class ZSubscriptionController: ZGenericController {
 
-	@IBOutlet var cancelButton : ZButton?
-	@IBOutlet var  buttonsView : ZView?
-	@IBOutlet var   statusView : ZView?
-	@IBOutlet var  statusLabel : ZTextField?
 	@IBOutlet var    dateLabel : ZTextField?
-	@IBOutlet var       height : NSLayoutConstraint?
+	@IBOutlet var  statusLabel : ZTextField?
+	@IBOutlet var  statusView  : ZView?
+	@IBOutlet var buttonsView  : ZView?
+	@IBOutlet var cancelButton : ZButton?
 	override  var controllerID : ZControllerID { return .idSubscription }
-	var               rows : Int    { return gProducts.products.count }
-	var        bannerTitle : String { return gShowMySubscriptions ? kSubscription : kSubscribe }
+	var            bannerTitle : String        { return gShowMySubscriptions ? kSubscription : kSubscribe }
+	var                   rows : Int           { return gProducts.products.count }
 
 	func toggleViews() {
 		gShowMySubscriptions = !gShowMySubscriptions
@@ -44,12 +43,12 @@ class ZSubscriptionController: ZGenericController {
 	func subscriptionUpdate() {
 		statusView?      .isHidden = !gShowMySubscriptions
 		buttonsView?     .isHidden =  gShowMySubscriptions
-		height?          .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
+//		height?          .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
 
 		if  gShowMySubscriptions {
 			dateLabel?       .text = gProducts.expires
 			statusLabel?     .text = gProducts.status
-//			cancelButton?.isHidden = !(gProducts.zToken?.type.isAutoRenew ?? false)
+			cancelButton?.isHidden = !(gProducts.zToken?.type.isAutoRenew ?? false)
 		} else if gSubscriptionDidChange  {
 			gSubscriptionDidChange  = false
 			var prior: ZSubscriptionButton?
@@ -99,7 +98,7 @@ class ZSubscriptionController: ZGenericController {
 
 class ZSubscriptionButton: ZButton {
 
-	func layoutWithin(_ controller: ZSubscriptionController, below prior: ZSubscriptionButton?) {
+	func layoutWithin(_ controller: ZSubscriptionController, below above: ZSubscriptionButton?) {
 		let   last = tag == controller.rows - 1
 		let margin = 8.0
 
@@ -107,8 +106,8 @@ class ZSubscriptionButton: ZButton {
 			make.left .equalToSuperview().offset(margin)
 			make.right.equalToSuperview() .inset(margin)
 
-			if  let p = prior {
-				make.top.equalTo(p.snp.bottom)
+			if  let a = above {
+				make.top.equalTo(a.snp.bottom)
 
 				if  last {
 					make.bottom.equalToSuperview().inset(margin)

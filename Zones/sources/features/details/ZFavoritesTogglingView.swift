@@ -10,6 +10,7 @@ import Foundation
 
 class ZFavoritesTogglingView : ZTogglingView {
 
+	@IBOutlet var upDownView : ZView?
 	@IBOutlet var downButton : ZButton?
 	@IBOutlet var   upButton : ZButton?
 	override func updateTitleBarButtons() { updateFavoritesButtons() }
@@ -17,10 +18,8 @@ class ZFavoritesTogglingView : ZTogglingView {
 	@IBAction override func buttonAction(_ button: ZButton) {
 		switch identity {
 			case .vFavorites: gFavorites.showNextList(down: button == downButton)
-			default:          return
+			default:          super.buttonAction(button)
 		}
-
-		super.buttonAction(button)
 	}
 
 	func detectUpDownButton(at location: CGPoint, inView: ZView) -> Bool? { // true means down

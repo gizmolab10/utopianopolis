@@ -496,7 +496,8 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
 	func printWidget() {
-		if  let   mapView = controller?.mapView {
+		if  gProducts.hasEnabledSubscription,
+			let   mapView = controller?.mapView {
 			let   current = frame.expandedEquallyBy(40.0).offsetBy(dx: 15.0, dy: 22.0)
 			let     prior = mapView.frame
 			let    offset = gMapOffset

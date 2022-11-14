@@ -24,12 +24,14 @@ class ZTogglingView: ZView {
 	@IBOutlet var          spinner : ZProgressIndicator?
 	@IBOutlet var      titleButton : ZBannerButton?
 	@IBOutlet var  switchingButton : ZButton?
-	@IBOutlet var       upDownView : ZView?
 	@IBOutlet var       bannerView : ZView?
 	@IBOutlet var     hideableView : ZView?
 
 	var favoritesTitle : String  { return hideHideable ? "Favorites" : gFavoritesHere?.favoritesTitle ?? "Gerglagaster" }
 	var kind           : String? { return gConvertFromOptionalUserInterfaceItemIdentifier(identifier) }
+
+	func toggleHideableVisibility() { hideHideable = !hideHideable }
+	func    updateTitleBarButtons() {}
 
     // MARK: - identity
     // MARK: -
@@ -73,10 +75,6 @@ class ZTogglingView: ZView {
             }
         }
     }
-
-	func toggleHideableVisibility() {
-		hideHideable = !hideHideable
-	}
 
     // MARK: - events
     // MARK: -
@@ -128,12 +126,6 @@ class ZTogglingView: ZView {
 		}
 	}
 
-	func updateTitleBarButtons() {
-		if  identity == .vSubscribe {
-			updateSubscribeSwitch()
-		}
-	}
-
 	func updateView() { // gSignal for .sDetails goes here
 		updateColors()
 		updateTitleBarButtons()
@@ -149,11 +141,6 @@ class ZTogglingView: ZView {
 		switchingButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 	}
 
-	func updateSubscribeSwitch() {
-		switchingButton? .isHidden = !gUseSubscriptions
-		switchConstraint?.constant = hideHideable ? .zero : 60.0
-	}
-
 	func updateSpinner() {
 		if  let      s = spinner {
 			let   hide = gCurrentOp.isDoneOp && gCoreDataStack.isDoneOp
@@ -166,7 +153,7 @@ class ZTogglingView: ZView {
 			}
 		}
 	}
-
+	
     func updateHideableView() {
         let    hide = hideHideable
         let visible = subviews.contains(hideableView!)
@@ -177,7 +164,7 @@ class ZTogglingView: ZView {
 			hideableView?.isHidden = hide
 
 			hideableView?.snp.removeConstraints()
-			bannerView?.snp.removeConstraints()
+			bannerView?  .snp.removeConstraints()
 
 			if  hide {
 				hideableView?.removeFromSuperview()
@@ -187,11 +174,10 @@ class ZTogglingView: ZView {
 			} else {
 				addSubview(hideableView!)
 				hideableView?.snp.makeConstraints { make in
-					make.bottom.equalTo(self)
-
 					if  let b = bannerView {
 						make.top.equalTo(b.snp.bottom)
 						make.left.right.equalTo(b)
+						make.bottom.equalTo(self)
 					}
 				}
 			}

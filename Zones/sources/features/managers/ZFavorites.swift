@@ -184,7 +184,7 @@ class ZFavorites: ZSmallMapRecords {
 			}
 
 			setHere(to: here)
-			gSignal([.sDetails])
+			gSignal([.spCrumbs, .spFavorites])
 
 			return here
 		}

@@ -519,7 +519,7 @@ extension ZView {
     }
 
 	@objc func printView() { // ZView
-//		if  gProducts.hasEnabledSubscription {
+		if  gProducts.hasEnabledSubscription {
 			let       printInfo = NSPrintInfo.shared
 			printInfo.topMargin = 72.0
 			let         isWider = bounds.width > bounds.height
@@ -538,7 +538,7 @@ extension ZView {
 			printInfo.updateFromPMPrintSettings()
 			printInfo.updateFromPMPageFormat()
 			NSPrintOperation(view: self, printInfo: printInfo).run()
-//		}
+		}
 	}
 
 	func drawBox(in view: ZView, inset: CGFloat = 0, with color: ZColor) {

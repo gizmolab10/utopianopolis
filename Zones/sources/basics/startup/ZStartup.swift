@@ -36,7 +36,7 @@ class ZStartup: NSObject {
 	func startupCloudAndUI() {
 
 		gCoreDataMode.remove(.dCloudKit)
-		gDebugModes.remove(.dWriteFiles)
+		gDebugModes  .insert(.dUseSubscriptions)
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
