@@ -139,6 +139,8 @@ class ZSelecting: NSObject {
             }
         }
 
+		grabs.respectOrder()
+
         return grabs
     }
     

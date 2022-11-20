@@ -276,10 +276,8 @@ extension ZoneArray {
 				case .eByKind:       sortByZoneType(parent, iBackwards)
 			}
 		} else {
-			let parents = parentsAndChildren
-
-			for (parent, children) in parents {
-				children.sortBy(type, iBackwards, inParent: parent)
+			for (parent, children) in parentsAndChildren {
+				children.sortBy(type, iBackwards, inParent: parent)   // recurse
 			}
 		}
 	}
@@ -292,12 +290,13 @@ extension ZoneArray {
 
 	func reverse(_ parent: Zone) {
 		alterOrdering(inParent: parent) { iZones -> (ZoneArray) in
-			var result = ZoneArray()
-			var  index = 0
+			var  result = ZoneArray()
+			var   index = count
 
-			while index < count {
-				result.append(self[count - index - 1])
-				index        += 1
+			while index > 0 {
+				index  -= 1
+
+				result.append(self[index])
 			}
 
 			return result
@@ -385,11 +384,11 @@ extension ZoneArray {
 	}
 
 	func alterOrdering(_ iBackwards: Bool = false, inParent: Zone, with sort: ZonesToZonesClosure) {
-		inParent.children.updateOrder()
-
 		if  count > 1 {
+			var        zones = self
 			let (start, end) = orderLimits()
-			let        zones = sort(self)
+
+			zones = sort(zones)
 
 			zones.updateOrdering(start: start, end: end)
 			inParent.children.replace(zones)

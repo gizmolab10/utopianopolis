@@ -65,7 +65,7 @@ class ZStartup: NSObject {
 				gRemoteStorage.updateAllManifestCounts()
 				gRemoteStorage.recount()
 				gRefreshCurrentEssay()
-//				gProducts.fetchProductData()
+				gProducts.fetchProductData()
 
 				gRefusesFirstResponder                = false
 				gMainController?.helpButton?.isHidden = false
