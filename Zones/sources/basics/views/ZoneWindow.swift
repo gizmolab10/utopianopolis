@@ -20,6 +20,12 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     var          observer : NSKeyValueObservation?
 	var      inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
 
+	func draw() {
+		if  let v = contentView {
+			v.draw(v.bounds)
+		}
+	}
+
 	func revealEssayEditorInspectorBar(_ show: Bool = false) {
 		if  let            bar  = inspectorBar,
 			bar      .isHidden ==  show {

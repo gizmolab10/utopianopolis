@@ -43,18 +43,7 @@ enum ZOperationID: Int, CaseIterable {
     case oBookmarks			 // MINE ONLY
 	case oResolve
 	case oAdopt
-
-	var progressTime : Int {
-		switch self {
-			case .oLoadingIdeas:     return gRemoteStorage.dataLoadTime
-			case .oMigrateFromCloud: return gNeedsMigrate ? 50 : 0
-			case .oWrite:            return gWriteFiles   ? 40 : 0
-			case .oResolve:          return  4
-			case .oManifest:         return  3
-			case .oAdopt:            return  2
-			default:                 return  1
-		}
-	}
+	case oEnd
 
 	var useTimer: Bool {
 		switch self {
@@ -68,8 +57,7 @@ enum ZOperationID: Int, CaseIterable {
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites] }
 	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity,
-											.oFetchUserRecord, .oCheckAvailability] + bothDBOps }
+	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
 	var alwaysBoth  : Bool   { return   bothDBOps.contains(self) }
@@ -206,7 +194,7 @@ class ZOperations: NSObject {
 
 								onCompletion()
 							} else {
-								setProgressTime(for: operationID)
+								gStartup.setProgressTime(for: operationID)
 							}
 						}
 					}
@@ -219,37 +207,6 @@ class ZOperations: NSObject {
         queue.isSuspended = false
     }
 
-	private func setProgressTime(for op: ZOperationID) {
-		if  !gHasFinishedStartup, op != .oUserPermissions,
-		    gAssureProgressTimesAreLoaded() {
-
-			let priorTime = getAccumulatedProgressTime(untilExcluding: op)
-			let delta     = gStartup.elapsedTime - priorTime
-
-			if  delta    >= 1.5 {
-				gProgressTimes[op] = delta
-			}
-
-			gStoreProgressTimes()
-		}
-	}
-
-
-	private func getAccumulatedProgressTime(untilExcluding op: ZOperationID) -> Double {
-		var sum = Double.zero
-
-		if  gAssureProgressTimesAreLoaded() {
-			let opValue = op.rawValue
-
-			for opID in ZOperationID.allCases {
-				if  opValue > opID.rawValue {          // all ops prior to op parameter
-					sum += gProgressTimes[opID] ?? 1.0
-				}
-			}
-		}
-
-		return sum
-	}
     func add(_ operation: Operation) {
 		if  let prior: Operation = queue.operations.last {
             operation.addDependency(prior)

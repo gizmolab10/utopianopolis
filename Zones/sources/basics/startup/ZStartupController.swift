@@ -63,13 +63,16 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 
 	func pingRunloop() {
 		startupUpdate()
+		FOREGROUND(forced: true) {
+			RunLoop.current.run(until: Date().addingTimeInterval(0.00001)) // invoke draw
+		}
 	}
 
 	func startupUpdate() {
-		if !gHasFinishedStartup, gStartup.oneTimerIntervalHasElapsed {
-			FOREGROUND(forced: true) { [self] in
-				updateStartupStatus()
-			}
+		if  gHasFinishedStartup {
+			gTimers.stopTimer (for: .tStartup)
+		} else if gStartup.oneTimerIntervalHasElapsed {
+			updateStartupStatus()
 		}
 	}
 
@@ -81,7 +84,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		enableCloudDrive?.isHidden = true  // !hasInternet || gStartupLevel != .pleaseEnableDrive //  "  "  "
 		pleaseWait?      .isHidden = false //  hasInternet && notWait                             //  "  "  "
 
-		if  gAssureProgressTimesAreLoaded() {
+		if  gStartup.assureProgressTimesAreLoaded() {
 			let       statusText = gCurrentOp.fullStatus
 			let         rootView = gMainWindow?.contentView
 			operationLabel?.text = statusText
@@ -89,7 +92,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 			thermometerBar?.updateProgress()
 			gApplication?.setWindowsNeedUpdate(true)
 			gApplication?.updateWindows()
-			rootView?.setNeedsDisplay()
+			rootView?.setAllSubviewsNeedDisplay()
 		}
 	}
 

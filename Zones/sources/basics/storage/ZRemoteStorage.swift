@@ -35,7 +35,6 @@ class ZRemoteStorage: NSObject {
     var   currentRecords : ZRecords    { return zRecords(for: gDatabaseID)! }
     var     currentCloud : ZCloud?     { return currentRecords as? ZCloud }
     var rootProgenyCount : Int         { return (rootZone?.progenyCount ?? 0) + (rootZone?.count ?? 0) + 1 }
-	var     dataLoadTime : Int         { return totalLoadableRecordsCount / gTimePerRecord }
 	var         manifest : ZManifest?  { return currentRecords.manifest }
     var lostAndFoundZone : Zone?       { return currentRecords.lostAndFoundZone }
     var      destroyZone : Zone?       { return currentRecords.destroyZone }
@@ -84,7 +83,6 @@ class ZRemoteStorage: NSObject {
 
 		return count
 	}
-
 
 	var totalLoadableRecordsCount: Int {
 		switch gCDMigrationState {

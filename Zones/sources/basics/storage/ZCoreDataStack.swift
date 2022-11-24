@@ -213,7 +213,7 @@ class ZCoreDataStack: NSObject {
 				FOREGROUND { [self] in
 					load(type: kManifestType, into: dbID, onlyOne: false)
 
-					gProgressTimesReady = true
+					gStartup.progressTimesReady = true
 					var roots = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
 
 					if  dbID == .mineID {

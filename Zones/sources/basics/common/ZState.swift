@@ -14,9 +14,7 @@ var   gIsEditingStateChanging                           = false
 var    gRefusesFirstResponder                           = false
 var       gHasFinishedStartup                           = false
 var       gIsExportingToAFile                           = false
-var       gProgressTimesReady                           = false
 var        gKeyboardIsVisible                           = false
-var         gGotProgressTimes                           = false
 var          gIsReadyToShowUI                           = false
 var          gDeferringRedraw                           = false
 var           gPushIsDisabled                           = false
@@ -24,7 +22,6 @@ var            gTextCapturing                           = false
 var             gIgnoreEvents                           = false
 var             gNeedsRecount                           = false
 var               gLaunchedAt                           = Date()
-var            gProgressTimes                           = [ZOperationID : Double]()
 var           gAnglesFraction                           = 42.0
 var              gAnglesDelta                           = 15.0
 var               gDebugCount                           = 0
@@ -104,76 +101,6 @@ func gToggleShowExplanations() {
 
 	gHideExplanation()
 	gSignal([.sDetails])
-}
-
-func gLoadProgressTimes() {
-	if  let string = getPreferenceString(for: kProgressTimes) {
-		let  pairs = string.components(separatedBy: kCommaSeparator)
-
-		for pair in pairs {
-			let       items = pair.components(separatedBy: kColonSeparator)
-			if  items.count > 1,
-				let      op = items[0].integerValue,
-				let    time = items[1].doubleValue {
-
-				gSetProgressTime(opInt: op, value: time)
-			}
-		}
-	}
-}
-
-func gStoreProgressTimes() {
-	var separator = kEmpty
-	var  storable = kEmpty
-
-	for (op, value) in gProgressTimes {
-		if  value >= 1.5 {
-			storable.append("\(separator)\(op)\(kColonSeparator)\(value)")
-
-			separator = kCommaSeparator
-		}
-	}
-
-	setPreferencesString(storable, for: kProgressTimes)
-}
-
-var gTotalTime : Double {
-	if  gAssureProgressTimesAreLoaded() {
-		return gProgressTimes.values.reduce(0, +)
-	}
-
-	return .zero
-}
-
-func gSetProgressTime(opInt: Int, value: Double?) {
-	if  let op = ZOperationID(rawValue: opInt) {
-		let time = value ?? Double(op.progressTime)
-
-		if  time > 1 {
-			gProgressTimes[op] = time
-		}
-	}
-}
-
-func gAssureProgressTimesAreLoaded() -> Bool {
-	if  gProgressTimesReady, !gGotProgressTimes {
-		for op in ZOperationID.oStartingUp.rawValue ... ZOperationID.oDone.rawValue {
-			gSetProgressTime(opInt: op, value: nil)
-		}
-
-		gLoadProgressTimes()
-
-		gGotProgressTimes = true
-	}
-
-	return gGotProgressTimes
-}
-
-var gTimePerRecord : Int {
-	switch gCDMigrationState {         // TODO: adjust for cpu speed
-		case .normal: return 800
-		default:      return 130
-	}
 }
 
 var gCurrentEvent: ZEvent? {
