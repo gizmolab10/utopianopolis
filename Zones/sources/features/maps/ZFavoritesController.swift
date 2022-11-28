@@ -49,7 +49,6 @@ class ZFavoritesController: ZMapController {
 		super.layoutForCurrentScrollOffset()
 	}
 
-
 	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
 		if  gFavoritesAreVisible {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()

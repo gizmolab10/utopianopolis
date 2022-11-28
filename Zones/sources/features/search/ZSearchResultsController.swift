@@ -76,6 +76,7 @@ class ZSearchResultsController: ZGenericTableController {
 		let match = NSMutableAttributedString(string: text)
 		let range = NSRange(location: 0, length: text.length)
 
+		match.addAttribute(.foregroundColor, value: ZColor.black,        range: range)
 		match.addAttribute(.backgroundColor, value: matchHighlightColor, range: range)
 		error.append(match)
 

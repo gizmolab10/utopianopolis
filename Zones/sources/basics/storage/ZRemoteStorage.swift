@@ -142,6 +142,12 @@ class ZRemoteStorage: NSObject {
 		}
 	}
 
+	func setup() {
+		updateRootsOfAllProjeny()
+		updateAllManifestCounts()
+		recount()
+	}
+
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
         for cloud in allClouds {
 			cloud.recount()

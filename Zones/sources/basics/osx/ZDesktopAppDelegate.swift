@@ -33,6 +33,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			gAppDelegate = self
 
             UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
+			UserDefaults.standard.synchronize()
 			gApplication?.registerForRemoteNotifications(matching: .badge)
             gStartup.startupCloudAndUI()
 			gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { note in
