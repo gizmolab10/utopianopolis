@@ -256,7 +256,6 @@
 		A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1E23E2268E00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
-		A776C245280B690600065B73 /* Essay.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A776C244280B690600065B73 /* Essay.storyboard */; };
 		A777A7AF260FAC0300361265 /* ZMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A777A7AE260FAC0300361265 /* ZMapView.swift */; };
 		A777A7B0260FAC0300361265 /* ZMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A777A7AE260FAC0300361265 /* ZMapView.swift */; };
 		A777A7B1260FAC0300361265 /* ZMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A777A7AE260FAC0300361265 /* ZMapView.swift */; };
@@ -602,7 +601,6 @@
 		A76F9B94275ADCBB00FAF55A /* ZSliderLabelCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSliderLabelCombo.swift; sourceTree = "<group>"; };
 		A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = tutorial.idea.and.list.mov; sourceTree = "<group>"; };
 		A774ED1923E225A500080DC9 /* ZGesturesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGesturesController.swift; sourceTree = "<group>"; };
-		A776C244280B690600065B73 /* Essay.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Essay.storyboard; sourceTree = "<group>"; };
 		A777A7AE260FAC0300361265 /* ZMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMapView.swift; sourceTree = "<group>"; };
 		A77976F624996DBC00A6734B /* ZHelpDotsExemplarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpDotsExemplarController.swift; sourceTree = "<group>"; };
 		A78460E02724FAC5006A4075 /* ZPseudoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZPseudoView.swift; sourceTree = "<group>"; };
@@ -858,7 +856,6 @@
 			isa = PBXGroup;
 			children = (
 				A7245E0321729B18003D4BDA /* Details.storyboard */,
-				A776C244280B690600065B73 /* Essay.storyboard */,
 				A7245E0021729B02003D4BDA /* Main.storyboard */,
 				A746D461219F613D00123A0A /* Help.storyboard */,
 			);
@@ -1447,7 +1444,6 @@
 				A7245DFE21729B02003D4BDA /* Main.storyboard in Resources */,
 				A7B78D3B2448EF6400DB2C14 /* everyone.seriously in Resources */,
 				A7738FE12628C3390040B9CD /* tutorial.idea.and.list.mov in Resources */,
-				A776C245280B690600065B73 /* Essay.storyboard in Resources */,
 				0C1ABAAC1FB144E400D62947 /* Assets.xcassets in Resources */,
 				A746D465219F613D00123A0A /* Help.storyboard in Resources */,
 				A7245E0121729B18003D4BDA /* Details.storyboard in Resources */,

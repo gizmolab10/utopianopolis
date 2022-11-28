@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -887,16 +887,16 @@ CA
                                 </connections>
                             </containerView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Alternate Side View">
-                                <rect key="frame" x="226" y="0.0" width="225" height="255"/>
+                                <rect key="frame" x="226" y="0.0" width="225" height="256"/>
                                 <subviews>
                                     <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
-                                        <rect key="frame" x="0.0" y="0.0" width="225" height="255"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="225" height="256"/>
                                         <connections>
                                             <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
                                         </connections>
                                     </containerView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="cYx-gW-vNV">
-                                        <rect key="frame" x="0.0" y="0.0" width="225" height="255"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="225" height="256"/>
                                         <connections>
                                             <segue destination="Hxl-Pi-4li" kind="embed" id="VOo-Sq-lQs"/>
                                         </connections>
@@ -951,7 +951,7 @@ CA
                                                 <rect key="frame" x="6" y="15" width="15" height="15"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="9" id="6gn-6u-4Qb"/>
-                                                    <constraint firstAttribute="width" constant="15" id="d3L-0l-AB2"/>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="15" id="d3L-0l-AB2"/>
                                                 </constraints>
                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="MGu-Pu-2JQ">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -965,7 +965,7 @@ CA
                                                 <rect key="frame" x="6" y="15" width="15" height="15"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="9" id="1EF-9x-VXf"/>
-                                                    <constraint firstAttribute="width" constant="15" id="hfn-38-2PL"/>
+                                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="15" id="hfn-38-2PL"/>
                                                 </constraints>
                                                 <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="tWJ-5j-O3c">
                                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1032,21 +1032,18 @@ CA
                                 </constraints>
                             </customView>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="3wl-F6-Mu5">
-                                <rect key="frame" x="0.0" y="253" width="451" height="5"/>
+                                <rect key="frame" x="0.0" y="254" width="451" height="4"/>
                             </box>
                             <containerView focusRingType="none" translatesAutoresizingMaskIntoConstraints="NO" id="9jn-kU-BvC" userLabel="Debug View">
-                                <rect key="frame" x="226" y="105" width="200" height="150"/>
+                                <rect key="frame" x="226" y="106" width="200" height="150"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="2uX-UW-8hh"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="Fb0-pk-Vph"/>
                                     <constraint firstAttribute="height" constant="150" id="zOF-4u-MNX"/>
                                 </constraints>
-                                <connections>
-                                    <segue destination="9fV-7J-U9d" kind="embed" id="Nvn-NZ-vnl"/>
-                                </connections>
                             </containerView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="13C-5j-Mtw">
-                                <rect key="frame" x="226" y="235" width="20" height="20"/>
+                                <rect key="frame" x="226" y="236" width="20" height="20"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="PsJ-Js-Vyw"/>
                                     <constraint firstAttribute="width" constant="20" id="jV4-zi-0da"/>
@@ -1059,9 +1056,10 @@ CA
                                     <action selector="debugInfoButtonAction:" target="MXk-17-6Dz" id="UaE-dM-00j"/>
                                 </connections>
                             </button>
-                            <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="E8R-Lg-1Ha" userLabel="Details View">
                                 <rect key="frame" x="0.0" y="168" width="226" height="88"/>
                                 <constraints>
+                                    <constraint firstAttribute="height" constant="88" id="3sw-1U-DZj"/>
                                     <constraint firstAttribute="width" constant="226" id="us8-K9-IEo"/>
                                 </constraints>
                                 <connections>
@@ -1094,12 +1092,9 @@ CA
                                     <constraint firstAttribute="height" constant="250" id="ifk-8h-ZPC"/>
                                     <constraint firstAttribute="width" constant="350" id="qkI-pD-7SY"/>
                                 </constraints>
-                                <connections>
-                                    <segue destination="mSh-jO-anT" kind="embed" id="wKL-WY-7pZ"/>
-                                </connections>
                             </containerView>
-                            <customView hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ntq-Zy-gaV" customClass="ZExplanationPopover" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="88" y="74" width="275" height="153"/>
+                            <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ntq-Zy-gaV" customClass="ZExplanationPopover" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="88" y="76" width="275" height="148"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q1p-3k-xdd">
                                         <rect key="frame" x="10" y="124" width="255" height="16"/>
@@ -1153,6 +1148,7 @@ CA
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="1LB-o3-akz"/>
+                            <constraint firstItem="Ntq-Zy-gaV" firstAttribute="centerX" secondItem="eh7-uz-OG5" secondAttribute="centerX" id="3cG-Ty-RCy"/>
                             <constraint firstAttribute="bottom" secondItem="bXe-bA-sJU" secondAttribute="bottom" id="6AW-Ew-5FL"/>
                             <constraint firstAttribute="bottom" secondItem="uYG-mD-FXW" secondAttribute="bottom" constant="20" symbolic="YES" id="75s-sV-IVf"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="9Q8-HC-P7X"/>
@@ -1160,6 +1156,7 @@ CA
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GgL-zJ-zYQ"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
+                            <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="whm-tf-fPZ" secondAttribute="bottom" id="IQ9-Kv-otw"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="6" id="Lys-IS-2eI"/>
                             <constraint firstItem="whm-tf-fPZ" firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="OLC-5r-vQf"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="whm-tf-fPZ" secondAttribute="trailing" id="Pjc-Nx-5dx"/>
@@ -1181,6 +1178,7 @@ CA
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="13C-5j-Mtw" secondAttribute="leading" id="jVX-sm-H1A"/>
                             <constraint firstAttribute="trailing" secondItem="Ung-au-KM8" secondAttribute="trailing" id="kQM-GN-liC"/>
                             <constraint firstItem="yl6-st-bhl" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" constant="11" id="m1y-JF-jje"/>
+                            <constraint firstItem="Ntq-Zy-gaV" firstAttribute="centerY" secondItem="eh7-uz-OG5" secondAttribute="centerY" id="naS-s5-GzT"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="qfT-hA-eas"/>
                             <constraint firstItem="13C-5j-Mtw" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="r7B-pw-fl4"/>
                             <constraint firstAttribute="trailing" secondItem="5jB-w2-4Dg" secondAttribute="trailing" id="rXH-it-XjL"/>
@@ -1355,8 +1353,8 @@ CA
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
-                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Bm-oC-5lh" userLabel="Essay Controls View" customClass="ZEssayControlsView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="135" width="261" height="18"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="5Bm-oC-5lh" userLabel="Essay Controls View" customClass="ZEssayControlsView" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="135" width="260" height="20"/>
                                 <subviews>
                                     <button identifier="left.arrow" toolTip="show previous" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RN5-Of-rTw" userLabel="left.arrow">
                                         <rect key="frame" x="-1" y="-2" width="22" height="23"/>
@@ -1506,9 +1504,11 @@ CA
                             </customView>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="5Bm-oC-5lh" firstAttribute="leading" secondItem="hqm-9J-YF3" secondAttribute="leading" id="QYD-ZO-0E1"/>
                             <constraint firstAttribute="bottom" secondItem="hqm-9J-YF3" secondAttribute="bottom" id="Rcy-2n-8ye"/>
                             <constraint firstItem="hqm-9J-YF3" firstAttribute="leading" secondItem="HOI-yt-EwI" secondAttribute="leading" id="ZZW-hK-9Mg"/>
                             <constraint firstItem="hqm-9J-YF3" firstAttribute="top" secondItem="HOI-yt-EwI" secondAttribute="top" id="svi-Cg-ZxO"/>
+                            <constraint firstItem="5Bm-oC-5lh" firstAttribute="centerY" secondItem="hqm-9J-YF3" secondAttribute="centerY" id="xYv-BB-xx4"/>
                             <constraint firstAttribute="trailing" secondItem="hqm-9J-YF3" secondAttribute="trailing" id="ycB-H2-Aes"/>
                         </constraints>
                     </customView>
@@ -1954,25 +1954,25 @@ DQ
         <!--Debug Angles Controls-->
         <scene sceneID="nGL-an-oE5">
             <objects>
-                <viewController id="mSh-jO-anT" userLabel="Debug Angles Controls" customClass="ZDebugAnglesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="SV1-9q-1Vm">
-                        <rect key="frame" x="0.0" y="0.0" width="322" height="200"/>
+                <viewController storyboardIdentifier="angles" id="mSh-jO-anT" userLabel="Debug Angles Controls" customClass="ZDebugAnglesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" hidden="YES" id="SV1-9q-1Vm">
+                        <rect key="frame" x="0.0" y="0.0" width="322" height="202"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="Angles" translatesAutoresizingMaskIntoConstraints="NO" id="iU4-Yn-HWR">
-                                <rect key="frame" x="17" y="102" width="288" height="78"/>
+                                <rect key="frame" x="17" y="102" width="288" height="80"/>
                                 <view key="contentView" id="OLz-so-Ez9">
-                                    <rect key="frame" x="3" y="3" width="282" height="60"/>
+                                    <rect key="frame" x="4" y="5" width="280" height="60"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView identifier="central" translatesAutoresizingMaskIntoConstraints="NO" id="fII-si-7Qj" userLabel="Central" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="32" width="266" height="20"/>
+                                            <rect key="frame" x="8" y="32" width="264" height="20"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="XHa-Tv-e1G">
                                                     <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="8gG-Lg-PQO"/>
-                                                        <constraint firstAttribute="width" constant="50" id="Jov-bD-PO6"/>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="Jov-bD-PO6"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Central" id="0uH-o4-n4q">
                                                         <font key="font" metaFont="system"/>
@@ -1996,7 +1996,7 @@ DQ
                                                     </connections>
                                                 </textField>
                                                 <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fIX-yF-2r1" userLabel="angle slider">
-                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <rect key="frame" x="89" y="-6" width="177" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="5Ne-Kw-FFA"/>
                                                     </constraints>
@@ -2023,13 +2023,13 @@ DQ
                                             </connections>
                                         </customView>
                                         <customView identifier="outer" translatesAutoresizingMaskIntoConstraints="NO" id="23a-23-WTx" userLabel="Outer" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="8" width="266" height="20"/>
+                                            <rect key="frame" x="8" y="8" width="264" height="20"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tmz-aB-rBP">
                                                     <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="XC1-Hk-4WR"/>
-                                                        <constraint firstAttribute="width" constant="50" id="poh-CB-6Lx"/>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="poh-CB-6Lx"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Outer" id="kz1-GY-jDj">
                                                         <font key="font" metaFont="system"/>
@@ -2053,7 +2053,7 @@ DQ
                                                     </connections>
                                                 </textField>
                                                 <slider verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="C99-9G-KTL" userLabel="angle slider">
-                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <rect key="frame" x="89" y="-6" width="177" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="dWQ-wZ-XXE"/>
                                                     </constraints>
@@ -2091,21 +2091,20 @@ DQ
                                     </constraints>
                                 </view>
                             </box>
-                            <box fixedFrame="YES" borderType="line" title="Adjustments" translatesAutoresizingMaskIntoConstraints="NO" id="80b-Hr-ftf">
-                                <rect key="frame" x="17" y="20" width="288" height="78"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <box borderType="line" title="Adjustments" translatesAutoresizingMaskIntoConstraints="NO" id="80b-Hr-ftf">
+                                <rect key="frame" x="17" y="20" width="288" height="80"/>
                                 <view key="contentView" id="1TR-XJ-hPU">
-                                    <rect key="frame" x="3" y="3" width="282" height="60"/>
+                                    <rect key="frame" x="4" y="5" width="280" height="60"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView identifier="delta" translatesAutoresizingMaskIntoConstraints="NO" id="kxv-TD-meC" userLabel="Delta" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="32" width="266" height="20"/>
+                                            <rect key="frame" x="8" y="32" width="264" height="20"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uXW-aI-cMT">
                                                     <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="Gl5-NR-tSZ"/>
-                                                        <constraint firstAttribute="width" constant="50" id="uuI-46-Gxv"/>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="uuI-46-Gxv"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Delta" id="2FK-5C-uxG">
                                                         <font key="font" metaFont="system"/>
@@ -2129,7 +2128,7 @@ DQ
                                                     </connections>
                                                 </textField>
                                                 <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ccG-ej-D16" userLabel="angle slider">
-                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <rect key="frame" x="89" y="-6" width="177" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="sd1-Yq-edm"/>
                                                     </constraints>
@@ -2156,12 +2155,12 @@ DQ
                                             </connections>
                                         </customView>
                                         <customView identifier="fraction" translatesAutoresizingMaskIntoConstraints="NO" id="EBw-V8-JKi" userLabel="Fraction" customClass="ZSliderLabelCombo" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="8" width="266" height="20"/>
+                                            <rect key="frame" x="8" y="8" width="264" height="20"/>
                                             <subviews>
                                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dWF-W5-3Fs">
                                                     <rect key="frame" x="-2" y="0.0" width="54" height="20"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="50" id="PmJ-4w-Agt"/>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="PmJ-4w-Agt"/>
                                                         <constraint firstAttribute="height" constant="20" id="dS6-cW-YMD"/>
                                                     </constraints>
                                                     <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Fraction" id="BXx-70-Egb">
@@ -2186,7 +2185,7 @@ DQ
                                                     </connections>
                                                 </textField>
                                                 <slider verticalHuggingPriority="750" tag="1" translatesAutoresizingMaskIntoConstraints="NO" id="1Pe-ny-uuR" userLabel="angle slider">
-                                                    <rect key="frame" x="89" y="-6" width="179" height="28"/>
+                                                    <rect key="frame" x="89" y="-6" width="177" height="28"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="c58-65-7Qh"/>
                                                     </constraints>
@@ -2228,7 +2227,11 @@ DQ
                         <constraints>
                             <constraint firstItem="iU4-Yn-HWR" firstAttribute="leading" secondItem="SV1-9q-1Vm" secondAttribute="leading" constant="20" id="Fuw-eH-thE"/>
                             <constraint firstItem="iU4-Yn-HWR" firstAttribute="top" secondItem="SV1-9q-1Vm" secondAttribute="top" constant="20" id="XKo-Ib-0fo"/>
+                            <constraint firstAttribute="bottom" secondItem="80b-Hr-ftf" secondAttribute="bottom" constant="24" id="Ymd-7h-AGP"/>
                             <constraint firstAttribute="trailing" secondItem="iU4-Yn-HWR" secondAttribute="trailing" constant="20" id="b0M-Zp-BBV"/>
+                            <constraint firstItem="80b-Hr-ftf" firstAttribute="leading" secondItem="SV1-9q-1Vm" secondAttribute="leading" constant="20" symbolic="YES" id="bhd-F8-B8t"/>
+                            <constraint firstItem="80b-Hr-ftf" firstAttribute="top" secondItem="iU4-Yn-HWR" secondAttribute="bottom" constant="6" id="nvp-kU-whA"/>
+                            <constraint firstAttribute="trailing" secondItem="80b-Hr-ftf" secondAttribute="trailing" constant="20" symbolic="YES" id="zEj-eI-Siy"/>
                         </constraints>
                     </view>
                     <connections>
@@ -2246,7 +2249,7 @@ DQ
         <!--Debug Controller-->
         <scene sceneID="xPN-n7-b66">
             <objects>
-                <viewController id="9fV-7J-U9d" userLabel="Debug Controller" customClass="ZDebugController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="debug" id="9fV-7J-U9d" userLabel="Debug Controller" customClass="ZDebugController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="zUC-V8-Tvm">
                         <rect key="frame" x="0.0" y="0.0" width="160" height="300"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -2592,8 +2595,8 @@ CA
         </scene>
     </scenes>
     <resources>
-        <image name="NSRevealFreestandingTemplate" width="15" height="15"/>
-        <image name="NSStopProgressFreestandingTemplate" width="15" height="15"/>
+        <image name="NSRevealFreestandingTemplate" width="20" height="20"/>
+        <image name="NSStopProgressFreestandingTemplate" width="20" height="20"/>
         <image name="cancel" width="24" height="24"/>
         <image name="exit" width="26" height="26"/>
         <image name="left.arrow" width="860" height="785"/>

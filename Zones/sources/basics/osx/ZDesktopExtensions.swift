@@ -612,7 +612,7 @@ extension ZoneWindow {
         contentMinSize        = kDefaultWindowRect.size // smallest size user to which can shrink window
         let              rect = gWindowRect
         
-        setFrame(rect, display: true)
+        setFrame(rect, display: false)
         
         observer = observe(\.effectiveAppearance) { _, _  in
             gSignal([.sAppearance])

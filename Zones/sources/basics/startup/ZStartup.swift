@@ -21,7 +21,7 @@ class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
 
-//		gPrintModes            = []
+		gPrintModes            = []
 //		gPrintModes  .insert(.dTime)
 //		gDebugModes  .insert(.dUseSubscriptions)
 //		gCoreDataMode.remove(.dCloudKit)
@@ -45,32 +45,29 @@ class ZStartup: NSObject {
 
 		gBatches.startUp { iSame in
 			FOREGROUND { [self] in
-				gIsReadyToShowUI = true
+				gMainController?.helpButton?.isHidden = false
+				gRefusesFirstResponder                = false
+				gHasFinishedStartup                   = true
+				gIsReadyToShowUI                      = true
+				gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 
 				gDetailsController?.removeViewFromStack(for: .vSubscribe)
 				gRefreshPersistentWorkMode()
-				gRemoteStorage.updateRootsOfAllProjeny()
-				gRemoteStorage.updateAllManifestCounts()
-				gRemoteStorage.recount()
+				gRemoteStorage.setup()
 				gRefreshCurrentEssay()
 				gProducts.fetchProductData()
-
-				gRefusesFirstResponder                = false
-				gMainController?.helpButton?.isHidden = false
-				gHasFinishedStartup                   = true
-				gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
+				gHereMaybe?.grab()
 
 				if  gIsStartupMode {
 					gSetMapWorkMode()
 				}
 
-				gHereMaybe?.grab()
-				gSignal([.sLaunchDone])
-
 				FOREGROUND(after: 0.1) { [self] in
 					if  gCDMigrationState != .normal {
 						gSaveContext()
 					}
+
+					gSignal([.sLaunchDone])
 
 					requestFeedback() {
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tPersist, .tHover]) // .tLicense

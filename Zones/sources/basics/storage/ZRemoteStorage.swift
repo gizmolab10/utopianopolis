@@ -136,6 +136,12 @@ class ZRemoteStorage: NSObject {
 		}
 	}
 
+	func setup() {
+		updateRootsOfAllProjeny()
+		updateAllManifestCounts()
+		recount()
+	}
+
 	func removeAllDuplicates() {
 		for records in allRecordsArrays {
 			records.removeAllDuplicates()
