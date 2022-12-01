@@ -100,7 +100,7 @@ class ZTimers: NSObject {
 				case .tStartup:              waitFor =  0.000001         // one micro second
 				case .tKey,     .tPersist:   waitFor =  5.0              // five seconds
 				case .tLicense, .tRecount:   waitFor = 60.0              // one minute
-				case .tHover,   .tMouseZone: waitFor = kOneTimerInterval // one fifth second
+				case .tHover,   .tMouseZone: waitFor = kOneHoverInterval // one fifth second
 				default:                     break
 			}
 

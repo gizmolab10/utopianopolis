@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="YaQ-0g-PCb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="20037"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21507"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -10,17 +10,17 @@
             <objects>
                 <viewController id="fxO-Qj-JeN" customClass="ZDataController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="155"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="159"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box borderType="line" title="storage" translatesAutoresizingMaskIntoConstraints="NO" id="AUf-tY-f9E">
-                                <rect key="frame" x="5" y="87" width="280" height="64"/>
+                                <rect key="frame" x="5" y="89" width="280" height="66"/>
                                 <view key="contentView" id="uro-ap-Iux">
-                                    <rect key="frame" x="3" y="3" width="274" height="46"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="46"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3v8-d2-yo8" userLabel="Total Count Label">
-                                            <rect key="frame" x="6" y="27" width="262" height="15"/>
+                                            <rect key="frame" x="6" y="27" width="260" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="iSu-QB-gpG"/>
                                             </constraints>
@@ -31,7 +31,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fy3-JT-P1F">
-                                            <rect key="frame" x="6" y="4" width="262" height="15"/>
+                                            <rect key="frame" x="6" y="4" width="260" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="am7-ij-t8n"/>
                                             </constraints>
@@ -54,13 +54,13 @@
                                 </view>
                             </box>
                             <box borderType="line" title="selection" translatesAutoresizingMaskIntoConstraints="NO" id="kOk-k7-jTQ">
-                                <rect key="frame" x="5" y="4" width="280" height="79"/>
+                                <rect key="frame" x="5" y="4" width="280" height="81"/>
                                 <view key="contentView" id="izc-li-pFu">
-                                    <rect key="frame" x="3" y="3" width="274" height="61"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="61"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BcI-eM-ytK">
-                                            <rect key="frame" x="6" y="42" width="262" height="15"/>
+                                            <rect key="frame" x="6" y="42" width="260" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="G6i-MA-0f5"/>
                                             </constraints>
@@ -71,7 +71,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JFS-Ma-Zx8">
-                                            <rect key="frame" x="6" y="23" width="262" height="15"/>
+                                            <rect key="frame" x="6" y="23" width="260" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="X5g-AM-OTQ"/>
                                             </constraints>
@@ -82,7 +82,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Nr1-TP-dq5">
-                                            <rect key="frame" x="6" y="4" width="262" height="15"/>
+                                            <rect key="frame" x="6" y="4" width="260" height="15"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="15" id="mlQ-Pb-juW"/>
                                             </constraints>
@@ -108,7 +108,7 @@
                                 </view>
                             </box>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4om-oY-tSH">
-                                <rect key="frame" x="287" y="0.0" width="5" height="155"/>
+                                <rect key="frame" x="287" y="0.0" width="5" height="159"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="RY0-UO-Dkf"/>
                                 </constraints>
@@ -526,17 +526,17 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="287"/>
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="291"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box autoresizesSubviews="NO" borderType="none" title="list lengths show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
-                                <rect key="frame" x="5" y="244" width="280" height="35"/>
+                                <rect key="frame" x="8" y="252" width="274" height="31"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
-                                    <rect key="frame" x="0.0" y="0.0" width="280" height="20"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="274" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="1" y="-1" width="278" height="21"/>
+                                            <rect key="frame" x="1" y="-1" width="272" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <segments>
@@ -562,9 +562,9 @@
                                 </constraints>
                             </box>
                             <box borderType="line" title="map" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="148" width="280" height="92"/>
+                                <rect key="frame" x="5" y="150" width="280" height="94"/>
                                 <view key="contentView" id="npe-oq-zV9">
-                                    <rect key="frame" x="3" y="3" width="274" height="74"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FKt-Xz-j3O" userLabel="labels">
@@ -619,10 +619,10 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="xWn-hi-oFR" userLabel="sliders">
-                                            <rect key="frame" x="111" y="0.0" width="160" height="74"/>
+                                            <rect key="frame" x="111" y="0.0" width="158" height="74"/>
                                             <subviews>
                                                 <slider identifier="thickness" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gh7-LP-7IV">
-                                                    <rect key="frame" x="-2" y="42" width="164" height="30"/>
+                                                    <rect key="frame" x="-2" y="42" width="162" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="mm0-xX-hLQ"/>
                                                     </constraints>
@@ -632,7 +632,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="font size" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="X28-Kf-ltl" userLabel="Font Size">
-                                                    <rect key="frame" x="-2" y="20" width="164" height="30"/>
+                                                    <rect key="frame" x="-2" y="20" width="162" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xX2-we-KBt"/>
                                                     </constraints>
@@ -642,7 +642,7 @@
                                                     </connections>
                                                 </slider>
                                                 <slider identifier="horizontal" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OmD-gF-PvR" userLabel="Horizontal Spacing">
-                                                    <rect key="frame" x="-2" y="-2" width="164" height="30"/>
+                                                    <rect key="frame" x="-2" y="-2" width="162" height="30"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="xc9-eh-z97"/>
                                                     </constraints>
@@ -678,9 +678,9 @@
                                 </view>
                             </box>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150" userLabel="colors">
-                                <rect key="frame" x="5" y="47" width="280" height="93"/>
+                                <rect key="frame" x="5" y="47" width="280" height="95"/>
                                 <view key="contentView" id="rb6-oU-fw8">
-                                    <rect key="frame" x="3" y="3" width="274" height="75"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="G62-eE-NOU" userLabel="labels">
@@ -750,10 +750,10 @@
                                             </constraints>
                                         </customView>
                                         <customView translatesAutoresizingMaskIntoConstraints="NO" id="FDB-6R-I3I" userLabel="color wells">
-                                            <rect key="frame" x="110" y="4" width="161" height="69"/>
+                                            <rect key="frame" x="110" y="4" width="159" height="69"/>
                                             <subviews>
                                                 <colorWell identifier="zones" translatesAutoresizingMaskIntoConstraints="NO" id="UMY-8c-tep">
-                                                    <rect key="frame" x="0.0" y="46" width="161" height="23"/>
+                                                    <rect key="frame" x="-3" y="44" width="165" height="27"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="i5B-AL-Q9X"/>
                                                     </constraints>
@@ -763,7 +763,7 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="drag targets" translatesAutoresizingMaskIntoConstraints="NO" id="j0f-8D-Ds5" userLabel="drag targets color box">
-                                                    <rect key="frame" x="0.0" y="23" width="161" height="23"/>
+                                                    <rect key="frame" x="-3" y="21" width="165" height="27"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="XcF-55-QfT"/>
                                                     </constraints>
@@ -773,7 +773,7 @@
                                                     </connections>
                                                 </colorWell>
                                                 <colorWell identifier="accent" translatesAutoresizingMaskIntoConstraints="NO" id="wsy-Dq-H7s">
-                                                    <rect key="frame" x="0.0" y="0.0" width="161" height="23"/>
+                                                    <rect key="frame" x="-3" y="-2" width="165" height="27"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="23" id="ukQ-KH-zeP"/>
                                                     </constraints>
@@ -809,7 +809,7 @@
                                 </view>
                             </box>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dkn-tQ-U5p" userLabel="colorful">
-                                <rect key="frame" x="149" y="127" width="72" height="17"/>
+                                <rect key="frame" x="149" y="129" width="72" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="16" id="ctp-Vy-MUv"/>
                                 </constraints>
@@ -822,13 +822,13 @@
                                 </connections>
                             </button>
                             <box borderType="none" title="circles show for" translatesAutoresizingMaskIntoConstraints="NO" id="EBA-0Z-ZoM" userLabel="circles">
-                                <rect key="frame" x="5" y="8" width="280" height="35"/>
+                                <rect key="frame" x="8" y="12" width="274" height="31"/>
                                 <view key="contentView" id="bZ5-d7-EXq">
-                                    <rect key="frame" x="0.0" y="0.0" width="280" height="20"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="274" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="layout" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oGC-zp-Rq7">
-                                            <rect key="frame" x="0.0" y="-1" width="280" height="21"/>
+                                            <rect key="frame" x="0.0" y="-1" width="274" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectAny" id="kkM-fg-4gO">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <segments>
@@ -893,18 +893,17 @@
         <scene sceneID="uRy-JP-y7m">
             <objects>
                 <viewController id="YdN-bY-sSj" customClass="ZKickoffToolsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="MMF-wn-1M6">
-                        <rect key="frame" x="0.0" y="0.0" width="290" height="299"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                    <view key="view" translatesAutoresizingMaskIntoConstraints="NO" id="MMF-wn-1M6">
+                        <rect key="frame" x="0.0" y="0.0" width="290" height="301"/>
                         <subviews>
                             <box borderType="line" title="ToolTips and Explanations" translatesAutoresizingMaskIntoConstraints="NO" id="1ID-ro-NAz">
                                 <rect key="frame" x="5" y="250" width="280" height="41"/>
                                 <view key="contentView" id="0RF-K9-32y">
-                                    <rect key="frame" x="3" y="3" width="274" height="23"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="21"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="toolTip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-7" y="-6" width="151" height="33"/>
+                                            <rect key="frame" x="-7" y="-6" width="150" height="33"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="WPU-QJ-waV"/>
                                             </constraints>
@@ -918,7 +917,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="explain" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Rq-Ef-CYU" userLabel="explanations" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="131" y="-6" width="150" height="33"/>
+                                            <rect key="frame" x="130" y="-6" width="149" height="33"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="fj3-y1-qFq"/>
                                             </constraints>
@@ -944,17 +943,17 @@
                                     </constraints>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="37" id="k2S-VB-8WA"/>
+                                    <constraint firstAttribute="height" constant="37" id="AdN-3q-BWv"/>
                                 </constraints>
                             </box>
                             <box identifier="add" title="Add idea as" translatesAutoresizingMaskIntoConstraints="NO" id="yWs-Kk-dmA">
                                 <rect key="frame" x="5" y="205" width="280" height="41"/>
                                 <view key="contentView" id="6gW-4w-OHR">
-                                    <rect key="frame" x="3" y="3" width="274" height="23"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="21"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="-6" width="150" height="33"/>
+                                            <rect key="frame" x="-6" y="-6" width="149" height="31"/>
                                             <buttonCell key="cell" type="push" title="child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -965,7 +964,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="131" y="1" width="150" height="19"/>
+                                            <rect key="frame" x="130" y="1" width="149" height="17"/>
                                             <buttonCell key="cell" type="push" title="sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -994,11 +993,11 @@
                             <box identifier="edit" title="Edit" translatesAutoresizingMaskIntoConstraints="NO" id="2K6-Dx-rco" userLabel="Edit">
                                 <rect key="frame" x="5" y="160" width="280" height="41"/>
                                 <view key="contentView" id="oj1-Uo-6FC">
-                                    <rect key="frame" x="3" y="3" width="274" height="23"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="21"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="-6" width="150" height="33"/>
+                                            <rect key="frame" x="-6" y="-6" width="149" height="31"/>
                                             <buttonCell key="cell" type="push" title="idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1009,7 +1008,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="131" y="1" width="150" height="19"/>
+                                            <rect key="frame" x="130" y="1" width="149" height="17"/>
                                             <buttonCell key="cell" type="push" title="note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1038,11 +1037,11 @@
                             <box identifier="move" title="Move" translatesAutoresizingMaskIntoConstraints="NO" id="Eo8-dK-qAb">
                                 <rect key="frame" x="5" y="71" width="280" height="85"/>
                                 <view key="contentView" id="dg8-AR-KhC">
-                                    <rect key="frame" x="3" y="3" width="274" height="67"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="65"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="up" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="36" width="286" height="35"/>
+                                            <rect key="frame" x="-6" y="36" width="284" height="33"/>
                                             <buttonCell key="cell" type="push" title="up" alternateTitle="UP ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1053,7 +1052,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="focus" toolTip="focus on the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SJq-nd-vaN" userLabel="focus" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="85" y="15" width="104" height="32"/>
+                                            <rect key="frame" x="84" y="15" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="focus" alternateTitle="/" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qid-p3-qJU">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1064,7 +1063,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="right" verticalHuggingPriority="749" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="176" y="15" width="104" height="32"/>
+                                            <rect key="frame" x="175" y="15" width="103" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1075,7 +1074,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="down" verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="-6" width="286" height="32"/>
+                                            <rect key="frame" x="-6" y="-6" width="284" height="32"/>
                                             <buttonCell key="cell" type="push" title="down" alternateTitle="DOWN ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1086,7 +1085,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="15" width="104" height="32"/>
+                                            <rect key="frame" x="-6" y="15" width="103" height="32"/>
                                             <buttonCell key="cell" type="push" title="left" alternateTitle="&lt;-" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1125,11 +1124,11 @@
                             <box borderType="line" title="Modifier Keys" translatesAutoresizingMaskIntoConstraints="NO" id="BZ2-Au-okv">
                                 <rect key="frame" x="5" y="4" width="280" height="63"/>
                                 <view key="contentView" id="7JG-O0-yA8">
-                                    <rect key="frame" x="3" y="3" width="274" height="45"/>
+                                    <rect key="frame" x="4" y="5" width="272" height="43"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="shift" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Qe-VP-Kce" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="15" width="149" height="34"/>
+                                            <rect key="frame" x="-5" y="14" width="148" height="33"/>
                                             <buttonCell key="cell" type="push" title="SHIFT" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="2fx-6f-Zh2">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1139,7 +1138,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="command" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jMS-ki-sap" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-5" y="-6" width="149" height="32"/>
+                                            <rect key="frame" x="-5" y="-6" width="148" height="31"/>
                                             <buttonCell key="cell" type="push" title="COMMAND" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k68-pr-cxj">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1149,7 +1148,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="option" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JnY-Vs-p4U" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="132" y="15" width="148" height="34"/>
+                                            <rect key="frame" x="131" y="14" width="147" height="33"/>
                                             <buttonCell key="cell" type="push" title="OPTION" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3qw-o2-Ih5">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1159,7 +1158,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="control" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="cxk-91-GuE" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="132" y="-6" width="148" height="32"/>
+                                            <rect key="frame" x="131" y="-6" width="147" height="31"/>
                                             <buttonCell key="cell" type="push" title="CONTROL" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fu3-k6-L9o">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1201,7 +1200,7 @@
                             <constraint firstAttribute="trailing" secondItem="1ID-ro-NAz" secondAttribute="trailing" constant="8" id="0NE-IG-CmL"/>
                             <constraint firstAttribute="trailing" secondItem="BZ2-Au-okv" secondAttribute="trailing" constant="8" id="7eV-6w-4L8"/>
                             <constraint firstItem="Eo8-dK-qAb" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="OKG-eI-oG3"/>
-                            <constraint firstItem="1ID-ro-NAz" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" constant="8" id="Q8c-oE-VCz"/>
+                            <constraint firstItem="1ID-ro-NAz" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" constant="10" id="Q8c-oE-VCz"/>
                             <constraint firstItem="yWs-Kk-dmA" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="QOn-Bn-5x8"/>
                             <constraint firstItem="1ID-ro-NAz" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="UWe-Eb-foo"/>
                             <constraint firstAttribute="bottom" secondItem="BZ2-Au-okv" secondAttribute="bottom" constant="8" id="UyC-c2-x9n"/>

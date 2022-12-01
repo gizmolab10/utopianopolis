@@ -221,7 +221,7 @@ class ZStartup: NSObject {
 
 			for opID in ZOperationID.allCases {
 				if  opValue > opID.rawValue {          // all ops prior to op parameter
-					sum += progressTimes[opID] ?? 0.4
+					sum += progressTimes[opID] ?? 0.55
 				}
 			}
 		}
