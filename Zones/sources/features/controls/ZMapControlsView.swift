@@ -64,16 +64,17 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
+		gTextEditor.stopCurrentEdit(forceCapture: true) // don't discard user's work
+
 		if  let    type = button.modeButtonType {
 			switch type {
-				case .tLayout:  gMapLayoutMode   = gMapLayoutMode  .next
+				case .tLayout:  gMapLayoutMode   = gMapLayoutMode  .next; gRelayoutMaps()
 				case .tGrowth:  gListGrowthMode  = gListGrowthMode .next
 				case .tConfine: gConfinementMode = gConfinementMode.next
 			}
 		}
 
-		gTextEditor.stopCurrentEdit(forceCapture: true) // don't discard user's work
-		gSignal([.sDetails, .spCrumbs])
+		gSignal([.sDetails])
 	}
 
 	func controlsUpdate() {

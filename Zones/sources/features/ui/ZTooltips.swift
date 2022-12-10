@@ -223,7 +223,7 @@ extension ZoneTextWidget {
 			toolTip  = "Idea text\n\nedit \"\(name)\""
 		}
 
-//		updateTracking() // needed because text field is a subview of the map, not the text widget
+		updateTracking() // needed because text field is a subview of the map, not the text widget
 	}
 
 }

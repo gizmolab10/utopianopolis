@@ -31,18 +31,18 @@ enum ZSentEmailType: String {
 @objc(ZUser)
 class ZUser : ZRecord {
 
-	@NSManaged var      authorID: String?
-	@NSManaged var   writeAccess: NSNumber?
-	@NSManaged var sentEmailType: String?
-	var                 isExempt: Bool { return authorID == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" }
+	@NSManaged var        authorID : String?
+	@NSManaged var     writeAccess : NSNumber?
+	@NSManaged var   sentEmailType : String?
+	override   var cloudProperties : StringsArray { return ZUser.cloudProperties }
+	var                   isExempt : Bool { return authorID == "783BF01A-7535-4950-99EE-B63DB2732824" }
+	func save() { gUserRecordName = recordName }
 
 	var access: ZUserAccess {
 		if  isExempt {
-			writeAccess  = ZUserAccess.eFull.number
-		}
-		
-		if  writeAccess == nil {
-			writeAccess  = ZUserAccess.eNormal.number
+			writeAccess = ZUserAccess.eFull.number
+		} else if writeAccess == nil {
+			writeAccess = ZUserAccess.eNormal.number
 		}
 		
 		return ZUserAccess(rawValue: writeAccess!.intValue)!
@@ -51,12 +51,6 @@ class ZUser : ZRecord {
 	static func uniqueUser(recordName: String?, in dbID: ZDatabaseID) -> ZUser {
 		return uniqueZRecord(entityName: kUserType, recordName: recordName, in: dbID) as! ZUser
 	}
-
-	func save() {
-		gUserRecordName = recordName
-	}
-
-    override var cloudProperties: StringsArray { return ZUser.cloudProperties }
 
     override class var cloudProperties: StringsArray {
         return [#keyPath(authorID),

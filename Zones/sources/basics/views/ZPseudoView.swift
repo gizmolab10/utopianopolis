@@ -23,17 +23,13 @@ enum ZDrawPhase: String {
 class ZPseudoView: NSObject {
 
 	var      isHovering = false
+	var      identifier = NSUserInterfaceItemIdentifier("")
+	var  subpseudoviews = [ZPseudoView] ()
 	var   absoluteFrame = CGRect.zero
 	var absoluteHitRect = CGRect.zero
 	var          bounds = CGRect.zero
 	var           frame = CGRect.zero
 	var       drawnSize = CGSize.zero     { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
-	var      identifier = NSUserInterfaceItemIdentifier("")
-	var  subpseudoviews = [ZPseudoView] ()
-	var superpseudoview : ZPseudoView?
-	var      toolTipTag : ZToolTipTag?
-	var    absoluteView : ZView?
-	var       drawnView : ZView?
 	var      controller : ZMapController? { return nil }
 	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
 	var  absoluteCenter : CGPoint         { return absoluteFrame.center }
@@ -42,11 +38,15 @@ class ZPseudoView: NSObject {
 	var        isBigMap : Bool            { return controller?.isBigMap ?? true }
 	var    isLinearMode : Bool            { return mode == .linearMode }
 	var  isCircularMode : Bool            { return mode == .circularMode }
+	var superpseudoview : ZPseudoView?
+	var      toolTipTag : ZToolTipTag?
+	var    absoluteView : ZView?
+	var       drawnView : ZView?
 
-	override var description: String { return toolTip ?? super.description }
-	func draw(_ phase: ZDrawPhase) {} // overridden in all subclasses
-	func setFrameSize(_ newSize: NSSize) { frame.size = newSize }
-	func setupDrawnView() { drawnView = absoluteView }
+	override var description: String      { return toolTip ?? super.description }
+	func draw(_ phase: ZDrawPhase)        {} // overridden in all subclasses
+	func setFrameSize(_ newSize: NSSize)  { frame.size = newSize }
+	func setupDrawnView()                 { drawnView = absoluteView }
 
 	func debug(_ rect: CGRect, _ message: String = kEmpty) {}
 

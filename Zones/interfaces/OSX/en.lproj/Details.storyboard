@@ -898,15 +898,11 @@
                         <subviews>
                             <box borderType="line" title="ToolTips and Explanations" translatesAutoresizingMaskIntoConstraints="NO" id="1ID-ro-NAz">
                                 <rect key="frame" x="5" y="250" width="280" height="41"/>
-                                <view key="contentView" id="0RF-K9-32y">
+                                <view key="contentView" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0RF-K9-32y">
                                     <rect key="frame" x="4" y="5" width="272" height="21"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="toolTip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-7" y="-6" width="150" height="33"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="21" id="WPU-QJ-waV"/>
-                                            </constraints>
+                                            <rect key="frame" x="-7" y="-6" width="121" height="32"/>
                                             <buttonCell key="cell" type="push" title="transitioning..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ltM-0d-32i">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -917,10 +913,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="explain" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Rq-Ef-CYU" userLabel="explanations" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="130" y="-6" width="149" height="33"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="21" id="fj3-y1-qFq"/>
-                                            </constraints>
+                                            <rect key="frame" x="101" y="-6" width="121" height="32"/>
                                             <buttonCell key="cell" type="push" title="transitioning..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pls-co-ZKe">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -934,12 +927,12 @@
                                     <constraints>
                                         <constraint firstItem="0Rq-Ef-CYU" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" constant="1" id="1Tk-9e-jh5"/>
                                         <constraint firstAttribute="bottom" secondItem="0Rq-Ef-CYU" secondAttribute="bottom" constant="1" id="1qv-es-Fje"/>
-                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="leading" secondItem="8oF-qb-aFC" secondAttribute="trailing" constant="1" id="5jk-SN-CWF"/>
                                         <constraint firstAttribute="bottom" secondItem="8oF-qb-aFC" secondAttribute="bottom" constant="1" id="8gP-O5-KOJ"/>
+                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="leading" secondItem="8oF-qb-aFC" secondAttribute="trailing" constant="1" id="BRV-bB-5hS"/>
                                         <constraint firstItem="8oF-qb-aFC" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" constant="1" id="Cra-zJ-GFW"/>
-                                        <constraint firstAttribute="trailing" secondItem="0Rq-Ef-CYU" secondAttribute="trailing" id="eRt-nA-XGU"/>
+                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="leading" secondItem="0RF-K9-32y" secondAttribute="leading" id="TAJ-Kp-NU5"/>
+                                        <constraint firstAttribute="trailing" secondItem="0Rq-Ef-CYU" secondAttribute="trailing" id="d08-5p-gyX"/>
                                         <constraint firstItem="8oF-qb-aFC" firstAttribute="width" secondItem="0Rq-Ef-CYU" secondAttribute="width" id="k5D-c2-y2x"/>
-                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="leading" secondItem="0RF-K9-32y" secondAttribute="leading" id="zA9-z7-GKC"/>
                                     </constraints>
                                 </view>
                                 <constraints>
@@ -953,7 +946,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="child" toolTip="add a new idea as child to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xIc-ry-xck" userLabel="child" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="-6" width="149" height="31"/>
+                                            <rect key="frame" x="-7" y="-6" width="150" height="31"/>
                                             <buttonCell key="cell" type="push" title="child" alternateTitle="SPACE" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8y-nU-3ox">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -977,7 +970,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="EXp-p8-Pyy" firstAttribute="leading" secondItem="xIc-ry-xck" secondAttribute="trailing" constant="1" id="7KB-RK-Fyh"/>
-                                        <constraint firstItem="xIc-ry-xck" firstAttribute="leading" secondItem="6gW-4w-OHR" secondAttribute="leading" constant="1" id="Et7-GF-Fa6"/>
+                                        <constraint firstItem="xIc-ry-xck" firstAttribute="leading" secondItem="6gW-4w-OHR" secondAttribute="leading" id="Et7-GF-Fa6"/>
                                         <constraint firstAttribute="bottom" secondItem="xIc-ry-xck" secondAttribute="bottom" constant="1" id="IWu-R8-eia"/>
                                         <constraint firstAttribute="bottom" secondItem="EXp-p8-Pyy" secondAttribute="bottom" constant="8" id="KeS-tR-fic"/>
                                         <constraint firstItem="EXp-p8-Pyy" firstAttribute="width" secondItem="xIc-ry-xck" secondAttribute="width" id="UKn-4P-ggM"/>
@@ -997,7 +990,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="idea" toolTip="edit the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="GxP-Zs-LHC" userLabel="idea" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="-6" width="149" height="31"/>
+                                            <rect key="frame" x="-7" y="-6" width="150" height="31"/>
                                             <buttonCell key="cell" type="push" title="idea" alternateTitle="RETURN" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YHj-2q-hu8">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1021,7 +1014,7 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="tUN-AT-gcT" secondAttribute="trailing" id="10T-8e-BSm"/>
-                                        <constraint firstItem="GxP-Zs-LHC" firstAttribute="leading" secondItem="oj1-Uo-6FC" secondAttribute="leading" constant="1" id="84G-VM-jMX"/>
+                                        <constraint firstItem="GxP-Zs-LHC" firstAttribute="leading" secondItem="oj1-Uo-6FC" secondAttribute="leading" id="84G-VM-jMX"/>
                                         <constraint firstItem="tUN-AT-gcT" firstAttribute="top" secondItem="oj1-Uo-6FC" secondAttribute="top" constant="8" id="Jf0-TW-DNU"/>
                                         <constraint firstItem="tUN-AT-gcT" firstAttribute="width" secondItem="GxP-Zs-LHC" secondAttribute="width" id="VCB-Od-fe4"/>
                                         <constraint firstAttribute="bottom" secondItem="tUN-AT-gcT" secondAttribute="bottom" constant="8" id="exb-A6-9JC"/>
@@ -1041,7 +1034,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button identifier="up" verticalHuggingPriority="750" horizontalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="sI0-vi-ud6" userLabel="up" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="36" width="284" height="33"/>
+                                            <rect key="frame" x="-7" y="36" width="286" height="33"/>
                                             <buttonCell key="cell" type="push" title="up" alternateTitle="UP ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-zy-Y7c">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1063,7 +1056,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="right" verticalHuggingPriority="749" verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="kLb-tf-VgL" userLabel="right" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="175" y="15" width="103" height="32"/>
+                                            <rect key="frame" x="175" y="15" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="right" alternateTitle="-&gt;" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="UrN-Q5-bwD">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1074,7 +1067,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="down" verticalHuggingPriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-3u-WGy" userLabel="down" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="-6" width="284" height="32"/>
+                                            <rect key="frame" x="-7" y="-6" width="286" height="32"/>
                                             <buttonCell key="cell" type="push" title="down" alternateTitle="DOWN ARROW" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="gmQ-hx-fbx">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1085,7 +1078,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="left" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kdP-wF-YeD" userLabel="left" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-6" y="15" width="103" height="32"/>
+                                            <rect key="frame" x="-7" y="15" width="104" height="32"/>
                                             <buttonCell key="cell" type="push" title="left" alternateTitle="&lt;-" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xEN-g3-ZK6">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1098,22 +1091,22 @@
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="RmY-3u-WGy" firstAttribute="top" secondItem="kLb-tf-VgL" secondAttribute="bottom" constant="1" id="0aA-Y2-L15"/>
-                                        <constraint firstAttribute="trailing" secondItem="RmY-3u-WGy" secondAttribute="trailing" constant="1" id="4XY-w7-fVj"/>
-                                        <constraint firstAttribute="trailing" secondItem="sI0-vi-ud6" secondAttribute="trailing" constant="1" id="6vS-bK-3XB"/>
+                                        <constraint firstAttribute="trailing" secondItem="RmY-3u-WGy" secondAttribute="trailing" id="4XY-w7-fVj"/>
+                                        <constraint firstAttribute="trailing" secondItem="sI0-vi-ud6" secondAttribute="trailing" id="6vS-bK-3XB"/>
                                         <constraint firstItem="RmY-3u-WGy" firstAttribute="top" secondItem="SJq-nd-vaN" secondAttribute="bottom" constant="1" id="Aso-fy-apH"/>
                                         <constraint firstItem="SJq-nd-vaN" firstAttribute="top" secondItem="sI0-vi-ud6" secondAttribute="bottom" constant="1" id="GfW-7A-k1Q"/>
-                                        <constraint firstItem="kdP-wF-YeD" firstAttribute="leading" secondItem="dg8-AR-KhC" secondAttribute="leading" constant="1" id="KjY-3s-LTX"/>
-                                        <constraint firstAttribute="trailing" secondItem="kLb-tf-VgL" secondAttribute="trailing" constant="1" id="Qas-oX-W38"/>
+                                        <constraint firstItem="kdP-wF-YeD" firstAttribute="leading" secondItem="dg8-AR-KhC" secondAttribute="leading" id="KjY-3s-LTX"/>
+                                        <constraint firstAttribute="trailing" secondItem="kLb-tf-VgL" secondAttribute="trailing" id="Qas-oX-W38"/>
                                         <constraint firstItem="kLb-tf-VgL" firstAttribute="leading" secondItem="SJq-nd-vaN" secondAttribute="trailing" constant="1" id="QcN-gx-T6K"/>
-                                        <constraint firstItem="sI0-vi-ud6" firstAttribute="leading" secondItem="dg8-AR-KhC" secondAttribute="leading" constant="1" id="Sl0-8q-cOp"/>
                                         <constraint firstItem="kdP-wF-YeD" firstAttribute="top" secondItem="sI0-vi-ud6" secondAttribute="bottom" constant="1" id="VB2-P2-aXT"/>
-                                        <constraint firstItem="RmY-3u-WGy" firstAttribute="leading" secondItem="dg8-AR-KhC" secondAttribute="leading" constant="1" id="Ybz-fR-vAs"/>
+                                        <constraint firstItem="RmY-3u-WGy" firstAttribute="leading" secondItem="dg8-AR-KhC" secondAttribute="leading" id="Ybz-fR-vAs"/>
                                         <constraint firstAttribute="bottom" secondItem="RmY-3u-WGy" secondAttribute="bottom" constant="1" id="gbA-8f-Wi4"/>
                                         <constraint firstItem="sI0-vi-ud6" firstAttribute="top" secondItem="dg8-AR-KhC" secondAttribute="top" constant="1" id="kDG-e6-OKZ"/>
                                         <constraint firstItem="kLb-tf-VgL" firstAttribute="top" secondItem="sI0-vi-ud6" secondAttribute="bottom" constant="1" id="oVA-VK-GMQ"/>
                                         <constraint firstItem="SJq-nd-vaN" firstAttribute="leading" secondItem="kdP-wF-YeD" secondAttribute="trailing" constant="1" id="pFl-rS-SBT"/>
                                         <constraint firstItem="RmY-3u-WGy" firstAttribute="top" secondItem="kdP-wF-YeD" secondAttribute="bottom" constant="1" id="ptW-yk-Zm8"/>
                                         <constraint firstItem="kLb-tf-VgL" firstAttribute="width" secondItem="kdP-wF-YeD" secondAttribute="width" id="qwh-j1-Gh7"/>
+                                        <constraint firstItem="sI0-vi-ud6" firstAttribute="leading" secondItem="dg8-AR-KhC" secondAttribute="leading" id="vPK-Xp-T9X"/>
                                         <constraint firstItem="SJq-nd-vaN" firstAttribute="width" secondItem="kdP-wF-YeD" secondAttribute="width" id="zFH-qN-Ynn"/>
                                     </constraints>
                                 </view>
