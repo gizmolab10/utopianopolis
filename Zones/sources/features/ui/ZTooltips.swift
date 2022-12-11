@@ -163,7 +163,7 @@ extension Zone {
 			let  action =  isReveal   ? reveal   : drag
 			let   title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
 			let  suffix = !plainRe    ? kEmpty   : revealTipSuffix
-			let   extra = !plainRe    ? kEmpty   : "target of "
+			let   extra =  plainRe    ? kEmpty   : "target of "
 			let    text = title + action + extra + target + suffix
 
 			return text

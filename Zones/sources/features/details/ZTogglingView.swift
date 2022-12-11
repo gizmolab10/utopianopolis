@@ -80,6 +80,7 @@ class ZTogglingView: ZView {
     // MARK: -
 
 	@IBAction func toggleAction(_ sender: Any) {
+		gTextEditor.stopCurrentEdit()
 		toggleHideableVisibility()
 		gDetailsController?.redisplayOnToggle()
 	}
@@ -89,8 +90,8 @@ class ZTogglingView: ZView {
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
-		}) { [self] in
-            gDetailsController?.register(id: identity, for: self)
+		}) {
+			gDetailsController?.register(id: self.identity, for: self)
         }
 
 		updateView()

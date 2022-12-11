@@ -536,7 +536,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="counts" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hRI-S8-ys7">
-                                            <rect key="frame" x="1" y="-1" width="272" height="21"/>
+                                            <rect key="frame" x="-2" y="-2" width="278" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectOne" id="AOk-RI-tLe">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <segments>
@@ -552,9 +552,9 @@
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="hRI-S8-ys7" firstAttribute="leading" secondItem="5gJ-xh-VlV" secondAttribute="leading" constant="3" id="YmR-pV-tLh"/>
-                                        <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" id="h83-pb-w7Y"/>
-                                        <constraint firstAttribute="trailing" secondItem="hRI-S8-ys7" secondAttribute="trailing" constant="3" id="o6Y-Mh-jz7"/>
+                                        <constraint firstItem="hRI-S8-ys7" firstAttribute="leading" secondItem="5gJ-xh-VlV" secondAttribute="leading" id="YmR-pV-tLh"/>
+                                        <constraint firstAttribute="centerY" secondItem="hRI-S8-ys7" secondAttribute="centerY" constant="-1" id="h83-pb-w7Y"/>
+                                        <constraint firstAttribute="trailing" secondItem="hRI-S8-ys7" secondAttribute="trailing" id="o6Y-Mh-jz7"/>
                                     </constraints>
                                 </view>
                                 <constraints>
@@ -828,7 +828,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="layout" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oGC-zp-Rq7">
-                                            <rect key="frame" x="0.0" y="-1" width="274" height="21"/>
+                                            <rect key="frame" x="-3" y="-2" width="280" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectAny" id="kkM-fg-4gO">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <segments>
@@ -842,9 +842,9 @@
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="oGC-zp-Rq7" secondAttribute="trailing" constant="3" id="JGa-lr-Uq7"/>
-                                        <constraint firstItem="oGC-zp-Rq7" firstAttribute="leading" secondItem="bZ5-d7-EXq" secondAttribute="leading" constant="3" id="NMW-iq-f6e"/>
-                                        <constraint firstItem="oGC-zp-Rq7" firstAttribute="centerY" secondItem="bZ5-d7-EXq" secondAttribute="centerY" id="hQ7-oq-KkS"/>
+                                        <constraint firstAttribute="trailing" secondItem="oGC-zp-Rq7" secondAttribute="trailing" id="JGa-lr-Uq7"/>
+                                        <constraint firstItem="oGC-zp-Rq7" firstAttribute="leading" secondItem="bZ5-d7-EXq" secondAttribute="leading" id="NMW-iq-f6e"/>
+                                        <constraint firstItem="oGC-zp-Rq7" firstAttribute="centerY" secondItem="bZ5-d7-EXq" secondAttribute="centerY" constant="1" id="hQ7-oq-KkS"/>
                                     </constraints>
                                 </view>
                                 <constraints>

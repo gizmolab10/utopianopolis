@@ -100,7 +100,7 @@ class ZBreadcrumbsView : ZButtonsView {
 			for (index, button) in buttons.enumerated() {
 				if  index > 0,
 					let crumb = button as? ZBreadcrumbButton {
-					let extra = -gSmallFontSize / 2.1
+					let extra = -gSmallFontSize / 2.7 - 1.0
 					let point = crumb.frame.centerLeft.offsetBy(.zero, extra)
 					let color = crumb.zone.color ?? kDefaultIdeaColor
 
