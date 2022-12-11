@@ -272,7 +272,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			widget.frame = CGRect(origin: origin, size: size)
 
 			widget.grandRelayout()
-			gWidgets.updateAllToolTips() // potentially all new widgets (and their dots): regenerate all their tool tips
+			updateAllToolTips() // potentially all new widgets (and their dots): regenerate all their tool tips
 			detectHover()
 			setNeedsDisplay()
 		}
