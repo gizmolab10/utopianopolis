@@ -83,15 +83,9 @@ class ZHovering: NSObject {
 extension ZMapView {
 
 	var shouldDetectHovering : Bool {
-		return okayToDetectHover
+		return gIsReadyToShowUI
 		&& !gDragging.isDragging
 		&& !gRubberband.showRubberband    // not blink rubberband or drag
-	}
-
-	override func mouseMoved(with event: ZEvent) {
-		super.mouseMoved(with: event)
-
-		okayToDetectHover = true
 	}
 
 	@discardableResult func detectHover() -> Bool {
@@ -103,8 +97,6 @@ extension ZMapView {
 			} else {
 				hoverDetected = h.clear()
 			}
-
-			okayToDetectHover = true
 		}
 
 		return hoverDetected

@@ -78,9 +78,10 @@ var                gMicroFont :                   ZFont { return .systemFont(ofS
 var                 gTinyFont :                   ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction) }
 var                  gBigFont :                   ZFont { return .systemFont(ofSize: gBigFontSize) }
 
-func        gToggleDatabaseID()                         { gDatabaseID   =  gOtherDatabaseID }
-func         gSetEditIdeaMode()                         { gWorkMode     = .wEditIdeaMode }
-func          gSetMapWorkMode()                         { gWorkMode     = .wMapMode }
+func       gConcealmentString(for hide: Bool) -> String { return (hide ? "hide" : "reveal") }
+func        gToggleDatabaseID()                         { gDatabaseID  =  gOtherDatabaseID }
+func         gSetEditIdeaMode()                         { gWorkMode    = .wEditIdeaMode }
+func          gSetMapWorkMode()                         { gWorkMode    = .wMapMode }
 
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next

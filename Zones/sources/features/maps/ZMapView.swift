@@ -24,7 +24,6 @@ enum ZMapID: String {
 
 class ZMapView: ZView {
 
-	var         okayToDetectHover = false
 	var                     mapID : ZMapID?
 	var                  hovering : ZHovering?
 	var                controller : ZMapController?

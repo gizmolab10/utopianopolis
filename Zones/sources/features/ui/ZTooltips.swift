@@ -17,7 +17,7 @@ enum ZControlType {
 @objc protocol ZToolTipper {
 
 	@objc func updateToolTips()
-//	var toolTip: String? { get set }
+	@objc func clearToolTips()
 
 }
 
@@ -120,10 +120,16 @@ extension ZKickoffToolsController {
 		}
 	}
 
-}
+	func clearToolTips() {
+		view.applyToAllSubviews { subview in
+			if  let     button = subview as? ZKickoffToolButton {
+				button.clearToolTips()
+			} else if  let box = subview as? ZBox {
+				box   .toolTip = nil
+			}
+		}
+	}
 
-func gConcealmentString(for hide: Bool) -> String {
-	return (hide ? "hide" : "reveal")
 }
 
 extension Zone {
@@ -144,25 +150,21 @@ extension Zone {
 		}
 
 		return string
-
 	}
 
 	func dotToolTipText(_ isReveal: Bool) -> String? {
 		if  let    name = zoneName {
-			let  noName = count == 0 && isTraveller && isReveal && !isBookmark
+			let plainRe =  isReveal  && !isBookmark
+			let  noName = count == 0 && isTraveller && plainRe
 			let   plain = count == 0  ? kEmpty   : gConcealmentString(for: isExpanded) + " list for "
 			let  target = noName      ? kEmpty   : "\"\(name)\""
-			let   extra = !isReveal   ? kEmpty   : !isBookmark ? kEmpty : "target of "
 			let    drag = (isSelected ? kEmpty   : "select or ") + "drag "
 			let  reveal = !isBookmark ? plain    : "change focus to "
 			let  action =  isReveal   ? reveal   : drag
-			let  suffix =  isReveal   ? revealTipSuffix : kEmpty
 			let   title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
+			let  suffix = !plainRe    ? kEmpty   : revealTipSuffix
+			let   extra = !plainRe    ? kEmpty   : "target of "
 			let    text = title + action + extra + target + suffix
-
-//			if  !isReveal, zoneName == "vital", isInBigMap {
-//				print(isSelected)
-//			}
 
 			return text
 		}
@@ -171,6 +173,7 @@ extension Zone {
 	}
 
 	func updateToolTips() { widget?.updateToolTips() }
+	func clearToolTips()  { widget?.clearToolTips() }
 
 }
 
@@ -184,14 +187,23 @@ extension ZoneWidget {
 		}
 	}
 
+	func clearToolTips() {
+		parentLine?.dragDot?.clearToolTips()
+
+		for child in childrenLines {
+			child.revealDot?.clearToolTips()
+		}
+	}
+
 }
 
 extension ZoneDot {
 
 	var toolTipIsVisible: Bool { return gShowToolTips && dotIsVisible }
+	func clearToolTips() { toolTip = nil }
 
 	func updateToolTips() {
-		toolTip = nil;
+		clearToolTips()
 
 		if  toolTipIsVisible {
 			toolTip = widgetZone?.dotToolTipText(isReveal)
@@ -202,8 +214,10 @@ extension ZoneDot {
 
 extension ZBannerButton {
 
+	func clearToolTips() { toolTip = nil }
+
 	func updateToolTips() {
-		toolTip = nil
+		clearToolTips()
 
 		if  gShowToolTips,
 			let view = togglingView {
@@ -215,8 +229,10 @@ extension ZBannerButton {
 
 extension ZoneTextWidget {
 
+	func clearToolTips() { toolTip = nil }
+
 	func updateToolTips() {
-		toolTip = nil
+		clearToolTips()
 
 		if  gShowToolTips,
 			let name = widgetZone?.zoneName {
@@ -231,17 +247,13 @@ extension ZoneTextWidget {
 extension WidgetHashDictionary {
 
 	mutating func clear() {
-		removeToolTips()
+		clearAllToolTips()
 		removeAll()
 	}
 
-	func removeToolTips() {
+	func clearAllToolTips() {
 		for widget in values {
-			widget.toolTip = nil
-			widget.parentLine?.revealDot?.toolTip = nil
-			for line in widget.childrenLines {
-				line.dragDot?.toolTip = nil
-			}
+			widget.clearToolTips()
 		}
 	}
 
@@ -249,7 +261,7 @@ extension WidgetHashDictionary {
 
 extension ZWidgets {
 
-	func updateToolTips() {
+	func updateAllToolTips() {
 		if  let widgets = allWidgets(for: .tIdea) {
 			for widget in widgets {
 				widget.updateToolTips()
@@ -257,16 +269,24 @@ extension ZWidgets {
 		}
 	}
 
-	func removeToolTipsFromAllWidgets(for controller: ZMapController) {
-		if  let type = controller.hereZone?.widgetType {
-			removeToolTips(for: type)
+	func clearAllToolTips() {
+		if  let widgets = allWidgets(for: .tIdea) {
+			for widget in widgets {
+				widget.clearToolTips()
+			}
 		}
 	}
 
-	func removeToolTips(for type: ZWidgetType) {
+	func removeToolTipsFromAllWidgets(for controller: ZMapController) {
+		if  let type = controller.hereZone?.widgetType {
+			clearAllToolTips(for: type)
+		}
+	}
+
+	func clearAllToolTips(for type: ZWidgetType) {
 		let registry = getZoneWidgetRegistry(for: type)
 
-		registry?.removeToolTips()
+		registry?.clearAllToolTips()
 	}
 
 }
@@ -296,18 +316,27 @@ extension ZMapControlsView {
 		}
 	}
 
+	func clearToolTips() {
+		for button in buttons {
+			button.toolTip = nil
+		}
+	}
+
 }
 
 extension ZToolTipButton {
 
 	@objc func updateToolTips() {}
+	@objc func clearToolTips() {}
 
 }
 
 extension ZBreadcrumbButton {
 
+	override func clearToolTips() { toolTip = nil }
+
 	override func updateToolTips() {
-		toolTip = nil
+		clearToolTips()
 
 		if  gShowToolTips {
 			var  body : String?

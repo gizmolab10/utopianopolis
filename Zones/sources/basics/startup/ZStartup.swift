@@ -48,7 +48,6 @@ class ZStartup: NSObject {
 				gMainController?.helpButton?.isHidden = false
 				gRefusesFirstResponder                = false
 				gHasFinishedStartup                   = true
-				gIsReadyToShowUI                      = true
 				gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 
 				gDetailsController?.removeViewFromStack(for: .vSubscribe)
@@ -66,6 +65,8 @@ class ZStartup: NSObject {
 					if  gCDMigrationState != .normal {
 						gSaveContext()
 					}
+
+					gIsReadyToShowUI = true
 
 					gSignal([.sLaunchDone])
 
