@@ -30,14 +30,15 @@ class ZPseudoView: NSObject {
 	var          bounds = CGRect.zero
 	var           frame = CGRect.zero
 	var       drawnSize = CGSize.zero     { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
-	var      controller : ZMapController? { return nil }
-	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
+	var         toolTip : String?         { didSet { updateToolTipTag() } }
 	var  absoluteCenter : CGPoint         { return absoluteFrame.center }
 	var      dotPlusGap : CGFloat         { return gDotWidth + gapDistance }
 	var     gapDistance : CGFloat         { return (isBigMap ? gBigFontSize : gSmallFontSize) * 0.6 }
 	var        isBigMap : Bool            { return controller?.isBigMap ?? true }
 	var    isLinearMode : Bool            { return mode == .linearMode }
 	var  isCircularMode : Bool            { return mode == .circularMode }
+	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
+	var      controller : ZMapController? { return nil }
 	var superpseudoview : ZPseudoView?
 	var      toolTipTag : ZToolTipTag?
 	var    absoluteView : ZView?
@@ -47,18 +48,7 @@ class ZPseudoView: NSObject {
 	func draw(_ phase: ZDrawPhase)        {} // overridden in all subclasses
 	func setFrameSize(_ newSize: NSSize)  { frame.size = newSize }
 	func setupDrawnView()                 { drawnView = absoluteView }
-
 	func debug(_ rect: CGRect, _ message: String = kEmpty) {}
-
-	var toolTip : String? {
-		didSet {
-			if  let t = toolTipTag {
-				absoluteView?.removeToolTip(t)
-			}
-
-			toolTipTag = (toolTip == nil) ? nil : absoluteView?.addToolTip(absoluteFrame, owner: self, userData: nil)
-		}
-	}
 
 	init(view: ZView?) {
 		super.init()
@@ -66,6 +56,14 @@ class ZPseudoView: NSObject {
 		absoluteView = view
 
 		setupDrawnView()
+	}
+
+	func updateToolTipTag() {
+		if  let t = toolTipTag {
+			absoluteView?.removeToolTip(t)
+		}
+
+		toolTipTag = (toolTip == nil) ? nil : absoluteView?.addToolTip(absoluteFrame, owner: self, userData: nil)
 	}
 
 	func convertPoint(_ point: NSPoint, toRootPseudoView view: ZPseudoView?) -> NSPoint {

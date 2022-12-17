@@ -134,7 +134,7 @@ extension ZKickoffToolsController {
 
 extension Zone {
 
-	var revealTipSuffix: String {
+	var revealToolTipSuffix: String {
 		var string = kEmpty
 
 		if  count == 0, isTraveller {
@@ -152,18 +152,30 @@ extension Zone {
 		return string
 	}
 
+	var bookmarkToolTip: String {
+		let   flags = gModifierFlags
+		let COMMAND = flags.isCommand
+		let forNote = COMMAND && hasNote
+
+		if  forNote {
+			noop()
+		}
+
+		return forNote ? "open note editor on " : "change focus to "
+	}
+
 	func dotToolTipText(_ isReveal: Bool) -> String? {
 		if  let    name = zoneName {
 			let plainRe =  isReveal  && !isBookmark
 			let  noName = count == 0 && isTraveller && plainRe
 			let   plain = count == 0  ? kEmpty   : gConcealmentString(for: isExpanded) + " list for "
 			let  target = noName      ? kEmpty   : "\"\(name)\""
+			let  suffix = !plainRe    ? kEmpty   : revealToolTipSuffix
+			let   extra =  plainRe    ? kEmpty   : "target of "
 			let    drag = (isSelected ? kEmpty   : "select or ") + "drag "
-			let  reveal = !isBookmark ? plain    : "change focus to "
+			let  reveal = !isBookmark ? plain    : bookmarkToolTip
 			let  action =  isReveal   ? reveal   : drag
 			let   title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
-			let  suffix = !plainRe    ? kEmpty   : revealTipSuffix
-			let   extra =  plainRe    ? kEmpty   : "target of "
 			let    text = title + action + extra + target + suffix
 
 			return text
@@ -261,7 +273,7 @@ extension WidgetHashDictionary {
 
 extension ZWidgets {
 
-	func updateAllToolTips() {
+	func updateAllToolTips(_ flags: ZEventFlags? = nil) {
 		if  let widgets = allWidgets(for: .tIdea) {
 			for widget in widgets {
 				widget.updateToolTips()

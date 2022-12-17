@@ -22,9 +22,10 @@ let gEvents             = ZEvents()
 
 class ZEvents: ZGeneric {
 
-    var localMonitor: Any?
+	var      keyDownMonitor: Any?
+	var flagsChangedMonitor: Any?
 
-    func clear() { removeMonitorAsync() }
+    func clear() { removeAllMonitorsAsync() }
 
 //    func createCalendarEvent(named iName: String) -> EKEvent {
 //        var event = EKCalendarItem(eventStore: gEventStore)
@@ -43,20 +44,30 @@ class ZEvents: ZGeneric {
         gRelayoutMaps()
 		gEssayView?.resetForDarkMode()
     }
-    
-    
-    func removeMonitorAsync(_ closure: Closure? = nil) {
-        #if os(OSX)
-            if  let     save = localMonitor {
-				localMonitor = nil
 
-                FOREGROUND(after: 0.001) {
-                    ZEvent.removeMonitor(save)
-                    closure?()
-                }
-            } else {
-                closure?()
-            }
+	func removeMonitor(_ monitor: inout Any?, _ closure: Closure? = nil) -> Bool {
+		if  let save = monitor {
+			monitor  = nil
+
+			FOREGROUND(after: 0.001) {
+				ZEvent.removeMonitor(save)
+				closure?()
+			}
+
+			return false
+		}
+
+		return true
+	}
+
+	func removeAllMonitorsAsync(_ closure: Closure? = nil) {
+#if os(OSX)
+		let  key = removeMonitor(&keyDownMonitor,                  closure)
+		let flag = removeMonitor(&flagsChangedMonitor, !key ? nil: closure)
+
+		if  key && flag {
+			closure?()
+		}
         #endif
     }
 
@@ -64,10 +75,18 @@ class ZEvents: ZGeneric {
     func setupLocalEventsMonitor() {
         #if os(OSX)
 
-		localMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
+		flagsChangedMonitor = ZEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> ZEvent? in
+			if  event.modifierFlags.rawValue != 0 {
+				gMapController?.replaceAllToolTips()
+			}
+
+			return event
+		}
+
+		keyDownMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
                 if !isDuplicate(event: event) {
 					// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
-					let isWindow = event.type == .keyDown || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
+					let isWindow = (event.type == .keyDown) || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
 
 					if  gIsEssayMode,
 						gMapIsResponder {
