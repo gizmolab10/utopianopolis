@@ -156,7 +156,7 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 
 	func toolsUpdate() {
 		updateFlags() // must call this first as others rely on flags
-		updateToolTips()
+		updateToolTips(gModifierFlags)
 		updateBoxesAndButtons()
 	}
 

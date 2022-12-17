@@ -76,8 +76,9 @@ class ZEvents: ZGeneric {
         #if os(OSX)
 
 		flagsChangedMonitor = ZEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> ZEvent? in
-			if  event.modifierFlags.rawValue != 0 {
-				gMapController?.replaceAllToolTips()
+			let flags = event.modifierFlags
+			if  flags.rawValue != 0 {
+				gMapController?.replaceAllToolTips(flags)
 			}
 
 			return event

@@ -46,7 +46,7 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 
 	override func updateButtons() {
 		updateButtonTitlesAndColors()
-		updateToolTips()
+		updateToolTips(gModifierFlags)
 	}
 
 	func updateButtonTitlesAndColors() {
@@ -80,7 +80,7 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 	func controlsUpdate() {
 		updateButtonTitlesAndColors()
 		setupAndRedraw()
-		updateToolTips()
+		updateToolTips(gModifierFlags)
 	}
 
 	override func draw(_ iDirtyRect: NSRect) {

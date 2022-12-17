@@ -16,7 +16,7 @@ enum ZControlType {
 
 @objc protocol ZToolTipper {
 
-	@objc func updateToolTips()
+	@objc func updateToolTips(_ flags: ZEventFlags)
 	@objc func clearToolTips()
 
 }
@@ -110,7 +110,7 @@ extension ZBox {
 
 extension ZKickoffToolsController {
 
-	func updateToolTips() {
+	func updateToolTips(_ flags: ZEventFlags) {
 		view.applyToAllSubviews { subview in
 			if  let     button = subview as? ZKickoffToolButton {
 				button.toolTip = button.toolTipString
@@ -164,11 +164,13 @@ extension Zone {
 		return forNote ? "open note editor on " : "change focus to "
 	}
 
-	func dotToolTipText(_ isReveal: Bool) -> String? {
+	func dotToolTipText(_ isReveal: Bool, _ flags: ZEventFlags) -> String? {
 		if  let    name = zoneName {
+			let  oneGen = isExpanded || !flags.isCommand
 			let plainRe =  isReveal  && !isBookmark
 			let  noName = count == 0 && isTraveller && plainRe
-			let   plain = count == 0  ? kEmpty   : gConcealmentString(for: isExpanded) + " list for "
+			let    list = oneGen      ? " list for " : " entire hierarchy of "
+			let   plain = count == 0  ? kEmpty   : gConcealmentString(for: isExpanded) + list
 			let  target = noName      ? kEmpty   : "\"\(name)\""
 			let  suffix = !plainRe    ? kEmpty   : revealToolTipSuffix
 			let   extra =  plainRe    ? kEmpty   : "target of "
@@ -184,18 +186,18 @@ extension Zone {
 		return nil
 	}
 
-	func updateToolTips() { widget?.updateToolTips() }
-	func clearToolTips()  { widget?.clearToolTips() }
+	func updateToolTips(_ flags: ZEventFlags) { widget?.updateToolTips(flags) }
+	func clearToolTips()                      { widget?.clearToolTips() }
 
 }
 
 extension ZoneWidget {
 
-	func updateToolTips() {
-		parentLine?.dragDot?.updateToolTips()
+	func updateToolTips(_ flags: ZEventFlags) {
+		parentLine?.dragDot?.updateToolTips(flags)
 
 		for child in childrenLines {
-			child.revealDot?.updateToolTips()
+			child.revealDot?.updateToolTips(flags)
 		}
 	}
 
@@ -214,11 +216,11 @@ extension ZoneDot {
 	var toolTipIsVisible: Bool { return gShowToolTips && dotIsVisible }
 	func clearToolTips() { toolTip = nil }
 
-	func updateToolTips() {
+	func updateToolTips(_ flags: ZEventFlags) {
 		clearToolTips()
 
 		if  toolTipIsVisible {
-			toolTip = widgetZone?.dotToolTipText(isReveal)
+			toolTip = widgetZone?.dotToolTipText(isReveal, flags)
 		}
 	}
 
@@ -228,7 +230,7 @@ extension ZBannerButton {
 
 	func clearToolTips() { toolTip = nil }
 
-	func updateToolTips() {
+	func updateToolTips(_ flags: ZEventFlags) {
 		clearToolTips()
 
 		if  gShowToolTips,
@@ -243,7 +245,7 @@ extension ZoneTextWidget {
 
 	func clearToolTips() { toolTip = nil }
 
-	func updateToolTips() {
+	func updateToolTips(_ flags: ZEventFlags) {
 		clearToolTips()
 
 		if  gShowToolTips,
@@ -273,10 +275,10 @@ extension WidgetHashDictionary {
 
 extension ZWidgets {
 
-	func updateAllToolTips(_ flags: ZEventFlags? = nil) {
+	func updateAllToolTips(_ flags: ZEventFlags) {
 		if  let widgets = allWidgets(for: .tIdea) {
 			for widget in widgets {
-				widget.updateToolTips()
+				widget.updateToolTips(flags)
 			}
 		}
 	}
@@ -305,7 +307,7 @@ extension ZWidgets {
 
 extension ZMapControlsView {
 
-	func updateToolTips() {
+	func updateToolTips(_ flags: ZEventFlags) {
 		for button in buttons {
 			button.toolTip = nil
 
@@ -338,8 +340,8 @@ extension ZMapControlsView {
 
 extension ZToolTipButton {
 
-	@objc func updateToolTips() {}
-	@objc func clearToolTips() {}
+	func updateToolTips(_ flags: ZEventFlags) {}
+	func clearToolTips()                      {}
 
 }
 
@@ -347,7 +349,7 @@ extension ZBreadcrumbButton {
 
 	override func clearToolTips() { toolTip = nil }
 
-	override func updateToolTips() {
+	override func updateToolTips(_ flags: ZEventFlags) {
 		clearToolTips()
 
 		if  gShowToolTips {

@@ -159,7 +159,7 @@ class ZTogglingView: ZView {
         let    hide = hideHideable
         let visible = subviews.contains(hideableView!)
 
-		titleButton?.updateToolTips()
+		titleButton?.updateToolTips(gModifierFlags)
 
 		if  hide == visible { // need for update
 			hideableView?.isHidden = hide

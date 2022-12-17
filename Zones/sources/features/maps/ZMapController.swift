@@ -230,21 +230,21 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		return nil
 	}
 
-	func replaceAllToolTips() {
+	func replaceAllToolTips(_ flags: ZEventFlags) {
 		clearAllToolTips()
-		updateAllToolTips()
+		updateAllToolTips(flags)
 	}
 
-	func updateAllToolTips() {
+	func updateAllToolTips(_ flags: ZEventFlags) {
 		view.traverseHierarchy() { subview in
 			if  let s = subview as? ZToolTipper {
-				s.updateToolTips()
+				s.updateToolTips(flags)
 			}
 
 			return .eContinue
 		}
 
-		gWidgets.updateAllToolTips()
+		gWidgets.updateAllToolTips(flags)
 	}
 
 	func clearAllToolTips() {
@@ -272,7 +272,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 			widget.frame = CGRect(origin: origin, size: size)
 
 			widget.grandRelayout()
-			updateAllToolTips() // potentially all new widgets (and their dots): regenerate all their tool tips
+			updateAllToolTips(gModifierFlags) // potentially all new widgets (and their dots): regenerate all their tool tips
 			detectHover()
 			setNeedsDisplay()
 		}
@@ -288,10 +288,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 					resize()
 					layoutForCurrentScrollOffset()
 				case .sToolTips:
-					replaceAllToolTips()
+					replaceAllToolTips(gModifierFlags)
 				default:
 					createAndLayoutWidgets(for: iSignalObject, kind)
-//					replaceAllToolTips()
 			}
 		}
 	}
