@@ -9,79 +9,79 @@
 import Foundation
 import CloudKit
 
-var  gTextEditorHandlesArrows                           = false
-var   gIsEditingStateChanging                           = false
-var    gRefusesFirstResponder                           = false
-var       gHasFinishedStartup                           = false
-var       gIsExportingToAFile                           = false
-var        gKeyboardIsVisible                           = false
-var          gIsReadyToShowUI                           = false
-var          gDeferringRedraw                           = false
-var           gPushIsDisabled                           = false
-var            gTextCapturing                           = false
-var             gIgnoreEvents                           = false
-var             gNeedsRecount                           = false
-var               gLaunchedAt                           = Date()
-var           gAnglesFraction                           = 42.0
-var              gAnglesDelta                           = 15.0
-var               gDebugCount                           = 0
-var        gInterruptionCount                           = 0
-var    gTimeUntilCurrentEvent :            TimeInterval = 0  // by definition, first event is startup
-var         gCDMigrationState :       ZCDMigrationState = .firstTime
-var             gCurrentTrait :                 ZTrait?
-var     gCurrentMouseDownZone :                   Zone?
-var gCurrentMouseDownLocation :                CGFloat?
-var       gCurrentBrowseLevel :                    Int?
-var        gCurrentKeyPressed :                 String?
+var  gTextEditorHandlesArrows                       = false
+var   gIsEditingStateChanging                       = false
+var    gRefusesFirstResponder                       = false
+var       gHasFinishedStartup                       = false
+var       gIsExportingToAFile                       = false
+var        gKeyboardIsVisible                       = false
+var          gIsReadyToShowUI                       = false
+var          gDeferringRedraw                       = false
+var           gPushIsDisabled                       = false
+var            gTextCapturing                       = false
+var             gIgnoreEvents                       = false
+var             gNeedsRecount                       = false
+var               gLaunchedAt                       = Date()
+var           gAnglesFraction                       = 42.0
+var              gAnglesDelta                       = 15.0
+var               gDebugCount                       = 0
+var        gInterruptionCount                       = 0
+var    gTimeUntilCurrentEvent :        TimeInterval = 0  // by definition, first event is startup
+var         gCDMigrationState :   ZCDMigrationState = .firstTime
+var             gCurrentTrait :             ZTrait?
+var     gCurrentMouseDownZone :               Zone?
+var gCurrentMouseDownLocation :            CGFloat?
+var       gCurrentBrowseLevel :                Int?
+var        gCurrentKeyPressed :             String?
 
-var                   gIsDark :                    Bool { return gDarkMode == .Dark }
-var                   gIsLate :                    Bool { return gBatches.isLate }
-var                   gIsMine :                    Bool { return gDatabaseID == .mineID }
-var                gIsEditing :                    Bool { return gIsEditIdeaMode || gIsEssayMode }
-var          gIsHelpFrontmost :                    Bool { return gHelpWindow?.isKeyWindow ?? false }
-var         gGrabbedCanTravel :                    Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
-var       gBrowsingIsConfined :                    Bool { return gConfinementMode == .list }
-var            gListsGrowDown :                    Bool { return gListGrowthMode  == .down }
-var           gDuplicateEvent :                    Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var           gIsEditIdeaMode :                    Bool { return gWorkMode == .wEditIdeaMode }
-var            gIsStartupMode :                    Bool { return gWorkMode == .wStartupMode }
-var            gIsResultsMode :                    Bool { return gWorkMode == .wResultsMode }
-var              gIsEssayMode :                    Bool { return gWorkMode == .wEssayMode }
-var                gIsMapMode :                    Bool { return gWorkMode == .wMapMode }
-var              gIsSearching :                    Bool { return gSearching.state != .sNot }
-var           gIsNotSearching :                    Bool { return gSearching.state == .sNot }
-var     gSearchResultsVisible :                    Bool { return gSearching.state == .sList }
-var    gWaitingForSearchEntry :                    Bool { return gSearching.state == .sEntry }
-var           gCanDrawWidgets :                    Bool { return gIsMapOrEditIdeaMode || !gSearchResultsVisible }
-var      gIsMapOrEditIdeaMode :                    Bool { return gIsMapMode || gIsEditIdeaMode }
-var          gCanSaveWorkMode :                    Bool { return gIsMapMode || gIsEssayMode }
-var          gIsDraggableMode :                    Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
-var   gDrawCirclesAroundIdeas :                    Bool { return gCirclesDisplayMode.contains(.cIdeas) }
-var      gDetailsViewIsHidden :                    Bool { return gMainController?.detailView?.isHidden ?? true }
-var           gMapIsResponder :                    Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
-var             gUserIsExempt :                    Bool { return gIgnoreExemption ? false  : gUser?.isExempt ?? false } // discard this?
-var               gUserIsIdle :                    Bool { return gUserActiveInWindow == nil }
-var         gCurrentEssayZone :                   Zone? { return gCurrentEssay?.zone }
-var         gUniqueRecordName :                  String { return CKRecordID().recordName }
-var                  gRecords :                ZRecords { return (kIsPhone && gShowSmallMapForIOS) ? gFavorites : gRemoteStorage.currentRecords }
-var                 gDarkMode :          InterfaceStyle { return InterfaceStyle() }
-var            gModifierFlags :             ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
-var    gTimeSinceCurrentEvent :            TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
-var   gDeciSecondsSinceLaunch :                     Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
-var          gOtherDatabaseID :             ZDatabaseID { return gDatabaseID == .mineID ? .everyoneID : .mineID }
-var  gLightishBackgroundColor :                  ZColor { return gAccentColor.lightish(by: 1.02)  }
-var          gDarkAccentColor :                  ZColor { return gAccentColor.darker  (by: 1.3) }
-var       gLighterActiveColor :                  ZColor { return gActiveColor.lighter (by: 4.0)   }
-var          gBackgroundColor :                  ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
-var                gSmallFont :                   ZFont { return .systemFont(ofSize: gSmallFontSize) }
-var                gMicroFont :                   ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction * kSmallMapReduction) }
-var                 gTinyFont :                   ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction) }
-var                  gBigFont :                   ZFont { return .systemFont(ofSize: gBigFontSize) }
+var                   gIsDark :                Bool { return gDarkMode == .Dark }
+var                   gIsLate :                Bool { return gBatches.isLate }
+var                   gIsMine :                Bool { return gDatabaseID == .mineID }
+var                gIsEditing :                Bool { return gIsEditIdeaMode || gIsEssayMode }
+var          gIsHelpFrontmost :                Bool { return gHelpWindow?.isKeyWindow ?? false }
+var         gGrabbedCanTravel :                Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
+var       gBrowsingIsConfined :                Bool { return gConfinementMode == .list }
+var            gListsGrowDown :                Bool { return gListGrowthMode  == .down }
+var           gDuplicateEvent :                Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
+var           gIsEditIdeaMode :                Bool { return gWorkMode == .wEditIdeaMode }
+var            gIsStartupMode :                Bool { return gWorkMode == .wStartupMode }
+var            gIsResultsMode :                Bool { return gWorkMode == .wResultsMode }
+var              gIsEssayMode :                Bool { return gWorkMode == .wEssayMode }
+var                gIsMapMode :                Bool { return gWorkMode == .wMapMode }
+var              gIsSearching :                Bool { return gSearching.state != .sNot }
+var           gIsNotSearching :                Bool { return gSearching.state == .sNot }
+var     gSearchResultsVisible :                Bool { return gSearching.state == .sList }
+var    gWaitingForSearchEntry :                Bool { return gSearching.state == .sEntry }
+var           gCanDrawWidgets :                Bool { return gIsMapOrEditIdeaMode || !gSearchResultsVisible }
+var      gIsMapOrEditIdeaMode :                Bool { return gIsMapMode || gIsEditIdeaMode }
+var          gCanSaveWorkMode :                Bool { return gIsMapMode || gIsEssayMode }
+var          gIsDraggableMode :                Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
+var   gDrawCirclesAroundIdeas :                Bool { return gCirclesDisplayMode.contains(.cIdeas) }
+var      gDetailsViewIsHidden :                Bool { return gMainController?.detailView?.isHidden ?? true }
+var           gMapIsResponder :                Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
+var             gUserIsExempt :                Bool { return gIgnoreExemption ? false  : gUser?.isExempt ?? false } // discard this?
+var               gUserIsIdle :                Bool { return gUserActiveInWindow == nil }
+var         gCurrentEssayZone :               Zone? { return gCurrentEssay?.zone }
+var         gUniqueRecordName :              String { return CKRecordID().recordName }
+var                  gRecords :            ZRecords { return (kIsPhone && gShowSmallMapForIOS) ? gFavorites : gRemoteStorage.currentRecords }
+var                 gDarkMode :      InterfaceStyle { return InterfaceStyle() }
+var            gModifierFlags :         ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
+var    gTimeSinceCurrentEvent :        TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
+var   gDeciSecondsSinceLaunch :                 Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
+var          gOtherDatabaseID :         ZDatabaseID { return gDatabaseID == .mineID ? .everyoneID : .mineID }
+var  gLightishBackgroundColor :              ZColor { return gAccentColor.lightish(by: 1.02)  }
+var          gDarkAccentColor :              ZColor { return gAccentColor.darker  (by: 1.3) }
+var       gLighterActiveColor :              ZColor { return gActiveColor.lighter (by: 4.0)   }
+var          gBackgroundColor :              ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
+var                gSmallFont :               ZFont { return .systemFont(ofSize: gSmallFontSize) }
+var                gMicroFont :               ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction * kSmallMapReduction) }
+var                 gTinyFont :               ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction) }
+var                  gBigFont :               ZFont { return .systemFont(ofSize: gBigFontSize) }
 
-func       gConcealmentString(for hide: Bool) -> String { return (hide ? "hide" : "reveal") }
-func        gToggleDatabaseID()                         { gDatabaseID  =  gOtherDatabaseID }
-func         gSetEditIdeaMode()                         { gWorkMode    = .wEditIdeaMode }
-func          gSetMapWorkMode()                         { gWorkMode    = .wMapMode }
+func       gConcealmentString(hide: Bool) -> String { return (hide ? "hide" : "reveal") }
+func        gToggleDatabaseID()                     { gDatabaseID  =  gOtherDatabaseID }
+func         gSetEditIdeaMode()                     { gWorkMode    = .wEditIdeaMode }
+func          gSetMapWorkMode()                     { gWorkMode    = .wMapMode }
 
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next

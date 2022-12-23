@@ -109,18 +109,20 @@ class ZStartup: NSObject {
 	var  progressTimesReady = false
 	var    gotProgressTimes = false
 	var       progressTimes = [ZOperationID : Double]()
-	let    startupClockTime = CACurrentMediaTime() // mach_absolute_time()
+	var    startupClockTime = Double.zero
+	var        savedElapsed = Double.zero
 	var               prior = Double.zero
 	var    elapsedClockTime : Double { return CACurrentMediaTime() - startupClockTime }
 	var fractionOfClockTime : Double { return elapsedClockTime / getAccumulatedProgressTime(untilExcluding: .oLoadingIdeas) }
 	var        dataLoadTime : Int    { return gRemoteStorage.totalLoadableRecordsCount / timePerRecord }
+	func captureElapsedTime()        { savedElapsed = elapsedClockTime }
+	func     setStartupTime()        { startupClockTime = CACurrentMediaTime() - savedElapsed } // mach_absolute_time()
 
 	var oneTimerIntervalHasElapsed : Bool {
 		let current = elapsedClockTime
 		let enough  = (current - prior) > kOneTimerInterval
 		if  enough  {
 			prior   = current
-//			printDebug(.dTime, current.stringTo(precision: 2) + "      \(gCurrentOp)")
 		}
 
 		return enough

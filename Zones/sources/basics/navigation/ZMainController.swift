@@ -78,7 +78,7 @@ class ZMainController: ZGesturesController {
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wResultsMode, .wEssayMode].contains(gWorkMode)
 		controlsView?    .isHidden = !gShowMainControls
-		hamburgerButton?  .toolTip =  gConcealmentString(for: gShowDetailsView) + " detail views"
+		hamburgerButton?  .toolTip =  gConcealmentString(hide: gShowDetailsView) + " detail views"
 		hamburgerButton?    .image =  hamburgerImage
 	}
 

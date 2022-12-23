@@ -134,60 +134,46 @@ extension ZKickoffToolsController {
 
 extension Zone {
 
-	var revealToolTipSuffix: String {
-		var string = kEmpty
+	func updateToolTips(_ flags: ZEventFlags) { widget?.updateToolTips(flags) }
+	func clearToolTips()                      { widget?.clearToolTips() }
 
-		if  count == 0, isTraveller {
-			string = count == 0 ? kEmpty : "\n\nor with COMMAND key down, "
+	func dotToolTipText(_ isReveal: Bool, _ flags: ZEventFlags) -> String {
+		let COMMAND = flags.isCommand
+		let noChild = count    == 0
+		let special =  COMMAND || noChild
+		let  oneGen = !COMMAND || isExpanded || isTraveller
+		let   title = (isReveal ? "Reveal"    : "Drag") + " dot\n\n"
+		let    list = oneGen    ? "list for"  : "entire hierarchy of"
+		var  action = noChild   ? kEmpty      : gConcealmentString(hide: isExpanded) + " \(list) "
+		var    name = zoneName ?? kEmptyIdea
 
-			if  hasNote {
-				string += "begin editing note"
-			} else if hasEmail {
-				string += "send an email"
+		if  !isReveal {
+			if  isSelected {
+				action = kEmpty
+			} else {
+				action = "select or "
+			}
+
+			action += "drag"
+		} else if     special, isTraveller {
+			if        hasEmail {
+				action = "send an email to"
+				name   = email     ?? name
 			} else if hasHyperlink {
-				string += "invoke web link"
+				action = "visit website at"
+				name   = hyperLink ?? name
+			} else if hasNote, (COMMAND || !isBookmark) {
+				action = "begin editing note of"
+				if    isBookmark {
+					action += " target of"
+				}
+			} else if isBookmark {
+				action = "change focus to"
 			}
 		}
 
-		return string
+		return title + action + " \"\(name)\""
 	}
-
-	var bookmarkToolTip: String {
-		let   flags = gModifierFlags
-		let COMMAND = flags.isCommand
-		let forNote = COMMAND && hasNote
-
-		if  forNote {
-			noop()
-		}
-
-		return forNote ? "open note editor on " : "change focus to "
-	}
-
-	func dotToolTipText(_ isReveal: Bool, _ flags: ZEventFlags) -> String? {
-		if  let    name = zoneName {
-			let  oneGen = isExpanded || !flags.isCommand
-			let plainRe =  isReveal  && !isBookmark
-			let  noName = count == 0 && isTraveller && plainRe
-			let    list = oneGen      ? " list for " : " entire hierarchy of "
-			let   plain = count == 0  ? kEmpty   : gConcealmentString(for: isExpanded) + list
-			let  target = noName      ? kEmpty   : "\"\(name)\""
-			let  suffix = !plainRe    ? kEmpty   : revealToolTipSuffix
-			let   extra =  plainRe    ? kEmpty   : "target of "
-			let    drag = (isSelected ? kEmpty   : "select or ") + "drag "
-			let  reveal = !isBookmark ? plain    : bookmarkToolTip
-			let  action =  isReveal   ? reveal   : drag
-			let   title = (isReveal   ? "Reveal" : "Drag") + " dot\n\n"
-			let    text = title + action + extra + target + suffix
-
-			return text
-		}
-
-		return nil
-	}
-
-	func updateToolTips(_ flags: ZEventFlags) { widget?.updateToolTips(flags) }
-	func clearToolTips()                      { widget?.clearToolTips() }
 
 }
 

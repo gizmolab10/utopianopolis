@@ -40,11 +40,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		}
 	}
 
-	override func viewWillAppear() {
-		super.viewWillAppear()
-		startupUpdate()
-	}
-
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		switch kind {
 			case .spStartupStatus: updateStartupStatus()
@@ -56,7 +51,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		if  gStartupLevel == .pleaseWait || !gHasInternet {
 			onCompletion?()
 		} else {
-//			startupCompletion = onCompletion   // uncomment to support cloud kit
+//			startupCompletion = onCompletion   // TODO: uncomment to support cloud kit
 			onCompletion?()
 		}
 	}

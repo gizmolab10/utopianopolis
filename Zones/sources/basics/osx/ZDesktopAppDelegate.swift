@@ -28,7 +28,9 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
     // MARK: -
 
     func applicationDidBecomeActive(_ notification: Notification) {
-        if  needsSetup {
+		gStartup.setStartupTime()
+
+		if  needsSetup {
             needsSetup   = false
 			gAppDelegate = self
 
@@ -41,6 +43,10 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			}
         }
     }
+
+	func applicationDidResignActive(_ notification: Notification) {
+		gStartup.captureElapsedTime()
+	}
 
     func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {}
 	
