@@ -131,12 +131,7 @@ var gTrackedAreas = [ZTrackedArea]()
 func gRemoveAllTracking() {
 	while gTrackedAreas.count > 0 {
 		let   tracked = gTrackedAreas.removeFirst()
-		if  let  area = tracked.area,
-			let owner = area.owner as? NSObject {
-			if  owner.debugName == "vital", owner.zClassInitial == "D" {
-				printDebug(.dTrack, "remove \(owner.debugTitle)")
-			}
-
+		if  let  area = tracked.area {
 			tracked.view?.removeTrackingArea(area)
 		}
 	}

@@ -106,6 +106,12 @@ enum ZoneAttributeType: String {
 	case groupOwner     = "+"
 }
 
+enum ZRelayoutMapType: Int {
+	case small
+	case both
+	case big
+}
+
 struct ZTinyDotType: OptionSet {
 	let rawValue : Int
 	

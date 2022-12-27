@@ -153,23 +153,23 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	}
 
 	var doNotLayout: Bool {
-		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || gIsEditIdeaMode
-	}
-
-	enum ZRelayoutMapType: Int {
-		case small
-		case both
-		case big
+		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || gIsEditIdeaMode || (gIsEssayMode && isBigMap)
 	}
 
 	func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-		clearAllToolTips()
 		createWidgets(for: iZone, kind)
 		layoutForCurrentScrollOffset()
 	}
 
     func createWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-		if  doNotLayout || kind == .sResize { return }
+		if  doNotLayout || kind == .sResize {
+			if  kind != .sResize, isBigMap, gIsEssayMode {   // do not create widgets behind essay view
+				mapView?.removeAllTextViews(ofType: .big)
+				clearAllToolTips(for: isBigMap ? .big : .small)
+			}
+
+			return
+		}
 
 		printDebug(.dSpeed, "\(zClassName) createWidgets")
 
@@ -182,7 +182,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gTextCapturing             = false
         if  let               zone = iZone as? Zone,
             let             widget = zone.widget,
-			widget.widgetType           == zone.widgetType {
+			widget.widgetType     == zone.widgetType {
             specificWidget         = widget
             specificIndex          = zone.siblingIndex
             recursing              = [.sData, .spRelayout].contains(kind)
@@ -247,26 +247,32 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 		gWidgets.updateAllToolTips(flags)
 	}
 
-	func clearAllToolTips() {
+	func clearAllToolTips(for type: ZRelayoutMapType = .both) {
 		view.traverseHierarchy() { subview in
-			if  let s = subview as? ZToolTipper {
-				s.clearToolTips()
+			if  let t = subview as? ZoneTextWidget,
+				let z = t.widgetZone,
+				z.isInMap(of: type) {
+				t.clearToolTips()
 			}
 
 			return .eContinue
 		}
 
-		gWidgets.clearAllToolTips()
+		gWidgets.clearAllToolTips(for: type)
 	}
 
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		clearAllToolTips()
+		clearAllToolTips(for: isBigMap ? .big : .small)
 		gRemoveAllTracking()
 
-		if  let   widget = hereWidget,
-			let  mOrigin = mapOrigin {
+		if  isBigMap, gIsEssayMode {
+			return               // when in essay mode, do not process big map's widgets
+		}
+
+		if  let  mOrigin = mapOrigin,
+			let   widget = hereWidget {
 			let     size = widget.drawnSize.dividedInHalf
 			let   origin = isBigMap ? mOrigin - size : mOrigin
 			widget.frame = CGRect(origin: origin, size: size)

@@ -1737,6 +1737,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		return false
 	}
+
+	func isInMap(of type: ZRelayoutMapType = .both) -> Bool {
+		guard let isSmall = root?.isInFavorites else { return false }
+		switch type {
+			case .small: return  isSmall
+			case   .big: return !isSmall
+			default:     return  true
+		}
+	}
 	
 	// MARK: - traits
 	// MARK: -

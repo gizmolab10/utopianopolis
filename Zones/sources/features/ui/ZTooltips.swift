@@ -139,23 +139,18 @@ extension Zone {
 
 	func dotToolTipText(_ isReveal: Bool, _ flags: ZEventFlags) -> String {
 		let COMMAND = flags.isCommand
-		let noChild = count    == 0
-		let special =  COMMAND || noChild
-		let  oneGen = !COMMAND || isExpanded || isTraveller
-		let   title = (isReveal ? "Reveal"    : "Drag") + " dot\n\n"
-		let    list = oneGen    ? "list for"  : "entire hierarchy of"
-		var  action = noChild   ? kEmpty      : gConcealmentString(hide: isExpanded) + " \(list) "
-		var    name = zoneName ?? kEmptyIdea
+		let noChild = count      == 0
+		let special =  COMMAND   || noChild
+		let  oneGen = !COMMAND   || isExpanded || isTraveller
+		let   title = (isReveal   ? "Reveal"    : "Drag")       + " dot\n\n"
+		let    list = oneGen      ? "list for"  : "entire hierarchy of"
+		let    drag = (isSelected ? kEmpty      : "select or ") + "drag"
+		var  action = noChild     ? kEmpty      : gConcealmentString(hide: isExpanded) + " \(list) "
+		var    name = zoneName   ?? kEmptyIdea
 
 		if  !isReveal {
-			if  isSelected {
-				action = kEmpty
-			} else {
-				action = "select or "
-			}
-
-			action += "drag"
-		} else if     special, isTraveller {
+			action     = drag
+		} else if     isTraveller, special {
 			if        hasEmail {
 				action = "send an email to"
 				name   = email     ?? name
@@ -163,7 +158,7 @@ extension Zone {
 				action = "visit website at"
 				name   = hyperLink ?? name
 			} else if hasNote, (COMMAND || !isBookmark) {
-				action = "begin editing note of"
+				action = "edit note of"
 				if    isBookmark {
 					action += " target of"
 				}
@@ -269,7 +264,7 @@ extension ZWidgets {
 		}
 	}
 
-	func clearAllToolTips() {
+	func clearAllToolTips(for type: ZRelayoutMapType = .both) {
 		if  let widgets = allWidgets(for: .tIdea) {
 			for widget in widgets {
 				widget.clearToolTips()
