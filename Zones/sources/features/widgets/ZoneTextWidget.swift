@@ -118,7 +118,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 		if  let     size = text?.sizeWithFont(preferredFont) {
 			let     hide = widgetZone?.isFavoritesHere ?? false
 			let    width = hide ? .zero : size.width + 6.0
-			let   height = size.height + 1.0
+			let   height = size.height + (gDotHalfWidth * 0.8)
 			drawnSize    = CGSize(width: width, height: height)
 		}
 	}

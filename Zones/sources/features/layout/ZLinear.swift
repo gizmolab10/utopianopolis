@@ -104,7 +104,7 @@ extension ZoneWidget {
 				t.relayoutAbsoluteFrame(relativeTo: controller)
 
 				textWidget?.frame = t.absoluteFrame
-			} else if let    size = textWidget?.drawnSize {
+			} else if let    size = textWidget?.drawnSize.insetBy(.zero, gDotWidth * 0.1) {
 				let             x = hideDragDot ? 20.0 : gHorizontalGap + 4.0
 				let             y = (drawnSize.height - size.height) / 2.0
 				let        origin = CGPoint(x: x, y: y)
