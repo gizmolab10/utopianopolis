@@ -1478,7 +1478,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			next.grab()
 			gFavorites.setHere(to: self)
 			gFavorites.updateFavoritesAndRedraw(needsRedraw: true)
-			gSignal([.spCrumbs, .spDataDetails, .spFavorites, .sDetails])
+			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
 		}
 	}
 
@@ -1514,7 +1514,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				p.grab()
-				gSignal([.spCrumbs, .spDataDetails, .spFavorites, .sDetails])
+				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
 			}
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
@@ -2311,7 +2311,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gSignal([.spFavorites, .spRelayout])
+				gSignal([.spSmallMap, .spRelayout])
 			}
 		}
 	}
@@ -2365,7 +2365,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.spCrumbs, .spDataDetails, .spFavorites, .spMap])
+			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .spBigMap])
 		}
 	}
 

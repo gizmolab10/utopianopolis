@@ -54,7 +54,7 @@ class ZFocusing : NSObject {
 		}
 
 		let finishAndGrabHere = {
-			gSignal([.spFavorites])
+			gSignal([.spSmallMap])
 			gHere.grab()               // NOTE: changes work mode
 			atArrival()
 		}

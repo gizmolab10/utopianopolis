@@ -110,7 +110,7 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 			if  let m = gMainWindow, m.handleKey(key, flags: f) {       // this is so cool, ;-)
 				FOREGROUND(after: 0.1) {
 					if  isEdit {
-						gSelecting.firstGrab()?.edit()                    // edit newly grabbed zone
+						gSelecting.firstGrab()?.edit()                  // edit newly grabbed zone
 					}
 
 					gExplanation(showFor: key)

@@ -844,7 +844,7 @@ CA
                     </items>
                     <accessibility description="Map Contextual Menu" identifier="Map Contextual Menu"/>
                 </menu>
-                <viewController id="XfG-lQ-9wD" userLabel="Map" customClass="ZMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" userLabel="Map" customClass="ZBigMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <customView key="view" id="37A-oF-Gav" userLabel="Drag View" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -2420,10 +2420,10 @@ DQ
             </objects>
             <point key="canvasLocation" x="986" y="468"/>
         </scene>
-        <!--Favorites Map-->
+        <!--Small Map-->
         <scene sceneID="fRz-nE-ecT">
             <objects>
-                <viewController title="favorites" id="SUz-Nq-f3E" userLabel="Favorites Map" customClass="ZFavoritesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="small" id="SUz-Nq-f3E" userLabel="Small Map" customClass="ZSmallMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kOn-SC-u0e">
                         <rect key="frame" x="0.0" y="0.0" width="121" height="1"/>
                         <autoresizingMask key="autoresizingMask"/>

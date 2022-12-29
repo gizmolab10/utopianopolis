@@ -184,7 +184,7 @@ class ZFavorites: ZSmallMapRecords {
 			}
 
 			setHere(to: here)
-			gSignal([.spCrumbs, .spFavorites])
+			gSignal([.spCrumbs, .spSmallMap])
 
 			return here
 		}
@@ -296,7 +296,7 @@ class ZFavorites: ZSmallMapRecords {
         if  updateAllFavorites() || needsRedraw {
             gRelayoutMaps { onCompletion?() }
         } else {
-			gFavoritesController?.replaceAllToolTips(gModifierFlags)
+			gSmallMapController?.replaceAllToolTips(gModifierFlags)
             onCompletion?()
         }
     }

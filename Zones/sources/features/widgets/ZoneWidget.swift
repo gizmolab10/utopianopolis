@@ -115,9 +115,9 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		return result!
 	}
 
-	override var controller : ZMapController? {
+	override var controller : ZBigMapController? {
 		if widgetType.isBigMap   { return              gMapController }
-		if widgetType.isFavorite { return        gFavoritesController }
+		if widgetType.isFavorite { return        gSmallMapController }
 		if widgetType.isExemplar { return gHelpDotsExemplarController }
 
 		return nil

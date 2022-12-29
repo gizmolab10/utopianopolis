@@ -13,7 +13,7 @@ var gHelpMapView                : ZMapView?                    { return gHelpDot
 var gHelpHyperlinkColor         : ZColor                       { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
 var gHelpDotsExemplarController : ZHelpDotsExemplarController? { return gControllers.controllerForID(.idHelpDots) as? ZHelpDotsExemplarController }
 
-class ZHelpDotsExemplarController : ZMapController {
+class ZHelpDotsExemplarController : ZBigMapController {
 
 	override  var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override  var   controllerID : ZControllerID  { return .idHelpDots }

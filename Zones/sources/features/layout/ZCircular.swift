@@ -154,7 +154,7 @@ extension ZoneWidget {
 		updateAllProgenyFrames(in: controller, true)    // sets widget absolute frame
 	}
 
-	func updateAllProgenyFrames(in controller: ZMapController?, _ absolute: Bool = false) {
+	func updateAllProgenyFrames(in controller: ZBigMapController?, _ absolute: Bool = false) {
 		traverseAllWidgetsByLevel {          (level, widgets) in
 			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // not absolute sets lineAngle
 		}
@@ -327,7 +327,7 @@ extension ZWidgets {
 
 extension ZoneWidgetArray {
 
-	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
+	func updateAllWidgetFrames(at  level: Int, in controller: ZBigMapController?, _ absolute: Bool = false) {
 		if  let vFrame = controller?.mapPseudoView?.frame {
 			let radius = ZWidgets.ringRadius(at: level)
 			let offset = CGPoint(x: gMapOffset.x - gDotHeight, y: -gMapOffset.y - 22.0)
@@ -556,7 +556,7 @@ extension ZoneDot {
 // MARK: - controller
 // MARK: -
 
-extension ZMapController {
+extension ZBigMapController {
 
 	func circularDrawLevelRings() {
 		if  let     center = hereWidget?.absoluteCenter {
@@ -579,7 +579,7 @@ extension ZMapController {
 
 extension ZDragging {
 
-	func circularDropMaybeOntoWidget(_ gesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+	func circularDropMaybeOntoWidget(_ gesture: ZGestureRecognizer?, in controller: ZBigMapController) -> Bool { // true means successful drop
 		clearDragAndDrop()
 
 		if  let       view = gesture?.view,

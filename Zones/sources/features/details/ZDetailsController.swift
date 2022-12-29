@@ -48,7 +48,6 @@ class ZDetailsController: ZGesturesController {
 		closure()
 
 		view?.hideHideable = save
-
 	}
 	
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {

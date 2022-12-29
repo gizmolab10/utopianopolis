@@ -54,7 +54,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	weak var            widget : ZoneWidget?
 	var                  ratio : CGFloat         { return widget?.mapReduction ?? 1.0 }
 	var             widgetZone : Zone?           { return widget?.widgetZone }
-	override var    controller : ZMapController? { return widget?.controller }
+	override var    controller : ZBigMapController? { return widget?.controller }
 	override var zClassInitial : String          { return isReveal ? "R" : "D" }
 	override var     debugName : String          { return widgetZone?.zoneName ?? kUnknown }
 	var        dragDotIsHidden : Bool            { return widgetZone?.dragDotIsHidden ?? true }

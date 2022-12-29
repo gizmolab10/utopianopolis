@@ -123,7 +123,7 @@ extension ZoneDot {
 
 extension ZDragging {
 
-	func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+	func dropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZBigMapController) -> Bool { // true means successful drop
 		if !draggedZones.containsARoot,
 			draggedZones.userCanMoveAll {
 			switch controller.mapLayoutMode {

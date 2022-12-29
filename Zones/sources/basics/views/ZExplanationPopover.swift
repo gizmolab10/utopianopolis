@@ -43,7 +43,7 @@ class ZExplanationPopover : ZView {
 		if  let v = gSelecting.firstGrab()?.widget?.textWidget, !isHidden {
 			snp.removeConstraints()
 			snp.makeConstraints { make in
-				make .bottom.equalTo(v.snp.bottom)
+				make .bottom.equalTo(v.snp.centerY)
 				make.centerX.equalTo(v.snp.centerX)
 			}
 		}

@@ -38,7 +38,7 @@ class ZPseudoView: NSObject {
 	var    isLinearMode : Bool            { return mode == .linearMode }
 	var  isCircularMode : Bool            { return mode == .circularMode }
 	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
-	var      controller : ZMapController? { return nil }
+	var      controller : ZBigMapController? { return nil }
 	var superpseudoview : ZPseudoView?
 	var      toolTipTag : ZToolTipTag?
 	var    absoluteView : ZView?
@@ -86,7 +86,7 @@ class ZPseudoView: NSObject {
 		return CGRect(origin: o, size: rect.size)
 	}
 
-	func relayoutAbsoluteFrame(relativeTo controller: ZMapController?) {
+	func relayoutAbsoluteFrame(relativeTo controller: ZBigMapController?) {
 		if  let       map = controller?.mapPseudoView {
 			absoluteFrame = convertRect(frame, toRootPseudoView: map)
 //			debug(absoluteFrame, "ABS FRAME")

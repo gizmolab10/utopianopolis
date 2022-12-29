@@ -527,7 +527,7 @@ class ZMapEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-			gSignal([.spMain, .sDetails, .spMap])
+			gSignal([.spMain, .sDetails, .spBigMap])
         } else if COMMA {
 			gDetailsController?.displayPreferences()
         } else if gIsEditIdeaMode {

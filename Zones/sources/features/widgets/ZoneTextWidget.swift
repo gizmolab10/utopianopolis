@@ -26,7 +26,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 	override var     debugName : String          { return   widgetZone?.zoneName ?? kUnknown }
 	override var preferredFont : ZFont           { return ((widget?.widgetType.isBigMap ?? true) && (widget?.isLinearMode ?? false)) ? gBigFont : gSmallFont }
     var             widgetZone : Zone?           { return   widget?.widgetZone }
-	var             controller : ZMapController? { return   widget?.controller }
+	var             controller : ZBigMapController? { return   widget?.controller }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
 	var              drawnSize = CGSize.zero

@@ -89,7 +89,7 @@ class ZDragging: NSObject {
 		gMapController?.setNeedsDisplay() // erase drag: line and dot
 	}
 
-	func handleDragGesture(_ gesture: ZPanGestureRecognizer, in controller: ZMapController) {
+	func handleDragGesture(_ gesture: ZPanGestureRecognizer, in controller: ZBigMapController) {
 		if  gIgnoreEvents {
 			return
 		}
@@ -176,7 +176,7 @@ class ZDragging: NSObject {
 		}
 	}
 
-	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) {
+	func dropMaybeGesture(_ iGesture: ZGestureRecognizer?, in controller: ZBigMapController) {
 		cleanupAfterDrag()
 
 		if  dropMaybeOntoFavoritesButton(iGesture, in: controller) ||
@@ -190,7 +190,7 @@ class ZDragging: NSObject {
 		}
 	}
 
-	func dropMaybeOntoFavoritesButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+	func dropMaybeOntoFavoritesButton(_ iGesture: ZGestureRecognizer?, in controller: ZBigMapController) -> Bool { // true means successful drop
 		if  let location = iGesture?.location(in: controller.view),
 		    let     view = gDetailsController?.view(for: .vFavorites) as? ZFavoritesTogglingView,
 			let     down = view.detectUpDownButton(at: location, inView: controller.view) {
@@ -214,7 +214,7 @@ class ZDragging: NSObject {
 		return false
 	}
 
-	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
+	func dropMaybeOntoCrumbButton(_ iGesture: ZGestureRecognizer?, in controller: ZBigMapController) -> Bool { // true means successful drop
 		if  let crumb = gBreadcrumbsView?.detectCrumb(iGesture),
 			!draggedZones.containsARoot,
 			!draggedZones.contains(crumb.zone),

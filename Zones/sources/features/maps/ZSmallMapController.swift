@@ -1,5 +1,5 @@
 //
-//  ZFavoritesController.swift
+//  ZSmallMapController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 5/5/20.
@@ -12,19 +12,21 @@ import Cocoa
 import UIKit
 #endif
 
-var gFavoritesController : ZFavoritesController? { return gControllers.controllerForID(.idFavorites) as? ZFavoritesController }
+var gSmallMapController : ZSmallMapController? { return gControllers.controllerForID(.idSmallMap) as? ZSmallMapController }
 
-class ZFavoritesController: ZMapController {
+class ZSmallMapController: ZBigMapController {
 
 	override var       hereZone : Zone?          { return gFavoritesHereMaybe }
 	override var     widgetType : ZWidgetType    { return .tFavorite }
-	override var   controllerID : ZControllerID  { return .idFavorites }
+	override var   controllerID : ZControllerID  { return .idSmallMap }
 	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }
 
 	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gFavoritesAreVisible, super.shouldHandle(kind) {
-			super.createAndLayoutWidgets(for: iZone, kind)
+			FOREGROUND(after: kind == .sLaunchDone ? 0.01 : .zero) { // so small map is not too high when other details views are shown
+				super.createAndLayoutWidgets(for: iZone, kind)
+			}
 		}
 	}
 
