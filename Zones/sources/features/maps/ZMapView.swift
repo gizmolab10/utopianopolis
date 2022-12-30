@@ -26,7 +26,7 @@ class ZMapView: ZView {
 
 	var                     mapID : ZMapID?
 	var                  hovering : ZHovering?
-	var                controller : ZBigMapController?
+	var                controller : ZMapController?
 	@IBOutlet var decorationsView : ZMapView?
 	override func  menu(for event : ZEvent) -> ZMenu? { return controller?.mapContextualMenu }
 	override var        debugName : String            { return controller?.zClassName ?? kUnknown }
@@ -34,7 +34,7 @@ class ZMapView: ZView {
 	// MARK: - initialize
 	// MARK: -
 
-	func setup(_ id: ZMapID = .mText, with iController: ZBigMapController) {
+	func setup(_ id: ZMapID = .mText, with iController: ZMapController) {
 		if  controller == nil {
 			controller  = iController
 			identifier  = id.identifier
@@ -114,7 +114,7 @@ class ZMapView: ZView {
 					c.drawWidgets(for: phase)
 				}
 
-				gSmallMapController?.drawWidgets(for: phase)
+				gFavoritesMapController?.drawWidgets(for: phase)
 			}
 		}
 	}

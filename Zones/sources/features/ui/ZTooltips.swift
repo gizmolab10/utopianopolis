@@ -272,7 +272,7 @@ extension ZWidgets {
 		}
 	}
 
-	func removeToolTipsFromAllWidgets(for controller: ZBigMapController) {
+	func removeToolTipsFromAllWidgets(for controller: ZMapController) {
 		if  let type = controller.hereZone?.widgetType {
 			clearAllToolTips(for: type)
 		}

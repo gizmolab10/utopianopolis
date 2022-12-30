@@ -99,17 +99,17 @@ extension ZoneWidget {
 
 }
 
-extension ZSmallMapController {
+extension ZFavoritesMapController {
 
 	override func detectHit(at location: CGPoint) -> Any? {
 		return hereWidget?.detectHit(at: location)
 	}
 }
 
-extension ZBigMapController {
+extension ZMapController {
 
 	@objc func detectHit(at location: CGPoint) -> Any? {
-		return gSmallMapController?.detectHit(at: location) ?? hereWidget?.detectHit(at: location)
+		return gFavoritesMapController?.detectHit(at: location) ?? hereWidget?.detectHit(at: location)
 	}
 
 }

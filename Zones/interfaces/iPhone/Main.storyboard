@@ -147,27 +147,27 @@
             </objects>
             <point key="canvasLocation" x="327.536231884058" y="152.67857142857142"/>
         </scene>
-        <!--Big Map Controller-->
+        <!--Map Controller-->
         <scene sceneID="9WU-We-u6g">
             <objects>
-                <viewController storyboardIdentifier="graph" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVv-ZA-i1M" customClass="ZBigMapController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="graph" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wVv-ZA-i1M" customClass="ZMapController" customModule="iFocus" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ceC-hh-Sah"/>
                         <viewControllerLayoutGuide type="bottom" id="jqU-Hy-33R"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="idC-U9-mJR" customClass="UIScrollView">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="627"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="409"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lbQ-ID-4Qi" customClass="ZMapView" customModule="iFocus" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="627"/>
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="409"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rjc-4k-2DZ">
-                                <rect key="frame" x="0.0" y="213.66666666666663" width="414" height="200"/>
+                                <rect key="frame" x="0.0" y="104.66666666666669" width="600" height="200"/>
                                 <subviews>
                                     <activityIndicatorView opaque="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="MXz-29-dtr">
-                                        <rect key="frame" x="107" y="0.0" width="200" height="200"/>
+                                        <rect key="frame" x="200" y="0.0" width="200" height="200"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="200" id="O1k-TD-Pj9"/>
@@ -214,14 +214,14 @@
                         <viewControllerLayoutGuide type="bottom" id="juo-SR-9yi"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="500-EQ-J08">
-                        <rect key="frame" x="0.0" y="0.0" width="314" height="46"/>
+                        <rect key="frame" x="0.0" y="0.0" width="500" height="46"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aIl-bX-msY">
                                 <rect key="frame" x="0.0" y="0.0" width="406" height="46"/>
                                 <subviews>
                                     <segmentedControl opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" momentary="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CxM-46-LlZ">
-                                        <rect key="frame" x="91.666666666666686" y="1" width="131" height="45"/>
+                                        <rect key="frame" x="184.66666666666666" y="1" width="130.99999999999997" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="44" id="L8m-kW-g8t"/>
                                         </constraints>

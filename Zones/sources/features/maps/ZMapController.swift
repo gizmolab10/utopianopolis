@@ -14,7 +14,7 @@ import SnapKit
     import UIKit
 #endif
 
-var gMapController    : ZBigMapController? { return gControllers.controllerForID(.idBigMap) as? ZBigMapController }
+var gMapController    : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
 var gMapView          : ZMapView?       { return gMapController?.view as? ZMapView }
 var gLinesAndDotsView : ZMapView?       { return gMapView?.decorationsView }
 
@@ -37,7 +37,7 @@ enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 	}
 }
 
-class ZBigMapController: ZGesturesController, ZScrollDelegate {
+class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	var                priorLocation = CGPoint.zero
 	override  var       controllerID : ZControllerID  { return .idBigMap }

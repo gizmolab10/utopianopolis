@@ -24,7 +24,7 @@ class ZoneLine: ZPseudoView {
 	var         childWidget : ZoneWidget?
 	var        parentWidget : ZoneWidget?
 	var            isCenter : Bool            { return  parentWidget?.isCenter ?? true }
-	override var controller : ZBigMapController? { return (parentWidget ?? childWidget)?.controller }
+	override var controller : ZMapController? { return (parentWidget ?? childWidget)?.controller }
 
 	func addDots(reveal: ZoneDot? = nil, drag: ZoneDot? = nil) {
 		if  let p                    = parentWidget {

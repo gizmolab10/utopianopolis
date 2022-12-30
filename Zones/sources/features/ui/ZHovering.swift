@@ -104,7 +104,7 @@ extension ZMapView {
 
 }
 
-extension ZBigMapController {
+extension ZMapController {
 
 	func detectHover() {
 		if  mapView?.detectHover() ?? false {

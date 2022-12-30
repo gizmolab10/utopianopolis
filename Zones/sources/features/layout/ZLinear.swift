@@ -379,7 +379,7 @@ extension ZDragging {
 		}
 	}
 
-	func linearDropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZBigMapController) -> Bool { // true means successful drop
+	func linearDropMaybeOntoWidget(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
 		var            totalGrabs = draggedZones
 		totalGrabs.appendUnique(contentsOf: gSelecting.currentMapGrabs)
 		if  let           gesture = iGesture,
@@ -442,13 +442,13 @@ extension ZDragging {
 // MARK: - map controller
 // MARK: -
 
-extension ZBigMapController {
+extension ZMapController {
 
 	func linearNearestWidget(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (ZoneWidget?, CGPoint)? {
 		if  let         viewG = gesture?.view,
 			let     locationM = gesture?.location(in: viewG),
 			let       widgetM = hereWidget?.widgetNearestTo(locationM) {
-			let     alternate = isBigMap ? gSmallMapController : gMapController
+			let     alternate = isBigMap ? gFavoritesMapController : gMapController
 			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
 				let locationA = mapPseudoView?.convertPoint(locationM, toRootPseudoView: mapViewA),
 				let   widgetA = alternate?.hereWidget?.widgetNearestTo(locationA),
