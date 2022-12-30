@@ -38,7 +38,11 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	var hasEnabledSubscription: Bool {
-		return zToken != nil && zToken!.state != .sExpired
+		guard let t = zToken else {
+			return false
+		}
+
+		return t.state != .sExpired
 	}
 
 	var zToken: ZToken? {

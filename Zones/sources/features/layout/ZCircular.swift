@@ -14,9 +14,9 @@ import Foundation
 extension ZoneWidget {
 
 	var    placesCount :     Int { return ZWidgets.placesCount(at: linesLevel) }
-	var    spreadAngle : CGFloat { return parentWidget?.incrementAngle ?? CGFloat(k2PI) }
+	var    spreadAngle : CGFloat { return parentWidget?.incrementAngle ?? k2PI.float }
 	var incrementAngle : CGFloat { return spreadAngle / CGFloat(max(1, widgetZone?.count ?? 1)) }
-	var     placeAngle : CGFloat { return (-rawPlaceAngle - CGFloat(kHalfPI)).confine(within: CGFloat(k2PI)) }
+	var     placeAngle : CGFloat { return (-rawPlaceAngle - kHalfPI.float).confine(within: k2PI.float) }
 
 	var rawPlaceAngle : CGFloat {
 
@@ -41,12 +41,12 @@ extension ZoneWidget {
 			let count = CGFloat(max(0, c - 1))
 			let extra = CGFloat(linesLevel != 1 ? .zero : -0.5)
 			let delta = CGFloat(index) - (count / 2.0) + extra
-			let     o = (delta * angle).confine(within: CGFloat(k2PI))
+			let     o = (delta * angle).confine(within: k2PI.float)
 
 			return  o
 		}
 
-		return CGFloat(k2PI)
+		return k2PI.float
 	}
 
 	var circularSelectionHighlightPath : ZBezierPath {
@@ -297,7 +297,7 @@ extension ZWidgets {
 		let   angle = vector.angle
 		let   level = levelAt(vector.length)
 		let widgets = visibleChildren(at: level)
-		var  dAngle = CGFloat(k2PI)
+		var  dAngle = k2PI.float
 		var   found : ZoneWidget?
 
 		for widget in widgets {
@@ -312,7 +312,7 @@ extension ZWidgets {
 			let oAngle = widget.placeAngle
 			let   sign = CGFloat(dAngle >= 0 ? 1 : -1)
 			let iAngle = widget.incrementAngle * sign / 2.0
-			let tAngle = (oAngle + iAngle).confine(within: CGFloat(k2PI))
+			let tAngle = (oAngle + iAngle).confine(within: k2PI.float)
 
 			return (widget, tAngle)
 		}
@@ -429,7 +429,7 @@ extension ZoneDot {
 		} else if let    l = line,
 				  let size = l.parentWidget?.highlightRect.size.expandedEquallyBy(gDotHalfWidth) {
 
-			return CGFloat(size.ellipticalLengthAt(Double(l.parentToChildAngle)))    // apply trigonometry
+			return size.ellipticalLengthAt(Double(l.parentToChildAngle).float )    // apply trigonometry
 		}
 
 		return .zero
@@ -537,7 +537,7 @@ extension ZoneDot {
 			if  parameters.isReveal {
 				path  = ZBezierPath.bloatedTrianglePath(in: rect, at: angle)
 			} else {
-				angle = gDrawCirclesAroundIdeas ? angle : CGFloat(ZPosition.position(for: Double(l.parentToChildAngle)).angle)
+				angle = gDrawCirclesAroundIdeas ? angle : ZPosition.position(for: Double(l.parentToChildAngle)).angle.float
 				path  = ZBezierPath.ovalPath(in: rect, at: angle)
 			}
 			

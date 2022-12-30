@@ -188,7 +188,7 @@ class ZHelpData: NSObject {
 
 		for     value in values {
 			if  value != 0 {
-				tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
+				tabStops.append(NSTextTab(textAlignment: .left, location: value.float, options: [:]))
 			}
 		}
 	}

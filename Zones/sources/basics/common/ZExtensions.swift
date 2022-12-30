@@ -353,50 +353,6 @@ extension ZStorageDictionary {
 
 }
 
-extension Int {
-
-	var ordinal: String {
-		switch self {
-			case 1:  return "first"
-			case 2:  return "second"
-			case 3:  return "third"
-			default: return kEmpty
-		}
-	}
-
-	func isWithin(_ range: ClosedRange<Int>) -> Bool { return range.contains(self) }
-	func confine(within: Int)                -> Int  { return Int(Double(self).confine(within: Double(within))) }
-
-	func next(forward: Bool, max: Int) -> Int? {
-		if  max <= 0                  { return nil }
-		if self <= 0   &&  forward    { return max }
-		if self >= max && !forward    { return 0 }
-
-		let    next = self + (forward ? -1 : 1)
-		if     next < 0 || next > max { return nil }
-		return next
-	}
-
-	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
-		var angles             = [Double]()
-		if  self              > 0 {
-			let         isEven = self % 2 == 0
-			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? .zero : 0.5)
-			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-self) // negative means clockwise in osx (counterclockwise in ios)
-
-			for index in 0 ... self - 1 {
-				let increments = Double(index) + extra
-				let      angle = startAngle + incrementAngle * increments
-
-				angles.append(angle.confine(within: k2PI))
-			}
-		}
-
-		return angles
-	}
-
-}
-
 extension Dictionary {
 
 	var byteCount: Int { return data?.count ?? 0 }
@@ -654,20 +610,21 @@ infix operator ** : MultiplicationPrecedence
 
 extension Double {
 
-	static func ** (base: Double, power: Double) -> Double { return pow(base, power) }
-	func   confine(within: Double)               -> Double { return Double(CGFloat(self).confine(within: CGFloat(within))) }
-	func   stringTo(precision: Int)              -> String { return        CGFloat(self).stringTo(precision: precision) }
-	var    roundedToNearestInt                    : Int    { return        CGFloat(self).roundedToNearestInt }
-	var    upward                                 : Bool   { return self < kPI }
+	static func ** (base: Double, power: Double) -> Double  { return pow(base, power) }
+	func   confine(within: Double)               -> Double  { return Double(float.confine(within: CGFloat(within))) }
+	func   stringTo(precision: Int)              -> String  { return        float.stringTo(precision: precision) }
+	var    roundedToNearestInt                    : Int     { return        float.roundedToNearestInt }
+	var    upward                                 : Bool    { return self < kPI }
+	var    float                                  : CGFloat { return CGFloat(self) }
 
 }
 
 extension CGFloat {
 
-	func stringTo(precision: Int) -> String { return String(format: "%.0\(precision)f", self) }
-	var  upward                    : Bool   { return self < CGFloat(kPI) }
-	var  roundedToNearestInt       : Int    { return Int(self + 0.5) }
-	func isBetween(low: CGFloat, high: CGFloat) -> Bool { return low < high && low < self && self < high }
+	var  roundedToNearestInt                     : Int    { return Int(self + 0.5) }
+	var  upward                                  : Bool   { return self < kPI.float }
+	func isBetween(low: CGFloat, high: CGFloat) -> Bool   { return low < high && low < self && self < high }
+	func stringTo(precision: Int)               -> String { return String(format: "%.0\(precision)f", self) }
 
 	func confineBetween(low: CGFloat, high: CGFloat) -> CGFloat {
 		return fmax(fmin(self, high), low)
@@ -686,6 +643,53 @@ extension CGFloat {
 		}
 
 		return i
+	}
+
+}
+
+extension Int {
+
+	var ordinal: String {
+		switch self {
+			case 1:  return "first"
+			case 2:  return "second"
+			case 3:  return "third"
+			default: return kEmpty
+		}
+	}
+
+	func isWithin(_ range: ClosedRange<Int>) -> Bool    { return range.contains(self) }
+	func confine(within: Int)                -> Int     { return Int(float.confine(within: CGFloat(within))) }
+	func stringTo(precision: Int)            -> String  { return     float.stringTo(precision: precision) }
+	var  stringAsPerThousand                  : String  { return    (float / 1000.0).stringTo(precision: 1) }
+	var  float                                : CGFloat { return CGFloat(self) }
+
+	func next(forward: Bool, max: Int) -> Int? {
+		if  max <= 0                  { return nil }
+		if self <= 0   &&  forward    { return max }
+		if self >= max && !forward    { return 0 }
+
+		let    next = self + (forward ? -1 : 1)
+		if     next < 0 || next > max { return nil }
+		return next
+	}
+
+	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
+		var angles             = [Double]()
+		if  self              > 0 {
+			let         isEven = self % 2 == 0
+			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? .zero : 0.5)
+			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-self) // negative means clockwise in osx (counterclockwise in ios)
+
+			for index in 0 ... self - 1 {
+				let increments = Double(index) + extra
+				let      angle = startAngle + incrementAngle * increments
+
+				angles.append(angle.confine(within: k2PI))
+			}
+		}
+
+		return angles
 	}
 
 }

@@ -79,7 +79,7 @@ public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
 public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
-let kVerticalWeight      = CGFloat( 1)
+let kVerticalWeight      = CGFloat(1)
 var gIsPrinting          : Bool { return NSPrintOperation.current != nil }
 var gFavoritesAreVisible : Bool { return gDetailsViewIsVisible(for: .vFavorites) }
 protocol ZScrollDelegate : NSObjectProtocol {}
@@ -1276,7 +1276,7 @@ extension ZoneLine {
 			rect.size     .width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
 			let            delta = CGFloat(4)
 			let       smallDelta = CGFloat(1)
-			let        thickness = CGFloat(gLineThickness)
+			let        thickness = gLineThickness
 
             switch kind! {
             case .above:

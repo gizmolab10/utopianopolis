@@ -50,7 +50,7 @@ class ZStartup: NSObject {
 				gHasFinishedStartup                   = true
 				gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 
-				gDetailsController?.removeViewFromStack(for: .vSubscribe)
+//				gDetailsController?.removeViewFromStack(for: .vSubscribe)
 				gRefreshPersistentWorkMode()
 				gRemoteStorage.setup()
 				gRefreshCurrentEssay()

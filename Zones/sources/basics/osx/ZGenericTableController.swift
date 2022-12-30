@@ -26,7 +26,7 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
 		if  let                 t = genericTableView {
 			t.delegate            = self
 			t.dataSource          = self
-			tableHeight?.constant = CGFloat(numberOfRows(in: t)) * rowHeight
+			tableHeight?.constant = numberOfRows(in: t).float * rowHeight
 		}
 	}
 

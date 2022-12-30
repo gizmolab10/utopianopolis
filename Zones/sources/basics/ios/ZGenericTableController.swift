@@ -15,12 +15,12 @@ class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableVie
     @IBOutlet var genericTableView: ZTableView!
 
     func tableView(_ tableView: ZTableView, numberOfRowsInSection section: Int) -> Int { return 1 }
-    func numberOfRows(in tableView: ZTableView) -> Int { return tableView(tableView, numberOfRowsInSection: 0) }
-    func tableView(_ tableView: ZTableView, cellForRowAt indexPath: IndexPath) -> ZTableCellView { return ZTableCellView() }
+	func numberOfRows(in tableView: ZTableView) -> Int { return 0 } // tableView(tableView, numberOfRowsInSection: 0) }
+	private func tableView(_ tableView: ZTableView, cellForRowAt indexPath: IndexPath) -> ZTableCellView { return ZTableCellView() }
     override func handleSignal(_ object: Any?, kind: ZSignalKind) { genericTableUpdate() }
 
     func genericTableUpdate() {
         genericTableView.reloadData()
-        tableHeight?.constant = CGFloat(numberOfRows(in: genericTableView)) * genericTableView.rowHeight
+		tableHeight?.constant = numberOfRows(in: genericTableView).float * genericTableView.rowHeight
     }
 }

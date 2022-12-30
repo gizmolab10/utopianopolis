@@ -273,7 +273,7 @@ extension ZoneLine {
 	}
 
 	func linearStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let rect = iRect.centeredHorizontalLine(thick: CGFloat(gLineThickness))
+		let rect = iRect.centeredHorizontalLine(thick: gLineThickness)
 		let path = ZBezierPath(rect: rect)
 
 		path.setClip()

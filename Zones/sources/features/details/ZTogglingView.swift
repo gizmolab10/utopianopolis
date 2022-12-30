@@ -64,7 +64,7 @@ class ZTogglingView: ZView {
 
     var hideHideable: Bool {
         get {
-            return !gIsReadyToShowUI || gHiddenDetailViewIDs.contains(identity)
+            return gHiddenDetailViewIDs.contains(identity)
         }
 
         set {

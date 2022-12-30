@@ -43,7 +43,6 @@ class ZSubscriptionController: ZGenericController {
 	func subscriptionUpdate() {
 		statusView?      .isHidden = !gShowMySubscriptions
 		buttonsView?     .isHidden =  gShowMySubscriptions
-//		height?          .constant =  gShowMySubscriptions ? 84.0 : CGFloat(rows) * 26.0 - 3.0
 
 		if  gShowMySubscriptions {
 			dateLabel?       .text = gProducts.expires

@@ -115,7 +115,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		let       center = iDirtyRect.center
 		let            x = center.x - CGFloat(tinyRadius + radius + 1.0)
 		let            y = center.y - CGFloat(tinyRadius + parameters.verticleOffset)
-		let         rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
+		let         rect = CGRect(x: x, y: y, width: tinyDiameter.float, height: tinyDiameter.float)
 		let         path = ZBezierPath(ovalIn: rect)
 		path.lineWidth   = CGFloat(gLineThickness * 1.2)
 		path.flatness    = kDefaultFlatness

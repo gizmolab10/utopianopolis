@@ -62,7 +62,7 @@ class ZPreferencesController: ZGenericController {
     // MARK: -
 
 	@IBAction func sliderAction(_ iSlider: ZSlider) {
-        let value = CGFloat(iSlider.doubleValue)
+		let value = iSlider.doubleValue.float
 
 		if  let     identifier = gConvertFromOptionalUserInterfaceItemIdentifier(iSlider.identifier) {
 			switch (identifier) {

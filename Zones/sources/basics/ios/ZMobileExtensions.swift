@@ -40,6 +40,7 @@ public typealias ZBezierPath                 = UIBezierPath
 public typealias ZSearchField                = UISearchBar
 public typealias ZApplication                = UIApplication
 public typealias ZTableColumn                = ZNullProtocol
+public typealias ZTableCellView              = UITableCellView
 public typealias ZWindowDelegate             = ZNullProtocol
 public typealias ZScrollDelegate             = UIScrollViewDelegate
 public typealias ZWindowController           = ZNullProtocol
