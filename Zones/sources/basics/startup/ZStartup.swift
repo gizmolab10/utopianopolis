@@ -22,8 +22,9 @@ class ZStartup: NSObject {
 	func startupCloudAndUI() {
 
 //		gPrintModes            = []
+		gDebugModes            = []
 //		gPrintModes  .insert(.dTime)
-//		gDebugModes  .insert(.dUseSubscriptions)
+//		gDebugModes  .insert(.dSubscriptionTimeout)
 //		gCoreDataMode.remove(.dCloudKit)
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
@@ -50,16 +51,20 @@ class ZStartup: NSObject {
 				gHasFinishedStartup                   = true
 				gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
 
-//				gDetailsController?.removeViewFromStack(for: .vSubscribe)
-				gRefreshPersistentWorkMode()
-				gRemoteStorage.setup()
-				gRefreshCurrentEssay()
-				gProducts.fetchProductData()
-				gHereMaybe?.grab()
-
 				if  gIsStartupMode {
 					gSetMapWorkMode()
 				}
+
+				if  gNoSubscriptions {
+					gDetailsController?.removeViewFromStack(for: .vSubscribe)
+				} else {
+					gProducts.fetchProductData()
+				}
+
+				gRefreshPersistentWorkMode()
+				gRemoteStorage.setup()
+				gRefreshCurrentEssay()
+				gHereMaybe?.grab()
 
 				FOREGROUND(after: 0.1) { [self] in
 					if  gCDMigrationState != .normal {
@@ -86,8 +91,9 @@ class ZStartup: NSObject {
 			let image = kHelpMenuImage
 
 			gAlerts.showAlert(
-				"Please forgive my interruption",
-				"Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)?\n\nYou can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below.",
+				"Please forgive my interruption", [
+				"Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)?",
+				"You can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below."].joined(separator: "\n\n"),
 				"Reply in an email",
 				"Dismiss",
 				image) { [self] status in

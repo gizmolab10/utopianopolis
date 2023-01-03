@@ -4,12 +4,14 @@
 <dict>
 	<key>com.seriously.promotion</key>
 	<string>Introductory</string>
-	<key>com.seriously.annual</key>
-	<string>One Year</string>
 	<key>com.seriously.daily</key>
 	<string>One Day</string>
+	<key>com.seriously.weekly</key>
+	<string>One Week</string>
 	<key>com.seriously.monthly</key>
 	<string>One Month</string>
+	<key>com.seriously.annual</key>
+	<string>One Year</string>
 	<key>com.seriously.lifetime</key>
 	<string>Lifetime</string>
 </dict>

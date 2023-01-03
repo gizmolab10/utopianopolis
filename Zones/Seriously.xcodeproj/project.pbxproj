@@ -219,6 +219,7 @@
 		A74DBDEB244E004000DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
 		A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
 		A74DBDED244E179700DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
+		A74ECDBD2963BD82005191A9 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A74ECDBC2963BD82005191A9 /* StoreKit.framework */; };
 		A752FC2C24512D7700603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
 		A752FC2F24512E0B00603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
 		A752FC3024512E0C00603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
@@ -582,6 +583,7 @@
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Help.storyboard; sourceTree = "<group>"; };
 		A746D466219F637A00123A0A /* Seriously.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seriously.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A74DBDEA244E004000DF751A /* ZContextualMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContextualMenu.swift; sourceTree = "<group>"; };
+		A74ECDBC2963BD82005191A9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A752FC2B24512D7700603A54 /* ZoneArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneArray.swift; sourceTree = "<group>"; };
 		A752FC31245222D100603A54 /* ZoneContextualMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneContextualMenu.swift; sourceTree = "<group>"; };
 		A759F70024269D29008CEA59 /* ZTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTimers.swift; sourceTree = "<group>"; };
@@ -671,6 +673,7 @@
 				A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */,
 				A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */,
 				A7CC53AD267C2A7F00370BC0 /* CryptoKit.framework in Frameworks */,
+				A74ECDBD2963BD82005191A9 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -703,6 +706,7 @@
 		0C09A7D81FE86FCC00F3D736 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A74ECDBC2963BD82005191A9 /* StoreKit.framework */,
 				A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */,
 				A7F7C42D226D343400D52637 /* CloudKit.framework */,
 				A71485952256D13A00F54C0C /* iOS */,
@@ -730,7 +734,6 @@
 				0C39B22A1F182EBB0091F4D1 /* ZPreferencesController.swift */,
 				A7E5A5E923EFAE4F00A52F47 /* ZTogglingView.swift */,
 				A7290E7D2920DD8F00716109 /* ZFavoritesTogglingView.swift */,
-				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
 			);
 			path = details;
 			sourceTree = "<group>";
@@ -742,7 +745,6 @@
 				A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */,
 				0C39B22F1F182EBB0091F4D1 /* ZClosures.swift */,
 				0C39B2301F182EBB0091F4D1 /* ZConstants.swift */,
-				A72808B124A8688C00238889 /* ZDebug.swift */,
 				0CABC9EE2022768D0019D8B0 /* ZEnumerations.swift */,
 				0C48B0941F87197B00A247BC /* ZEvents.swift */,
 				0C39B2311F182EBB0091F4D1 /* ZExtensions.swift */,
@@ -792,7 +794,6 @@
 				A70064DC22484808004E3A8D /* ZManifest.swift */,
 				A706444A247222A500F90B86 /* ZNode.swift */,
 				0C39B25D1F182EBB0091F4D1 /* Zone.swift */,
-				A7D507CB2688F2BA001CEA9F /* ZProducts.swift */,
 				A7D507D2269151B6001CEA9F /* ZReceipt.swift */,
 				0C39B25E1F182EBB0091F4D1 /* ZRecord.swift */,
 				0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */,
@@ -1014,6 +1015,15 @@
 			path = ui;
 			sourceTree = "<group>";
 		};
+		A74ECDBB2963B4AD005191A9 /* subscriptions */ = {
+			isa = PBXGroup;
+			children = (
+				A7D507CB2688F2BA001CEA9F /* ZProducts.swift */,
+				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
+			);
+			path = subscriptions;
+			sourceTree = "<group>";
+		};
 		A76243B227EF96890007EDC1 /* managers */ = {
 			isa = PBXGroup;
 			children = (
@@ -1073,6 +1083,7 @@
 		A786C6EE25DF5F7400B23FBF /* debug */ = {
 			isa = PBXGroup;
 			children = (
+				A72808B124A8688C00238889 /* ZDebug.swift */,
 				A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */,
 				A786C6F025DF5F9F00B23FBF /* ZDebugController.swift */,
 			);
@@ -1177,6 +1188,7 @@
 				A76243B227EF96890007EDC1 /* managers */,
 				A7DF4865249B1860008B35AC /* maps */,
 				A7DF4868249B1A3E008B35AC /* search */,
+				A74ECDBB2963B4AD005191A9 /* subscriptions */,
 				A745ED0826AF4DE10013D1A4 /* ui */,
 				A7DF486D249C10F0008B35AC /* widgets */,
 			);

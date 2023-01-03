@@ -66,7 +66,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func fetchProductData() {   // fetch product data
-		queue.add(self) // for paymentQueue callbacks
+		queue.add(self)         // for paymentQueue callbacks
 		queue.restoreCompletedTransactions()
 		fetchProducts()
 		validateCurrentReceipt()
@@ -94,23 +94,25 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 
 	func showExpirationAlert() {
 		gAlerts.showAlert("Please forgive my interruption", [
-							"I hope you are enjoying Seriously.", [
-								"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
-								"Because I do see the value of letting you \(kTryThenBuy),",
-								"this alert is being shown to you only after a free period of use.",
-								"During this period all features of Seriously have been enabled."].joined(separator: kSpace), [
-									"If you wish to continue using Seriously for free,",
-									"some features [editing notes, search and print] will be disabled.",
-									"If these features are important to you,",
-									"you can retain them by purchasing a license."].joined(separator: kSpace)].joined(separator: "\n\n"),
+			"I hope you are enjoying Seriously.", [
+				"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
+				"Because I do see the value of letting you \(kTryThenBuy),",
+				"this alert is being shown to you after a free period of use.",
+				"During this period all features of Seriously have been enabled."].joined(separator: kSpace), [
+					"If you wish to continue using Seriously for free,",
+					"some features [editing notes, search and print] will be disabled.",
+					"If these features are important to you,",
+					"you can continue using them by purchasing a license."].joined(separator: kSpace)].joined(separator: "\n\n"),
 						  "Purchase a subscription",
 						  "No thanks, the limited features are perfect") { status in
 			if  status              == .sYes {
 				gShowDetailsView     = true
 				gShowMySubscriptions = false
 
-				gDetailsController?.showViewFor(.vSubscribe)
-				gSignal([.spSubscription, .sDetails])
+				if !gNoSubscriptions {
+					gDetailsController?.showViewFor(.vSubscribe)
+					gSignal([.spSubscription, .sDetails])
+				}
 			}
 		}
 	}
@@ -119,7 +121,13 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	// MARK: -
 
 	func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-		products = response.products
+		products = response.products.sorted(by: { a, b in
+			if  let at = a.type?.threshold,
+				let bt = b.type?.threshold {
+				return at < bt
+			}
+			return false
+		})
 		gSubscriptionDidChange  = true
 
 		gSignal([.spSubscription])                 // update subscription controller
@@ -220,37 +228,26 @@ extension SKProduct {
 
 enum ZProductType: String {
 	case     pFree = "com.seriously.promotion"    // missing?
-	case    pDaily = "com.seriously.daily"
+	case   pWeekly = "com.seriously.weekly"
 	case   pAnnual = "com.seriously.annual"
 	case  pMonthly = "com.seriously.monthly"
 	case pLifetime = "com.seriously.lifetime"
 
-	static var all: [ZProductType] {
-		return [.pFree, .pDaily, .pAnnual, .pMonthly, .pLifetime]
-	}
+	static var all : [ZProductType] { return [.pFree, .pWeekly, .pMonthly, .pAnnual, .pLifetime] }
+	var      title : String         { return "\(durationString) (\(cost))" }
+	var   duration : Double         { return Double(threshold)	}
 
 	var isAutoRenew: Bool {
 		switch self {
-			case .pMonthly,
-				 .pAnnual: return true
-			default:       return false
+			case .pLifetime,
+				 .pFree: return false
+			default:     return true
 		}
 	}
 
-	var title: String { return "\(durationString) (\(cost))" }
-
-	var duration: Double {
+	var durationString : String {
 		switch self {
-			case .pDaily:    return Double(kOneDay)
-			case .pAnnual:   return Double(kOneYear)
-			case .pMonthly:  return Double(kOneMonth)
-			default:         return .nan
-		}
-	}
-
-	var durationString: String {
-		switch self {
-			case .pDaily:    return "One Day"
+			case .pWeekly:   return "One Week"
 			case .pAnnual:   return "One Year"
 			case .pMonthly:  return "One Month"
 			case .pLifetime: return "Lifetime"
@@ -260,16 +257,17 @@ enum ZProductType: String {
 
 	var threshold: Int {
 		switch self {
-			case .pDaily:    return kOneDay
+			case .pWeekly:   return kOneWeek
 			case .pAnnual:   return kOneYear
-			case .pMonthly:  return kOneMonth
+			case .pFree,
+				 .pMonthly:  return kOneMonth
 			default:         return Int.max
 		}
 	}
 
 	var cost: String {
 		switch self {
-			case .pDaily:    return  "$0.99"
+			case .pWeekly:   return  "$0.99"
 			case .pAnnual:   return "$24.99"
 			case .pMonthly:  return  "$2.49"
 			case .pLifetime: return "$64.99"

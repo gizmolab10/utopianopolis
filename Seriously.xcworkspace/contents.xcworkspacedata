@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Zones/sources/basics/data/seriously.storekit">
+   </FileRef>
+   <FileRef
       location = "group:Zones/Seriously.xcodeproj">
    </FileRef>
 </Workspace>
