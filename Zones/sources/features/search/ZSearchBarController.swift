@@ -74,7 +74,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	func handleEvent(_ event: ZEvent) -> ZEvent? {
 		let    string = event.input ?? kEmpty
 		let     flags = event.modifierFlags
-		let   COMMAND = flags.isCommand
+		let   COMMAND = flags.hasCommand
 		let       key = string[string.startIndex].description
 		let       isF = key == "f"
 		let     isTab = key == kTab

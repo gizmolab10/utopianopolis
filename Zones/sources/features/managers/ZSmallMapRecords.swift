@@ -325,7 +325,7 @@ class ZSmallMapRecords: ZRecords {
 			for bookmark in bookmarks {
 				let isInHere = bookmark.isInFavoritesHere
 
-				if !bookmark.isDeleted, flags.isCommand ? bookmark.isInRecentsGroup : isInHere {
+				if !bookmark.isDeleted, flags.hasCommand ? bookmark.isInRecentsGroup : isInHere {
 					gShowDetailsView = true
 
 					if  !isInHere {

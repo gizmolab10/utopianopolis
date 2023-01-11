@@ -50,7 +50,6 @@ class ZHelpDotsData: ZHelpData {
 		".f",					"10 ideas              medium dot right",										"",
 		".f",					"12 ideas              medium dot left, 2 small dots right",					"",
 		".f",					"120 ideas            large hollow left, 2 medium right",						"",
-		".f",					"1200 ideas          large hollow left, 2 medium hollow right",					"",
 		"",						"",																				"",
 		"_bookmark dots",		"click to change focus", 														"",
 		".b",					"bookmark           focus on bookmark's target",								"",

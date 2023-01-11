@@ -125,8 +125,8 @@ class ZBreadcrumbsView : ZButtonsView {
 		if        index < crumbs.count {
 			let    zone = crumbs[index]
 			let   flags = button.currentEvent?.modifierFlags
-			let  OPTION = flags?.isOption  ?? false
-			let COMMAND = flags?.isCommand ?? false
+			let  OPTION = flags?.hasOption  ?? false
+			let COMMAND = flags?.hasCommand ?? false
 
 			if    zone == gHere, !gIsEssayMode, !COMMAND { return }
 

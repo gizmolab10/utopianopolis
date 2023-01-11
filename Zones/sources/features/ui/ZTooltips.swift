@@ -57,8 +57,8 @@ extension ZKickoffToolButton {
 			let    buttonID = kickoffToolID {
 			let   canTravel = gIsMapMode && gGrabbedCanTravel
 			let       flags = gKickoffToolsController?.flags
-			let    	 OPTION = flags?.isOption  ?? false
-			let    	CONTROL = flags?.isControl ?? false
+			let    	 OPTION = flags?.hasOption  ?? false
+			let    	CONTROL = flags?.hasControl ?? false
 			let     addANew = "adds a new idea as "
 			let     editing = (!gIsEditing ? "edits" : "stops editing and save to")
 			let notMultiple = gSelecting.currentMapGrabs.count < 2
@@ -94,8 +94,8 @@ extension ZBox {
 		if  gShowToolTips,
 			let  boxID = kickoffToolID {
 			let  flags = gKickoffToolsController?.flags
-			let  SHIFT = flags?.isShift  ?? false
-			let OPTION = flags?.isOption ?? false
+			let  SHIFT = flags?.hasShift  ?? false
+			let OPTION = flags?.hasOption ?? false
 
 			switch boxID {
 				case .move: return SHIFT && !OPTION ? "horizontal arrows conceal and reveal, vertical arrows expand selection" : (OPTION ? "relocate" : "browse to next") + " selected idea"
@@ -138,7 +138,7 @@ extension Zone {
 	func clearToolTips()                      { widget?.clearToolTips() }
 
 	func dotToolTipText(_ isReveal: Bool, _ flags: ZEventFlags) -> String {
-		let COMMAND = flags.isCommand
+		let COMMAND = flags.hasCommand
 		let noChild = count      == 0
 		let special =  COMMAND   || noChild
 		let  oneGen = !COMMAND   || isExpanded || isTraveller

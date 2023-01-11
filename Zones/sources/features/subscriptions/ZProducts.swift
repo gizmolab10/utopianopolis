@@ -88,7 +88,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		if  let product = productAt(index) {
 			let payment = SKMutablePayment(product: product)
 
-			queue.add(payment) // always fails!
+			queue.add(payment)
 		}
 	}
 
@@ -102,7 +102,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 					"If you wish to continue using Seriously for free,",
 					"some features [editing notes, search and print] will be disabled.",
 					"If these features are important to you,",
-					"you can continue using them by purchasing a license."].joined(separator: kSpace)].joined(separator: "\n\n"),
+					"you can continue using them by purchasing a license."].joined(separator: kSpace)].joined(separator: kDoubleNewLine),
 						  "Purchase a subscription",
 						  "No thanks, the limited features are perfect") { status in
 			if  status              == .sYes {
@@ -121,13 +121,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	// MARK: -
 
 	func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-		products = response.products.sorted(by: { a, b in
-			if  let at = a.type?.threshold,
-				let bt = b.type?.threshold {
-				return at < bt
-			}
-			return false
-		})
+		products                = extractAndSortProducts(from: response)
 		gSubscriptionDidChange  = true
 
 		gSignal([.spSubscription])                 // update subscription controller
@@ -177,30 +171,31 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?) {
+		print("purchaseSucceeded")
+
+		gSignal([.spSubscription])
 	}
 
-	func purchaseStarted() {
-		print("purchaseStarted")
-	}
-
-	func purchaseDeferred() {
-		print("purchaseDeferred")
-	}
-
-	func purchaseFailed(_ error: Error?) {
-		var suffix  = ""
-		if  let e   = error {
-			suffix  = ": \(e)"
-		}
-
-		print("purchaseFailed" + suffix)
-	}
+	func purchaseStarted()  { print("purchaseStarted") }
+	func purchaseDeferred() { print("purchaseDeferred") }
+	func purchaseFailed(_ error: Error?) { print("purchaseFailed") }
 
 	// MARK: - internals
 	// MARK: -
 
+	func extractAndSortProducts(from response: SKProductsResponse) -> [SKProduct] {
+		return response.products.sorted(by: { a, b in
+			if  let at = a.type?.threshold,
+				let bt = b.type?.threshold {
+				return at < bt
+			}
+
+			return false
+		})
+	}
+
 	func productAt(_ index: Int) -> SKProduct? {
-		if index >= products.count { return nil }
+		guard index < products.count else { return nil }
 
 		return products[index]
 	}

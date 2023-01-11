@@ -23,9 +23,10 @@ class ZStartup: NSObject {
 
 //		gPrintModes            = []
 		gDebugModes            = []
+		gCoreDataMode          = []
 //		gPrintModes  .insert(.dTime)
-//		gDebugModes  .insert(.dSubscriptionTimeout)
-//		gCoreDataMode.remove(.dCloudKit)
+		gDebugModes  .insert(.dNoSubscriptions)
+		gCoreDataMode.insert(.dNoCloudKit)
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
@@ -46,10 +47,9 @@ class ZStartup: NSObject {
 
 		gBatches.startUp { iSame in
 			FOREGROUND { [self] in
-				gMainController?.helpButton?.isHidden = false
-				gRefusesFirstResponder                = false
-				gHasFinishedStartup                   = true
-				gCurrentHelpMode                      = .proMode // so prepare strings will work correctly for all help modes
+				gRefusesFirstResponder = false
+				gHasFinishedStartup    = true
+				gCurrentHelpMode       = .proMode // so prepare strings will work correctly for all help modes
 
 				if  gIsStartupMode {
 					gSetMapWorkMode()
@@ -93,7 +93,7 @@ class ZStartup: NSObject {
 			gAlerts.showAlert(
 				"Please forgive my interruption", [
 				"Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)?",
-				"You can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below."].joined(separator: "\n\n"),
+				"You can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below."].joined(separator: kDoubleNewLine),
 				"Reply in an email",
 				"Dismiss",
 				image) { [self] status in

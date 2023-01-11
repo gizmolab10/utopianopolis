@@ -100,12 +100,12 @@ class ZDragging: NSObject {
 
 			gTextEditor.stopCurrentEdit(forceCapture: true, andRedraw: false) // so drag and rubberband do not lose user's changes
 
-			if  flags.isCommand && !flags.isOption {          // shift background
+			if  flags.hasCommand && !flags.hasOption {          // shift background
 				controller.offsetEvent(move: state == .changed,  to: location)
 			} else if !draggedZones.isEmpty {
 				dropMaybeGesture(gesture, in: controller)     // logic for drawing the drop dot, and for dropping dragged idea
 			} else if state == .changed {
-				if  flags.isControl, controller.inCircularMode {
+				if  flags.hasControl, controller.inCircularMode {
 					controller.rotationEvent(location)
 				} else if gRubberband.setRubberbandExtent(to: location) {  // enlarge rubberband
 					gRubberband.updateGrabs()

@@ -40,6 +40,9 @@ class ZHelpMapData : ZHelpData {
 		"0/", 			"show/hide this window", 							"",
 		"0A", 			"show About Seriously", 							"",
 		"0R", 			"report a problem", 								"",
+		"0",			 												"", "",
+		"0_COMMAND + MOUSE CLICK",										"", "",
+		"0 ",		 	"drag entire map", 								    "mouse-e21b7a63020e",
 		"+",			 												"", "",
 		"0!WHILE IN THE SEARCH BAR:", 									"", "",
 		"0",			 												"", "",
@@ -49,7 +52,7 @@ class ZHelpMapData : ZHelpData {
 		"0",			 												"", "",
 		"0_COMMAND + KEY", 												"", "",
 		"0A", 			"select all search text", 							"search-2a996591375a",
-		"0F", 			"dismisss search bar", 								"search-2a996591375a"
+		"0F", 			"dismisss search bar", 								"search-2a996591375a",
 	]
 
 	let mapColumnTwo: StringsArray = [
@@ -94,7 +97,7 @@ class ZHelpMapData : ZHelpData {
 		"0vertical", 	"browse results (wraps around)", 					"search-2a996591375a",
 		"0",			 												"", "",
 		"0",			 												"", "",
-		"0!legend:", 	"click on blue text to view further details",		"_" // leave underscore (invisible): applies blue color to text
+		"0!legend:", 	"click on blue text to view further details",		"_", // leave underscore (invisible): applies blue color to text
 	]
 
 	let mapColumnThree: StringsArray = [
@@ -111,7 +114,7 @@ class ZHelpMapData : ZHelpData {
 		"2EQUALS", 		"invoke hyperlink or email", 						"extras-2a9b1a7db21f",
 		"2COMMA", 		"toggle lists grow up/down", 						"",
 		"0SPACE", 		"create new idea in list", 							"edit-d05d18996df7",
-		"0/", 			"focus (also, manage recents/favorites)", 			"focusing-your-thinking-a53adb16bba",
+		"0/", 			"focus (also, manage favorites)", 					"focusing-your-thinking-a53adb16bba",
 		"0\\", 			"switch to other map", 				    			"",
 		"0[, ]", 		"focus on prior/next idea",         				"focusing-your-thinking-a53adb16bba",
 		"0B", 			"create a bookmark", 								"focusing-your-thinking-a53adb16bba",
@@ -127,6 +130,20 @@ class ZHelpMapData : ZHelpData {
 		"2S", 			"save to a Seriously file", 						"cloud-vs-file-f3543f7281ac",
 		"2T", 			"swap selected idea with parent", 					"parent-child-tweaks-bf067abdf461",
 		"0X", 			"move into done (creating it if missing)",			"",
+		"0",			 												"", "",
+		"0_SHIFT + KEY",												"", "",
+		"2[, ]", 		"focus on prior/next idea in group",				"",
+		"0LEFT ", 		"hide list", 										"focusing-your-thinking-a53adb16bba",
+		"0RIGHT", 		"reveal list",	 									"focusing-your-thinking-a53adb16bba",
+		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53",
+		"1",			 												"", "",
+		"1_SHIFT + MOUSE CLICK",										"", "",
+		"1 ", 			"un/extend selection", 								"selecting-ideas-cc2939720e53",
+	]
+
+	let mapColumnFour: StringsArray = [
+		"0",			 												"", "",
+		"0",			 												"", "",
 		"1",			 												"", "",
 		"1_COMMAND + KEY", 												"", "",
 		"2ARROWS", 		"extend all the way", 								"selecting-ideas-cc2939720e53",
@@ -137,11 +154,6 @@ class ZHelpMapData : ZHelpData {
 		"1A", 			"select all ideas", 								"selecting-ideas-cc2939720e53",
 		"2D", 			"append onto parent", 								"parent-child-tweaks-bf067abdf461",
 		"2[, ]", 		"prior/next favorites list",						"",
-	]
-
-	let mapColumnFour: StringsArray = [
-		"0",			 												"", "",
-		"0",			 												"", "",
 		"0",			 												"", "",
 		"0_OPTION + KEY", 												"", "",
 		"0ARROWS", 		"move selected idea", 								"organize-fcdc44ac04e4",
@@ -159,18 +171,11 @@ class ZHelpMapData : ZHelpData {
 		"2D", 			"duplicate idea only (ignore its list)",			"",
 		"2O", 			"show data files in Finder", 						"cloud-vs-file-f3543f7281ac",
 		"2S", 			"save to cloud",			 						"cloud-vs-file-f3543f7281ac",
-		"2[, ]", 		"move bookmark to prior/next favorites list",		"",
+		"2[, ]", 		"move bookmark to",									"",
+		"2", 			"prior/next favorites list",						"",
 		"2",			 												"", "",
-		"0_SHIFT + KEY",												"", "",
-		"2[, ]", 		"focus on prior/next idea in group",				"",
-		"2",			"+ COMMAND applies all the way",					"",
-		"0LEFT ", 		"hide list", 										"focusing-your-thinking-a53adb16bba",
-		"0RIGHT", 		"reveal list",	 									"focusing-your-thinking-a53adb16bba",
-		"2vertical", 	"extend selection", 								"selecting-ideas-cc2939720e53",
-		"0",			 												"", "",
-		"0_MOUSE CLICK + MODIFIER KEY",									"", "",
-		"0COMMAND", 	"drag entire map", 								    "mouse-e21b7a63020e",
-		"1SHIFT", 		"un/extend selection", 								"selecting-ideas-cc2939720e53",
+		"2_COMMAND + OPTION + CONTROL + KEY", 							"", "",
+		"2N", 			"convert list into a note",							"",
 		"2",			 												"", "",
 		"2",			 												"", "",
 		"2!WHILE MULTIPLE IDEAS ARE SELECTED:",							"", "",

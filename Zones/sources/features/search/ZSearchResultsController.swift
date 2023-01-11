@@ -416,7 +416,7 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
 	@discardableResult func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) -> Bool { // false means not handled
-		let COMMAND = flags.isCommand
+		let COMMAND = flags.hasCommand
 
 		switch arrow {
 			case .up, .down: moveSelection(up: arrow == .up, extreme: COMMAND)

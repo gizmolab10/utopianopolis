@@ -29,7 +29,7 @@ class ZFocusing : NSObject {
 	}
 
 	func pushPopFavorite(_ flags: ZEventFlags, kind: ZFocusKind) {
-		if  flags.isControl {
+		if  flags.hasControl {
 			gFavorites.popAndUpdateCurrent()
 		} else {
 			focusOnGrab(kind, flags, shouldGrab: true) { // complex grab logic
@@ -73,7 +73,7 @@ class ZFocusing : NSObject {
 			atArrival()
 		} else if zone.isInFavorites {  // state 3
 			finishAndGrabHere()
-		} else if flags.isCommand {             // state 4
+		} else if flags.hasCommand {             // state 4
 			gFavorites.refocus {
 				atArrival()
 			}

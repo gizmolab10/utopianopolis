@@ -137,9 +137,9 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func nextBookmark(down: Bool, flags: ZEventFlags) {
-		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
-		let   SHIFT = flags.isShift
+		let COMMAND = flags.hasCommand
+		let  OPTION = flags.hasOption
+		let   SHIFT = flags.hasShift
 
 		if  COMMAND {
 			showNextList(down: down, moveCurrent: OPTION)

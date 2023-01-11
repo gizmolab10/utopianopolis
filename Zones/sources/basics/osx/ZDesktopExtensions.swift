@@ -231,17 +231,17 @@ extension NSURL {
 
 extension ZEventFlags {
 
-	var isAnyMultiple:       Bool       { return  exactlySplayed || exactlySpecial || exactlyOtherSpecial || isAll }
-	var isAny:               Bool       { return  isCommand ||  isOption ||  isControl }
-	var isAll:               Bool       { return  isCommand &&  isOption &&  isControl }
-	var exactlySpecial:      Bool       { return  isCommand &&  isOption && !isControl }
-	var exactlySplayed:      Bool       { return  isCommand && !isOption &&  isControl }
-	var exactlyOtherSpecial: Bool       { return !isCommand &&  isOption &&  isControl }
-    var isNumericPad:        Bool { get { return  contains(.numericPad) } set { if newValue { insert(.numericPad) } else { remove(.numericPad) } } }
-	var isControl:           Bool { get { return  contains(.control)    } set { if newValue { insert(.control)    } else { remove(.control) } } }
-	var isCommand:           Bool { get { return  contains(.command)    } set { if newValue { insert(.command)    } else { remove(.command) } } }
-    var isOption:            Bool { get { return  contains(.option)     } set { if newValue { insert(.option)     } else { remove(.option) } } }
-    var isShift:             Bool { get { return  contains(.shift)      } set { if newValue { insert(.shift)      } else { remove(.shift) } } }
+	var isAnyMultiple:       Bool       { return  exactlySplayed || exactlySpecial || exactlyOtherSpecial || exactlyAll }
+	var isAny:               Bool       { return  hasCommand ||  hasOption ||  hasControl }
+	var exactlyAll:          Bool       { return  hasCommand &&  hasOption &&  hasControl }
+	var exactlySpecial:      Bool       { return  hasCommand &&  hasOption && !hasControl }
+	var exactlySplayed:      Bool       { return  hasCommand && !hasOption &&  hasControl }
+	var exactlyOtherSpecial: Bool       { return !hasCommand &&  hasOption &&  hasControl }
+    var hasNumericPad:       Bool { get { return  contains(.numericPad) } set { if newValue { insert(.numericPad) } else { remove(.numericPad) } } }
+	var hasControl:          Bool { get { return  contains(.control)    } set { if newValue { insert(.control)    } else { remove(.control) } } }
+	var hasCommand:          Bool { get { return  contains(.command)    } set { if newValue { insert(.command)    } else { remove(.command) } } }
+    var hasOption:           Bool { get { return  contains(.option)     } set { if newValue { insert(.option)     } else { remove(.option) } } }
+    var hasShift:            Bool { get { return  contains(.shift)      } set { if newValue { insert(.shift)      } else { remove(.shift) } } }
 
 }
 
@@ -589,7 +589,7 @@ extension ZMapView {
     }
 
     override func scrollWheel(with event: ZEvent) {
-        if  event.modifierFlags.isCommand {
+        if  event.modifierFlags.hasCommand {
             updateMagnification(with: event)
         } else {
             let     multiply = CGFloat(1.5 * gScaling)
@@ -905,7 +905,7 @@ extension ZTextEditor {
 
         switch arrow {
         case .up,
-             .down: moveUp(arrow == .up, stopEdit: !flags.isOption)
+             .down: moveUp(arrow == .up, stopEdit: !flags.hasOption)
         case .left:
             if  atStart {
                 moveOut(true)
@@ -1063,9 +1063,9 @@ extension ZMenu {
 extension NSText {
 	
 	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
-		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
-		let   SHIFT = flags.isShift
+		let COMMAND = flags.hasCommand
+		let  OPTION = flags.hasOption
+		let   SHIFT = flags.hasShift
 		
 		switch arrow {
 		case .up:    moveToBeginningOfLine(self)

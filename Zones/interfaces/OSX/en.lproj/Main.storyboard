@@ -1065,20 +1065,6 @@ CA
                                     <segue destination="yWa-SA-l1V" kind="embed" id="zUI-P5-fnz"/>
                                 </connections>
                             </containerView>
-                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uYG-mD-FXW">
-                                <rect key="frame" x="408" y="16" width="25" height="25"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="20" id="Je6-hR-luc"/>
-                                    <constraint firstAttribute="height" constant="20" id="afp-9Y-h7b"/>
-                                </constraints>
-                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c4d-kZ-RgI">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="helpButtonAction:" target="MXk-17-6Dz" id="4jL-i4-hFc"/>
-                                </connections>
-                            </button>
                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="5oi-yK-PC4" userLabel="Permission View">
                                 <rect key="frame" x="0.0" y="0.0" width="451" height="300"/>
                                 <connections>
@@ -1144,6 +1130,20 @@ CA
                                     <outlet property="titleView" destination="Q1p-3k-xdd" id="nJu-rc-OAM"/>
                                 </connections>
                             </customView>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uYG-mD-FXW">
+                                <rect key="frame" x="408" y="16" width="25" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="Je6-hR-luc"/>
+                                    <constraint firstAttribute="height" constant="20" id="afp-9Y-h7b"/>
+                                </constraints>
+                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="c4d-kZ-RgI">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="helpButtonAction:" target="MXk-17-6Dz" id="4jL-i4-hFc"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="1LB-o3-akz"/>
@@ -1252,7 +1252,7 @@ CA
                                 <rect key="frame" x="20" y="20" width="259" height="269"/>
                                 <clipView key="contentView" id="xkU-Kc-9TS">
                                     <rect key="frame" x="1" y="1" width="257" height="267"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" id="z27-6x-Roi">
                                             <rect key="frame" x="0.0" y="0.0" width="257" height="267"/>
@@ -1326,7 +1326,7 @@ CA
                                 <rect key="frame" x="0.0" y="0.0" width="356" height="289"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="DDT-jd-TI8">
                                     <rect key="frame" x="0.0" y="0.0" width="341" height="289"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <textView verticallyResizable="YES" usesFontPanel="YES" usesInspectorBar="YES" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" allowsImageEditing="YES" usesRuler="YES" quoteSubstitution="YES" linkDetection="YES" dashSubstitution="YES" textReplacement="YES" spellingCorrection="YES" smartInsertDelete="YES" id="WXi-Uu-tc4" customClass="ZEssayView" customModule="Seriously" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="341" height="289"/>
@@ -2249,7 +2249,7 @@ DQ
                                 <rect key="frame" x="0.0" y="0.0" width="160" height="300"/>
                                 <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="n13-pi-a65">
                                     <rect key="frame" x="0.0" y="0.0" width="160" height="300"/>
-                                    <autoresizingMask key="autoresizingMask"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView focusRingType="none" verticalHuggingPriority="750" mirrorLayoutDirectionWhenInternationalizing="never" columnAutoresizingStyle="none" selectionHighlightStyle="none" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="16" id="8lm-kp-gkp">
                                             <rect key="frame" x="0.0" y="0.0" width="160" height="300"/>

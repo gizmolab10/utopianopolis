@@ -78,7 +78,7 @@ class ZSubscriptionController: ZGenericController {
 			 "3. Click 'View Information' at the top of the window. You might be asked to sign in.",
 			 "4. On the page that appears, scroll until you see 'Subscriptions', then click 'Manage'.",
 			 "5. Click 'Edit' next to the subscription that you want.",
-			 "6. Click 'Cancel Subscription'. If you don’t see 'Cancel Subscription', then the subscription is already canceled and won't renew. "].joined(separator: "\n"),
+			 "6. Click 'Cancel Subscription'. If you don’t see 'Cancel Subscription', then the subscription is already canceled and won't renew. "].joined(separator: kNewLine),
 			"OK", "My subscription is missing!",
 			alertWidth: CGFloat(700.0)) { status in
 			if  status == .sNo {

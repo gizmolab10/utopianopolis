@@ -29,7 +29,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	override func awakeFromNib() {
 		super.awakeFromNib()
 
-		gMainController?.helpButton?.isHidden = true
 		enableCloudLabel?.text = enableCloudDriveText
 		accessIDLabel?   .text = appleIDText
 		loadingLabel?    .text = loadingText
@@ -48,11 +47,10 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func getPermissionFromUser(onCompletion: Closure? = nil) {
-		if  gStartupLevel == .pleaseWait || !gHasInternet {
+		if  gStartupLevel == .pleaseWait || !gHasInternet || !gIsUsingCloudKit {
 			onCompletion?()
-		} else {
-//			startupCompletion = onCompletion   // TODO: uncomment to support cloud kit
-			onCompletion?()
+		} else if gIsUsingCloudKit {
+			startupCompletion = onCompletion
 		}
 	}
 
@@ -136,7 +134,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 								"Seriously will automatically upload your work."].joined(separator: kSpace),
 							   ["To share your personal data with other devices you own which run Seriously",
 								"this and those other devices must grant Seriously access to your Apple ID."].joined(separator: ", "),
-							   "Do you want to grant such access to Seriously?"].joined(separator: "\n\n")
+							   "Do you want to grant such access to Seriously?"].joined(separator: kDoubleNewLine)
 
 	var enableCloudDriveText: String = [["In order to share your Seriously data with your other devices running Seriously",
 										 "your cloud drive must be enabled. Unfortunately",
@@ -147,7 +145,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 										 "and click on the button next to it labeled \"Options...\"",
 										 "Scroll down until you see Seriously.",
 										 "Check the box next to it."].joined(separator: kSpace),
-										"Then return here and click Continue, below."].joined(separator: "\n\n")
+										"Then return here and click Continue, below."].joined(separator: kDoubleNewLine)
 
 	var loadingText: String = ["Your data is loading (it can take up to a minute the first time).",
 							   "Please wait until the drawing (of ideas) appears before adding new ideas to it."].joined(separator: kSpace)

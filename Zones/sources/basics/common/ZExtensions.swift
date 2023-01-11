@@ -1388,7 +1388,7 @@ extension Array {
                 if  separator.isEmpty {
                     separator.appendSpacesToLength(kLogTabStop)
 
-                    separator = "\n\(separator)"
+                    separator = kNewLine + separator
                 }
             }
         }
@@ -2633,9 +2633,9 @@ extension String {
 		let outer = repeater.repeatedFor(count + 8)
 
 		if  repeater == kEmpty {
-			return "\n\(inner)\n"
+			return kNewLine + inner + kNewLine
 		} else {
-			return "\n\(outer)\n\(inner)\n\(outer)\n"
+			return kNewLine + outer + kNewLine + inner + kNewLine + outer + kNewLine
 		}
 	}
 

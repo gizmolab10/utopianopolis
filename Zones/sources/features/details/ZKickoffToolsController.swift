@@ -47,9 +47,9 @@ enum ZKickoffToolID: String {
 class ZKickoffToolsController: ZGenericController, ZToolTipper {
 
 	override var controllerID : ZControllerID { return .idStartHere }
-	var            isRelocate :   Bool { return flags.isOption  && !gIsEditing }
-	var               isMixed :   Bool { return flags.isShift   && !gIsEditing && !flags.isOption }
-	var            canUnfocus :   Bool { return flags.isControl && (gFavoritesRoot?.children.count ?? 0) > 1 }
+	var            isRelocate :   Bool { return flags.hasOption  && !gIsEditing }
+	var               isMixed :   Bool { return flags.hasShift   && !gIsEditing && !flags.hasOption }
+	var            canUnfocus :   Bool { return flags.hasControl && (gFavoritesRoot?.children.count ?? 0) > 1 }
 	var             canTravel :   Bool { return gIsMapMode && gGrabbedCanTravel }
 	var            swapDBText : String { return "switch to \(gIsMine ? "everyone's" : "my") ideas" }
 	var           expandMaybe : String { return isMixed ? "expand selection " : kEmpty }
@@ -73,13 +73,13 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 		buttonFor(.swapDB)?     .title =  swapDBText
 		buttonFor(.up)?         .title =  expandMaybe       + "up"
 		buttonFor(.down)?       .title =  expandMaybe       + "down"
-		buttonFor(.sibling)?    .title =  flags.isOption    ? "parent"       : "sibling"
+		buttonFor(.sibling)?    .title =  flags.hasOption    ? "parent"       : "sibling"
 		buttonFor(.left)?       .title =  isMixed           ? "conceal"      : "left"
 		buttonFor(.right)?      .title =  isMixed           ? "reveal"       : canTravel ? "invoke" : "right"
 		buttonFor(.focus)?      .title =  canUnfocus        ? "unfocus"      : canTravel ? "invoke" : gSelecting.movableIsHere ? "favorite" : "focus"
 		buttonFor(.toolTip)?    .title = (gShowToolTips     ? "hide"         : "show")   + " toolTips"
 		buttonFor(.explain)?    .title = (gShowExplanations ? "hide"         : "show")   + " explains"
-		boxFor   (.move)?       .title = (isRelocate        ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.isCommand ? " to farthest"  : kEmpty)
+		boxFor   (.move)?       .title = (isRelocate        ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.hasCommand ? " to farthest"  : kEmpty)
 		boxFor   (.edit)?       .title =  gIsEditing        ? "Stop Editing" : "Edit"
 		buttonFor(.idea)?       .title =  "idea"
 		buttonFor(.note)?       .title =  "note"
@@ -91,18 +91,18 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 
 		if  let itemID = button.kickoffToolID,
 			let    key = keyFrom(itemID) {
-			let isEdit = gIsEditIdeaMode && key.arrow != nil && flags.isCommand
+			let isEdit = gIsEditIdeaMode && key.arrow != nil && flags.hasCommand
 			var      f = flags
 
 			switch key {
-				case kSpace: if gIsEditIdeaMode { f.isControl = true }  // so child will be created
+				case kSpace: if gIsEditIdeaMode { f.hasControl = true }  // so child will be created
 				case "e",
-					"y":     f.isCommand = true                         // tweak because otherwise plain e / y is inserted into text
+					"y":     f.hasCommand = true                         // tweak because otherwise plain e / y is inserted into text
 				default:     break
 			}
 
 			if  isEdit {
-				f.isCommand = false                                     // so browse does not go to extreme
+				f.hasCommand = false                                     // so browse does not go to extreme
 
 				gTextEditor.stopCurrentEdit()                           // so browse ideas, not text
 			}
@@ -161,10 +161,10 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 	}
 
 	func updateFlags() {
-		flags.isShift   = buttonFor(.shift)?  .state == NSControl.StateValue.on
-		flags.isOption  = buttonFor(.option)? .state == NSControl.StateValue.on
-		flags.isCommand = buttonFor(.command)?.state == NSControl.StateValue.on
-		flags.isControl = buttonFor(.control)?.state == NSControl.StateValue.on
+		flags.hasShift   = buttonFor(.shift)?  .state == NSControl.StateValue.on
+		flags.hasOption  = buttonFor(.option)? .state == NSControl.StateValue.on
+		flags.hasCommand = buttonFor(.command)?.state == NSControl.StateValue.on
+		flags.hasControl = buttonFor(.control)?.state == NSControl.StateValue.on
 	}
 
 	func arrowFrom(_ from: ZKickoffToolID) -> ZArrowKey? {

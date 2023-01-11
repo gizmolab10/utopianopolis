@@ -137,7 +137,7 @@ class ZHelpController: ZGenericTableController {
 				nextMode = .essayMode
 			} else if flags.exactlyOtherSpecial {
 				nextMode = .dotMode
-			} else if flags.isAll {
+			} else if flags.exactlyAll {
 				nextMode = .proMode
 			}
 		}
@@ -170,7 +170,7 @@ class ZHelpController: ZGenericTableController {
 	// MARK: -
 
 	func handleKey(_ key: String, flags: ZEventFlags) -> Bool {   // false means key not handled
-		let  COMMAND = flags.isCommand
+		let  COMMAND = flags.hasCommand
 		let  SPECIAL = flags.exactlySpecial
 
 		switch key {

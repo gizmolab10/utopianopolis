@@ -40,7 +40,7 @@ class ZBaseEditor : NSObject {
 					case "/": gHelpController?.show(       flags: flags); return true
 					default:  break
 				}
-			} else if flags.isCommand {
+			} else if flags.hasCommand {
 				switch key {
 					case "e": gToggleShowExplanations();                  return true
 					case "h": gApplication?.hide(nil);                    return true

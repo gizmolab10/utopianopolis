@@ -15,9 +15,9 @@ import UIKit
 #endif
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)  && gIsUsingCoreData }
-var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)  && gIsUsingCoreData }
-var     gIsUsingCloudKit : Bool { return  gCoreDataMode.contains(.dCloudKit) && gIsUsingCoreData }
+var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)    && gIsUsingCoreData }
+var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)    && gIsUsingCoreData }
+var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit) && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var gNoteVisibilityIcons : Bool { return  gDebugModes.contains(.dNoteVisibilityIcons) }
@@ -45,10 +45,10 @@ struct ZCoreDataMode: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dDisabled = ZCoreDataMode(rawValue: 1 << 0) // cannot use core data
-	static let dCloudKit = ZCoreDataMode(rawValue: 1 << 1) // store in cloud kit
-	static let dNotSave  = ZCoreDataMode(rawValue: 1 << 2) // save is not operational
-	static let dNotLoad  = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
+	static let dDisabled   = ZCoreDataMode(rawValue: 1 << 0) // cannot use core data
+	static let dNoCloudKit = ZCoreDataMode(rawValue: 1 << 1) // store in cloud kit
+	static let dNotSave    = ZCoreDataMode(rawValue: 1 << 2) // save is not operational
+	static let dNotLoad    = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
 }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {

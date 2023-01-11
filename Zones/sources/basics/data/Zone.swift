@@ -1984,6 +1984,37 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return zones
 	}
 
+	func convertChildrenToNote() {
+		let empty = NSMutableAttributedString(string: kEmpty)
+		let  text = hasNote ? noteMaybe?.noteText ?? empty : empty
+		let     n = createNote()
+
+		traverseAllProgeny { child in
+			if  child != self {
+				let t = child.extractAsNoteText()
+
+				if  text.string != kEmpty {
+					text.append(kDoubleBlankLine)
+				}
+
+				text.append(t)
+				child.deleteSelf {}
+			}
+		}
+
+		n?.saveAsNote(text, textOnly: true)
+	}
+
+	func extractAsNoteText() -> NSAttributedString {
+		let  text = NSMutableAttributedString(string: zoneName ?? kEmptyIdea, attributes: [.font : kDefaultEssayFont])
+		if  let t = noteMaybe?.noteText {
+			text.append(kDoubleBlankLine)
+			text.append(t)
+		}
+
+		return text
+	}
+
 	// MARK: - groupOwner
 	// MARK: -
 
@@ -2398,8 +2429,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var        zones = iZones
 		var      restore = [Zone: (Zone, Int?)] ()
 		let     STAYHERE = flags.exactlySpecial
-		let   NOBOOKMARK = flags.isControl
-		let         COPY = flags.isOption
+		let   NOBOOKMARK = flags.hasControl
+		let         COPY = flags.hasOption
 		var    cyclicals = IndexSet()
 
 		// separate zones that are connected back to themselves
@@ -3428,8 +3459,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func dragDotClicked(_ flags: ZEventFlags) {
-		let COMMAND = flags.isCommand
-		let   SHIFT = flags.isShift
+		let COMMAND = flags.hasCommand
+		let   SHIFT = flags.hasShift
 
 		if  COMMAND {
 			grab()            // narrow selection to just this one zone
@@ -3451,8 +3482,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func revealDotClicked(_ flags: ZEventFlags, isCircularMode: Bool = false) {
 		ungrabProgeny()
 
-		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
+		let COMMAND = flags.hasCommand
+		let  OPTION = flags.hasOption
 
 		if  isCircularMode {
 			toggleShowing()

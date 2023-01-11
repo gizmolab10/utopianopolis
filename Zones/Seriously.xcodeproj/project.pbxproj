@@ -794,7 +794,6 @@
 				A70064DC22484808004E3A8D /* ZManifest.swift */,
 				A706444A247222A500F90B86 /* ZNode.swift */,
 				0C39B25D1F182EBB0091F4D1 /* Zone.swift */,
-				A7D507D2269151B6001CEA9F /* ZReceipt.swift */,
 				0C39B25E1F182EBB0091F4D1 /* ZRecord.swift */,
 				0C39B25F1F182EBB0091F4D1 /* ZTrait.swift */,
 				A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */,
@@ -1019,6 +1018,7 @@
 			isa = PBXGroup;
 			children = (
 				A7D507CB2688F2BA001CEA9F /* ZProducts.swift */,
+				A7D507D2269151B6001CEA9F /* ZReceipt.swift */,
 				A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */,
 			);
 			path = subscriptions;

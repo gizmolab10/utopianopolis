@@ -467,10 +467,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 		let enabled = gProducts.hasEnabledSubscription || true
 		let SPECIAL = flags.exactlySpecial
-		let COMMAND = flags.isCommand
-		let CONTROL = flags.isControl
-		let OPTION  = flags.isOption
-		var SHIFT   = flags.isShift
+		let COMMAND = flags.hasCommand
+		let CONTROL = flags.hasControl
+		let OPTION  = flags.hasOption
+		var SHIFT   = flags.hasShift
 		let SEVERAL = flags.isAnyMultiple
 		let ANY     = flags.isAny
 		if  key    != key.lowercased() {
@@ -595,9 +595,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		let   SHIFT = flags.isShift
-		let  OPTION = flags.isOption
-		let COMMAND = flags.isCommand
+		let   SHIFT = flags.hasShift
+		let  OPTION = flags.hasOption
+		let COMMAND = flags.hasCommand
 		let SPECIAL = flags.exactlySpecial
 		let SPLAYED = flags.exactlySplayed
 
@@ -707,7 +707,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				if  let   index = grabbedNotes.firstIndex(of: note) {
 					grabbedNotes.remove(at: index)
 				} else {
-					if !event.modifierFlags.isShift {
+					if !event.modifierFlags.hasShift {
 						ungrabAll()
 					}
 
@@ -888,7 +888,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 		let indents = relativeLevelOfFirstGrabbed
 
-		if  flags.isOption {
+		if  flags.hasOption {
 			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
 				save()
 
@@ -896,7 +896,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					resetTextAndGrabs()
 				}
 			}
-		} else if flags.isShift {
+		} else if flags.hasShift {
 			if [.left, .right].contains(arrow) {
 				// conceal reveal subnotes of grabbed (NEEDS new ZEssay code)
 			}
@@ -907,7 +907,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				swapBetweenNoteAndEssay()
 			}
 		} else if [.up, .down].contains(arrow) {
-			grabNextNote(up: arrow == .up, ungrab: !flags.isShift)
+			grabNextNote(up: arrow == .up, ungrab: !flags.hasShift)
 			scrollToGrabbed()
 			gSignal([.sDetails])
 		}
@@ -1181,7 +1181,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let     flags = event.modifierFlags
 			let sizeDelta = CGSize(rectFromEvent(event).origin - start)
 
-			updateImageRubberband(for: sizeDelta, flags.isCommand)
+			updateImageRubberband(for: sizeDelta, flags.hasCommand)
 			setNeedsDisplay()
 		}
 	}
@@ -1719,7 +1719,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			if        flags.exactlyOtherSpecial {
 				child(named: "idea", withText: text)
-			} else if flags.isAll {
+			} else if flags.exactlyAll {
 				child(named: text,   withText: kNoteDefault)
 			} else {
 				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text

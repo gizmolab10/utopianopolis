@@ -73,14 +73,14 @@ class ZMapEditor: ZBaseEditor {
 		if !gIsEditingStateChanging,
 		    var     key = iKey {
 			let   arrow = key.arrow
-			let CONTROL = flags.isControl
+			let CONTROL = flags.hasControl
 			let SPECIAL = flags.exactlySpecial
 			let SPLAYED = flags.exactlySplayed
-			let COMMAND = flags.isCommand
-			let  OPTION = flags.isOption
-			var   SHIFT = flags.isShift
+			let COMMAND = flags.hasCommand
+			let  OPTION = flags.hasOption
+			var   SHIFT = flags.hasShift
 			let     ANY = flags.isAny
-			let     ALL = flags.isAll
+			let     ALL = flags.exactlyAll
 
             if  key    != key.lowercased() {
                 key     = key.lowercased()
@@ -185,7 +185,7 @@ class ZMapEditor: ZBaseEditor {
 		if !gIsExportingToAFile {
 			if  gTextEditorHandlesArrows || gIsEditIdeaMode {
 				gTextEditor.handleArrow(arrow, flags: flags)
-			} else if !((flags.isOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
+			} else if !((flags.hasOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
 				switch arrow {
 					case .down,    .up: moveUp  (arrow == .up,   flags: flags);                             forceRedraw()
 					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion); forceRedraw(); return
@@ -219,8 +219,8 @@ class ZMapEditor: ZBaseEditor {
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
         let alterers = "ehlnuw#" + kMarkingCharacters + kReturn
 		let  ALTERER = alterers.contains(key)
-        let  COMMAND = flags.isCommand
-        let  CONTROL = flags.isControl
+        let  COMMAND = flags.hasCommand
+        let  CONTROL = flags.hasControl
 		let      ANY = COMMAND || CONTROL
 
         if  !ANY && ALTERER {    return .eAlter
@@ -352,8 +352,8 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func handleX(_ flags: ZEventFlags) -> Bool {
-		if  flags.isCommand {
-			delete(permanently: flags.isOption)
+		if  flags.hasCommand {
+			delete(permanently: flags.hasOption)
 
 			return true
 		}
@@ -376,10 +376,10 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func handleDelete(_ flags: ZEventFlags, _ isWindow: Bool) {
-		let CONTROL = flags.isControl
+		let CONTROL = flags.hasControl
 		let SPECIAL = flags.exactlySpecial
-		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
+		let COMMAND = flags.hasCommand
+		let  OPTION = flags.hasOption
 		let     ANY = flags.isAny
 
 		if  CONTROL {
@@ -680,19 +680,24 @@ class ZMapEditor: ZBaseEditor {
 
 	func editNote(flags: ZEventFlags, useGrabbed: Bool = true) {
 		if !gIsEssayMode {
-			let            OPTION  = flags.isOption
+			let               ALL  = flags.exactlyAll
+			let            OPTION  = flags.hasOption
 			let           SPECIAL  = flags.exactlySpecial
 			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple, OPTION drives it to single
 
 			if  let grab = gSelecting.firstGrab() {
-				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
-					gCurrentEssay  = grab.note
-				}
+				if  ALL {
+					grab.convertChildrenToNote()
+				} else {
+					if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
+						gCurrentEssay  = grab.note
+					}
 
-				if  SPECIAL {
-					grab.traverseAllProgeny { child in
-						if  child != grab, !child.isBookmark, !child.hasNoteOrEssay {
-							child.setTraitText(kNoteDefault, for: .tNote)
+					if  SPECIAL {
+						grab.traverseAllProgeny { child in
+							if  child != grab, !child.isBookmark, !child.hasNoteOrEssay {
+								child.setTraitText(kNoteDefault, for: .tNote)
+							}
 						}
 					}
 				}
@@ -956,9 +961,9 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func moveUp(_ up: Bool, flags: ZEventFlags) {
-		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
-		let   SHIFT = flags.isShift
+		let COMMAND = flags.hasCommand
+		let  OPTION = flags.hasOption
+		let   SHIFT = flags.hasShift
 
 		moveUp(up, selectionOnly: !OPTION, extreme: COMMAND, growSelection: SHIFT)
 	}
@@ -1215,9 +1220,9 @@ class ZMapEditor: ZBaseEditor {
 
 	func moveLeft(_ out: Bool, flags: ZEventFlags, onCompletion: Closure? = nil) {
 		if  let moveable = gSelecting.rootMostMoveable {
-			let  COMMAND = flags.isCommand
-			let   OPTION = flags.isOption
-			let    SHIFT = flags.isShift
+			let  COMMAND = flags.hasCommand
+			let   OPTION = flags.hasOption
+			let    SHIFT = flags.hasShift
 
 			if  OPTION, !moveable.canRelocateInOrOut {
 				return

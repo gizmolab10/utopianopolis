@@ -13,8 +13,6 @@ let gReceipt = ZReceipt()
 
 class ZReceipt: NSObject {
 
-//	let d = CMSDecoder()
-
 	var currentReceipt: String? {
 		if  let  receiptUrl = Bundle.main.appStoreReceiptURL,
 			let receiptData = try? Data(contentsOf: receiptUrl) {
