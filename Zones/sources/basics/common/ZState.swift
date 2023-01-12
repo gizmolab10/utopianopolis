@@ -292,6 +292,11 @@ var gStartupLevel : ZStartupLevel {
 	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
 }
 
+var gStartupCount : Int {
+	get { return getPreferencesInt(for: kStartupCount, defaultInt: 0) }
+	set { setPreferencesInt(newValue, for: kStartupCount) }
+}
+
 var gEssayTitleMode : ZEssayTitleMode {
 	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sFull.rawValue))! }
 	set { setPreferencesInt(newValue.rawValue, for: kEssayTitleMode) }

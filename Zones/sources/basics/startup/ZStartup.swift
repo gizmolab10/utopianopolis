@@ -84,8 +84,14 @@ class ZStartup: NSObject {
 		}
 	}
 
+	var launchedEnoughTimes: Bool {
+		gStartupCount = gStartupCount + 1
+
+		return gStartupCount > 10
+	}
+
 	func requestFeedback(_ onCompletion: @escaping Closure) {
-		if       !emailSent(for: .eBetaTesting) {
+		if       !emailSent(for: .eBetaTesting), launchedEnoughTimes {
 			recordEmailSent(for: .eBetaTesting)
 
 			let image = kHelpMenuImage

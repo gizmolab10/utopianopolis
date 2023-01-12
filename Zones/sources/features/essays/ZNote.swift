@@ -82,21 +82,21 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		set { zone?.maybeNoteOrEssayTrait?.needsSave = newValue }
 	}
 
-	func saveAsNote(_ attributedString: NSAttributedString?, textOnly: Bool = false) {
-		if  let            trait  = noteTrait, textOnly || needsSave,  // textOnly is for replacing only the text, and requires saving
-			let       attributed  = attributedString {
-			let            delta  = attributed.string.length - textRange.upperBound
-			autoDelete            = false
+	func saveAsNote(_ attributedString: NSAttributedString?, force: Bool = false) {
+		if  let                trait  = noteTrait, force || needsSave,  // textOnly is for replacing only the text, and requires saving
+			let           attributed  = attributedString {
+			let                delta  = attributed.string.length - textRange.upperBound
+			autoDelete                = false
 
 			if  delta != 0 {
-				textRange.length += delta      // correct text range, to avoid out of range for substring, on next line
+				textRange    .length += delta      // correct text range, to avoid out of range for substring, on next line
 			}
 
-			let             text  = attributed.attributedSubstring(from: textRange)
-			trait      .noteText  = NSMutableAttributedString(attributedString: text)
+			let                 text  = attributed.attributedSubstring(from: textRange)
+			trait          .noteText  = NSMutableAttributedString(attributedString: text)
 
 			if  let z                 = zone {
-				if  gEssayTitleMode  != .sEmpty, !textOnly {
+				if  gEssayTitleMode  != .sEmpty, titleRange.length != 0 {
 					let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: kNewLine, with: kEmpty)
 					z.setNameForSelfAndBookmarks(to: name)
 				}

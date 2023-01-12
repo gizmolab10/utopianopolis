@@ -1786,7 +1786,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  isBookmark {
 			return bookmarkTarget?.hasTrait(for: iType) ?? false
 		} else {
-			return traits[iType] != nil
+			return maybeTraitFor(iType) != nil
 		}
 	}
 
@@ -1816,6 +1816,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 	}
+
+	var noteText : NSMutableAttributedString? { return maybeTraitFor(.tNote)?.noteText }
 
 	var assets: [CKAsset]? {
 		get {
@@ -1986,7 +1988,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func convertChildrenToNote() {
 		let empty = NSMutableAttributedString(string: kEmpty)
-		let  text = hasNote ? noteMaybe?.noteText ?? empty : empty
+		let  text = noteText ?? empty
 		let     n = createNote()
 
 		traverseAllProgeny { child in
@@ -2002,12 +2004,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		n?.saveAsNote(text, textOnly: true)
+		n?.saveAsNote(text, force: true)
 	}
 
 	func extractAsNoteText() -> NSAttributedString {
-		let  text = NSMutableAttributedString(string: zoneName ?? kEmptyIdea, attributes: [.font : kDefaultEssayFont])
-		if  let t = noteMaybe?.noteText {
+		let text  = NSMutableAttributedString(string: zoneName ?? kEmptyIdea, attributes: [.font : kDefaultEssayFont])
+		if  let t = noteText {
 			text.append(kDoubleBlankLine)
 			text.append(t)
 		}
