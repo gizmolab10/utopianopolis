@@ -73,8 +73,7 @@ class ZControllers: NSObject {
 	// MARK: -
 
 	func showEssay(forGuide: Bool) {
-		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "42F338C4-9055-4921-BBD8-1984DF406052"
-
+		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "8F42BAA6-55CC-42F3-A3E3-5F76423B3887"
 		if  let    e = gEssayView,
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)

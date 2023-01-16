@@ -129,6 +129,8 @@ enum ZFillType: String {
 class ZHelpData: NSObject {
 
 	let rowsBeforeSearch  = 33
+	let medium            = "https://medium.com/@sand_74696/"
+	let wiki              = "https://seriouslythink.com/usermanual/"
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
 	var strippedStrings   = [StringsArray]()
@@ -389,15 +391,22 @@ class ZHelpData: NSObject {
 		return result
 	}
 
-	func url(for row: Int, column: Int) -> String? {
-		let m = "https://medium.com/@sand_74696/"
-		let (first, _, url) = strings(for: row, column: column)
-		let (_, types) = extractTypes(from: first)
+	func extractURL(from name: String) -> String? {
+		let parts = name.components(separatedBy: "+")
+		let count = parts.count
+		let  base = count == 1 ? medium : wiki
 
-		if  !url.isHyphen, !url.isEmpty {
+		return count == 0 ? nil : base + parts[0]
+	}
+
+	func url(for row: Int, column: Int) -> String? {
+		let (first, _, name) = strings(for: row, column: column)
+
+		if  !name.isHyphen, !name.isEmpty {
+			let (_, types) = extractTypes(from: first)
 			for type in types {
 				if  type.isVisibleForCurrentMode {
-					return m + url
+					return extractURL(from: name)
 				}
 			}
 		}
