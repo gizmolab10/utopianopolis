@@ -126,11 +126,25 @@ enum ZFillType: String {
 	case both   = "b"
 }
 
+enum ZHelpSectionID: String {
+	case basic        = "b"
+	case intermediate = "i"
+	case advanced     = "a"
+
+	var description : String {
+		switch self {
+			case .basic:        return "basic/"
+			case .intermediate: return "intermediate/"
+			case .advanced:     return "advanced/"
+		}
+	}
+}
+
 class ZHelpData: NSObject {
 
 	let rowsBeforeSearch  = 33
 	let medium            = "https://medium.com/@sand_74696/"
-	let wiki              = "https://seriouslythink.com/usermanual/"
+	let wiki              = "https://seriouslythink.com/"
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
 	var strippedStrings   = [StringsArray]()
@@ -394,7 +408,7 @@ class ZHelpData: NSObject {
 	func extractURL(from name: String) -> String? {
 		let parts = name.components(separatedBy: "+")
 		let count = parts.count
-		let  base = count == 1 ? medium : wiki
+		let  base = count == 1 ? medium : wiki + (ZHelpSectionID(rawValue: parts[1])?.description ?? kEmpty)
 
 		return count == 0 ? nil : base + parts[0]
 	}
