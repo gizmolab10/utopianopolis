@@ -157,7 +157,7 @@ class ZMapEditor: ZBaseEditor {
 						case "#":        if gSelecting.hasMultipleGrabs { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
 						case "/":        return handleSlash(flags)
-						case "?":        if CONTROL { openBrowserForFocusWebsite() } else { gCurrentKeyPressed = nil; return false }
+						case "?":        if CONTROL { openBrowserForSeriouslyWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   nextBookmark(down: key == "]", flags: flags)
 						case kTab:       gSelecting.addSibling(OPTION)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }

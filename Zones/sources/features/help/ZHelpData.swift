@@ -14,137 +14,9 @@ import Cocoa
 import UIKit
 #endif
 
-enum ZHelpDotType: String {
-	case one        = "single"
-	case ten        = "10"
-	case has        = "in"
-	case note       = "note"
-	case drag       = "editable"
-	case three      = "3"
-	case click      = "points"
-	case email      = "email"
-	case essay      = "click"
-	case owner      = "owner"
-	case member     = "member"
-	case twelve     = "12"
-	case progeny    = "only"
-	case favorite   = "this"
-	case bookmark   = "bookmark"
-	case notemark   = "target"
-	case oneTwenty  = "120"
-	case hyperlink  = "hyperlink"
-	case twelveHund = "1200"
-	case unwritable = "not"
-
-	var isReveal    : Bool            { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
-	var showAccess  : Bool            { return  [.progeny,                     .unwritable].contains(self) }
-	var pointLeft   : Bool            { return self == .click }
-	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
-
-	var size: CGSize {
-		return gDotSize(forReveal: isReveal)
-	}
-
-	func rect(_ origin: CGPoint) -> CGRect {
-		var r = CGRect(origin: origin, size: size)
-
-		if  self == .favorite {
-			r = r.insetEquallyBy(fraction: (1.0 - kSmallMapReduction) / 2.0)
-		}
-
-		return r
-	}
-
-	var traitType: String {
-		switch self {
-			case .note,
-				 .essay:     return ZTraitType.tNote     .rawValue
-			case .email:     return ZTraitType.tEmail    .rawValue
-			case .hyperlink: return ZTraitType.tHyperlink.rawValue
-			default:         return kEmpty
-		}
-	}
-
-	var count: Int {
-		switch self {
-			case .twelveHund: return 1200
-			case .oneTwenty:  return  120
-			case .twelve:     return   12
-			case .ten:        return   10
-			case .three:      return    3
-			case .one:        return    1
-			default:          return    0
-		}
-	}
-
-	func helpDotParameters(isFilled: Bool = false) -> ZDotParameters {
-		var p           = ZDotParameters()
-		p.color         = gHelpHyperlinkColor
-		p.fill          = isFilled ? p.color : gBackgroundColor
-		p.filled        = isFilled
-		p.isReveal      = isReveal
-		p.typeOfTrait   = traitType
-		p.showAccess    = showAccess
-		p.accessType    = accessType
-		p.showList      = pointLeft || !isFilled
-		p.isGroupOwner  = self == .owner
-		p.isGrouped     = self == .owner    || self == .member
-		p.hasTargetNote = self == .notemark || self == .has
-		p.hasTarget     = self == .bookmark
-		p.showSideDot   = self == .favorite
-		p.childCount    = count
-
-		return p
-	}
-
-}
-
-enum ZHelpType: String {
-	case hPro       = "2"
-	case hBold      = "!"
-	case hDots      = "."
-	case hSkip      = "="
-	case hExtra     = "+"
-	case hEmpty     = "-"
-	case hBasic     = "0"
-	case hIntermed  = "1"
-	case hUnderline = "_"
-
-	var isVisibleForCurrentMode: Bool {
-		switch gCurrentHelpMode {
-			case .basicMode:  return self == .hBasic
-			case .middleMode: return self == .hBasic || self == .hIntermed
-			case .proMode:    return self == .hBasic || self == .hIntermed || self == .hPro
-			default:          return false
-		}
-	}
-}
-
-enum ZFillType: String {
-	case filled = "f"
-	case empty  = "e"
-	case both   = "b"
-}
-
-enum ZHelpSectionID: String {
-	case basic        = "b"
-	case intermediate = "i"
-	case advanced     = "a"
-
-	var description : String {
-		switch self {
-			case .basic:        return "basic/"
-			case .intermediate: return "intermediate/"
-			case .advanced:     return "advanced/"
-		}
-	}
-}
-
 class ZHelpData: NSObject {
 
 	let rowsBeforeSearch  = 33
-	let medium            = "https://medium.com/@sand_74696/"
-	let wiki              = "https://seriouslythink.com/"
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
 	var strippedStrings   = [StringsArray]()
@@ -405,14 +277,6 @@ class ZHelpData: NSObject {
 		return result
 	}
 
-	func extractURL(from name: String) -> String? {
-		let parts = name.components(separatedBy: "+")
-		let count = parts.count
-		let  base = count == 1 ? medium : wiki + (ZHelpSectionID(rawValue: parts[1])?.description ?? kEmpty)
-
-		return count == 0 ? nil : base + parts[0]
-	}
-
 	func url(for row: Int, column: Int) -> String? {
 		let (first, _, name) = strings(for: row, column: column)
 
@@ -420,7 +284,7 @@ class ZHelpData: NSObject {
 			let (_, types) = extractTypes(from: first)
 			for type in types {
 				if  type.isVisibleForCurrentMode {
-					return extractURL(from: name)
+					return name.asHelpURL
 				}
 			}
 		}
@@ -428,4 +292,146 @@ class ZHelpData: NSObject {
 		return nil
 	}
 
+}
+
+extension String {
+
+	var asHelpURL: String? {
+		let   parts = components(separatedBy: "+")
+		let   count = parts.count
+		guard count > 0 else { return nil }
+		let   proto = "https://"
+		let  medium = "medium.com/@sand_74696/"
+		let    wiki = "seriouslythink.com/"
+		let    base = count == 1 ? medium : wiki + (ZHelpSectionID(rawValue: parts[1])?.description ?? kEmpty)
+
+		return proto + base + parts[0]
+	}
+
+}
+
+enum ZHelpDotType: String {
+	case one        = "single"
+	case ten        = "10"
+	case has        = "in"
+	case note       = "note"
+	case drag       = "editable"
+	case three      = "3"
+	case click      = "points"
+	case email      = "email"
+	case essay      = "click"
+	case owner      = "owner"
+	case member     = "member"
+	case twelve     = "12"
+	case progeny    = "only"
+	case favorite   = "this"
+	case bookmark   = "bookmark"
+	case notemark   = "target"
+	case oneTwenty  = "120"
+	case hyperlink  = "hyperlink"
+	case twelveHund = "1200"
+	case unwritable = "not"
+
+	var isReveal    : Bool            { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
+	var showAccess  : Bool            { return  [.progeny,                     .unwritable].contains(self) }
+	var pointLeft   : Bool            { return self == .click }
+	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+
+	var size: CGSize {
+		return gDotSize(forReveal: isReveal)
+	}
+
+	func rect(_ origin: CGPoint) -> CGRect {
+		var r = CGRect(origin: origin, size: size)
+
+		if  self == .favorite {
+			r = r.insetEquallyBy(fraction: (1.0 - kSmallMapReduction) / 2.0)
+		}
+
+		return r
+	}
+
+	var traitType: String {
+		switch self {
+			case .note,
+					.essay:     return ZTraitType.tNote     .rawValue
+			case .email:     return ZTraitType.tEmail    .rawValue
+			case .hyperlink: return ZTraitType.tHyperlink.rawValue
+			default:         return kEmpty
+		}
+	}
+
+	var count: Int {
+		switch self {
+			case .twelveHund: return 1200
+			case .oneTwenty:  return  120
+			case .twelve:     return   12
+			case .ten:        return   10
+			case .three:      return    3
+			case .one:        return    1
+			default:          return    0
+		}
+	}
+
+	func helpDotParameters(isFilled: Bool = false) -> ZDotParameters {
+		var p           = ZDotParameters()
+		p.color         = gHelpHyperlinkColor
+		p.fill          = isFilled ? p.color : gBackgroundColor
+		p.filled        = isFilled
+		p.isReveal      = isReveal
+		p.typeOfTrait   = traitType
+		p.showAccess    = showAccess
+		p.accessType    = accessType
+		p.showList      = pointLeft || !isFilled
+		p.isGroupOwner  = self == .owner
+		p.isGrouped     = self == .owner    || self == .member
+		p.hasTargetNote = self == .notemark || self == .has
+		p.hasTarget     = self == .bookmark
+		p.showSideDot   = self == .favorite
+		p.childCount    = count
+
+		return p
+	}
+
+}
+
+enum ZHelpType: String {
+	case hPro       = "2"
+	case hBold      = "!"
+	case hDots      = "."
+	case hSkip      = "="
+	case hExtra     = "+"
+	case hEmpty     = "-"
+	case hBasic     = "0"
+	case hIntermed  = "1"
+	case hUnderline = "_"
+
+	var isVisibleForCurrentMode: Bool {
+		switch gCurrentHelpMode {
+			case .basicMode:  return self == .hBasic
+			case .middleMode: return self == .hBasic || self == .hIntermed
+			case .proMode:    return self == .hBasic || self == .hIntermed || self == .hPro
+			default:          return false
+		}
+	}
+}
+
+enum ZFillType: String {
+	case filled = "f"
+	case empty  = "e"
+	case both   = "b"
+}
+
+enum ZHelpSectionID: String {
+	case basic        = "b"
+	case intermediate = "i"
+	case advanced     = "a"
+
+	var description : String {
+		switch self {
+			case .basic:        return "basic/"
+			case .intermediate: return "intermediate/"
+			case .advanced:     return "advanced/"
+		}
+	}
 }
