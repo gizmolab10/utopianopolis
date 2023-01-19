@@ -456,11 +456,6 @@ class ZRecord: ZManagedObject {
 						}
 					default:
 						setValue(value, forKeyPath: keyPath)
-
-//						if  keyPath == "zoneColor",
-//							(dict[.name] as? String) == "jonathan" {
-//							noop()
-//						}
 				}
 			}
 		}

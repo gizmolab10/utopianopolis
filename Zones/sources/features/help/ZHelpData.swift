@@ -22,10 +22,11 @@ class ZHelpData: NSObject {
 	var strippedStrings   = [StringsArray]()
 	var columnStrings     : [StringsArray] { return [[]] }
 	var rowHeight         :  CGFloat       { return 16.0 }
+	var dotOffset         :  CGFloat       { return  2.1 }
 	var noTabPrefix       :  String        { return "   " }
-	var tabOffsets        : [Int]          { return [0, 20, 85] } // default for graph shortcuts
-	var columnWidth       :  Int           { return 580 }         // "
-	var indexOfLastColumn :  Int           { return 1 }           // "
+	var tabOffsets        : [Int]          { return [0, 20, 85] }
+	var columnWidth       :  Int           { return 580 }
+	var indexOfLastColumn :  Int           { return 1 }
 	var stringsPerColumn  :  Int           { return 3 }
 	var isPro             :  Bool          { return gCurrentHelpMode == .proMode }
 	var isDots            :  Bool          { return gCurrentHelpMode == .dotMode }
@@ -36,14 +37,14 @@ class ZHelpData: NSObject {
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)
-		let     shortcutLower  = first.substring(with: NSMakeRange(0, 1)).lowercased()
-		let       filledLower  = first.substring(with: NSMakeRange(1, 2)).lowercased()
-		let            filled  = ZFillType(rawValue: filledLower)
+		let       helpTypeRaw  = first.substring(with: NSMakeRange(0, 1)).lowercased()
+		let         filledRaw  = first.substring(with: NSMakeRange(1, 2)).lowercased()
+		let            filled  = ZFillType(rawValue: filledRaw)
 		var           dotType  : ZHelpDotType?
-		if  let      helpType  = ZHelpType(rawValue: shortcutLower),
+		if  let      helpType  = ZHelpType(rawValue: helpTypeRaw),
 			helpType == .hDots {
-			let         value  = second.components(separatedBy: kSpace)[0]
-			dotType            = ZHelpDotType(rawValue: value)
+			let    dotTypeRaw  = second.components(separatedBy: kSpace)[0]
+			dotType            = ZHelpDotType(rawValue: dotTypeRaw)
 		}
 
 		return (dotType, filled)
@@ -104,10 +105,6 @@ class ZHelpData: NSObject {
 			return (kEmpty, kEmpty, kEmpty)
 		}
 
-		if  strings[index] == "0!legend" {
-			noop()
-		}
-
 		return (strings[index], strings[index + 1], strings[index + 2])
 	}
 
@@ -118,6 +115,8 @@ class ZHelpData: NSObject {
 	}
 
 	func prepareStrings() {
+		strippedStrings.removeAll()
+
 		for column in 0...indexOfLastColumn {
 			var       prepared = StringsArray()
 			let     rawStrings = columnStrings[column]
@@ -316,20 +315,19 @@ enum ZHelpDotType: String {
 	case has        = "in"
 	case note       = "note"
 	case drag       = "editable"
-	case three      = "3"
+	case five       = "5"
 	case click      = "points"
 	case email      = "email"
 	case essay      = "click"
 	case owner      = "owner"
 	case member     = "member"
-	case twelve     = "12"
+	case eleven     = "11"
 	case progeny    = "only"
 	case favorite   = "this"
 	case bookmark   = "bookmark"
 	case notemark   = "target"
-	case oneTwenty  = "120"
 	case hyperlink  = "hyperlink"
-	case twelveHund = "1200"
+	case oneEleven  = "111"
 	case unwritable = "not"
 
 	var isReveal    : Bool            { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
@@ -353,23 +351,20 @@ enum ZHelpDotType: String {
 
 	var traitType: String {
 		switch self {
-			case .note,
-					.essay:     return ZTraitType.tNote     .rawValue
-			case .email:     return ZTraitType.tEmail    .rawValue
-			case .hyperlink: return ZTraitType.tHyperlink.rawValue
-			default:         return kEmpty
+			case .note, .essay: return ZTraitType.tNote     .rawValue
+			case .email:        return ZTraitType.tEmail    .rawValue
+			case .hyperlink:    return ZTraitType.tHyperlink.rawValue
+			default:            return kEmpty
 		}
 	}
 
 	var count: Int {
 		switch self {
-			case .twelveHund: return 1200
-			case .oneTwenty:  return  120
-			case .twelve:     return   12
-			case .ten:        return   10
-			case .three:      return    3
-			case .one:        return    1
-			default:          return    0
+			case .oneEleven: return 111
+			case .eleven:    return  11
+			case .ten:       return  10
+			case .five:      return   5
+			default:         return   1
 		}
 	}
 

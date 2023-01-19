@@ -125,7 +125,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
 		let count      = parameters.childCount
-		if  count      > 0 {
+		if  count      > 1 {
 			let  frame = iDirtyRect.offsetEquallyBy(-0.1)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
 			let radius = ((Double(frame.size.height * gLineThickness) / 24.0) + 0.4)
@@ -217,10 +217,6 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
-
-		if  isHovering {
-			noop()
-		}
 
 		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
 			gActiveColor.setStroke()

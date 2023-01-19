@@ -48,10 +48,6 @@ extension ZoneWidget {
 		if  !visited.contains(self),
 			absoluteDragHitRect.contains(point) {
 
-			if  let name = widgetZone?.zoneName, name == "drag line wrong" {
-				noop()
-			}
-
 			for child in childrenWidgets {
 				if  self        != child,
 					let    found = child.widgetNearestTo(point, visited + [self]) {    // recurse into child

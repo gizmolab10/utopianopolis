@@ -899,10 +899,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for child in childArray {
 				let strings = child.convertFromCoreData(visited: v)
 
-				if  child.dbid != dbid {
-					noop()
-				}
-
 				if  let name = child.recordName,
 					(visited == nil || !visited!.contains(name)) {
 					converted.append(contentsOf: strings)

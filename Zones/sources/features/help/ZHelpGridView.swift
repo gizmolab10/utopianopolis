@@ -15,10 +15,11 @@ class ZHelpGridView: ZView {
 	override func draw(_ iDirtyRect: NSRect) {
 		super.draw(iDirtyRect)
 
-		if  !isHidden,
-			let      data  = helpData,
-			[.dotMode, .essayMode].contains(data.helpMode) {
-			drawDotsHelp(in: iDirtyRect, using: data)
+		if  let data = helpData, !isHidden,
+			data.helpMode.showsDots {
+			gWhileBaseFontSize(is: ZFont.systemFontSize) { [self] in
+				drawDotsHelp(in: iDirtyRect, using: data)
+			}
 		}
 	}
 
@@ -30,9 +31,9 @@ class ZHelpGridView: ZView {
 					let t = ft {
 					var e = true
 					var f = true
-					let v = Double(data.rowHeight) + 2.0
-					let y = Double(row)    *    -v + Double(iDirtyRect.height) - 24.0
+					let v = Double(data.rowHeight) + data.dotOffset
 					let x = Double(column) * 580.0 + Double(iDirtyRect.minX)   + 30.0
+					let y = Double(row)    *    -v + Double(iDirtyRect.height) - 24.0
 					let d = ZoneDot(view: self)
 
 					switch t {

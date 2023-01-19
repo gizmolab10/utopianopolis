@@ -79,7 +79,7 @@ class ZHelpMapData : ZHelpData {
 		"0!WHILE EDITING (TEXT IS SELECTED):", 							"", "",
 		"0",			 												"", "",
 		"0surround:", 	"| [ { ( < \" '",									"edit+b+edit-d05d18996df7",
-		"2",			 												"", "",
+		"1",			 												"", "",
 		"1_COMMAND + KEY", 												"", "",
 		"2D", 			"if all selected, append to parent", 				"parent+a+parent-child-tweaks-bf067abdf461",
 		"2 ", 			"else, convert selection into a child",	 			"parent+a+parent-child-tweaks-bf067abdf461",

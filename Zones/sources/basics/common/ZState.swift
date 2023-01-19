@@ -621,6 +621,19 @@ var gBaseFontSize: CGFloat {
 	}
 }
 
+func gWhileBaseFontSize(is temporary: CGFloat, closure: Closure?) {
+	guard let block = closure else { return }
+
+	let     prior = gBaseFontSize
+	gBaseFontSize = temporary
+
+	block()
+
+	FOREGROUND(after: 0.5) {
+		gBaseFontSize = prior
+	}
+}
+
 enum ZListGrowthMode: String {
 	case down = "Down"
 	case up   = "Up"

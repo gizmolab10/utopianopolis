@@ -43,6 +43,13 @@ enum ZHelpMode: String {
 		return rawValue == mode.rawValue
 	}
 
+	var showsDots: Bool {
+		switch self {
+			case .dotMode, .essayMode: return true
+			default:                   return false
+		}
+	}
+
 }
 
 class ZHelpController: ZGenericTableController {

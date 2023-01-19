@@ -83,10 +83,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 				rootLine?.draw(phase) // for here's drag dot
 			}
 
-			if  hereZone?.widget != hereWidget {
-				noop()
-			}
-
 			hereZone?.widget?.traverseAllWidgetProgeny() { widget in
 				widget.draw(phase)
 			}

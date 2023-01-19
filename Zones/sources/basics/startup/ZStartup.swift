@@ -21,7 +21,7 @@ class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
 
-//		gPrintModes            = []
+		gPrintModes            = []
 		gDebugModes            = []
 		gCoreDataMode          = []
 //		gPrintModes  .insert(.dTime)
@@ -77,7 +77,7 @@ class ZStartup: NSObject {
 
 					requestFeedback() {
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tPersist, .tHover]) // .tLicense
-						gSignal([.sSwap, .spMain, .spCrumbs, .spPreferences, .spRelayout, .spDataDetails])
+						gSignal([.sSwap, .spMain, .spCrumbs, .spRelayout, .spDataDetails, .spPreferences])
 					}
 				}
 			}

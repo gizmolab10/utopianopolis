@@ -403,11 +403,8 @@ class ZCoreDataStack: NSObject {
 	// else throws mutate while enumerate error
 
 	func fetch(type: String, recordName: String = kEmpty, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
-		var objects = ZManagedObjectsArray()
-		let request = fetchRequest(type: type, recordName: recordName, into: dbID)
-		if  type == kZoneType, recordName == kRootName, dbID == .everyoneID {
-			noop()
-		}
+		var objects       = ZManagedObjectsArray()
+		let request       = fetchRequest(type: type, recordName: recordName, into: dbID)
 		var items         = fetchUsing(request: request, onlyOne: false)
 		if  items.count  == 0 {
 			registerAsMissing(recordName: recordName, dbID: dbID)
