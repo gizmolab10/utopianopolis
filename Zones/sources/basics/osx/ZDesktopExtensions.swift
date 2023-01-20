@@ -1295,18 +1295,19 @@ extension ZoneLine {
     }
 
     func curvedLinePath(in iRect: CGRect, kind: ZLineCurveKind) -> ZBezierPath {
+		guard let        c = controller else { return ZBezierPath() }
         let        isAbove = kind == .above
-		let     aboveDelta = gDotHalfHeight / 7.0
-		let     belowDelta =     gDotHeight * 0.85
+		let     aboveDelta = c.dotHalfHeight / 7.0
+		let     belowDelta =     c.dotHeight * 0.85
         var           rect = iRect
 
         if  isAbove {
             rect.origin.y -= rect.height + aboveDelta    // do this first. height is altered below
 		} else if kind == .below {
-			rect.origin.y += gDotHalfHeight / 4.0
+			rect.origin.y += c.dotHalfHeight / 4.0
 		}
 
-		rect.size   .width = rect.width  * 2.0 + gDotHalfWidth
+		rect.size   .width = rect.width  * 2.0 + c.dotHalfWidth
 		rect.size  .height = rect.height * 2.0 + (isAbove ? aboveDelta : belowDelta)
 
 		ZBezierPath.setClip(to: iRect)

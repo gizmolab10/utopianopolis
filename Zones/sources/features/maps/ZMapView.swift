@@ -92,13 +92,15 @@ class ZMapView: ZView {
 
 		switch mapID {
 			case .mText:
-				super.draw     (iDirtyRect) // text fields are drawn by OS
+				super.draw(iDirtyRect) // text fields are drawn by OS
 			case .mDecorations:
 				ZBezierPath.fillWithColor(gBackgroundColor, in: iDirtyRect) // remove old rubberband and drag line/dot
-				drawWidgets(in: iDirtyRect, for: .pHighlights)
-				drawWidgets(in: iDirtyRect, for: .pLines)
-				drawWidgets(in: iDirtyRect, for: .pDots)   // draw dots last so they can "cover" the ends of lines
-				drawDrag       (iDirtyRect)
+
+				for phase in gAllDrawPhases {
+					drawWidgets(in: iDirtyRect, for: phase)
+				}
+
+				drawDrag(iDirtyRect)
 			default: break
 		}
 	}
@@ -114,7 +116,7 @@ class ZMapView: ZView {
 					c.drawWidgets(for: phase)
 				}
 
-				gFavoritesMapController?.drawWidgets(for: phase)
+				gFavoritesMapController.drawWidgets(for: phase)
 			}
 		}
 	}

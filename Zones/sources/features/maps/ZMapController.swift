@@ -42,13 +42,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 	var                priorLocation = CGPoint.zero
 	override  var       controllerID : ZControllerID  { return .idBigMap }
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
-	var                 inLinearMode : Bool           { return mode == .linearMode }
-	var               inCircularMode : Bool           { return mode == .circularMode }
+	var                 inLinearMode : Bool           { return mapLayoutMode == .linearMode }
+	var               inCircularMode : Bool           { return mapLayoutMode == .circularMode }
 	var               canDrawWidgets : Bool           { return gCanDrawWidgets } // overridden by help dots controller
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
 	var                     isBigMap : Bool           { return controllerID == .idBigMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
-	var                         mode : ZMapLayoutMode { return isBigMap ? gMapLayoutMode : .linearMode }
 	var                   widgetType : ZWidgetType    { return .tBigMap }
 	var                mapPseudoView : ZPseudoView?
 	var                   hereWidget : ZoneWidget?
@@ -212,7 +211,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate {
 
 	var mapOrigin: CGPoint? {
 		if  let  mapSize = mapView?.frame.size.dividedInHalf {
-			let   bigMap = gMapOffset.offsetBy(-gDotHeight, 22.0)
+			let   bigMap = gMapOffset.offsetBy(-dotHeight, 22.0)
 			let smallMap = CGPoint(x: -12.0, y: -6.0)
 			let exemplar = CGPoint(x: .zero, y: -6.0)
 			var   offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap

@@ -167,7 +167,7 @@ class ZMapEditor: ZBaseEditor {
 						case kHyphen:    return handleHyphen(COMMAND, OPTION)
 						case kCommaSeparator,
 							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
-						case kEquals:    if COMMAND { updateFontSize(up: true) } else { gSelecting.sortedGrabs.invokeTravel() { reveal in gRelayoutMaps() } }
+						case kEquals:    if COMMAND { gUpdateBaseFontSize(up: true) } else { gSelecting.sortedGrabs.invokeTravel() { reveal in gRelayoutMaps() } }
 						case kBackspace,
 							 kDelete:    handleDelete(flags, isWindow)
 						default:         return false // indicate key was not handled
@@ -343,7 +343,7 @@ class ZMapEditor: ZBaseEditor {
 		} else if OPTION {
 			return gSelecting.currentMoveable.convertToFromLine()
 		} else if COMMAND {
-			updateFontSize(up: false)
+			gUpdateBaseFontSize(up: false)
 		} else {
 			addDashedLine()
 		}

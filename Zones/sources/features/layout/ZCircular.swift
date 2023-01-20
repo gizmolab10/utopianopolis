@@ -61,8 +61,9 @@ extension ZoneWidget {
 	// MARK: -
 
 	func circularUpdateWidgetDrawnSize() {
-		if  let  size = textWidget?.frame.size {
-			drawnSize = size.insetBy(gDotHeight, gDotHeight)
+		if  let     c = gMapController,
+			let  size = textWidget?.frame.size {
+			drawnSize = size.insetBy(c.dotHeight, c.dotHeight)
 		}
 	}
 
@@ -93,13 +94,15 @@ extension ZoneWidget {
 	}
 
 	func circularUpdateHighlightRect() {
-		if  gDrawCirclesAroundIdeas {
-			let    center = absoluteCenter
-			let    radius = gCircleIdeaRadius + gDotHalfWidth
-			highlightRect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
-//			center.printPoint("HIGHLIGHT " + selfInQuotes)
-		} else if let   t = pseudoTextWidget {
-			highlightRect = t.absoluteFrame.expandedBy(dx: gDotHalfWidth, dy: .zero)
+		if  let             c = controller {
+			if  gDrawCirclesAroundIdeas {
+				let    center = absoluteCenter
+				let    radius = c.circleIdeaRadius + c.dotHalfWidth
+				highlightRect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
+//				center.printPoint("HIGHLIGHT " + selfInQuotes)
+			} else if let   t = pseudoTextWidget {
+				highlightRect = t.absoluteFrame.expandedBy(dx: c.dotHalfWidth, dy: .zero)
+			}
 		}
 	}
 
@@ -230,8 +233,9 @@ extension ZWidgets {
 	}
 
 	static func ringRadius(at level: Int) -> CGFloat {
-		let  increment = gCircleIdeaRadius * 2.0 + gDotHeight * 1.5
-		var     radius = increment + gDotHalfWidth
+		guard let    c = gMapController else { return .zero }
+		let  increment = c.circleIdeaRadius * 2.0 + c.dotHeight * 1.5
+		var     radius = increment + c.dotHalfWidth
 
 		// need to do this tweak at every level
 
@@ -328,9 +332,10 @@ extension ZWidgets {
 extension ZoneWidgetArray {
 
 	func updateAllWidgetFrames(at  level: Int, in controller: ZMapController?, _ absolute: Bool = false) {
-		if  let vFrame = controller?.mapPseudoView?.frame {
+		if  let vFrame = controller?.mapPseudoView?.frame,
+			let      c = controller {
 			let radius = ZWidgets.ringRadius(at: level)
-			let offset = CGPoint(x: gMapOffset.x - gDotHeight, y: -gMapOffset.y - 22.0)
+			let offset = CGPoint(x: gMapOffset.x - c.dotHeight, y: -gMapOffset.y - 22.0)
 			let center = vFrame.center + offset
 
 			for w in self {
@@ -340,7 +345,7 @@ extension ZoneWidgetArray {
 					let   angle = w.placeAngle + gMapRotationAngle
 					let rotated = CGPoint(x: .zero, y: radius).rotate(by: Double(angle))
 					let  origin = center + rotated
-					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(gCircleIdeaRadius)
+					let    rect = CGRect(origin: origin, size:     .zero).expandedEquallyBy(c.circleIdeaRadius)
 					w   .bounds = CGRect(origin:  .zero, size: rect.size)
 					w    .frame = rect
 				}
@@ -389,7 +394,7 @@ extension ZoneLine {
 			let  angle = dragAngle {
 			let vector = CGPoint(x: length, y: .zero).rotate(by: Double(angle))
 			let center = widget.absoluteCenter
-			let   size = gDotSize(forReveal: false, forBigMap: isBig)
+			let   size = controller?.dotSize(forReveal: false) ?? .zero
 			rect       = CGRect(origin: center + vector, size: .zero).expandedBy(size.dividedInHalf)
 		}
 
@@ -422,14 +427,16 @@ extension ZoneDot {
 	}
 
 	var dotHypotenuse : CGFloat {
-		if  gDrawCirclesAroundIdeas {
-			let      width = isReveal ? gDotHeight : gDotWidth
+		if  let              c = controller {
+			if  gDrawCirclesAroundIdeas {
+				let      width = isReveal ? c.dotHeight : c.dotWidth
 
-			return gCircleIdeaRadius + 1.5 + (width / 3.0)
-		} else if let    l = line,
-				  let size = l.parentWidget?.highlightRect.size.expandedEquallyBy(gDotHalfWidth) {
+				return c.circleIdeaRadius + 1.5 + (width / 3.0)
+			} else if let    l = line,
+					  let size = l.parentWidget?.highlightRect.size.expandedEquallyBy(c.dotHalfWidth) {
 
-			return size.ellipticalLengthAt(Double(l.parentToChildAngle).float )    // apply trigonometry
+				return size.ellipticalLengthAt(Double(l.parentToChildAngle).float )    // apply trigonometry
+			}
 		}
 
 		return .zero
@@ -502,12 +509,13 @@ extension ZoneDot {
 
 	func circularUpdateDragDotAbsoluteFrame() {
 		if  let          l = line,
-			let      frame = l.childWidget?.pseudoTextWidget?.absoluteFrame.expandedBy(dx: gDotHalfWidth, dy: .zero),
+			let          c = controller,
+			let      frame = l.childWidget?.pseudoTextWidget?.absoluteFrame.expandedBy(dx: c.dotHalfWidth, dy: .zero),
 			let lineVector = l.parentToChildVector {
 			let      angle = lineVector.angle
 			let   position = ZPosition.position(for: Double(angle))
-			let  expansion = gDotSize(forReveal: false, forBigMap: isBigMap).dividedInHalf
-			let   halfSize = frame.size.dividedInHalf.expandedEquallyBy(gDotEighthWidth)
+			let  expansion = controller?.dotSize(forReveal: false).dividedInHalf ?? .zero
+			let   halfSize = frame.size.dividedInHalf.expandedEquallyBy(c.dotEighthWidth)
 			let     height = halfSize.height
 			let      width = halfSize.width
 			let     offset = width * ratioForAngle(angle)
@@ -567,7 +575,7 @@ extension ZMapController {
 				let  color = gAccentColor.withAlpha(0.2)
 				level     += 1
 
-				rect.drawColoredCircle(color, thickness: gDotHeight, dashes: true)
+				rect.drawColoredCircle(color, thickness: dotHeight, dashes: true)
 			}
 		}
 	}

@@ -297,7 +297,7 @@ extension UIView {
 
     override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if  event?.subtype == UIEvent.EventSubtype.motionShake && !gKeyboardIsVisible {
-            gMapController?.recenter()
+            gMapController.recenter()
         }
     }
 
@@ -560,7 +560,7 @@ extension ZTextEditor {
 
     func fullResign()  {
         assignAsFirstResponder(nil) // ios broken?
-		assignAsFirstResponder(gMapController?.mobileKeyInput)
+		assignAsFirstResponder(gMapController.mobileKeyInput)
 	}
 	
 }

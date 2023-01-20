@@ -14,6 +14,20 @@ import Foundation
     import UIKit
 #endif
 
+enum ZMapType : Int {
+	case mSmall
+	case mHelp
+	case mBig
+
+	var divisor: CGFloat {
+		switch self {
+			case .mSmall: return kSmallMapReduction
+			case .mHelp:  return .zero
+			case .mBig:   return 1.0
+		}
+	}
+}
+
 class ZGenericController: ZController, ZGeneric {
 
 	var        isVisible = false
@@ -23,6 +37,14 @@ class ZGenericController: ZController, ZGeneric {
     func handleSignal(_ object: Any?, kind: ZSignalKind) {}
 	func controllerStartup() {}
 	func controllerSetup(with mapView: ZMapView?) {}
+
+	var mapType : ZMapType {
+		switch controllerID {
+			case .idSmallMap: return .mSmall
+			case .idBigMap:   return .mBig
+			default:          return .mHelp
+		}
+	}
 
 	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {

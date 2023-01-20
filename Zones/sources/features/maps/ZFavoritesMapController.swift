@@ -12,7 +12,7 @@ import Cocoa
 import UIKit
 #endif
 
-var gFavoritesMapController : ZFavoritesMapController? { return gControllers.controllerForID(.idSmallMap) as? ZFavoritesMapController }
+var gFavoritesMapController : ZFavoritesMapController { return gControllers.controllerForID(.idSmallMap) as? ZFavoritesMapController ?? ZFavoritesMapController() }
 
 class ZFavoritesMapController: ZMapController {
 
@@ -31,20 +31,20 @@ class ZFavoritesMapController: ZMapController {
 	}
 
 	override func layoutForCurrentScrollOffset() {
-		if  let           r = hereWidget,
+		if  let           w = hereWidget,
 			let           p = mapPseudoView,
 			let detailsSize = gDetailsController?.view.frame.size,
 			let   controlsY = gMapControlsView?.frame.height,
 			let        mapY = mapView?.bounds.height {
-			let     widgetY = r.drawnSize.height
+			let     widgetY = w.drawnSize.height
 			let      deltaY = CGFloat(16.0)
 			let           y = mapY - widgetY - controlsY - detailsSize.height - deltaY
 			let        size = CGSize(width: detailsSize.width, height: widgetY + deltaY)
 			let      origin = CGPoint(x: .zero, y: y)
 			let        rect = CGRect(origin: origin, size: size)
-			r.absoluteFrame = rect
+			w.absoluteFrame = rect
 			p.absoluteFrame = rect
-			r        .frame = rect
+			w        .frame = rect
 			p        .frame = rect
 		}
 

@@ -17,9 +17,8 @@ class ZHelpGridView: ZView {
 
 		if  let data = helpData, !isHidden,
 			data.helpMode.showsDots {
-			gWhileBaseFontSize(is: ZFont.systemFontSize) { [self] in
-				drawDotsHelp(in: iDirtyRect, using: data)
-			}
+			gBaseFontSize = ZFont.systemFontSize * 0.7
+			drawDotsHelp(in: iDirtyRect, using: data)
 		}
 	}
 
@@ -29,21 +28,15 @@ class ZHelpGridView: ZView {
 				let (dc, ft) = data.dotTypes(for: row, column: column)
 				if  let c = dc,
 					let t = ft {
-					var e = true
-					var f = true
+					var f = t != .empty
+					var e = t != .filled
 					let v = Double(data.rowHeight) + data.dotOffset
 					let x = Double(column) * 580.0 + Double(iDirtyRect.minX)   + 30.0
 					let y = Double(row)    *    -v + Double(iDirtyRect.height) - 24.0
 					let d = ZoneDot(view: self)
 
-					switch t {
-						case .filled: e = false
-						case .empty:  f = false
-						default:      break
-					}
-
 					if  e {
-						// draw empty in first column
+						// draw e in first column
 
 						let p = CGPoint(x: x, y: y)
 						let r = c.rect(p)
@@ -58,7 +51,7 @@ class ZHelpGridView: ZView {
 					}
 
 					if  f {
-						// draw filled in second column
+						// draw f in second column
 
 						let p = CGPoint(x: x + 20.0, y: y)
 						let r = c.rect(p)

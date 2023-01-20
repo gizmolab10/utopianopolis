@@ -336,15 +336,15 @@ enum ZHelpDotType: String {
 	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 
 	var size: CGSize {
-		return gDotSize(forReveal: isReveal)
+		return gHelpDotsExemplarController?.dotSize(forReveal: isReveal) ?? .zero
 	}
 
 	func rect(_ origin: CGPoint) -> CGRect {
 		var r = CGRect(origin: origin, size: size)
 
-		if  self == .favorite {
-			r = r.insetEquallyBy(fraction: (1.0 - kSmallMapReduction) / 2.0)
-		}
+//		if  self == .favorite {
+//			r = r.insetEquallyBy(fraction: 0.3)
+//		}
 
 		return r
 	}

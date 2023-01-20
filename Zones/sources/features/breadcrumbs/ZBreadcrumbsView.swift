@@ -100,8 +100,8 @@ class ZBreadcrumbsView : ZButtonsView {
 			for (index, button) in buttons.enumerated() {
 				if  index > 0,
 					let crumb = button as? ZBreadcrumbButton {
-					let extra = -gSmallFontSize / 2.7 - 1.0
-					let point = crumb.frame.centerLeft.offsetBy(.zero, extra)
+					let extra = 14.66 - (gFavoritesMapController.fontSize) / 3.0
+					let point = crumb.frame.bottomLeft.offsetBy(.zero, extra)
 					let color = crumb.zone.color ?? kDefaultIdeaColor
 
 					">".draw(at: point, withAttributes: [.foregroundColor : color, .font: gSmallFont])

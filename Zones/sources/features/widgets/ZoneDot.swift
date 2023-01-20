@@ -191,14 +191,16 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForBigMap: Bool = true) {
-		let   text = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
-		let factor = CGFloat(string == "w" ? 1.07 : 0.93)
-		let  width = gDotWidth * ratio
-		let   font = ZFont.boldSystemFont(ofSize: width)
-		let offset = text.sizeWithFont(font).dividedInHalf
-		let  point = iDirtyRect.center.offsetBy(-offset.width, -offset.height * factor)
+		if  let      c = controller {
+			let   text = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
+			let factor = CGFloat(string == "w" ? 1.07 : 0.93)
+			let  width = c.dotWidth * ratio
+			let   font = ZFont.boldSystemFont(ofSize: width)
+			let offset = text.sizeWithFont(font).dividedInHalf
+			let  point = iDirtyRect.center.offsetBy(-offset.width, -offset.height * factor)
 
-		text.draw(at: point, withAttributes: [.foregroundColor : color, .font: font])
+			text.draw(at: point, withAttributes: [.foregroundColor : color, .font: font])
+		}
 	}
 
 	func drawRevealDotDecorations(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {

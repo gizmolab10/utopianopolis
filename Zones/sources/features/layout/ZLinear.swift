@@ -104,7 +104,8 @@ extension ZoneWidget {
 				t.relayoutAbsoluteFrame(relativeTo: controller)
 
 				textWidget?.frame = t.absoluteFrame
-			} else if let    size = textWidget?.drawnSize.insetBy(.zero, gDotWidth * 0.1) {
+			} else if let       c = controller,
+					  let    size = textWidget?.drawnSize.insetBy(.zero, c.dotWidth * 0.1) {
 				let             x = hideDragDot ? 20.0 : gHorizontalGap + 4.0
 				let             y = (drawnSize.height - size.height) / 2.0
 				let        origin = CGPoint(x: x, y: y)
@@ -132,27 +133,30 @@ extension ZoneWidget {
 	}
 
 	func linearRelayoutAbsoluteHitRect() {
-		var rect         = absoluteFrame
-		let hasReveal    = widgetZone?.showRevealDot ?? false
-		let deltaX       = gDotWidth * (hasReveal ? 3.0 : 1.0)    // why 3?
-		let extra        = CGSize(width: deltaX, height: .zero)
-		for child in childrenWidgets {
-			if  let zone = child.widgetZone, zone.isVisible {
-				rect     = rect.union(child.absoluteHitRect)
+		if  let            c = controller {
+			var rect         = absoluteFrame
+			let hasReveal    = widgetZone?.showRevealDot ?? false
+			let deltaX       = c.dotWidth * (hasReveal ? 3.0 : 1.0)    // why 3?
+			let extra        = CGSize(width: deltaX, height: .zero)
+			for child in childrenWidgets {
+				if  let zone = child.widgetZone, zone.isVisible {
+					rect     = rect.union(child.absoluteHitRect)
+				}
 			}
+			absoluteHitRect  = rect.expandedBy(extra).offsetBy(extra)
+//			debug(absoluteHitRect, "HIT RECT ")
 		}
-		absoluteHitRect  = rect.expandedBy(extra).offsetBy(extra)
-//		debug(absoluteHitRect, "HIT RECT ")
 	}
 
 	func linearRelayoutHighlightRect() {
 		if  let     frame = textWidget?.frame,
-			let      zone = widgetZone {
+			let      zone = widgetZone,
+			let         c = controller {
 			let   fExpand = CGFloat(zone.showRevealDot ? 0.56 : -1.06)
 			let   mExpand = CGFloat(zone.showRevealDot ? 1.25 :  0.65)
-			let   xExpand = gDotHeight * mExpand
-			let   yExpand = gDotHeight / -20.0 * mapReduction
-			highlightRect = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: gDotHalfWidth * fExpand, dy: .zero)
+			let   xExpand = c.dotHeight * mExpand
+			let   yExpand = c.dotHeight / -20.0 * mapReduction
+			highlightRect = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: c.dotHalfWidth * fExpand, dy: .zero)
 		}
 	}
 
@@ -225,7 +229,8 @@ extension ZoneLine {
 	var linearDraggingDotAbsoluteFrame: CGRect {
 		var rect = CGRect()
 
-		if  let zone = parentWidget?.widgetZone {
+		if  let zone = parentWidget?.widgetZone,
+			let    c = controller {
 			if !zone.hasVisibleChildren {
 
 				// //////////////////////
@@ -233,7 +238,7 @@ extension ZoneLine {
 				// //////////////////////
 
 				if  let            dot = revealDot {
-					let         insetX = CGFloat((gDotHeight - gDotWidth) / 2.0)
+					let         insetX = CGFloat((c.dotHeight - c.dotWidth) / 2.0)
 					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: .zero).offsetBy(dx: gHorizontalGap, dy: .zero)
 				}
 			} else if let      indices = gDragging.dropIndices, indices.count > 0 {
@@ -320,16 +325,17 @@ extension ZoneDot {
 	}
 
 	@discardableResult func linearUpdateDotDrawnSize() -> CGSize {
-		let inBig = widget?.widgetType.isBigMap ?? true
-		drawnSize = gDotSize(forReveal: isReveal, forBigMap: inBig)
+		drawnSize = controller?.dotSize(forReveal: isReveal) ?? .zero
 
 		return drawnSize
 	}
 
 	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(gDotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-gDotHalfWidth, .zero)
-		absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
-		absoluteHitRect = absoluteFrame.expandedEquallyBy(gDotHalfWidth)
+		if  let           c = controller {
+			let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(c.dotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-c.dotHalfWidth, .zero)
+			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
+			absoluteHitRect = absoluteFrame.expandedEquallyBy(c.dotHalfWidth)
+		}
 	}
 
 	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {

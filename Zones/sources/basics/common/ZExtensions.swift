@@ -3131,16 +3131,6 @@ extension ZPseudoView {
 
 }
 
-extension ZTextField {
-
-	var       isEditingText:  Bool { return gIsEditIdeaMode }
-    @objc var preferredFont: ZFont { return gBigFont }
-
-    @objc func selectCharacter(in range: NSRange) {}
-    @objc func alterCase(up: Bool) {}
-
-}
-
 extension NSSegmentedControl {
 
 	var seletedSegments: IndexSet {

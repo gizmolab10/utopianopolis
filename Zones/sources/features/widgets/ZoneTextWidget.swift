@@ -24,7 +24,6 @@ enum ZTextType: Int {
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 
 	override var     debugName : String          { return   widgetZone?.zoneName ?? kUnknown }
-	override var preferredFont : ZFont           { return ((widget?.widgetType.isBigMap ?? true) && (widget?.isLinearMode ?? false)) ? gBigFont : gSmallFont }
     var             widgetZone : Zone?           { return   widget?.widgetZone }
 	var             controller : ZMapController? { return   widget?.controller }
     weak var            widget : ZoneWidget?
@@ -66,7 +65,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
         textAlignment              = .left
         backgroundColor            = kClearColor
         zlayer.backgroundColor     = kClearColor.cgColor
-        font                       = preferredFont
+		font                       = widget?.controller?.font ?? gSmallFont
 
         #if os(iOS)
             autocapitalizationType = .none
@@ -115,19 +114,20 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 	}
 
 	func updateSize() {
-		if  let     size = text?.sizeWithFont(preferredFont) {
-			let     hide = widgetZone?.isFavoritesHere ?? false
-			let    width = hide ? .zero : size.width + 6.0
-			let   height = size.height + (gDotHalfWidth * 0.8)
-			drawnSize    = CGSize(width: width, height: height)
+		if  let      f = font,
+			let   size = text?.sizeWithFont(f) {
+			let   hide = widgetZone?.isFavoritesHere ?? false
+			let  width = hide ? .zero : size.width + 6.0
+			let height = size.height + (controller?.dotHalfWidth ?? .zero * 0.8)
+			drawnSize  = CGSize(width: width, height: height)
 		}
 	}
 
 	func offset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
-        if  let   name = widgetZone?.unwrappedName {
-            let   font = preferredFont
-            let offset = name.offset(using: font, for: selectedRange, atStart: atStart)
-            var   rect = name.rectWithFont(font)
+        if  let   name = widgetZone?.unwrappedName,
+			let      f = font {
+            let offset = name.offset(using: f, for: selectedRange, atStart: atStart)
+            var   rect = name.rectWithFont(f)
             rect       = convert(rect, to: nil)
             
             return rect.minX + offset
@@ -137,7 +137,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
     }
 
 	override func mouseDown(with event: ZEvent) {
-		if !gRefusesFirstResponder { // ignore mouse down during startup
+		if !gRefusesFirstResponder, window == gMainWindow { // ignore mouse down during startup
 			gTemporarilySetMouseDownLocation(event.locationInWindow.x)
 			gTemporarilySetMouseZone(widgetZone)
 
@@ -173,7 +173,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
         return false
 	}
 	
-	override func selectCharacter(in range: NSRange) {
+	func selectCharacter(in range: NSRange) {
         #if os(OSX)
         if  let e = currentEditor() {
             e.selectedRange = range
@@ -181,7 +181,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
         #endif
     }
 
-    override func alterCase(up: Bool) {
+    func alterCase(up: Bool) {
         if  var t = text {
             t = up ? t.uppercased() : t.lowercased()
 

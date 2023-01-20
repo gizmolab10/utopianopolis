@@ -170,7 +170,7 @@ class ZActionsController : ZGenericController {
 	func refetch(for iAll: Bool) {
 		gBatches		 .unHang()
 		gWidgets         .clearRegistry()
-		gMapController?.clear()
+		gMapController.clear()
 		gControllers     .startupCloudAndUI()
 	}
 	

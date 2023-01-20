@@ -73,10 +73,6 @@ var  gLightishBackgroundColor :              ZColor { return gAccentColor.lighti
 var          gDarkAccentColor :              ZColor { return gAccentColor.darker  (by: 1.3) }
 var       gLighterActiveColor :              ZColor { return gActiveColor.lighter (by: 4.0)   }
 var          gBackgroundColor :              ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
-var                gSmallFont :               ZFont { return .systemFont(ofSize: gSmallFontSize) }
-var                gMicroFont :               ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction * kSmallMapReduction) }
-var                 gTinyFont :               ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction) }
-var                  gBigFont :               ZFont { return .systemFont(ofSize: gBigFontSize) }
 
 func       gConcealmentString(hide: Bool) -> String { return (hide ? "hide" : "reveal") }
 func        gToggleDatabaseID()                     { gDatabaseID  =  gOtherDatabaseID }
@@ -603,12 +599,12 @@ var gHorizontalGap: CGFloat {
 
 var gBaseFontSize: CGFloat {
 	get {
-		var value: CGFloat? = UserDefaults.standard.object(forKey: kFontSize) as? CGFloat
+		var value: CGFloat? = UserDefaults.standard.object(forKey: kBaseFontSize) as? CGFloat
 
 		if  value == nil {
-			value  = kDefaultFontSize
+			value  = kDefaultBaseFontSize
 
-			UserDefaults.standard.set(value, forKey:kFontSize)
+			UserDefaults.standard.set(value, forKey:kBaseFontSize)
 			UserDefaults.standard.synchronize()
 		}
 
@@ -616,22 +612,22 @@ var gBaseFontSize: CGFloat {
 	}
 
 	set {
-		UserDefaults.standard.set(newValue, forKey:kFontSize)
+		UserDefaults.standard.set(newValue, forKey:kBaseFontSize)
 		UserDefaults.standard.synchronize()
 	}
 }
 
-func gWhileBaseFontSize(is temporary: CGFloat, closure: Closure?) {
+func gWhileUsingDefaultBaseFontSize(closure: Closure?) {
 	guard let block = closure else { return }
 
-	let     prior = gBaseFontSize
-	gBaseFontSize = temporary
+//	let     prior = gBaseFontSize
+	gBaseFontSize = ZFont.systemFontSize
 
 	block()
 
-	FOREGROUND(after: 0.5) {
-		gBaseFontSize = prior
-	}
+//	FOREGROUND(after: 2.0) {
+//		gBaseFontSize = prior
+//	}
 }
 
 enum ZListGrowthMode: String {

@@ -20,6 +20,8 @@ enum ZDrawPhase: String {
 	case pDots       = "d"
 }
 
+let gAllDrawPhases: [ZDrawPhase] = [.pHighlights, .pLines, .pDots]   // draw dots last so they can "cover" the ends of lines
+
 class ZPseudoView: NSObject {
 
 	var      isHovering = false
@@ -31,14 +33,14 @@ class ZPseudoView: NSObject {
 	var           frame = CGRect.zero
 	var       drawnSize = CGSize.zero     { didSet { bounds = CGRect(origin: .zero, size: drawnSize) } }
 	var         toolTip : String?         { didSet { updateToolTipTag() } }
-	var  absoluteCenter : CGPoint         { return absoluteFrame.center }
-	var      dotPlusGap : CGFloat         { return gDotWidth + gapDistance }
-	var     gapDistance : CGFloat         { return (isBigMap ? gBigFontSize : gSmallFontSize) * 0.6 }
-	var        isBigMap : Bool            { return controller?.isBigMap ?? true }
-	var    isLinearMode : Bool            { return mode == .linearMode }
-	var  isCircularMode : Bool            { return mode == .circularMode }
-	var            mode : ZMapLayoutMode  { return controller?.mapLayoutMode ?? .linearMode }
-	var      controller : ZMapController? { return nil }
+	var  absoluteCenter : CGPoint         { return  absoluteFrame.center }
+	var    isLinearMode : Bool            { return  mode == .linearMode }
+	var  isCircularMode : Bool            { return  mode == .circularMode }
+	var        isBigMap : Bool            { return  controller?.isBigMap ?? true }
+	var     gapDistance : CGFloat         { return (controller?.fontSize ?? kDefaultFontSize) * 0.6 }
+	var      dotPlusGap : CGFloat         { return  controller?.dotWidth ?? .zero + gapDistance }
+	var            mode : ZMapLayoutMode  { return  controller?.mapLayoutMode ?? .linearMode }
+	var      controller : ZMapController? { return  nil }
 	var superpseudoview : ZPseudoView?
 	var      toolTipTag : ZToolTipTag?
 	var    absoluteView : ZView?

@@ -38,6 +38,8 @@ enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values
 	}
 }
 
+let kAllDatabaseIDs: [ZDatabaseID] = [.mineID, .everyoneID]
+
 enum ZDatabaseID: String {
 	case favoritesID = "favorites"
 	case  everyoneID = "everyone"

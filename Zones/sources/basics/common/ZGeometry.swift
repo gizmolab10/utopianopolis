@@ -10,8 +10,8 @@ import Foundation
 
 #if os(OSX)
 import Cocoa
-let kFontDelta = CGFloat(11)
-let kDotFactor = CGFloat(2.5)
+let kFontDelta = CGFloat(10)
+let kDotFactor = CGFloat(1.5)
 var gTextOffset: CGFloat?
 #elseif os(iOS)
 import UIKit
@@ -20,27 +20,45 @@ let kDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var      gSmallFontSize : CGFloat { return   gBigFontSize * kSmallMapReduction }
-var        gBigFontSize : CGFloat { return  gBaseFontSize + kFontDelta } // 13 ... 28
-var          gDotHeight : CGFloat { return (gBaseFontSize / kDotFactor) + kFontDelta + 2.0 }
-var           gDotWidth : CGFloat { return gDotHeight * kDragDotReduction }
-var   gCircleIdeaRadius : CGFloat { return gDotHeight * 2.2 }
-var      gDotHalfHeight : CGFloat { return gDotHeight / 2.0 }
-var     gDotEighthWidth : CGFloat { return gDotWidth  / 8.0 }
-var       gDotHalfWidth : CGFloat { return gDotWidth  / 2.0 }
+var gSmallFontSize : CGFloat { return   gBigFontSize * kSmallMapReduction }
+var   gBigFontSize : CGFloat { return  gBaseFontSize + kFontDelta }          // 13 ... 28
+var     gSmallFont :   ZFont { return  gFavoritesMapController.font }
+var     gMicroFont :   ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction * kSmallMapReduction) }
+var       gBigFont :   ZFont { return .systemFont(ofSize: gBigFontSize) }
 
-func gDotSize(forReveal: Bool)                  -> CGSize  { return CGSize(width: forReveal ? gDotHeight : gDotWidth, height: gDotHeight) }
-func gDotSize(forReveal: Bool, forBigMap: Bool) -> CGSize  { return gDotSize(forReveal: forReveal).multiplyBy(forBigMap ? 1.0 : kSmallMapReduction) }
+func gUpdateBaseFontSize(up: Bool) {
+	let     delta = CGFloat(up ? 1 : -1)
+	var      size = gBaseFontSize + delta
+	size          = size.confineBetween(low: .zero, high: 15.0)
+	gBaseFontSize = size
 
-extension ZMapEditor {
+	gSignal([.spRelayout, .spPreferences])
+}
 
-	func updateFontSize(up: Bool) {
-		let     delta = CGFloat(up ? 1 : -1)
-		var      size = gBaseFontSize + delta
-		size          = size.confineBetween(low: .zero, high: 15.0)
-		gBaseFontSize = size
+extension ZMapController {
 
-		gSignal([.spRelayout, .spPreferences])
-	}
+	@objc var baseFontSize : CGFloat { return gBaseFontSize }
+	var           fontSize : CGFloat { return  baseFontSize + kFontDelta }                      // 13 ... 28
+	var          dotHeight : CGFloat { return (fontSize / kDotFactor) + 2.0 }
+	var      dotHalfHeight : CGFloat { return  dotHeight / 2.0 }
+	var   circleIdeaRadius : CGFloat { return  dotHeight * 2.2 }
+	var           dotWidth : CGFloat { return  dotHeight * kDragDotReduction }
+	var       dotHalfWidth : CGFloat { return  dotWidth  / 2.0 }
+	var     dotEighthWidth : CGFloat { return  dotWidth  / 8.0 }
+	var               font :   ZFont { return .systemFont(ofSize: fontSize) }
+
+	func dotSize(forReveal: Bool) -> CGSize { return CGSize(width: forReveal ? dotHeight : dotWidth, height: dotHeight) }
+
+}
+
+extension ZFavoritesMapController {
+
+	override var baseFontSize: CGFloat { return super.baseFontSize * kSmallMapReduction }
+
+}
+
+extension ZHelpDotsExemplarController {
+
+	override var baseFontSize: CGFloat { return kDefaultBaseFontSize * 0.7 }
 
 }

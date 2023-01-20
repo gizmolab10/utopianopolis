@@ -16,12 +16,13 @@ extension ZoneWidget {
 
 	var absoluteDragHitRect : CGRect {
 		var     rect  = absoluteHitRect
-		if  let view  = controller?.mapPseudoView {
+		if  let     c = controller,
+			let view  = c.mapPseudoView {
 			let vRect = view.frame
 			if  isHere {
 				rect  = vRect
 			} else if gDragging.isDragging {
-				rect  = rect.expandedEquallyBy(gDotHeight / 3.0).expandedEquallyBy(fraction: 0.05)
+				rect  = rect.expandedEquallyBy(c.dotHeight / 3.0).expandedEquallyBy(fraction: 0.05)
 
 				if  parentWidget?.isHere ?? false {
 					rect.size.width = vRect.width
@@ -105,7 +106,7 @@ extension ZFavoritesMapController {
 extension ZMapController {
 
 	@objc func detectHit(at location: CGPoint) -> Any? {
-		return gFavoritesMapController?.detectHit(at: location) ?? hereWidget?.detectHit(at: location)
+		return gFavoritesMapController.detectHit(at: location) ?? hereWidget?.detectHit(at: location)
 	}
 
 }

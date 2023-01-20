@@ -102,22 +102,17 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
 	var widgetType : ZWidgetType {
-		var result    = widgetZone?.widgetType
-
-		if  result   == nil {
-			result    = .tBigMap
+		var type  = widgetZone?.widgetType ?? .tBigMap
+		if  let t = widgetObject.widgetType {
+			type.insert(t)
 		}
 
-		if  let oType = widgetObject.widgetType {
-			result?.insert(oType)
-		}
-
-		return result!
+		return type
 	}
 
 	override var controller : ZMapController? {
 		if widgetType.isBigMap   { return              gMapController }
-		if widgetType.isFavorite { return        gFavoritesMapController }
+		if widgetType.isFavorite { return     gFavoritesMapController }
 		if widgetType.isExemplar { return gHelpDotsExemplarController }
 
 		return nil
@@ -278,7 +273,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		line   .dragAngle = angle
 		line.parentWidget = self
 		let        reveal = isCircularMode ? ZoneDot(view: aView) : gDragging.dropWidget?.sharedRevealDot
-		line      .length = gCircleIdeaRadius + gDotHalfWidth
+		line      .length = (controller?.circleIdeaRadius ?? .zero) + (controller?.dotHalfWidth ?? .zero)
 
 		line.addDots(reveal: reveal, drag:   ZoneDot(view: aView))
 
