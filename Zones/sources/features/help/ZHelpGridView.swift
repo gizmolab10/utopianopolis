@@ -28,8 +28,8 @@ class ZHelpGridView: ZView {
 				let (dc, ft) = data.dotTypes(for: row, column: column)
 				if  let c = dc,
 					let t = ft {
-					var f = t != .empty
-					var e = t != .filled
+					let f = t != .empty
+					let e = t != .filled
 					let v = Double(data.rowHeight) + data.dotOffset
 					let x = Double(column) * 580.0 + Double(iDirtyRect.minX)   + 30.0
 					let y = Double(row)    *    -v + Double(iDirtyRect.height) - 24.0

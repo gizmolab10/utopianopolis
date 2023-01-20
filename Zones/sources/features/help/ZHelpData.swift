@@ -330,24 +330,12 @@ enum ZHelpDotType: String {
 	case oneEleven  = "111"
 	case unwritable = "not"
 
-	var isReveal    : Bool            { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
-	var showAccess  : Bool            { return  [.progeny,                     .unwritable].contains(self) }
-	var pointLeft   : Bool            { return self == .click }
-	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
-
-	var size: CGSize {
-		return gHelpDotsExemplarController?.dotSize(forReveal: isReveal) ?? .zero
-	}
-
-	func rect(_ origin: CGPoint) -> CGRect {
-		var r = CGRect(origin: origin, size: size)
-
-//		if  self == .favorite {
-//			r = r.insetEquallyBy(fraction: 0.3)
-//		}
-
-		return r
-	}
+	var accessType    :    ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+	var pointLeft     :               Bool { return self == .click }
+	var showAccess    :               Bool { return  [.progeny,                     .unwritable].contains(self) }
+	var isReveal      :               Bool { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
+	var size          :             CGSize { return gHelpController?.dotSize(forReveal: isReveal) ?? .zero }
+	func rect(_ origin: CGPoint) -> CGRect { return CGRect(origin: origin, size: size) }
 
 	var traitType: String {
 		switch self {

@@ -21,10 +21,16 @@ var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
 var gSmallFontSize : CGFloat { return   gBigFontSize * kSmallMapReduction }
-var   gBigFontSize : CGFloat { return  gBaseFontSize + kFontDelta }          // 13 ... 28
+var   gBigFontSize : CGFloat { return  gBaseFontSize + kFontDelta }          // 15 ... 28
 var     gSmallFont :   ZFont { return  gFavoritesMapController.font }
 var     gMicroFont :   ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction * kSmallMapReduction) }
 var       gBigFont :   ZFont { return .systemFont(ofSize: gBigFontSize) }
+
+protocol ZGeometry {
+
+	var coreFontSize : CGFloat { get }
+
+}
 
 func gUpdateBaseFontSize(up: Bool) {
 	let     delta = CGFloat(up ? 1 : -1)
@@ -35,10 +41,10 @@ func gUpdateBaseFontSize(up: Bool) {
 	gSignal([.spRelayout, .spPreferences])
 }
 
-extension ZMapController {
+extension ZGenericController {
 
-	@objc var baseFontSize : CGFloat { return gBaseFontSize }
-	var           fontSize : CGFloat { return  baseFontSize + kFontDelta }                      // 13 ... 28
+	@objc var coreFontSize : CGFloat { return gBaseFontSize }
+	var           fontSize : CGFloat { return  coreFontSize + kFontDelta }                      // 13 ... 28
 	var          dotHeight : CGFloat { return (fontSize / kDotFactor) + 2.0 }
 	var      dotHalfHeight : CGFloat { return  dotHeight / 2.0 }
 	var   circleIdeaRadius : CGFloat { return  dotHeight * 2.2 }
@@ -53,12 +59,17 @@ extension ZMapController {
 
 extension ZFavoritesMapController {
 
-	override var baseFontSize: CGFloat { return super.baseFontSize * kSmallMapReduction }
+	override var coreFontSize: CGFloat { return super.coreFontSize * kSmallMapReduction }
 
 }
 
 extension ZHelpDotsExemplarController {
 
-	override var baseFontSize: CGFloat { return kDefaultBaseFontSize * 0.7 }
+	override var coreFontSize: CGFloat { return kDefaultBaseFontSize * 0.7 }
 
+}
+
+extension ZHelpController {
+
+	override var coreFontSize: CGFloat { return kDefaultBaseFontSize * 1.3 }
 }

@@ -874,13 +874,13 @@
                     <connections>
                         <outlet property="activeMineColorBox" destination="j0f-8D-Ds5" id="FRZ-SF-WJ1"/>
                         <outlet property="backgroundColorBox" destination="wsy-Dq-H7s" id="lQ4-nS-6Bk"/>
+                        <outlet property="baseFontSize" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
                         <outlet property="circlesDisplayBox" destination="EBA-0Z-ZoM" id="TWM-NQ-iz3"/>
                         <outlet property="circlesDisplayControl" destination="oGC-zp-Rq7" id="ygO-cT-QUw"/>
                         <outlet property="clearColorButton" destination="0Qp-4d-Tu8" id="6Al-nd-9pG"/>
                         <outlet property="colorPreferencesBox" destination="mS1-t0-150" id="EjN-WA-D0x"/>
                         <outlet property="colorfulModeButton" destination="dkn-tQ-U5p" id="oSj-yf-UQj"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
-                        <outlet property="fontSize" destination="X28-Kf-ltl" id="bZA-x3-VXU"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
                         <outlet property="lineThickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>

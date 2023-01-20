@@ -127,8 +127,8 @@ class ZTextPack: NSObject {
 	}
 
     func setup(for iZRecord: ZRecord) {
+		packedZone   = iZRecord as? Zone ?? packedTrait?.ownerZone
         packedTrait  = iZRecord as? ZTrait
-        packedZone   = iZRecord as? Zone ?? packedTrait?.ownerZone
         originalText = unwrappedName
 
 		textWidget?.setText(originalText)

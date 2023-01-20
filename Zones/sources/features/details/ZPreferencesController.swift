@@ -31,7 +31,7 @@ class ZPreferencesController: ZGenericController {
     @IBOutlet var    backgroundColorBox : ZColorWell?
     @IBOutlet var    activeMineColorBox : ZColorWell?
 	@IBOutlet var          zoneColorBox : ZColorWell?
-	@IBOutlet var              fontSize : ZSlider?
+	@IBOutlet var          baseFontSize : ZSlider?
 	@IBOutlet var         lineThickness : ZSlider?
 	@IBOutlet var     horizontalSpacing : ZSlider?
 	@IBOutlet var    colorfulModeButton : ZButton?
@@ -43,7 +43,7 @@ class ZPreferencesController: ZGenericController {
             let                            grabbed = gSelecting.firstSortedGrab
             countsModeControl?    .selectedSegment = gCountsMode   .rawValue
             lineThickness?            .doubleValue = Double(gLineThickness)
-            fontSize?                 .doubleValue = Double(gBaseFontSize)
+            baseFontSize?                 .doubleValue = Double(gBaseFontSize)
             horizontalSpacing?        .doubleValue = Double(gHorizontalGap)
 			circlesDisplayBox?           .isHidden = gMapLayoutMode == .linearMode
 			colorPreferencesBox?         .isHidden = !gColorfulMode

@@ -31,7 +31,7 @@ class ZWidgets: NSObject {
 	func allWidgets(for type: ZWidgetType) -> ZoneWidgetArray? {
 		switch type {
 			case .tExemplar: return exemplarWidgets.justWidgets
-			default:         return bigMapWidgets.justWidgets + favoriteWidgets.justWidgets
+			default:         return   bigMapWidgets.justWidgets + favoriteWidgets.justWidgets
 		}
 	}
 

@@ -52,7 +52,7 @@ enum ZHelpMode: String {
 
 }
 
-class ZHelpController: ZGenericTableController {
+class ZHelpController: ZGenericTableController, ZGeometry {
 
 	@IBOutlet var      clipView : ZView?
 	@IBOutlet var   mapHelpGrid : ZHelpGridView?

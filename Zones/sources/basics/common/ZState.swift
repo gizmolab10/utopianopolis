@@ -617,19 +617,6 @@ var gBaseFontSize: CGFloat {
 	}
 }
 
-func gWhileUsingDefaultBaseFontSize(closure: Closure?) {
-	guard let block = closure else { return }
-
-//	let     prior = gBaseFontSize
-	gBaseFontSize = ZFont.systemFontSize
-
-	block()
-
-//	FOREGROUND(after: 2.0) {
-//		gBaseFontSize = prior
-//	}
-}
-
 enum ZListGrowthMode: String {
 	case down = "Down"
 	case up   = "Up"

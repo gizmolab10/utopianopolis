@@ -37,7 +37,7 @@ enum ZMapLayoutMode: Int { // do not change the order, they are persisted
 	}
 }
 
-class ZMapController: ZGesturesController, ZScrollDelegate {
+class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 	var                priorLocation = CGPoint.zero
 	override  var       controllerID : ZControllerID  { return .idBigMap }

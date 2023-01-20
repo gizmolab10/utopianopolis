@@ -263,7 +263,7 @@
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="biU-wq-VIU" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="51" y="112" width="500" height="68"/>
+                                <rect key="frame" x="51" y="109" width="500" height="68"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="sby-t3-IyJ" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="500" height="68"/>
@@ -296,11 +296,11 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="KDc-oP-JYJ" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="6dL-MM-3e7"/>
-                            <constraint firstItem="biU-wq-VIU" firstAttribute="top" secondItem="NcL-My-K47" secondAttribute="bottom" constant="6" id="D3I-Ry-qWW"/>
+                            <constraint firstItem="biU-wq-VIU" firstAttribute="top" secondItem="NcL-My-K47" secondAttribute="bottom" constant="9" id="D3I-Ry-qWW"/>
                             <constraint firstAttribute="bottom" secondItem="KDc-oP-JYJ" secondAttribute="bottom" constant="10" id="XII-Hs-TK2"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="top" secondItem="61U-DM-8bn" secondAttribute="top" constant="20" id="Yky-s4-T9I"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="b5k-cm-raf"/>
-                            <constraint firstItem="KDc-oP-JYJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="bottom" constant="6" id="j4k-5I-uKa"/>
+                            <constraint firstItem="KDc-oP-JYJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="bottom" constant="3" id="j4k-5I-uKa"/>
                             <constraint firstItem="biU-wq-VIU" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="nBA-46-y3O"/>
                         </constraints>
                     </view>

@@ -37,18 +37,17 @@ class ZHelpDotsExemplarController : ZMapController {
 		topLabel?   .text = "ALL ideas have a DRAG dot on the left. Many have a REVEAL dot on the right. For example:"
 		bottomLabel?.font = kLargeHelpFont
 		bottomLabel?.text = "\t• The drag dot (at left) is used to select, deselect and drag the idea\n\t• The reveal dot (at right) is used to show or hide its list, or activate the idea\n\nWhen the cursor hovers over a dot, the fill in color reverses (try the dots above). Dots are often decorated, providing further information about their idea (see below)."
-		gWhileUsingDefaultBaseFontSize() {
-			gRelayoutMaps()
-		}
+		gRelayoutMaps()
 	}
 
 	func setupExemplar() {
 		let             name = kExemplarRootName
 		rootZone             = Zone.create(within: name, databaseID: .everyoneID)
-		rootZone?.zoneName   = "this idea holds a list of three ideas"
-		rootZone?.color      = kDefaultIdeaColor
+		rootZone?  .zoneName = "this idea holds a list of three ideas"
+		rootZone?     .color = gHelpHyperlinkColor
 		rootZone?.parentLink = kNullLink
-		rootZone?.root       = rootZone
+		rootZone?      .root = rootZone
+		rootZone? .colorized = true
 
 		for index in [3, 2, 1] {
 			let        child = Zone.create(within: name, for: index, databaseID: .everyoneID)
