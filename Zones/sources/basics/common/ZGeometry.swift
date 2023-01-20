@@ -44,16 +44,15 @@ func gUpdateBaseFontSize(up: Bool) {
 extension ZGenericController {
 
 	@objc var coreFontSize : CGFloat { return gBaseFontSize }
-	var           fontSize : CGFloat { return  coreFontSize + kFontDelta }                      // 13 ... 28
-	var          dotHeight : CGFloat { return (fontSize / kDotFactor) + 2.0 }
+	var           fontSize : CGFloat { return  coreFontSize + kFontDelta }      // 15 ... 28
+	var          dotHeight : CGFloat { return (fontSize  / kDotFactor) + 2.0 }
 	var      dotHalfHeight : CGFloat { return  dotHeight / 2.0 }
 	var   circleIdeaRadius : CGFloat { return  dotHeight * 2.2 }
 	var           dotWidth : CGFloat { return  dotHeight * kDragDotReduction }
 	var       dotHalfWidth : CGFloat { return  dotWidth  / 2.0 }
 	var     dotEighthWidth : CGFloat { return  dotWidth  / 8.0 }
 	var               font :   ZFont { return .systemFont(ofSize: fontSize) }
-
-	func dotSize(forReveal: Bool) -> CGSize { return CGSize(width: forReveal ? dotHeight : dotWidth, height: dotHeight) }
+	func dotSize(forReveal : Bool) -> CGSize { return CGSize(width: forReveal ? dotHeight : dotWidth, height: dotHeight) }
 
 }
 
@@ -71,5 +70,6 @@ extension ZHelpDotsExemplarController {
 
 extension ZHelpController {
 
-	override var coreFontSize: CGFloat { return kDefaultBaseFontSize * 1.3 }
+	override var coreFontSize: CGFloat { return kDefaultBaseFontSize * 1.8 }
+
 }

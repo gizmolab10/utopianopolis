@@ -111,13 +111,13 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let       radius = parameters.sideDotRadius
 		let   tinyRadius =     radius * 0.7
-		let tinyDiameter = tinyRadius * 2.0
-		let       center = iDirtyRect.center
-		let            x = center.x - CGFloat(tinyRadius + radius + 1.0)
-		let            y = center.y - CGFloat(tinyRadius + parameters.verticleOffset)
-		let         rect = CGRect(x: x, y: y, width: tinyDiameter.float, height: tinyDiameter.float)
+		let     diameter = tinyRadius * 2.0
+		let    thickness = CGFloat(gLineThickness * 1.2)
+		let            x = iDirtyRect.centerLeft.x - CGFloat(tinyRadius + thickness * 2.0)
+		let            y = iDirtyRect.center    .y - CGFloat(tinyRadius + parameters.verticleOffset)
+		let         rect = CGRect(x: x, y: y, width: diameter.float, height: diameter.float)
 		let         path = ZBezierPath(ovalIn: rect)
-		path.lineWidth   = CGFloat(gLineThickness * 1.2)
+		path.lineWidth   = thickness
 		path.flatness    = kDefaultFlatness
 
 		path.fill()
@@ -191,7 +191,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForBigMap: Bool = true) {
-		if  let      c = controller {
+		if  let      c = controller ?? gHelpController {
 			let   text = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
 			let factor = CGFloat(string == "w" ? 1.07 : 0.93)
 			let  width = c.dotWidth * ratio
@@ -228,7 +228,8 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			parameters .fill.setFill()
 		}
 
-		drawMainDot(in: iDirtyRect, using: parameters) // needed for dots help view
+		drawMainDot(in: iDirtyRect, using: parameters)     // needed for dots help view
+		drawAroundDot(  iDirtyRect,        parameters)
 
 		if  parameters.typeOfTrait != kEmpty, controller?.inCircularMode != isReveal {
 
@@ -302,8 +303,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 				absoluteHitRect.drawColoredRect(.blue, radius: 2.0, thickness: 1.0)
 			}
 			
-			drawDot      (rect, p)
-			drawAroundDot(rect, p)
+			drawDot(rect, p)
 		}
 	}
 
