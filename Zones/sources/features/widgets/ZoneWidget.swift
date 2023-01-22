@@ -417,13 +417,14 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
 	func drawSelectionHighlight(_ style: ZHighlightStyle) {
+		guard let c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
 		if  highlightRect.hasZeroSize || style == .none {
 			return
 		}
 
 		let      color = widgetZone?.highlightColor
 		let       path = selectionHighlightPath
-		path.lineWidth = CGFloat(gLineThickness * 2.5)
+		path.lineWidth = CGFloat(c.coreThickness * 2.5)
 		path .flatness = kDefaultFlatness
 		
 		switch style {

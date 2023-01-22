@@ -278,7 +278,8 @@ extension ZoneLine {
 	}
 
 	func linearStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		let rect = iRect.centeredHorizontalLine(thick: gLineThickness)
+		guard let c = controller ?? gHelpController else { return ZBezierPath() } // for help dots, widget and controller are nil; so use help controller
+		let rect = iRect.centeredHorizontalLine(thick: c.coreThickness)
 		let path = ZBezierPath(rect: rect)
 
 		path.setClip()
@@ -339,7 +340,8 @@ extension ZoneDot {
 	}
 
 	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		let  thickness = CGFloat(gLineThickness) * 2.0
+		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
+		let  thickness = CGFloat(c.coreThickness) * 2.0
 		var       path = ZBezierPath()
 
 		if  parameters.isReveal && parameters.childCount > 0 {

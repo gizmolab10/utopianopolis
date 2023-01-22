@@ -705,7 +705,7 @@ extension CGPoint {
 	var dividedInHalf            : CGPoint { return multiplyBy(0.5) }
 	var inverted                 : CGPoint { return CGPoint(x: -x, y: -y) }
 
-	public static func equaled(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
+	public static func squared(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 
     public init(_ size: CGSize) {
         self.init()
@@ -3039,7 +3039,8 @@ extension ZView {
 extension ZPseudoView {
 
 	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {
-		if  var       dotCount = count {
+		if  let              c = controller ?? gHelpController, // for help dots, widget and controller are nil; so use help controller
+			var       dotCount = count {
 			var      fatHollow = false
 			var     tinyHollow = false
 			var      tinyIsFat = false
@@ -3102,7 +3103,7 @@ extension ZPseudoView {
 
 								let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 								let           path = ZBezierPath(ovalIn: ovalRect)
-								path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
+								path    .lineWidth = CGFloat(c.coreThickness * (asEssay ? 7.0 : 3.0))
 								path     .flatness = kDefaultFlatness
 
 								if  isHollow {

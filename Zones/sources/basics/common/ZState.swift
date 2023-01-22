@@ -562,7 +562,7 @@ var gLineThickness: CGFloat {
 		var value: CGFloat? = UserDefaults.standard.object(forKey: kThickness) as? CGFloat
 		
 		if  value == nil {
-			value  = 1.25
+			value  = kDefaultLineThickness
 			
 			UserDefaults.standard.set(value, forKey:kThickness)
 			UserDefaults.standard.synchronize()

@@ -22,25 +22,24 @@ enum ZDecorationType: Int {
 
 struct  ZDotParameters {
 
-	var childCount     = 0
-	var verticleOffset = Double.zero
-	var sideDotRadius  = 4.0
-	var typeOfTrait    = kEmpty
-	var isDrop         = false
-	var filled         = false
-	var isReveal       = false
-	var isDragged      = false
-	var isGrouped      = false
-	var isGroupOwner   = false
-	var badRecordName  = false
-	var hasTargetNote  = false
-	var hasTarget      = false
-	var showList       = false
-	var showAccess     = false
-	var showSideDot    = false
-	var fill           = gBackgroundColor
-	var color          = kDefaultIdeaColor
-	var accessType     = ZDecorationType.vertical
+	var childCount    = 0
+	var sideDotOffset = CGPoint.zero
+	var typeOfTrait   = kEmpty
+	var isDrop        = false
+	var filled        = false
+	var isReveal      = false
+	var isDragged     = false
+	var isGrouped     = false
+	var isGroupOwner  = false
+	var badRecordName = false
+	var hasTargetNote = false
+	var hasTarget     = false
+	var showList      = false
+	var showAccess    = false
+	var showSideDot   = false
+	var fill          = gBackgroundColor
+	var color         = kDefaultIdeaColor
+	var accessType    = ZDecorationType.vertical
 
 }
 
@@ -109,13 +108,14 @@ class ZoneDot: ZPseudoView, ZToolTipper {
     // MARK: -
 
 	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let       radius = parameters.sideDotRadius
-		let   tinyRadius =     radius * 0.7
-		let     diameter = tinyRadius * 2.0
-		let    thickness = CGFloat(gLineThickness * 1.2)
-		let            x = iDirtyRect.centerLeft.x - CGFloat(tinyRadius + thickness * 2.0)
-		let            y = iDirtyRect.center    .y - CGFloat(tinyRadius + parameters.verticleOffset)
-		let         rect = CGRect(x: x, y: y, width: diameter.float, height: diameter.float)
+		guard let      c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
+		let    thickness = c.coreThickness * 1.2
+		let       radius = c.dotWidth * 0.3 + thickness
+		let     diameter = radius * 2.0
+		let            y = iDirtyRect.center.y
+		let            x = iDirtyRect.centerLeft.x   - CGFloat(thickness * 2.0)
+		let       origin = CGPoint(x: x, y: y)       - CGPoint.squared(radius) - parameters.sideDotOffset
+		let         rect = CGRect(origin: origin, size: CGSize.squared(diameter))
 		let         path = ZBezierPath(ovalIn: rect)
 		path.lineWidth   = thickness
 		path.flatness    = kDefaultFlatness
@@ -124,32 +124,34 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
+		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
 		let count      = parameters.childCount
 		if  count      > 1 {
 			let  frame = iDirtyRect.offsetEquallyBy(-0.1)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
-			let radius = ((Double(frame.size.height * gLineThickness) / 24.0) + 0.4)
+			let radius = ((Double(frame.size.height * c.coreThickness) / 24.0) + 0.4)
 
 			drawTinyDots(surrounding: frame, count: count, radius: radius, color: color)
 		}
 	}
 
-    func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
-        var thickness = CGFloat(gLineThickness + 0.5) * ratio
-        var      path = ZBezierPath(rect: .zero)
-        var      rect = CGRect.zero
+	func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
+		guard let   c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
+		var thickness = CGFloat(c.coreThickness + 0.5) * ratio
+		var      path = ZBezierPath(rect: .zero)
+		var      rect = CGRect.zero
 
-        switch type {
-        case .vertical:
-			rect      = iDirtyRect.insetEquallyBy(fraction: 0.175).centeredVerticalLine(thick: thickness)
-            path      = ZBezierPath(rect: rect)
-        case .sideDot:
-            thickness = (thickness + 2.0) * iDirtyRect.size.height / 12.0
-            rect      = CGRect(origin: CGPoint(x: iDirtyRect.maxX -  thickness - 1.0,   y: iDirtyRect.midY - thickness / 2.0), size: CGSize.squared(thickness))
-            path      = ZBezierPath(ovalIn: rect)
-        }
+		switch type {
+			case .vertical:
+				rect      = iDirtyRect.insetEquallyBy(fraction: 0.175).centeredVerticalLine(thick: thickness)
+				path      = ZBezierPath(rect: rect)
+			case .sideDot:
+				thickness = (thickness + 2.0) * iDirtyRect.size.height / 12.0
+				rect      = CGRect(origin: CGPoint(x: iDirtyRect.maxX -  thickness - 1.0,   y: iDirtyRect.midY - thickness / 2.0), size: CGSize.squared(thickness))
+				path      = ZBezierPath(ovalIn: rect)
+		}
 
-        path.fill()
+		path.fill()
 	}
 
 	func drawCenterBookmarkDecorations(in iDirtyRect: CGRect, hasNote: Bool = false) {
@@ -191,7 +193,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForBigMap: Bool = true) {
-		if  let      c = controller ?? gHelpController {
+		if  let      c = controller ?? gHelpController { // for help dots, widget and controller are nil; so use help controller
 			let   text = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
 			let factor = CGFloat(string == "w" ? 1.07 : 0.93)
 			let  width = c.dotWidth * ratio
@@ -217,19 +219,8 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		}
 	}
 
-	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
-
-		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
-			gActiveColor.setStroke()
-			gActiveColor.setFill()
-		} else {
-			parameters.color.setStroke()
-			parameters .fill.setFill()
-		}
-
-		drawMainDot(in: iDirtyRect, using: parameters)     // needed for dots help view
-		drawAroundDot(  iDirtyRect,        parameters)
+	func drawDotInterior(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
 
 		if  parameters.typeOfTrait != kEmpty, controller?.inCircularMode != isReveal {
 
@@ -237,15 +228,13 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			// TRAIT DECORATIONS //
 			// ///////////////// //
 
-			let fillColor = parameters.filled ? gBackgroundColor : parameters.color
-
 			drawTraitDecoration(in: iDirtyRect, string: parameters.typeOfTrait, color: fillColor)
 		}
 
 		if  parameters.isReveal {
 			drawRevealDotDecorations(iDirtyRect, parameters)
 		} else {
-			decorationFillColor.setFill()
+			fillColor.setFill()
 
 			if  parameters.isGrouped, controller?.inCircularMode == false {
 
@@ -267,7 +256,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		}
 	}
 
-	func drawAroundDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawDotExterior(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		if  parameters.showSideDot,
 			!parameters.isReveal {
 
@@ -292,6 +281,20 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 			drawTinyCountDots(iDirtyRect, parameters: parameters)
 		}
+	}
+
+	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
+			gActiveColor.setStroke()
+			gActiveColor.setFill()
+		} else {
+			parameters.color.setStroke()
+			parameters .fill.setFill()
+		}
+
+		drawMainDot(in: iDirtyRect, using: parameters)     // needed for dots help view
+		drawDotExterior(iDirtyRect,        parameters)
+		drawDotInterior(iDirtyRect,        parameters)
 	}
 
     func draw() {

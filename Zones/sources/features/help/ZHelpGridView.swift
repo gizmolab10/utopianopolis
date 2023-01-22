@@ -36,7 +36,7 @@ class ZHelpGridView: ZView {
 					let d = ZoneDot(view: self)
 
 					if  e {
-						// draw e in first column
+						// draw empty dot in first column
 
 						let p = CGPoint(x: x, y: y)
 						let r = c.rect(p)
@@ -46,19 +46,19 @@ class ZHelpGridView: ZView {
 
 						if  c == .favorite {
 							m.color.withAlphaComponent(0.7).setFill()
-							d.drawAroundDot(r, m)
+							d.drawDotExterior(r, m)
 						}
 					}
 
 					if  f {
-						// draw f in second column
+						// draw filled dot in second column
 
 						let p = CGPoint(x: x + 20.0, y: y)
 						let r = c.rect(p)
 						let m = c.helpDotParameters(isFilled: true)
 
 						d.drawDot(r, m)
-						d.drawAroundDot(r, m)
+						d.drawDotExterior(r, m)
 					}
 				}
 			}

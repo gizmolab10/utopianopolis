@@ -96,8 +96,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                        isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                       isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
-	var                  isCurrentRecent :               Bool  { return self == gFavorites.currentRecent }
-	var                isCurrentFavorite :               Bool  { return self == gFavorites.currentFavorite }
+	var                isCurrentFavorite :               Bool  { return isInFavorites && bookmarkTarget == gHere }
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                  dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var               canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
@@ -822,18 +821,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return nil
-	}
-
-	var offsetFromMiddle : Double {
-		var index = ((Double(parentZone?.count ?? 0) / 2.0) - Double(siblingIndex ?? 0)) * 0.8
-		let limit = 6.0
-		if  index < .zero {
-			index = max(index, -limit)
-		} else {
-			index = min(index,  limit)
-		}
-
-		return index
 	}
 
 	var canEditNow: Bool {   // workaround recently introduced change in become first responder invocation logic [aka: fucked it up]
@@ -3553,29 +3540,48 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return results
 	}
 
+	func centeredIndex(_ limit: CGFloat, _ multiplyBy: CGFloat) -> CGFloat {
+		let power = 1.7
+		var index = (((CGFloat(parentZone?.count ?? 0) / 2.0) - CGFloat(siblingIndex ?? 0)) * 0.8) * multiplyBy
+		if  index < .zero {
+			index = -(abs(max(index, -limit)) ** power)
+		} else {
+			index =       min(index,  limit)  ** power
+		}
+
+		return index
+	}
+
+	var sideDotOffset: CGPoint {
+		let x = -abs(centeredIndex(12.0, 3.0 / (gHorizontalGap - 20.0)))
+		let y =      centeredIndex( 8.0, 2.5 / (gHorizontalGap - 26.0))
+
+		return CGPoint(x: x, y: y)
+	}
+
 	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool, _ isDragDrop: Bool = false) -> ZDotParameters {
-		let            d = gDragging.dragLine?.parentWidget?.widgetZone
-		var            p = ZDotParameters()
-		let            t = bookmarkTarget
-		let            k = traitKeys
-		let            g = groupOwner
-		p.color          = dotColor
-		p.isGrouped      = g != nil
-		p.showList       = isExpanded
-		p.hasTarget      = isBookmark
-		p.typeOfTrait    = k.first ?? kEmpty
-		p.showAccess     = hasAccessDecoration
-		p.hasTargetNote  = t?.hasNote ?? false
-		p.isGroupOwner   = g == self || g == t
-		p.showSideDot    = isCurrentFavorite || isCurrentRecent
-		p.isDragged      = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil
-		p.verticleOffset = offsetFromMiddle / (Double(gHorizontalGap) - 27.0) * 4.0
-		p.childCount     = (gCountsMode == .progeny) ? progenyCount : indirectCount
-		p.accessType     = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
-		p.isReveal       = isReveal
-		p.isDrop         = isDragDrop && d != nil && d == self
-		p.filled         = isFilled
-		p.fill           = isFilled ? dotColor.lighter(by: 2.5) : gBackgroundColor
+		let           d = gDragging.dragLine?.parentWidget?.widgetZone
+		var           p = ZDotParameters()
+		let           t = bookmarkTarget
+		let           g = groupOwner
+		let           k = traitKeys
+		p.color         = dotColor
+		p.isGrouped     = g != nil
+		p.showList      = isExpanded
+		p.hasTarget     = isBookmark
+		p.typeOfTrait   = k.first ?? kEmpty
+		p.showAccess    = hasAccessDecoration
+		p.hasTargetNote = t?.hasNote ?? false
+		p.isGroupOwner  = g == self || g == t
+		p.showSideDot   = isCurrentFavorite
+		p.sideDotOffset = sideDotOffset
+		p.childCount    = (gCountsMode == .progeny) ? progenyCount : indirectCount
+		p.accessType    = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
+		p.isDragged     = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil
+		p.isReveal      = isReveal
+		p.isDrop        = isDragDrop && d != nil && d == self
+		p.filled        = isFilled
+		p.fill          = isFilled ? dotColor.lighter(by: 2.5) : gBackgroundColor
 
 		return p
 	}

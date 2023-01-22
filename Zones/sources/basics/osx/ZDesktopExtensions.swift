@@ -1269,14 +1269,15 @@ extension ZoneLine {
 
     func linearLineRect(for kind: ZLineCurveKind?) -> CGRect {
 		var                 rect = CGRect.zero
-        if  kind                != nil,
-			let      sourceFrame = revealDot?.absoluteFrame,
+		if  kind                != nil,
+			let                c = controller ?? gHelpController, // for help dots, widget and controller are nil; so use help controller
+        	let      sourceFrame = revealDot?.absoluteFrame,
 			let      targetFrame = dragDot?.absoluteFrame {
-            rect.origin       .x = sourceFrame    .midX
-			rect.size     .width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
+			let        thickness = c.coreThickness
 			let            delta = CGFloat(4)
 			let       smallDelta = CGFloat(1)
-			let        thickness = gLineThickness
+			rect       .origin.x = sourceFrame    .midX
+			rect     .size.width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
 
             switch kind! {
             case .above:

@@ -139,8 +139,9 @@ extension ZoneWidget {
 	// MARK: -
 
 	func drawInterior(_ color: ZColor) {
+		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
 		let       path = selectionHighlightPath
-		path.lineWidth = CGFloat(gLineThickness * 2.5)
+		path.lineWidth = CGFloat(c.coreThickness * 2.5)
 		path .flatness = kDefaultFlatness
 
 		color.setFill()
@@ -535,10 +536,11 @@ extension ZoneDot {
 
 	func circularDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		if  let     l = line,
+			let     c = controller,
 			let     p = l.parentWidget?.widgetZone, (p.isExpanded || parameters.isReveal),
 			let     z = l .childWidget?.widgetZone {
 			var angle = l.dotToDotAngle + CGFloat((z.isShowing && p.isExpanded) ? .zero : kPI)
-			let thick = CGFloat(gLineThickness * 2.0)
+			let thick = CGFloat(c.coreThickness * 2.0)
 			let  rect = iDirtyRect.insetEquallyBy(thick)
 			var  path = ZBezierPath()
 
