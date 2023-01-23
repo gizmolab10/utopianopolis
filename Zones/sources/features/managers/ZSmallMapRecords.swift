@@ -83,7 +83,7 @@ class ZSmallMapRecords: ZRecords {
 					if  moveCurrent {
 						moveCurrentTo(newCurrent)
 					} else {
-						setAsCurrent (newCurrent, alterBigMapFocus: true)
+						setAsCurrent (newCurrent, alterBigMapFocus: true, makeVisible: true)
 					}
 				}
 			}

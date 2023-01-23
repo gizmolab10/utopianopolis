@@ -107,7 +107,7 @@ extension ZoneWidget {
 				textWidget?.frame = t.absoluteFrame
 			} else if let       c = controller,
 					  let    size = textWidget?.drawnSize.insetBy(.zero, c.dotWidth * 0.1) {
-				let             x = hideDragDot ? 20.0 : c.horizontalGap + 4.0
+				let             x = hideDragDot ? 20.0 : c.horizontalGap + c.fontSize + c.coreThickness * 5.0 - 20.0
 				let             y = (drawnSize.height - size.height) / 2.0
 				let        origin = CGPoint(x: x, y: y)
 				t          .frame = CGRect(origin: origin, size: size)
@@ -153,11 +153,12 @@ extension ZoneWidget {
 		if  let     frame = textWidget?.frame,
 			let      zone = widgetZone,
 			let         c = controller {
+			let     thick = c.coreThickness * 4.0
 			let   fExpand = CGFloat(zone.showRevealDot ? 0.56 : -1.06)
 			let   mExpand = CGFloat(zone.showRevealDot ? 1.25 :  0.65)
-			let   xExpand = c.dotHeight * mExpand
-			let   yExpand = c.dotHeight / -20.0 * mapReduction
-			highlightRect = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: c.dotHalfWidth * fExpand, dy: .zero)
+			let   xExpand = c.dotHeight * mExpand + thick
+			let   yExpand = c.dotHeight / -25.0 * mapReduction
+			highlightRect = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: c.dotHalfWidth * fExpand + thick, dy: .zero)
 		}
 	}
 
@@ -334,21 +335,19 @@ extension ZoneDot {
 
 	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		if  let           c = controller {
-			let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(c.dotWidth, .zero) : absoluteTextFrame.centerLeft.offsetBy(-c.dotHalfWidth, .zero)
+			let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(c.dotWidth + c.coreThickness * 5.0, .zero) : absoluteTextFrame.centerLeft.offsetBy(-c.dotHalfWidth, .zero)
 			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
 			absoluteHitRect = absoluteFrame.expandedEquallyBy(c.dotHalfWidth)
 		}
 	}
 
 	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
-		let  thickness = CGFloat(c.coreThickness) * 2.0
-		var       path = ZBezierPath()
+		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and thus controller are nil; so use help controller
+		let  thickness = c.coreThickness * 2.0
+		var       path = ZBezierPath                (ovalIn: iDirtyRect.insetEquallyBy(fraction: 0.1))
 
 		if  parameters.isReveal && parameters.childCount > 0 {
 			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
-		} else {
-			path       = ZBezierPath                (ovalIn: iDirtyRect.insetEquallyBy(thickness))
 		}
 
 		path.lineWidth = thickness

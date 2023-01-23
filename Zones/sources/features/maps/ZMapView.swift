@@ -82,7 +82,7 @@ class ZMapView: ZView {
 	func debugDraw() {
 		bounds                .insetEquallyBy(1.5).drawColoredRect(.blue)
 		decorationsView?.frame.insetEquallyBy(3.0).drawColoredRect(.red)
-		superview?.drawBox(in: self, with:                          .orange)
+		superview?.drawBox(in: self, with:                         .orange)
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {

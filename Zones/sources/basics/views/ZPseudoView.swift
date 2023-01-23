@@ -38,7 +38,7 @@ class ZPseudoView: NSObject {
 	var  isCircularMode : Bool            { return  mode == .circularMode }
 	var        isBigMap : Bool            { return  controller?.isBigMap ?? true }
 	var     gapDistance : CGFloat         { return (controller?.fontSize ?? kDefaultFontSize) * 0.6 }
-	var      dotPlusGap : CGFloat         { return  controller?.dotWidth ?? .zero + gapDistance }
+	var      dotPlusGap : CGFloat         { return (controller?.dotWidth ?? .zero) + gapDistance }
 	var            mode : ZMapLayoutMode  { return  controller?.mapLayoutMode ?? .linearMode }
 	var      controller : ZMapController? { return  nil }
 	var superpseudoview : ZPseudoView?

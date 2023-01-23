@@ -23,7 +23,6 @@ enum ZDecorationType: Int {
 struct  ZDotParameters {
 
 	var childCount    = 0
-	var sideDotOffset = CGPoint.zero
 	var typeOfTrait   = kEmpty
 	var isDrop        = false
 	var filled        = false
@@ -110,9 +109,10 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		guard let      c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
 		let       radius = c.sideDotRadius
+		let        ovalX = radius + c.dotHalfWidth
 		let     diameter = radius * 2.0
 		let         size = CGSize.squared(diameter)
-		let       origin = iDirtyRect.center - CGPoint.squared(radius) + parameters.sideDotOffset
+		let       origin = iDirtyRect.center - CGPoint.squared(radius) - CGPoint(x: ovalX, y: .zero)
 		let         rect = CGRect(origin: origin, size: size)
 		let         path = ZBezierPath(ovalIn: rect)
 		path.lineWidth   = c.coreThickness * 1.2
@@ -125,9 +125,9 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
 		let count      = parameters.childCount
 		if  count      > 1 {
-			let  frame = iDirtyRect.offsetEquallyBy(-0.1)
+			let  frame = iDirtyRect.offsetEquallyBy(-0.1).expandedEquallyBy(c.coreThickness)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
-			let radius = ((Double(frame.size.height * c.coreThickness) / 24.0) + 0.4)
+			let radius = (frame.size.height * c.coreThickness / 60.0) + 0.7
 
 			drawTinyDots(surrounding: frame, count: count, radius: radius, color: color)
 		}
