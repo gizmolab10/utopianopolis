@@ -109,7 +109,7 @@ extension ZoneDot {
 		}
 	}
 
-	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
+	func drawMainDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		switch mode {
 			case .linearMode:     linearDrawMainDot(in: iDirtyRect, using: parameters)
 			case .circularMode: circularDrawMainDot(in: iDirtyRect, using: parameters)

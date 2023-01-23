@@ -615,16 +615,21 @@ extension Double {
 	func   stringTo(precision: Int)              -> String  { return        float.stringTo(precision: precision) }
 	var    roundedToNearestInt                    : Int     { return        float.roundedToNearestInt }
 	var    upward                                 : Bool    { return self < kPI }
+	var    squared                                : Double  { return self * self }
 	var    float                                  : CGFloat { return CGFloat(self) }
 
 }
 
 extension CGFloat {
 
-	var  roundedToNearestInt                     : Int    { return Int(self + 0.5) }
-	var  upward                                  : Bool   { return self < kPI.float }
-	func isBetween(low: CGFloat, high: CGFloat) -> Bool   { return low < high && low < self && self < high }
-	func stringTo(precision: Int)               -> String { return String(format: "%.0\(precision)f", self) }
+	var  roundedToNearestInt                     : Int     { return Int(self + 0.5) }
+	var  upward                                  : Bool    { return     self < kPI.float }
+	var  squared                                 : CGFloat { return     self * self }
+	var  invertedSquared                         : CGFloat { return 1.0 / squared }
+	var  oneDigitString                          : String  { return stringTo(precision: 1) }
+	var  twoDigitString                          : String  { return stringTo(precision: 2) }
+	func stringTo(precision: Int)               -> String  { return String(format: "%.0\(precision)f", self) }
+	func isBetween(low: CGFloat, high: CGFloat) -> Bool    { return low < high && low < self && self < high }
 
 	func confineBetween(low: CGFloat, high: CGFloat) -> CGFloat {
 		return fmax(fmin(self, high), low)
@@ -660,7 +665,6 @@ extension Int {
 
 	func isWithin(_ range: ClosedRange<Int>) -> Bool    { return range.contains(self) }
 	func confine(within: Int)                -> Int     { return Int(float.confine(within: CGFloat(within))) }
-	func stringTo(precision: Int)            -> String  { return     float.stringTo(precision: precision) }
 	var  stringAsPerThousand                  : String  { return    (float / 1000.0).stringTo(precision: 1) }
 	var  float                                : CGFloat { return CGFloat(self) }
 
@@ -698,12 +702,14 @@ infix operator -- : AdditionPrecedence
 
 extension CGPoint {
 
-	var containsNAN              : Bool    { return x.isNaN || y.isNaN }
-	var descriptionToTwoDecimals : String  { return "(\(x.stringTo(precision: 2)), \(y.stringTo(precision: 2)))"}
-	var length                   : CGFloat { return sqrt(x * x + y * y) }
-	var angle                    : CGFloat { return atan2(y, x) }
-	var dividedInHalf            : CGPoint { return multiplyBy(0.5) }
-	var inverted                 : CGPoint { return CGPoint(x: -x, y: -y) }
+	var containsNAN     : Bool    { return x.isNaN || y.isNaN }
+	var twoDigitsString : String  { return "(\(x.stringTo(precision: 2)), \(y.stringTo(precision: 2)))"}
+	var oneDigitString  : String  { return "(\(x.stringTo(precision: 1)), \(y.stringTo(precision: 1)))"}
+	var integerString   : String  { return "(\(Int(x)), \(Int(y)))" }
+	var dividedInHalf   : CGPoint { return multiplyBy(0.5) }
+	var inverted        : CGPoint { return CGPoint(x: -x, y: -y) }
+	var length          : CGFloat { return sqrt(x * x + y * y) }
+	var angle           : CGFloat { return atan2(y, x) }
 
 	public static func squared(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 

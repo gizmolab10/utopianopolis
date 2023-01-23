@@ -582,7 +582,7 @@ var gHorizontalGap: CGFloat {
 		var value: CGFloat? = UserDefaults.standard.object(forKey: kHorizontalGap) as? CGFloat
 
 		if  value == nil {
-			value  = 30.0
+			value  = kDefaultHorizontalGap
 
 			UserDefaults.standard.set(value, forKey:kHorizontalGap)
 			UserDefaults.standard.synchronize()

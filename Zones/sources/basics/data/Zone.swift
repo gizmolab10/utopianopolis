@@ -79,6 +79,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                        emailLink :             String? { return email == nil ? nil : kMailTo + email! }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                    lowestExposed :                Int? { return exposed(upTo: highestExposed) }
+	var                        halfCount :                Int  { return Int((Double(count) + 0.5) / 2.0) }
 	var                            count :                Int  { return children.count }
 	var                         dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
 	var                      clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
@@ -3552,11 +3553,50 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return index
 	}
 
-	var sideDotOffset: CGPoint {
-		let x = -abs(centeredIndex(12.0, 3.0 / (gHorizontalGap - 20.0)))
-		let y =      centeredIndex( 8.0, 2.5 / (gHorizontalGap - 26.0))
+	var centeredIndex: (CGFloat, CGFloat) {
+		let limit = 12
+		var index = (parentZone?.halfCount ?? 0) - (siblingIndex ?? 0)
+		let  goUp = (index >= 0) ? 1.0 : -1.0
+		if  index < .zero {
+			index = max(index, -limit)
+		} else {
+			index = min(index,  limit)
+		}
 
-		return CGPoint(x: x, y: y)
+		return (goUp, CGFloat(index))
+
+	}
+
+	var sideDotOffset: CGPoint {
+		var offset = CGPoint.zero
+
+		if  let       c = widget?.controller, isCurrentFavorite {
+//			let (up, i) = centeredIndex
+			let   ovalX = c.sideDotRadius + c.dotHalfWidth
+			offset      = CGPoint(x: -ovalX, y: .zero)
+//			let   ovalY = c.sideDotRadius + c.dotHalfHeight
+//			let  curveX = c.horizontalGap
+//			let  curveY = c.dotHeight * i
+
+//			if  i      == 0 {
+//				offset  = CGPoint(x: -ovalX, y: .zero)
+//				print("\(Int(i * up)), \(offset.oneDigitString)")
+//			} else {  // calculate the point where the big and the small ellipses intersect
+//				let   s = (ovalX / curveX).squared
+//				let   a =  curveY.invertedSquared - s / ovalY.squared
+//				let   b =  2.0 / ovalY * up
+//				let   c = -2.0
+//				let   d =  b.squared   -  4.0 * a * c
+//				let   y = (-b - sqrt(d) * up) / (2.0 * a) // quadratic equation
+//				let   e =  1.0 - (y / ovalY).squared
+//				let   x =  ovalX * -sqrt(abs(e))
+//				offset  = CGPoint(x: x, y: y)
+//				print("\(Int(i * up)), \(d.oneDigitString), \(e.oneDigitString), \(offset.oneDigitString)")
+//			}
+
+		}
+
+		return offset
 	}
 
 	func plainDotParameters(_ isFilled: Bool, _ isReveal: Bool, _ isDragDrop: Bool = false) -> ZDotParameters {

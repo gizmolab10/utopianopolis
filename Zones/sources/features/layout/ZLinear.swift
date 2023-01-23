@@ -14,12 +14,13 @@ import Foundation
 extension ZoneWidget {
 
 	func linearUpdateWidgetDrawnSize() {
-		if  let       t = textWidget,
+		if  let       c = controller,
+			let       t = textWidget,
 			let   lSize = linesView?   .drawnSize {
 			let   cSize = childrenView?.drawnSize
 			var   width = cSize?.width  ?? .zero
 			var  height = cSize?.height ?? .zero
-			let   extra = width != .zero ? .zero : gHorizontalGap / 2.0
+			let   extra = width != .zero ? .zero : c.horizontalGap / 2.0
 			width      += t.drawnSize.width
 			let lheight = lSize.height
 			let  lWidth = lSize.width * 2.0
@@ -106,7 +107,7 @@ extension ZoneWidget {
 				textWidget?.frame = t.absoluteFrame
 			} else if let       c = controller,
 					  let    size = textWidget?.drawnSize.insetBy(.zero, c.dotWidth * 0.1) {
-				let             x = hideDragDot ? 20.0 : gHorizontalGap + 4.0
+				let             x = hideDragDot ? 20.0 : c.horizontalGap + 4.0
 				let             y = (drawnSize.height - size.height) / 2.0
 				let        origin = CGPoint(x: x, y: y)
 				t          .frame = CGRect(origin: origin, size: size)
@@ -239,7 +240,7 @@ extension ZoneLine {
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((c.dotHeight - c.dotWidth) / 2.0)
-					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: .zero).offsetBy(dx: gHorizontalGap, dy: .zero)
+					rect               = dot.absoluteFrame.insetBy(dx: insetX, dy: .zero).offsetBy(dx: c.horizontalGap, dy: .zero)
 				}
 			} else if let      indices = gDragging.dropIndices, indices.count > 0 {
 				let         firstindex = indices.firstIndex
@@ -278,9 +279,9 @@ extension ZoneLine {
 	}
 
 	func linearStraightLinePath(in iRect: CGRect, _ isDragLine: Bool) -> ZBezierPath {
-		guard let c = controller ?? gHelpController else { return ZBezierPath() } // for help dots, widget and controller are nil; so use help controller
-		let rect = iRect.centeredHorizontalLine(thick: c.coreThickness)
-		let path = ZBezierPath(rect: rect)
+		guard let c = controller else { return ZBezierPath() }
+		let    rect = iRect.centeredHorizontalLine(thick: c.coreThickness)
+		let    path = ZBezierPath(rect: rect)
 
 		path.setClip()
 

@@ -30,6 +30,7 @@ protocol ZGeometry {
 
 	var  coreFontSize : CGFloat { get }
 	var coreThickness : CGFloat { get }
+	var horizontalGap : CGFloat { get }
 
 }
 
@@ -44,6 +45,7 @@ func gUpdateBaseFontSize(up: Bool) {
 
 extension ZGenericController {
 
+	@objc var horizontalGap : CGFloat { return gHorizontalGap }
 	@objc var coreThickness : CGFloat { return gLineThickness }
 	@objc var  coreFontSize : CGFloat { return gBaseFontSize }
 	var            fontSize : CGFloat { return  coreFontSize + kFontDelta }      // 15 ... 28
@@ -53,6 +55,7 @@ extension ZGenericController {
 	var            dotWidth : CGFloat { return  dotHeight * kDragDotReduction }
 	var        dotHalfWidth : CGFloat { return  dotWidth  / 2.0 }
 	var      dotEighthWidth : CGFloat { return  dotWidth  / 8.0 }
+	var       sideDotRadius : CGFloat { return  dotWidth  * 0.3 + coreThickness * 1.2 }
 	var                font :   ZFont { return .systemFont(ofSize: fontSize) }
 	func  dotSize(forReveal : Bool) -> CGSize { return CGSize(width: forReveal ? dotHeight : dotWidth, height: dotHeight) }
 
@@ -60,6 +63,7 @@ extension ZGenericController {
 
 extension ZFavoritesMapController {
 
+	override var horizontalGap: CGFloat { return super.horizontalGap * 0.9 }
 	override var coreThickness: CGFloat { return super.coreThickness * kSmallMapReduction }
 	override var  coreFontSize: CGFloat { return super .coreFontSize * kSmallMapReduction }
 
@@ -67,6 +71,7 @@ extension ZFavoritesMapController {
 
 extension ZHelpDotsExemplarController {
 
+	override var horizontalGap: CGFloat { return kDefaultHorizontalGap }
 	override var coreThickness: CGFloat { return kDefaultLineThickness }
 	override var  coreFontSize: CGFloat { return kDefaultBaseFontSize * 0.7 }
 
@@ -74,7 +79,8 @@ extension ZHelpDotsExemplarController {
 
 extension ZHelpController {
 
+	override var horizontalGap: CGFloat { return kDefaultHorizontalGap }
 	override var coreThickness: CGFloat { return kDefaultLineThickness }
-	override var  coreFontSize: CGFloat { return kDefaultBaseFontSize * 1.8 }
+	override var  coreFontSize: CGFloat { return kDefaultBaseFontSize * 1.4 }
 
 }

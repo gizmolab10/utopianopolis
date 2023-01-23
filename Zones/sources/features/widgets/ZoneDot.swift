@@ -109,15 +109,13 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		guard let      c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
-		let    thickness = c.coreThickness * 1.2
-		let       radius = c.dotWidth * 0.3 + thickness
+		let       radius = c.sideDotRadius
 		let     diameter = radius * 2.0
-		let            y = iDirtyRect.center.y
-		let            x = iDirtyRect.centerLeft.x   - CGFloat(thickness * 2.0)
-		let       origin = CGPoint(x: x, y: y)       - CGPoint.squared(radius) - parameters.sideDotOffset
-		let         rect = CGRect(origin: origin, size: CGSize.squared(diameter))
+		let         size = CGSize.squared(diameter)
+		let       origin = iDirtyRect.center - CGPoint.squared(radius) + parameters.sideDotOffset
+		let         rect = CGRect(origin: origin, size: size)
 		let         path = ZBezierPath(ovalIn: rect)
-		path.lineWidth   = thickness
+		path.lineWidth   = c.coreThickness * 1.2
 		path.flatness    = kDefaultFlatness
 
 		path.fill()
@@ -292,9 +290,9 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			parameters .fill.setFill()
 		}
 
-		drawMainDot(in: iDirtyRect, using: parameters)     // needed for dots help view
-		drawDotExterior(iDirtyRect,        parameters)
-		drawDotInterior(iDirtyRect,        parameters)
+		drawMainDot    (iDirtyRect, parameters)
+		drawDotExterior(iDirtyRect, parameters)
+		drawDotInterior(iDirtyRect, parameters)
 	}
 
     func draw() {

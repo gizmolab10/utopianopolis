@@ -1271,23 +1271,23 @@ extension ZoneLine {
 		var                 rect = CGRect.zero
 		if  kind                != nil,
 			let                c = controller ?? gHelpController, // for help dots, widget and controller are nil; so use help controller
-        	let      sourceFrame = revealDot?.absoluteFrame,
-			let      targetFrame = dragDot?.absoluteFrame {
+        	let        fromFrame = revealDot?.absoluteFrame,
+			let          toFrame = dragDot?.absoluteFrame {
 			let        thickness = c.coreThickness
 			let            delta = CGFloat(4)
 			let       smallDelta = CGFloat(1)
-			rect       .origin.x = sourceFrame    .midX
-			rect     .size.width = abs(targetFrame.midX - sourceFrame.midX) + 2.0
+			rect       .origin.x = fromFrame    .midX
+			rect     .size.width = abs(  toFrame.minX - rect.minX)
 
             switch kind! {
             case .above:
-				rect.origin   .y =     sourceFrame.midY              - delta
-				rect.size.height = abs(targetFrame.midY - rect.minY)
+				rect.origin   .y =     fromFrame.midY              - delta
+				rect.size.height = abs(  toFrame.midY - rect.minY)
             case .below:
-				rect.origin   .y =     targetFrame.midY              - smallDelta
-				rect.size.height = abs(sourceFrame.midY - rect.minY) - delta
+				rect.origin   .y =       toFrame.midY              - smallDelta
+				rect.size.height = abs(fromFrame.midY - rect.minY) - delta
             case .straight:
-				rect.origin   .y =     sourceFrame.midY              - smallDelta
+				rect.origin   .y =     fromFrame.midY              - smallDelta
                 rect.size.height = thickness
             }
         }
