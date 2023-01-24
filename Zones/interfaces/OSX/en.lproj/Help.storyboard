@@ -263,10 +263,10 @@
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="biU-wq-VIU" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="51" y="109" width="500" height="68"/>
+                                <rect key="frame" x="51" y="106" width="500" height="80"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="sby-t3-IyJ" customClass="ZMapView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="500" height="68"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="500" height="80"/>
                                     </customView>
                                 </subviews>
                                 <constraints>
@@ -275,7 +275,7 @@
                                     <constraint firstItem="sby-t3-IyJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="top" id="QpJ-VW-bbo"/>
                                     <constraint firstAttribute="width" constant="500" id="dRm-Nx-NZp"/>
                                     <constraint firstAttribute="trailing" secondItem="sby-t3-IyJ" secondAttribute="trailing" id="vtT-q8-Ens"/>
-                                    <constraint firstAttribute="height" constant="68" id="xRG-Gk-2Jx"/>
+                                    <constraint firstAttribute="height" constant="80" id="xRG-Gk-2Jx"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="decorationsView" destination="sby-t3-IyJ" id="5QC-0H-Sxi"/>
@@ -296,11 +296,11 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="KDc-oP-JYJ" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="6dL-MM-3e7"/>
-                            <constraint firstItem="biU-wq-VIU" firstAttribute="top" secondItem="NcL-My-K47" secondAttribute="bottom" constant="9" id="D3I-Ry-qWW"/>
+                            <constraint firstItem="biU-wq-VIU" firstAttribute="top" secondItem="NcL-My-K47" secondAttribute="bottom" id="D3I-Ry-qWW"/>
                             <constraint firstAttribute="bottom" secondItem="KDc-oP-JYJ" secondAttribute="bottom" constant="10" id="XII-Hs-TK2"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="top" secondItem="61U-DM-8bn" secondAttribute="top" constant="20" id="Yky-s4-T9I"/>
                             <constraint firstItem="NcL-My-K47" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="b5k-cm-raf"/>
-                            <constraint firstItem="KDc-oP-JYJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="bottom" constant="3" id="j4k-5I-uKa"/>
+                            <constraint firstItem="KDc-oP-JYJ" firstAttribute="top" secondItem="biU-wq-VIU" secondAttribute="bottom" id="j4k-5I-uKa"/>
                             <constraint firstItem="biU-wq-VIU" firstAttribute="centerX" secondItem="61U-DM-8bn" secondAttribute="centerX" id="nBA-46-y3O"/>
                         </constraints>
                     </view>

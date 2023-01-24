@@ -8,6 +8,25 @@
 
 import Foundation
 
+enum ZMapLayoutMode: Int { // do not change the order, they are persisted
+	case linearMode
+	case circularMode
+
+	var next: ZMapLayoutMode {
+		switch self {
+			case .linearMode: return .circularMode
+			default:          return .linearMode
+		}
+	}
+
+	var title: String {
+		switch self {
+			case .linearMode: return "Tree"
+			default:          return "Star"
+		}
+	}
+}
+
 // MARK: - widget
 // MARK: -
 

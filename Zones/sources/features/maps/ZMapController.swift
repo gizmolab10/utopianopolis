@@ -18,25 +18,6 @@ var gMapController    : ZMapController? { return gControllers.controllerForID(.i
 var gMapView          : ZMapView?       { return gMapController?.view as? ZMapView }
 var gLinesAndDotsView : ZMapView?       { return gMapView?.decorationsView }
 
-enum ZMapLayoutMode: Int { // do not change the order, they are persisted
-	case linearMode
-	case circularMode
-
-	var next: ZMapLayoutMode {
-		switch self {
-		case .linearMode: return .circularMode
-		default:          return .linearMode
-		}
-	}
-
-	var title: String {
-		switch self {
-		case .linearMode: return "Tree"
-		default:          return "Star"
-		}
-	}
-}
-
 class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 	var                priorLocation = CGPoint.zero
@@ -213,7 +194,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		if  let  mapSize = mapView?.frame.size.dividedInHalf {
 			let   bigMap = gMapOffset.offsetBy(-dotHeight, 22.0)
 			let smallMap = CGPoint(x: -12.0, y: -6.0)
-			let exemplar = CGPoint(x: .zero, y: -6.0)
+			let exemplar = CGPoint(x: .zero, y: -8.0)
 			var   offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
 			if  !kIsPhone {
 				offset.y = -offset.y    // default values are in iphone coordinates whereas y coordination is opposite in non-iphone devices

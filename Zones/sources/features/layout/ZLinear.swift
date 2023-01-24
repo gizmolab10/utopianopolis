@@ -150,15 +150,17 @@ extension ZoneWidget {
 	}
 
 	func linearRelayoutHighlightRect() {
-		if  let     frame = textWidget?.frame,
-			let      zone = widgetZone,
-			let         c = controller {
-			let     thick = c.coreThickness * 4.0
-			let   fExpand = CGFloat(zone.showRevealDot ? 0.56 : -1.06)
-			let   mExpand = CGFloat(zone.showRevealDot ? 1.25 :  0.65)
-			let   xExpand = c.dotHeight * mExpand + thick
-			let   yExpand = c.dotHeight / -25.0 * mapReduction
-			highlightRect = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: c.dotHalfWidth * fExpand + thick, dy: .zero)
+		if  let      frame = textWidget?.frame,
+			let       zone = widgetZone,
+			let          c = controller {
+			let      thick = c.coreThickness
+			let showReveal = zone.showRevealDot
+			let    yExpand = c.dotHeight / -25.0 * mapReduction
+			let    fExpand = showReveal ? 0.56 : -1.06
+			let    xOffset = c.dotHalfWidth * fExpand + thick * 3.0
+			let    mExpand = showReveal ? 1.25 :  0.65
+			let    xExpand = c.dotHeight * mExpand + thick * 4.0
+			highlightRect  = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: xOffset, dy: .zero)
 		}
 	}
 

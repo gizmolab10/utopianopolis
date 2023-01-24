@@ -63,7 +63,6 @@ extension ZGenericController {
 
 extension ZFavoritesMapController {
 
-	override var horizontalGap: CGFloat { return super.horizontalGap * 0.9 }
 	override var coreThickness: CGFloat { return super.coreThickness * kSmallMapReduction }
 	override var  coreFontSize: CGFloat { return super .coreFontSize * kSmallMapReduction }
 
@@ -71,7 +70,7 @@ extension ZFavoritesMapController {
 
 extension ZHelpDotsExemplarController {
 
-	override var horizontalGap: CGFloat { return kDefaultHorizontalGap }
+	override var horizontalGap: CGFloat { return kDefaultHorizontalGap * 1.3 }
 	override var coreThickness: CGFloat { return kDefaultLineThickness }
 	override var  coreFontSize: CGFloat { return kDefaultBaseFontSize * 0.7 }
 
@@ -79,7 +78,6 @@ extension ZHelpDotsExemplarController {
 
 extension ZHelpController {
 
-	override var horizontalGap: CGFloat { return kDefaultHorizontalGap }
 	override var coreThickness: CGFloat { return kDefaultLineThickness }
 	override var  coreFontSize: CGFloat { return kDefaultBaseFontSize * 1.4 }
 
