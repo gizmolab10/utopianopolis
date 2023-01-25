@@ -1658,7 +1658,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func assignAndColorize(_ iText: String) {
 		if  userCanWrite {
 			zoneName  = iText
-			colorized = true
+			colorized = !colorized // WTF?
 
 			gTextEditor.updateText(inZone: self)
 		}
@@ -3606,7 +3606,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func convertToTitledLine() {
 		zoneName  = kHalfLineOfDashes + kSpace + unwrappedName + kSpace + kHalfLineOfDashes
-		colorized = true
+		colorized = !colorized // WTF?
 	}
 
 	func surround(by: String) -> Bool {
@@ -3650,19 +3650,28 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func convertToFromLine() -> Bool {
-		if  let childName = widget?.textWidget?.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
+		if  var childName = widget?.textWidget?.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
 			var location = 12
 
-			if  zoneName != childName {
-				zoneName  = childName
-				colorized = false
-				location  = 0
-			} else {
+			if      childName == zoneName {
+				if  zoneName  == kLineOfDashes {
+					zoneName   = kVerticalBar
+					childName  = kVerticalBar
+				}
+
 				convertToTitledLine()
+			} else {
+				if  childName == kVerticalBar {
+					childName  = kLineOfDashes
+				}
+
+				zoneName  = childName
+				colorized = !colorized // WTF?
+				location  = 0
 			}
 
 			gTextEditor.stopCurrentEdit()
-			editAndSelect(range: NSMakeRange(location,  childName.length))
+			editAndSelect(range: NSMakeRange(location, childName.length))
 
 			return true
 		}
@@ -3673,7 +3682,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func convertFromLineWithTitle() {
 		if  let childName = widget?.textWidget?.extractedTitle {
 			zoneName  = childName
-			colorized = false
+			colorized = !colorized // WTF?
 		}
 	}
 

@@ -665,7 +665,7 @@ extension Int {
 
 	func isWithin(_ range: ClosedRange<Int>) -> Bool    { return range.contains(self) }
 	func confine(within: Int)                -> Int     { return Int(float.confine(within: CGFloat(within))) }
-	var  stringInThousands                    : String  { return "\(((float / 500.0).rounded(.toNearestOrAwayFromZero) / 2.0).stringTo(precision: 1))" }
+	var  stringInThousands                    : String  { return "\(((float * 3.0 / 1000.0).rounded(.toNearestOrAwayFromZero) / 3.0).stringTo(precision: 1))" }
 	var  float                                : CGFloat { return CGFloat(self) }
 
 	func next(forward: Bool, max: Int) -> Int? {

@@ -339,7 +339,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func handleHyphen(_ COMMAND: Bool = false, _ OPTION: Bool = false) -> Bool {
 		if  COMMAND && OPTION {
-			convertToTitledLineAndRearrangeChildren()
+			delete(preserveChildren: true, convertToTitledLine: true)
 		} else if OPTION {
 			return gSelecting.currentMoveable.convertToFromLine()
 		} else if COMMAND {
@@ -439,13 +439,10 @@ class ZMapEditor: ZBaseEditor {
 			let promoteToParent: ClosureClosure = { innerClosure in
 				original.convertFromLineWithTitle()
 
-				grabs.moveIntoAndGrab(original) { reveal in
+				grabs.reversed().moveIntoAndGrab(original) { reveal in
 					original.grab()
-
-					gRelayoutMaps {
-						innerClosure()
-						onCompletion?()
-					}
+					innerClosure()
+					onCompletion?()
 				}
 			}
 
@@ -709,13 +706,9 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    // MARK: - lines
+    // MARK: - parents
     // MARK: -
-    
-    func convertToTitledLineAndRearrangeChildren() {
-        delete(preserveChildren: true, convertToTitledLine: true)
-    }
-	
+
 	func swapWithParent() {
 		if  gSelecting.currentMapGrabs.count == 1,
 			let zone = gSelecting.firstSortedGrab {
@@ -800,23 +793,26 @@ class ZMapEditor: ZBaseEditor {
 			gSelecting.clearPaste()
 			gSelecting.currentMapGrabs = []
 
-			for grab in grabs.reversed() {
+			for grab in grabs {
 				if !convertToTitledLine {       // delete, add to paste
 					grab.addToPaste()
 					grab.moveZone(to: grab.trashZone)
-				} else {                        // convert to titled line and insert above
-					grab.convertToTitledLine()
-					children.append(grab)
+				} else {
 					grab.addToGrabs()
+
+					if  let name = grab.zoneName, !name.contains(kHalfLineOfDashes) {                        // convert to titled line and insert above
+						grab.convertToTitledLine()
+						children.append(grab)
+					}
 				}
 
-				for child in grab.children.reversed() {
+				for child in grab.children {
 					children.append(child)
 					child.addToGrabs()
 				}
 			}
 
-			for child in children {
+			for child in children.reversed() {
 				child.orphan()
 				parent.addChildAndUpdateOrder(child, at: siblingIndex)
 			}
@@ -831,53 +827,48 @@ class ZMapEditor: ZBaseEditor {
 		onCompletion?()
 	}
 
-    func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
-        gDeferRedraw { [self] in
-            if  preserveChildren && !permanently {
-                preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
-                    gFavorites.updateFavoritesAndRedraw {
-                        gDeferringRedraw = false
-                        
-                        gRelayoutMaps()
-                    }
-                }
-            } else if let grab = gSelecting.rootMostMoveable {
-				let    inSmall = grab.isInFavorites // these three values
-				let     parent = grab.parentZone    // are out of date
-				let      index = grab.siblingIndex  // after delete zones, below
-
-				prepareUndoForDelete()
-                
-				gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
-					gDeferringRedraw = false
-
-					if  inSmall,
-						let i  = index,
-						let p  = parent {
-						let c  = p.count
-						if  c == 0 || c <= i {   // no more siblings
-							if  p.isInFavorites {
-								gFavorites.updateAllFavorites()
-							} else if c == 0 {
-								ZBookmarks.newOrExistingBookmark(targeting: gHere, addTo: gFavoritesHere)  // assure at least one bookmark in recents (targeting here)
-
-								if  p.isInBigMap {
-									gHere.grab()                                               // as though user clicked on background
-								}
-							}
-						} else {
-							let z = p.children[i]
-
-							z.grab()
-						}
+	func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
+		if  preserveChildren && !permanently {
+			preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
+				gFavorites.updateFavoritesAndRedraw {
+					FOREGROUND(after: 0.05) {
+						gRelayoutMaps()
 					}
+				}
+			}
+		} else if let grab = gSelecting.rootMostMoveable {
+			let    inSmall = grab.isInFavorites // these three values
+			let     parent = grab.parentZone    // are out of date
+			let      index = grab.siblingIndex  // after delete zones, below
 
-					gDeferringRedraw = false
-					gRelayoutMaps()
-                }
-            }
-        }
-    }
+			prepareUndoForDelete()
+
+			gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
+				if  inSmall,
+					let i  = index,
+					let p  = parent {
+					let c  = p.count
+					if  c == 0 || c <= i {   // no more siblings
+						if  p.isInFavorites {
+							gFavorites.updateAllFavorites()
+						} else if c == 0 {
+							ZBookmarks.newOrExistingBookmark(targeting: gHere, addTo: gFavoritesHere)  // assure at least one bookmark in recents (targeting here)
+
+							if  p.isInBigMap {
+								gHere.grab()                                               // as though user clicked on background
+							}
+						}
+					} else {
+						let z = p.children[i]
+
+						z.grab()
+					}
+				}
+
+				gRelayoutMaps()
+			}
+		}
+	}
 
 	func paste() { pasteInto(gSelecting.firstSortedGrab) }
 

@@ -293,12 +293,11 @@ class ZFavorites: ZSmallMapRecords {
 	// MARK: -
     
     func updateFavoritesAndRedraw(needsRedraw: Bool = true, _ onCompletion: Closure? = nil) {
-        if  updateAllFavorites() || needsRedraw {
-            gRelayoutMaps { onCompletion?() }
-        } else {
+        if  !updateAllFavorites(), !needsRedraw {
 			gFavoritesMapController.replaceAllToolTips(gModifierFlags)
-            onCompletion?()
         }
+
+		onCompletion?()
     }
 
     @discardableResult func updateAllFavorites() -> Bool {

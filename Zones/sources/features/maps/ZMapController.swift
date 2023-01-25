@@ -124,8 +124,13 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	}
 
 	func setNeedsDisplay() {
-		mapView?                  .setNeedsDisplay()
+		mapView?                 .setNeedsDisplay()
 		mapView?.decorationsView?.setNeedsDisplay()
+	}
+
+	func setAllSubviewsNeedDisplay() {
+		mapView?                 .setAllSubviewsNeedDisplay()
+		mapView?.decorationsView?.setAllSubviewsNeedDisplay()
 	}
 
 	var doNotLayout: Bool {
@@ -256,7 +261,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 			widget.grandRelayout()
 			updateAllToolTips(gModifierFlags) // potentially all new widgets (and their dots): regenerate all their tool tips
 			detectHover()
-			setNeedsDisplay()
+			setAllSubviewsNeedDisplay()
 		}
 	}
 

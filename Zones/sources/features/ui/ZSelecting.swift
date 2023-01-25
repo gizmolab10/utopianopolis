@@ -346,12 +346,13 @@ class ZSelecting: NSObject {
     func grab(_ iZones: ZoneArray?, updateBrowsingLevel: Bool = true) {
 		if  let zones = iZones {
 			ungrabAll(retaining: zones)
-			gSignal([.spCrumbs, .sDetails, .spSmallMap, .spPreferences])                // so color wells and breadcrumbs are updated
 
             if  updateBrowsingLevel,
                 let 		  level = zones.rootMost?.level {
                 gCurrentBrowseLevel = level
             }
+
+			gSignal([.spCrumbs, .sDetails, .spSmallMap, .spPreferences])                // so color wells and breadcrumbs are updated
         }
     }
     
