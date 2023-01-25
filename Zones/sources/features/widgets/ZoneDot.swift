@@ -107,17 +107,23 @@ class ZoneDot: ZPseudoView, ZToolTipper {
     // MARK: -
 
 	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		guard let      c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
+		guard let      c = controller ?? gHelpController else { return }    // for help dots, widget and controller are nil; so use help controller
+		let  strokeColor = parameters.color.withAlphaComponent(0.7)
+		let    fillColor = parameters.filled ? gBackgroundColor : strokeColor
+
 		let       radius = c.sideDotRadius
-		let        ovalX = radius + c.dotHalfWidth
+		let        ovalX = c.dotHalfWidth
 		let     diameter = radius * 2.0
 		let         size = CGSize.squared(diameter)
 		let       origin = iDirtyRect.center - CGPoint.squared(radius) - CGPoint(x: ovalX, y: .zero)
 		let         rect = CGRect(origin: origin, size: size)
 		let         path = ZBezierPath(ovalIn: rect)
-		path.lineWidth   = c.coreThickness * 1.2
+		path.lineWidth   = c.coreThickness * 2.0
 		path.flatness    = kDefaultFlatness
 
+		strokeColor.setStroke()
+		fillColor  .setFill()
+		path.stroke()
 		path.fill()
 	}
 
@@ -262,10 +268,6 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			// INDICATE CURRENT IN SMALL MAP //
 			// ////////////////////////////////
 
-			let color = parameters.color.withAlphaComponent(0.7)
-
-			color.setFill()
-			color.setStroke()
 			drawFavoriteSideDot(in: iDirtyRect, parameters)
 		} else if  isLinearMode,
 			gCountsMode == .dots,

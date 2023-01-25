@@ -94,8 +94,6 @@ class ZFiles: NSObject {
 	}
 
 	func migrate(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		gStartup.progressTimesReady = true // so progress bar will appear
-
 		if  !hasMine, databaseID == .mineID {
 			onCompletion?(0)                   // mine file does not exist, do nothing
 		} else {

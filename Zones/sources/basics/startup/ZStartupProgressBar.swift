@@ -16,11 +16,11 @@ import UIKit
 
 class ZStartupProgressBar: NSProgressIndicator {
 
-	func updateProgress() { doubleValue = minValue + ((maxValue - minValue) * gStartup.fractionOfClockTime)  }
+	func updateProgress() { doubleValue = minValue + ((maxValue - minValue) * gStartup.fractionOfLoadTime)  }
 
-	override func draw(_ iDirtyRect: CGRect) {
-		printDebug(.dTime, doubleValue.stringTo(precision: 2) + "      \(gCurrentOp)")
-		super.draw(frame)
-	}
+//	override func draw(_ iDirtyRect: CGRect) {
+//		printDebug(.dTime, doubleValue.stringTo(precision: 2) + "      \(gCurrentOp)")
+//		super.draw(frame)
+//	}
 
 }

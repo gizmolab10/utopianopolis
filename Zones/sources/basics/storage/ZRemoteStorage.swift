@@ -39,7 +39,8 @@ class ZRemoteStorage: NSObject {
     var lostAndFoundZone : Zone?       { return currentRecords.lostAndFoundZone }
     var      destroyZone : Zone?       { return currentRecords.destroyZone }
     var        trashZone : Zone?       { return currentRecords.trashZone }
-	var         rootZone : Zone? { get { return currentRecords.rootZone }  set { currentRecords.rootZone  = newValue } }
+	var         rootZone : Zone? { get { return currentRecords.rootZone } set { currentRecords.rootZone  = newValue } }
+
 	func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
 	func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
 	func cancel()                                { currentCloud?.currentOperation?.cancel() }
@@ -93,8 +94,8 @@ class ZRemoteStorage: NSObject {
 
 	var countStatus : String {
 		let lCount = totalLoadableRecordsCount
-		let tCount = totalRecordsCount.stringAsPerThousand + " thousand"
-		let suffix = lCount == 0 ? kEmpty : " (of \(lCount.stringAsPerThousand))"
+		let tCount = totalRecordsCount.stringInThousands + " thousand"
+		let suffix = lCount == 0 ? kEmpty : " (of \(lCount.stringInThousands))"
 
 		return tCount + suffix
 	}

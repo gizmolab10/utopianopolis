@@ -193,8 +193,6 @@ class ZOperations: NSObject {
 								// //////////// //
 
 								onCompletion()
-							} else {
-								gStartup.setProgressTime(for: operationID)
 							}
 						}
 					}

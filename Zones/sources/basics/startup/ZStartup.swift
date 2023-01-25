@@ -74,6 +74,7 @@ class ZStartup: NSObject {
 					gIsReadyToShowUI = true
 
 					gSignal([.sLaunchDone])
+//					updateDefaultProgressTime()
 
 					requestFeedback() {
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tPersist, .tHover]) // .tLicense
@@ -118,16 +119,11 @@ class ZStartup: NSObject {
 	// MARK: - startup progress times
 	// MARK: -
 
-	var  progressTimesReady = false
-	var    gotProgressTimes = false
-	var       progressTimes = [ZOperationID : Double]()
 	var    startupClockTime = Double.zero
 	var        savedElapsed = Double.zero
 	var               prior = Double.zero
 	var    elapsedClockTime : Double { return CACurrentMediaTime() - startupClockTime }
-	var fractionOfClockTime : Double { return elapsedClockTime / getAccumulatedProgressTime(untilExcluding: .oLoadingIdeas) }
-	var        dataLoadTime : Int    { return gRemoteStorage.totalLoadableRecordsCount / timePerRecord }
-	func captureElapsedTime()        { savedElapsed = elapsedClockTime }
+	func captureElapsedTime()        { savedElapsed     = elapsedClockTime }
 	func     setStartupTime()        { startupClockTime = CACurrentMediaTime() - savedElapsed } // mach_absolute_time()
 
 	var oneTimerIntervalHasElapsed : Bool {
@@ -138,126 +134,6 @@ class ZStartup: NSObject {
 		}
 
 		return enough
-	}
-
-	var totalProgressTime : Double {
-		if  assureProgressTimesAreLoaded() {
-			return progressTimes.values.reduce(0, +)
-		}
-
-		return Double(Int.max)
-	}
-
-	var timePerRecord : Int {
-		switch gCDMigrationState {         // TODO: adjust for cpu speed
-			case .normal: return 800
-			default:      return 130
-		}
-	}
-
-	func loadProgressTimes() {
-		if  let string = getPreferenceString(for: kProgressTimes) {
-			let  pairs = string.components(separatedBy: kCommaSeparator)
-
-			for op in ZOperationID.oStartingUp.rawValue ... ZOperationID.oEnd.rawValue {
-				setProgressTime(nil, for: op)
-			}
-
-			for pair in pairs {
-				let       items = pair.components(separatedBy: kColonSeparator)
-				if  items.count > 1,
-					let      op = items[0].integerValue,
-					let    time = items[1].doubleValue {
-
-					setProgressTime(time, for: op)
-				}
-			}
-		}
-	}
-
-	func storeProgressTimes() {
-		var separator = kEmpty
-		var  storable = kEmpty
-
-		for (op, value) in progressTimes {
-			if  value >= 1.5 {
-				storable.append("\(separator)\(op)\(kColonSeparator)\(value)")
-
-				separator = kCommaSeparator
-			}
-		}
-
-		setPreferencesString(storable, for: kProgressTimes)
-	}
-
-	func setProgressTime(_  value: Double?, for opInt: Int) {
-		if  let op = ZOperationID(rawValue: opInt) {
-			let time = value ?? Double(op.defaultProgressTime) // when value is nil, insert default
-
-			if  time > 1 {
-				progressTimes[op] = time
-			}
-		}
-	}
-
-	func setProgressTime(for op: ZOperationID) {
-		if  !gHasFinishedStartup, op != .oUserPermissions,
-			assureProgressTimesAreLoaded() {
-
-			let expected = getAccumulatedProgressTime(untilExcluding: op)
-			let elapsed  = elapsedClockTime
-			let delta    = expected - elapsed
-
-			if  delta   >= 1.5 {
-				progressTimes[op] = delta
-
-				storeProgressTimes()
-			}
-
-			printDebug(.dTime, delta.stringTo(precision: 2) + "      \(gCurrentOp) \(elapsed.stringTo(precision: 2))")
-		}
-	}
-
-	func assureProgressTimesAreLoaded() -> Bool {
-		if  progressTimesReady, !gotProgressTimes {
-			loadProgressTimes()
-
-			gotProgressTimes = true
-		}
-
-		return gotProgressTimes
-	}
-
-	func getAccumulatedProgressTime(untilExcluding op: ZOperationID) -> Double {
-		var sum = Double.zero
-
-		if  assureProgressTimesAreLoaded() {
-			let opValue = op.rawValue
-
-			for opID in ZOperationID.allCases {
-				if  opValue > opID.rawValue {          // all ops prior to op parameter
-					sum += progressTimes[opID] ?? kDefaultProgressTime
-				}
-			}
-		}
-
-		return sum
-	}
-
-}
-
-extension ZOperationID {
-
-	var defaultProgressTime : Int {
-		switch self {
-			case .oLoadingIdeas:     return gStartup.dataLoadTime
-			case .oMigrateFromCloud: return gNeedsMigrate ? 50 : 0
-			case .oWrite:            return gWriteFiles   ? 40 : 0
-			case .oResolve:          return  4
-			case .oManifest:         return  3
-			case .oAdopt:            return  2
-			default:                 return  1
-		}
 	}
 
 }

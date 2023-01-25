@@ -55,7 +55,7 @@ extension ZGenericController {
 	var            dotWidth : CGFloat { return  dotHeight * kDragDotReduction }
 	var        dotHalfWidth : CGFloat { return  dotWidth  / 2.0 }
 	var      dotEighthWidth : CGFloat { return  dotWidth  / 8.0 }
-	var       sideDotRadius : CGFloat { return  dotWidth  * 0.3 + coreThickness * 1.2 }
+	var       sideDotRadius : CGFloat { return  dotWidth  * 0.25 }
 	var                font :   ZFont { return .systemFont(ofSize: fontSize) }
 	func  dotSize(forReveal : Bool) -> CGSize { return CGSize(width: forReveal ? dotHeight : dotWidth, height: dotHeight) }
 

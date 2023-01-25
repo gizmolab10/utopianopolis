@@ -557,6 +557,26 @@ var gScaling: Double {
 	}
 }
 
+var gDefaultProgressTime: Double {
+	get {
+		var value: Double? = UserDefaults.standard.object(forKey: kProgressTimeKey) as? Double
+
+		if  value == nil {
+			value  = kDefaultProgressTime
+
+			UserDefaults.standard.set(value, forKey:kProgressTimeKey)
+			UserDefaults.standard.synchronize()
+		}
+
+		return value!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue, forKey:kProgressTimeKey)
+		UserDefaults.standard.synchronize()
+	}
+}
+
 var gLineThickness: CGFloat {
 	get {
 		var value: CGFloat? = UserDefaults.standard.object(forKey: kThickness) as? CGFloat

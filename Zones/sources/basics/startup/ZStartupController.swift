@@ -23,7 +23,6 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	@IBOutlet var acccessToAppleID  : ZView?
 	@IBOutlet var enableCloudDrive  : ZView?
 	@IBOutlet var spinner           : ZProgressIndicator?
-	@IBOutlet var thermometerBar    : ZStartupProgressBar?
 	var           startupCompletion : Closure?
 
 	override func awakeFromNib() {
@@ -69,24 +68,17 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		}
 	}
 
-	func updateStartupStatus() {
-
-		// internet availability is not required until cloud access actually works
-
+	func updateStartupStatus() {   // internet availability is not required until cloud access actually works
 		acccessToAppleID?.isHidden = true  // !hasInternet || gStartupLevel != .firstTime         // .firstTime shows this
 		enableCloudDrive?.isHidden = true  // !hasInternet || gStartupLevel != .pleaseEnableDrive //  "  "  "
 		pleaseWait?      .isHidden = false //  hasInternet && notWait                             //  "  "  "
+		let             statusText = gCurrentOp.fullStatus
+		let               rootView = gMainWindow?.contentView
+		operationLabel?      .text = statusText
 
-		if  gStartup.assureProgressTimesAreLoaded() {
-			let       statusText = gCurrentOp.fullStatus
-			let         rootView = gMainWindow?.contentView
-			operationLabel?.text = statusText
-
-			thermometerBar?.updateProgress()
-			gApplication?.setWindowsNeedUpdate(true)
-			gApplication?.updateWindows()
-			rootView?.setAllSubviewsNeedDisplay()
-		}
+		gApplication?.setWindowsNeedUpdate(true)
+		gApplication?.updateWindows()
+		rootView?.setAllSubviewsNeedDisplay()
 	}
 
 	@IBAction func handlePermissionAction(_ button: ZButton) {

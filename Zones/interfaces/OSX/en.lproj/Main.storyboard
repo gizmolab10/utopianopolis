@@ -1836,9 +1836,6 @@ DQ
                                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
-                                                    <progressIndicator wantsLayer="YES" maxValue="100" doubleValue="1" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="2xi-Mf-riK" customClass="ZStartupProgressBar" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="270" width="450" height="20"/>
-                                                    </progressIndicator>
                                                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="b5J-39-GIU">
                                                         <rect key="frame" x="-2" y="275" width="454" height="16"/>
                                                         <constraints>
@@ -1879,20 +1876,17 @@ DQ
                                                     <constraint firstAttribute="trailing" secondItem="ab6-2E-Tk7" secondAttribute="trailing" id="9aB-1d-uJ7"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="top" secondItem="rmD-x7-RtA" secondAttribute="top" id="AQM-Sx-kce"/>
                                                     <constraint firstItem="b5J-39-GIU" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="DJt-Xf-pfx"/>
-                                                    <constraint firstItem="ab6-2E-Tk7" firstAttribute="top" secondItem="2xi-Mf-riK" secondAttribute="bottom" id="DyG-bD-3nL"/>
                                                     <constraint firstItem="Bpe-so-Utw" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="Fjz-mY-LvT"/>
-                                                    <constraint firstItem="2xi-Mf-riK" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="UgY-DM-pFT"/>
+                                                    <constraint firstItem="b5J-39-GIU" firstAttribute="top" secondItem="kKM-9B-fW0" secondAttribute="bottom" constant="6" id="SlR-8R-x00"/>
                                                     <constraint firstAttribute="trailing" secondItem="b5J-39-GIU" secondAttribute="trailing" id="VAz-EV-aFz"/>
-                                                    <constraint firstItem="2xi-Mf-riK" firstAttribute="top" secondItem="kKM-9B-fW0" secondAttribute="bottom" constant="8" id="ckq-Yb-bP4"/>
                                                     <constraint firstAttribute="bottom" secondItem="GXv-wU-eO3" secondAttribute="bottom" constant="14" id="dI2-H3-BuL"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="top" secondItem="Bpe-so-Utw" secondAttribute="bottom" constant="8" id="eLN-Jp-aZL"/>
-                                                    <constraint firstAttribute="trailing" secondItem="2xi-Mf-riK" secondAttribute="trailing" id="fNg-Gi-UtW"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="ggn-Vd-Fw6"/>
                                                     <constraint firstItem="ab6-2E-Tk7" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="t9F-Pw-VJN"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="tel-TX-yu7"/>
                                                     <constraint firstAttribute="trailing" secondItem="Bpe-so-Utw" secondAttribute="trailing" id="v9Q-bx-OJi"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="wDF-tk-EUz"/>
-                                                    <constraint firstItem="b5J-39-GIU" firstAttribute="top" secondItem="kKM-9B-fW0" secondAttribute="bottom" constant="6" id="ze5-Jm-waO"/>
+                                                    <constraint firstItem="ab6-2E-Tk7" firstAttribute="top" secondItem="b5J-39-GIU" secondAttribute="bottom" constant="4" id="zFc-0j-SUr"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
@@ -1938,7 +1932,6 @@ DQ
                         <outlet property="operationLabel" destination="ab6-2E-Tk7" id="UWg-bo-ff3"/>
                         <outlet property="pleaseWait" destination="rmD-x7-RtA" id="Pgi-uv-g7c"/>
                         <outlet property="spinner" destination="WgU-WR-q9Z" id="HsV-21-7aa"/>
-                        <outlet property="thermometerBar" destination="2xi-Mf-riK" id="GCP-V7-8ij"/>
                     </connections>
                 </viewController>
                 <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
