@@ -21,7 +21,6 @@ var gAppDelegate: ZDesktopAppDelegate?
 @NSApplicationMain
 
 class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
-
     var needsSetup = true
 
     // MARK: - delegation
@@ -36,6 +35,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 
             UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
 			UserDefaults.standard.synchronize()
+			gApplication?.registerUserInterfaceItemSearchHandler(gHelpSearchDelegate)
 			gApplication?.registerForRemoteNotifications(matching: .badge)
             gStartup.startupCloudAndUI()
 			gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { note in
@@ -71,32 +71,26 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			}
         }
     }
-	
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         printDebug(.dError, "hah!")
     }
 
-
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         // printDebug(.dError, deviceToken)
     }
 
-
     func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         printDebug(.dError, "\(error)")
     }
-    
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
     }
 
-
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         return .terminateNow
     }
-
 
 	var workingEditor: ZBaseEditor? {
 		if  gIsHelpFrontmost {
@@ -110,7 +104,10 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			default: 	       return nil
 		}
 	}
-    
+
+	// MARK: - menu
+	// MARK: -
+
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
 		if  let   item = iItem,
 			let editor = workingEditor {

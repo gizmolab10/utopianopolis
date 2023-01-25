@@ -116,7 +116,7 @@ class ZStartup: NSObject {
 		}
 	}
 
-	// MARK: - startup progress times
+	// MARK: - startup progress
 	// MARK: -
 
 	var    startupClockTime = Double.zero

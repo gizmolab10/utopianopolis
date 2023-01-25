@@ -238,6 +238,7 @@
 		A764067C23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
 		A764067D23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
 		A764067E23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
+		A765258D2981B81B0080111C /* ZHelpSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A765258C2981B81B0080111C /* ZHelpSearchDelegate.swift */; };
 		A76D193B2703FEBB00E04044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76D193A2703FEBB00E04044 /* AppDelegate.swift */; };
 		A76D193D2703FEBB00E04044 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76D193C2703FEBB00E04044 /* ViewController.swift */; };
 		A76D19402703FEBB00E04044 /* simple.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A76D193E2703FEBB00E04044 /* simple.xcdatamodeld */; };
@@ -587,6 +588,7 @@
 		A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsController.swift; sourceTree = "<group>"; };
 		A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsView.swift; sourceTree = "<group>"; };
 		A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbs.swift; sourceTree = "<group>"; };
+		A765258C2981B81B0080111C /* ZHelpSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpSearchDelegate.swift; sourceTree = "<group>"; };
 		A76D19382703FEBB00E04044 /* simple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = simple.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A76D193A2703FEBB00E04044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A76D193C2703FEBB00E04044 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -1119,6 +1121,7 @@
 				A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */,
 				A7D2D65C2492E12900F652B0 /* ZHelpGridView.swift */,
 				A7E9A3AF23C115470064C89A /* ZHelpMapData.swift */,
+				A765258C2981B81B0080111C /* ZHelpSearchDelegate.swift */,
 				A70E648B27B73352003C457E /* ZHelpWindowController.swift */,
 			);
 			path = help;
@@ -1670,6 +1673,7 @@
 				A705B0A22780F02800DBA20F /* ZDetecting.swift in Sources */,
 				A786C6F325DF5F9F00B23FBF /* ZDebugController.swift in Sources */,
 				A7D2D649248F119A00F652B0 /* ZHelpEssayData.swift in Sources */,
+				A765258D2981B81B0080111C /* ZHelpSearchDelegate.swift in Sources */,
 				0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */,
 				A70E8204290611AC00E66963 /* ZTraverse.swift in Sources */,
 				A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */,

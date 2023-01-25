@@ -15,11 +15,11 @@ import UIKit
 #endif
 
 var gSimple: Simple?
-var gAppDelegate: AppDelegate?
+var gAppDelegate: SimpleAppDelegate?
 func gSave() { gAppDelegate?.saveAction(nil) }
 
 @main
-class AppDelegate: NSObject, NSApplicationDelegate {
+class SimpleAppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Insert code here to initialize your application

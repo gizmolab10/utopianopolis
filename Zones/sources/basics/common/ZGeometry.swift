@@ -54,6 +54,7 @@ extension ZGenericController {
 	var    circleIdeaRadius : CGFloat { return  dotHeight * 2.2 }
 	var            dotWidth : CGFloat { return  dotHeight * kDragDotReduction }
 	var        dotHalfWidth : CGFloat { return  dotWidth  / 2.0 }
+	var      dotThirdhWidth : CGFloat { return  dotWidth  / 3.0 }
 	var      dotEighthWidth : CGFloat { return  dotWidth  / 8.0 }
 	var       sideDotRadius : CGFloat { return  dotWidth  * 0.25 }
 	var                font :   ZFont { return .systemFont(ofSize: fontSize) }

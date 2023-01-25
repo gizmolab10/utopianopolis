@@ -112,10 +112,9 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		let    fillColor = parameters.filled ? gBackgroundColor : strokeColor
 
 		let       radius = c.sideDotRadius
-		let        ovalX = c.dotHalfWidth
 		let     diameter = radius * 2.0
 		let         size = CGSize.squared(diameter)
-		let       origin = iDirtyRect.center - CGPoint.squared(radius) - CGPoint(x: ovalX, y: .zero)
+		let       origin = iDirtyRect.center - CGPoint.squared(radius) - CGPoint(x: c.dotThirdhWidth, y: .zero)
 		let         rect = CGRect(origin: origin, size: size)
 		let         path = ZBezierPath(ovalIn: rect)
 		path.lineWidth   = c.coreThickness * 2.0
