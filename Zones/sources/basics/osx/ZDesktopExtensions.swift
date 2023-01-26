@@ -80,7 +80,7 @@ public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
 public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
 let kVerticalWeight      = CGFloat(1)
-var gIsPrinting          : Bool { return NSPrintOperation.current != nil }
+var gIsPrinting          = false
 var gFavoritesAreVisible : Bool { return gDetailsViewIsVisible(for: .vFavorites) }
 protocol ZScrollDelegate : NSObjectProtocol {}
 
@@ -414,6 +414,7 @@ extension ZTextView {
 
 	@objc override func printView() { // ZTextView
 		if  gProducts.hasEnabledSubscription {
+			gIsPrinting      = true
 			var view: NSView = self
 			let    printInfo = NSPrintInfo.shared
 			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
@@ -430,6 +431,7 @@ extension ZTextView {
 			printInfo.updateFromPMPrintSettings()
 			printInfo.updateFromPMPageFormat()
 			NSPrintOperation(view: view, printInfo: printInfo).run()
+			gIsPrinting      = false
 		}
 	}
 
@@ -520,6 +522,7 @@ extension ZView {
 
 	@objc func printView() { // ZView
 		if  gProducts.hasEnabledSubscription {
+			gIsPrinting         = true
 			let       printInfo = NSPrintInfo.shared
 			printInfo.topMargin = 72.0
 			let         isWider = bounds.width > bounds.height
@@ -538,6 +541,7 @@ extension ZView {
 			printInfo.updateFromPMPrintSettings()
 			printInfo.updateFromPMPageFormat()
 			NSPrintOperation(view: self, printInfo: printInfo).run()
+			gIsPrinting         = false
 		}
 	}
 

@@ -54,17 +54,19 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func pingRunloop() {
-		startupUpdate()
-		FOREGROUND(forced: true) {
-			RunLoop.current.run(until: Date().addingTimeInterval(0.00001)) // invoke draw
+		startupUpdate {
+			FOREGROUND(forced: true) {
+				RunLoop.current.run(until: Date().addingTimeInterval(0.01)) // invoke draw
+			}
 		}
 	}
 
-	func startupUpdate() {
+	func startupUpdate(_ closure: Closure? = nil) {
 		if  gHasFinishedStartup {
 			gTimers.stopTimer (for: .tStartup)
 		} else if gStartup.oneTimerIntervalHasElapsed {
 			updateStartupStatus()
+			closure?()
 		}
 	}
 

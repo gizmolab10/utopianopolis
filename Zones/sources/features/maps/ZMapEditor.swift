@@ -70,7 +70,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-		if !gIsEditingStateChanging,
+		if !gIsEditingStateChanging, !gIsPrinting,
 		    var     key = iKey {
 			let   arrow = key.arrow
 			let CONTROL = flags.hasControl
@@ -830,7 +830,7 @@ class ZMapEditor: ZBaseEditor {
 	func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
 		if  preserveChildren && !permanently {
 			preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
-				gFavorites.updateFavoritesAndRedraw {
+				gFavorites.updateFavoritesAndRedraw(needsRedraw: false) {
 					FOREGROUND(after: 0.05) {
 						gRelayoutMaps()
 					}

@@ -1130,7 +1130,7 @@ CA
                                     <outlet property="titleView" destination="Q1p-3k-xdd" id="nJu-rc-OAM"/>
                                 </connections>
                             </customView>
-                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uYG-mD-FXW">
+                            <button hidden="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uYG-mD-FXW">
                                 <rect key="frame" x="408" y="16" width="25" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="Je6-hR-luc"/>
@@ -1837,9 +1837,9 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <textField verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ab6-2E-Tk7">
-                                                        <rect key="frame" x="-2" y="250" width="454" height="21"/>
+                                                        <rect key="frame" x="221" y="243" width="8" height="28"/>
                                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="4iQ-Bz-ATj">
-                                                            <font key="font" metaFont="system" size="18"/>
+                                                            <font key="font" metaFont="system" size="24"/>
                                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" white="1" alpha="0.00016505281689999999" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         </textFieldCell>
@@ -1863,13 +1863,12 @@ DQ
                                                     <constraint firstAttribute="trailing" secondItem="kKM-9B-fW0" secondAttribute="trailing" id="64a-a0-lta"/>
                                                     <constraint firstItem="Bpe-so-Utw" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="7Pa-L5-sLy"/>
                                                     <constraint firstItem="ab6-2E-Tk7" firstAttribute="top" secondItem="kKM-9B-fW0" secondAttribute="bottom" constant="26" id="8wo-D1-Lz9"/>
-                                                    <constraint firstAttribute="trailing" secondItem="ab6-2E-Tk7" secondAttribute="trailing" id="9aB-1d-uJ7"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="top" secondItem="rmD-x7-RtA" secondAttribute="top" id="AQM-Sx-kce"/>
                                                     <constraint firstItem="Bpe-so-Utw" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="Fjz-mY-LvT"/>
+                                                    <constraint firstItem="ab6-2E-Tk7" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="TkD-W0-irr"/>
                                                     <constraint firstAttribute="bottom" secondItem="GXv-wU-eO3" secondAttribute="bottom" constant="14" id="dI2-H3-BuL"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="top" secondItem="Bpe-so-Utw" secondAttribute="bottom" constant="8" id="eLN-Jp-aZL"/>
                                                     <constraint firstItem="kKM-9B-fW0" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="ggn-Vd-Fw6"/>
-                                                    <constraint firstItem="ab6-2E-Tk7" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="t9F-Pw-VJN"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="leading" secondItem="rmD-x7-RtA" secondAttribute="leading" id="tel-TX-yu7"/>
                                                     <constraint firstAttribute="trailing" secondItem="Bpe-so-Utw" secondAttribute="trailing" id="v9Q-bx-OJi"/>
                                                     <constraint firstItem="GXv-wU-eO3" firstAttribute="centerX" secondItem="rmD-x7-RtA" secondAttribute="centerX" id="wDF-tk-EUz"/>

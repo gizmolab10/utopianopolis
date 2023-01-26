@@ -74,11 +74,12 @@ class ZStartup: NSObject {
 					gIsReadyToShowUI = true
 
 					gSignal([.sLaunchDone])
-//					updateDefaultProgressTime()
 
 					requestFeedback() {
 						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tPersist, .tHover]) // .tLicense
 						gSignal([.sSwap, .spMain, .spCrumbs, .spRelayout, .spDataDetails, .spPreferences])
+
+						gMainController?.helpButton?.isHidden = false
 					}
 				}
 			}
@@ -128,7 +129,7 @@ class ZStartup: NSObject {
 
 	var oneTimerIntervalHasElapsed : Bool {
 		let current = elapsedClockTime
-		let enough  = (current - prior) > kOneTimerInterval
+		let enough  = (current - prior) > kOneStartupInterval
 		if  enough  {
 			prior   = current
 		}

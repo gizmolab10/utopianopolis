@@ -297,6 +297,10 @@ class ZFavorites: ZSmallMapRecords {
 			gFavoritesMapController.replaceAllToolTips(gModifierFlags)
         }
 
+		if  needsRedraw {
+			gRelayoutMaps()
+		}
+
 		onCompletion?()
     }
 

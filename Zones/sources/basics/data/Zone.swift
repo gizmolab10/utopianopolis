@@ -1461,8 +1461,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if let next = gListsGrowDown ? children.last : children.first {
 			next.grab()
 			gFavorites.setHere(to: self)
-			gFavorites.updateFavoritesAndRedraw(needsRedraw: true)
-			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+			gFavorites.updateFavoritesAndRedraw {
+				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+			}
 		}
 	}
 
@@ -2257,8 +2258,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				onCompletion?(false)
 			} else if target.isInFavorites {
 				gFavorites.setHere(to: target)
-				gFavorites.updateFavoritesAndRedraw(needsRedraw: true)
-				onCompletion?(false)
+				gFavorites.updateFavoritesAndRedraw {
+					onCompletion?(false)
+				}
 			} else {
 				if  gIsEssayMode {
 					gControllers.swapMapAndEssay(force: .wMapMode)

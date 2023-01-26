@@ -263,12 +263,13 @@ class ZSelecting: NSObject {
 		if !selectionOnly {
 			currentMoveable.recount()
 		}
-
+		
 		updateBrowsingLevel()
-        updateCousinList()
-        gFavorites.updateFavoritesAndRedraw(needsRedraw: needsRedraw)
-		gSignal([.sDetails])
-    }
+		updateCousinList()
+		gFavorites.updateFavoritesAndRedraw(needsRedraw: needsRedraw) {
+			gSignal([.sDetails])
+		}
+	}
 
 	func handleDuplicates(_ COMMAND: Bool) {
 		let grabs = simplifiedGrabs
