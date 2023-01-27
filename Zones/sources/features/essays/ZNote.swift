@@ -42,7 +42,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location }
-	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kNoteDefault }
+	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kDefaultNoteText }
 	var               isNote : Bool      { return !(zone?.hasChildNotes ?? false) }
 	var    	            zone : Zone?
 

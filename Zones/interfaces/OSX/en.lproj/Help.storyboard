@@ -133,28 +133,28 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <subviews>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="xnX-b2-ZbK" userLabel="Essay Introduction">
-                                        <rect key="frame" x="0.0" y="603" width="1152" height="222"/>
+                                        <rect key="frame" x="0.0" y="611" width="1152" height="214"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="222" id="ETB-M9-wQK"/>
+                                            <constraint firstAttribute="height" constant="214" id="ETB-M9-wQK"/>
                                         </constraints>
                                         <connections>
                                             <segue destination="oot-pe-OOD" kind="embed" id="lb6-W0-7Pj"/>
                                         </connections>
                                     </containerView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Irq-gp-pkb" userLabel="Top Horizontal Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="602" width="1152" height="1"/>
+                                        <rect key="frame" x="0.0" y="610" width="1152" height="1"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="5jy-EA-JHq"/>
                                         </constraints>
                                     </customView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="PcV-Nl-m8i" userLabel="Center Vertical Line" customClass="ZLineView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="576" y="0.0" width="1" height="602"/>
+                                        <rect key="frame" x="576" y="0.0" width="1" height="610"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="1" id="aEd-8r-MKM"/>
                                         </constraints>
                                     </customView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="eYP-Bj-W4Q" userLabel="Essay Graphicals">
-                                        <rect key="frame" x="0.0" y="0.0" width="576" height="452"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="576" height="460"/>
                                         <connections>
                                             <segue destination="hfc-IY-bB0" kind="embed" id="4Lu-IR-AJz"/>
                                         </connections>

@@ -8,7 +8,7 @@
 
 import Foundation
 
-let essayPrefixArray = Array(repeating: kEmpty, count: 3 * 14)
+let essayPrefixArray = Array(repeating: kEmpty, count: 3 * 13)
 
 class ZHelpEssayData: ZHelpData {
 
@@ -32,26 +32,22 @@ class ZHelpEssayData: ZHelpData {
 
 	let essayColumnTwo: StringsArray = essayPrefixArray + [
 		"",																							"",	"",
-		"!KEYS, ALWAYS",							 												"",	"",
+		"!ALWAYS",									 												"",	"",
 		"",																							"",	"",
 		"_KEY",			 																			"", "",
 		"0ESCAPE", 						"discard unsaved changes and exit the editor",			 		"",
 		"",																							"",	"",
 		"_COMMAND + KEY", 																			"", "",
 		"0RETURN", 						"save changes and exit the editor",								"",
-		"0[ or ]",						"save changes and edit the prior or next essay (or note)",		"",
+		"0[ or ]",						"save changes and edit the prior or next essay / note",			"",
+		"0D",							"convert selected text into child note",						"",
+		"0J",							"add boilerplate to empty notes (use OPTION to remove)",		"",
+		"0N",							"save changes and toggle between essay and note",				"",
 		"0S",							"save changes",													"",
 		"0T",							"lookup selection in thesaurus",								"",
 		"",																							"",	"",
 		"_COMMAND + OPTION + CONTROL + KEY", 														"", "",
 		"0LEFT ARROW", 					"edit the containing essay",									"",
-		"",																							"",	"",
-		"",																							"",	"",
-		"!KEYS, WHEN NO NOTES ARE GRABBED",			 												"", "",
-		"",																							"",	"",
-		"_COMMAND + KEY", 																			"", "",
-		"0J",							"add boilerplate to empty notes (use OPTION to remove)",		"",
-		"0N",							"save changes and toggle between essay and note",				"",
 		"",																							"",	"",
 		"",																							"",	"",
 		"!WHEN ONE OR MORE NOTES ARE GRABBED (e.g., see bottom left)", 								"", "",

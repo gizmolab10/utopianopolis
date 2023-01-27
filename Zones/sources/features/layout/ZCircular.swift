@@ -390,8 +390,7 @@ extension ZoneLine {
 	var circularDraggingDotAbsoluteFrame: CGRect {
 		var rect = CGRect.zero
 
-		if  let  isBig = controller?.isBigMap,
-			let widget = parentWidget,
+		if  let widget = parentWidget,
 			let  angle = dragAngle {
 			let vector = CGPoint(x: length, y: .zero).rotate(by: Double(angle))
 			let center = widget.absoluteCenter

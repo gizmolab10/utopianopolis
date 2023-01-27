@@ -151,9 +151,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var essayRecordName  : String?
 
 	var selectedNotes : [ZNote] {
+		gCurrentEssay?.updateNoteOffsets()
+
 		return (gCurrentEssay?.zone?.zonesWithVisibleNotes.filter {
-			$0.note?.noteRange != nil &&
-			selectedRange.intersects($0.note!.noteRange.extendedBy(1))
+			guard let range = $0.note?.noteRange else { return false }
+			return selectedRange.intersects(range.extendedBy(1))
 		}.map {
 			$0.note!
 		})!
@@ -513,7 +515,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			if  enabled {
 				switch key {
 					case "b":  applyToSelection(BOLD: true)
-					case "d":  convertToChild(flags); return true
+					case "d":  convertToChild(); return true
 					case "e":  grabSelectedTextForSearch()
 					case "f":  gSearching.showSearch(OPTION)
 					case "g":  searchAgain(OPTION)
@@ -546,7 +548,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else if CONTROL {
 			if  enabled {
 				switch key {
-					case "d": convertToChild(flags)
+					case "d": convertToChild()
 					case "w": showLinkPopup()
 					default:  return false
 				}
@@ -562,7 +564,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		} else if OPTION, enabled {
 			switch key {
-				case "d": convertToChild(flags)
+				case "d": convertToChild()
 				default:  return false
 			}
 
@@ -611,7 +613,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			}
 		} else if  SPLAYED {
 			switch arrow {
-				case .right: convertSentencesIntoChildIdeas(flags)
+				case .right: convertSentencesIntoChildIdeas()
 				default:     break
 			}
 		} else if  COMMAND && SHIFT {
@@ -928,12 +930,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	var lastGrabbedDot : ZEssayDragDot? {
-		var grabbed : ZEssayDragDot?
+		var    grabbed : ZEssayDragDot?
 
 		for dot in dragDots {
 			if  let zone = dot.note?.zone,
 				grabbedZones.contains(zone) {
-				grabbed = dot
+				grabbed  = dot
 			}
 		}
 
@@ -949,9 +951,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let     c = textContainer {
 			let zones = zone.zonesWithVisibleNotes
 			let level = zone.level
+
+			essay.updateNoteOffsets()
+
 			for (index, zone) in zones.enumerated() {
 				if  var note   = zone.note {
-					if  index == 0 { // huh?
+					if  index == 0 {
 						note   = essay
 					}
 
@@ -1580,12 +1585,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			zone.traverseAllProgeny { child in
 				if  conceal {
 					if  let string = child.maybeTraitFor(.tNote)?.text,
-						string == kNoteDefault {
+						string == kDefaultNoteText {
 						child.deleteNote()
 					}
 				} else {
 					if !child.hasNoteOrEssay {
-						child.setTraitText(kNoteDefault, for: .tNote)  // create an empty note trait, add to child
+						child.setTraitText(kDefaultNoteText, for: .tNote)  // create an empty note trait, add to child
 					}
 				}
 			}
@@ -1688,54 +1693,32 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		gSignal([.spCrumbs])
 	}
 
-	func convertSentencesIntoChildIdeas(_ flags: ZEventFlags) {
+	func convertSentencesIntoChildIdeas() {
 		if  let s = selectionString {
-			let a = s.separatedIntoSentences   // separate into sentences
+			let a = s.separatedIntoSentences        // separate into sentences
 			// delete the text
 
-			for sentence in a {
-				createNoteNamed(sentence, flags)   			// create a child idea from each
+			for sentence in a {                     // create a child idea from each
+				createNoteNamed(sentence)           // add them as notes to the essay
 			}
-			// add them as notes to the essay
 		}
 	}
 
-	private func convertToChild(_ flags: ZEventFlags) { createNoteNamed(selectionString, flags) }
+	private func convertToChild() { createNoteNamed(selectionString) }
 
-	private func createNoteNamed(_ name: String?, _ flags: ZEventFlags) {
+	private func createNoteNamed(_ name: String?) {
 		if  let   text = name, text.length > 0,
 			let parent = selectedZone {
 			let   dbID = parent.databaseID
+			let  child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new zone from text
 
-			func child(named name: String, withText: String) {
-				let child = Zone.uniqueZoneNamed(name, databaseID: dbID)   	// create new zone from text
+			insertText(kEmpty, replacementRange: selectedRange)	            // remove selected text
+			save()
+			parent.addChildNoDuplicate(child)                               // add as new child of parent
+			child.setTraitText(kDefaultNoteText, for: .tNote)               // boilerplate
+			gCurrentEssayZone?.createNote()
 
-				parent.addChildNoDuplicate(child)                           // add as new child of parent
-				child.setTraitText(text, for: .tNote)                       // create note from text in the child
-				gCurrentEssayZone?.createNote()
-
-				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.noteTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
-			}
-
-			if        flags.exactlyOtherSpecial {
-				child(named: "idea", withText: text)
-			} else if flags.exactlyAll {
-				child(named: text,   withText: kNoteDefault)
-			} else {
-				let child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new (to be child) zone from text
-				insertText(kEmpty, replacementRange: selectedRange)	        // remove text
-				parent.addChildNoDuplicate(child)
-				child.asssureIsVisible()
-				prepareToExit()
-				save()
-				child.grab()
-				exit()
-				gRelayoutMaps()
-
-				FOREGROUND(after: 0.001) {       // defer idea edit until after this function exits
-					child.edit()
-				}
-			}
+			resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.noteTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
 		}
 	}
 

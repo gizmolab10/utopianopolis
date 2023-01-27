@@ -693,7 +693,7 @@ class ZMapEditor: ZBaseEditor {
 					if  SPECIAL {
 						grab.traverseAllProgeny { child in
 							if  child != grab, !child.isBookmark, !child.hasNoteOrEssay {
-								child.setTraitText(kNoteDefault, for: .tNote)
+								child.setTraitText(kDefaultNoteText, for: .tNote)
 							}
 						}
 					}

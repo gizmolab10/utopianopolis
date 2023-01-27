@@ -239,8 +239,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		} else {
 			fillColor.setFill()
 
-			if  parameters.isGrouped, controller?.inCircularMode == false {
-
+			if  parameters.isGrouped, !(controller?.inCircularMode ?? false) {
 				// //////////////////// //
 				// GROUPING DECORATIONS //
 				// //////////////////// //

@@ -31,7 +31,7 @@ class ZHelpDotsData: ZHelpData {
 		".b",					"member of a favorites group",													"",
 		"",						"",																				"",
 		"_appears only in favorites",																		"",	"",
-		".b",					"this bookmark's target is current focus",										""
+		".b",					"this bookmark's target is the current focus",									""
 	]
 
 	let dotsColumnTwo: StringsArray = dotsPrefixArray + [
