@@ -94,10 +94,10 @@ class ZRemoteStorage: NSObject {
 
 	var countStatus : String {
 		let lCount = totalLoadableRecordsCount
-		let tCount = totalRecordsCount.stringInThousands + " thousand"
-		let suffix = lCount == 0 ? kEmpty : " (of \(lCount.stringInThousands))"
+		let tCount = totalRecordsCount.stringInHundreds
+		let suffix = lCount == 0 ? kEmpty : " / \(lCount.stringInHundreds)"
 
-		return tCount + suffix
+		return tCount + suffix + " hundred"
 	}
 
     var allClouds: [ZCloud] {

@@ -289,14 +289,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			note.updateNoteOffsets()
 			note.updatedRangesFrom(note.noteTrait?.noteText)
+			setNeedsDisplay()
 
 			if  let r = range {
 				FOREGROUND { [self] in
 					selectAndScrollTo(r.offsetBy(delta))
 				}
 			}
-
-			setNeedsDisplay()
 		}
 
 		return delta
@@ -602,18 +601,26 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		let COMMAND = flags.hasCommand
 		let SPECIAL = flags.exactlySpecial
 		let SPLAYED = flags.exactlySplayed
+		let     ALL = flags.exactlyAll
 
 		if  hasGrabbedNote {
 			handleGrabbed(arrow, flags: flags)
+		} else if  lockedSelection {
+			handlePlainArrow(arrow)
 		} else if  SPECIAL {
 			switch arrow {
 				case .left:  fallthrough
 				case .right: move(out: arrow == .left)
 				default:     break
 			}
+		} else if  ALL {
+			switch arrow {
+				case .right: convertSelectionIntoChildIdeas(asSentences: true)
+				default:     break
+			}
 		} else if  SPLAYED {
 			switch arrow {
-				case .right: convertSentencesIntoChildIdeas()
+				case .right: convertSelectionIntoChildIdeas(asSentences: false)
 				default:     break
 			}
 		} else if  COMMAND && SHIFT {
@@ -652,10 +659,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case .right: moveWordForward(nil)
 			}
 		} else {
-			handlePlainArrow(arrow)
-		}
-
-		if  lockedSelection {
 			handlePlainArrow(arrow)
 		}
 
@@ -963,7 +966,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					let dragHeight = 15.0
 					let  dragWidth = 11.75
 					let      color = zone.color ?? kDefaultIdeaColor
-					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2     // first and last note have altered offset (thus, altered range)
+					let     offset = index == 0 ? 0 : 1                   // first note has an altered offset and thus, an altered range
 					let  noteRange = note.noteRange.offsetBy(offset)
 					let      inset = CGFloat(2.0)
 					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).expandedEquallyBy(inset)
@@ -1693,33 +1696,52 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		gSignal([.spCrumbs])
 	}
 
-	func convertSentencesIntoChildIdeas() {
-		if  let s = selectionString {
-			let a = s.separatedIntoSentences        // separate into sentences
-			// delete the text
+	func convertSelectionIntoChildIdeas(asSentences: Bool) {
+		if  let    string = selectionString {
+			let separator = asSentences ? ". " : kNewLine
+			let     ideas = string.components(separatedBy: separator)
+			var      last : Zone?
 
-			for sentence in a {                     // create a child idea from each
-				createNoteNamed(sentence)           // add them as notes to the essay
+			insertText(kDefaultNoteText, replacementRange: selectedRange)   // remove selected text
+
+			for idea in ideas {                                   // create a child idea from each
+				last = createNoteNamed(idea)                      // add them as notes to the essay
+			}
+
+			if  let range = last?.note?.noteTextRange {
+				setSelectedRange(range)
 			}
 		}
 	}
 
-	private func convertToChild() { createNoteNamed(selectionString) }
+	private func convertToChild() {
+		if  let zone = createNoteNamed(selectionString) {
+			insertText(kEmpty, replacementRange: selectedRange)	            // remove selected text
 
-	private func createNoteNamed(_ name: String?) {
+			if  let range = zone.note?.noteTextRange {
+				setSelectedRange(range)
+			}
+		}
+	}
+
+	private func createNoteNamed(_ name: String?) -> Zone? {
+		var      child : Zone?
+
 		if  let   text = name, text.length > 0,
+			let  essay = gCurrentEssay,
 			let parent = selectedZone {
 			let   dbID = parent.databaseID
-			let  child = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new zone from text
+			child      = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new zone from text
 
-			insertText(kEmpty, replacementRange: selectedRange)	            // remove selected text
+			gCreateCombinedEssay = true
+
 			save()
 			parent.addChildNoDuplicate(child)                               // add as new child of parent
-			child.setTraitText(kDefaultNoteText, for: .tNote)               // boilerplate
-			gCurrentEssayZone?.createNote()
-
-			resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.noteTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
+			child?.setTraitText(kDefaultNoteText, for: .tNote)               // boilerplate
+			resetCurrentEssay(essay, selecting: nil)
 		}
+
+		return child
 	}
 
 	private func alterCase(up: Bool) {

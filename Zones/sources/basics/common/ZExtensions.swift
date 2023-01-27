@@ -666,6 +666,7 @@ extension Int {
 	func isWithin(_ range: ClosedRange<Int>) -> Bool    { return range.contains(self) }
 	func confine(within: Int)                -> Int     { return Int(float.confine(within: CGFloat(within))) }
 	var  stringInThousands                    : String  { return "\(((float * 2.0 / 1000.0).rounded(.toNearestOrAwayFromZero) / 2.0).stringTo(precision: 1))" }
+	var  stringInHundreds                     : String  { return "\((float / 100.0).rounded(.toNearestOrAwayFromZero).stringTo(precision: 0))" }
 	var  float                                : CGFloat { return CGFloat(self) }
 
 	func next(forward: Bool, max: Int) -> Int? {
@@ -2228,10 +2229,6 @@ extension String {
 		return nil
 	}
 
-	var separatedIntoSentences : StringsArray {
-		return components(separatedBy: ". ")
-	}
-
 	var rootID: ZRootID? {
 		switch self {
 			case          kRootName: return .rootID
@@ -2740,7 +2737,7 @@ extension Data {
 	func extractCSV() -> [StringsArray] {
 		var           rows  = [StringsArray]()
 		if  let     string  = String(data: self, encoding: .ascii)?.substring(fromInclusive: 3) {
-			let      items  = string.components(separatedBy: "\n")
+			let      items  = string.components(separatedBy: kNewLine)
 			for item in items {
 				let fields  = item.escapeCommasWithinQuotes.components(separatedBy: kCommaSeparator)
 				rows.append(fields)

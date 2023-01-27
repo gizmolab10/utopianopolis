@@ -65,7 +65,7 @@ enum ZOperationID: Int, CaseIterable {
 	var isDoneOp    : Bool   { return     doneOps.contains(self) }
 	var showCount   : Bool   { return    countOps.contains(self) }
 	var description : String { return "\(self)".substring(fromInclusive: 1).unCamelcased }                // space separated words
-	var countStatus : String { return !showCount ? kEmpty : " ... \(gRemoteStorage.countStatus)" }
+	var countStatus : String { return !showCount ? kEmpty : " \(gRemoteStorage.countStatus)" }
 	var fullStatus  : String { return description + countStatus }
 
 }
