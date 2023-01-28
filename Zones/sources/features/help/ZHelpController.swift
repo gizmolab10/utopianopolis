@@ -137,15 +137,15 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	func show(_ iShow: Bool? = nil, flags: ZEventFlags = ZEventFlags()) {
 		var     nextMode = gCurrentHelpMode
 
-		if            flags.isAnyMultiple {
-			if        flags.exactlySpecial {
+		if  gIsEssayMode || flags.exactlySplayed {
+			nextMode     = .essayMode
+		} else if !gIsEssayMode {
+			if              flags.exactlyOtherSpecial {
 				nextMode = .basicMode
-			} else if flags.exactlySplayed {
-				nextMode = .essayMode
-			} else if flags.exactlyOtherSpecial {
-				nextMode = .dotMode
-			} else if flags.exactlyAll {
+			} else if       flags.exactlyAll {
 				nextMode = .proMode
+			} else {
+				nextMode = .dotMode // prefer this
 			}
 		}
 
@@ -153,9 +153,8 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	}
 
 	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
-		if  let        next = mode,
-			let isKeyWindow = gHelpWindow?.isKeyWindow {
-			let        show = iShow ?? !isKeyWindow
+		if  let next = mode {
+			let show = iShow ?? (!gIsHelpVisible || next != gCurrentHelpMode)
 
 			if !show  {
 				gHelpWindow?.close()

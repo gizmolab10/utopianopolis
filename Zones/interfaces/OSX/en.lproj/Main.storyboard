@@ -569,13 +569,13 @@ DQ
                                             <menu key="submenu" title="Cheat Sheets" id="TET-FJ-Mmt">
                                                 <items>
                                                     <menuItem title="Dots" keyEquivalent="/" id="W6c-6I-BEc">
-                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
+                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="vLz-Yr-nvb"/>
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="Basic Keys" keyEquivalent="/" id="RQA-tZ-jdg">
-                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="GVM-4d-6re"/>
                                                         </connections>

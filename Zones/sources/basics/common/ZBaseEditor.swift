@@ -78,7 +78,7 @@ class ZBaseEditor : NSObject {
 			!matchesPrevious(event) {
 			previousEvent  = event
 			
-			if         gHelpWindow?.isKeyWindow ?? false {
+			if         gIsHelpFrontmost {
 				return gHelpController?.handleEvent(event) // better to detect here than in ZEvents.keyDownMonitor
 			} else if  gIsSearching {
 				return gSearchBarController?.handleEvent(event)

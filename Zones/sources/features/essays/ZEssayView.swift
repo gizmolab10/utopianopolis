@@ -1727,7 +1727,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let  index = atEnd ? parent.count : 0
 			child      = Zone.uniqueZoneNamed(text, databaseID: dbID)           // create new zone from text
 
-			gCreateCombinedEssay = true
+			gCreateCombinedEssay = parent.zonesWithVisibleNotes.count > 0
 
 			save()
 			parent.addChildNoDuplicate(child, at: index)                        // add as new child of parent
