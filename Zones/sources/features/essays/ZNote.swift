@@ -44,6 +44,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kDefaultNoteText }
 	var               isNote : Bool      { return !(zone?.hasChildNotes ?? false) }
+	var            firstNote : ZNote     { return self }
 	var    	            zone : Zone?
 
 	func updateChildren() {}

@@ -425,11 +425,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		let dots = dragDots
 		if  dots.count > 0 {
 			for (index, dot) in dots.enumerated() {
-				if  let     note = dot.note,
+				if  let     note = dot.note?.firstNote,
 					let     zone = note.zone {
 					let  grabbed = grabbedZones.contains(zone)
-					let extendBy = index == 0 ? kNoteIndentSpacer.length : -1     // fixes intersection computation, first & last note have altered range
-					let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
+					let selected = note.noteRange.inclusiveIntersection(selectedRange) != nil
 					let   filled = selected && !hasGrabbedNote
 					let    color = dot.color
 
@@ -514,7 +513,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			if  enabled {
 				switch key {
 					case "b":  applyToSelection(BOLD: true)
-					case "d":  convertToChild(); return true
+					case "d":  convertSelectedTextToChild(); return true
 					case "e":  grabSelectedTextForSearch()
 					case "f":  gSearching.showSearch(OPTION)
 					case "g":  searchAgain(OPTION)
@@ -547,7 +546,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else if CONTROL {
 			if  enabled {
 				switch key {
-					case "d": convertToChild()
+					case "d": convertSelectedTextToChild()
 					case "w": showLinkPopup()
 					default:  return false
 				}
@@ -563,7 +562,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		} else if OPTION, enabled {
 			switch key {
-				case "d": convertToChild()
+				case "d": convertSelectedTextToChild()
 				default:  return false
 			}
 
@@ -979,8 +978,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: -8.0))
 					let   dragSize = CGSize(width: dragWidth, height: dragHeight)
 					let   dragRect = CGRect(origin: dragOrigin, size: dragSize)
+					let        dot = ZEssayDragDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note)
 
-					dots.append(ZEssayDragDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note))
+					dots.append(dot)
 				}
 			}
 		}
@@ -1577,7 +1577,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return followLinkInSelection()
 	}
 
-	// MARK: - more
+	// MARK: - child notes
 	// MARK: -
 
 	func revealEmptyNotes(_ conceal: Bool = false) {
@@ -1639,19 +1639,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func popNoteAndUpdate() {
-		if  gFavorites.pop(),
-			let  notemark = gFavorites.rootZone?.notemarks.first,
-			let      note = notemark.bookmarkTarget?.note {
-			gCurrentEssay = note
-
-			gFavorites.setAsCurrent(notemark, makeVisible: true)
-			gSignal([.spSmallMap, .spCrumbs])
-
-			updateTextStorage()
-		}
-	}
-
 	func move(out: Bool) {
 		gCreateCombinedEssay = true
 		let            range = selectedRange()
@@ -1696,52 +1683,74 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		gSignal([.spCrumbs])
 	}
 
+	func resetAndSelect(_ zone: Zone?) {
+		resetCurrentEssay()
+
+		if  let range = zone?.note?.noteTextRange {
+			setSelectedRange(range)
+		}
+	}
+
 	func convertSelectionIntoChildIdeas(asSentences: Bool) {
-		if  let    string = selectionString {
+		if  let    parent = selectedZone,
+			let    string = selectionString {
 			let separator = asSentences ? ". " : kNewLine
 			let     ideas = string.components(separatedBy: separator)
-			var      last : Zone?
+			var      zone : Zone?
 
-			insertText(kDefaultNoteText, replacementRange: selectedRange)   // remove selected text
+			insertText(kDefaultNoteText, replacementRange: selectedRange)       // remove selected text
 
-			for idea in ideas {                                   // create a child idea from each
-				last = createNoteNamed(idea)                      // add them as notes to the essay
+			for idea in ideas {                                                 // create a child idea from each
+				zone = createNoteNamed(idea, in: parent, atEnd: true)           // add them as notes to the essay
 			}
 
-			if  let range = last?.note?.noteTextRange {
-				setSelectedRange(range)
+			resetAndSelect(zone)
+		}
+	}
+
+	private func convertSelectedTextToChild() {
+		if  let   parent = selectedZone,
+			let   string = selectionString {
+
+			insertText(kEmpty, replacementRange: selectedRange)	                // remove selected text
+
+			if  let zone = createNoteNamed(string, in: parent) {
+				resetAndSelect(zone)
 			}
 		}
 	}
 
-	private func convertToChild() {
-		if  let zone = createNoteNamed(selectionString) {
-			insertText(kEmpty, replacementRange: selectedRange)	            // remove selected text
-
-			if  let range = zone.note?.noteTextRange {
-				setSelectedRange(range)
-			}
-		}
-	}
-
-	private func createNoteNamed(_ name: String?) -> Zone? {
+	private func createNoteNamed(_ name: String?, in parent: Zone, atEnd: Bool = false) -> Zone? {
 		var      child : Zone?
-
-		if  let   text = name, text.length > 0,
-			let  essay = gCurrentEssay,
-			let parent = selectedZone {
+		if  let   text = name, text.length > 0 {
 			let   dbID = parent.databaseID
-			child      = Zone.uniqueZoneNamed(text, databaseID: dbID)   	// create new zone from text
+			let  index = atEnd ? parent.count : 0
+			child      = Zone.uniqueZoneNamed(text, databaseID: dbID)           // create new zone from text
 
 			gCreateCombinedEssay = true
 
 			save()
-			parent.addChildNoDuplicate(child)                               // add as new child of parent
-			child?.setTraitText(kDefaultNoteText, for: .tNote)               // boilerplate
-			resetCurrentEssay(essay, selecting: nil)
+			parent.addChildNoDuplicate(child, at: index)                        // add as new child of parent
+			child?.setTraitText(text, for: .tNote, addDefaultAttributes: true)
 		}
 
 		return child
+	}
+
+	// MARK: - more
+	// MARK: -
+
+	func popNoteAndUpdate() {
+		if  gFavorites.pop(),
+			let  notemark = gFavorites.rootZone?.notemarks.first,
+			let      note = notemark.bookmarkTarget?.note {
+			gCurrentEssay = note
+
+			gFavorites.setAsCurrent(notemark, makeVisible: true)
+			gSignal([.spSmallMap, .spCrumbs])
+
+			updateTextStorage()
+		}
 	}
 
 	private func alterCase(up: Bool) {

@@ -13,8 +13,9 @@ func gCreateEssay(_ zone: Zone) -> ZEssay {
 }
 
 class ZEssay: ZNote {
-	var    essayRange : NSRange { return NSRange(location: 0, length: essayLength) }
-	override var kind : String  { return "essay" }
+	var         essayRange : NSRange { return NSRange(location: 0, length: essayLength) }
+	override var      kind : String  { return "essay" }
+	override var firstNote : ZNote   { return children[0] }
 
 	override var lastTextIsDefault: Bool {
 		if  let last = children.last,

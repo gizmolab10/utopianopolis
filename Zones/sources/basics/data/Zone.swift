@@ -1779,11 +1779,19 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return traits[iType]?.text
 	}
 
-	func setTraitText(_ iText: String?, for iType: ZTraitType?) {
+	func setTraitText(_ iText: String?, for iType: ZTraitType?, addDefaultAttributes: Bool = false) {
 		if  let       type = iType {
 			if  let   text = iText {
 				let  trait = traitFor(type)
 				trait.text = text
+
+				if  addDefaultAttributes { // for creating new child notes with non-default text
+					let attributed = NSMutableAttributedString(string: text)
+
+					attributed.addAttribute(.font, value: kDefaultEssayFont, range: NSRange(location: 0, length: text.length))
+
+					trait.format   = attributed.attributesAsString
+				}
 
 				trait.updateSearchables()
 			} else {
@@ -1797,7 +1805,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			switch (type) {
 				case .tEmail:     emailMaybe     = iText
 				case .tHyperlink: hyperLinkMaybe = iText
-				default: break
+				default:          break
 			}
 		}
 	}

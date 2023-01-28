@@ -87,6 +87,13 @@ class ZTrait: ZTraitAssets {
 	var              _ownerZone : Zone?
 	var              _traitType : ZTraitType?
 
+	var attributedText : NSMutableAttributedString? {
+		didSet {
+			text   = attributedText?.string;
+			format = attributedText?.attributesAsString
+		}
+	}
+
 	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
 	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
 
@@ -225,7 +232,7 @@ class ZTrait: ZTraitAssets {
 	var noteText: NSMutableAttributedString? {
 		get {
 			var        string : NSMutableAttributedString?
-			let       isEmpty = text == nil || text!.isEmpty || text! == kDefaultNoteText
+			let       isEmpty = text == nil || text!.isEmpty
 
 			whileSelfIsCurrentTrait {
 				if  isEmpty {
@@ -239,7 +246,7 @@ class ZTrait: ZTraitAssets {
 
 					if  let f = format {
 						string?.attributesAsString = f
-					} else if isEmpty {
+					} else if isEmpty || text! == kDefaultNoteText {
 						string?.addAttribute(.font, value: kDefaultEssayFont, range: NSRange(location: 0, length: string!.length))
 					}
 				}
