@@ -45,11 +45,11 @@ class ZRemoteStorage: NSObject {
 	func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
 	func cancel()                                { currentCloud?.currentOperation?.cancel() }
 
-	var allProgeny : ZoneArray {
+	var all : ZoneArray {
 		var total = ZoneArray()
 
 		for cloud in allClouds {
-			total.append(contentsOf: cloud.allProgeny)
+			total.append(contentsOf: cloud.all)
 		}
 
 		return total
@@ -236,7 +236,6 @@ class ZRemoteStorage: NSObject {
 		if  zRecords     == nil {
 			switch dbID {
 			case .favoritesID: zRecords = gFavorites
-//			case .recentsID:   zRecords = gRecents
 			default:           zRecords = ZCloud(dbID)
 			}
 			

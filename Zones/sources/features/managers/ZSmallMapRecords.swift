@@ -105,18 +105,18 @@ class ZSmallMapRecords: ZRecords {
 		}
 	}
 
-	func setAsCurrent(_ iZone: Zone?, alterBigMapFocus: Bool = false, makeVisible: Bool = false) {
-		if  makeVisible,
-			makeVisibleAndMarkInSmallMap(iZone) {
-			iZone?.grab()
+	func setAsCurrent(_ zone: Zone?, alterBigMapFocus: Bool = false, makeVisible: Bool = false) {
+		if  makeVisible {
+			makeVisibleAndMarkInSmallMap(zone)
+			zone?.grab()
 		}
 
-		if  let       tHere = iZone?.bookmarkTarget {
-			setCurrentBookmarksTargeting(tHere)
+		if  let target = zone?.bookmarkTarget {
+			setCurrentBookmarksTargeting(target)
 
 			if  alterBigMapFocus {
-				gDatabaseID          = tHere.databaseID
-				gRecords.currentHere = tHere // avoid push
+				gDatabaseID          = target.databaseID
+				gRecords.currentHere = target // avoid push
 
 				gHere.grab()
 			}
@@ -125,8 +125,8 @@ class ZSmallMapRecords: ZRecords {
 				gFocusing.focusOnGrab(.eSelected) {
 					gSignal([.spRelayout])
 				}
-			} else if gCurrentEssayZone != tHere {
-				gEssayView?.resetCurrentEssay(tHere.note)
+			} else if gCurrentEssayZone != target {
+				gEssayView?.resetCurrentEssay(target.note)
 			}
 		}
 	}
@@ -181,6 +181,21 @@ class ZSmallMapRecords: ZRecords {
 		gRelayoutMaps()
 	}
 
+	func popNoteAndUpdate() -> Bool {
+		if  pop(),
+			let  notemark = rootZone?.notemarks.first,
+			let      note = notemark.bookmarkTarget?.note {
+			gCurrentEssay = note
+
+			setAsCurrent(notemark, makeVisible: true)
+			gSignal([.spSmallMap, .spCrumbs])
+
+			return true
+		}
+
+		return false
+	}
+
 	func insertAsNext(_ zone: Zone) {
 		if  let           r = rootZone {
 			let      cIndex = r.children.firstIndex(of: zone) ?? 0
@@ -215,20 +230,21 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	@discardableResult func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) -> Bool {
+		var flag         = false
 		if  let zone     = iZone,
 			let parent   = zone.parentZone,
 			currentHere != parent {
-			currentHere.collapse()
+			flag         = true
+			let here     = currentHere
+			currentHere  = parent
 
-			currentHere = parent
-
-			currentHere.expand()
-			setCurrent(zone)
-
-			return true
+			here.collapse()
 		}
 
-		return false
+		currentHere.expand()
+		setCurrent(iZone)
+
+		return flag
 	}
 
 	var currentTargets: ZoneArray {

@@ -47,7 +47,7 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	var rootsGroupZone: Zone {
-		for zone in allProgeny {
+		for zone in all {
 			if  zone.recordName == kRootsName {
 				return zone
 			}
@@ -68,7 +68,7 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	var recentsGroupZone: Zone {
-		for zone in allProgeny {
+		for zone in all {
 			if  zone.recordName == kRecentsName {
 				return zone
 			}
@@ -280,7 +280,7 @@ class ZFavorites: ZSmallMapRecords {
 	}
 
 	func show(_ zone: Zone) {
-		let bookmarks = allProgeny.intersection(zone.bookmarksTargetingSelf)
+		let bookmarks = all.intersection(zone.bookmarksTargetingSelf)
 		if  bookmarks.count > 0,
 			let parent = bookmarks[0].parentZone {
 			setHere(to: parent)

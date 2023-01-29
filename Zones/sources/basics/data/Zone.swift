@@ -38,6 +38,32 @@ struct ZWorkingListType: OptionSet {
 	static let   wProgeny = ZWorkingListType(rawValue: 1 << 2)
 	static let    wGroups = ZWorkingListType(rawValue: 1 << 3)
 	static let       wAll = ZWorkingListType(rawValue: 1 << 4)
+
+	func matchingZones(within zone: Zone) -> ZoneArray {
+		let progeny = contains(.wProgeny)
+		let  groups = contains(.wGroups)
+		let     all = contains(.wAll)
+		var  result = ZoneArray()
+
+		zone.traverseAllProgeny { iZone in
+			let notSelf = zone != iZone
+
+			if  all ||
+				!groups && (!progeny || notSelf) && matchesTypeOfBookmark(for: iZone) ||
+				notSelf && ( progeny || (groups  && (iZone.count > 0))) {
+				result.appendUnique(item: iZone)
+			}
+		}
+
+		return result
+	}
+
+	func matchesTypeOfBookmark(for zone: Zone) -> Bool {
+		guard let target = zone.bookmarkTarget else { return false }
+
+		return contains(.wBookmarks) || (contains(.wNotemarks) && target.hasNote)
+	}
+
 }
 
 @objc (Zone)
@@ -94,6 +120,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var             isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                 isAZone :               Bool  { return true }
 	override var                 isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
+	override var            passesFilter :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
 	var                        isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                       isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
@@ -141,9 +168,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                  notemarks       :          ZoneArray  { return zones(of:  .wNotemarks) }
 	var               allNotemarkProgeny :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
 	var               allBookmarkProgeny :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
-	var                       allProgeny :          ZoneArray  { return zones(of:               .wProgeny)  }
-	var                        allGroups :          ZoneArray  { return zones(of:               .wGroups)  }
-	var                              all :          ZoneArray  { return zones(of:               .wAll) }
+	var                       allProgeny :          ZoneArray  { return zones(of:               .wProgeny ) }
+	var                        allGroups :          ZoneArray  { return zones(of:               .wGroups  ) }
+	var                              all :          ZoneArray  { return zones(of:               .wAll     ) }
 	var                  visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
 	var                   duplicateZones =          ZoneArray  ()
 	var                         children =          ZoneArray  ()
@@ -160,10 +187,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func updateRootFromParent()                                       { setRoot(getRoot) }
 	func setRoot(_ iRoot: Zone?)                                      { if let r = iRoot { root = r } }
 	func maybeTraitFor(_ iType: ZTraitType)              ->   ZTrait? { return traits[iType] }
-
-	override var passesFilter: Bool {
-		return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
-	}
+	func zones(of type: ZWorkingListType)                -> ZoneArray { return type.matchingZones(within: self) }
 
 	override var isInScope: Bool {
 		if  root == nil {
@@ -210,31 +234,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return value
-	}
-
-	func zones(of type: ZWorkingListType) -> ZoneArray {
-		var result = ZoneArray()
-		if  type.contains(.wAll) {
-			traverseAllProgeny { iZone in
-				result.append(iZone)
-			}
-		} else if type.contains(.wProgeny) {
-			traverseAllProgeny { iZone in
-				if  iZone.isBookmark(of: type) {
-					result.append(iZone)
-				}
-			}
-		} else if type.contains(.wGroups) {
-			traverseAllProgeny { iZone in
-				if  iZone != self, iZone.count > 0 {
-					result.append(iZone)
-				}
-			}
-		} else {
-			result = children.filter { $0.isBookmark(of: type) }
-		}
-
-		return result
 	}
 
 	var unwrappedNameWithEllipses : String {
@@ -353,10 +352,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				zoneLink   = "\(dbid)::\(name)"
 			}
 		}
-	}
-
-	@discardableResult func isBookmark(of type: ZWorkingListType) -> Bool {
-		return (bookmarkTarget != nil && (type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget!.hasNote)))
 	}
 
 	func addBookmark() {

@@ -133,7 +133,7 @@ class ZRecords: NSObject {
 	var       zRecordsCount : Int       { return zRecordsLookup.count }
 	var    cloudUnavailable : Bool      { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
     var         hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
-	var          allProgeny : ZoneArray { return rootZone?.all ?? [] }
+	var                 all : ZoneArray { return rootZone?.all ?? [] }
 
 	func countBy                      (type: String)  -> Int?     { return recordNamesByType[type]?.count }
 	func recordNamesForState (_ state: ZRecordState)  -> StringsArray { return recordNamesByState[state] ?? [] }
@@ -336,7 +336,7 @@ class ZRecords: NSObject {
 			case .dFavorites:  return favoritesZone?     .all
 			case .dDestroy:    return destroyZone?       .all
 			case .dTrash:      return trashZone?         .all
-			case .dProgeny:    return allProgeny
+			case .dProgeny:    return all
 			case .dValid:      return debugValid
 			case .dTotal:      return debugTotal
 			default:           return nil

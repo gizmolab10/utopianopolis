@@ -14,11 +14,11 @@ let gContainer = CKContainer(identifier: kCloudID)
 class ZCloud: ZRecords {
 
 	var    addedToLevels = [Int : ZRecordsArray] ()
-	var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
-	var   refetchingName :       String { return "remember.\(databaseID.rawValue)" }
-	var    isRemembering :         Bool = false
 	var currentOperation : CKOperation?
 	var currentPredicate : NSPredicate?
+	var         database :  CKDatabase? { return gRemoteStorage.databaseForID(databaseID) }
+	var   refetchingName :      String  { return "remember.\(databaseID.rawValue)" }
+	var    isRemembering :        Bool  = false
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
         if  database != nil, gHasInternet {

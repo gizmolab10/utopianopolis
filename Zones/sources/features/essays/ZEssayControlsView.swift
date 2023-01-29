@@ -59,7 +59,7 @@ class ZEssayControlsView: ZView {
 	@IBOutlet var printButton    : ZToolTipButton?
 	@IBOutlet var hideButton     : ZToolTipButton?
 	@IBOutlet var saveButton     : ZToolTipButton?
-	@IBAction func handleButtonAction(_ iButton: ZToolTipButton) { gEssayView?.handleControlAction(iButton) }
+	@IBAction func handleButtonAction(_ iButton: ZToolTipButton) { gEssayView?.handleButtonAction(iButton) }
 
 	func setupAllEssayControls() {
 		if  let           b = inspectorBar, !b.subviews.contains(self) {
