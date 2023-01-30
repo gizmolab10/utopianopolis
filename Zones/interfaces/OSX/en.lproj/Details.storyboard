@@ -5,10 +5,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Data Controller-->
+        <!--Data Details Controller-->
         <scene sceneID="SRV-hs-cwo">
             <objects>
-                <viewController id="fxO-Qj-JeN" customClass="ZDataController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="fxO-Qj-JeN" customClass="ZDataDetailsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="mbO-Ma-L1E">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="159"/>
                         <autoresizingMask key="autoresizingMask"/>

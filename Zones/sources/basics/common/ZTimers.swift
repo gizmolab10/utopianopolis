@@ -34,8 +34,6 @@ enum ZTimerID : Int {
 	case tHover                    // "
 	case tKey
 
-	static let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tPersist]
-
 	var string: String { return "\(self)" }
 
 	var description: String? {
@@ -75,7 +73,7 @@ class ZTimers: NSObject {
 
 	var timers = [ZTimerID : Timer]()
 
-	var statusText: String? { return gCurrentTimerID?.description }
+	var statusText: String? { return gCurrentTimerID?.description ?? kEmpty }
 
 	func stopTimer(for timerID: ZTimerID?) {
 		if  let id = timerID {
@@ -92,17 +90,25 @@ class ZTimers: NSObject {
 
 	func startTimer(for timerID: ZTimerID?) {
 		if  let     tid = timerID {
-			let repeats = ZTimerID.repeaters.contains(tid)
+
+			// //
+			// interval of time before firing, also between repeats
+			// //
+
 			var waitFor = 1.0                   // one second
-			var   block : Closure = {}          // do nothing by default
 
 			switch tid {
-				case .tStartup:              waitFor =  0.5              // one half second
 				case .tKey,     .tPersist:   waitFor =  5.0              // five seconds
 				case .tLicense, .tRecount:   waitFor = 60.0              // one minute
 				case .tHover,   .tMouseZone: waitFor = kOneHoverInterval // one fifth second
 				default:                     break
 			}
+
+			// //
+			// associate closure with timer id
+			// //
+
+			var block : Closure = {}          // do nothing by default
 
 			switch tid {
 				case .tKey:                     block = { gCurrentKeyPressed        = nil }
@@ -119,8 +125,15 @@ class ZTimers: NSObject {
 				default:                        break
 			}
 
+			// //
+			// create the timer. while it fires, set the current timer id
+			// //
+
+			let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tPersist]  // only these tasks repeat (forever)
+			let repeats = repeaters.contains(tid)
+
 			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats) {
-				gCurrentTimerID     = timerID
+				gCurrentTimerID     = timerID      // this is for cloudStatusLabel, in data details
 
 				block()
 
@@ -134,15 +147,6 @@ class ZTimers: NSObject {
 	func startTimers(for timers: [ZTimerID]) {
 		for timer in timers {
 			gTimers.startTimer(for: timer)
-		}
-	}
-
-	func rresetTimer(for id: ZTimerID?, withTimeInterval seconds: TimeInterval, repeats: Bool = false, block: @escaping Closure) {
-		let  nano = DispatchTime(uptimeNanoseconds: UInt64(seconds * 1000000000.0))    // 10 ^ 9
-		let  time = DispatchQueue.SchedulerTimeType(nano)
-		let i = DispatchQueue.SchedulerTimeType.Stride(floatLiteral: seconds)
-		let _ = gBACKGROUND.schedule(after: time, interval: i) {
-			block()
 		}
 	}
 

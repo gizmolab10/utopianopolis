@@ -234,7 +234,7 @@ class ZHelpData: NSObject {
 
 			if  first.length == 0 {
 				appendTab()
-				if  column == 2, attributedString(for: row, column: 1).string.containsNonTabs {
+				if  column == 2, attributedString(for: row, column: 1).string.containsNoTabs {
 					appendTab()
 				}
 			}
@@ -386,6 +386,7 @@ enum ZHelpType: String {
 	case hExtra     = "+"
 	case hEmpty     = "-"
 	case hBasic     = "0"
+	case hPlain     = " "
 	case hIntermed  = "1"
 	case hUnderline = "_"
 

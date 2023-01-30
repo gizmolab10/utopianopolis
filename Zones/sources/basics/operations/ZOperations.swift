@@ -135,17 +135,6 @@ class ZOperations: NSObject {
 		}
 	}
 
-	func updateStatus() {
-		var signals: ZSignalKindArray = [.spDataDetails]     // show change in cloud status
-
-		if !gHasFinishedStartup {
-			signals.append(.spStartupStatus)         // show current op in splash view
-			printOp()
-		}
-
-		gSignal(signals)
-	}
-
     func setupAndRun(_ operationIDs: ZOpIDsArray, onCompletion: @escaping Closure) {
         if  queue.operationCount > 30 {
             gAlerts.showAlert("overloading queue", "programmer error", "send an email to sand@gizmolab.com") { iObject in

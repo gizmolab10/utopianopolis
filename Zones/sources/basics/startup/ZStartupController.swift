@@ -71,9 +71,9 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func updateStartupStatus() {   // internet availability is not required until cloud access actually works
-		acccessToAppleID?.isHidden = true  // !hasInternet || gStartupLevel != .firstTime         // .firstTime shows this
-		enableCloudDrive?.isHidden = true  // !hasInternet || gStartupLevel != .pleaseEnableDrive //  "  "  "
-		pleaseWait?      .isHidden = false //  hasInternet && notWait                             //  "  "  "
+		acccessToAppleID?.isHidden = true     // !hasInternet || gStartupLevel != .firstTime            // .firstTime shows this
+		enableCloudDrive?.isHidden = true     // !hasInternet || gStartupLevel != .pleaseEnableDrive    //  "  "  "
+		pleaseWait?      .isHidden = false    //  hasInternet && notWait                                //  "  "  "
 		let             statusText = gCurrentOp.fullStatus
 		let               rootView = gMainWindow?.contentView
 		operationLabel?      .text = statusText

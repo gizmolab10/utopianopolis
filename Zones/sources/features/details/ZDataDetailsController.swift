@@ -1,5 +1,5 @@
 //
-//  ZInformationController.swift
+//  ZDataDetailsController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/13/17.
@@ -14,7 +14,7 @@ import Foundation
     import UIKit
 #endif
 
-class ZDataController: ZGenericController {
+class ZDataDetailsController: ZGenericController {
 
 	@IBOutlet var modificationDateLabel: ZTextField?
 	@IBOutlet var      cloudStatusLabel: ZTextField?

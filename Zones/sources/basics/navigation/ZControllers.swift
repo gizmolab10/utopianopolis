@@ -149,21 +149,21 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func signalFor(_ object: Any? = nil, multiple: ZSignalKindArray, onCompletion: Closure? = nil) {
+	func signalFor(_ object: Any? = nil, multiple regards: ZSignalKindArray, onCompletion: Closure? = nil) {
 		FOREGROUND { [self] in
-			if  multiple.contains(.spRelayout) {
+			if  regards.contains(.spRelayout) {
 				gWidgets.clearAll()
 				gMapView?.updateTracking()
 				gMapView?.removeAllTextViews(ofType: .both)
 			}
 
-			for regarding in multiple {
-				for (cid, signalObject) in signalObjectsByControllerID {
+			for regarding in regards {
+				for (controllerID, signalObject) in signalObjectsByControllerID {
                     let closure = {
                         signalObject.closure(object, regarding)
                     }
                     
-					switch (regarding, cid) {  // these non-default cases send a signal only to the one (or two) corresponding controller)s)
+					switch (regarding, controllerID) {  // these non-default cases send a signal only to the one (or two) corresponding controller)s)
 						case (.spMain,         .idMain):         closure()
 						case (.spDebug,        .idDebug):        closure()
 						case (.spCrumbs,       .idCrumbs):       closure()
@@ -177,8 +177,8 @@ class ZControllers: NSObject {
 							let startupCIDs : [ZControllerID] = [.idStartup, .idHelpDots]
 
 							switch regarding {
-								case .spRelayout:      if     mapCIDs.contains(cid) { closure() }
-								case .spStartupStatus: if startupCIDs.contains(cid) { closure() }
+								case .spRelayout:      if     mapCIDs.contains(controllerID) { closure() }
+								case .spStartupStatus: if startupCIDs.contains(controllerID) { closure() }
 								default:                                              closure()
 							}
 					}

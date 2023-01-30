@@ -166,7 +166,7 @@ extension String {
     }
 
     var arrow: ZArrowKey? {
-        if  containsNonAscii {
+        if  containsNoAscii {
             let character = utf8CString[2]
             
             for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
