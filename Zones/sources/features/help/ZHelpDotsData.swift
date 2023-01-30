@@ -55,11 +55,11 @@ class ZHelpDotsData: ZHelpData {
 		".b",						"bookmark             focus on bookmark's target",								"",
 		".b",						"target has note    \" \" \", also, ⌘-click to view note",						"",
 		"",							"",					 															"",
-		"!trait decorations",		"if it's a circle (third column), click to:",									"",
-		"!",						"tap \"h\" to edit    or tap \"=\" to:",										"",
+		"!trait decorations",		"if it's a circle       (third column), click to:",								"",
+		"!",						"tap \"h\" to edit:   tap \"=\" to:",											"",
 		".3",						"email                     compose & send",										"",
-		".3",						"hyperlink              open in a browser",										"",
-		".3",						"note                      edit",												""
+		".3",						"hyperlink               open in a browser",									"",
+		".3",						"note                       edit",												""
 	]
 
 }

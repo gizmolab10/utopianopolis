@@ -49,10 +49,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func updateChildren() {}
 	func updateNoteOffsets() {}
-	func notes(in range: NSRange) -> [ZNote] { return [self] }
+	func notes              (in range: NSRange)   -> [ZNote]  { return [self] }
+	func updateFontSize     (_ increment: Bool)   -> Bool     { return updateTraitFontSize(increment) }
+	func updateTraitFontSize(_ increment: Bool)   -> Bool     { return noteTrait?.updateEssayFontSize(increment) ?? false }
 	func saveAsEssay(_ attributedString: NSAttributedString?) { saveAsNote(attributedString) }
-	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
-	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
 
 	init(zones: ZoneArray) {}
 
@@ -63,7 +63,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		self.zone  = zone
 
 		if  zone?.zoneName == nil {
-			zone?.zoneName  = kEmptyIdea
+			zone?.zoneName  = kEmptyIdea  // cannot leave it nil or note editor will behave poorly (not show title or boilerplate)
 		}
 	}
 
