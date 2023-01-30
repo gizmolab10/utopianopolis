@@ -356,7 +356,7 @@ enum ZHelpDotType: String {
 		}
 	}
 
-	func helpDotParameters(isFilled: Bool = false) -> ZDotParameters {
+	func helpDotParameters(isFilled: Bool = false, isRound: Bool = false) -> ZDotParameters {
 		var p           = ZDotParameters()
 		p.color         = gHelpHyperlinkColor
 		p.fill          = isFilled ? p.color : gBackgroundColor
@@ -371,7 +371,7 @@ enum ZHelpDotType: String {
 		p.hasTargetNote = self == .notemark || self == .has
 		p.hasTarget     = self == .bookmark
 		p.showSideDot   = self == .favorite
-		p.childCount    = count
+		p.childCount    = isRound ? 0 : count
 
 		return p
 	}
@@ -401,9 +401,10 @@ enum ZHelpType: String {
 }
 
 enum ZFillType: String {
-	case filled = "f"
-	case empty  = "e"
-	case both   = "b"
+	case fFilled = "f"
+	case fEmpty  = "e"
+	case fBoth   = "b"
+	case fThree  = "3"
 }
 
 enum ZHelpSectionID: String {

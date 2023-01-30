@@ -36,7 +36,7 @@ enum ZTraitType: String { // stored in database: do not change
 	case tDate      = "d"
 	case tNote      = "n"
 
-	static var activeTypes: [ZTraitType] { return [.tEmail, .tHyperlink] }
+	static var activeTypes: [ZTraitType] { return [.tEmail, .tHyperlink, .tNote] }
 
 	var heightRatio: CGFloat {
 		switch self {

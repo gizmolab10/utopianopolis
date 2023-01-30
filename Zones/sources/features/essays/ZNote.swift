@@ -61,6 +61,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 		autoDelete = true
 		self.zone  = zone
+
+		if  zone?.zoneName == nil {
+			zone?.zoneName  = kEmptyIdea
+		}
 	}
 
 	static func == ( left: ZNote, right: ZNote) -> Bool {

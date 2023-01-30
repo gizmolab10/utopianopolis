@@ -675,35 +675,8 @@ class ZMapEditor: ZBaseEditor {
 		gSelecting.firstSortedGrab?.editTraitForType(type)
 	}
 
-	func editNote(flags: ZEventFlags, useGrabbed: Bool = true) {
-		if !gIsEssayMode {
-			let               ALL  = flags.exactlyAll
-			let            OPTION  = flags.hasOption
-			let           SPECIAL  = flags.exactlySpecial
-			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple, OPTION drives it to single
-
-			if  let grab = gSelecting.firstGrab() {
-				if  ALL {
-					grab.convertChildrenToNote()
-				} else {
-					if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
-						gCurrentEssay  = grab.note
-					}
-
-					if  SPECIAL {
-						grab.traverseAllProgeny { child in
-							if  child != grab, !child.isBookmark, !child.hasNoteOrEssay {
-								child.setTraitText(kDefaultNoteText, for: .tNote)
-							}
-						}
-					}
-				}
-			}
-		}
-
-		gControllers.swapMapAndEssay(force: .wEssayMode) {
-			gEssayView?.selectFirstNote()
-		}
+	func editNote(flags: ZEventFlags?, useGrabbed: Bool = true) {
+		gSelecting.firstGrab()?.editNote(flags: flags, useGrabbed: useGrabbed)
 	}
 
     // MARK: - parents

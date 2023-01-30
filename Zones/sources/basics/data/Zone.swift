@@ -1585,7 +1585,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
-	func editTraitForType(_ type: ZTraitType) { gTextEditor.edit(traitFor(type)) }
+
+	func editTraitForType(_ type: ZTraitType) {
+		switch type {
+			case .tNote: showNote()
+			default:     gTextEditor.edit(traitFor(type))
+		}
+	}
 
 	@discardableResult func edit() -> ZTextEditor? {
 		gTemporarilySetMouseZone(self) // so become first responder will work
@@ -1928,6 +1934,35 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		deleteNote()
+	}
+
+	func editNote(flags: ZEventFlags?, useGrabbed: Bool = true) {
+		if !gIsEssayMode {
+			let               ALL  = flags?.exactlyAll     ?? false
+			let            OPTION  = flags?.hasOption      ?? true
+			let           SPECIAL  = flags?.exactlySpecial ?? false
+			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple, OPTION drives it to single
+
+			if  ALL {
+				convertChildrenToNote()
+			} else {
+				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
+					gCurrentEssay  = note
+				}
+
+				if  SPECIAL {
+					traverseAllProgeny { child in
+						if  child != self, !child.isBookmark, !child.hasNoteOrEssay {
+							child.setTraitText(kDefaultNoteText, for: .tNote)
+						}
+					}
+				}
+			}
+		}
+
+		gControllers.swapMapAndEssay(force: .wEssayMode) {
+			gEssayView?.selectFirstNote()
+		}
 	}
 
 	func showNote() {
