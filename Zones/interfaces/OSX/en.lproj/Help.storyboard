@@ -424,14 +424,14 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                                         </constraints>
                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
                                             <font key="font" metaFont="label" size="11"/>
-                                            <mutableString key="title">           1               2          3         4         5          6          7              8            9
+                                            <string key="title">           1               2          3         4         5          6          7              8            9
 
    1     arrows take you to prior and next note/essay
    2     save all changes and resume editing
    3     print entire note/essay
    4     save all changes and exit editing
    5     erase content of all, or grabbed notes, and exit editing
-   6     discard all changes and exit editing    7     hide titles (idea text) grab dots    8     show titiles and hide grab dits    9     show both</mutableString>
+   6     discard all changes and exit editing    7     hide titles (idea text) grab dots    8     show titiles and hide grab dits    9     show both</string>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -459,7 +459,7 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                                 </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga">
-                                <rect key="frame" x="97" y="32" width="407" height="100"/>
+                                <rect key="frame" x="97" y="58" width="407" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="JYh-DR-oiw"/>
                                     <constraint firstAttribute="width" constant="407" id="rlV-fW-sN0"/>
@@ -476,7 +476,7 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                             <constraint firstAttribute="trailing" secondItem="p1n-xy-ora" secondAttribute="trailing" constant="17" id="WdM-y6-twZ"/>
                             <constraint firstItem="1LF-SL-gga" firstAttribute="centerX" secondItem="3u1-0n-NPP" secondAttribute="centerX" id="YBT-Ep-Bog"/>
                             <constraint firstItem="p1n-xy-ora" firstAttribute="leading" secondItem="3u1-0n-NPP" secondAttribute="leading" constant="17" id="dqK-sY-EZj"/>
-                            <constraint firstItem="1LF-SL-gga" firstAttribute="top" secondItem="p1n-xy-ora" secondAttribute="bottom" constant="30" id="mhe-GO-wPh"/>
+                            <constraint firstItem="1LF-SL-gga" firstAttribute="top" secondItem="p1n-xy-ora" secondAttribute="bottom" constant="4" id="mhe-GO-wPh"/>
                             <constraint firstItem="p1n-xy-ora" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="bottom" constant="8" id="sm2-L6-eW9"/>
                         </constraints>
                     </view>

@@ -902,20 +902,20 @@
                                 <view key="contentView" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0RF-K9-32y">
                                     <rect key="frame" x="4" y="5" width="272" height="21"/>
                                     <subviews>
-                                        <button identifier="toolTip" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="8oF-qb-aFC" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="-7" y="-6" width="121" height="32"/>
-                                            <buttonCell key="cell" type="push" title="transitioning..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ltM-0d-32i">
+                                        <button identifier="toolTip" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bat-sV-YIg" userLabel="tooltiips" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="-7" y="-6" width="149" height="32"/>
+                                            <buttonCell key="cell" type="push" title="transitioning" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iE4-XE-b4x">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                             <connections>
-                                                <action selector="buttonAction:" target="YdN-bY-sSj" id="IK3-TD-da7"/>
-                                                <outlet property="controller" destination="YdN-bY-sSj" id="l1E-sz-aYZ"/>
+                                                <action selector="buttonAction:" target="YdN-bY-sSj" id="kpQ-kx-YIj"/>
+                                                <outlet property="controller" destination="YdN-bY-sSj" id="QYU-RI-pod"/>
                                             </connections>
                                         </button>
-                                        <button identifier="explain" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="0Rq-Ef-CYU" userLabel="explanations" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="101" y="-6" width="121" height="32"/>
-                                            <buttonCell key="cell" type="push" title="transitioning..." bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pls-co-ZKe">
+                                        <button identifier="explain" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Rq-Ef-CYU" userLabel="explanations" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
+                                            <rect key="frame" x="129" y="-6" width="150" height="32"/>
+                                            <buttonCell key="cell" type="push" title="transitioning" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pls-co-ZKe">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
@@ -926,14 +926,13 @@
                                         </button>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" constant="1" id="1Tk-9e-jh5"/>
-                                        <constraint firstAttribute="bottom" secondItem="0Rq-Ef-CYU" secondAttribute="bottom" constant="1" id="1qv-es-Fje"/>
-                                        <constraint firstAttribute="bottom" secondItem="8oF-qb-aFC" secondAttribute="bottom" constant="1" id="8gP-O5-KOJ"/>
-                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="leading" secondItem="8oF-qb-aFC" secondAttribute="trailing" constant="1" id="BRV-bB-5hS"/>
-                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" constant="1" id="Cra-zJ-GFW"/>
-                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="leading" secondItem="0RF-K9-32y" secondAttribute="leading" id="TAJ-Kp-NU5"/>
-                                        <constraint firstAttribute="trailing" secondItem="0Rq-Ef-CYU" secondAttribute="trailing" id="d08-5p-gyX"/>
-                                        <constraint firstItem="8oF-qb-aFC" firstAttribute="width" secondItem="0Rq-Ef-CYU" secondAttribute="width" id="k5D-c2-y2x"/>
+                                        <constraint firstItem="bat-sV-YIg" firstAttribute="leading" secondItem="0RF-K9-32y" secondAttribute="leading" id="730-SP-EnM"/>
+                                        <constraint firstAttribute="trailing" secondItem="0Rq-Ef-CYU" secondAttribute="trailing" id="JM3-la-GQY"/>
+                                        <constraint firstItem="bat-sV-YIg" firstAttribute="centerY" secondItem="0RF-K9-32y" secondAttribute="centerY" id="XfJ-N7-db3"/>
+                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="centerY" secondItem="0RF-K9-32y" secondAttribute="centerY" id="gG5-WT-1gh"/>
+                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" id="gUu-th-E9m"/>
+                                        <constraint firstItem="bat-sV-YIg" firstAttribute="top" secondItem="0RF-K9-32y" secondAttribute="top" id="l9T-Vz-NcZ"/>
+                                        <constraint firstItem="0Rq-Ef-CYU" firstAttribute="leading" secondItem="bat-sV-YIg" secondAttribute="trailing" constant="1" id="o1O-hR-dMs"/>
                                     </constraints>
                                 </view>
                                 <constraints>
@@ -958,7 +957,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="sibling" toolTip="add a new idea as sibling to current selection" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EXp-p8-Pyy" userLabel="sibling" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="130" y="1" width="149" height="17"/>
+                                            <rect key="frame" x="130" y="-6" width="149" height="31"/>
                                             <buttonCell key="cell" type="push" title="sibling" alternateTitle="TAB" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rMw-U8-ScO">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -973,11 +972,11 @@
                                         <constraint firstItem="EXp-p8-Pyy" firstAttribute="leading" secondItem="xIc-ry-xck" secondAttribute="trailing" constant="1" id="7KB-RK-Fyh"/>
                                         <constraint firstItem="xIc-ry-xck" firstAttribute="leading" secondItem="6gW-4w-OHR" secondAttribute="leading" id="Et7-GF-Fa6"/>
                                         <constraint firstAttribute="bottom" secondItem="xIc-ry-xck" secondAttribute="bottom" constant="1" id="IWu-R8-eia"/>
-                                        <constraint firstAttribute="bottom" secondItem="EXp-p8-Pyy" secondAttribute="bottom" constant="8" id="KeS-tR-fic"/>
+                                        <constraint firstAttribute="bottom" secondItem="EXp-p8-Pyy" secondAttribute="bottom" constant="1" id="KeS-tR-fic"/>
                                         <constraint firstItem="EXp-p8-Pyy" firstAttribute="width" secondItem="xIc-ry-xck" secondAttribute="width" id="UKn-4P-ggM"/>
                                         <constraint firstItem="xIc-ry-xck" firstAttribute="top" secondItem="6gW-4w-OHR" secondAttribute="top" constant="1" id="XaT-wP-fbL"/>
                                         <constraint firstAttribute="trailing" secondItem="EXp-p8-Pyy" secondAttribute="trailing" id="m8R-Oq-PoK"/>
-                                        <constraint firstItem="EXp-p8-Pyy" firstAttribute="top" secondItem="6gW-4w-OHR" secondAttribute="top" constant="8" id="wsk-dk-94h"/>
+                                        <constraint firstItem="EXp-p8-Pyy" firstAttribute="top" secondItem="6gW-4w-OHR" secondAttribute="top" constant="1" id="wsk-dk-94h"/>
                                     </constraints>
                                 </view>
                                 <constraints>
@@ -1002,7 +1001,7 @@
                                             </connections>
                                         </button>
                                         <button identifier="note" toolTip="edit the note of the currently selected idea" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tUN-AT-gcT" userLabel="note" customClass="ZKickoffToolButton" customModule="Seriously" customModuleProvider="target">
-                                            <rect key="frame" x="130" y="1" width="149" height="17"/>
+                                            <rect key="frame" x="130" y="-6" width="149" height="31"/>
                                             <buttonCell key="cell" type="push" title="note" alternateTitle="N" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Bov-NG-9Nh">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -1016,9 +1015,9 @@
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="tUN-AT-gcT" secondAttribute="trailing" id="10T-8e-BSm"/>
                                         <constraint firstItem="GxP-Zs-LHC" firstAttribute="leading" secondItem="oj1-Uo-6FC" secondAttribute="leading" id="84G-VM-jMX"/>
-                                        <constraint firstItem="tUN-AT-gcT" firstAttribute="top" secondItem="oj1-Uo-6FC" secondAttribute="top" constant="8" id="Jf0-TW-DNU"/>
+                                        <constraint firstItem="tUN-AT-gcT" firstAttribute="top" secondItem="oj1-Uo-6FC" secondAttribute="top" constant="1" id="Jf0-TW-DNU"/>
                                         <constraint firstItem="tUN-AT-gcT" firstAttribute="width" secondItem="GxP-Zs-LHC" secondAttribute="width" id="VCB-Od-fe4"/>
-                                        <constraint firstAttribute="bottom" secondItem="tUN-AT-gcT" secondAttribute="bottom" constant="8" id="exb-A6-9JC"/>
+                                        <constraint firstAttribute="bottom" secondItem="tUN-AT-gcT" secondAttribute="bottom" constant="1" id="exb-A6-9JC"/>
                                         <constraint firstItem="GxP-Zs-LHC" firstAttribute="top" secondItem="oj1-Uo-6FC" secondAttribute="top" constant="1" id="gRM-Hd-bNg"/>
                                         <constraint firstItem="tUN-AT-gcT" firstAttribute="leading" secondItem="GxP-Zs-LHC" secondAttribute="trailing" constant="1" id="t8Q-IR-J3I"/>
                                         <constraint firstAttribute="bottom" secondItem="GxP-Zs-LHC" secondAttribute="bottom" constant="1" id="vyA-cV-AYT"/>

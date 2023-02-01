@@ -49,6 +49,7 @@ let          kOneHoverInterval =    0.2
 let        kOneStartupInterval =    0.75
 let      kDefaultLineThickness =    1.25
 let      kDefaultHorizontalGap =   30.0
+let          kDefaultDotHeight = ((kDefaultFontSize + kFontDelta) / kDotFactor) + 2.0
 let           kDefaultFlatness = CGFloat( 0.00001)
 let          kDragDotReduction = CGFloat( 0.75)
 let         kSmallMapReduction = CGFloat(kIsPhone ? 1.0 : 0.5)

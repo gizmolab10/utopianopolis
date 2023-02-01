@@ -114,7 +114,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		let       radius = c.sideDotRadius
 		let     diameter = radius * 2.0
 		let         size = CGSize.squared(diameter)
-		let       origin = iDirtyRect.center - CGPoint.squared(radius) - CGPoint(x: c.dotThirdhWidth, y: .zero)
+		let       origin = iDirtyRect.center - CGPoint.squared(radius) - CGPoint(x: c.dotThirdWidth, y: .zero)
 		let         rect = CGRect(origin: origin, size: size)
 		let         path = ZBezierPath(ovalIn: rect)
 		path.lineWidth   = c.coreThickness * 2.0

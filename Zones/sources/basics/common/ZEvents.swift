@@ -36,15 +36,8 @@ class ZEvents: ZGeneric {
 
     func controllerSetup(with mainView: ZMapView?) {
         setupLocalEventsMonitor()
-        gNotificationCenter.addObserver(self, selector: #selector(ZEvents.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
     }
     
-    
-    @objc func handleDarkModeChange(iNote: Notification) {
-        gRelayoutMaps()
-		gEssayView?.resetForDarkMode()
-    }
-
 	func removeMonitor(_ monitor: inout Any?, _ closure: Closure? = nil) -> Bool {
 		if  let save = monitor {
 			monitor  = nil

@@ -77,6 +77,7 @@ class ZPreferencesController: ZGenericController {
 			}
 
 			gSignal([.spRelayout, .spCrumbs, .spPreferences])
+			gExplainPopover?.reexplain()
 		}
     }
 
@@ -92,6 +93,7 @@ class ZPreferencesController: ZGenericController {
 			}
 
 			gSignal([.sDatum])
+			gExplainPopover?.reexplain()
         }
 	}
 
