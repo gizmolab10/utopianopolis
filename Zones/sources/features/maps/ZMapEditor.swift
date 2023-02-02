@@ -109,8 +109,8 @@ class ZMapEditor: ZBaseEditor {
 						case "p":      printCurrentFocus()
 						case "t":      if SPECIAL { gCurrentlyEditingWidget?.swapWithParent() } else if COMMAND { showThesaurus(for: gCurrentlySelectedText) } 
 						case "/":      return handleSlash(flags)
-						case kCommaSeparator,
-							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
+						case kComma,
+						     kPeriod:  commaAndPeriod(COMMAND, OPTION, with: key == kComma)
 						case kTab:     gSelecting.addSibling(OPTION)
 						case kSpace:   gSelecting.currentMoveable.addIdea()
 						case kReturn:  if COMMAND { editNote(flags: flags) }
@@ -165,8 +165,8 @@ class ZMapEditor: ZBaseEditor {
 						case kEscape:    editNote(flags: flags, useGrabbed: false)
 						case kBackSlash: mapControl(OPTION)
 						case kHyphen:    return handleHyphen(COMMAND, OPTION)
-						case kCommaSeparator,
-							 kDotSeparator: commaAndPeriod(COMMAND, OPTION, with: key == kCommaSeparator)
+						case kComma,
+							 kPeriod:    commaAndPeriod(COMMAND, OPTION, with: key == kComma)
 						case kEquals:    if COMMAND { gUpdateBaseFontSize(up: true) } else { gSelecting.sortedGrabs.invokeTravel() { reveal in gRelayoutMaps() } }
 						case kBackspace,
 							 kDelete:    handleDelete(flags, isWindow)
@@ -517,10 +517,10 @@ class ZMapEditor: ZBaseEditor {
 	}
 
     func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with COMMA: Bool) {
-        if !COMMAND || (OPTION && COMMA) {
-            toggleGrowthAndConfinementModes(changesDirection:  COMMA)
+        if  !COMMAND || (OPTION && COMMA) {
+            toggleGrowthAndConfinementModes(changesDirection: COMMA)
             
-            if  gIsEditIdeaMode    && COMMA {
+            if  gIsEditIdeaMode && COMMA {
                 swapAndResumeEdit()
             }
 
@@ -698,7 +698,7 @@ class ZMapEditor: ZBaseEditor {
         
         if  let   zone = t.currentlyEditedZone, zone.hasSiblings {
             let upward = gListGrowthMode == .up
-            let offset = t.editingOffset(upward)
+            let offset = t.selectedRange
             
             t.stopCurrentEdit(forceCapture: true)
             zone.ungrab()
@@ -706,10 +706,8 @@ class ZMapEditor: ZBaseEditor {
             gCurrentBrowseLevel = zone.level // so cousin list will not be empty
             
             moveUp(upward, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { kind in
-                gRelayoutMaps() {
-                    t.edit(zone)
-                    t.setCursor(at: offset)
-                }
+				t.edit(zone)
+				t.selectedRange = offset
             }
         }
     }

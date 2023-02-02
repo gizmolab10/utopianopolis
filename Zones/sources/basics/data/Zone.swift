@@ -827,7 +827,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var userWantsToEdit: Bool {
 		let key = gCurrentKeyPressed ?? kEmpty
-		return "-deh \t\r".contains(key)
+		return "-deh, \t\r".contains(key)
 		|| gCurrentKeyPressed?.arrow != nil
 		|| gCurrentMouseDownZone     == self
 	}

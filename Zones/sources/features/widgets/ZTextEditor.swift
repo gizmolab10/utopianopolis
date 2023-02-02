@@ -307,7 +307,6 @@ class ZTextEditor: ZTextView {
 
 				if  let t = zone.widget?.textWidget {
 					t.enableUndo()
-					t.controller?.createAndLayoutWidgets(for: zone, .spRelayout)       // relayout and draw widget and its children
 					assignAsFirstResponder(t)
 				}
 

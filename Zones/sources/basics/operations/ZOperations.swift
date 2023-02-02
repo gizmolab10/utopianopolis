@@ -78,7 +78,6 @@ class ZOperations: NSObject {
     var       lastOpStart :            Date?
 	var        opDuration :    TimeInterval  { return -(lastOpStart?.timeIntervalSinceNow ?? .zero) }
 	var      shouldCancel :            Bool  { return !currentOp.isDoneOp && !currentOp.useTimer && (opDuration > 5.0) }
-	var     debugTimeText :          String  { return "\(Double(gDeciSecondsSinceLaunch) / 10.0)" }
 	var     operationText :          String  { return currentOp.description }
 	func unHang()                            { if gStartupLevel != .firstStartup { onCloudResponse?(0) } }
 	func printOp(_ message: String = kEmpty) { printDebug(.dOps, operationText + message) }

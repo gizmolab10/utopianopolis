@@ -34,8 +34,8 @@ var gCurrentMouseDownLocation :            CGFloat?
 var       gCurrentBrowseLevel :                Int?
 var        gCurrentKeyPressed :             String?
 
-var                   gIsDark :                Bool { return gDarkMode == .Dark }
 var                   gIsLate :                Bool { return gBatches.isLate }
+var                   gIsDark :                Bool { return gDarkMode == .Dark }
 var                   gIsMine :                Bool { return gDatabaseID == .mineID }
 var                gIsEditing :                Bool { return gIsEditIdeaMode || gIsEssayMode }
 var            gIsHelpVisible :                Bool { return gHelpWindow?.isVisible ?? false }
@@ -68,12 +68,11 @@ var                  gRecords :            ZRecords { return (kIsPhone && gShowS
 var                 gDarkMode :      InterfaceStyle { return InterfaceStyle() }
 var            gModifierFlags :         ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
 var    gTimeSinceCurrentEvent :        TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
-var   gDeciSecondsSinceLaunch :                 Int { return Int(Date().timeIntervalSince(gLaunchedAt) * 10.0) }
 var          gOtherDatabaseID :         ZDatabaseID { return gDatabaseID == .mineID ? .everyoneID : .mineID }
 var  gLightishBackgroundColor :              ZColor { return gAccentColor.lightish(by: 1.02)  }
 var          gDarkAccentColor :              ZColor { return gAccentColor.darker  (by: 1.3) }
 var       gLighterActiveColor :              ZColor { return gActiveColor.lighter (by: 4.0)   }
-var          gBackgroundColor :              ZColor { return  gIsDark ? kDarkestGrayColor : kWhiteColor }
+var          gBackgroundColor :              ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
 
 func       gConcealmentString(hide: Bool) -> String { return (hide ? "hide" : "reveal") }
 func        gToggleDatabaseID()                     { gDatabaseID  =  gOtherDatabaseID }

@@ -117,7 +117,7 @@ extension String {
 
 		switch self {
 			case "e", "y": return nil
-			default:       return ("Currently \(state) idea\(plural)", "Press RETURN to \(save), or press TAB to edit a new sibling idea.")
+			default:       return ("Currently \(state) idea\(plural)", "While here, you can press these keys:\nRETURN to \(save)\nTAB to edit a new sibling idea\nCONTROL SPACE to edit a new child.")
 		}
 	}
 
