@@ -150,6 +150,9 @@
 		A70CAD402609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */; };
 		A70CAD412609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */; };
 		A70CAD422609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */; };
+		A70CFB48298C643700EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
+		A70CFB49298C643700EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
+		A70CFB4A298C643700EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
 		A70E648527B6F4FB003C457E /* ZApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E648427B6F4FB003C457E /* ZApplication.swift */; };
 		A70E648C27B73352003C457E /* ZHelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E648B27B73352003C457E /* ZHelpWindowController.swift */; };
 		A70E8202290611AC00E66963 /* ZTraverse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E8201290611AC00E66963 /* ZTraverse.swift */; };
@@ -547,6 +550,7 @@
 		A706444A247222A500F90B86 /* ZNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZNode.swift; sourceTree = "<group>"; };
 		A706444E247316DA00F90B86 /* ZRecents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZRecents.swift; sourceTree = "<group>"; };
 		A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpEssayIntroductionController.swift; sourceTree = "<group>"; };
+		A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDarkableImageView.swift; sourceTree = "<group>"; };
 		A70E648427B6F4FB003C457E /* ZApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZApplication.swift; sourceTree = "<group>"; };
 		A70E648B27B73352003C457E /* ZHelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpWindowController.swift; sourceTree = "<group>"; };
 		A70E8201290611AC00E66963 /* ZTraverse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraverse.swift; sourceTree = "<group>"; };
@@ -804,6 +808,7 @@
 			isa = PBXGroup;
 			children = (
 				A7064436246F6D2700F90B86 /* ZButtonsView.swift */,
+				A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */,
 				A74DBDEA244E004000DF751A /* ZContextualMenu.swift */,
 				A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */,
 				A7B48A8823E0E80C00654DBD /* ZGridCell.swift */,
@@ -1576,6 +1581,7 @@
 				A7B78D3D244B768400DB2C14 /* ZTraitAssets.swift in Sources */,
 				A7CF3205260D737B00285A03 /* ZHelpEssayGraphicalsController.swift in Sources */,
 				0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */,
+				A70CFB48298C643700EF56A5 /* ZDarkableImageView.swift in Sources */,
 				A796741426597EAF00F06769 /* ZControlsController.swift in Sources */,
 				A706442E246E182400F90B86 /* ZTooltips.swift in Sources */,
 				A7D2D6592492B55900F652B0 /* ZHelpButtonsView.swift in Sources */,
@@ -1730,6 +1736,7 @@
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C43EFD621010F62000976CE /* ZRecords.swift in Sources */,
 				A72808B424A8688C00238889 /* ZDebug.swift in Sources */,
+				A70CFB4A298C643700EF56A5 /* ZDarkableImageView.swift in Sources */,
 				0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */,
 				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
@@ -1831,6 +1838,7 @@
 				A7CF3206260D737B00285A03 /* ZHelpEssayGraphicalsController.swift in Sources */,
 				A7B48AA623E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
 				A796741526597EAF00F06769 /* ZControlsController.swift in Sources */,
+				A70CFB49298C643700EF56A5 /* ZDarkableImageView.swift in Sources */,
 				0C39B2B11F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				A7E44A31255B9FBA00DA4B13 /* ZManagedObject.swift in Sources */,
 				A7B48AAF23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */,

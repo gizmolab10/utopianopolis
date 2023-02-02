@@ -11,7 +11,9 @@ import CoreData
 
 class ZHelpEssayGraphicalsController : ZGenericController {
 
-	override var controllerID : ZControllerID { return .idHelpEssayGraphicals }
+	override  var controllerID : ZControllerID { return .idHelpEssayGraphicals }
+	@IBOutlet var controlsView : ZDarkableImageView?
+	@IBOutlet var     grabView : ZDarkableImageView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)

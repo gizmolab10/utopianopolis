@@ -17,7 +17,6 @@ import Cocoa
 import UIKit
 #endif
 
-
 enum ZArrowKey: Int8 {
     case up    = -128
     case down

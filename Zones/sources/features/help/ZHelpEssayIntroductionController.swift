@@ -15,13 +15,12 @@ import Cocoa
 import UIKit
 #endif
 
-
 class ZHelpEssayIntroductionController : ZGenericController {
 
 	override  var controllerID : ZControllerID { return .idHelpEssayIntroduction }
+	@IBOutlet var    imageView : ZDarkableImageView?
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?
-	@IBOutlet var    imageView : NSImageView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)

@@ -337,7 +337,7 @@
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="49A-vl-LCi">
                                 <rect key="frame" x="0.0" y="36" width="601" height="80"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="r5Z-ad-4h5">
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="r5Z-ad-4h5" customClass="ZDarkableImageView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="152" y="0.0" width="298" height="80"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="298" id="GAF-Oi-xrL"/>
@@ -410,7 +410,7 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="EIu-cm-elS" userLabel="Buttons Explanation View">
                                 <rect key="frame" x="101" y="198" width="400" height="194"/>
                                 <subviews>
-                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy">
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy" customClass="ZDarkableImageView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="154" width="400" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="dwW-94-QMT"/>
@@ -458,7 +458,7 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga">
+                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga" customClass="ZDarkableImageView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="97" y="58" width="407" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="JYh-DR-oiw"/>
@@ -480,6 +480,10 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                             <constraint firstItem="p1n-xy-ora" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="bottom" constant="8" id="sm2-L6-eW9"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="controlsView" destination="EIu-cm-elS" id="Zsn-a0-v2K"/>
+                        <outlet property="grabView" destination="1LF-SL-gga" id="FKZ-fC-ffW"/>
+                    </connections>
                 </viewController>
                 <customObject id="laJ-9X-cDL" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

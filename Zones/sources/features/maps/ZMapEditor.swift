@@ -698,7 +698,7 @@ class ZMapEditor: ZBaseEditor {
         
         if  let   zone = t.currentlyEditedZone, zone.hasSiblings {
             let upward = gListGrowthMode == .up
-            let offset = t.selectedRange
+            let select = t.selectedRange
             
             t.stopCurrentEdit(forceCapture: true)
             zone.ungrab()
@@ -707,7 +707,8 @@ class ZMapEditor: ZBaseEditor {
             
             moveUp(upward, [zone], selectionOnly: false, extreme: false, growSelection: false, targeting: nil) { kind in
 				t.edit(zone)
-				t.selectedRange = offset
+
+				t.selectedRange = select
             }
         }
     }

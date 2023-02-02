@@ -2036,18 +2036,19 @@ extension ZImage {
 
 	func resize(_ newSize: CGSize) -> NSImage {
 		let newImage = NSImage(size: newSize)
+
 		newImage.lockFocus()
 		draw(in: CGRect(origin: .zero, size: newSize), from: CGRect(origin: .zero, size: size), operation: .sourceOver, fraction: CGFloat(1))
 		newImage.unlockFocus()
+
 		return newImage
 	}
 
 	var invertedImage: ZImage? {
-		if  let   tiffData = tiffRepresentation,
-			let     bitMap = NSBitmapImageRep(data: tiffData) {
-			let beginImage = CIImage(bitmapImageRep: bitMap)
-
-			if  let filter = CIFilter(name: "CIColorInvert") {
+		if  let         tiffData = tiffRepresentation,
+			let           bitMap = NSBitmapImageRep(data: tiffData) {
+			let       beginImage = CIImage(bitmapImageRep: bitMap)
+			if  let       filter = CIFilter(name: "CIColorInvert") {
 				filter.setValue(beginImage, forKey: kCIInputImageKey)
 
 				if  let filtered = filter.outputImage {
