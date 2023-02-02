@@ -318,10 +318,10 @@ class ZRecord: ZManagedObject {
     }
 
     func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {     // all properties are extracted from record, using iKeyPath as key
-        switch iKeyPath {
-        case kpRecordName:       return recordName as NSObject?      // except for the record name
-        default:                 return value(forKeyPath: iKeyPath) as? NSObject
-        }
+		switch iKeyPath {
+			case kpRecordName: return recordName as NSObject?      // except for the record name
+			default:           return value(forKeyPath: iKeyPath) as? NSObject
+		}
     }
 
     func prepare(_ iObject: NSObject, of iType: ZStorageType) -> NSObject? {

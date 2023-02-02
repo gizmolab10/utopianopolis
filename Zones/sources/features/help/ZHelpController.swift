@@ -21,7 +21,8 @@ var gHelpWindow           : ZWindow?         { return gHelpWindowController?.win
 let gAllHelpModes         : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
 
 enum ZHelpMode: String {
-	case middleMode = "m"
+	case middleMode = "i"
+	case mouseMode  = "m"
 	case basicMode  = "b"
 	case essayMode  = "e"
 	case proMode    = "a"
@@ -30,12 +31,13 @@ enum ZHelpMode: String {
 
 	var title: String {
 		switch self {
-		case .middleMode: return "intermediate keys"
-		case .essayMode:  return "notes & essays"
-		case .basicMode:  return "basic keys"
-		case .proMode:    return "all keys"
-		case .dotMode:    return "dots"
-		default:          return kEmpty
+			case .middleMode: return "intermediate keys"
+			case .essayMode:  return "notes & essays"
+			case .mouseMode:  return "mouse"
+			case .basicMode:  return "basic keys"
+			case .proMode:    return "all keys"
+			case .dotMode:    return "dots"
+			default:          return kEmpty
 		}
 	}
 

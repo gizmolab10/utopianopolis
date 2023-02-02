@@ -57,13 +57,13 @@ class ZAlerts : NSObject {
         let      text = kSpace + (iMessage ?? kEmpty)
 
         if  let ckError: CKError = iError as? CKError {
-            switch ckError.code {
-           //  case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
-            case .networkUnavailable: gHasInternet = false; closure?(true) // was alertNoInternet
-            default:
-                printDebug(.dError, ckError.localizedDescription + text)
-                closure?(true)
-            }
+			switch ckError.code {
+//				case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
+				case .networkUnavailable: gHasInternet = false; closure?(true) // was alertNoInternet
+				default:
+					printDebug(.dError, ckError.localizedDescription + text)
+					closure?(true)
+			}
         } else if let nsError = iError as? NSError {
             let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? kEmpty
 
@@ -84,20 +84,20 @@ class ZAlerts : NSObject {
         let message = "In System Preferences, please enable network access"
 
 		alertWithClosure("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
-            switch status {
-            case .sShow:
-				alert?.showModal { [self] choice in
-                    switch choice {
-                    case .sYes:
-                        openSystemPreferences()
-                        onCompletion()
-                    default: break
-                    }
-                }
-            default:
-                openSystemPreferences()
-                onCompletion()
-            }
+			switch status {
+				case .sShow:
+					alert?.showModal { [self] choice in
+						switch choice {
+							case .sYes:
+								openSystemPreferences()
+								onCompletion()
+							default: break
+						}
+					}
+				default:
+					openSystemPreferences()
+					onCompletion()
+			}
         }
     }
 
@@ -105,20 +105,20 @@ class ZAlerts : NSObject {
         let message = "In System Preferences, please \n  1. click on iCloud,\n  2. sign in,\n  3. turn on iCloud drive"
 
 		alertWithClosure("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
-                switch status {
-                case .sShow:
-						alert?.showModal { [self] choice in
-                        switch choice {
-                        case .sYes:
-                            openSystemPreferences()
-                            onCompletion()
-                        default: break
-                        }
-                    }
-                default:
-                    openSystemPreferences()
-                    onCompletion()
-                }
+			switch status {
+				case .sShow:
+					alert?.showModal { [self] choice in
+						switch choice {
+							case .sYes:
+								openSystemPreferences()
+								onCompletion()
+							default: break
+						}
+					}
+				default:
+					openSystemPreferences()
+					onCompletion()
+			}
         }
     }
 }

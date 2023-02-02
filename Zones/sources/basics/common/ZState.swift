@@ -130,15 +130,15 @@ enum ZIdeaVisibilityMode : Int {
 
 	var array : StringsArray {
 		switch self {
-		case .mExpanded:  return gExpandedIdeas
-		case .mCollapsed: return gCollapsedIdeas
+			case .mExpanded:  return gExpandedIdeas
+			case .mCollapsed: return gCollapsedIdeas
 		}
 	}
 
 	func setArray(_ array: StringsArray) {
 		switch self {
-		case .mExpanded:  gExpandedIdeas  = array
-		case .mCollapsed: gCollapsedIdeas = array
+			case .mExpanded:  gExpandedIdeas  = array
+			case .mCollapsed: gCollapsedIdeas = array
 		}
 	}
 }

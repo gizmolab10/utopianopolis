@@ -40,7 +40,7 @@ public typealias ZBezierPath                 = UIBezierPath
 public typealias ZSearchField                = UISearchBar
 public typealias ZApplication                = UIApplication
 public typealias ZTableColumn                = ZNullProtocol
-public typealias ZTableCellView              = UITableCellView
+//public typealias ZTableCellView              = UITableCellView
 public typealias ZWindowDelegate             = ZNullProtocol
 public typealias ZScrollDelegate             = UIScrollViewDelegate
 public typealias ZWindowController           = ZNullProtocol
@@ -137,7 +137,7 @@ extension String {
 
     func openAsURL() {
         if let url = URL(string: self) {
-            gApplication?.open(url)
+//            gApplication?.open(url)
         }
     }
 
@@ -171,13 +171,15 @@ extension ZColor {
     }
     
     var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
-		var h: CGFloat = .zero
-		var s: CGFloat = .zero
-		var b: CGFloat = .zero
-		var a: CGFloat = .zero
-		let      color = CGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent) // avoid crash due to grey color space
+		var h:    CGFloat = .zero
+		var s:    CGFloat = .zero
+		var b:    CGFloat = .zero
+		var a:    CGFloat = .zero
+		if  let coreColor = cgColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil) {
+			let     color = ZColor(cgColor: coreColor) // avoid crash due to grey color space
 
-		color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+			color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+		}
         
         return (h, s, b, a)
     }
@@ -297,18 +299,12 @@ extension UIView {
 
     override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if  event?.subtype == UIEvent.EventSubtype.motionShake && !gKeyboardIsVisible {
-            gMapController.recenter()
+            gMapController?.recenter()
         }
     }
 
 	func printView() {}
 
-}
-
-extension ZStackableView {
-    
-    var identity: ZDetailsViewID { return .All }    
-    
 }
 
 extension UITableView {
@@ -342,7 +338,7 @@ extension ZWindow {
     override open var canBecomeFirstResponder: Bool { return true }
 
     override open var keyCommands: [UIKeyCommand]? {
-        if  gIsIdeaMode {
+        if  gIsEditIdeaMode { // TODO: should be gIsMapMode?
             return nil
         }
 
@@ -421,7 +417,7 @@ extension UISearchBar {
 extension ZoneTextWidget {
 
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        layoutTextField()
+		updateGUI()
         gMapView?.setAllSubviewsNeedDisplay()
 
         return true
@@ -499,7 +495,7 @@ extension ZAlert {
     func showAlert(closure: AlertStatusClosure? = nil) {
         modalPresentationStyle = .popover
 
-        gControllers.currentController?.present(self, animated: true) {
+        gControllers.currentController?.present(self, animated: true) { [self] in
             dismiss(animated: false) {
                 closure?(.sShown)
             }
@@ -511,9 +507,7 @@ extension ZAlert {
 extension ZAlerts {
 
     func openSystemPreferences() {
-        if let url = URL(string: "App-Prefs:root=General&path=Network") {
-            gApplication?.open(url)
-        }
+		"App-Prefs:root=General&path=Network".openAsURL()
     }
     
     func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
@@ -560,17 +554,17 @@ extension ZTextEditor {
 
     func fullResign()  {
         assignAsFirstResponder(nil) // ios broken?
-		assignAsFirstResponder(gMapController.mobileKeyInput)
+		assignAsFirstResponder(gMapController?.mobileKeyInput)
 	}
 	
 }
 
 extension ZMapController {
     
-    @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(up: true) }
-    @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(up: false) }
-    @objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: true)  { gSelecting.updateAfterMove() } }
-    @objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: false) { gSelecting.updateAfterMove() } }
+    @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.moveUp(true) }
+    @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.moveUp(false) }
+	@objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: true)  { _ in gSelecting.updateAfterMove(needsRedraw: true) } }
+	@objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: false) { _ in gSelecting.updateAfterMove(needsRedraw: true) } }
         
 }
 

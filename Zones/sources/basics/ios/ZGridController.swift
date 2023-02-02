@@ -31,7 +31,7 @@ class ZGridController: UICollectionViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		collectionView.register(ZGridCell.self, forCellWithReuseIdentifier: "gridCell")
-		update()
+		gridUpdate()
 	}
 
 	func gridUpdate() {
@@ -44,7 +44,7 @@ class ZGridController: UICollectionViewController {
 
 	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "gridCell", for: indexPath as IndexPath) as! ZGridCell
-		cell.addBorder(thickness: 0.5, radius: 5.0, color: kLightGrayColor.cgColor)
+//		cell.addBorder(thickness: 0.5, radius: 5.0, color: kLightGrayColor.cgColor)
 		cell.backgroundColor = .clear
 		cell.title.textColor = .blue
 		cell.title.text = kEmpty
@@ -53,21 +53,21 @@ class ZGridController: UICollectionViewController {
 		
 		if  let    gridIID = ZGridID(rawValue: indexPath.row) {
 			switch gridIID {
-			case .idCollapse: cell.title.text = "⋺"
-			case .idUp:       cell.title.text = "⇧"
-			case .idExpand:   cell.title.text = "⋲"
-			case .idLeft:     cell.title.text = "⇦"
-			case .idFocus:    cell.title.text = "/"
-			case .idRight:    cell.title.text = "⇨"
-			case .idMove:     cell.title.text = "✍"
-			case .idDown:     cell.title.text = "⇩"
-			case .idExtend:   break // cell.title.text = "+"
+				case .idCollapse: cell.title.text = "⋺"
+				case .idUp:       cell.title.text = "⇧"
+				case .idExpand:   cell.title.text = "⋲"
+				case .idLeft:     cell.title.text = "⇦"
+				case .idFocus:    cell.title.text = "/"
+				case .idRight:    cell.title.text = "⇨"
+				case .idMove:     cell.title.text = "✍"
+				case .idDown:     cell.title.text = "⇩"
+				case .idExtend:   break // cell.title.text = "+"
 			}
 
 			switch gridIID {
-			case .idExtend: 						if 		  extends { cell.backgroundColor = kLightGrayColor }
-			case .idUp, .idDown, .idLeft, .idRight: if !selectionOnly { cell.backgroundColor = kLightGrayColor }
-			default: break
+				case .idExtend: 						if 		  extends { cell.backgroundColor = kLightGrayColor }
+				case .idUp, .idDown, .idLeft, .idRight: if !selectionOnly { cell.backgroundColor = kLightGrayColor }
+				default: break
 			}
 		}
 
@@ -82,22 +82,22 @@ class ZGridController: UICollectionViewController {
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		if  let    gridIID = ZGridID(rawValue: indexPath.row) {
 
-			let complete = {
-				gSelecting.updateAfterMove()
-				redrawMap()
+			let complete = { [self] in
+				gSelecting.updateAfterMove(needsRedraw: true)
+				gRelayoutMaps()
 				gridUpdate()
 			}
 
 			switch gridIID {
-			case .idCollapse,
-				 .idExpand:   gSelecting.currentMoveable.generationalUpdate(gridIID == .idExpand) { complete() }
-			case .idUp:       gMapEditor.move(up:  true,  selectionOnly: selectionOnly)
-			case .idDown:     gMapEditor.move(up:  false, selectionOnly: selectionOnly)
-			case .idLeft:     gMapEditor.move(out: true,  selectionOnly: selectionOnly)           { complete() }
-			case .idRight:    gMapEditor.move(out: false, selectionOnly: selectionOnly)           { complete() }
-			case .idFocus:    gFocusing.focusOnGrab(kind: .eSelected) { gRedrawMap() }; return
-			case .idMove:     selectionOnly = !selectionOnly // only a toggle, does nothing else
-			case .idExtend:   break // extends = !extends // disabled for now
+				case .idCollapse,
+					 .idExpand: gSelecting.currentMoveable.generationalUpdate(show: gridIID == .idExpand) { complete() }
+				case .idUp:     gMapEditor.moveUp(true,  selectionOnly: selectionOnly)
+				case .idDown:   gMapEditor.moveUp(false, selectionOnly: selectionOnly)
+				case .idLeft:   gMapEditor.move(out:  true,  selectionOnly: selectionOnly) { _ in complete() }
+				case .idRight:  gMapEditor.move(out:  false, selectionOnly: selectionOnly) { _ in complete() }
+				case .idFocus:  gFocusing.focusOnGrab(.eSelected)                          {  gRelayoutMaps() }; return
+				case .idMove:   selectionOnly = !selectionOnly // only a toggle, does nothing else
+				case .idExtend: break // extends = !extends // disabled for now
 			}
 			
 			complete()

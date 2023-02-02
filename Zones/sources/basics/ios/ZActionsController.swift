@@ -35,9 +35,7 @@ enum ZFunction: String {
 	case eMe         = "Me"
 }
 
-
 var gActionsController: ZActionsController { return gControllers.controllerForID(.idActions) as! ZActionsController }
-
 
 class ZActionsController : ZGenericController {
 
@@ -45,20 +43,16 @@ class ZActionsController : ZGenericController {
 	override  var    controllerID : ZControllerID { return .idActions }
 	var                     isTop : Bool { return gCurrentFunction == .eTop }
 
-
     // MARK: - events
     // MARK: -
-
 
 	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		actionUpdate()
 	}
-	
-	
+
 	@IBAction func actionsVisibilityButtonAction(iButton: UIButton) {
 		showTop()
 	}
-	
 
 	@IBAction func selectorAction(iControl: UISegmentedControl) {
 		if  let    title = iControl.titleForSegment(at: iControl.selectedSegment),
@@ -66,23 +60,22 @@ class ZActionsController : ZGenericController {
 			let     zone = gSelecting.currentMoveable
 			
 			switch function {
-			case .eTop, .eEdit, .eCloud,
-				 .eMore:    gCurrentFunction = function; actionUpdate()
-			case .eRefetchAll,
-				 .eRefetch: refetch(for: function == .eRefetchAll)
-			case .ePrefs:   switchView(to: function)
-			case .eDelete:  gMapEditor.deleteGrabbed()
-			case .eNew:     gSelecting.currentMoveable.addIdea()
-			case .eHang:    gBatches.unHang()
-			case .eName:    gTextEditor.edit(zone)
-			case .eHelp:    openBrowserForFocusWebsite()
-			case .eNext:    gSelecting.rootMostMoveable.addNext()
-			case .eToTop:   showTop()
-			default:        break
+				case .eTop, .eEdit, .eCloud,
+					 .eMore:    gCurrentFunction = function; actionUpdate()
+				case .eRefetchAll,
+					 .eRefetch: refetch(for: function == .eRefetchAll)
+				case .ePrefs:   switchView(to: function)
+				case .eDelete:  gSelecting.lastGrab.deleteSelf {}
+				case .eNew:     gSelecting.currentMoveable.addIdea()
+				case .eHang:    gBatches.unHang()
+				case .eName:    gTextEditor.edit(zone)
+//				case .eHelp:    openBrowserForFocusWebsite()
+				case .eNext:    gSelecting.rootMostMoveable?.addNext()
+				case .eToTop:   showTop()
+				default:        break
 			}
 		}
 	}
-	
 
 	func actionUpdate() {
 		if  let actions = actionsSelector {
@@ -105,73 +98,67 @@ class ZActionsController : ZGenericController {
 			}
 			
 			switch gCurrentFunction {
-			case .eTop:
-				insert(.eEdit)
-				insert(.eCloud)
-				insert(.eMore)
-			case .eEdit:
-				insert(.eNew)
-				insert(.eNext)
-				insert(.eName)
-				insert(.eDelete)
-			case .eCloud:
-				if  gIsLate {
-					insert(.eHang)
-				} else {
-					insert(.eRefetch)
-					insert(.eRefetchAll)
-				}
-			case .eMore:
-				insert(.eHelp)
-				insert(.ePrefs)
-			default: break
+				case .eTop:
+					insert(.eEdit)
+					insert(.eCloud)
+					insert(.eMore)
+				case .eEdit:
+					insert(.eNew)
+					insert(.eNext)
+					insert(.eName)
+					insert(.eDelete)
+				case .eCloud:
+					if  gIsLate {
+						insert(.eHang)
+					} else {
+						insert(.eRefetch)
+						insert(.eRefetchAll)
+					}
+				case .eMore:
+					insert(.eHelp)
+					insert(.ePrefs)
+				default: break
 			}
 		}
 	}
-	
-	
+
 	// MARK: - functions
 	// MARK: -
 	
-	
 	func alignView() {
 		switch gDatabaseID {
-		case .everyoneID: gCurrentMapFunction = .ePublic
-		default:          gCurrentMapFunction = .eMe
+			case .everyoneID: gCurrentMapFunction = .ePublic
+			default:          gCurrentMapFunction = .eMe
 		}
 	}
-	
-	
+
 	func switchView(to iFunction: ZFunction) {
 		let priorShown = gShowSmallMapForIOS
 		let    priorID = gDatabaseID
 
 		switch iFunction {
-		case .eMe:        gShowSmallMapForIOS = false; gDatabaseID = .mineID
-		case .ePublic:    gShowSmallMapForIOS = false; gDatabaseID = .everyoneID
-		case .eFavorites: gShowSmallMapForIOS = true
-		default: break
+			case .eMe:        gShowSmallMapForIOS = false; gDatabaseID = .mineID
+			case .ePublic:    gShowSmallMapForIOS = false; gDatabaseID = .everyoneID
+			case .eFavorites: gShowSmallMapForIOS = true
+			default:          break
 		}
 		
 		if  gDatabaseID != priorID || gShowSmallMapForIOS != priorShown {
-			gSelecting.updateAfterMove()
-			redrawMap()
+			gSelecting.updateAfterMove(needsRedraw: true)
+			gRelayoutMaps()
 		}
 	}
-	
-	
+
 	func showTop() {
 		gCurrentFunction = .eTop
 		
 		actionUpdate()
 	}
-	
 
 	func refetch(for iAll: Bool) {
-		gBatches		 .unHang()
-		gWidgets         .clearRegistry()
-		gMapController.clear()
-		gControllers     .startupCloudAndUI()
+		gBatches.unHang()
+		gWidgets.clearAll()
+		gStartup.startupCloudAndUI()
 	}
 	
 }

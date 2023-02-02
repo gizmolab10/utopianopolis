@@ -933,11 +933,11 @@ enum ZDirection : Int {
 
 	var cursor: NSCursor {
 		switch self {
-		case .bottom,
-			 .top:  return .resizeUpDown
-		case .right,
-			 .left: return .resizeLeftRight
-		default:    return kFourArrowsCursor ?? .crosshair
+			case .bottom,
+				 .top:  return .resizeUpDown
+			case .right,
+				 .left: return .resizeLeftRight
+			default:    return kFourArrowsCursor ?? .crosshair
 		}
 	}
 
