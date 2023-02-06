@@ -21,7 +21,7 @@ class ZControlsController: ZGenericController {
 	func updateOptionView() { searchStateDidChange() }
 
 	override func controllerSetup(with mapView: ZMapView?) {
-		searchOptionsView?.zlayer.backgroundColor = kWhiteColor.cgColor
+		searchOptionsView?.zlayer.backgroundColor = kClearColor.cgColor
 
 		searchStateDidChange()
 	}
@@ -35,6 +35,7 @@ class ZControlsController: ZGenericController {
 
 	func searchStateDidChange() {
 		searchOptionsView?.isHidden = gIsNotSearching
+		mapControlsView?  .isHidden = gIsSearching
 
 		gMainController?.searchStateDidChange() // moved dismiss button to main controller
 	}

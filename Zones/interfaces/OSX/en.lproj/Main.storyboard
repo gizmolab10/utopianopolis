@@ -935,16 +935,16 @@ CA
                                     <action selector="hamburgerButtonAction:" target="MXk-17-6Dz" id="Jmy-Uu-Ilu"/>
                                 </connections>
                             </button>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="whm-tf-fPZ" userLabel="Controls View">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="whm-tf-fPZ" userLabel="map and search controls view">
                                 <rect key="frame" x="34" y="256" width="192" height="44"/>
                                 <connections>
                                     <segue destination="c3F-r9-TYw" kind="embed" id="bZN-yX-DFc"/>
                                 </connections>
                             </containerView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Bar View">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Right Bar View">
                                 <rect key="frame" x="226" y="256" width="225" height="44"/>
                                 <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="TGS-db-Yos" userLabel="search buttons">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="TGS-db-Yos" userLabel="search and dismiss buttons">
                                         <rect key="frame" x="0.0" y="0.0" width="27" height="44"/>
                                         <subviews>
                                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RjV-tY-a8J" userLabel="Search Buttons">
@@ -2310,14 +2310,14 @@ DQ
             <objects>
                 <viewController id="c3F-r9-TYw" userLabel="Controls Controller" customClass="ZControlsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="inW-Gh-k1T">
-                        <rect key="frame" x="0.0" y="0.0" width="240" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="182" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LcE-Ba-uvs" userLabel="Map Controls">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="44"/>
+                                <rect key="frame" x="0.0" y="0.0" width="182" height="44"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="Rct-nF-Qx4" customClass="ZMapControlsView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="240" height="44"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="182" height="44"/>
                                     </customView>
                                 </subviews>
                                 <constraints>
@@ -2329,14 +2329,14 @@ DQ
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="jbD-YT-XOW">
-                                <rect key="frame" x="0.0" y="0.0" width="240" height="44"/>
+                                <rect key="frame" x="0.0" y="0.0" width="182" height="44"/>
                                 <subviews>
                                     <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
-                                        <rect key="frame" x="76" y="20" width="166" height="21"/>
+                                        <rect key="frame" x="-2" y="20" width="186" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="16" id="fuA-YK-5ve"/>
                                         </constraints>
-                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
+                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
                                             <font key="font" metaFont="system"/>
                                             <segments>
                                                 <segment label="bookmarks"/>
@@ -2349,11 +2349,11 @@ DQ
                                         </connections>
                                     </segmentedControl>
                                     <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
-                                        <rect key="frame" x="61" y="3" width="180" height="16"/>
+                                        <rect key="frame" x="-1" y="3" width="184" height="16"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="13" id="cnb-Bz-45J"/>
                                         </constraints>
-                                        <segmentedCell key="cell" controlSize="mini" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
+                                        <segmentedCell key="cell" controlSize="mini" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
                                             <font key="font" metaFont="miniSystem"/>
                                             <segments>
                                                 <segment label="public"/>
@@ -2370,7 +2370,9 @@ DQ
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="e16-JP-Abj" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" constant="11" id="FVP-QG-ppX"/>
+                                    <constraint firstItem="e16-JP-Abj" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" constant="1" id="WkX-Sj-n8o"/>
                                     <constraint firstAttribute="trailing" secondItem="e16-JP-Abj" secondAttribute="trailing" constant="1" id="YK6-XZ-o7v"/>
+                                    <constraint firstItem="zJL-q5-otI" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" constant="1" id="kgY-L1-g43"/>
                                     <constraint firstAttribute="trailing" secondItem="zJL-q5-otI" secondAttribute="trailing" constant="1" id="nAT-qw-ZBN"/>
                                     <constraint firstItem="zJL-q5-otI" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" constant="-9" id="rB4-0W-OCA"/>
                                 </constraints>
@@ -2396,7 +2398,7 @@ DQ
                 </viewController>
                 <customObject id="933-fU-289" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="986" y="468"/>
+            <point key="canvasLocation" x="957" y="468"/>
         </scene>
         <!--Small Map-->
         <scene sceneID="fRz-nE-ecT">

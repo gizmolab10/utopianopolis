@@ -1,5 +1,5 @@
 //
-//  ZSearchController.swift
+//  ZSearchBarController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 12/15/16.

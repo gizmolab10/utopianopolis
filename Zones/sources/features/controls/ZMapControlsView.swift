@@ -29,13 +29,13 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 	override  var  verticalLineIndex : Int? { return 1 }
 
 	override func setupButtons() {
-		removeButtons()
+		super.setupButtons()
 
-		buttons                   = [ZButton]()
+		buttons                   = [ZHoverableButton]()
 		let t : [ZModeButtonType] = [.tLayout, .tGrowth, .tConfine]
 		for type in t {
 			let             title = type.rawValue
-			let            button = ZButton(title: title, target: self, action: #selector(handleButtonPress))
+			let            button = ZHoverableButton(title: title, target: self, action: #selector(handleButtonPress))
 			button.modeButtonType = type
 			button.isBordered     = true
 

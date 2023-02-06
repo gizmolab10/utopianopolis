@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZHoverableButton: ZDarkableButton, ZToolTipper {
+class ZHoverableButton: ZDarkableImageButton, ZToolTipper {
 
 	var originalBackgroundColor: ZColor?
 

@@ -16,8 +16,11 @@ class ZButtonsView : ZView {
 	var  verticalLineIndex : Int? { return nil }
 	var            buttons = [ZButton]()
 
-	func setupButtons()  {}
 	func updateButtons() {}
+
+	func setupButtons() {
+		removeButtons()
+	}
 
 	func removeButtons() {
 		for button in buttons {
@@ -26,6 +29,8 @@ class ZButtonsView : ZView {
 	}
 
 	func setupAndRedraw() {
+		zlayer.backgroundColor = kClearColor.cgColor
+
 		setupButtons() // customize this in subclass
 		updateAndRedraw()
 	}

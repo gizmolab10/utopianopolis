@@ -13,6 +13,8 @@ class ZDarkableImage : ZImage {
 	var darkened: ZImage?
 
 	var current: ZImage? {
+		setupAsDarkable()
+
 		return gIsDark ? darkened : self as ZImage
 	}
 
@@ -20,18 +22,25 @@ class ZDarkableImage : ZImage {
 		current?.draw(in: rect)
 	}
 
+	func setupAsDarkable() {
+		if  darkened     == nil,
+			let  darkable = invertedImage {
+			darkable.size = size
+			darkened      = darkable
+		}
+	}
+
 	static func create(from image: ZImage) -> ZDarkableImage? {
-		if  let     darkable = image as? ZDarkableImage {
-			return  darkable
+		if  let    darkable = image as? ZDarkableImage {
+			return darkable
 		}
 
-		if  let     darkable = image.invertedImage,
-			let         data = image.tiffRepresentation {
-			let       result = ZDarkableImage(data: data)
-			darkable.size    = image.size
-			result?.darkened = darkable
+		if  let        data = image.tiffRepresentation {
+			let      result = ZDarkableImage(data: data)
 
-			return    result
+			result?.setupAsDarkable()
+
+			return   result
 		}
 
 		return nil

@@ -1,5 +1,5 @@
 //
-//  SeriouslyegmentedControl.swift
+//  ZoneSegmentedControl.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 9/25/17.
@@ -15,12 +15,13 @@ class ZoneSegmentedControl : ZSegmentedControl {
         super.awakeFromNib()
 
         let image = kSegmentDividerImage
+		let  font = UIFont.systemFont(ofSize: 17)
 
         setDividerImage(image, forLeftSegmentState:   .normal, rightSegmentState:   .normal, barMetrics: .default)
         setDividerImage(image, forLeftSegmentState:   .normal, rightSegmentState: .selected, barMetrics: .default)
         setDividerImage(image, forLeftSegmentState: .selected, rightSegmentState:   .normal, barMetrics: .default)
 
-        setTitleTextAttributes([.font : gWidgetFont], for: .normal)
+        setTitleTextAttributes([.font : font], for: .normal)
     }
 
 }

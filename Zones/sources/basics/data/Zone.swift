@@ -100,7 +100,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
 	var                      widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kBlackColor }
 	var                        textColor :             ZColor? { return isDragged ? gActiveColor : widgetColor }
-	var                     lighterColor :             ZColor? { return color?.withAlphaComponent(0.3) }
+	var                     lighterColor :             ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
 	var                   highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
 	var                        emailLink :             String? { return email == nil ? nil : kMailTo + email! }
 	var                   linkRecordName :             String? { return zoneLink?.maybeRecordName }

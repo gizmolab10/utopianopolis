@@ -1,5 +1,5 @@
 //
-//  ZDarkableButton.swift
+//  ZDarkableImageButton.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 2/6/23.
@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZDarkableButton : ZButton {
+class ZDarkableImageButton : ZButton {
 
 	var original: ZImage?
 	var darkened: ZImage?
@@ -25,10 +25,10 @@ class ZDarkableButton : ZButton {
 		bezelStyle = .texturedRounded
 
 		setButtonType(.momentaryChange)
-		setupDarkened()
+		setupAsDarkable()
 	}
 
-	func setupDarkened() {
+	func setupAsDarkable() {
 		if  let        i  = image {
 			if  darkened == nil {
 				darkened  = i.invertedImage

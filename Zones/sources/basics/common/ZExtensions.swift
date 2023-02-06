@@ -2096,8 +2096,11 @@ extension NSTextAttachment {
 		}
 	}
 
-	func refreshImage() {
-		// how?
+	func setupAsDarkable() {
+		if  let   cell = attachmentCell as? NSCell,
+			let  image = cell.image {
+			cell.image = ZDarkableImage.create(from: image)
+		}
 	}
 
 }

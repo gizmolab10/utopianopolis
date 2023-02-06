@@ -81,13 +81,20 @@ class ZEssayControlsView: ZView {
 
 	func updateTitleSegments(_ enabled: Bool = true) {
 		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
-		titlesControl?.segmentCount = isNote ? 2 : 3
+		let                segments = isNote ? 2 : 3
+		titlesControl?.segmentCount = segments
 		titlesControl?   .isEnabled = enabled
 
-		if !isNote {
-			let image = kShowDragDot?.resize(CGSize.squared(16.0))
-			titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
-			titlesControl?.setImage(image,                         forSegment: 2)
+		for segment in 0...segments {
+			let  image = titlesControl?.image  (forSegment: segment) ?? kShowDragDot?.resize(CGSize.squared(16.0))
+			if  let  i = image {
+				let di = ZDarkableImage.create(from: i)
+				titlesControl?.setImage(di,     forSegment: segment)
+			}
+
+			if  titlesControl?.toolTip(         forSegment: segment) == nil {
+				titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
+			}
 		}
 	}
 
