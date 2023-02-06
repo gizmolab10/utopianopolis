@@ -319,7 +319,7 @@ extension ZMapControlsView {
 
 }
 
-extension ZToolTipButton {
+extension ZHoverableButton {
 
 	func updateToolTips(_ flags: ZEventFlags) {}
 	func clearToolTips()                      {}

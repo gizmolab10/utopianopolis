@@ -1,5 +1,5 @@
 //
-//  ZToolTipButton.swift
+//  ZHoverableButton.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 3/13/21.
@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZToolTipButton: ZButton, ZToolTipper {
+class ZHoverableButton: ZDarkableButton, ZToolTipper {
 
 	var originalBackgroundColor: ZColor?
 
@@ -52,4 +52,5 @@ class ZToolTipButton: ZButton, ZToolTipper {
 
 		super.mouseUp(with: event)
 	}
+
 }

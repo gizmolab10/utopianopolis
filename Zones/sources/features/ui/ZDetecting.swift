@@ -168,7 +168,7 @@ extension ZView {
 
 }
 
-extension ZToolTipButton {
+extension ZHoverableButton {
 
 	func updateTracking() { addTracking(for: self, in: frame) }
 

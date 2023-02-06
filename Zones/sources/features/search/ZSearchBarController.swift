@@ -44,7 +44,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	}
 
 	func searchStateDidChange() {
-		switch gSearching.state {
+		switch gSearching.searchState {
 			case .sEntry, .sFind:
 				assignAsFirstResponder(searchBar)
 			default: break
@@ -104,7 +104,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 			handleArrow(arrow, with: flags)
 		} else {
 			if !isReturn, isWaiting {
-				gSearching.state = .sFind    // don't call setSearchStateTo, it has unwanted side-effects
+				gSearching.searchState = .sFind    // don't call setSearchStateTo, it has unwanted side-effects
 			}
             
             return event

@@ -15,7 +15,7 @@ import Foundation
 #endif
 
 func gExitSearchMode(force: Bool = true) { if force || gIsSearching { gSearching.exitSearchMode() } }
-var  gShowsSearchResults  : Bool { return gSearching.state == .sList }
+var  gShowsSearchResults  : Bool { return gSearching.searchState == .sList }
 
 enum ZSearchState: Int {
     case sEntry
@@ -28,7 +28,7 @@ let gSearching = ZSearching()
 
 class ZSearching: NSObject, ZSearcher {
 
-	var         state = ZSearchState.sNot
+	var         searchState = ZSearchState.sNot
 	var    hasResults : Bool { return gSearchResultsController?.hasResults ?? false }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
@@ -38,7 +38,7 @@ class ZSearching: NSObject, ZSearcher {
 	}
 
 	func exitSearchMode() {
-		state = .sNot // don't call setSearchStateTo (below), it has unwanted side-effects
+		searchState = .sNot // don't call setSearchStateTo (below), it has unwanted side-effects
 
 		gSignal([.sFound, .sSearch, .spRelayout])
 
@@ -48,13 +48,13 @@ class ZSearching: NSObject, ZSearcher {
 	}
 
 	func setSearchStateTo(_ iState: ZSearchState) {
-		state = iState
+		searchState = iState
 
 		gControlsController?     .searchStateDidChange()
 		gSearchBarController?    .searchStateDidChange()
 		gSearchResultsController?.searchStateDidChange()
 
-		switch state {
+		switch searchState {
 			case .sList:          gSignal([.sFound])
 			case .sFind, .sEntry: assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBar)
 
@@ -64,7 +64,7 @@ class ZSearching: NSObject, ZSearcher {
 
 	func showSearch(_ OPTION: Bool = false) {
 //		if  gProducts.hasEnabledSubscription {
-		state = .sEntry // don't call setSearchStateTo, it has unwanted side-effects
+		searchState = .sEntry // don't call setSearchStateTo, it has unwanted side-effects
 
 		gSignal([OPTION ? .sFound : .sSearch])
 //		}

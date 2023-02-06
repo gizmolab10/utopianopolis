@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ZKickoffToolButton: ZToolTipButton {
+class ZKickoffToolButton: ZHoverableButton {
 
 	@IBOutlet var controller: ZKickoffToolsController?
 	var downTitle = kEmpty

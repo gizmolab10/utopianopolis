@@ -31,7 +31,10 @@ class ZTogglingView: ZView {
 	var kind           : String? { return gConvertFromOptionalUserInterfaceItemIdentifier(identifier) }
 
 	func toggleHideableVisibility() { hideHideable = !hideHideable }
-	func    updateTitleBarButtons() {}
+
+	func updateTitleBarButtons() {
+		switchingButton?.attributedTitle = "Switch".darkAdaptedTitle
+	}
 
     // MARK: - identity
     // MARK: -

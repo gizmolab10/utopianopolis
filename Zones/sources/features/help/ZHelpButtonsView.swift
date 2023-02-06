@@ -50,13 +50,13 @@ class ZHelpButtonsView : ZButtonsView {
 	}
 
 	override func setupButtons() {
-		for mode in gAllHelpModes {
+		for mode in ZHelpMode.all {
 			buttonForMode(mode)
 		}
 	}
 
 	override func updateButtons() {
-		for mode in gAllHelpModes {
+		for mode in ZHelpMode.all {
 			buttonForMode(mode).isEnabled = true
 		}
 	}

@@ -150,9 +150,15 @@
 		A70CAD402609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */; };
 		A70CAD412609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */; };
 		A70CAD422609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */; };
-		A70CFB48298C643700EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
-		A70CFB49298C643700EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
-		A70CFB4A298C643700EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
+		A70CFB4C298C739E00EF56A5 /* ZHelpMouseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB4B298C739E00EF56A5 /* ZHelpMouseData.swift */; };
+		A70CFB4D298C739E00EF56A5 /* ZHelpMouseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB4B298C739E00EF56A5 /* ZHelpMouseData.swift */; };
+		A70CFB4E298C739E00EF56A5 /* ZHelpMouseData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB4B298C739E00EF56A5 /* ZHelpMouseData.swift */; };
+		A70CFB5B298F304F00EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
+		A70CFB5C298F305000EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
+		A70CFB5D298F305000EF56A5 /* ZDarkableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */; };
+		A70CFB5F29906DBB00EF56A5 /* ZDarkableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB5E29906DBB00EF56A5 /* ZDarkableImage.swift */; };
+		A70CFB6029906DBB00EF56A5 /* ZDarkableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB5E29906DBB00EF56A5 /* ZDarkableImage.swift */; };
+		A70CFB6129906DBB00EF56A5 /* ZDarkableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70CFB5E29906DBB00EF56A5 /* ZDarkableImage.swift */; };
 		A70E648527B6F4FB003C457E /* ZApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E648427B6F4FB003C457E /* ZApplication.swift */; };
 		A70E648C27B73352003C457E /* ZHelpWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E648B27B73352003C457E /* ZHelpWindowController.swift */; };
 		A70E8202290611AC00E66963 /* ZTraverse.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70E8201290611AC00E66963 /* ZTraverse.swift */; };
@@ -216,6 +222,9 @@
 		A745ED0C26AF4E7D0013D1A4 /* ZHovering.swift in Sources */ = {isa = PBXBuildFile; fileRef = A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */; };
 		A745ED0D26AF4E7D0013D1A4 /* ZHovering.swift in Sources */ = {isa = PBXBuildFile; fileRef = A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */; };
 		A746D465219F613D00123A0A /* Help.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A746D461219F613D00123A0A /* Help.storyboard */; };
+		A74BE5E32991857800601D6B /* ZDarkableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74BE5E12991857800601D6B /* ZDarkableButton.swift */; };
+		A74BE5E42991857800601D6B /* ZDarkableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74BE5E12991857800601D6B /* ZDarkableButton.swift */; };
+		A74BE5E52991857800601D6B /* ZDarkableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74BE5E12991857800601D6B /* ZDarkableButton.swift */; };
 		A74DBDEB244E004000DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
 		A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
 		A74DBDED244E179700DF751A /* ZContextualMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A74DBDEA244E004000DF751A /* ZContextualMenu.swift */; };
@@ -336,9 +345,9 @@
 		A7B78D42244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */; };
 		A7B78D43244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */; };
 		A7B78D44244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */; };
-		A7C344E025FD4AA900ACB6A3 /* ZTooltipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZTooltipButton.swift */; };
-		A7C344E125FD4AA900ACB6A3 /* ZTooltipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZTooltipButton.swift */; };
-		A7C344E225FD4AA900ACB6A3 /* ZTooltipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZTooltipButton.swift */; };
+		A7C344E025FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */; };
+		A7C344E125FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */; };
+		A7C344E225FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */; };
 		A7C7AF5923B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5A23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
 		A7C7AF5B23B6D0A000AAD593 /* ZEssay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */; };
@@ -551,6 +560,8 @@
 		A706444E247316DA00F90B86 /* ZRecents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZRecents.swift; sourceTree = "<group>"; };
 		A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpEssayIntroductionController.swift; sourceTree = "<group>"; };
 		A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDarkableImageView.swift; sourceTree = "<group>"; };
+		A70CFB4B298C739E00EF56A5 /* ZHelpMouseData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpMouseData.swift; sourceTree = "<group>"; };
+		A70CFB5E29906DBB00EF56A5 /* ZDarkableImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDarkableImage.swift; sourceTree = "<group>"; };
 		A70E648427B6F4FB003C457E /* ZApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZApplication.swift; sourceTree = "<group>"; };
 		A70E648B27B73352003C457E /* ZHelpWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpWindowController.swift; sourceTree = "<group>"; };
 		A70E8201290611AC00E66963 /* ZTraverse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraverse.swift; sourceTree = "<group>"; };
@@ -583,6 +594,7 @@
 		A745ED0A26AF4E7D0013D1A4 /* ZHovering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHovering.swift; sourceTree = "<group>"; };
 		A746D462219F613D00123A0A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Help.storyboard; sourceTree = "<group>"; };
 		A746D466219F637A00123A0A /* Seriously.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Seriously.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A74BE5E12991857800601D6B /* ZDarkableButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZDarkableButton.swift; sourceTree = "<group>"; };
 		A74DBDEA244E004000DF751A /* ZContextualMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZContextualMenu.swift; sourceTree = "<group>"; };
 		A74ECDBC2963BD82005191A9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A752FC2B24512D7700603A54 /* ZoneArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneArray.swift; sourceTree = "<group>"; };
@@ -634,7 +646,7 @@
 		A7B78D382448EF6300DB2C14 /* everyone.seriously */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = everyone.seriously; sourceTree = "<group>"; };
 		A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraitAssets.swift; sourceTree = "<group>"; };
 		A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbButton.swift; sourceTree = "<group>"; };
-		A7C344DF25FD4AA900ACB6A3 /* ZTooltipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTooltipButton.swift; sourceTree = "<group>"; };
+		A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHoverableButton.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
 		A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSubscriptionController.swift; sourceTree = "<group>"; };
@@ -792,6 +804,7 @@
 			isa = PBXGroup;
 			children = (
 				0C39B25B1F182EBB0091F4D1 /* ZAction.swift */,
+				A70CFB5E29906DBB00EF56A5 /* ZDarkableImage.swift */,
 				A7221CA5263519190022902D /* ZFile.swift */,
 				A70064DC22484808004E3A8D /* ZManifest.swift */,
 				A706444A247222A500F90B86 /* ZNode.swift */,
@@ -808,17 +821,18 @@
 			isa = PBXGroup;
 			children = (
 				A7064436246F6D2700F90B86 /* ZButtonsView.swift */,
-				A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */,
 				A74DBDEA244E004000DF751A /* ZContextualMenu.swift */,
+				A74BE5E12991857800601D6B /* ZDarkableButton.swift */,
+				A70CFB47298C643700EF56A5 /* ZDarkableImageView.swift */,
 				A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */,
 				A7B48A8823E0E80C00654DBD /* ZGridCell.swift */,
+				A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */,
+				A793722E25BE2EE0008C98AE /* ZKickoffToolButton.swift */,
 				A7B48A7A23E0E80C00654DBD /* ZMobileKeyInput.swift */,
 				A78460E02724FAC5006A4075 /* ZPseudoView.swift */,
 				A752FC31245222D100603A54 /* ZoneContextualMenu.swift */,
 				A7B48A8623E0E80C00654DBD /* ZoneSegmentedControl.swift */,
-				A793722E25BE2EE0008C98AE /* ZKickoffToolButton.swift */,
 				A76F9B94275ADCBB00FAF55A /* ZSliderLabelCombo.swift */,
-				A7C344DF25FD4AA900ACB6A3 /* ZTooltipButton.swift */,
 				A7B48A7E23E0E80C00654DBD /* ZoneWindow.swift */,
 			);
 			path = views;
@@ -1126,6 +1140,7 @@
 				A70CAD3F2609542C00820C42 /* ZHelpEssayIntroductionController.swift */,
 				A7D2D65C2492E12900F652B0 /* ZHelpGridView.swift */,
 				A7E9A3AF23C115470064C89A /* ZHelpMapData.swift */,
+				A70CFB4B298C739E00EF56A5 /* ZHelpMouseData.swift */,
 				A765258C2981B81B0080111C /* ZHelpSearchDelegate.swift */,
 				A70E648B27B73352003C457E /* ZHelpWindowController.swift */,
 			);
@@ -1524,6 +1539,7 @@
 				A7B48A9923E0E80C00654DBD /* ZoneWindow.swift in Sources */,
 				A700F94924AFBE8F009C87AA /* ZCoreDataStack.swift in Sources */,
 				A714854E22552CA300F54C0C /* ZMapController.swift in Sources */,
+				A70CFB5F29906DBB00EF56A5 /* ZDarkableImage.swift in Sources */,
 				0C39B31F1F182EBB0091F4D1 /* ZTrait.swift in Sources */,
 				0C39B2E31F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				A74DBDEB244E004000DF751A /* ZContextualMenu.swift in Sources */,
@@ -1546,6 +1562,7 @@
 				A7229FAF23B84B4300FA2841 /* ZNote.swift in Sources */,
 				A70E8202290611AC00E66963 /* ZTraverse.swift in Sources */,
 				A7B48AB123E0E80C00654DBD /* ZoneDot.swift in Sources */,
+				A70CFB4C298C739E00EF56A5 /* ZHelpMouseData.swift in Sources */,
 				A7CC53AF267FD07300370BC0 /* ZSubscriptionController.swift in Sources */,
 				A7D507CC2688F2BA001CEA9F /* ZProducts.swift in Sources */,
 				A700F94E24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
@@ -1581,7 +1598,6 @@
 				A7B78D3D244B768400DB2C14 /* ZTraitAssets.swift in Sources */,
 				A7CF3205260D737B00285A03 /* ZHelpEssayGraphicalsController.swift in Sources */,
 				0C2E22C51F75BB7D00B50A71 /* ZMainController.swift in Sources */,
-				A70CFB48298C643700EF56A5 /* ZDarkableImageView.swift in Sources */,
 				A796741426597EAF00F06769 /* ZControlsController.swift in Sources */,
 				A706442E246E182400F90B86 /* ZTooltips.swift in Sources */,
 				A7D2D6592492B55900F652B0 /* ZHelpButtonsView.swift in Sources */,
@@ -1589,12 +1605,14 @@
 				0C43EFDA21010F62000976CE /* ZOperations.swift in Sources */,
 				A7E44A32255B9FBB00DA4B13 /* ZManagedObject.swift in Sources */,
 				0C43EFE021010F62000976CE /* ZCloud.swift in Sources */,
-				A7C344E025FD4AA900ACB6A3 /* ZTooltipButton.swift in Sources */,
+				A7C344E025FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */,
+				A70CFB5D298F305000EF56A5 /* ZDarkableImageView.swift in Sources */,
 				A7E096CA23EB98FA0017EC32 /* ZLinkDialogController.swift in Sources */,
 				A7D507D3269151B7001CEA9F /* ZReceipt.swift in Sources */,
 				0C39B3191F182EBB0091F4D1 /* Zone.swift in Sources */,
 				A7D2D64F24902EDF00F652B0 /* ZHelpData.swift in Sources */,
 				A713DC4927B064D500058F51 /* ZEssayControlsView.swift in Sources */,
+				A74BE5E32991857800601D6B /* ZDarkableButton.swift in Sources */,
 				A70CAD402609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */,
 				0C39B2C81F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0C43EFD421010F62000976CE /* ZRecords.swift in Sources */,
@@ -1651,6 +1669,7 @@
 				A713DC4B27B064D500058F51 /* ZEssayControlsView.swift in Sources */,
 				A78460EE2727B332006A4075 /* ZGeometry.swift in Sources */,
 				A700F94B24AFBE8F009C87AA /* ZCoreDataStack.swift in Sources */,
+				A70CFB6129906DBB00EF56A5 /* ZDarkableImage.swift in Sources */,
 				A78A6E0C23B021EA000F581F /* ZEssayEditor.swift in Sources */,
 				A796741126597D0800F06769 /* ZControlsView.swift in Sources */,
 				0CABC9F12022768D0019D8B0 /* ZEnumerations.swift in Sources */,
@@ -1664,10 +1683,11 @@
 				A7C7AF5B23B6D0A000AAD593 /* ZEssay.swift in Sources */,
 				A711059925BB620500D051E9 /* ZTraitArray.swift in Sources */,
 				A764067A23F7E37600D9EA3A /* ZBreadcrumbsView.swift in Sources */,
+				A70CFB5B298F304F00EF56A5 /* ZDarkableImageView.swift in Sources */,
 				A752FC2F24512E0B00603A54 /* ZoneArray.swift in Sources */,
 				A70064DF22484808004E3A8D /* ZManifest.swift in Sources */,
 				A7D2D65F2492E12900F652B0 /* ZHelpGridView.swift in Sources */,
-				A7C344E225FD4AA900ACB6A3 /* ZTooltipButton.swift in Sources */,
+				A7C344E225FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */,
 				A7229FB123B84B4300FA2841 /* ZNote.swift in Sources */,
 				0C39B28E1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
 				A70E648527B6F4FB003C457E /* ZApplication.swift in Sources */,
@@ -1713,6 +1733,7 @@
 				0C39B2DC1F182EBB0091F4D1 /* ZGestureAndKeyRecognizer.swift in Sources */,
 				0CB619A11FB3C4660087B066 /* ZMapController.swift in Sources */,
 				A705B09E27768C0900DBA20F /* ZDragging.swift in Sources */,
+				A74BE5E52991857800601D6B /* ZDarkableButton.swift in Sources */,
 				A7290E802920DD8F00716109 /* ZFavoritesTogglingView.swift in Sources */,
 				A73A6029273DAAA900703459 /* ZLayout.swift in Sources */,
 				A7245E0921729FFE003D4BDA /* ZHelpController.swift in Sources */,
@@ -1736,12 +1757,12 @@
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
 				0C43EFD621010F62000976CE /* ZRecords.swift in Sources */,
 				A72808B424A8688C00238889 /* ZDebug.swift in Sources */,
-				A70CFB4A298C643700EF56A5 /* ZDarkableImageView.swift in Sources */,
 				0C09A7D71FE5DEC600F3D736 /* ZGenericTableController.swift in Sources */,
 				0C7126CD1FB39C5200CD3E76 /* ZDesktopExtensions.swift in Sources */,
 				0C39B2EE1F182EBB0091F4D1 /* ZWidgets.swift in Sources */,
 				A7DF7DBE247AFE2800F03060 /* ZRubberband.swift in Sources */,
 				0C43EFE221010F62000976CE /* ZCloud.swift in Sources */,
+				A70CFB4E298C739E00EF56A5 /* ZHelpMouseData.swift in Sources */,
 				A74DBDEC244E179600DF751A /* ZContextualMenu.swift in Sources */,
 				A78460E32724FAC5006A4075 /* ZPseudoView.swift in Sources */,
 				A7E9A3B223C115470064C89A /* ZHelpMapData.swift in Sources */,
@@ -1781,6 +1802,7 @@
 				A700F94A24AFBE8F009C87AA /* ZCoreDataStack.swift in Sources */,
 				A7B48A8E23E0E80C00654DBD /* ZMobileKeyInput.swift in Sources */,
 				A7395BB021B877B600F5759F /* ZTextEditor.swift in Sources */,
+				A70CFB6029906DBB00EF56A5 /* ZDarkableImage.swift in Sources */,
 				0C39B2E41F182EBB0091F4D1 /* ZControllers.swift in Sources */,
 				A711059825BB620500D051E9 /* ZTraitArray.swift in Sources */,
 				0C39B2C01F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
@@ -1803,6 +1825,7 @@
 				A70E8203290611AC00E66963 /* ZTraverse.swift in Sources */,
 				A7CC53B0267FD07300370BC0 /* ZSubscriptionController.swift in Sources */,
 				A7D507CD2688F2BA001CEA9F /* ZProducts.swift in Sources */,
+				A70CFB4D298C739E00EF56A5 /* ZHelpMouseData.swift in Sources */,
 				A700F94F24AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
 				0C39B2AE1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				0C2E22D31F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
@@ -1838,20 +1861,21 @@
 				A7CF3206260D737B00285A03 /* ZHelpEssayGraphicalsController.swift in Sources */,
 				A7B48AA623E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
 				A796741526597EAF00F06769 /* ZControlsController.swift in Sources */,
-				A70CFB49298C643700EF56A5 /* ZDarkableImageView.swift in Sources */,
 				0C39B2B11F182EBB0091F4D1 /* ZExtensions.swift in Sources */,
 				A7E44A31255B9FBA00DA4B13 /* ZManagedObject.swift in Sources */,
 				A7B48AAF23E0E80C00654DBD /* ZoneSegmentedControl.swift in Sources */,
 				0C39B2EA1F182EBB0091F4D1 /* ZSelecting.swift in Sources */,
 				0C43EFDB21010F62000976CE /* ZOperations.swift in Sources */,
 				A7D2D65024902EDF00F652B0 /* ZHelpData.swift in Sources */,
-				A7C344E125FD4AA900ACB6A3 /* ZTooltipButton.swift in Sources */,
+				A7C344E125FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */,
 				A7E9A3B123C115470064C89A /* ZHelpMapData.swift in Sources */,
+				A70CFB5C298F305000EF56A5 /* ZDarkableImageView.swift in Sources */,
 				A7D507D4269151B7001CEA9F /* ZReceipt.swift in Sources */,
 				A70064DE22484808004E3A8D /* ZManifest.swift in Sources */,
 				A7C7AF5A23B6D0A000AAD593 /* ZEssay.swift in Sources */,
 				A70CAD412609542C00820C42 /* ZHelpEssayIntroductionController.swift in Sources */,
 				A713DC4A27B064D500058F51 /* ZEssayControlsView.swift in Sources */,
+				A74BE5E42991857800601D6B /* ZDarkableButton.swift in Sources */,
 				A7B48AA323E0E80C00654DBD /* ZLineView.swift in Sources */,
 				A7B78D43244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */,
 				A7D947DE21EC127D00B7DBFC /* ZSearchResultsController.swift in Sources */,

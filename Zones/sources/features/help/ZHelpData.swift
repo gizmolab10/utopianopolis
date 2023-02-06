@@ -118,8 +118,9 @@ class ZHelpData: NSObject {
 		strippedStrings.removeAll()
 
 		for column in 0...indexOfLastColumn {
+			let        strings = columnStrings
 			var       prepared = StringsArray()
-			let     rawStrings = columnStrings[column]
+			let     rawStrings = strings.count <= column ? [kEmpty] : strings[column]
 			let          limit = rawStrings.count / stringsPerColumn
 			var            row = 0
 			while          row < limit {

@@ -200,7 +200,7 @@ class ZFiles: NSObject {
 
 	func writeImage(_ image: ZImage, using originalName: String? = nil) -> URL? {
 		if  let name = originalName {
-			let url = assetURL(for: name)
+			let url  = assetURL(for: name)
 
 			if  url.writeData(image.jpeg) {
 				return url

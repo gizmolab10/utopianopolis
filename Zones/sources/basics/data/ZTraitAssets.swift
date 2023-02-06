@@ -56,7 +56,7 @@ class ZTraitAssets : ZRecord {
 	// check if file actually exist in assets folder
 	// by successfully creating a wrapper
 	// try using the filename passed in
-	// then look up the the corresponding ASSET and try using ITS fileurl
+	// then look up the the corresponding ASSET and try using ITS fileURL
 	// if either exists, create a text attachment from the wrapper
 
 	func textAttachment(for fileName: String) -> NSTextAttachment? {

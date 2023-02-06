@@ -49,10 +49,10 @@ var            gIsStartupMode :                Bool { return gWorkMode == .wStar
 var            gIsResultsMode :                Bool { return gWorkMode == .wResultsMode }
 var              gIsEssayMode :                Bool { return gWorkMode == .wEssayMode }
 var                gIsMapMode :                Bool { return gWorkMode == .wMapMode }
-var              gIsSearching :                Bool { return gSearching.state != .sNot }
-var           gIsNotSearching :                Bool { return gSearching.state == .sNot }
-var     gSearchResultsVisible :                Bool { return gSearching.state == .sList }
-var    gWaitingForSearchEntry :                Bool { return gSearching.state == .sEntry }
+var              gIsSearching :                Bool { return gSearching.searchState != .sNot }
+var           gIsNotSearching :                Bool { return gSearching.searchState == .sNot }
+var     gSearchResultsVisible :                Bool { return gSearching.searchState == .sList }
+var    gWaitingForSearchEntry :                Bool { return gSearching.searchState == .sEntry }
 var           gCanDrawWidgets :                Bool { return gIsMapOrEditIdeaMode || !gSearchResultsVisible }
 var      gIsMapOrEditIdeaMode :                Bool { return gIsMapMode || gIsEditIdeaMode }
 var          gCanSaveWorkMode :                Bool { return gIsMapMode || gIsEssayMode }

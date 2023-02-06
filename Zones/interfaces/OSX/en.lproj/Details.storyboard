@@ -13,6 +13,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="290" height="159"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4om-oY-tSH">
+                                <rect key="frame" x="287" y="0.0" width="5" height="159"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="1" id="RY0-UO-Dkf"/>
+                                </constraints>
+                            </box>
                             <box borderType="line" title="storage" translatesAutoresizingMaskIntoConstraints="NO" id="AUf-tY-f9E">
                                 <rect key="frame" x="5" y="89" width="280" height="66"/>
                                 <view key="contentView" id="uro-ap-Iux">
@@ -107,12 +113,6 @@
                                     </constraints>
                                 </view>
                             </box>
-                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="4om-oY-tSH">
-                                <rect key="frame" x="287" y="0.0" width="5" height="159"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="1" id="RY0-UO-Dkf"/>
-                                </constraints>
-                            </box>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="AUf-tY-f9E" secondAttribute="trailing" constant="8" id="LKl-z1-sFI"/>
@@ -136,6 +136,13 @@
                     </connections>
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <box horizontalHuggingPriority="750" boxType="separator" id="mrz-BF-ZFz">
+                    <rect key="frame" x="2" y="-2" width="1" height="163"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="1" id="lx2-Nt-k4T"/>
+                    </constraints>
+                </box>
             </objects>
             <point key="canvasLocation" x="-95" y="1528"/>
         </scene>
@@ -526,9 +533,15 @@
             <objects>
                 <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" misplaced="YES" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="225" height="291"/>
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="291"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="NaT-UR-V9P">
+                                <rect key="frame" x="223" y="0.0" width="5" height="291"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="1" id="siO-6p-WyD"/>
+                                </constraints>
+                            </box>
                             <box autoresizesSubviews="NO" borderType="none" title="list lengths show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
                                 <rect key="frame" x="8" y="252" width="210" height="31"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
@@ -854,8 +867,11 @@
                             </box>
                         </subviews>
                         <constraints>
+                            <constraint firstAttribute="bottom" secondItem="NaT-UR-V9P" secondAttribute="bottom" id="1jr-uO-969"/>
+                            <constraint firstAttribute="trailing" secondItem="NaT-UR-V9P" secondAttribute="trailing" id="3P1-ql-BPn"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" constant="8" id="4bu-dm-ncy"/>
                             <constraint firstItem="dkn-tQ-U5p" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="8" id="4sz-44-ZbP"/>
+                            <constraint firstItem="NaT-UR-V9P" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" id="93I-09-1gi"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
                             <constraint firstAttribute="bottom" secondItem="EBA-0Z-ZoM" secondAttribute="bottom" constant="12" id="BkH-85-3z1"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
@@ -897,6 +913,12 @@
                     <view key="view" translatesAutoresizingMaskIntoConstraints="NO" id="MMF-wn-1M6">
                         <rect key="frame" x="0.0" y="0.0" width="290" height="301"/>
                         <subviews>
+                            <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="PCa-cE-M3H">
+                                <rect key="frame" x="287" y="0.0" width="5" height="301"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="1" id="9LZ-IO-1SW"/>
+                                </constraints>
+                            </box>
                             <box borderType="line" title="ToolTips and Explanations" translatesAutoresizingMaskIntoConstraints="NO" id="1ID-ro-NAz">
                                 <rect key="frame" x="5" y="250" width="280" height="41"/>
                                 <view key="contentView" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0RF-K9-32y">
@@ -1192,6 +1214,7 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="1ID-ro-NAz" secondAttribute="trailing" constant="8" id="0NE-IG-CmL"/>
                             <constraint firstAttribute="trailing" secondItem="BZ2-Au-okv" secondAttribute="trailing" constant="8" id="7eV-6w-4L8"/>
+                            <constraint firstAttribute="bottom" secondItem="PCa-cE-M3H" secondAttribute="bottom" id="KpQ-dE-row"/>
                             <constraint firstItem="Eo8-dK-qAb" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="OKG-eI-oG3"/>
                             <constraint firstItem="1ID-ro-NAz" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" constant="10" id="Q8c-oE-VCz"/>
                             <constraint firstItem="yWs-Kk-dmA" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="QOn-Bn-5x8"/>
@@ -1206,6 +1229,8 @@
                             <constraint firstAttribute="trailing" secondItem="2K6-Dx-rco" secondAttribute="trailing" constant="8" id="pSu-4J-TY7"/>
                             <constraint firstItem="yWs-Kk-dmA" firstAttribute="top" secondItem="1ID-ro-NAz" secondAttribute="bottom" constant="8" id="q8Q-kY-fCi"/>
                             <constraint firstItem="2K6-Dx-rco" firstAttribute="leading" secondItem="MMF-wn-1M6" secondAttribute="leading" constant="8" id="t0b-qp-9b2"/>
+                            <constraint firstAttribute="trailing" secondItem="PCa-cE-M3H" secondAttribute="trailing" id="umo-Bm-wOP"/>
+                            <constraint firstItem="PCa-cE-M3H" firstAttribute="top" secondItem="MMF-wn-1M6" secondAttribute="top" id="xsA-ld-p9V"/>
                         </constraints>
                     </view>
                 </viewController>

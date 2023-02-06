@@ -1138,7 +1138,7 @@ extension CGRect {
 		let path = ZBezierPath(rect: rect)
 
 		path.setClip()
-		kBlackColor.setFill()
+		kGrayColor.setFill()
 		path.fill()
 
 	}
@@ -1819,8 +1819,8 @@ extension NSFontDescriptor {
 }
 
 struct ZRangedAttachment {
-	let range: NSRange
-	let attachment: NSTextAttachment
+	let      range : NSRange
+	let attachment : NSTextAttachment
 
 	func glyphRect(for textStorage: NSTextStorage?, margin: CGFloat) -> CGRect? {
 		if  let          managers = textStorage?.layoutManagers, managers.count > 0 {
@@ -1901,11 +1901,10 @@ extension NSMutableAttributedString {
 
 	var attachedImages: [ZImage] {
 		let array: [ZImage?] = attachmentCells.map { $0.image }
-
-		var result = [ZImage]()
+		var result           = [ZImage]()
 
 		for item in array {
-			if  let image = item {
+			if  var image    = item {
 				result.append(image)
 			}
 		}
@@ -2025,13 +2024,6 @@ extension NSMutableAttributedString {
 
 }
 
-extension NSTextAttachmentCell {
-
-	var frame: CGRect {
-		return CGRect(origin: attachment?.bounds.origin ?? CGPoint.zero, size: cellSize())
-	}
-}
-
 extension ZImage {
 
 	func resize(_ newSize: CGSize) -> NSImage {
@@ -2067,20 +2059,39 @@ extension ZImage {
 
 }
 
+extension NSTextAttachmentCell {
+
+	var frame: CGRect {
+		return CGRect(origin: attachment?.bounds.origin ?? CGPoint.zero, size: cellSize())
+	}
+
+//	open override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView?) {
+//		if  gIsDark,
+//			let drawMe = image?.invertedImage {
+//			drawMe.draw(in: cellFrame)
+//		} else if let view = controlView {
+//			super.drawInterior(withFrame: cellFrame, in: view)
+//		}
+//	}
+
+}
+
 extension NSTextAttachment {
 
 	var cellImage: ZImage? {
 		get {
-			if  let cell = attachmentCell as? NSTextAttachmentCell {
-				return cell.image
+			if  let  cell = attachmentCell as? NSCell,
+				let image = cell.image {
+				return ZDarkableImage.create(from: image)
 			}
 
 			return nil
 		}
 
 		set {
-			if  let   cell = attachmentCell as? NSTextAttachmentCell {
-				cell.image = newValue
+			if  let  image = newValue,
+				let   cell = attachmentCell as? NSCell {
+				cell.image = ZDarkableImage.create(from: image)
 			}
 		}
 	}
@@ -2369,6 +2380,16 @@ extension String {
             return ZColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
         }
     }
+
+	var darkAdaptedTitle: NSAttributedString {
+		let color = gIsDark ? kDarkestGrayColor : kBlackColor
+		let title = NSMutableAttributedString(string: self)
+		let range = NSRange(location: 0, length: length)
+
+		title.addAttribute(.foregroundColor, value: color, range: range)
+
+		return title
+	}
 
     func index(at: Int) -> Index {
         var position = at

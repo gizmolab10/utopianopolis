@@ -177,6 +177,12 @@ class ZFavorites: ZSmallMapRecords {
 		return rootZone
 	}
 
+	func nextListAttributed(down: Bool) -> NSAttributedString {
+		let string = nextList(down: down)?.unwrappedName.capitalized ?? kEmpty
+
+		return string.darkAdaptedTitle
+	}
+
 	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false) -> Zone? {
 		if  let  here = nextList(down: down) {
 			if  let b = bookmarkToMove, moveCurrent {

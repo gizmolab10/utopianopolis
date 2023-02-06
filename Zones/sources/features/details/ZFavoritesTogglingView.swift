@@ -13,7 +13,6 @@ class ZFavoritesTogglingView : ZTogglingView {
 	@IBOutlet var upDownView : ZView?
 	@IBOutlet var downButton : ZButton?
 	@IBOutlet var   upButton : ZButton?
-	override func updateTitleBarButtons() { updateFavoritesButtons() }
 
 	@IBAction override func buttonAction(_ button: ZButton) {
 		switch identity {
@@ -57,13 +56,13 @@ class ZFavoritesTogglingView : ZTogglingView {
 		upButton?  .zlayer.backgroundColor = gDarkAccentColor.cgColor
 	}
 
-	func updateFavoritesButtons() {
+	override func updateTitleBarButtons() {
 		let           hidden = hideHideable || gFavorites.hideUpDownView
 		upDownView?.isHidden = hidden
 
 		if !hidden {
-			downButton?.title = gFavorites.nextList(down:  true)?.unwrappedName.capitalized ?? kEmpty
-			upButton?  .title = gFavorites.nextList(down: false)?.unwrappedName.capitalized ?? kEmpty
+			downButton?.attributedTitle = gFavorites.nextListAttributed(down:  true)
+			upButton?  .attributedTitle = gFavorites.nextListAttributed(down: false)
 		}
 
 		titleButton?.snp.removeConstraints()

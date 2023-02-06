@@ -18,23 +18,25 @@ import SnapKit
 var gHelpWindowController : NSWindowController?         // instantiated once, in startupCloudAndUI
 var gHelpController       : ZHelpController? { return gHelpWindowController?.contentViewController as? ZHelpController }
 var gHelpWindow           : ZWindow?         { return gHelpWindowController?.window }
-let gAllHelpModes         : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
 
 enum ZHelpMode: String {
+
 	case middleMode = "i"
-	case mouseMode  = "m"
+	case mouseMode  = "m" // save for later!!!
 	case basicMode  = "b"
 	case essayMode  = "e"
 	case proMode    = "a"
 	case dotMode    = "d"
 	case noMode     = " "
 
+	static let all: [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode] // , .mouseMode]
+
 	var title: String {
 		switch self {
 			case .middleMode: return "intermediate keys"
 			case .essayMode:  return "notes & essays"
-			case .mouseMode:  return "mouse"
 			case .basicMode:  return "basic keys"
+			case .mouseMode:  return "mouse"
 			case .proMode:    return "all keys"
 			case .dotMode:    return "dots"
 			default:          return kEmpty
@@ -47,8 +49,8 @@ enum ZHelpMode: String {
 
 	var showsDots: Bool {
 		switch self {
-			case .dotMode, .essayMode: return true
-			default:                   return false
+			case .dotMode, .essayMode, .mouseMode: return true
+			default:                               return false
 		}
 	}
 
@@ -60,10 +62,12 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	@IBOutlet var   mapHelpGrid : ZHelpGridView?
 	@IBOutlet var  dotsHelpGrid : ZHelpGridView?
 	@IBOutlet var essayHelpGrid : ZHelpGridView?
+	@IBOutlet var mouseHelpGrid : ZHelpGridView?
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons = ZHelpButtonsView()
 	let           essayHelpData = ZHelpEssayData()
+	let           mouseHelpData = ZHelpMouseData()
 	let            dotsHelpData = ZHelpDotsData()
 	let             mapHelpData = ZHelpMapData()
 	var               isShowing = false
@@ -76,6 +80,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
 		switch iMode {
 			case .essayMode: return essayHelpData
+			case .mouseMode: return mouseHelpData
 			case   .dotMode: return  dotsHelpData
 			default:         return   mapHelpData
 		}
@@ -84,8 +89,9 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
 		switch iMode {
 			case .essayMode: return essayHelpGrid
-			case .dotMode:   return dotsHelpGrid
-			default:         return mapHelpGrid
+			case .mouseMode: return mouseHelpGrid
+			case .dotMode:   return  dotsHelpGrid
+			default:         return   mapHelpGrid
 		}
 	}
 
@@ -215,7 +221,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 		if  let c = clipView {
 			c.zlayer.backgroundColor = .clear
 
-			for m in gAllHelpModes {
+			for m in ZHelpMode.all {
 				if  let         g = gridView(for: m) {
 					let      data = helpData(for: m)
 					g.helpData    = data
@@ -247,7 +253,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 			return sameMode || showGraph
 		}
 
-		for mode in gAllHelpModes {
+		for mode in ZHelpMode.all {
 			let hide = !shouldShow(mode)
 			gridView(for: mode)?.isHidden = hide
 		}

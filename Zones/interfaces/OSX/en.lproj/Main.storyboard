@@ -944,7 +944,7 @@ CA
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Bar View">
                                 <rect key="frame" x="226" y="256" width="225" height="44"/>
                                 <subviews>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="TGS-db-Yos">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="TGS-db-Yos" userLabel="search buttons">
                                         <rect key="frame" x="0.0" y="0.0" width="27" height="44"/>
                                         <subviews>
                                             <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RjV-tY-a8J" userLabel="Search Buttons">
@@ -983,13 +983,13 @@ CA
                                             <constraint firstItem="RjV-tY-a8J" firstAttribute="centerY" secondItem="TGS-db-Yos" secondAttribute="centerY" id="tbZ-Bn-EY7"/>
                                         </constraints>
                                     </customView>
-                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="bdu-fM-xV9">
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="bdu-fM-xV9" userLabel="search and crumbs">
                                         <rect key="frame" x="27" y="0.0" width="198" height="44"/>
                                         <subviews>
-                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View">
+                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View" customClass="ZBreadcrumbsView" customModule="Seriously" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="198" height="44"/>
                                                 <connections>
-                                                    <segue destination="auf-AV-5qA" kind="embed" id="9wH-w7-oo9"/>
+                                                    <segue destination="auf-AV-5qA" kind="embed" id="8CD-jp-sY9"/>
                                                 </connections>
                                             </containerView>
                                             <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Bar View">
@@ -1314,10 +1314,10 @@ CA
             </objects>
             <point key="canvasLocation" x="903" y="716"/>
         </scene>
-        <!--Essay-->
+        <!--Essay Controller-->
         <scene sceneID="YUn-EI-h0m">
             <objects>
-                <viewController id="8gW-F6-R6g" userLabel="Essay" customClass="ZEssayController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="8gW-F6-R6g" userLabel="Essay Controller" customClass="ZEssayController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <customView key="view" id="HOI-yt-EwI" userLabel="View">
                         <rect key="frame" x="0.0" y="0.0" width="356" height="289"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -1352,7 +1352,7 @@ CA
                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Bm-oC-5lh" userLabel="Essay Controls View" customClass="ZEssayControlsView" customModule="Seriously" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="135" width="261" height="18"/>
                                 <subviews>
-                                    <button identifier="left.arrow" toolTip="show previous" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RN5-Of-rTw" userLabel="left.arrow">
+                                    <button identifier="left.arrow" toolTip="show previous" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RN5-Of-rTw" userLabel="left.arrow" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="-1" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="Hbe-G7-0qQ"/>
@@ -1365,7 +1365,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="Gzj-2a-iUp"/>
                                         </connections>
                                     </button>
-                                    <button identifier="right.arrow" toolTip="show next" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lZL-XS-Be7" userLabel="right.arrow">
+                                    <button identifier="right.arrow" toolTip="show next" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lZL-XS-Be7" userLabel="right.arrow" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="23" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="P3Z-ez-bha"/>
@@ -1378,7 +1378,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="G2M-R5-EDK"/>
                                         </connections>
                                     </button>
-                                    <button identifier="save" toolTip="save" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oEH-Lm-TYQ" userLabel="save">
+                                    <button identifier="save" toolTip="save" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oEH-Lm-TYQ" userLabel="save" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="47" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="bGK-SG-7dR"/>
@@ -1391,7 +1391,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="RKg-Mj-n5E"/>
                                         </connections>
                                     </button>
-                                    <button identifier="printer" toolTip="print" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j4W-F3-JHg" userLabel="printer">
+                                    <button identifier="printer" toolTip="print" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j4W-F3-JHg" userLabel="printer" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="71" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="zag-SG-G7g"/>
@@ -1404,7 +1404,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="wId-4b-3QH"/>
                                         </connections>
                                     </button>
-                                    <button identifier="exit" toolTip="save changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sJ-7J-RbI" userLabel="exit">
+                                    <button identifier="exit" toolTip="save changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sJ-7J-RbI" userLabel="exit" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="95" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="dbx-WR-CTS"/>
@@ -1417,7 +1417,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="eZA-QY-DOh"/>
                                         </connections>
                                     </button>
-                                    <button identifier="trash" toolTip="delete" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7F-Fr-RQL" userLabel="trash">
+                                    <button identifier="trash" toolTip="delete" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7F-Fr-RQL" userLabel="trash" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="119" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="QKc-KO-gIL"/>
@@ -1430,7 +1430,7 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="2tm-CL-1xj"/>
                                         </connections>
                                     </button>
-                                    <button identifier="discard" toolTip="discard changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Bk-q7-w37" userLabel="cancel">
+                                    <button identifier="discard" toolTip="discard changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Bk-q7-w37" userLabel="cancel" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="143" y="-2" width="22" height="23"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="20" id="2od-Um-DWP"/>
@@ -1593,7 +1593,7 @@ CA
                                 </constraints>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="w8s-R4-Cto">
-                                <rect key="frame" x="113" y="20" width="154" height="24"/>
+                                <rect key="frame" x="112" y="20" width="155" height="24"/>
                                 <subviews>
                                     <button identifier="cancel" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gr8-OU-8kq">
                                         <rect key="frame" x="-5" y="-5" width="76" height="32"/>
@@ -1609,7 +1609,7 @@ Gw
                                         </connections>
                                     </button>
                                     <button identifier="apply" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2tL-oS-kZx">
-                                        <rect key="frame" x="90" y="-5" width="69" height="32"/>
+                                        <rect key="frame" x="90" y="-5" width="70" height="32"/>
                                         <buttonCell key="cell" type="push" title="Apply" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3Ky-Zt-VtF">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -1803,7 +1803,7 @@ DQ
                                                         </textFieldCell>
                                                     </textField>
                                                     <button identifier="continue" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="eJt-eS-JWW">
-                                                        <rect key="frame" x="181" y="-7" width="89" height="32"/>
+                                                        <rect key="frame" x="180" y="-7" width="90" height="32"/>
                                                         <buttonCell key="cell" type="push" title="Continue" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KhS-Fu-AAZ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
@@ -2564,8 +2564,8 @@ CA
         </scene>
     </scenes>
     <resources>
-        <image name="NSRevealFreestandingTemplate" width="20" height="20"/>
-        <image name="NSStopProgressFreestandingTemplate" width="20" height="20"/>
+        <image name="NSRevealFreestandingTemplate" width="19" height="19"/>
+        <image name="NSStopProgressFreestandingTemplate" width="19" height="19"/>
         <image name="cancel" width="24" height="24"/>
         <image name="exit" width="26" height="26"/>
         <image name="left.arrow" width="860" height="785"/>

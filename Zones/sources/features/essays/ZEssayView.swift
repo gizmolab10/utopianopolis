@@ -34,7 +34,7 @@ enum ZNoteVisibilityIconType: Int {
 		}
 	}
 
-	func imageForState(_ on: Bool) -> ZImage? {
+	func imageForVisibilityState(_ on: Bool) -> ZImage? {
 		switch self {
 			case .tChildren: return on ? kStackImage     : kSingleImage
 			case .tSelf:     return on ? kEyeImage       : kEyebrowImage
@@ -205,7 +205,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			for type in ZNoteVisibilityIconType.all {
 				if  !(type.forEssayOnly && isANote),
 					let     on = v.stateFor(type),
-					let  image = type.imageForState(on) {
+					let  image = type.imageForVisibilityState(on) {
 					let origin = CGPoint(x: bounds.maxX, y: y).offsetBy(-type.offset, .zero)
 					let   rect = CGRect(origin: origin, size: .zero).expandedBy(image.size.dividedInHalf)
 
@@ -335,7 +335,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				assignAsFirstResponder(self)                                 // show cursor and respond to key input
 				gMainWindow?.setupEssayInspectorBar()
 
-				gEssayControlsView?.setupAllEssayControls()
+				gEssayControlsView?.setupEssayControls()
 				gEssayControlsView?.enableEssayControls(true)
 			}
 		}
@@ -716,7 +716,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return result
 	}
 
-	@objc func handleButtonAction(_ iButton: ZToolTipButton) {
+	@objc func handleButtonAction(_ iButton: ZHoverableButton) {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
 				case .idForward:  nextBookmark(down:  true)
@@ -1181,8 +1181,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let         wrap  = a.fileWrapper,
 			let        image  = a.cellImage {
 			let      oldSize  = image.size
-			if       oldSize != size,
-					 let newImage  = image.resizedTo(size) {
+			if  let newImage  = image.resizedTo(size),
+					 oldSize != size {
 				a .cellImage  = newImage
 
 				if  gFiles.writeImage(newImage, using: wrap.preferredFilename) != nil {
@@ -1409,7 +1409,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			switch type {
 				case .hEmail,
-						.hWeb:   displayLinkDialog()
+					 .hWeb:   displayLinkDialog()
 				case .hFile:  displayUploadDialog()
 				case .hClear: setLink(to: nil)
 				default:      setLink(to: gSelecting.pastableRecordName)
