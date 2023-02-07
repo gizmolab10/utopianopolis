@@ -2065,15 +2065,6 @@ extension NSTextAttachmentCell {
 		return CGRect(origin: attachment?.bounds.origin ?? CGPoint.zero, size: cellSize())
 	}
 
-//	open override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView?) {
-//		if  gIsDark,
-//			let drawMe = image?.invertedImage {
-//			drawMe.draw(in: cellFrame)
-//		} else if let view = controlView {
-//			super.drawInterior(withFrame: cellFrame, in: view)
-//		}
-//	}
-
 }
 
 extension NSTextAttachment {

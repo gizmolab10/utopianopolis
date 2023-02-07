@@ -8,39 +8,41 @@
 
 import Foundation
 
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 class ZDarkableImage : ZImage {
 
+	var original: ZImage?
 	var darkened: ZImage?
 
 	var current: ZImage? {
-		setupAsDarkable()
-
-		return gIsDark ? darkened : self as ZImage
-	}
-
-	open override func draw(in rect: NSRect) {
-		current?.draw(in: rect)
+		return (gIsDark ? darkened : original) ?? self as ZImage
 	}
 
 	func setupAsDarkable() {
-		if  darkened     == nil,
-			let  darkable = invertedImage {
-			darkable.size = size
-			darkened      = darkable
+		if  darkened       == nil,
+			let darkable    = invertedImage {
+			darkable.size   = size
+			darkened        = darkable
+			original        = self
 		}
 	}
 
-	static func create(from image: ZImage) -> ZDarkableImage? {
-		if  let    darkable = image as? ZDarkableImage {
-			return darkable
+	static func create(from   image: ZImage?) -> ZDarkableImage? {
+		if  let    darkable = image          as? ZDarkableImage {
+			return darkable   // already created it
 		}
 
-		if  let        data = image.tiffRepresentation {
-			let      result = ZDarkableImage(data: data)
+		if  let    data     = image?.tiffRepresentation {
+			let    result   = ZDarkableImage(data: data)
 
 			result?.setupAsDarkable()
 
-			return   result
+			return result
 		}
 
 		return nil

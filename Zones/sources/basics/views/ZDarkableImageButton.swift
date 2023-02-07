@@ -18,6 +18,7 @@ class ZDarkableImageButton : ZButton {
 
 	var original: ZImage?
 	var darkened: ZImage?
+	var  current: ZImage? { return gIsDark ? darkened : original }
 
 	func setEnabledAndTracking(_ enabled: Bool) {
 		isEnabled  = enabled
@@ -26,16 +27,14 @@ class ZDarkableImageButton : ZButton {
 
 		setButtonType(.momentaryChange)
 		setupAsDarkable()
+
+		image      = current
 	}
 
 	func setupAsDarkable() {
-		if  let        i  = image {
-			if  darkened == nil {
-				darkened  = i.invertedImage
-				original  = i
-			}
-
-			image         = gIsDark ? darkened : original
+		if  darkened == nil {
+			darkened  = image?.invertedImage
+			original  = image
 		}
 	}
 
