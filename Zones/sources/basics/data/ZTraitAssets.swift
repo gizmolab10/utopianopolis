@@ -104,11 +104,7 @@ class ZTraitAssets : ZRecord {
 			return nil
 		}
 
-		let a = NSTextAttachment(fileWrapper: wrapper)
-
-		a.setupAsDarkable() // for drawing the image inverted when in dark mode
-
-		return a
+		return ZEssayAttachment(fileWrapper: wrapper)
 	}
 
 	// MARK: - persistence

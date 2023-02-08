@@ -2037,15 +2037,16 @@ extension ZImage {
 	}
 
 	var invertedImage: ZImage? {
-		if  let         tiffData = tiffRepresentation,
-			let           bitMap = NSBitmapImageRep(data: tiffData) {
-			let       beginImage = CIImage(bitmapImageRep: bitMap)
-			if  let       filter = CIFilter(name: "CIColorInvert") {
+		if  let          tiffData = tiffRepresentation,
+			let            bitMap = NSBitmapImageRep(data: tiffData) {
+			let        beginImage = CIImage(bitmapImageRep: bitMap)
+			if  let        filter = CIFilter(name: "CIColorInvert") {
 				filter.setValue(beginImage, forKey: kCIInputImageKey)
 
-				if  let filtered = filter.outputImage {
-					let imageRep = NSCIImageRep(ciImage: filtered)
-					let newImage = NSImage(size: imageRep.size)
+				if  let  filtered = filter.outputImage {
+					let  imageRep = NSCIImageRep(ciImage: filtered)
+					let  newImage = NSImage(size: imageRep.size)
+					newImage.size = size
 
 					newImage.addRepresentation(imageRep)
 
@@ -2071,9 +2072,8 @@ extension NSTextAttachment {
 
 	var cellImage: ZImage? {
 		get {
-			if  let  cell = attachmentCell as? NSCell,
-				let image = cell.image {
-				return ZDarkableImage.create(from: image)
+			if  let    cell = attachmentCell as? NSCell {
+				return cell.image
 			}
 
 			return nil
@@ -2082,15 +2082,8 @@ extension NSTextAttachment {
 		set {
 			if  let  image = newValue,
 				let   cell = attachmentCell as? NSCell {
-				cell.image = ZDarkableImage.create(from: image)
+				cell.image = image
 			}
-		}
-	}
-
-	func setupAsDarkable() {
-		if  let   cell = attachmentCell as? NSCell,
-			let  image = cell.image {
-			cell.image = ZDarkableImage.create(from: image)
 		}
 	}
 
