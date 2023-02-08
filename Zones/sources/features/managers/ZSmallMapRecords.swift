@@ -67,6 +67,7 @@ class ZSmallMapRecords: ZRecords {
 			if  let target = current?.zoneLink {
 				for (index, bookmark) in zones.enumerated() {
 					if  target == bookmark.zoneLink {
+						toIndex = index.next(forward: !down, max: maxIndex) ?? toIndex
 						if       !down, index > 0 {
 							toIndex   = index - 1         // go up
 						} else if down, index < maxIndex {
@@ -108,7 +109,6 @@ class ZSmallMapRecords: ZRecords {
 	func setAsCurrent(_ zone: Zone?, alterBigMapFocus: Bool = false, makeVisible: Bool = false) {
 		if  makeVisible {
 			makeVisibleAndMarkInSmallMap(zone)
-			zone?.grab()
 		}
 
 		if  let target = zone?.bookmarkTarget {

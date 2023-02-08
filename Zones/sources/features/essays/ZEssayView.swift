@@ -719,8 +719,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	@objc func handleButtonAction(_ iButton: ZHoverableButton) {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
-				case .idForward:  nextBookmark(down:  true)
-				case .idBack:     nextBookmark(down: false)
+				case .idForward:  nextNotemark(down:  true)
+				case .idBack:     nextNotemark(down: false)
 				case .idSave:     save()
 				case .idPrint:    printView()
 				case .idHide:     grabDone()
@@ -731,7 +731,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func nextBookmark(down: Bool) {
+	func nextNotemark(down: Bool) {
 		save()
 		gFavorites.nextBookmark(down: down, amongNotes: true)
 	}

@@ -1445,7 +1445,7 @@ CA
                                     </button>
                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">
                                         <rect key="frame" x="166" y="-2" width="96" height="23"/>
-                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="rwX-zm-gqJ">
+                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="selectOne" id="rwX-zm-gqJ">
                                             <font key="font" metaFont="message" size="11"/>
                                             <segments>
                                                 <segment toolTip="hide titles and drag dots" image="show.note" width="28" selected="YES"/>
@@ -2574,7 +2574,7 @@ CA
         <image name="printer" width="225" height="225"/>
         <image name="right.arrow" width="860" height="785"/>
         <image name="save" width="24" height="24"/>
-        <image name="settings" width="800" height="800"/>
+        <image name="settings" width="736" height="736"/>
         <image name="show.drag.dot" width="512" height="512"/>
         <image name="show.note" width="512" height="512"/>
         <image name="show.title" width="512" height="512"/>

@@ -40,6 +40,7 @@ enum ZEssayButtonID : Int {
 }
 
 class ZEssayControlsView: ZView {
+	var      isTitlesControlDark = false
 	var           inspectorBar   : ZView?   { return gMainWindow?.inspectorBar }
 	@IBOutlet var titlesControl  : ZSegmentedControl?
 	@IBOutlet var backwardButton : ZHoverableButton?
@@ -81,22 +82,32 @@ class ZEssayControlsView: ZView {
 
 	func updateTitleSegments(_ enabled: Bool = true) {
 		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
-		let                segments = 3
+		let                segments = isNote ? 2 : 3
 		titlesControl?.segmentCount = segments
 		titlesControl?   .isEnabled = enabled
+		titlesControl?.selectedSegmentBezelColor = kSystemBlue
 
-		for segment in 0...segments {
-			if  let image = titlesControl?.image(  forSegment: segment),
-				image   as? ZDarkableImage == nil,
-				let  dark = ZDarkableImage.create(from: image) {
+		if !isNote {
+			var image = kShowDragDot?.resize(CGSize.squared(16.0))
 
-				titlesControl?.setImage(dark,      forSegment: segment)
+			if  isTitlesControlDark {
+				image = image?.invertedImage
 			}
 
-			if  segment == 2 {
-				titlesControl?.setEnabled(!isNote, forSegment: segment)
+			titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
+			titlesControl?.setImage(image,                         forSegment: 2)
+		}
+
+		if  isTitlesControlDark != gIsDark {
+			isTitlesControlDark  = gIsDark
+
+			for segment in 0..<segments {
+				if  let image = titlesControl?.image(forSegment: segment)?.invertedImage {
+					titlesControl?.setImage(image,   forSegment: segment)
+				}
 			}
 		}
+
 	}
 
 	func matchTitlesControlTo(_ mode: ZEssayTitleMode) {
