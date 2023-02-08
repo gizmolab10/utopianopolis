@@ -124,7 +124,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                        isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                       isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                       isBookmark :               Bool  { return bookmarkTarget != nil }
-	var                isCurrentFavorite :               Bool  { return isInFavorites && bookmarkTarget == gHere }
 	var               hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                  dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var               canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
@@ -3621,7 +3620,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showAccess    = hasAccessDecoration
 		p.hasTargetNote = t?.hasNote ?? false
 		p.isGroupOwner  = g == self || g == t
-		p.showSideDot   = isCurrentFavorite
+		p.showSideDot   = gFavorites.currentFavorite == self
 		p.childCount    = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.accessType    = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
 		p.isDragged     = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil

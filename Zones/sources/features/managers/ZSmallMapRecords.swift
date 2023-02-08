@@ -67,7 +67,6 @@ class ZSmallMapRecords: ZRecords {
 			if  let target = current?.zoneLink {
 				for (index, bookmark) in zones.enumerated() {
 					if  target == bookmark.zoneLink {
-						toIndex = index.next(forward: !down, max: maxIndex) ?? toIndex
 						if       !down, index > 0 {
 							toIndex   = index - 1         // go up
 						} else if down, index < maxIndex {
@@ -84,24 +83,24 @@ class ZSmallMapRecords: ZRecords {
 					if  moveCurrent {
 						moveCurrentTo(newCurrent)
 					} else {
-						setAsCurrent (newCurrent, alterBigMapFocus: true, makeVisible: true)
+						setAsCurrent (newCurrent, alterBigMapFocus: !amongNotes, makeVisible: true)
 					}
 				}
 			}
 		}
 	}
 
-	func moveCurrentTo(_ iZone: Zone) {
-		if  let parent = iZone.parentZone,
+	func moveCurrentTo(_ zone: Zone) {
+		if  let parent = zone.parentZone,
 			let      p = currentFavorite?.parentZone, p == parent,
 			let   from = currentFavorite?.siblingIndex,
-			let     to = iZone.siblingIndex {
+			let     to = zone.siblingIndex {
 			parent.moveChildIndex(from: from, to: to)
 		}
 	}
 
-	func setCurrentBookmarksTargeting(_ iZone: Zone) {
-		for bookmark in iZone.bookmarksTargetingSelf {
+	func setCurrentBookmarksTargeting(_ zone: Zone) {
+		for bookmark in zone.bookmarksTargetingSelf {
 			setCurrent(bookmark)
 		}
 	}
@@ -118,15 +117,16 @@ class ZSmallMapRecords: ZRecords {
 				gDatabaseID          = target.databaseID
 				gRecords.currentHere = target // avoid push
 
-				gHere.grab()
+				target.grab()
 			}
 
 			if  gIsMapMode {
 				gFocusing.focusOnGrab(.eSelected) {
-					gSignal([.spRelayout])
+					gSignal([.spCrumbs, .spRelayout, .spDataDetails])
 				}
 			} else if gCurrentEssayZone != target {
 				gEssayView?.resetCurrentEssay(target.note)
+				gSignal([.spCrumbs, .spRelayout, .spDataDetails])
 			}
 		}
 	}
@@ -229,22 +229,19 @@ class ZSmallMapRecords: ZRecords {
 		}
 	}
 
-	@discardableResult func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) -> Bool {
-		var flag         = false
-		if  let zone     = iZone,
-			let parent   = zone.parentZone,
-			currentHere != parent {
-			flag         = true
-			let here     = currentHere
-			currentHere  = parent
+	func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) {
+		if  let zone         = iZone {
+			if  let parent   = zone.parentZone,
+				currentHere != parent {
+				let here     = currentHere
+				currentHere  = parent
 
-			here.collapse()
+				here.collapse()
+			}
+
+			currentHere.expand()
+			setCurrent(zone)
 		}
-
-		currentHere.expand()
-		setCurrent(iZone)
-
-		return flag
 	}
 
 	var currentTargets: ZoneArray {

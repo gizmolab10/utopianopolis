@@ -85,7 +85,6 @@ class ZEssayControlsView: ZView {
 		let                segments = isNote ? 2 : 3
 		titlesControl?.segmentCount = segments
 		titlesControl?   .isEnabled = enabled
-		titlesControl?.selectedSegmentBezelColor = kSystemBlue
 
 		if !isNote {
 			var image = kShowDragDot?.resize(CGSize.squared(16.0))
