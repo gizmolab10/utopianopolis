@@ -294,7 +294,7 @@ extension ZColor {
 		return nil
 	}
 
-	var accountingForDarkMode: NSColor { return gIsDark ? inverted : self }
+	var accountingForDarkMode: NSColor { return gIsDark ? invertedColor : self }
 
     func darker(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2), brightness: brightnessComponent / (by / 3), alpha: alphaComponent)
@@ -308,7 +308,7 @@ extension ZColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent,              brightness: brightnessComponent * by,         alpha: alphaComponent)
     }
 
-    var inverted: ZColor {
+    var invertedColor: ZColor {
         let b = max(.zero, min(1.0, 1.25 - brightnessComponent))
         let s = max(.zero, min(1.0, 1.45 - saturationComponent))
         
@@ -1127,30 +1127,18 @@ public extension ZImage {
 	var  png: Data? { return tiffRepresentation?.bitmap?.png }
 	var jpeg: Data? { return tiffRepresentation?.bitmap?.jpeg }
 
-	func oldResizedTo(_ newSize: CGSize) -> ZImage {
-		let newImage = ZImage(size: newSize)
-		let fromRect = CGRect(origin: CGPoint(), size: size)
-		let   inRect = CGRect(origin: CGPoint(), size: newSize)
-
-		newImage.lockFocus()
-		draw(in: inRect, from: fromRect, operation: .copy, fraction: CGFloat(1))
-		newImage.unlockFocus()
-
-		return newImage
-	}
-
-	func resizedTo(_ newSize: NSSize) -> ZImage? {
+	func imageResizedTo(_ newSize: CGSize) -> ZImage? {
 		if  let bitmapRep = NSBitmapImageRep(
-				bitmapDataPlanes      : nil,
-				pixelsWide            : Int(newSize.width),
-				pixelsHigh            : Int(newSize.height),
-				bitsPerSample         : 8,
-				samplesPerPixel       : 4,
-				hasAlpha              : true,
-				isPlanar              : false,
-				colorSpaceName        : .calibratedRGB,
-				bytesPerRow           : 0,
-				bitsPerPixel          : 0 ) {
+			bitmapDataPlanes      : nil,
+			pixelsWide            : Int(newSize.width  * 2.0),
+			pixelsHigh            : Int(newSize.height * 2.0),
+			bitsPerSample         : 8,
+			samplesPerPixel       : 4,
+			hasAlpha              : true,
+			isPlanar              : false,
+			colorSpaceName        : .calibratedRGB,
+			bytesPerRow           : 0,
+			bitsPerPixel          : 0 ) {
 			NSGraphicsContext.saveGraphicsState()
 
 			let              newImage = ZImage(size: newSize)

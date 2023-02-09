@@ -435,7 +435,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					drawVisibilityIcons(for: index, y: dot.dragRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
 
 					if  gEssayTitleMode == .sFull {
-						dot.dragRect.drawColoredOval(color, filled: filled || grabbed)   // draw drag dot
+						dot.dragRect.drawColoredOval(color, thickness: 2.0, filled: filled || grabbed)   // draw drag dot
 
 						if  let lineRect = dot.lineRect {
 							drawColoredRect(lineRect, color, thickness: 0.5)             // draw indent line in front of drag dot
@@ -876,25 +876,25 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			essay.updateNoteOffsets()
 
 			for (index, zone) in zones.enumerated() {
-				if  var note   = zone.note {
-					if  index == 0 {
-						note   = essay
+				if  var note       = zone.note {
+					if  index     == 0 {
+						note       = essay
 					}
 
 					let dragHeight = 15.0
 					let  dragWidth = 11.75
-					let      color = zone.color ?? kDefaultIdeaColor
-					let     offset = index == 0 ? 0 : 1                   // first note has an altered offset and thus, an altered range
-					let  noteRange = note.noteRange.offsetBy(offset)
 					let      inset = CGFloat(2.0)
-					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).expandedEquallyBy(inset)
+					let     offset = index == 0 ? 0 : 1               // first note has an altered offset ... thus, an altered range
 					let     indent = zone.level - level
 					let     noLine = indent == 0
-					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: dragHeight))
+					let      color = zone.color ?? kDefaultIdeaColor
+					let  noteRange = note.noteRange.offsetBy(offset)
+					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).expandedEquallyBy(inset)
+					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: dragHeight - 2.0))
 					let  lineWidth = dragWidth * Double(indent)
 					let   lineSize = CGSize(width: lineWidth, height: 0.5)
 					let   lineRect = noLine ? nil : CGRect(origin: lineOrigin, size: lineSize)
-					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: -8.0))
+					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: dragHeight / -2.0))
 					let   dragSize = CGSize(width: dragWidth, height: dragHeight)
 					let   dragRect = CGRect(origin: dragOrigin, size: dragSize)
 					let        dot = ZEssayDragDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note)
@@ -1176,18 +1176,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func updateImage() -> Bool {
-		if  let         size  = resizeDragRect?.size,
-			let            a  = imageAttachment?.attachment,
-			let         wrap  = a.fileWrapper,
-			let        image  = a.cellImage {
-			let      oldSize  = image.size
-			if  let newImage  = image.resizedTo(size),
-					 oldSize != size {
-				a .cellImage  = newImage
+		if  let size     = resizeDragRect?.size,
+			let a        = imageAttachment?.attachment,
+			let name     = a.fileWrapper?.preferredFilename,
+			let image    = a.cellImage,
+			size        != image.size,
+			let newImage = image.imageResizedTo(size) {
+			a.cellImage  = newImage
 
-				if  gFiles.writeImage(newImage, using: wrap.preferredFilename) != nil {
-					return true
-				}
+			if  gFiles.writeImage(newImage, using: name) != nil {
+				return true
 			}
 		}
 

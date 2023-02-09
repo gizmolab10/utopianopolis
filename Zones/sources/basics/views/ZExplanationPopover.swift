@@ -60,7 +60,7 @@ class ZExplanationPopover : ZView {
 				let             f = ZFont(name: "TimesNewRomanPS-BoldMT", size: s) ?? ZFont.systemFont(ofSize: s)
 				let             p = NSMutableParagraphStyle()
 				p      .alignment = .center
-				c.backgroundColor = gSelecting.currentMoveable.color ?? gBackgroundColor.inverted
+				c.backgroundColor = gSelecting.currentMoveable.color ?? gBackgroundColor.invertedColor
 
 				a.addAttribute(.font,            value: f,                                   range: r)
 				a.addAttribute(.paragraphStyle,  value: p,                                   range: r)

@@ -541,7 +541,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  gIsDark {
-				computed = computed?.inverted.lighter(by: 3.0)
+				computed = computed?.invertedColor.lighter(by: 3.0)
 			}
 
 			return computed
@@ -551,7 +551,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var computed = newValue
 
 			if  gIsDark {
-				computed = computed?.inverted
+				computed = computed?.invertedColor
 			}
 
 			if  let             b = bookmarkTarget {

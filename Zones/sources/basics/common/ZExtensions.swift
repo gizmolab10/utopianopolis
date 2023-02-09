@@ -1654,9 +1654,12 @@ extension NSCursor {
 		let halfLength = length / 2.0
 		let       size = CGSize.squared(length)
 		let    hotSpot = CGPoint(x: halfLength, y: halfLength)
-		if  let  image = kFourArrowsImage?.resize(size) {
+		if  let  image = kFourArrowsImage {
+			image.size = size
+
 			return NSCursor(image: image, hotSpot: hotSpot)
 		}
+
 		return nil
 	}
 
@@ -2025,16 +2028,6 @@ extension NSMutableAttributedString {
 }
 
 extension ZImage {
-
-	func resize(_ newSize: CGSize) -> NSImage {
-		let newImage = NSImage(size: newSize)
-
-		newImage.lockFocus()
-		draw(in: CGRect(origin: .zero, size: newSize), from: CGRect(origin: .zero, size: size), operation: .sourceOver, fraction: CGFloat(1))
-		newImage.unlockFocus()
-
-		return newImage
-	}
 
 	var invertedImage: ZImage? {
 		if  let          tiffData = tiffRepresentation,

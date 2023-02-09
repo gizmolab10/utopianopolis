@@ -272,7 +272,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		if  !gDeferringRedraw, gIsReadyToShowUI {
 			switch kind {
 				case .sResize:
-					resize()
+					resizeMapView()
 					layoutForCurrentScrollOffset()
 				case .sToolTips:
 					replaceAllToolTips(gModifierFlags)
@@ -282,7 +282,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		}
 	}
 
-	func resize() {
+	func resizeMapView() {
 		mapPseudoView?.frame = view.bounds
 
 		mapView?.resize()

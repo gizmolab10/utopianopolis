@@ -82,31 +82,37 @@ class ZEssayControlsView: ZView {
 
 	func updateTitleSegments(_ enabled: Bool = true) {
 		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
+		let                  invert = isTitlesControlDark != gIsDark
 		let                segments = isNote ? 2 : 3
 		titlesControl?.segmentCount = segments
 		titlesControl?   .isEnabled = enabled
+		isTitlesControlDark         = gIsDark
 
 		if !isNote {
-			var image = kShowDragDot?.resize(CGSize.squared(16.0))
+			var   image = kShowDragDot
+			image?.size = CGSize.squared(16.0)
 
-			if  isTitlesControlDark {
-				image = image?.invertedImage
+			if  gIsDark {
+				image   = image?.invertedImage
 			}
 
 			titlesControl?.setToolTip("show titles and drag dots", forSegment: 2)
 			titlesControl?.setImage(image,                         forSegment: 2)
 		}
 
-		if  isTitlesControlDark != gIsDark {
-			isTitlesControlDark  = gIsDark
+		for segment in 0..<segments {
+			if  var        image = titlesControl?.image(forSegment: segment) {
+				image.isTemplate = true
 
-			for segment in 0..<segments {
-				if  let image = titlesControl?.image(forSegment: segment)?.invertedImage {
-					titlesControl?.setImage(image,   forSegment: segment)
+				if  invert,
+					let inverted = image.invertedImage {
+					image        = inverted
 				}
+
+				titlesControl?.setImage(image,          forSegment: segment)
+
 			}
 		}
-
 	}
 
 	func matchTitlesControlTo(_ mode: ZEssayTitleMode) {
