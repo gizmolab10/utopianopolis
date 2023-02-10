@@ -133,7 +133,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var visibilities     = [ZNoteVisibility]()
 	var grabbedNotes     = [ZNote]()
 	var selectionRect    = CGRect()           { didSet { if selectionRect.origin == .zero { imageAttachment = nil } } }
-	var imageAttachment  : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
+	var imageAttachment  : ZRangedAttachment? { didSet { if imageAttachment == nil, oldValue != nil { eraseAttachment = oldValue } } }
 	var eraseAttachment  : ZRangedAttachment?
 	var grabbedZones     : [Zone]             { return grabbedNotes.map { $0.zone! } }
 	var firstNote        : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
@@ -414,7 +414,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				kClearColor .setFill()
 			}
 
-			drawImageResizeDots(around: attach)
+			drawImageResizeDots(around: imageAttachment)
 			drawNoteDecorations()
 		}
 	}
@@ -563,6 +563,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			}
 
 			return true
+		} else if key == kDelete {
+			clearResizing()
 		}
 
 		return !enabled
@@ -671,14 +673,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	func handleClick(with event: ZEvent) -> Bool { // true means do not further process this event
 		var              result = true
 		if  !gIgnoreEvents {
-			let            rect = rectFromEvent(event)
+			let            rect = event.location(in: self)
 			if  let      attach = hitTestForAttachment(in: rect) {
-				resizeDot       = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
-				resizeDragStart = rect.origin
 				imageAttachment = attach
+				resizeDragStart = rect.origin
+				resizeDot       = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
 				result          = resizeDot != nil
 
-				setSelectedRange(attach.range)
+				setSelectedRange(attach.glyphRange)
 				setNeedsDisplay()
 
 			} else if let   dot = dragDotHit(at: rect),
@@ -1079,12 +1081,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			rect.drawImageResizeDots()
 		} else if let    a = attach,
 				  let rect = rectForRangedAttachment(a) {
+//			print("\(a.identifier)  draw \(a.glyphRange), \(selectedRange)")
+
 			rect.drawImageResizeDots()
 		}
 	}
 
 	override func draggingEntered(_ drag: NSDraggingInfo) -> NSDragOperation {
-		if  let    board = drag.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+		if  let    board = drag.pasteboardArray,
 			let     path = board[0] as? String {
 			let fileName = URL(fileURLWithPath: path).lastPathComponent
 			printDebug(.dImages, "DROP     \(fileName)")
@@ -1095,8 +1099,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func clearResizing() {
-		eraseAttachment = nil
 		imageAttachment = nil
+		eraseAttachment = nil
 		resizeDragStart = nil
 		resizeDragRect  = nil
 		resizeDot       = nil
@@ -1108,7 +1112,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		if  resizeDot    != nil,
 			let     start = resizeDragStart {
 			let     flags = event.modifierFlags
-			let sizeDelta = CGSize(rectFromEvent(event).origin - start)
+			let sizeDelta = CGSize(event.location(in: self).origin - start)
 
 			updateImageRubberband(for: sizeDelta, flags.hasCommand)
 			setNeedsDisplay()
@@ -1161,21 +1165,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	override func mouseUp(with event: ZEvent) {
 		super.mouseUp(with: event)
 
-		if  resizeDot != nil,
-			updateImage(),
-			let attach = imageAttachment {
-			let  range = attach.range
+		if  let attach = imageAttachment {
+			let  range = attach.glyphRange
 
+			updateImage(for: attach)
 			save()
 			asssureSelectionIsVisible()
-			clearResizing()
 			setNeedsLayout()
 			setNeedsDisplay()
 			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
+
+			resizeDragRect = rectForRangedAttachment(attach)
 		}
 	}
 
-	func updateImage() -> Bool {
+	func updateImage(for attachment: ZRangedAttachment) {
 		if  let size     = resizeDragRect?.size,
 			let a        = imageAttachment?.attachment,
 			let name     = a.fileWrapper?.preferredFilename,
@@ -1184,12 +1188,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let newImage = image.imageResizedTo(size) {
 			a.cellImage  = newImage
 
-			if  gFiles.writeImage(newImage, using: name) != nil {
-				return true
-			}
+			gFiles.writeImage(newImage, using: name)
 		}
-
-		return false
 	}
 
 	func rectForUnclippedRangedAttachment(_ attach: ZRangedAttachment, orientedFrom direction: ZDirection) -> CGRect? {      // return nil if image is clipped
@@ -1213,11 +1213,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
-		if  let    rect = attach.glyphRect(for: textStorage, margin: margin) {
-			return rect
-		}
-
-		return nil
+		return attach.glyphRect(for: textStorage, margin: margin)
 	}
 
 	func hitTestForAttachment(in rect: CGRect) -> ZRangedAttachment? {
@@ -1225,6 +1221,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			for attach in attaches {
 				if  let imageRect = rectForRangedAttachment(attach)?.expandedEquallyBy(kEssayImageDotRadius),
 					imageRect.intersects(rect) {
+
+					if  attach.filename == imageAttachment?.filename {
+						imageAttachment  = attach
+					}
 
 					return attach
 				}
@@ -1709,7 +1709,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// and possibly display a tool tip
 
 	func updateCursor(for event: ZEvent) {
-		let rect = rectFromEvent(event)
+		let rect = event.location(in: self)
 
 		if  linkHit(at: rect) {
 			NSCursor.arrow.set()
@@ -1738,13 +1738,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	override func setSelectedRange(_ range: NSRange) {
 		if  let         text = textStorage?.string {
 			let storageRange = NSRange(location: 0, length: text.length)
-			let     endRange = NSRange(location: text.length, length: 0)
+			let     endRange = NSRange(location: text.length, length: 0) // immediately beyond final character of text
 			let       common = range.intersection(storageRange) ?? endRange
 
 			super.setSelectedRange(common)
 
-			if  let      rect = rectForRange(common) {
-				selectionRect = rect
+			if  let        rect = rectForRange(common) {
+				selectionRect   = rect
 			}
 		}
 	}

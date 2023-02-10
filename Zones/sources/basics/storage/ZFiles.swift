@@ -198,7 +198,7 @@ class ZFiles: NSObject {
 		}
 	}
 
-	func writeImage(_ image: ZImage, using originalName: String? = nil) -> URL? {
+	@discardableResult func writeImage(_ image: ZImage, using originalName: String? = nil) -> URL? {
 		if  let name = originalName {
 			let url  = assetURL(for: name)
 

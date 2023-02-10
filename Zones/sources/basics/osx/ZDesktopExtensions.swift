@@ -257,6 +257,13 @@ extension ZEvent {
 		return nil
 	}
 
+	func location(in view: ZView) -> CGRect {
+		let  point = locationInWindow
+		let origin = view.convert(point, from: nil)
+
+		return CGRect(origin: origin, size: CGSize(width: 1.0, height: 1.0))
+	}
+
 }
 
 extension ZColor {

@@ -1743,7 +1743,7 @@ extension NSMutableParagraphStyle {
 						}
 					case kIndent:
 						if  let             raw = subparts[1].integerValue {
-							let          indent = CGFloat(raw)
+							let          indent = CGFloat(raw) + 6.0 // 8 pixel gap between dot and title
 							firstLineHeadIndent = indent
 						}
 					case kLists:
@@ -1819,30 +1819,6 @@ extension NSFontDescriptor {
 
 		self.init(fontAttributes: dict)
 	}
-}
-
-struct ZRangedAttachment {
-	let      range : NSRange
-	let attachment : NSTextAttachment
-
-	func glyphRect(for textStorage: NSTextStorage?, margin: CGFloat) -> CGRect? {
-		if  let          managers = textStorage?.layoutManagers, managers.count > 0 {
-			let     layoutManager = managers[0] as NSLayoutManager
-			let        containers = layoutManager.textContainers
-			if  containers .count > 0 {
-				let textContainer = containers[0]
-				var    glyphRange = NSRange()
-
-				layoutManager.characterRange(forGlyphRange: range, actualGlyphRange: &glyphRange)
-
-				let          rect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: margin, dy: margin)
-
-				return rect
-			}
-		}
-
-		return nil
-	}
 
 }
 
@@ -1854,7 +1830,7 @@ extension NSMutableAttributedString {
 		let range = NSRange(location: 0, length: length)
 		var found = [NSRange]()
 
-		enumerateAttribute(.link, in: range, options: []) { (item, inRange, flag) in
+		enumerateAttribute(.link, in: range, options: []) { (_, inRange, _) in
 			if  inRange.length < 100 {
 				found.append(inRange)
 			}
@@ -1863,13 +1839,15 @@ extension NSMutableAttributedString {
 		return found
 	}
 
-	var rangedAttachments: [ZRangedAttachment] {
+	var rangedAttachments: ZRangedAttachmentArray {
 		let range = NSRange(location: 0, length: length)
-		var found = [ZRangedAttachment]()
+		var found = ZRangedAttachmentArray()
 
-		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, flag) in
+		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, _) in
 			if  let attach = item as? NSTextAttachment {
-				let append = ZRangedAttachment(range: inRange, attachment: attach)
+				let append = ZRangedAttachment(glyphRange: inRange, attachment: attach)
+
+//				print("\(append.identifier) range \(inRange)")
 
 				found.append(append)
 			}
@@ -1907,7 +1885,7 @@ extension NSMutableAttributedString {
 		var result           = [ZImage]()
 
 		for item in array {
-			if  var image    = item {
+			if  let image    = item {
 				result.append(image)
 			}
 		}
@@ -1926,7 +1904,7 @@ extension NSMutableAttributedString {
 			let  range = NSRange(location: 0, length: length)
 
 			for key in allKeys {
-				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, flag) in
+				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, _) in
 					var string: Any?
 
 					if  let value      = item {
@@ -2023,6 +2001,14 @@ extension NSMutableAttributedString {
 
 	func fixAllAttributes() {
 		fixAttributes(in: NSRange(location: 0, length: length))
+	}
+
+}
+
+extension NSDraggingInfo {
+
+	var pasteboardArray : NSArray? {
+		return draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray
 	}
 
 }
@@ -3029,10 +3015,6 @@ extension ZView {
 
 	func locationFromEvent(_ event: ZEvent) -> CGPoint {
 		return convert(event.locationInWindow, from: nil)
-	}
-
-	func rectFromEvent(_ event: ZEvent) -> CGRect {
-		return convert(CGRect(origin: event.locationInWindow, size: .zero), from: nil)
 	}
 
 	func analyze(_ object: AnyObject?) -> (Bool, Bool, Bool, Bool, Bool) {

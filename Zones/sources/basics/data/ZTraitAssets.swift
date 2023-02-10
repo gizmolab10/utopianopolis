@@ -104,7 +104,7 @@ class ZTraitAssets : ZRecord {
 			return nil
 		}
 
-		return ZEssayAttachment(fileWrapper: wrapper)
+		return ZImageAttachment(fileWrapper: wrapper)
 	}
 
 	// MARK: - persistence
