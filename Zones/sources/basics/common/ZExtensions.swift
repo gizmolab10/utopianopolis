@@ -2051,17 +2051,17 @@ extension NSTextAttachment {
 
 	var cellImage: ZImage? {
 		get {
-			if  let    cell = attachmentCell as? NSCell {
-				return cell.image
+			if  let    cell = attachmentCell as? ZImageAttachmentCell {
+				return cell.original?.image
 			}
 
 			return nil
 		}
 
 		set {
-			if  let  image = newValue,
-				let   cell = attachmentCell as? NSCell {
-				cell.image = image
+			if  let            image = newValue,
+				let             cell = attachmentCell as? ZImageAttachmentCell {
+				cell.original?.image = image
 			}
 		}
 	}

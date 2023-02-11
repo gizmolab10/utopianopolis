@@ -275,6 +275,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	func essayViewSetup() {
 		updateTextStorage()
+		clearResizing()      // remove leftovers from last essay
 	}
 
 	@discardableResult func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) -> Int {
@@ -735,6 +736,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	func nextNotemark(down: Bool) {
 		save()
+		clearResizing()
 		gFavorites.nextBookmark(down: down, amongNotes: true)
 	}
 
@@ -1164,16 +1166,16 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	override func mouseUp(with event: ZEvent) {
 		super.mouseUp(with: event)
+		save()
 
-		if  let attach = imageAttachment {
-			let  range = attach.glyphRange
+		if  let     attach = imageAttachment {
+			let      range = attach.glyphRange
 
 			updateImage(for: attach)
-			save()
+			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
 			asssureSelectionIsVisible()
 			setNeedsLayout()
 			setNeedsDisplay()
-			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
 
 			resizeDragRect = rectForRangedAttachment(attach)
 		}
