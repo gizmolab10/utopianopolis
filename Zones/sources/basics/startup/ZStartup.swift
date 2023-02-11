@@ -21,23 +21,29 @@ class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
 
-		gPrintModes            = []
-		gDebugModes            = []
-		gCoreDataMode          = []
+		gPrintModes                          = []
+		gDebugModes                          = []
+		gCoreDataMode                        = []
 //		gPrintModes  .insert(.dTime)
-		gDebugModes  .insert(.dNoSubscriptions)
 		gCoreDataMode.insert(.dNoCloudKit)
+		gDebugModes  .insert(.dNoSubscriptions)
+		gDebugModes  .insert(.dHideNoteVisibility)
 
-		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
-		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
-		gCDMigrationState      = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
-		gWorkMode              = .wStartupMode
-		gMainWindow?.acceptsMouseMovedEvents = true // so hover detection works
+		gRefusesFirstResponder               = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
+		gHelpWindowController                = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
+		gCDMigrationState                    = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
+		gWorkMode                            = .wStartupMode
 
 		if  gCDMigrationState != .normal {
 			gHereRecordNames = kDefaultRecordNames
 		}
 
+		gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { note in
+			print("remove local data and fetch user data")
+		}
+
+		gApplication?.registerForRemoteNotifications(matching: .badge)
+		setStartupTime()
 		gRemoteStorage.clear()
 		gMainWindow?.revealEssayEditorInspectorBar(false)
 		gSearching.setSearchStateTo(.sNot)

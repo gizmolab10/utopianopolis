@@ -1984,7 +1984,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var zonesWithVisibleNotes : ZoneArray {
-		if !gNoteVisibilityIcons {
+		if  gHideNoteVisibility {
 			return zonesWithNotes
 		}
 

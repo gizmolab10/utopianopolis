@@ -12,6 +12,7 @@ import CloudKit
 var  gTextEditorHandlesArrows                       = false
 var   gIsEditingStateChanging                       = false
 var    gRefusesFirstResponder                       = false
+var      gAllowSavingWorkMode                       = false
 var       gHasFinishedStartup                       = false
 var       gIsExportingToAFile                       = false
 var        gKeyboardIsVisible                       = false
@@ -753,16 +754,16 @@ var gCurrentMapFunction : ZFunction {
 #endif
 
 enum ZWorkMode: String {
-	case wEditIdeaMode = "i"
+	case wEditIdeaMode = "e"
 	case wStartupMode  = "s"
 	case wResultsMode  = "?"
 	case wEssayMode    = "n"
-	case wMapMode      = "g"
+	case wMapMode      = "m"
 }
 
 var gWorkMode: ZWorkMode = .wStartupMode {
 	didSet {
-		if  gCanSaveWorkMode {
+		if  gCanSaveWorkMode, gAllowSavingWorkMode {
 			setPreferencesString(gWorkMode.rawValue, for: kWorkMode)
 		}
 	}
@@ -847,9 +848,10 @@ func gRefreshCurrentEssay() {
 }
 
 func gRefreshPersistentWorkMode() {
-	if  let     mode = getPreferencesString(for: kWorkMode, defaultString: ZWorkMode.wEssayMode.rawValue),
-		let workMode = ZWorkMode(rawValue: mode) {
-		gWorkMode    = workMode
+	if  let             mode = getPreferencesString(for: kWorkMode, defaultString: ZWorkMode.wMapMode.rawValue),
+		let         workMode = ZWorkMode(rawValue: mode) {
+		gWorkMode            = workMode
+		gAllowSavingWorkMode = true
 	}
 }
 

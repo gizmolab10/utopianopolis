@@ -15,12 +15,10 @@ import UIKit
 #endif
 
 typealias ZRangedAttachmentArray = [ZRangedAttachment]
-var gIdentity = 0
 
 struct ZRangedAttachment {
 	let glyphRange : NSRange
 	let attachment : NSTextAttachment
-	var identifier = gIdentity
 	var filename: String? { return attachment.fileWrapper?.filename }
 
 	func glyphRect(for textStorage: NSTextStorage?, margin: CGFloat) -> CGRect? {

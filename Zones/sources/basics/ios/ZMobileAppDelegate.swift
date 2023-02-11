@@ -11,12 +11,13 @@ import UIKit
 import CloudKit
 import UserNotifications
 
-@UIApplicationMain
-
 var gAppDelegate: ZMobileAppDelegate?
+
+@UIApplicationMain
 
 class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
+	var needsSetup = true
     var window: UIWindow?
 
 
@@ -25,12 +26,13 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        application.applicationSupportsShakeToEdit = true
-		gAppDelegate = self
+		if  needsSetup {
+			needsSetup                                 = false
+			gAppDelegate                               = self
+			application.applicationSupportsShakeToEdit = true
 
-        // application.registerUserNotificationSettings(.badgeSetting)
-        application.registerForRemoteNotifications()
-        gControllers.startupCloudAndUI()
+			gStartup.startupCloudAndUI()
+		}
 
         return true
     }
@@ -40,12 +42,12 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
 
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        printDebug(.dError, deviceToken)
+		printDebug(.dError, deviceToken.description)
     }
 
 
     @nonobjc public func application(_ application: UIApplication, didRegister notificationSettings: UNNotificationSettings) {
-        printDebug(.dError, notificationSettings)
+		printDebug(.dError, notificationSettings.description)
     }
 
 

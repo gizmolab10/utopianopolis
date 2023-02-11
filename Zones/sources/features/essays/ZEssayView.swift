@@ -128,27 +128,26 @@ struct ZNoteVisibility {
 
 @objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
-	let margin           = CGFloat(20.0)
-	var dropped          = StringsArray()
-	var visibilities     = [ZNoteVisibility]()
-	var grabbedNotes     = [ZNote]()
-	var selectionRect    = CGRect()           { didSet { if selectionRect.origin == .zero { imageAttachment = nil } } }
-	var imageAttachment  : ZRangedAttachment? { didSet { if imageAttachment == nil, oldValue != nil { eraseAttachment = oldValue } } }
-	var eraseAttachment  : ZRangedAttachment?
-	var grabbedZones     : [Zone]             { return grabbedNotes.map { $0.zone! } }
-	var firstNote        : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
-	var selectedNote     : ZNote?             { return selectedNotes.last ?? gCurrentEssay }
-	var selectedZone     : Zone?              { return selectedNote?.zone }
-	var firstGrabbedNote : ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
-	var firstGrabbedZone : Zone?              { return firstGrabbedNote?.zone }
-	var hasGrabbedNote   : Bool               { return grabbedNotes.count != 0 }
-	var lockedSelection  : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
-	var firstIsGrabbed   : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
-	var selectionString  : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var resizeDragStart  : CGPoint?
-	var resizeDragRect   : CGRect?
-	var resizeDot        : ZDirection?
-	var essayRecordName  : String?
+	let margin             = CGFloat(20.0)
+	var dropped            = StringsArray()
+	var visibilities       = [ZNoteVisibility]()
+	var grabbedNotes       = [ZNote]()
+	var selectionRect      = CGRect()           { didSet { if selectionRect.origin == .zero { selectedAttachment = nil } } }
+	var grabbedZones       : [Zone]             { return grabbedNotes.map { $0.zone! } }
+	var firstNote          : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
+	var firstGrabbedNote   : ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
+	var firstGrabbedZone   : Zone?              { return firstGrabbedNote?.zone }
+	var selectedNote       : ZNote?             { return selectedNotes.last ?? gCurrentEssay }
+	var selectedZone       : Zone?              { return selectedNote?.zone }
+	var hasGrabbedNote     : Bool               { return grabbedNotes.count != 0 }
+	var lockedSelection    : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
+	var firstIsGrabbed     : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
+	var selectionString    : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
+	var essayRecordName    : String?
+	var resizeDragStart    : CGPoint?
+	var resizeDragRect     : CGRect?
+	var resizeDot          : ZDirection?
+	var selectedAttachment : ZRangedAttachment?
 
 	var selectedNotes : [ZNote] {
 		gCurrentEssay?.updateNoteOffsets()
@@ -200,7 +199,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func drawVisibilityIcons(for index: Int, y: CGFloat, isANote: Bool) {
-		if  gEssayTitleMode   != .sEmpty, gNoteVisibilityIcons {
+		if  gEssayTitleMode   != .sEmpty, !gHideNoteVisibility {
 			var              v = visibilities[index]
 			for type in ZNoteVisibilityIconType.all {
 				if  !(type.forEssayOnly && isANote),
@@ -219,7 +218,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func visibilityIconHit(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
-		if  gNoteVisibilityIcons {
+		if  !gHideNoteVisibility {
 			for visibility in visibilities {
 				for type in ZNoteVisibilityIconType.all {
 					if  visibility.rectFor(type).intersects(rect) {
@@ -401,23 +400,23 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// MARK: -
 
 	override func draw(_ iDirtyRect: NSRect) {
-		let attach = imageAttachment ?? eraseAttachment
-
 		clearImageResizeRubberband()
 		super.draw(iDirtyRect)
 
-		if iDirtyRect.width > 1.0 {
-			if  attach != nil {
-				gActiveColor.setStroke()
-				gActiveColor.setFill()
-			} else {
-				kClearColor .setStroke()
-				kClearColor .setFill()
-			}
-
-			drawImageResizeDots(around: imageAttachment)
+		if  iDirtyRect.width > 1.0 {
+			drawSelectedImage()
 			drawNoteDecorations()
 		}
+	}
+
+	func drawSelectedImage() {
+		let attach = selectedAttachment
+		let   rect = rectForResizing(around: attach)
+		let  color = (attach == nil) ? kClearColor : gActiveColor
+
+		color.setStroke()
+		color.setFill()
+		rect?.drawImageResizeDotsAndRubberband()
 	}
 
 	func drawNoteDecorations() {
@@ -676,7 +675,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		if  !gIgnoreEvents {
 			let            rect = event.location(in: self)
 			if  let      attach = hitTestForAttachment(in: rect) {
-				imageAttachment = attach
+				selectedAttachment = attach
 				resizeDragStart = rect.origin
 				resizeDot       = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
 				result          = resizeDot != nil
@@ -1067,26 +1066,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let        path = ZBezierPath(rect: bounds)
 
 			kClearColor.setFill()
-			path.fill() // erase rubberband
+			path.fill()           // erase rubberband
 		}
 	}
 
-	func drawImageResizeDots(around attach: ZRangedAttachment?) {
+	func rectForResizing(around attach: ZRangedAttachment?) -> CGRect? {
 		if  let       rect = resizeDragRect {
-			let       path = ZBezierPath(rect: rect)
-			let    pattern : [CGFloat] = [4.0, 4.0]
-			path.lineWidth = CGFloat(gLineThickness * 3.0)
-			path.flatness  = kDefaultFlatness
-
-			path.setLineDash(pattern, count: 2, phase: 4.0)
-			path.stroke()
-			rect.drawImageResizeDots()
+			return    rect
 		} else if let    a = attach,
 				  let rect = rectForRangedAttachment(a) {
-//			print("\(a.identifier)  draw \(a.glyphRange), \(selectedRange)")
-
-			rect.drawImageResizeDots()
+			return    rect
 		}
+
+		return nil
 	}
 
 	override func draggingEntered(_ drag: NSDraggingInfo) -> NSDragOperation {
@@ -1101,8 +1093,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func clearResizing() {
-		imageAttachment = nil
-		eraseAttachment = nil
+		selectedAttachment = nil
 		resizeDragStart = nil
 		resizeDragRect  = nil
 		resizeDot       = nil
@@ -1116,18 +1107,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let     flags = event.modifierFlags
 			let sizeDelta = CGSize(event.location(in: self).origin - start)
 
-			updateImageRubberband(for: sizeDelta, flags.hasCommand)
+			updateImageResizeRect(for: sizeDelta, flags.hasCommand)
 			setNeedsDisplay()
 		}
 	}
 
-	func updateImageRubberband(for delta: CGSize, _ COMMAND : Bool) {
+	func updateImageResizeRect(for delta: CGSize, _ COMMAND : Bool) {
 
 		// compute resizeDragRect from delta.width, image rect and corner
 		// for COMMAND == false: preserving aspect ratio
 
 		if  let direction = resizeDot,
-			let    attach = imageAttachment,
+			let    attach = selectedAttachment,
 			let      rect = rectForUnclippedRangedAttachment(attach, orientedFrom: direction) {
 			var      size = rect.size
 			var    origin = rect.origin
@@ -1168,10 +1159,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		super.mouseUp(with: event)
 		save()
 
-		if  let     attach = imageAttachment {
+		if  let     attach = selectedAttachment {
 			let      range = attach.glyphRange
 
-			updateImage(for: attach)
+			updateSelectedImage()
 			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
 			asssureSelectionIsVisible()
 			setNeedsLayout()
@@ -1181,9 +1172,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func updateImage(for attachment: ZRangedAttachment) {
+	func updateSelectedImage() {
 		if  let size     = resizeDragRect?.size,
-			let a        = imageAttachment?.attachment,
+			let a        = selectedAttachment?.attachment,
 			let name     = a.fileWrapper?.preferredFilename,
 			let image    = a.cellImage,
 			size        != image.size,
@@ -1224,8 +1215,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				if  let imageRect = rectForRangedAttachment(attach)?.expandedEquallyBy(kEssayImageDotRadius),
 					imageRect.intersects(rect) {
 
-					if  attach.filename == imageAttachment?.filename {
-						imageAttachment  = attach
+					if  attach.filename == selectedAttachment?.filename {
+						selectedAttachment  = attach
 					}
 
 					return attach

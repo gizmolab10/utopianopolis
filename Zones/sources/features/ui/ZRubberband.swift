@@ -67,13 +67,9 @@ class ZRubberband: NSObject {
 	}
 
 	func draw() {
-		if  let       rect = rubberbandRect {
-			let       path = ZBezierPath(rect: rect)
-			path.lineWidth = gIsDark ? 3.0 : 2.0
-
-			gActiveColor.accountingForDarkMode.lighter(by: 2.0).setStroke()
-			path.addDashes()
-			path.stroke()           // draw dashed rectangle in active color for rubberband
+		if  let rect = rubberbandRect {
+			gActiveColor.lighter(by: 2.0).setStroke()
+			rect.drawRubberband()           // draw dashed rectangle in active color for rubberband
 		}
 	}
 	

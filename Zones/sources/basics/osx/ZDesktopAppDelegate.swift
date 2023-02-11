@@ -27,20 +27,15 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
     // MARK: -
 
     func applicationDidBecomeActive(_ notification: Notification) {
-		gStartup.setStartupTime()
-
 		if  needsSetup {
             needsSetup   = false
 			gAppDelegate = self
 
-            UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
-			UserDefaults.standard.synchronize()
-			gApplication?.registerUserInterfaceItemSearchHandler(gHelpSearchDelegate)
-			gApplication?.registerForRemoteNotifications(matching: .badge)
+//			UserDefaults.standard.set(false, forKey: "NSConstraintBasedLayoutVisualizeMutuallyExclusiveConstraints")
+//			UserDefaults.standard.synchronize()
+			gApplication?.registerUserInterfaceItemSearchHandler(gHelpSearchDelegate) // so help search box functions as expected
+			gMainWindow?.acceptsMouseMovedEvents = true                               // so hover detection functions as expected
             gStartup.startupCloudAndUI()
-			gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { note in
-				print("remove local data and fetch user data")
-			}
         }
     }
 

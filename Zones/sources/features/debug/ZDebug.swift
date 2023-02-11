@@ -20,8 +20,8 @@ var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)    &
 var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit) && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
-var gNoteVisibilityIcons : Bool { return  gDebugModes.contains(.dNoteVisibilityIcons) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
+var  gHideNoteVisibility : Bool { return  gDebugModes.contains(.dHideNoteVisibility) }
 var     gNoSubscriptions : Bool { return  gDebugModes.contains(.dNoSubscriptions) }
 var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
 var         gDebugAngles : Bool { return  gDebugModes.contains(.dDebugAngles) }
@@ -67,8 +67,8 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dShowDuplicates      = ZDebugMode(rawValue: 1 <<  8) // report duplicates
 	static let dIgnoreExemption     = ZDebugMode(rawValue: 1 <<  9) // ignore user exemption
 	static let dNoSubscriptions     = ZDebugMode(rawValue: 1 << 10) // not incorporate subscriptions
-	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 11) // super short timeout
-	static let dNoteVisibilityIcons = ZDebugMode(rawValue: 1 << 12) // note visibility icons
+	static let dHideNoteVisibility  = ZDebugMode(rawValue: 1 << 11) // note visibility icons
+	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 12) // super short timeout
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 

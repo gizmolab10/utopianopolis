@@ -1172,7 +1172,7 @@ extension CGRect {
 		squareCentered.drawColoredOval(color, thickness: thickness, filled: filled, dashes: dashes)
 	}
 
-	func drawImageResizeDots() {
+	func drawImageResizeDotsAndRubberband() {
 		for point in selectionPoints.values {
 			let   dotRect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
 			let      path = ZBezierPath(ovalIn: dotRect)
@@ -1180,6 +1180,17 @@ extension CGRect {
 
 			path.stroke()
 		}
+
+		drawRubberband()
+	}
+
+	func drawRubberband() {
+		let       path = ZBezierPath(rect: self)
+		path.lineWidth = CGFloat(gLineThickness * (gIsDark ? 3.0 : 2.0))
+		path.flatness  = kDefaultFlatness
+
+		path.addDashes()
+		path.stroke()
 	}
 
 }
@@ -2051,17 +2062,16 @@ extension NSTextAttachment {
 
 	var cellImage: ZImage? {
 		get {
-			if  let    cell = attachmentCell as? ZImageAttachmentCell {
-				return cell.original?.image
+			if  let             cell = attachmentCell as? ZImageAttachmentCell {
+				return          cell.original?.image
 			}
 
 			return nil
 		}
 
 		set {
-			if  let            image = newValue,
-				let             cell = attachmentCell as? ZImageAttachmentCell {
-				cell.original?.image = image
+			if  let             cell = attachmentCell as? ZImageAttachmentCell {
+				cell.original?.image = newValue
 			}
 		}
 	}
