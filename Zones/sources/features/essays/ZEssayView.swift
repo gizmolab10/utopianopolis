@@ -747,7 +747,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	override func mouseMoved(with event: ZEvent) {
-		super.mouseMoved(with: event)
+//		super.mouseMoved(with: event) // not call super method: avoid a console warning when a linefeed is selected (sheesh!!!!)
 		updateCursor(for: event)
 	}
 
@@ -1193,8 +1193,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				rect  .size = image.size
 				switch direction {
 					case .topRight,
-							.topLeft,
-							.top: rect.origin.y -= yDelta
+						 .topLeft,
+						 .top: rect.origin.y -= yDelta
 					default:   break
 				}
 			}

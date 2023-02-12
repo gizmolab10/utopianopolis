@@ -3626,8 +3626,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isDragged     = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil
 		p.isReveal      = isReveal
 		p.isDrop        = isDragDrop && d != nil && d == self
-		p.filled        = isFilled
+		p.isFilled      = isFilled
 		p.fill          = isFilled ? dotColor.lighter(by: 2.5) : gBackgroundColor
+		p.isCircle      = p.hasTarget || p.hasTargetNote || p.childCount == 0
 
 		return p
 	}

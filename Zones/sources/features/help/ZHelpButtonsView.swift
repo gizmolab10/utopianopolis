@@ -70,12 +70,12 @@ class ZHelpButtonsView : ZButtonsView {
 	func showNextHelp(forward: Bool) {
 		var    mode = gCurrentHelpMode
 		switch mode {
-			case .basicMode:  mode = forward ? .middleMode : .dotMode
-			case .middleMode: mode = forward ? .proMode    : .basicMode
-			case .proMode:    mode = forward ? .essayMode  : .middleMode
-			case .essayMode:  mode = forward ? .dotMode    : .proMode
-			case .dotMode:    mode = forward ? .basicMode  : .essayMode
-			default:          break
+			case .basicMode:    mode = forward ? .intermedMode : .dotMode
+			case .intermedMode: mode = forward ? .proMode      : .basicMode
+			case .proMode:      mode = forward ? .essayMode    : .intermedMode
+			case .essayMode:    mode = forward ? .dotMode      : .proMode
+			case .dotMode:      mode = forward ? .basicMode    : .essayMode
+			default:            break
 		}
 
 		gHelpController?.showHelpFor(mode)

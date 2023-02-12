@@ -21,25 +21,25 @@ var gHelpWindow           : ZWindow?         { return gHelpWindowController?.win
 
 enum ZHelpMode: String {
 
-	case middleMode = "i"
-	case mouseMode  = "m" // save for later!!!
-	case basicMode  = "b"
-	case essayMode  = "e"
-	case proMode    = "a"
-	case dotMode    = "d"
-	case noMode     = " "
+	case intermedMode = "i"
+	case mouseMode    = "m" // save for later!!!
+	case basicMode    = "b"
+	case essayMode    = "e"
+	case proMode      = "a"
+	case dotMode      = "d"
+	case noMode       = " "
 
-	static let all: [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode] // , .mouseMode]
+	static let all: [ZHelpMode] = [.dotMode, .basicMode, .intermedMode, .proMode, .essayMode] // , .mouseMode]
 
 	var title: String {
 		switch self {
-			case .middleMode: return "intermediate keys"
-			case .essayMode:  return "notes & essays"
-			case .basicMode:  return "basic keys"
-			case .mouseMode:  return "mouse"
-			case .proMode:    return "all keys"
-			case .dotMode:    return "dots"
-			default:          return kEmpty
+			case .intermedMode: return "intermediate keys"
+			case .essayMode:    return "notes & essays"
+			case .basicMode:    return "basic keys"
+			case .mouseMode:    return "mouse"
+			case .proMode:      return "all keys"
+			case .dotMode:      return "dots"
+			default:            return kEmpty
 		}
 	}
 
@@ -243,7 +243,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	}
 
 	func updateGridVisibility() {
-		let graphModes: [ZHelpMode] = [.basicMode, .middleMode, .proMode]
+		let graphModes: [ZHelpMode] = [.basicMode, .intermedMode, .proMode]
 
 		func shouldShow(_ mode: ZHelpMode) -> Bool {
 			let sameMode  = mode == gCurrentHelpMode

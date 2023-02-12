@@ -23,10 +23,10 @@ enum ZDecorationType: Int {
 struct  ZDotParameters {
 
 	var childCount    = 0
-	var typeOfTrait   = kEmpty
 	var isDrop        = false
-	var filled        = false
 	var isReveal      = false
+	var isFilled      = false
+	var isCircle      = false
 	var isDragged     = false
 	var isGrouped     = false
 	var isGroupOwner  = false
@@ -36,6 +36,7 @@ struct  ZDotParameters {
 	var showList      = false
 	var showAccess    = false
 	var showSideDot   = false
+	var typeOfTrait   = kEmpty
 	var fill          = gBackgroundColor
 	var color         = kDefaultIdeaColor
 	var accessType    = ZDecorationType.vertical
@@ -109,7 +110,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		guard let      c = controller ?? gHelpController else { return }    // for help dots, widget and controller are nil; so use help controller
 		let  strokeColor = parameters.color.withAlphaComponent(0.7)
-		let    fillColor = parameters.filled ? gBackgroundColor : strokeColor
+		let    fillColor = parameters.isFilled ? gBackgroundColor : strokeColor
 
 		let       radius = c.sideDotRadius
 		let     diameter = radius * 2.0
@@ -129,7 +130,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
 		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
 		let count      = parameters.childCount
-		if  count      > 1 {
+		if  count      > 0 {
 			let  frame = iDirtyRect.offsetEquallyBy(-0.1).expandedEquallyBy(c.coreThickness)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
 			let radius = (frame.size.height * c.coreThickness / 60.0) + 0.7
@@ -208,10 +209,10 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		}
 	}
 
-	func drawRevealDotDecorations(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
+	func drawRevealDotDecoration(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		let fillColor = parameters.isFilled ? gBackgroundColor : parameters.color
 
-		if parameters.hasTarget || parameters.hasTargetNote {
+		if  parameters.hasTarget || parameters.hasTargetNote {
 
 			// //////////////////////////////// //
 			// TINY CENTER BOOKMARK DECORATIONS //
@@ -223,7 +224,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawDotInterior(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
+		let fillColor = parameters.isFilled ? gBackgroundColor : parameters.color
 
 		if  parameters.typeOfTrait != kEmpty, controller?.inCircularMode != isReveal {
 
@@ -235,11 +236,17 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		}
 
 		if  parameters.isReveal {
-			drawRevealDotDecorations(iDirtyRect, parameters)
+
+			// //////////////////// //
+			// BOOKMARK DECORATIONS //
+			// //////////////////// //
+
+			drawRevealDotDecoration(iDirtyRect, parameters)
 		} else {
 			fillColor.setFill()
 
 			if  parameters.isGrouped, !(controller?.inCircularMode ?? false) {
+
 				// //////////////////// //
 				// GROUPING DECORATIONS //
 				// //////////////////// //
@@ -282,7 +289,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		if  (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
+		if (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
 			gActiveColor.setStroke()
 			gActiveColor.setFill()
 		} else {

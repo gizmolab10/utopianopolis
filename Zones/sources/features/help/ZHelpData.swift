@@ -32,14 +32,14 @@ class ZHelpData: NSObject {
 	var isDots            :  Bool          { return gCurrentHelpMode == .dotMode }
 	var isBasic           :  Bool          { return gCurrentHelpMode == .basicMode }
 	var isEssay           :  Bool          { return gCurrentHelpMode == .essayMode }
-	var isIntermediate    :  Bool          { return gCurrentHelpMode == .middleMode }
+	var isIntermediate    :  Bool          { return gCurrentHelpMode == .intermedMode }
 	var boldFont          :  ZFont         { return kBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)
 		let       helpTypeRaw  = first.substring(with: NSMakeRange(0, 1)).lowercased()
 		let         filledRaw  = first.substring(with: NSMakeRange(1, 2)).lowercased()
-		let            filled  = ZFillType(rawValue: filledRaw)
+		let          fillType  = ZFillType(rawValue: filledRaw)
 		var           dotType  : ZHelpDotType?
 		if  let      helpType  = ZHelpType(rawValue: helpTypeRaw),
 			helpType == .hDots {
@@ -47,7 +47,7 @@ class ZHelpData: NSObject {
 			dotType            = ZHelpDotType(rawValue: dotTypeRaw)
 		}
 
-		return (dotType, filled)
+		return (dotType, fillType)
 	}
 
 	var countOfRows : Int {
@@ -347,21 +347,22 @@ enum ZHelpDotType: String {
 		}
 	}
 
-	var count: Int {
+	var childCount: Int {
 		switch self {
 			case .oneEleven: return 111
 			case .eleven:    return  11
 			case .ten:       return  10
 			case .five:      return   5
-			default:         return   1
+			case .one:       return   1
+			default:         return   0
 		}
 	}
 
-	func helpDotParameters(isFilled: Bool = false, isRound: Bool = false) -> ZDotParameters {
+	func helpDotParameters(isFilled: Bool = false, showAsACircle: Bool = false) -> ZDotParameters {
 		var p           = ZDotParameters()
 		p.color         = gHelpHyperlinkColor
 		p.fill          = isFilled ? p.color : gBackgroundColor
-		p.filled        = isFilled
+		p.isFilled      = isFilled
 		p.isReveal      = isReveal
 		p.typeOfTrait   = traitType
 		p.showAccess    = showAccess
@@ -372,7 +373,8 @@ enum ZHelpDotType: String {
 		p.hasTargetNote = self == .notemark || self == .has
 		p.hasTarget     = self == .bookmark
 		p.showSideDot   = self == .favorite
-		p.childCount    = isRound ? 0 : count
+		p.childCount    = showAsACircle ? 0 : childCount
+		p.isCircle      = showAsACircle || p.hasTarget || p.hasTargetNote
 
 		return p
 	}
@@ -393,10 +395,10 @@ enum ZHelpType: String {
 
 	var isVisibleForCurrentMode: Bool {
 		switch gCurrentHelpMode {
-			case .basicMode:  return self == .hBasic
-			case .middleMode: return self == .hBasic || self == .hIntermed
-			case .proMode:    return self == .hBasic || self == .hIntermed || self == .hPro
-			default:          return false
+			case .basicMode:    return self == .hBasic
+			case .intermedMode: return self == .hBasic || self == .hIntermed
+			case .proMode:      return self == .hBasic || self == .hIntermed || self == .hPro
+			default:            return false
 		}
 	}
 }

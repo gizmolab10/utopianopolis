@@ -28,12 +28,12 @@ class ZHelpGridView: ZView {
 				let (dotType, fillType) = data.dotTypes(for: row, column: column)
 				if  let dt = dotType,
 					let ft = fillType {
+					let  e = ft != .fFilled
 					let  f = ft != .fEmpty
 					let  t = ft == .fThree
-					let  e = ft != .fFilled
 					let vo = Double(data.rowHeight) + data.dotOffset
 					let  x = Double(column) * 580.0 + Double(iDirtyRect.minX)   + 30.0
-					let  y = Double(row)    *    -vo + Double(iDirtyRect.height) - 24.0
+					let  y = Double(row)    *   -vo + Double(iDirtyRect.height) - 24.0
 					let  d = ZoneDot(view: self)
 
 					if  e {
@@ -67,7 +67,7 @@ class ZHelpGridView: ZView {
 
 						let p = CGPoint(x: x + 40.0, y: y)
 						let r = dt.rect(p)
-						let m = dt.helpDotParameters(isFilled: true, isRound: true)
+						let m = dt.helpDotParameters(isFilled: true, showAsACircle: true)
 
 						d.drawDot(r, m)
 						d.drawDotExterior(r, m)
