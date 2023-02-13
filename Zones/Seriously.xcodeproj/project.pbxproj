@@ -244,6 +244,9 @@
 		A76243AE27EE8DB80007EDC1 /* ZExplanationPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */; };
 		A76243AF27EE8DB80007EDC1 /* ZExplanationPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */; };
 		A76243B027EE8DB80007EDC1 /* ZExplanationPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */; };
+		A763DB98299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */; };
+		A763DB99299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */; };
+		A763DB9A299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */; };
 		A764067423F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
 		A764067523F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
 		A764067623F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
@@ -605,6 +608,7 @@
 		A752FC31245222D100603A54 /* ZoneContextualMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZoneContextualMenu.swift; sourceTree = "<group>"; };
 		A759F70024269D29008CEA59 /* ZTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTimers.swift; sourceTree = "<group>"; };
 		A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZExplanationPopover.swift; sourceTree = "<group>"; };
+		A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZEssayView+Images.swift"; sourceTree = "<group>"; };
 		A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsController.swift; sourceTree = "<group>"; };
 		A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsView.swift; sourceTree = "<group>"; };
 		A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbs.swift; sourceTree = "<group>"; };
@@ -1061,6 +1065,16 @@
 			path = managers;
 			sourceTree = "<group>";
 		};
+		A763DB96299AFA00006D61D7 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */,
+				A72A470A299436C10087E2B7 /* ZImageAttachment.swift */,
+				A72A470E299436D70087E2B7 /* ZImageAttachmentCell.swift */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
 		A769977E24983C2C00DF289D /* breadcrumbs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1080,8 +1094,6 @@
 				A713DC4827B064D500058F51 /* ZEssayControlsView.swift */,
 				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
 				A7B48A7923E0E80C00654DBD /* ZEssayView.swift */,
-				A72A470A299436C10087E2B7 /* ZImageAttachment.swift */,
-				A72A470E299436D70087E2B7 /* ZImageAttachmentCell.swift */,
 				A7E096C923EB98FA0017EC32 /* ZLinkDialogController.swift */,
 				A7229FAC23B84B4300FA2841 /* ZNote.swift */,
 			);
@@ -1207,6 +1219,7 @@
 				0C39B2271F182EBB0091F4D1 /* details */,
 				A769977F24983C9600DF289D /* essays */,
 				A7D2D65224902F8F00F652B0 /* help */,
+				A763DB96299AFA00006D61D7 /* images */,
 				A73A601C273DA36500703459 /* layout */,
 				A76243B227EF96890007EDC1 /* managers */,
 				A7DF4865249B1860008B35AC /* maps */,
@@ -1585,6 +1598,7 @@
 				A7B48A8A23E0E80C00654DBD /* ZEssayView.swift in Sources */,
 				A764067423F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */,
 				0C39B2BF1F182EBB0091F4D1 /* ZMobileAppDelegate.swift in Sources */,
+				A763DB98299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */,
 				0C43EFD721010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				A711059D25BB95E400D051E9 /* ZSmallMapRecords.swift in Sources */,
 				A7B48AA523E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
@@ -1707,6 +1721,7 @@
 				A7D2D649248F119A00F652B0 /* ZHelpEssayData.swift in Sources */,
 				A765258D2981B81B0080111C /* ZHelpSearchDelegate.swift in Sources */,
 				0C43EFDC21010F62000976CE /* ZOperations.swift in Sources */,
+				A763DB9A299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */,
 				A70E8204290611AC00E66963 /* ZTraverse.swift in Sources */,
 				A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */,
 				A741C78C27DC0A0D00149200 /* ZFocusing.swift in Sources */,
@@ -1850,6 +1865,7 @@
 				A7E096CB23EB98FA0017EC32 /* ZLinkDialogController.swift in Sources */,
 				A711059E25BB95E400D051E9 /* ZSmallMapRecords.swift in Sources */,
 				A7CFA81C21F516E0008DA880 /* ZSearchBarController.swift in Sources */,
+				A763DB99299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */,
 				A7D2D64C248F11B300F652B0 /* ZHelpDotsData.swift in Sources */,
 				0C39B2CF1F182EBB0091F4D1 /* ZMobileExtensions.swift in Sources */,
 				A705B09D27768C0800DBA20F /* ZDragging.swift in Sources */,
