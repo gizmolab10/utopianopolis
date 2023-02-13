@@ -343,6 +343,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return delta
 	}
 
+	func nextNotemark(down: Bool) {
+		save()
+		clearResizing()
+		gFavorites.nextBookmark(down: down, amongNotes: true)
+	}
+
 	// MARK: - clean up
 	// MARK: -
 
@@ -673,19 +679,19 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	func handleClick(with event: ZEvent) -> Bool { // true means do not further process this event
 		var              result = true
 		if  !gIgnoreEvents {
-			let            rect = event.location(in: self)
-			if  let      attach = hitTestForAttachment(in: rect) {
+			let               rect = event.location(in: self)
+			if  let         attach = hitTestForAttachment(in: rect) {
 				selectedAttachment = attach
-				resizeDragStart = rect.origin
-				resizeDot       = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
-				result          = resizeDot != nil
+				resizeDragStart    = rect.origin
+				resizeDot          = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
+				result             = resizeDot != nil
 
 				setSelectedRange(attach.glyphRange)
 				setNeedsDisplay()
 
-			} else if let   dot = dragDotHit(at: rect),
-					  let  note = dot.note {
-				if  let   index = grabbedNotes.firstIndex(of: note) {
+			} else if let      dot = dragDotHit(at: rect),
+					  let     note = dot.note {
+				if  let      index = grabbedNotes.firstIndex(of: note) {
 					grabbedNotes.remove(at: index)
 				} else {
 					if !event.modifierFlags.hasShift {
@@ -711,7 +717,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				clearResizing()
 				setNeedsDisplay()
 
-				result = false
+				return false
 			}
 		}
 
@@ -731,24 +737,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				default:          break
 			}
 		}
-	}
-
-	func nextNotemark(down: Bool) {
-		save()
-		clearResizing()
-		gFavorites.nextBookmark(down: down, amongNotes: true)
-	}
-
-	override func mouseDown(with event: ZEvent) {
-		if  !handleClick   (with: event) {
-			super.mouseDown(with: event)
-			updateCursor    (for: event)
-		}
-	}
-
-	override func mouseMoved(with event: ZEvent) {
-//		super.mouseMoved(with: event) // not call super method: avoid a console warning when a linefeed is selected (sheesh!!!!)
-		updateCursor(for: event)
 	}
 
 	func pasteTextAndMatchStyle() -> Bool {
@@ -771,6 +759,39 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 
 		return false
+	}
+
+	override func setAlignment(_ alignment: NSTextAlignment, range: NSRange) {
+		super.setAlignment(alignment, range: range)
+
+		if  selectedAttachment != nil {
+			updateTextStorage(restoreSelection: selectedRange) // recompute resize rect (rubberband and dots)
+		}
+	}
+
+	override func mouseDown(with event: ZEvent) {
+		if  !handleClick   (with: event) {
+			super.mouseDown(with: event)
+			updateCursor    (for: event)
+		}
+	}
+
+	override func mouseMoved(with event: ZEvent) {
+//		super.mouseMoved(with: event) // not call super method: avoid a console warning when a linefeed is selected (sheesh!!!!)
+		updateCursor(for: event)
+	}
+
+	override func mouseDragged(with event: ZEvent) {
+		super.mouseDragged(with: event)
+
+		if  resizeDot    != nil,
+			let     start = resizeDragStart {
+			let     flags = event.modifierFlags
+			let sizeDelta = CGSize(event.location(in: self).origin - start)
+
+			updateImageResizeRect(for: sizeDelta, flags.hasCommand)
+			setNeedsDisplay()
+		}
 	}
 
 	// MARK: - locked ranges
@@ -1099,19 +1120,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		resizeDot       = nil
 	}
 
-	override func mouseDragged(with event: ZEvent) {
-		super.mouseDragged(with: event)
-
-		if  resizeDot    != nil,
-			let     start = resizeDragStart {
-			let     flags = event.modifierFlags
-			let sizeDelta = CGSize(event.location(in: self).origin - start)
-
-			updateImageResizeRect(for: sizeDelta, flags.hasCommand)
-			setNeedsDisplay()
-		}
-	}
-
 	func updateImageResizeRect(for delta: CGSize, _ COMMAND : Bool) {
 
 		// compute resizeDragRect from delta.width, image rect and corner
@@ -1155,6 +1163,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
+	override func concludeDragOperation(_ sender: NSDraggingInfo?) {
+		super.concludeDragOperation(sender)
+
+		updateImageAttachment()
+	}
+
 	override func mouseUp(with event: ZEvent) {
 		super.mouseUp(with: event)
 		save()
@@ -1182,6 +1196,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			a.cellImage  = newImage
 
 			gFiles.writeImage(newImage, using: name)
+		}
+	}
+
+	func updateImageAttachment() {
+		if  let         attach = textStorage?.rangedAttachment(in: selectedRange) {
+			selectedAttachment = attach
+			resizeDragRect     = rectForRangedAttachment(attach)
 		}
 	}
 

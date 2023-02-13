@@ -1904,6 +1904,16 @@ extension NSMutableAttributedString {
 		return result
 	}
 
+	func rangedAttachment(in range: NSRange) -> ZRangedAttachment? {
+		for attach in rangedAttachments {
+			if  range.intersects(attach.glyphRange) {
+				return attach
+			}
+		}
+
+		return nil
+	}
+
 	var attributesAsString: String {
 		get { return attributeStrings.joined(separator: gSeparatorAt(level: 1)) }
 		set { attributeStrings = newValue.componentsSeparatedAt(level: 1) }
