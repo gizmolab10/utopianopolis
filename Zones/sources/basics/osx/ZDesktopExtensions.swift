@@ -63,6 +63,7 @@ public typealias ZMenuDelegate               = NSMenuDelegate
 public typealias ZTableCellView              = NSTableCellView
 public typealias ZBitmapImageRep             = NSBitmapImageRep
 public typealias ZWindowDelegate             = NSWindowDelegate
+public typealias ZFontDescriptor             = NSFontDescriptor
 public typealias ZWindowController           = NSWindowController
 public typealias ZSegmentedControl           = NSSegmentedControl
 public typealias ZTextViewDelegate           = NSTextViewDelegate

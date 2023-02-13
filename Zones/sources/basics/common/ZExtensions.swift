@@ -1793,13 +1793,19 @@ extension ZFont {
 	var string: String { return fontDescriptor.string }
 
 	convenience init(string: String) {
-		let descriptor = NSFontDescriptor(string: string)
+		let descriptor = ZFontDescriptor(string: string)
 
 		self.init(descriptor: descriptor, textTransform: nil)!
 	}
+
+	func withTraits(_ traits: ZFontDescriptor.SymbolicTraits...) -> ZFont {
+		let descriptor = self.fontDescriptor.withSymbolicTraits(ZFontDescriptor.SymbolicTraits(traits))
+
+		return ZFont(descriptor: descriptor, size: descriptor.pointSize) ?? self
+	}
 }
 
-extension NSFontDescriptor {
+extension ZFontDescriptor {
 
 	var string: String {
 		var    result = kEmpty
@@ -1815,14 +1821,14 @@ extension NSFontDescriptor {
 
 	convenience init(string: String) {
 		let parts = string.modern.componentsSeparatedAt(level: 2)
-		var dict  = [NSFontDescriptor.AttributeName : Any]()
+		var dict  = [ZFontDescriptor.AttributeName : Any]()
 
 		for part in parts {
 			let subparts   = part.componentsSeparatedAt(level: 3)
 			if  subparts.count > 1 {
 				let    key = subparts[0]
 				let  value = subparts[1]
-				let   name = NSFontDescriptor.AttributeName(key)
+				let   name = ZFontDescriptor.AttributeName(key)
 
 				dict[name] = value
 			}

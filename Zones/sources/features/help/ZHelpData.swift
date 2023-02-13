@@ -33,6 +33,7 @@ class ZHelpData: NSObject {
 	var isBasic           :  Bool          { return gCurrentHelpMode == .basicMode }
 	var isEssay           :  Bool          { return gCurrentHelpMode == .essayMode }
 	var isIntermediate    :  Bool          { return gCurrentHelpMode == .intermedMode }
+	var italicsFont       :  ZFont         { return kItalicsFont }
 	var boldFont          :  ZFont         { return kBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
@@ -188,11 +189,13 @@ class ZHelpData: NSObject {
 		for type in types {
 			switch type {
 				case .hDots:
-					prefix = noTabPrefix
-				case .hBold:
-					attributes[.font] = boldFont
-				case .hUnderline:
-					attributes[.underlineStyle] = 1
+					prefix                           = noTabPrefix
+				case .hBold:               
+					attributes[.font]                = boldFont
+				case .hItalics:               
+					attributes[.font]                = italicsFont
+				case .hUnderline:     
+					attributes[.underlineStyle]      = 1
 				case .hBasic, .hIntermed, .hPro:
 					if  hasURL {
 						attributes[.foregroundColor] = gHelpHyperlinkColor
@@ -390,6 +393,7 @@ enum ZHelpType: String {
 	case hEmpty     = "-"
 	case hBasic     = "0"
 	case hPlain     = " "
+	case hItalics   = "i"
 	case hIntermed  = "1"
 	case hUnderline = "_"
 
@@ -411,15 +415,15 @@ enum ZFillType: String {
 }
 
 enum ZHelpSectionID: String {
-	case basic        = "b"
-	case intermediate = "i"
-	case advanced     = "a"
+	case sBasic        = "b"
+	case sIntermediate = "i"
+	case sAdvanced     = "a"
 
 	var description : String {
 		switch self {
-			case .basic:        return "basic/"
-			case .intermediate: return "intermediate/"
-			case .advanced:     return "advanced/"
+			case .sBasic:        return "basic/"
+			case .sIntermediate: return "intermediate/"
+			case .sAdvanced:     return "advanced/"
 		}
 	}
 }

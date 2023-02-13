@@ -16,6 +16,7 @@ class ZHelpDotsData: ZHelpData {
 	override var noTabPrefix   :  String        { return "                    " }
 	override var columnStrings : [StringsArray] { return [dotsColumnOne, dotsColumnTwo] }
 	override var tabOffsets    : [Int]          { return [0, 20, 165] }
+	override var italicsFont   :  ZFont         { return kLargeItalicsFont }
 	override var boldFont      :  ZFont         { return kLargeBoldFont }
 	override var rowHeight     :  CGFloat       { return 21.0 }
 
@@ -44,20 +45,20 @@ class ZHelpDotsData: ZHelpData {
 		".e",						"points to the left",															"",
 		"",							"",																				"",
 		"!when list is hidden",		"click to reveal list, surrounding dots indicate count:",						"",
-		".f",						"single idea            pne small dot",											"",
-		".f",						"5 ideas                  5 small dots all around",								"",
-		".f",						"10 ideas                medium dot right",										"",
-		".f",						"11 ideas                 medium dot left, small dot right",					"",
-		".f",						"111 ideas               large hollow dot left, medium dot right",				"",
-		"",							"                              (shows as 110, close enough, right?)",			"",
+		".f",						"single idea             one small dot",										"",
+		".f",						"5 ideas                   five small dots all around",							"",
+		".f",						"10 ideas                 medium dot right",									"",
+		".f",						"11 ideas                  medium dot left, small dot right",					"",
+		".f",						"111 ideas                large hollow dot left, medium dot right",				"",
+		"",							"                               (shows as 110, close enough, right?)",			"",
 		"",							"",																				"",
-		"!bookmark decorations",	"(always a circle) click to change focus", 										"",
-		".f",						"bookmark             focus on bookmark's target",								"",
-		".f",						"target has a note (ditto), also, ⌘-click to edit note",						"",
+		"!bookmark decorations",	"(always a filled circle) click to change focus", 								"",
+		".f",						"bookmark              focus on bookmark's target",								"",
+		".f",						"target has a note  same, and also ⌘-click to edit note",						"",
 		"",							"",					 															"",
-		"!trait decorations",		"if it's a circle       (third dot, below), click to:",							"",
-		"!",						"tap \"h\" to edit:   tap \"=\" to:",											"",
-		".3",						"email                     compose & send",										"",
+		"!trait decorations",		"tap \"h\" to edit:    tap \"=\" to:",											"",
+		"i but, if it's a circle (third column of dots)",		"       click to:",									"",
+		".3",						"email                      compose & send",									"",
 		".3",						"hyperlink               open in a browser",									"",
 		".3",						"note                       edit",												""
 	]
