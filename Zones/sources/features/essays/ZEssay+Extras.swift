@@ -1,5 +1,5 @@
 //
-//  ZEssay+Enumerations.swift
+//  ZEssay+Extras.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 2/13/23.

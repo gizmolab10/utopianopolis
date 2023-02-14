@@ -642,14 +642,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return false
 	}
 
-	override func setAlignment(_ alignment: NSTextAlignment, range: NSRange) {
-		super.setAlignment(alignment, range: range)
-
-		if  selectedAttachment != nil {
-			updateTextStorage(restoreSelection: selectedRange) // recompute resize rect (rubberband and dots)
-		}
-	}
-
 	override func mouseDown(with event: ZEvent) {
 		if  !handleClick   (with: event) {
 			super.mouseDown(with: event)
@@ -1415,37 +1407,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		for note in selectedNotes {
 			note.needsSave = true
 		}
-	}
-
-	// change cursor to
-	// indicate action possible on what's under cursor
-	// and possibly display a tool tip
-
-	func updateCursor(for event: ZEvent) {
-		let rect = event.location(in: self)
-
-		if  linkHit(at: rect) {
-			NSCursor.arrow.set()
-		} else if let   dot = dragDotHit(at: rect) {
-			if  let    note = dot.note {
-				let grabbed = grabbedNotes.contains(note)
-				toolTip     = note.toolTipString(grabbed: grabbed)
-			}
-
-			NSCursor.arrow.set()
-		} else if let    attach = hitTestForAttachment(in: rect) {
-			if  let         dot = rectForRangedAttachment(attach)?.hitTestForResizeDot (in: rect) {
-				dot.cursor.set()
-			} else {
-				NSCursor.openHand.set()
-			}
-		} else {
-			toolTip = nil
-
-			NSCursor.iBeam.set()
-		}
-
-		setNeedsDisplay()
 	}
 
 	override func setSelectedRange(_ range: NSRange) {

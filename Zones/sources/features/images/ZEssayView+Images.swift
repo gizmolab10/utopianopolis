@@ -66,6 +66,41 @@ extension ZEssayView {
 		}
 	}
 
+	// change cursor to
+	// indicate action possible on what's under cursor
+	// and possibly display a tool tip
+
+	func updateCursor(for event: ZEvent) {
+		let rect = event.location(in: self)
+
+		if  linkHit(at: rect) {
+			NSCursor.arrow.set()
+		} else if let    dot = dragDotHit(at: rect) {
+			if  let     note = dot.note {
+				let  grabbed = grabbedNotes.contains(note)
+				toolTip      = note.toolTipString(grabbed: grabbed)
+			}
+
+			NSCursor.arrow.set()
+		} else if let attach = hitTestForAttachment(in: rect) {
+			if  let      dot = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect) {
+				toolTip      = dot.toolTipString
+
+				dot.cursor.set()
+			} else {
+				toolTip      = gShowToolTips ? "Drag image\r\rClick and drag to move image" : nil
+
+				NSCursor.openHand.set()
+			}
+		} else {
+			toolTip = nil
+
+			NSCursor.iBeam.set()
+		}
+
+		setNeedsDisplay()
+	}
+
 	// MARK: - events
 	// MARK: -
 
@@ -79,6 +114,23 @@ extension ZEssayView {
 
 			updateImageResizeRect(for: sizeDelta, flags.hasCommand)
 			setNeedsDisplay()
+		}
+	}
+
+	override func mouseUp(with event: ZEvent) {
+		super.mouseUp(with: event)
+		save()
+
+		if  let     attach = selectedAttachment {
+			let      range = attach.glyphRange
+
+			updateSelectedImage()
+			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
+			asssureSelectionIsVisible()
+			setNeedsLayout()
+			setNeedsDisplay()
+
+			resizeDragRect = rectForRangedAttachment(attach)
 		}
 	}
 
@@ -99,20 +151,11 @@ extension ZEssayView {
 		updateImageAttachment()
 	}
 
-	override func mouseUp(with event: ZEvent) {
-		super.mouseUp(with: event)
-		save()
+	override func setAlignment(_ alignment: NSTextAlignment, range: NSRange) {
+		super.setAlignment(alignment, range: range)
 
-		if  let     attach = selectedAttachment {
-			let      range = attach.glyphRange
-
-			updateSelectedImage()
-			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
-			asssureSelectionIsVisible()
-			setNeedsLayout()
-			setNeedsDisplay()
-
-			resizeDragRect = rectForRangedAttachment(attach)
+		if  selectedAttachment != nil {
+			updateTextStorage(restoreSelection: range) // recompute resize rect (rubberband and dots)
 		}
 	}
 
