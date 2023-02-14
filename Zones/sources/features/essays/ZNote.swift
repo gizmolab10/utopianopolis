@@ -22,12 +22,14 @@ enum ZAlterationType: Int {
 	case eExit
 }
 
+typealias ZNoteArray = [ZNote]
+
 class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          essayLength = 0
 	var          indentCount = 0
 	var           noteOffset = 0
 	var           autoDelete = false		// true means delete this note on exit from essay mode
-	var             children = [ZNote]()
+	var             children = ZNoteArray()
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
 	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }
@@ -49,10 +51,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func updateChildren() {}
 	func updateNoteOffsets() {}
-	func notes              (in range: NSRange)   -> [ZNote]  { return [self] }
-	func updateFontSize     (_ increment: Bool)   -> Bool     { return updateTraitFontSize(increment) }
-	func updateTraitFontSize(_ increment: Bool)   -> Bool     { return noteTrait?.updateEssayFontSize(increment) ?? false }
-	func saveAsEssay(_ attributedString: NSAttributedString?) { saveAsNote(attributedString) }
+	func notes              (in range: NSRange)   -> ZNoteArray { return [self] }
+	func updateFontSize     (_ increment: Bool)   -> Bool       { return updateTraitFontSize(increment) }
+	func updateTraitFontSize(_ increment: Bool)   -> Bool       { return noteTrait?.updateEssayFontSize(increment) ?? false }
+	func saveAsEssay(_ attributedString: NSAttributedString?)   { saveAsNote(attributedString) }
 
 	init(zones: ZoneArray) {}
 

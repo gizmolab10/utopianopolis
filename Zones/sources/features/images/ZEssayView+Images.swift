@@ -44,6 +44,9 @@ struct ZRangedAttachment {
 
 extension ZEssayView {
 
+	// MARK: - draw
+	// MARK: -
+
 	func drawSelectedImage() {
 		let attach = selectedAttachment
 		let   rect = rectForResizing(around: attach)
@@ -54,17 +57,12 @@ extension ZEssayView {
 		rect?.drawImageResizeDotsAndRubberband()
 	}
 
-	func clearResizing() {
-		selectedAttachment = nil
-		resizeDragStart = nil
-		resizeDragRect  = nil
-		resizeDot       = nil
-	}
+	func clearImageResizeRubberband() {
+		if  resizeDragRect == nil {
+			let        path = ZBezierPath(rect: bounds)
 
-	func updateImageAttachment() {
-		if  let         attach = textStorage?.rangedAttachment(in: selectedRange) {
-			selectedAttachment = attach
-			resizeDragRect     = rectForRangedAttachment(attach)
+			kClearColor.setFill()
+			path.fill()           // erase rubberband
 		}
 	}
 
@@ -118,17 +116,8 @@ extension ZEssayView {
 		}
 	}
 
-	// MARK: - rect
+	// MARK: - rects
 	// MARK: -
-
-	func clearImageResizeRubberband() {
-		if  resizeDragRect == nil {
-			let        path = ZBezierPath(rect: bounds)
-
-			kClearColor.setFill()
-			path.fill()           // erase rubberband
-		}
-	}
 
 	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
 		return attach.glyphRect(for: textStorage, margin: margin)
@@ -226,14 +215,31 @@ extension ZEssayView {
 		}
 	}
 
+	// MARK: - image attachment
+	// MARK: -
+
+	func clearResizing() {
+		selectedAttachment = nil
+		resizeDragStart    = nil
+		resizeDragRect     = nil
+		resizeDot          = nil
+	}
+
+	func updateImageAttachment() {
+		if  let         attach = textStorage?.rangedAttachment(in: selectedRange) {
+			selectedAttachment = attach
+			resizeDragRect     = rectForRangedAttachment(attach)
+		}
+	}
+
 	func updateSelectedImage() {
-		if  let size     = resizeDragRect?.size,
-			let a        = selectedAttachment?.attachment,
-			let name     = a.fileWrapper?.preferredFilename,
-			let image    = a.cellImage,
-			size        != image.size,
+		if  let     size = resizeDragRect?.size,
+			let        a = selectedAttachment?.attachment,
+			let     name = a.fileWrapper?.preferredFilename,
+			let    image = a.cellImage,
+			image .size != size,
 			let newImage = image.imageResizedTo(size) {
-			a.cellImage  = newImage
+			a .cellImage = newImage
 
 			gFiles.writeImage(newImage, using: name)
 		}

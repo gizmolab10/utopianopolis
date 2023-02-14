@@ -247,6 +247,9 @@
 		A763DB98299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */; };
 		A763DB99299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */; };
 		A763DB9A299AFA3E006D61D7 /* ZEssayView+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */; };
+		A763DB9D299B0EBA006D61D7 /* ZEssay+Enumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB9C299B0EBA006D61D7 /* ZEssay+Enumerations.swift */; };
+		A763DB9E299B0EBA006D61D7 /* ZEssay+Enumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB9C299B0EBA006D61D7 /* ZEssay+Enumerations.swift */; };
+		A763DB9F299B0EBA006D61D7 /* ZEssay+Enumerations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A763DB9C299B0EBA006D61D7 /* ZEssay+Enumerations.swift */; };
 		A764067423F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
 		A764067523F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
 		A764067623F7D54700D9EA3A /* ZBreadcrumbsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */; };
@@ -609,6 +612,7 @@
 		A759F70024269D29008CEA59 /* ZTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTimers.swift; sourceTree = "<group>"; };
 		A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZExplanationPopover.swift; sourceTree = "<group>"; };
 		A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZEssayView+Images.swift"; sourceTree = "<group>"; };
+		A763DB9C299B0EBA006D61D7 /* ZEssay+Enumerations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZEssay+Enumerations.swift"; sourceTree = "<group>"; };
 		A764067323F7D54700D9EA3A /* ZBreadcrumbsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsController.swift; sourceTree = "<group>"; };
 		A764067723F7E37600D9EA3A /* ZBreadcrumbsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbsView.swift; sourceTree = "<group>"; };
 		A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbs.swift; sourceTree = "<group>"; };
@@ -1090,6 +1094,7 @@
 			isa = PBXGroup;
 			children = (
 				A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */,
+				A763DB9C299B0EBA006D61D7 /* ZEssay+Enumerations.swift */,
 				A78A6DFF23B02163000F581F /* ZEssayController.swift */,
 				A713DC4827B064D500058F51 /* ZEssayControlsView.swift */,
 				A78A6E0923B021EA000F581F /* ZEssayEditor.swift */,
@@ -1672,6 +1677,7 @@
 				0C39B2AA1F182EBB0091F4D1 /* ZClosures.swift in Sources */,
 				0C39B2B31F182EBB0091F4D1 /* ZGCD.swift in Sources */,
 				A7D3C24821FAA4E400B64B83 /* ZSearchBarController.swift in Sources */,
+				A763DB9D299B0EBA006D61D7 /* ZEssay+Enumerations.swift in Sources */,
 				0C3C12811F8D87DE00669432 /* ZEvents.swift in Sources */,
 				A73A602B273DADB200703459 /* ZCircular.swift in Sources */,
 				0C43EFBE21010F17000976CE /* ZFiles.swift in Sources */,
@@ -1770,6 +1776,7 @@
 				A745ED0D26AF4E7D0013D1A4 /* ZHovering.swift in Sources */,
 				0C39B2B81F182EBB0091F4D1 /* ZReachability.swift in Sources */,
 				0C39B2D31F182EBB0091F4D1 /* ZDesktopAppDelegate.swift in Sources */,
+				A763DB9F299B0EBA006D61D7 /* ZEssay+Enumerations.swift in Sources */,
 				A7E5A5EC23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */,
 				A7B48AA723E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
 				A72A470D299436C10087E2B7 /* ZImageAttachment.swift in Sources */,
@@ -1939,6 +1946,7 @@
 				A7E5A5EB23EFAE4F00A52F47 /* ZTogglingView.swift in Sources */,
 				A7B48AB223E0E80C00654DBD /* ZoneDot.swift in Sources */,
 				0C43EFE121010F62000976CE /* ZCloud.swift in Sources */,
+				A763DB9E299B0EBA006D61D7 /* ZEssay+Enumerations.swift in Sources */,
 				A7B48A8B23E0E80C00654DBD /* ZEssayView.swift in Sources */,
 				A73A602C273DADB200703459 /* ZCircular.swift in Sources */,
 				0C43EFBF21010F17000976CE /* ZFiles.swift in Sources */,

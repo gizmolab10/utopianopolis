@@ -116,8 +116,8 @@ class ZEssay: ZNote {
 		}
 	}
 
-	override func notes(in range: NSRange) -> [ZNote] {
-		var result = [ZNote]()
+	override func notes(in range: NSRange) -> ZNoteArray {
+		var result = ZNoteArray()
 		for child in children {
 			if  range.inclusiveIntersection(child.noteRange) != nil {
 				result.append(child)

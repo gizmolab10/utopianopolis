@@ -17,139 +17,30 @@ import UIKit
 
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
-enum ZNoteVisibilityIconType: Int {
-
-	case tSelf
-	case tChildren
-	case tHidden
-
-	static var all : [ZNoteVisibilityIconType] { return [.tSelf, .tChildren, .tHidden] }
-	var forEssayOnly : Bool { return self != .tSelf }
-
-	var offset : CGFloat {
-		switch self {
-			case .tSelf:     return 35.0
-			case .tChildren: return 60.0
-			case .tHidden:   return 85.0
-		}
-	}
-
-	func imageForVisibilityState(_ on: Bool) -> ZImage? {
-		switch self {
-			case .tChildren: return on ? kStackImage     : kSingleImage
-			case .tSelf:     return on ? kEyeImage       : kEyebrowImage
-			case .tHidden:   return on ? kLightbulbImage : kAntiLightbulbImage
-		}
-	}
-
-}
-
-enum ZEssayTitleMode: Int {
-	case sEmpty // do not change the order, storyboard and code dependencies
-	case sTitle
-	case sFull
-}
-
-enum ZEssayLinkType: String {
-	case hWeb   = "h"
-	case hFile  = "u"
-	case hIdea  = "i"
-	case hNote  = "n"
-	case hEssay = "e"
-	case hEmail = "m"
-	case hClear = "c"
-
-	var title: String {
-		switch self {
-		case .hWeb:   return "Internet"
-		case .hFile:  return "Upload"
-		case .hIdea:  return "Idea"
-		case .hNote:  return "Note"
-		case .hEssay: return "Essay"
-		case .hEmail: return "Email"
-		case .hClear: return "Clear"
-		}
-	}
-
-	var linkDialogLabel: String {
-		switch self {
-		case .hWeb:   return "Text of link"
-		case .hEmail: return "Email address"
-		default:      return "Name of file"
-		}
-	}
-
-	var linkType: String {
-		switch self {
-		case .hWeb:   return "http"
-		case .hEmail: return "mailto"
-		default:      return title.lowercased()
-		}
-	}
-
-	static var all: [ZEssayLinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hFile, .hClear] }
-
-}
-
-struct ZEssayDragDot {
-	var     color = kWhiteColor
-	var  dragRect = CGRect.zero
-	var  textRect = CGRect.zero
-	var  lineRect : CGRect?
-	var noteRange : NSRange?
-	var      note : ZNote?
-}
-
-struct ZNoteVisibility {
-	var       eyeRect = CGRect .zero
-	var     stackRect = CGRect .zero
-	var lightbulbRect = CGRect .zero
-	var          zone : Zone
-
-	func stateFor(_ type: ZNoteVisibilityIconType) -> Bool? { return zone.maybeNoteOrEssayTrait?.stateFor(type) }
-
-	mutating func setRect(_ rect: CGRect, for type: ZNoteVisibilityIconType) {
-		switch type {
-			case .tSelf:         eyeRect = rect
-			case .tChildren:   stackRect = rect
-			case .tHidden: lightbulbRect = rect
-		}
-	}
-
-	func rectFor(_ type: ZNoteVisibilityIconType) -> CGRect {
-		switch type {
-			case .tSelf:     return       eyeRect
-			case .tChildren: return     stackRect
-			case .tHidden:   return lightbulbRect
-		}
-	}
-
-}
-
 @objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	let margin             = CGFloat(20.0)
 	var dropped            = StringsArray()
-	var visibilities       = [ZNoteVisibility]()
-	var grabbedNotes       = [ZNote]()
-	var selectionRect      = CGRect()           { didSet { if selectionRect.origin == .zero { selectedAttachment = nil } } }
-	var grabbedZones       : [Zone]             { return grabbedNotes.map { $0.zone! } }
-	var firstNote          : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
-	var firstGrabbedNote   : ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
-	var firstGrabbedZone   : Zone?              { return firstGrabbedNote?.zone }
-	var selectedNote       : ZNote?             { return selectedNotes.last ?? gCurrentEssay }
-	var selectedZone       : Zone?              { return selectedNote?.zone }
-	var hasGrabbedNote     : Bool               { return grabbedNotes.count != 0 }
-	var lockedSelection    : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
-	var firstIsGrabbed     : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
-	var selectionString    : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
+	var visibilities       = ZNoteVisibilityArray()
+	var grabbedNotes       = ZNoteArray()
+	var selectionRect      = CGRect()  { didSet { if selectionRect.origin == .zero { selectedAttachment = nil } } }
+	var grabbedZones       : ZoneArray { return grabbedNotes.map { $0.zone! } }
+	var firstNote          : ZNote?    { return (dragDots.count == 0) ? nil : dragDots[0].note }
+	var firstGrabbedNote   : ZNote?    { return hasGrabbedNote ? grabbedNotes[0] : nil }
+	var firstGrabbedZone   : Zone?     { return firstGrabbedNote?.zone }
+	var selectedNote       : ZNote?    { return selectedNotes.last ?? gCurrentEssay }
+	var selectedZone       : Zone?     { return selectedNote?.zone }
+	var hasGrabbedNote     : Bool      { return grabbedNotes.count != 0 }
+	var lockedSelection    : Bool      { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
+	var firstIsGrabbed     : Bool      { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
+	var selectionString    : String?   { return textStorage?.attributedSubstring(from: selectedRange).string }
 	var essayRecordName    : String?
 	var resizeDragStart    : CGPoint?
 	var resizeDragRect     : CGRect?
 	var resizeDot          : ZDirection?
 	var selectedAttachment : ZRangedAttachment?
 
-	var selectedNotes : [ZNote] {
+	var selectedNotes : ZNoteArray {
 		gCurrentEssay?.updateNoteOffsets()
 
 		return (gCurrentEssay?.zone?.zonesWithVisibleNotes.filter {
@@ -864,8 +755,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return grabbed
 	}
 
-	var dragDots : [ZEssayDragDot] {
-		var dots = [ZEssayDragDot]()
+	var dragDots : ZEssayDragDotArray {
+		var dots = ZEssayDragDotArray()
 
 		if  let essay = gCurrentEssay, !essay.isNote,
 			let  zone = essay.zone,
