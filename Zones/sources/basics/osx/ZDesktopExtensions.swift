@@ -378,11 +378,10 @@ extension NSBezierPath {
 
 }
 
-extension ZTextView {
+extension ZEssayView {
 
 	func setText(_ text: Any) {
-		let range = NSRange(location: 0, length: textStorage?.length ?? 0)
-
+		let            range = NSRange(location: 0, length: textStorage?.length ?? 0)
 		guard let attributed = text as? NSMutableAttributedString else {
 			insertText(text, replacementRange: range)
 

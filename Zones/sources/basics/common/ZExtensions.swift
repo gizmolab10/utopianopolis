@@ -932,7 +932,6 @@ enum ZDirection : Int {
 	case bottomRight
 
 	var isFullResizeCorner : Bool    { return self == .topLeft || self == .bottomRight }
-	var toolTipString      : String? { return gShowToolTips ? "Resize image\r\rClick and drag to resize \(description)" : nil }
 
 	var cursor: NSCursor {
 		switch self {
@@ -942,15 +941,6 @@ enum ZDirection : Int {
 		}
 	}
 
-	var description: String {
-		switch self {
-			case .top, .bottom:          return "vertically"
-			case .left, .right:          return "horizontally"
-			case .topLeft, .bottomRight: return "vertically and horizontally, retaining aspect ratio"
-			default:                     return "vertically and horizontally"
-
-		}
-	}
 }
 
 extension CGRect {
@@ -2677,6 +2667,16 @@ extension String {
 		transform.translateX(by: point.x, yBy: point.y)
 		transform.rotate(byRadians: angle)
 		draw(at: .zero - offset, withAttributes: attributes)
+	}
+
+	func rangeOfParagraph(for range: NSRange) -> NSRange {
+		var   result = range
+		while result.location > 0,
+			  substring(with: result)[0] != kReturn {
+			result = result.extendedBy(-1)
+		}
+
+		return result
 	}
 
 }

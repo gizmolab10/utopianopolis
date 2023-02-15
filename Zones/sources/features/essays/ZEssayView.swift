@@ -71,6 +71,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return 0
 	}
 
+	var needsSave : Bool {
+		get { return gCurrentEssay?.needsSave ?? false }
+		set {        gCurrentEssay?.needsSave  = newValue }
+	}
+
 	// MARK: - note visibility
 	// MARK: -
 
@@ -682,6 +687,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			gCurrentEssay?.essayLength += delta           // compensate for change
 		}
+
+		updateImageMaybe(for: range)
 
 		return true // yes, change text
 	}

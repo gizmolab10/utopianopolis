@@ -151,14 +151,6 @@ extension ZEssayView {
 		updateImageAttachment()
 	}
 
-	override func setAlignment(_ alignment: NSTextAlignment, range: NSRange) {
-		super.setAlignment(alignment, range: range)
-
-		if  selectedAttachment != nil {
-			updateTextStorage(restoreSelection: range) // recompute resize rect (rubberband and dots)
-		}
-	}
-
 	// MARK: - rects
 	// MARK: -
 
@@ -268,11 +260,16 @@ extension ZEssayView {
 		resizeDot          = nil
 	}
 
-	func updateImageAttachment() {
-		if  let         attach = textStorage?.rangedAttachment(in: selectedRange) {
+	@discardableResult func updateImageAttachment() -> Bool {
+		if  let          range = textStorage?.string.rangeOfParagraph(for: selectedRange),
+			let         attach = textStorage?.rangedAttachment(in: range) {
 			selectedAttachment = attach
 			resizeDragRect     = rectForRangedAttachment(attach)
+
+			return true
 		}
+
+		return false
 	}
 
 	func updateSelectedImage() {
@@ -285,6 +282,15 @@ extension ZEssayView {
 			a .cellImage = newImage
 
 			gFiles.writeImage(newImage, using: name)
+		}
+	}
+
+	func updateImageMaybe(for range: NSRange) {
+		if  updateImageAttachment() {
+			updateTextStorage(restoreSelection: range) // recompute resize rect (rubberband and dots)
+
+			resizeDragRect = nil
+			needsSave      = true
 		}
 	}
 
