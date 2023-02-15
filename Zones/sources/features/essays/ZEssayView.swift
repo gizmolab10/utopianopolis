@@ -688,7 +688,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			gCurrentEssay?.essayLength += delta           // compensate for change
 		}
 
-		updateImageMaybe(for: range)
+		needsSave = true
 
 		return true // yes, change text
 	}

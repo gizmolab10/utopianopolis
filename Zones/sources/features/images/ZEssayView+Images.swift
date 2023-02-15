@@ -260,9 +260,9 @@ extension ZEssayView {
 		resizeDot          = nil
 	}
 
-	@discardableResult func updateImageAttachment() -> Bool {
-		if  let          range = textStorage?.string.rangeOfParagraph(for: selectedRange),
-			let         attach = textStorage?.rangedAttachment(in: range) {
+	@discardableResult func updateImageAttachment(for range: NSRange? = nil) -> Bool {
+		let attachmentRange    = range ?? selectedRange
+		if  let         attach = textStorage?.rangedAttachment(in: attachmentRange) {
 			selectedAttachment = attach
 			resizeDragRect     = rectForRangedAttachment(attach)
 
@@ -282,15 +282,6 @@ extension ZEssayView {
 			a .cellImage = newImage
 
 			gFiles.writeImage(newImage, using: name)
-		}
-	}
-
-	func updateImageMaybe(for range: NSRange) {
-		if  updateImageAttachment() {
-			updateTextStorage(restoreSelection: range) // recompute resize rect (rubberband and dots)
-
-			resizeDragRect = nil
-			needsSave      = true
 		}
 	}
 

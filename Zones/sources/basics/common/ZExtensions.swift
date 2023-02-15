@@ -2669,16 +2669,6 @@ extension String {
 		draw(at: .zero - offset, withAttributes: attributes)
 	}
 
-	func rangeOfParagraph(for range: NSRange) -> NSRange {
-		var   result = range
-		while result.location > 0,
-			  substring(with: result)[0] != kReturn {
-			result = result.extendedBy(-1)
-		}
-
-		return result
-	}
-
 }
 
 extension NSPredicate {
