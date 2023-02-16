@@ -97,20 +97,21 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 			switch key {
 				case kSpace: if gIsEditIdeaMode { f.hasControl = true }  // so child will be created
 				case "e",
-					"y":     f.hasCommand = true                         // tweak because otherwise plain e / y is inserted into text
+					 "y":    f.hasCommand = true                         // tweak because otherwise plain e / y is inserted into text
 				default:     break
 			}
 
 			if  isEdit {
 				f.hasCommand = false                                     // so browse does not go to extreme
 
-				gTextEditor.stopCurrentEdit()                           // so browse ideas, not text
+				gTextEditor.stopCurrentEdit()                            // so browse ideas, not text
 			}
 
-			if  let m = gMainWindow, m.handleKey(key, flags: f) {       // this is so cool, ;-)
+			if  let m = gMainWindow, m.handleKey(key, flags: f) {        // this is so cool, ;-)
 				FOREGROUND(after: 0.1) {
 					if  isEdit {
-						gSelecting.firstGrab()?.edit()                  // edit newly grabbed zone
+						gSelecting.firstGrab()?.edit()                   // edit newly grabbed zone
+						gRelayoutMaps()
 					}
 
 					gExplanation(showFor: key)

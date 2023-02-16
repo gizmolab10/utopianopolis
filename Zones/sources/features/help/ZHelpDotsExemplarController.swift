@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 
 var gHelpMapView                : ZMapView?                    { return gHelpDotsExemplarController?.helpMapView }
+var gHelpTitleColor             : ZColor                       { return gIsDark ? kSystemMint.lighter(by: 3.0) : kSystemMint.darker(by: 4.0) }
 var gHelpHyperlinkColor         : ZColor                       { return gIsDark ? kSystemBlue.lighter(by: 3.0) : kSystemBlue.darker(by: 4.0) }
 var gHelpDotsExemplarController : ZHelpDotsExemplarController? { return gControllers.controllerForID(.idHelpDots) as? ZHelpDotsExemplarController }
 

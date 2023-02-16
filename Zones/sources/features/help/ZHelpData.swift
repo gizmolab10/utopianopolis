@@ -192,6 +192,7 @@ class ZHelpData: NSObject {
 					prefix                           = noTabPrefix
 				case .hBold:               
 					attributes[.font]                = boldFont
+					attributes[.foregroundColor]     = gHelpTitleColor
 				case .hItalics:               
 					attributes[.font]                = italicsFont
 				case .hUnderline:     

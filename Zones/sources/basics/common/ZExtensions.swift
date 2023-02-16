@@ -815,7 +815,7 @@ extension CGSize {
 	public static func squared(_ length: CGFloat)    -> CGSize  { return CGSize(width: length, height: length) }
 	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint { return CGPoint(lhs) - rhs }
 	func hypotenuse(relativeTo other: CGSize)        -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
-	func tadd(width: CGFloat, height: CGFloat)       -> CGSize  { return self + CGSize(width: width, height: height) }
+	func add(width: CGFloat, height: CGFloat)        -> CGSize  { return self + CGSize(width: width, height: height) }
 	func multiplyBy(_ fraction: CGFloat)             -> CGSize  { return CGSize(width: width * fraction, height: height * fraction) }
 	func multiplyBy(_ fraction: CGSize)              -> CGSize  { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
 	func fraction(_ delta: CGSize)                   -> CGSize  { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }

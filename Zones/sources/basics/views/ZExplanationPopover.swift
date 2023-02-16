@@ -111,13 +111,13 @@ extension String {
 	var titleAndInstruction: (String, String)? {
 		if  gIsEssayMode { return nil }
 
-		let  alter = gIsEditIdeaMode ? "CONTROL " : kEmpty
-		let  state = gIsEditIdeaMode ? "edited" : "selected"
+		let  alter = gIsEditIdeaMode ? "CONTROL "                           : kEmpty
+		let  state = gIsEditIdeaMode ? "edited"                             : "selected"
 		let action = gIsEditIdeaMode ? "save your changes and exit editing" : "begin editing"
-		let plural = gSelecting.currentMapGrabs.count == 1 ? "" : "s"
+		let plural = gSelecting.currentMapGrabs.count == 1 ? kEmpty         : "s"
 		let  title = "Currently \(state) idea\(plural)"
 		let doThis = ["While here, you can press these keys:",
-					  "",
+					  kEmpty,
 					  "RETURN to \(action)",
 					  "TAB to edit a new sibling idea",
 					  "\(alter)SPACE to edit a new child."].joined(separator: kNewLine)

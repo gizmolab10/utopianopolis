@@ -71,6 +71,7 @@ let                 kGrayColor = ZColor(calibratedHue: .zero, saturation: .zero,
 let                kBlackColor = ZColor(calibratedHue: .zero, saturation: .zero, brightness: .zero, alpha: 1.0)
 let                kClearColor = ZColor(calibratedHue: .zero, saturation: .zero, brightness: .zero, alpha: .zero)
 let                kSystemBlue = ZColor(cgColor: ZColor.systemBlue.cgColor)!
+let                kSystemMint = ZColor(cgColor: ZColor.systemMint.cgColor)!
 let                   kUpImage = ZImage(named: "up")
 let                  kEyeImage = ZImage(named: "eye")
 let                 kDownImage = ZImage(named: "down")

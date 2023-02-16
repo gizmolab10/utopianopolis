@@ -74,9 +74,9 @@ class ZHelpMapData : ZHelpData {
 		"2",			 												"", "",
 		"1_CONTROL + KEY", 												"", "",
 		"1SPACE", 		"create new idea in list", 							"edit+b+edit-d05d18996df7",
+		"1",			 												"", "",
 		"0",			 												"", "",
-		"0",			 												"", "",
-		"0!WHILE EDITING (TEXT IS SELECTED):", 							"", "",
+		"0!WHILE EDITING (TEXT IS SELECTED):", 							"",	"",
 		"0",			 												"", "",
 		"0surround:", 	"| [ { ( < \" '",									"edit+b+edit-d05d18996df7",
 		"1",			 												"", "",
@@ -97,7 +97,7 @@ class ZHelpMapData : ZHelpData {
 		"0vertical", 	"browse results (wraps around)", 					"search+i+search-2a996591375a",
 		"0",			 												"", "",
 		"0",			 												"", "",
-		"0!legend:", 	"click on blue text to view further details",		"_", // leave underscore (invisible): applies blue color to text
+		"0legend:", 	"click on sky blue text to view further details",	"_", // leave underscore (invisible): applies blue color to text
 	]
 
 	let mapColumnThree: StringsArray = [
