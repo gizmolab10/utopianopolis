@@ -1,5 +1,5 @@
 //
-//  ZLineView.swift
+//  ZHelpLineView.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/7/19.
@@ -14,7 +14,7 @@ import UIKit
 #endif
 
 
-class ZLineView: ZView {
+class ZHelpLineView: ZView {
     
 	override func draw(_ iDirtyRect: CGRect) {
 		ZBezierPath.fillWithColor(kGridColor, in: iDirtyRect)

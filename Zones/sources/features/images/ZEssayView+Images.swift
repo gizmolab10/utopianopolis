@@ -125,7 +125,7 @@ extension ZEssayView {
 			let      range = attach.glyphRange
 
 			updateSelectedImage()
-			updateTextStorage(restoreSelection: range)  // recreate essay after an image is dropped
+			updateTextStorageRestoringSelection(range)  // recreate essay after an image is dropped
 			asssureSelectionIsVisible()
 			setNeedsLayout()
 			setNeedsDisplay()
@@ -148,7 +148,11 @@ extension ZEssayView {
 	override func concludeDragOperation(_ sender: NSDraggingInfo?) {
 		super.concludeDragOperation(sender)
 
-		updateImageAttachment()
+		if  let attach = updateSelectedAttachment() {
+			setSelectedRange(attach.glyphRange)
+		}
+
+		updateTextStorageRestoringSelection(selectedRange)
 	}
 
 	// MARK: - rects
@@ -260,16 +264,28 @@ extension ZEssayView {
 		resizeDot          = nil
 	}
 
-	@discardableResult func updateImageAttachment(for range: NSRange? = nil) -> Bool {
+	func updateImageInParagraph(containing range: NSRange) {
+		clearResizing()                                             // erase image rubberband
+
+		FOREGROUND(after: 0.075) { [self] in
+			if  let paragraphRange = textStorage?.string.rangeOfParagraph(for: range) {
+				updateSelectedAttachment(for: paragraphRange)
+			}
+
+			needsSave = true
+		}
+	}
+
+	@discardableResult func updateSelectedAttachment(for range: NSRange? = nil) -> ZRangedAttachment? {
 		let attachmentRange    = range ?? selectedRange
 		if  let         attach = textStorage?.rangedAttachment(in: attachmentRange) {
 			selectedAttachment = attach
-			resizeDragRect     = rectForRangedAttachment(attach)
+			resizeDragRect     = rectForRangedAttachment(attach)    // relocate image rubberband
 
-			return true
+			return selectedAttachment
 		}
 
-		return false
+		return nil
 	}
 
 	func updateSelectedImage() {

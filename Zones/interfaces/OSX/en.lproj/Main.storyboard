@@ -1079,10 +1079,10 @@ CA
                                 </constraints>
                             </containerView>
                             <customView hidden="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ntq-Zy-gaV" customClass="ZExplanationPopover" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="88" y="74" width="275" height="153"/>
+                                <rect key="frame" x="88" y="74" width="275" height="173"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q1p-3k-xdd">
-                                        <rect key="frame" x="10" y="124" width="255" height="16"/>
+                                        <rect key="frame" x="10" y="144" width="255" height="16"/>
                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Label" id="qww-39-bSR">
                                             <font key="font" usesAppearanceFont="YES"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1090,9 +1090,9 @@ CA
                                         </textFieldCell>
                                     </textField>
                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="D3y-QG-Yyf">
-                                        <rect key="frame" x="10" y="66" width="255" height="50"/>
+                                        <rect key="frame" x="14" y="66" width="247" height="70"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="50" id="GKc-Xi-Ygy"/>
+                                            <constraint firstAttribute="height" constant="70" id="GKc-Xi-Ygy"/>
                                         </constraints>
                                         <textFieldCell key="cell" controlSize="small" selectable="YES" title="Multiline Label" id="hcj-9F-AWd">
                                             <font key="font" metaFont="smallSystem"/>
@@ -1115,10 +1115,10 @@ CA
                                     <constraint firstAttribute="trailing" secondItem="Q1p-3k-xdd" secondAttribute="trailing" constant="12" id="08i-kB-trc"/>
                                     <constraint firstItem="Q1p-3k-xdd" firstAttribute="top" secondItem="Ntq-Zy-gaV" secondAttribute="top" constant="8" id="BC6-Ob-NAt"/>
                                     <constraint firstItem="Q1p-3k-xdd" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="12" id="CGu-3c-t7U"/>
-                                    <constraint firstAttribute="trailing" secondItem="D3y-QG-Yyf" secondAttribute="trailing" constant="12" id="FGc-pO-slI"/>
+                                    <constraint firstAttribute="trailing" secondItem="D3y-QG-Yyf" secondAttribute="trailing" constant="16" id="FGc-pO-slI"/>
                                     <constraint firstAttribute="trailing" secondItem="DiV-04-PdE" secondAttribute="trailing" constant="12" id="Gyw-Hz-9yD"/>
                                     <constraint firstAttribute="bottom" secondItem="DiV-04-PdE" secondAttribute="bottom" constant="40" id="MRS-Jt-vLL"/>
-                                    <constraint firstItem="D3y-QG-Yyf" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="12" id="RTG-D7-mM9"/>
+                                    <constraint firstItem="D3y-QG-Yyf" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="16" id="RTG-D7-mM9"/>
                                     <constraint firstItem="DiV-04-PdE" firstAttribute="leading" secondItem="Ntq-Zy-gaV" secondAttribute="leading" constant="12" id="VS6-7y-2yV"/>
                                     <constraint firstItem="DiV-04-PdE" firstAttribute="top" secondItem="D3y-QG-Yyf" secondAttribute="bottom" constant="8" id="cJI-eQ-Qf0"/>
                                     <constraint firstAttribute="width" constant="275" id="g6c-Db-Vgc"/>

@@ -84,7 +84,7 @@ class ZExplanationPopover : ZView {
 		path    .flatness = kDefaultFlatness
 		path   .lineWidth = 0.7
 		top     .origin.y = big.height
-		top  .size.height = 37.0
+//		top  .size.height = 65.0
 		small.size.height = delta * 1.25
 		let         short = small.offsetBy(dx: .zero, dy: 1.0)
 		let         erase = ZBezierPath.trianglePath(pointingDown: true, in: short)
@@ -111,13 +111,20 @@ extension String {
 	var titleAndInstruction: (String, String)? {
 		if  gIsEssayMode { return nil }
 
+		let  alter = gIsEditIdeaMode ? "CONTROL " : kEmpty
 		let  state = gIsEditIdeaMode ? "edited" : "selected"
-		let   save = gIsEditIdeaMode ? "save your changes and exit editing" : "begin editing"
-		let plural = gSelecting.currentMapGrabs.count < 2 ? "" : "s"
+		let action = gIsEditIdeaMode ? "save your changes and exit editing" : "begin editing"
+		let plural = gSelecting.currentMapGrabs.count == 1 ? "" : "s"
+		let  title = "Currently \(state) idea\(plural)"
+		let doThis = ["While here, you can press these keys:",
+					  "",
+					  "RETURN to \(action)",
+					  "TAB to edit a new sibling idea",
+					  "\(alter)SPACE to edit a new child."].joined(separator: kNewLine)
 
 		switch self {
 			case "e", "y": return nil
-			default:       return ("Currently \(state) idea\(plural)", "While here, you can press these keys:\nRETURN to \(save)\nTAB to edit a new sibling idea\nCONTROL SPACE to edit a new child.")
+			default:       return (title, doThis)
 		}
 	}
 

@@ -200,43 +200,47 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	@discardableResult func updateTextStorage(restoreSelection: NSRange? = nil) -> Int {
 		var delta = 0
 
-		// make sure we actually have a current essay
+		if  gCurrentEssay == nil {                           // make sure we actually have a current essay
+			gControllers.swapMapAndEssay(force: .wMapMode)   // not show blank essay
+		} else {
+			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
+
+			updateTextStorageRestoringSelection(restoreSelection)
+		}
+
+		return delta
+	}
+
+	func updateTextStorageRestoringSelection(_ range: NSRange?) {
+
 		// activate the buttons in the control bar
 		// grab the current essay text and put it in place
 		// grab record id of essay to indicate that this essay has not been saved
 		// saves time by not needlessly overwriting it later
 
+		gEssayControlsView?.updateTitleSegments()
 		resetForDarkMode()
+		save()
 
-		if  gCurrentEssay == nil {
-			gControllers.swapMapAndEssay(force: .wMapMode)                            // not show blank essay
-		} else {
-			gEssayControlsView?.updateTitleSegments()
+		if  (shouldOverwrite || range != nil),
+			let text = gCurrentEssay?.essayText {
 
-			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
-
-			if  (shouldOverwrite || restoreSelection != nil),
-				let text = gCurrentEssay?.essayText {
-
-				discardPriorText()
-				gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
-				selectAndScrollTo(restoreSelection)
-				undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
-			}
-
-			essayRecordName = gCurrentEssayZone?.recordName                           // do this after altering essay zone
-			delegate        = self 					    	                          // set delegate after discarding prior and injecting current text
-
-			if  gIsEssayMode {
-				assignAsFirstResponder(self)                                 // show cursor and respond to key input
-				gMainWindow?.setupEssayInspectorBar()
-
-				gEssayControlsView?.setupEssayControls()
-				gEssayControlsView?.enableEssayControls(true)
-			}
+			discardPriorText()
+			gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
+			selectAndScrollTo(range)
+			undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
 		}
 
-		return delta
+		essayRecordName = gCurrentEssayZone?.recordName                           // do this after altering essay zone
+		delegate        = self 					    	                          // set delegate after discarding prior and injecting current text
+
+		if  gIsEssayMode {
+			assignAsFirstResponder(self)                                 // show cursor and respond to key input
+			gMainWindow?.setupEssayInspectorBar()
+
+			gEssayControlsView?.setupEssayControls()
+			gEssayControlsView?.enableEssayControls(true)
+		}
 	}
 
 	func nextNotemark(down: Bool) {
@@ -669,26 +673,26 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
-		setNeedsDisplay()        // so dots selecting image will be redrawn
+		setNeedsDisplay()                                 // so image resize rubberband will be redrawn
 
 		if  let replacementLength = replacement?.length,
 			let         hasReturn = replacement?.containsLineEndOrTab,
-			let (result,   delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn) {
+			let   (result, delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn) {
 			switch result {
 				case .eAlter:        break
 				case .eLock:         return false
 				case .eExit: exit(); return false
 				case .eDelete:
-					FOREGROUND { [self] in                    // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
+					FOREGROUND { [self] in                // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
 						gCurrentEssay?.updateChildren()
 						updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
 			}
 
 			gCurrentEssay?.essayLength += delta           // compensate for change
+		} else {
+			updateImageInParagraph(containing: range)     // so image resize rubberband gets relocated correctly
 		}
-
-		needsSave = true
 
 		return true // yes, change text
 	}

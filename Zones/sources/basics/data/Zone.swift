@@ -98,7 +98,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                     widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                   linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
 	var            maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
-	var                      widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color?.darker(by: 3.0) : kBlackColor }
+	var                      widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color : kBlackColor }
 	var                        textColor :             ZColor? { return isDragged ? gActiveColor : widgetColor }
 	var                     lighterColor :             ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
 	var                   highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
@@ -528,7 +528,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	override var color: ZColor? {
 		get {
-			var computed: ZColor? = kDefaultIdeaColor
+			var computed        = kDefaultIdeaColor
 
 			if  gColorfulMode {
 				if  let       t = bookmarkTarget {
@@ -541,24 +541,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  gIsDark {
-				computed = computed?.invertedColor.lighter(by: 3.0)
+				computed        = computed.invertedColor
 			}
 
 			return computed
 		}
 
 		set {
-			var computed = newValue
+			if  let           b = bookmarkTarget {
+				b.color         = newValue
+			} else {
+				var computed    = newValue
 
-			if  gIsDark {
-				computed = computed?.invertedColor
-			}
+				if  gIsDark {
+					computed    = computed?.invertedColor
+				}
 
-			if  let             b = bookmarkTarget {
-				b.color           = newValue
-			} else if colorMaybe != computed {
-				colorMaybe        = computed
-				zoneColor         = computed?.string ?? kEmpty
+				if  colorMaybe != computed {
+					colorMaybe  = computed
+					zoneColor   = computed?.string ?? kEmpty
+				}
 			}
 		}
 	}
