@@ -9,14 +9,14 @@
 import Foundation
 import CloudKit
 
-let gRecents     = ZRecents(ZDatabaseID.recentsID)
-var gRecentsRoot : Zone? { return gRecents.rootZone }
-var gRecentsHere : Zone? { return gRecentsHereMaybe ?? gRecentsRoot }
-
-var gRecentsHereMaybe: Zone? {
-	get { return gHereZoneForIDMaybe(       .recentsID) }
-	set { gSetHereZoneForID(here: newValue, .recentsID) }
-}
+//let gRecents     = ZRecents(ZDatabaseID.recentsID)
+//var gRecentsRoot : Zone? { return gRecents.rootZone }
+//var gRecentsHere : Zone? { return gRecentsHereMaybe ?? gRecentsRoot }
+//
+//var gRecentsHereMaybe: Zone? {
+//	get { return gHereZoneForIDMaybe(       .recentsID) }
+//	set { gSetHereZoneForID(here: newValue, .recentsID) }
+//}
 
 class ZRecents : ZSmallMapRecords {
 
@@ -26,9 +26,7 @@ class ZRecents : ZSmallMapRecords {
 		}
 
 		set {
-			if  let n = newValue {
-				gMineCloud?.recentsZone = n
-			}
+			gMineCloud?.recentsZone = newValue
 		}
 	}
 
@@ -44,41 +42,11 @@ class ZRecents : ZSmallMapRecords {
 		}
 	}
 
-	override func push(_ zone: Zone? = gHere) -> Zone? {
-		if !gPushIsDisabled,
-		    gHasFinishedStartup, // avoid confusing recents upon relaunch
-		    rootZone != nil,
-			let pushMe = zone {
-
-			if  bookmarkTargeting(pushMe) == nil {
-				matchOrCreateBookmark(for: pushMe, autoAdd: true)
-			}
-
-			updateCurrentFavorite()
-		}
-
-		return zone
-	}
-
-	func object(for id: String) -> NSObject? {
-		let parts = id.components(separatedBy: kColonSeparator)
-
-		if  parts.count == 2 {
-			if  parts[0] == "note" {
-				return ZNote .object(for: parts[1], isExpanded: false)
-			} else {
-				return ZEssay.object(for: parts[1], isExpanded: true)
-			}
-		}
-
-		return nil
-	}
-
 	// MARK: - focus
 	// MARK: -
 
 	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-		if  let    current = currentFavorite {
+		if  let    current = currentRecent {
 			return current.focusThrough(atArrival)
 		}
 

@@ -19,7 +19,26 @@ var gFavoritesHereMaybe: Zone? {
 	set { gSetHereZoneForID(here: newValue, .favoritesID) }
 }
 
-class ZFavorites: ZSmallMapRecords {
+func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
+	gRemoteStorage.zRecords(for: dbID)?.hereZoneMaybe = here
+}
+
+func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
+	if  let    cloud = gRemoteStorage.zRecords(for: dbID) {
+		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
+	}
+
+	return nil
+}
+
+class ZFavorites: ZRecords {
+
+	var currentRecent    : Zone?
+	var currentFavorite  : Zone?
+	var working          : ZoneArray { return  gIsEssayMode ? workingNotemarks : workingBookmarks }
+	var workingGroups    : ZoneArray { return  rootZone?.allGroups ?? [] }
+	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
+	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
 
     // MARK: - initialization
     // MARK: -
@@ -40,9 +59,7 @@ class ZFavorites: ZSmallMapRecords {
 		}
 
 		set {
-			if  let n = newValue {
-				gMineCloud?.favoritesZone = n
-			}
+			gMineCloud?.favoritesZone = newValue
 		}
 	}
 
@@ -105,18 +122,17 @@ class ZFavorites: ZSmallMapRecords {
 		}
 	}
 
-	func object(for id: String) -> NSObject? {
-		let parts = id.components(separatedBy: kColonSeparator)
-
-		if  parts.count == 2 {
-			if  parts[0] == "note" {
-				return ZNote .object(for: parts[1], isExpanded: false)
-			} else {
-				return ZEssay.object(for: parts[1], isExpanded: true)
-			}
+	@discardableResult func matchOrCreateBookmark(for zone: Zone, addToRecents: Bool) -> Zone {
+		if  zone.isBookmark, let root = rootZone, zone.root == root {
+			return zone
 		}
 
-		return nil
+		let           target = zone.bookmarkTarget ?? zone
+		if  let    bookmarks = favoritesTargeting(target), bookmarks.count > 0 {
+			return bookmarks[0]
+		}
+
+		return ZBookmarks.newOrExistingBookmark(targeting: zone, addTo: addToRecents ? recentsGroupZone : nil)
 	}
 
     // MARK: - mutate
@@ -136,18 +152,6 @@ class ZFavorites: ZSmallMapRecords {
 		return bookmarkToMove(is: gSelecting.currentMoveableMaybe) ?? bookmarkToMove(is: currentFavorite)
 	}
 
-	func nextBookmark(down: Bool, flags: ZEventFlags) {
-		let COMMAND = flags.hasCommand
-		let  OPTION = flags.hasOption
-		let   SHIFT = flags.hasShift
-
-		if  COMMAND {
-			showNextList(down: down, moveCurrent: OPTION)
-		} else {
-			nextBookmark(down: down, moveCurrent: OPTION, withinRecents: !SHIFT)
-		}
-	}
-
 	var allGroups: ZoneArray? {
 		if  var zones = rootZone?.allGroups {
 			zones.appendUnique(item: rootZone)
@@ -165,39 +169,6 @@ class ZFavorites: ZSmallMapRecords {
 		return true
 	}
 
-	func nextList(down: Bool) -> Zone? {
-		if  let  here = hereZoneMaybe,
-			let zones = allGroups {
-			let index = zones.firstIndex(of: here) ?? 0
-			if  let n = index.next(forward: down, max: zones.count - 1) {
-				return zones[n]
-			}
-		}
-
-		return rootZone
-	}
-
-	func nextListAttributed(down: Bool) -> NSAttributedString {
-		let string = nextList(down: down)?.unwrappedName.capitalized ?? kEmpty
-
-		return string.darkAdaptedTitle
-	}
-
-	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false) -> Zone? {
-		if  let  here = nextList(down: down) {
-			if  let b = bookmarkToMove, moveCurrent {
-				b.moveZone(to: here)
-			}
-
-			setHere(to: here)
-			gSignal([.spCrumbs, .spSmallMap])
-
-			return here
-		}
-
-		return nil
-	}
-
 	var current : Zone? {
 		if  let here  = hereZoneMaybe {
 			if  here == recentsGroupZone {
@@ -208,6 +179,26 @@ class ZFavorites: ZSmallMapRecords {
 		}
 
 		return nil
+	}
+
+	func isCurrent(_ zone: Zone) -> Bool {
+		return [currentRecent, currentFavorite].contains(zone)
+	}
+
+	func current(mustBeRecents: Bool = false) -> Zone? {
+		let useRecents = mustBeRecents || currentHere.isInRecentsGroup
+
+		return useRecents ? currentRecent : currentFavorite
+	}
+
+	func setCurrent(_ zone: Zone?, mustBeRecents: Bool = false) {
+		let useRecents = mustBeRecents || currentHere.isInRecentsGroup || (zone?.isInRecentsGroup ?? false)
+
+		if  useRecents {
+			currentRecent   = zone
+		} else {
+			currentFavorite = zone
+		}
 	}
 
 	func maybeSetCurrentWithinHere(_ zone: Zone) -> Bool {
@@ -224,50 +215,71 @@ class ZFavorites: ZSmallMapRecords {
 		return false // current was not altered
 	}
 
-	override func push(_ zone: Zone? = gHere) -> Zone? {
-		if  let target            = zone {
-			let bookmarks         = favoritesTargeting(target)
-			if  let existing      = bookmarks?.firstUndeleted,
-				maybeSetCurrentWithinHere(existing) {
+	func moveCurrentTo(_ zone: Zone) {
+		if  let parent = zone.parentZone,
+			let      p = currentFavorite?.parentZone, p == parent,
+			let   from = currentFavorite?.siblingIndex,
+			let     to = zone.siblingIndex {
+			parent.moveChildIndex(from: from, to: to)
+		}
+	}
 
-				return existing
-			}
-
-			let here          = recentsGroupZone
-			var bookmark      = ZBookmarks.newBookmark(targeting: target)
-			let index         = currentRecent?.nextSiblingIndex
-			here.addChildNoDuplicate(bookmark, at: index)
-			gBookmarks.addToReverseLookup(bookmark)
+	func setCurrentBookmarksTargeting(_ zone: Zone) {
+		for bookmark in zone.bookmarksTargetingSelf {
 			setCurrent(bookmark)
+		}
+	}
 
-			if  !here.isInRecentsGroup,
-				let b         = bookmarks?.intersection(recentsGroupZone.children) {
-				if  b.count  == 0 {
-					let index = currentRecent?.nextSiblingIndex
-					bookmark  = ZBookmarks.newBookmark(targeting: target)
+	func setAsCurrent(_ zone: Zone?, alterBigMapFocus: Bool = false, makeVisible: Bool = false) {
+		if  makeVisible {
+			makeVisibleAndMarkInSmallMap(zone)
+		}
 
-					recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
-					gBookmarks.addToReverseLookup(bookmark)
-				}
+		if  let target = zone?.bookmarkTarget {
+			setCurrentBookmarksTargeting(target)
+
+			if  alterBigMapFocus {
+				gDatabaseID          = target.databaseID
+				gRecords.currentHere = target // avoid push
+
+				target.grab()
 			}
 
-			return bookmark
+			if  gIsMapMode {
+				gFocusing.focusOnGrab(.eSelected) {
+					gSignal([.spCrumbs, .spRelayout, .spDataDetails])
+				}
+			} else if gCurrentEssayZone != target {
+				gEssayView?.resetCurrentEssay(target.note)
+				gSignal([.spCrumbs, .spRelayout, .spDataDetails])
+			}
+		}
+	}
+
+	func targeting(_ target: Zone, in array: ZoneArray?, orSpawnsIt: Bool = true) -> ZoneArray? {
+		return array?.whoseTargetIntersects(with: [target], orSpawnsIt: orSpawnsIt)
+	}
+
+	func workingBookmarks(for target: Zone) -> ZoneArray? {
+		return targeting(target, in: workingBookmarks, orSpawnsIt: false)
+	}
+
+	func favoritesTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
+		return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
+	}
+
+	func object(for id: String) -> NSObject? {
+		let parts = id.components(separatedBy: kColonSeparator)
+
+		if  parts.count == 2 {
+			if  parts[0] == "note" {
+				return ZNote .object(for: parts[1], isExpanded: false)
+			} else {
+				return ZEssay.object(for: parts[1], isExpanded: true)
+			}
 		}
 
 		return nil
-	}
-
-	@discardableResult func matchOrCreateBookmark(for zone: Zone, addToRecents: Bool) -> Zone {
-		if  zone.isBookmark, let root = rootZone, zone.root == root {
-			return zone
-		}
-
-		let           target = zone.bookmarkTarget ?? zone
-		if  let    bookmarks = favoritesTargeting(target), bookmarks.count > 0 {
-			return bookmarks[0]
-		}
-
-		return ZBookmarks.newOrExistingBookmark(targeting: zone, addTo: addToRecents ? recentsGroupZone : nil)
 	}
 
 	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
@@ -448,6 +460,348 @@ class ZFavorites: ZSmallMapRecords {
 		}
 
 		return result
+	}
+
+	// MARK: - cycle
+	// MARK: -
+
+	func nextBookmark(down: Bool, flags: ZEventFlags) {
+		let COMMAND = flags.hasCommand
+		let  OPTION = flags.hasOption
+		let   SHIFT = flags.hasShift
+
+		if  COMMAND {
+			showNextList(down: down, moveCurrent: OPTION)
+		} else {
+			nextBookmark(down: down, moveCurrent: OPTION, withinRecents: !SHIFT)
+		}
+	}
+
+	func nextList(down: Bool) -> Zone? {
+		if  let  here = hereZoneMaybe,
+			let zones = allGroups {
+			let index = zones.firstIndex(of: here) ?? 0
+			if  let n = index.next(forward: down, max: zones.count - 1) {
+				return zones[n]
+			}
+		}
+
+		return rootZone
+	}
+
+	func nextListAttributed(down: Bool) -> NSAttributedString {
+		let string = nextList(down: down)?.unwrappedName.capitalized ?? kEmpty
+
+		return string.darkAdaptedTitle
+	}
+
+	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false) -> Zone? {
+		if  let  here = nextList(down: down) {
+			if  let b = bookmarkToMove, moveCurrent {
+				b.moveZone(to: here)
+			}
+
+			setHere(to: here)
+			gSignal([.spCrumbs, .spSmallMap])
+
+			return here
+		}
+
+		return nil
+	}
+
+	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, withinRecents: Bool = false) {
+		var current  = current(mustBeRecents: withinRecents)
+		if  current == nil {
+			current  = gFavorites.push()
+		}
+
+		let         recents = gFavorites.recentsGroupZone.children
+		let        notNotes = withinRecents ? recents.count > 0 ? recents : working : working
+		let           zones = amongNotes ? workingNotemarks : notNotes
+		let           count = zones.count
+		if  count           > 1 {            // there is no next for count == 0 or 1
+			let      adjust = moveCurrent ? 2 : 1
+			let    maxIndex = count - adjust
+			var     toIndex = down ? 0 : maxIndex
+			if  let  target = current?.zoneLink {
+				for (index, bookmark) in zones.enumerated() {
+					var next         = index
+					while target    == bookmark.zoneLink,
+						  let realNext = next.next(forward: !down, max: maxIndex) {
+
+						if  !zones[realNext].isBookmark {
+							next     = realNext
+						} else {
+							toIndex  = realNext
+
+							break
+						}
+					}
+				}
+
+				if  toIndex.isWithin(0 ... maxIndex) {
+					let newCurrent = zones[toIndex]
+
+					if  moveCurrent {
+						moveCurrentTo(newCurrent)
+					} else {
+						setAsCurrent (newCurrent, alterBigMapFocus: !amongNotes, makeVisible: false)
+					}
+				}
+			}
+		}
+	}
+
+	// MARK: - pop and push
+	// MARK: -
+
+	@discardableResult func push(_ zone: Zone? = gHere) -> Zone? {
+		if  let target            = zone {
+			let bookmarks         = favoritesTargeting(target)
+			if  let existing      = bookmarks?.firstUndeleted,
+				maybeSetCurrentWithinHere(existing) {
+
+				return existing
+			}
+
+			let here          = recentsGroupZone
+			var bookmark      = ZBookmarks.newBookmark(targeting: target)
+			let index         = currentRecent?.nextSiblingIndex
+			here.addChildNoDuplicate(bookmark, at: index)
+			gBookmarks.addToReverseLookup(bookmark)
+			setCurrent(bookmark)
+
+			if  !here.isInRecentsGroup,
+				let b         = bookmarks?.intersection(recentsGroupZone.children) {
+				if  b.count  == 0 {
+					let index = currentRecent?.nextSiblingIndex
+					bookmark  = ZBookmarks.newBookmark(targeting: target)
+
+					recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
+					gBookmarks.addToReverseLookup(bookmark)
+				}
+			}
+
+			return bookmark
+		}
+
+		return nil
+	}
+
+	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
+		if  let zone = iZone {
+			if  zone.isInFavorites {
+				zone.deleteSelf(permanently: true) {}
+
+				return true
+			} else if let bookmarks = workingBookmarks(for: zone) {
+				for bookmark in bookmarks {
+					bookmark.deleteSelf(permanently: true) {}
+				}
+
+				return true
+			}
+		}
+
+		return false
+	}
+
+	func popAndUpdateCurrent() {
+		if  let           c = currentRecent ?? currentFavorite,
+			let       index = c.siblingIndex,
+			let    children = c.siblings,
+			let        next = children.next(from: index, forward: gListsGrowDown),
+			pop(c) {
+			setCurrent(next)
+
+			if  let    here = next.bookmarkTarget {
+				gHere       = here
+
+				gHere.grab()
+			}
+		}
+
+		gSignal([.sDetails])
+		gRelayoutMaps()
+	}
+
+	func popNoteAndUpdate() -> Bool {
+		if  pop(),
+			let  notemark = rootZone?.notemarks.first,
+			let      note = notemark.bookmarkTarget?.note {
+			gCurrentEssay = note
+
+			setAsCurrent(notemark, makeVisible: true)
+			gSignal([.spSmallMap, .spCrumbs])
+
+			return true
+		}
+
+		return false
+	}
+
+	func insertAsNext(_ zone: Zone) {
+		if  let           r = rootZone {
+			let      cIndex = r.children.firstIndex(of: zone) ?? 0
+			let       index = cIndex.next(forward: gListsGrowDown, max: r.count - 1)
+
+			r.addChildNoDuplicate(zone, at: index)
+			setCurrent(zone)
+		}
+	}
+
+	func removeBookmarks(for iZone: Zone? = gHereMaybe) {
+		if  let      zone = iZone,
+			let bookmarks = workingBookmarks(for: zone) {
+			for bookmark in bookmarks {
+				bookmark.deleteSelf(permanently: true) {}
+			}
+		}
+	}
+
+	// MARK: - focus
+	// MARK: -
+
+	func revealBookmark(of target: Zone) {
+
+		// locate and make bookmark of target visible and mark it
+
+		if  let bookmarks = favoritesTargeting(target, orSpawnsIt: false) {
+			for bookmark in bookmarks {
+				makeVisibleAndMarkInSmallMap(bookmark)
+			}
+		}
+	}
+
+	func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) {
+		if  let zone         = iZone {
+			if  let parent   = zone.parentZone,
+				currentHere != parent {
+				let here     = currentHere
+				currentHere  = parent
+
+				here.collapse()
+			}
+
+			currentHere.expand()
+			setCurrent(zone)
+		}
+	}
+
+	var currentTargets: ZoneArray {
+		var  targets = ZoneArray()
+
+		if  gIsEssayMode,
+			let zone = gCurrentEssayZone {
+			targets.append(zone)
+		} else if let here = gHereMaybe {
+			targets.append(here)
+
+			if  let grab = gSelecting.firstGrab(),
+				!targets.contains(grab) {
+				targets.append(grab)
+			}
+		}
+
+		return targets
+	}
+
+	var bookmarksTargetingHere: ZoneArray? {
+		if  let bookmarks = rootZone?.allBookmarkProgeny, bookmarks.count > 0 {
+			let matches   = bookmarks.whoseTargetIntersects(with: currentTargets, orSpawnsIt: false)
+			if  matches.count > 0 {
+				return matches
+			}
+		}
+
+		return nil
+	}
+
+	func updateCurrentWithBookmarksTargetingHere() {
+		if  let      bookmarks = bookmarksTargetingHere {
+			let      inRecents = currentHere.isInRecentsGroup
+			var markedRecent   = false
+			var markedFavorite = false
+			for bookmark in bookmarks {
+				let toRecents  = bookmark.isInRecentsGroup
+				if  toRecents {
+					if !markedRecent {
+						markedRecent   = true
+						currentRecent  = bookmark
+					}
+				} else if !markedFavorite, !inRecents {
+					currentFavorite    = bookmark
+
+					if  bookmark.isInFavoritesHere {
+						markedFavorite = true
+					}
+				}
+
+				if  markedRecent, markedFavorite {
+					return
+				}
+			}
+		}
+	}
+
+	func grab(_ zones: ZoneArray) {
+		gSelecting.ungrabAll()
+
+		for zone in zones {
+			grab(zone, onlyOne: false)
+		}
+	}
+
+	func grab(_ zone: Zone, onlyOne: Bool = true) {
+		if  onlyOne {
+			zone.grab()
+		} else {
+			zone.addToGrabs()
+		}
+
+		if  let p = zone.parentZone {
+			if  let h = hereZoneMaybe, h != p {
+				hereZoneMaybe = p
+
+				h.collapse()
+			}
+
+			p.expand()
+		}
+	}
+
+	@discardableResult func swapBetweenBookmarkAndTarget(_ flags: ZEventFlags = ZEventFlags(), doNotGrab: Bool = true) -> Bool {
+		if  let cb = currentFavorite,
+			cb.isGrabbed {            // grabbed in small map, so ...
+			cb.bookmarkTarget?.grab() // grab target in big map
+		} else if doNotGrab {
+			return false
+		} else {
+			let bookmarks = gHere.bookmarksTargetingSelf
+
+			for bookmark in bookmarks {
+				let isInHere = bookmark.isInFavoritesHere
+
+				if !bookmark.isDeleted, flags.hasCommand ? bookmark.isInRecentsGroup : isInHere {
+					gShowDetailsView = true
+
+					if  !isInHere {
+						makeVisibleAndMarkInSmallMap(bookmark)
+					}
+
+					bookmark.grab()
+					gDetailsController?.showViewFor(.vFavorites)
+					gSignal([.spMain, .sDetails, .spRelayout])
+
+					return true
+				}
+			}
+
+			push()
+		}
+
+		return true
 	}
 
 }
