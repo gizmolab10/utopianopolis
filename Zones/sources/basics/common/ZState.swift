@@ -507,7 +507,7 @@ struct ZCirclesDisplayMode: OptionSet {
 
 var gCirclesDisplayMode: ZCirclesDisplayMode {
 	get {
-		let value = UserDefaults.standard.object(forKey: kCirclesDisplayMode) as? Int ?? 0
+		let value = UserDefaults.standard.object(    forKey: kCirclesDisplayMode) as? Int ?? 0
 
 		return ZCirclesDisplayMode(rawValue: value)
 	}

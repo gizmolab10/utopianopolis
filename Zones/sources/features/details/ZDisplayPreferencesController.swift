@@ -1,5 +1,5 @@
 //
-//  ZPreferencesController.swift
+//  ZDisplayPreferencesController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 4/13/17.
@@ -22,7 +22,7 @@ enum ZCountsMode: Int { // do not change the order, they are persisted
 	case progeny
 }
 
-class ZPreferencesController: ZGenericController {
+class ZDisplayPreferencesController: ZGenericController {
 
 	@IBOutlet var     countsModeControl : ZSegmentedControl?
 	@IBOutlet var circlesDisplayControl : ZSegmentedControl?
@@ -36,6 +36,7 @@ class ZPreferencesController: ZGenericController {
 	@IBOutlet var     horizontalSpacing : ZSlider?
 	@IBOutlet var    colorfulModeButton : ZButton?
 	@IBOutlet var      clearColorButton : ZButton?
+	@IBOutlet var          layoutButton : ZHoverableButton?
     override  var          controllerID : ZControllerID { return .idPreferences }
 
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
@@ -52,6 +53,7 @@ class ZPreferencesController: ZGenericController {
 			activeMineColorBox?             .color = gActiveColor
 			backgroundColorBox?             .color = gAccentColor
 			colorfulModeButton?             .title = gColorfulMode ? "colorful" : "monochrome"
+			layoutButton?                   .title = gMapLayoutMode.title
 
 			circlesDisplayControl?.selectSegments(from: gCirclesDisplayMode.indexSet)
             view.setAllSubviewsNeedDisplay()
@@ -80,6 +82,12 @@ class ZPreferencesController: ZGenericController {
 			gExplainPopover?.reexplain()
 		}
     }
+
+	@IBAction func layoutButtonAction(_ button: ZHoverableButton) {
+		gMapLayoutMode = gMapLayoutMode.next; gRelayoutMaps()
+
+		gSignal([.spPreferences])
+	}
 
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
         let color = iColorBox.color

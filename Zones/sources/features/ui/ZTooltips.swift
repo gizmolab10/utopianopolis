@@ -313,7 +313,6 @@ extension ZMapControlsView {
 				var      tip : String?
 
 				switch type {
-				case .tLayout:  tip = "Arrangement\n\narrange ideas as a \(gMapLayoutMode == .circularMode ? "tree" : "starburst")"
 				case .tGrowth:  tip = "Growth direction\n\ngrow lists \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
 				case .tConfine: tip = "Browsing confinement\n\n\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within current list")"
 				}
@@ -336,8 +335,8 @@ extension ZMapControlsView {
 
 extension ZHoverableButton {
 
-	func updateToolTips(_ flags: ZEventFlags) {}
-	func clearToolTips()                      {}
+	func updateToolTips(_ flags: ZEventFlags) { toolTip = "Arrangement\n\narrange ideas as a \(gMapLayoutMode == .circularMode ? "tree" : "starburst")"}
+	func clearToolTips()                      { toolTip = nil }
 
 }
 

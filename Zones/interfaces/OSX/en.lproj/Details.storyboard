@@ -137,7 +137,7 @@
                 </viewController>
                 <customObject id="wYh-I6-Wpi" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <box horizontalHuggingPriority="750" boxType="separator" id="mrz-BF-ZFz">
-                    <rect key="frame" x="2" y="-2" width="1" height="163"/>
+                    <rect key="frame" x="0.5" y="-2" width="5" height="163"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="1" id="lx2-Nt-k4T"/>
@@ -528,22 +528,22 @@
             </objects>
             <point key="canvasLocation" x="-613" y="1536.5"/>
         </scene>
-        <!--Preferences Controller-->
+        <!--Display Preferences Controller-->
         <scene sceneID="n3v-Vu-MZq">
             <objects>
-                <viewController id="Naq-se-Exq" customClass="ZPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" misplaced="YES" id="Ngb-Ew-NGG">
-                        <rect key="frame" x="0.0" y="0.0" width="226" height="291"/>
+                <viewController id="Naq-se-Exq" customClass="ZDisplayPreferencesController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="Ngb-Ew-NGG">
+                        <rect key="frame" x="0.0" y="0.0" width="226" height="295"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="NaT-UR-V9P">
-                                <rect key="frame" x="223" y="0.0" width="5" height="291"/>
+                                <rect key="frame" x="223" y="0.0" width="5" height="295"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="1" id="siO-6p-WyD"/>
                                 </constraints>
                             </box>
                             <box autoresizesSubviews="NO" borderType="none" title="list lengths show as" translatesAutoresizingMaskIntoConstraints="NO" id="ay3-pv-TvT" userLabel="counts">
-                                <rect key="frame" x="8" y="252" width="210" height="31"/>
+                                <rect key="frame" x="8" y="256" width="210" height="31"/>
                                 <view key="contentView" id="5gJ-xh-VlV">
                                     <rect key="frame" x="0.0" y="0.0" width="210" height="19"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -576,7 +576,7 @@
                                 </constraints>
                             </box>
                             <box borderType="line" title="map" translatesAutoresizingMaskIntoConstraints="NO" id="1dG-7h-ePD">
-                                <rect key="frame" x="5" y="150" width="216" height="94"/>
+                                <rect key="frame" x="5" y="154" width="216" height="94"/>
                                 <view key="contentView" id="npe-oq-zV9">
                                     <rect key="frame" x="4" y="5" width="208" height="74"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -691,8 +691,21 @@
                                     </constraints>
                                 </view>
                             </box>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dkn-tQ-U5p" userLabel="colorful">
+                                <rect key="frame" x="142" y="133" width="72" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="ctp-Vy-MUv"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundRect" title="hide colors" bezelStyle="roundedRect" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9zw-D0-dHl">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="smallSystem"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="colorfulModeAction:" target="Naq-se-Exq" id="6oW-J3-6sH"/>
+                                </connections>
+                            </button>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150" userLabel="colors">
-                                <rect key="frame" x="5" y="47" width="216" height="95"/>
+                                <rect key="frame" x="5" y="51" width="216" height="95"/>
                                 <view key="contentView" id="rb6-oU-fw8">
                                     <rect key="frame" x="4" y="5" width="208" height="75"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -822,17 +835,17 @@
                                     </constraints>
                                 </view>
                             </box>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dkn-tQ-U5p" userLabel="colorful">
-                                <rect key="frame" x="117" y="129" width="72" height="17"/>
+                            <button identifier="layout" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vAa-ia-x3J" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="163" y="30" width="50" height="17"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="16" id="ctp-Vy-MUv"/>
+                                    <constraint firstAttribute="height" constant="16" id="HfG-RP-p6j"/>
                                 </constraints>
-                                <buttonCell key="cell" type="roundRect" title="hide colors" bezelStyle="roundedRect" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9zw-D0-dHl">
+                                <buttonCell key="cell" type="roundRect" title="Button" bezelStyle="roundedRect" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="m2Q-Ae-ZQl">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="colorfulModeAction:" target="Naq-se-Exq" id="6oW-J3-6sH"/>
+                                    <action selector="layoutButtonAction:" target="Naq-se-Exq" id="jbS-0Y-0sC"/>
                                 </connections>
                             </button>
                             <box borderType="none" title="circles show for" translatesAutoresizingMaskIntoConstraints="NO" id="EBA-0Z-ZoM" userLabel="circles">
@@ -842,7 +855,7 @@
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <segmentedControl identifier="layout" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oGC-zp-Rq7">
-                                            <rect key="frame" x="-3" y="-2" width="216" height="21"/>
+                                            <rect key="frame" x="1" y="-2" width="208" height="21"/>
                                             <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillEqually" style="rounded" trackingMode="selectAny" id="kkM-fg-4gO">
                                                 <font key="font" metaFont="message" size="11"/>
                                                 <segments>
@@ -856,8 +869,8 @@
                                         </segmentedControl>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstAttribute="trailing" secondItem="oGC-zp-Rq7" secondAttribute="trailing" id="JGa-lr-Uq7"/>
-                                        <constraint firstItem="oGC-zp-Rq7" firstAttribute="leading" secondItem="bZ5-d7-EXq" secondAttribute="leading" id="NMW-iq-f6e"/>
+                                        <constraint firstAttribute="trailing" secondItem="oGC-zp-Rq7" secondAttribute="trailing" constant="4" id="JGa-lr-Uq7"/>
+                                        <constraint firstItem="oGC-zp-Rq7" firstAttribute="leading" secondItem="bZ5-d7-EXq" secondAttribute="leading" constant="4" id="NMW-iq-f6e"/>
                                         <constraint firstItem="oGC-zp-Rq7" firstAttribute="centerY" secondItem="bZ5-d7-EXq" secondAttribute="centerY" constant="1" id="hQ7-oq-KkS"/>
                                     </constraints>
                                 </view>
@@ -874,15 +887,17 @@
                             <constraint firstItem="NaT-UR-V9P" firstAttribute="top" secondItem="Ngb-Ew-NGG" secondAttribute="top" id="93I-09-1gi"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="9a4-Qq-RLi"/>
                             <constraint firstAttribute="bottom" secondItem="EBA-0Z-ZoM" secondAttribute="bottom" constant="12" id="BkH-85-3z1"/>
+                            <constraint firstItem="vAa-ia-x3J" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="HYn-zD-XbQ"/>
                             <constraint firstItem="ay3-pv-TvT" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="L8F-B3-k88"/>
-                            <constraint firstItem="EBA-0Z-ZoM" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="8" id="S5T-n5-cnj"/>
+                            <constraint firstAttribute="trailing" secondItem="dkn-tQ-U5p" secondAttribute="trailing" constant="12" id="TLH-Sf-kIL"/>
                             <constraint firstAttribute="trailing" secondItem="1dG-7h-ePD" secondAttribute="trailing" constant="8" id="aFt-c9-QQn"/>
-                            <constraint firstItem="dkn-tQ-U5p" firstAttribute="centerX" secondItem="Ngb-Ew-NGG" secondAttribute="centerX" constant="40" id="aRY-ez-tNd"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="top" secondItem="1dG-7h-ePD" secondAttribute="bottom" constant="12" id="ce0-lu-k66"/>
                             <constraint firstAttribute="trailing" secondItem="ay3-pv-TvT" secondAttribute="trailing" constant="8" id="dfi-pb-wOI"/>
                             <constraint firstAttribute="trailing" secondItem="EBA-0Z-ZoM" secondAttribute="trailing" constant="8" id="e5O-Pm-TJ2"/>
+                            <constraint firstItem="NaT-UR-V9P" firstAttribute="leading" secondItem="vAa-ia-x3J" secondAttribute="trailing" constant="12" id="hrg-Ip-nyd"/>
                             <constraint firstAttribute="trailing" secondItem="mS1-t0-150" secondAttribute="trailing" constant="8" id="m1Q-hz-0Mf"/>
                             <constraint firstItem="1dG-7h-ePD" firstAttribute="top" secondItem="ay3-pv-TvT" secondAttribute="bottom" constant="8" id="mc8-8X-vey"/>
+                            <constraint firstItem="EBA-0Z-ZoM" firstAttribute="top" secondItem="mS1-t0-150" secondAttribute="bottom" constant="12" id="sxL-jM-Jw2"/>
                             <constraint firstItem="EBA-0Z-ZoM" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xME-sO-pw1"/>
                             <constraint firstItem="mS1-t0-150" firstAttribute="leading" secondItem="Ngb-Ew-NGG" secondAttribute="leading" constant="8" id="xTu-eG-2S7"/>
                         </constraints>
@@ -898,13 +913,14 @@
                         <outlet property="colorfulModeButton" destination="dkn-tQ-U5p" id="oSj-yf-UQj"/>
                         <outlet property="countsModeControl" destination="hRI-S8-ys7" id="7ig-ZZ-v8Z"/>
                         <outlet property="horizontalSpacing" destination="OmD-gF-PvR" id="DN6-Os-oDZ"/>
+                        <outlet property="layoutButton" destination="vAa-ia-x3J" id="MhX-jd-5PL"/>
                         <outlet property="lineThickness" destination="gh7-LP-7IV" id="ox5-Ei-ZE6"/>
                         <outlet property="zoneColorBox" destination="UMY-8c-tep" id="vq3-82-A2w"/>
                     </connections>
                 </viewController>
                 <customObject id="JO0-BM-25B" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-95" y="1818"/>
+            <point key="canvasLocation" x="-95" y="1817.5"/>
         </scene>
         <!--Kickoff Tools Controller-->
         <scene sceneID="uRy-JP-y7m">
@@ -1269,7 +1285,7 @@
                                                 </textFieldCell>
                                             </textField>
                                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="raV-jm-PNg">
-                                                <rect key="frame" x="76" y="0.0" width="139" height="34"/>
+                                                <rect key="frame" x="75" y="0.0" width="140" height="34"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="22" id="IaT-pa-bEL"/>
                                                 </constraints>

@@ -15,7 +15,6 @@ import UIKit
 #endif
 
 enum ZModeButtonType: String {
-	case tLayout  = "layout" // tree / linear
 	case tConfine = "browse" // down / up
 	case tGrowth  = "grow"   // list / all
 }
@@ -32,7 +31,7 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 		super.setupButtons()
 
 		buttons                   = [ZHoverableButton]()
-		let t : [ZModeButtonType] = [.tLayout, .tGrowth, .tConfine]
+		let t : [ZModeButtonType] = [.tGrowth, .tConfine]
 		for type in t {
 			let             title = type.rawValue
 			let            button = ZHoverableButton(title: title, target: self, action: #selector(handleButtonPress))
@@ -53,7 +52,6 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 		for button in buttons {
 			if  let    type = button.modeButtonType {
 				switch type {
-				case .tLayout:  button.title = gMapLayoutMode  .title
 				case .tConfine: button.title = gConfinementMode.rawValue
 				case .tGrowth:  button.title = gListGrowthMode .rawValue
 				}
@@ -68,7 +66,6 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 
 		if  let    type = button.modeButtonType {
 			switch type {
-				case .tLayout:  gMapLayoutMode   = gMapLayoutMode  .next; gRelayoutMaps()
 				case .tGrowth:  gListGrowthMode  = gListGrowthMode .next
 				case .tConfine: gConfinementMode = gConfinementMode.next
 			}

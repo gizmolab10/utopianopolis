@@ -243,6 +243,7 @@ class ZFavorites: ZRecords {
 				gRecords.currentHere = target // avoid push
 
 				target.grab()
+				push(target)
 			}
 
 			if  gIsMapMode {
@@ -266,6 +267,10 @@ class ZFavorites: ZRecords {
 
 	func favoritesTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
 		return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
+	}
+
+	func recentsTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
+		return targeting(target, in: recentsGroupZone.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
 	}
 
 	func object(for id: String) -> NSObject? {
@@ -511,12 +516,12 @@ class ZFavorites: ZRecords {
 	}
 
 	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, withinRecents: Bool = false) {
-		var current  = current(mustBeRecents: withinRecents)
-		if  current == nil {
-			current  = gFavorites.push()
+		var current         = current(mustBeRecents: withinRecents)
+		if  current        == nil {
+			current         = push()
 		}
 
-		let         recents = gFavorites.recentsGroupZone.children
+		let         recents = recentsGroupZone.children
 		let        notNotes = withinRecents ? recents.count > 0 ? recents : working : working
 		let           zones = amongNotes ? workingNotemarks : notNotes
 		let           count = zones.count
@@ -558,7 +563,7 @@ class ZFavorites: ZRecords {
 
 	@discardableResult func push(_ zone: Zone? = gHere) -> Zone? {
 		if  let target            = zone {
-			let bookmarks         = favoritesTargeting(target)
+			let bookmarks         = recentsTargeting(target)
 			if  let existing      = bookmarks?.firstUndeleted,
 				maybeSetCurrentWithinHere(existing) {
 

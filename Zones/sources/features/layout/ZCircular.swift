@@ -573,7 +573,7 @@ extension ZMapController {
 			while ZWidgets.hasVisibleChildren   (at: level) {
 				let radius = ZWidgets.ringRadius(at: level)
 				let   rect = CGRect(origin: center, size: .zero).expandedEquallyBy(radius)
-				let  color = gAccentColor.withAlpha(0.2)
+				let  color = gAccentColor.withAlpha(0.5)
 				level     += 1
 
 				rect.drawColoredCircle(color, thickness: dotHeight, dashes: true)

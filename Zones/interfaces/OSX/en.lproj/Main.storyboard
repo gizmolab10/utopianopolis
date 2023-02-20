@@ -886,7 +886,7 @@ CA
                                     <segue destination="XfG-lQ-9wD" kind="embed" id="kDX-bX-Ojk"/>
                                 </connections>
                             </containerView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Alternate Side View">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Right Side View">
                                 <rect key="frame" x="226" y="0.0" width="225" height="255"/>
                                 <subviews>
                                     <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
