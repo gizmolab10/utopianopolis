@@ -463,8 +463,8 @@ class ZRecords: NSObject {
         }
     }
 
-	func searchLocal(for name: String, onCompletion: @escaping Closure) {
-		appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
+	func searchLocal(for string: String, onCompletion: @escaping Closure) {
+		appendZRecordsLookup(with: string) { iRecords -> ZRecordsArray in
 			guard let records = iRecords else {
 				onCompletion()
 

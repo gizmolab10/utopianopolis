@@ -61,6 +61,11 @@ class ZMapView: ZView {
 		if  let view = gMapView {
 			frame    = view.bounds
 
+			if  gIsEssayMode,
+				let view = gEssayView {
+				view.updateResizeDragRect()
+			}
+
 			setNeedsDisplay()
 		}
 	}

@@ -34,6 +34,10 @@ class ZSmallMapRecords: ZRecords {
 	// MARK: - cycle
 	// MARK: -
 
+	func isCurrent(_ zone: Zone) -> Bool {
+		return [currentRecent, currentFavorite].contains(zone)
+	}
+
 	func current(mustBeRecents: Bool = false) -> Zone? {
 		let useRecents = mustBeRecents || currentHere.isInRecentsGroup
 
@@ -51,29 +55,32 @@ class ZSmallMapRecords: ZRecords {
 	}
 
 	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, withinRecents: Bool = false) {
-		if  currentFavorite == nil {
-			gFavorites.push()
+		var current  = current(mustBeRecents: withinRecents)
+		if  current == nil {
+			current  = gFavorites.push()
 		}
 
-		let        recents = gFavorites.recentsGroupZone.children
-		let       notNotes = withinRecents ? recents.count > 0 ? recents : working : working
-		let          zones = amongNotes ? workingNotemarks : notNotes
-		let          count = zones.count
-		if  count          > 1 {            // there is no next for count == 0 or 1
-			let     adjust = moveCurrent ? 2 : 1
-			let   maxIndex = count - adjust
-			var    toIndex = down ? 0 : maxIndex
-			let    current = current(mustBeRecents: withinRecents)
-			if  let target = current?.zoneLink {
+		let         recents = gFavorites.recentsGroupZone.children
+		let        notNotes = withinRecents ? recents.count > 0 ? recents : working : working
+		let           zones = amongNotes ? workingNotemarks : notNotes
+		let           count = zones.count
+		if  count           > 1 {            // there is no next for count == 0 or 1
+			let      adjust = moveCurrent ? 2 : 1
+			let    maxIndex = count - adjust
+			var     toIndex = down ? 0 : maxIndex
+			if  let  target = current?.zoneLink {
 				for (index, bookmark) in zones.enumerated() {
-					if  target == bookmark.zoneLink {
-						if       !down, index > 0 {
-							toIndex   = index - 1         // go up
-						} else if down, index < maxIndex {
-							toIndex   = index + adjust    // go down
-						}
+					var next         = index
+					while target    == bookmark.zoneLink,
+						let realNext = next.next(forward: !down, max: maxIndex) {
 
-						break
+						if  !zones[realNext].isBookmark {
+							next     = realNext
+						} else {
+							toIndex  = realNext
+
+							break
+						}
 					}
 				}
 
@@ -83,7 +90,7 @@ class ZSmallMapRecords: ZRecords {
 					if  moveCurrent {
 						moveCurrentTo(newCurrent)
 					} else {
-						setAsCurrent (newCurrent, alterBigMapFocus: !amongNotes, makeVisible: true)
+						setAsCurrent (newCurrent, alterBigMapFocus: !amongNotes, makeVisible: false)
 					}
 				}
 			}
@@ -146,28 +153,32 @@ class ZSmallMapRecords: ZRecords {
 	// MARK: - pop and push
 	// MARK: -
 
-	func push(_ zone: Zone? = gHere) {}
+	@discardableResult func push(_ zone: Zone? = gHere) -> Zone? { return nil }
 
 	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
-		if  let zone = iZone,
-			let bookmarks = workingBookmarks(for: zone),
-			workingBookmarks.count > 1 {
-			for bookmark in bookmarks {
-				bookmark.deleteSelf(permanently: true) {}
-			}
+		if  let zone = iZone {
+			if  zone.isInFavorites {
+				zone.deleteSelf(permanently: true) {}
 
-			return true
+				return true
+			} else if let bookmarks = workingBookmarks(for: zone) {
+				for bookmark in bookmarks {
+					bookmark.deleteSelf(permanently: true) {}
+				}
+
+				return true
+			}
 		}
 
 		return false
 	}
 
 	func popAndUpdateCurrent() {
-		if  let           c = current(),
+		if  let           c = currentRecent ?? currentFavorite,
 			let       index = c.siblingIndex,
-			let    children = c.parentZone?.children,
-			let        next = children.next(from: index, forward: false),
-			pop() {
+			let    children = c.siblings,
+			let        next = children.next(from: index, forward: gListsGrowDown),
+			pop(c) {
 			setCurrent(next)
 
 			if  let    here = next.bookmarkTarget {

@@ -199,7 +199,6 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForBigMap: Bool = true) {
 		if  let      c = controller ?? gHelpController { // for help dots, widget and controller are nil; so use help controller
 			let   char = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
-//			let factor = CGFloat(string == "w" ? 1.07 : 0.93)
 			let  width = c.dotWidth * ratio * 1.4
 			let   font = ZFont.boldSystemFont(ofSize: width)
 			let   size = char.sizeWithFont(font)

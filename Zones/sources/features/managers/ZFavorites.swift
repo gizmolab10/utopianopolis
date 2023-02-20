@@ -144,7 +144,7 @@ class ZFavorites: ZSmallMapRecords {
 		if  COMMAND {
 			showNextList(down: down, moveCurrent: OPTION)
 		} else {
-			nextBookmark(down: down, moveCurrent: OPTION, withinRecents: SHIFT)
+			nextBookmark(down: down, moveCurrent: OPTION, withinRecents: !SHIFT)
 		}
 	}
 
@@ -224,34 +224,37 @@ class ZFavorites: ZSmallMapRecords {
 		return false // current was not altered
 	}
 
-	override func push(_ zone: Zone?  = gHere) {
+	override func push(_ zone: Zone? = gHere) -> Zone? {
 		if  let target            = zone {
 			let bookmarks         = favoritesTargeting(target)
 			if  let existing      = bookmarks?.firstUndeleted,
 				maybeSetCurrentWithinHere(existing) {
 
-				return
+				return existing
 			}
 
-			if  let here          = hereZoneMaybe {
-				var bookmark      = ZBookmarks.newBookmark(targeting: target)
-				let index         = current?.nextSiblingIndex
-				here.addChildNoDuplicate(bookmark, at: index)
-				gBookmarks.addToReverseLookup(bookmark)
-				setCurrent(bookmark)
+			let here          = recentsGroupZone
+			var bookmark      = ZBookmarks.newBookmark(targeting: target)
+			let index         = currentRecent?.nextSiblingIndex
+			here.addChildNoDuplicate(bookmark, at: index)
+			gBookmarks.addToReverseLookup(bookmark)
+			setCurrent(bookmark)
 
-				if  !here.isInRecentsGroup,
-					let b         = bookmarks?.intersection(recentsGroupZone.children) {
-					if  b.count  == 0 {
-						let index = currentRecent?.nextSiblingIndex
-						bookmark  = ZBookmarks.newBookmark(targeting: target)
+			if  !here.isInRecentsGroup,
+				let b         = bookmarks?.intersection(recentsGroupZone.children) {
+				if  b.count  == 0 {
+					let index = currentRecent?.nextSiblingIndex
+					bookmark  = ZBookmarks.newBookmark(targeting: target)
 
-						recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
-						gBookmarks.addToReverseLookup(bookmark)
-					}
+					recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
+					gBookmarks.addToReverseLookup(bookmark)
 				}
 			}
+
+			return bookmark
 		}
+
+		return nil
 	}
 
 	@discardableResult func matchOrCreateBookmark(for zone: Zone, addToRecents: Bool) -> Zone {

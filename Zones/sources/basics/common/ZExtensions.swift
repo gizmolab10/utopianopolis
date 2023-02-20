@@ -1862,8 +1862,6 @@ extension NSMutableAttributedString {
 			if  let attach = item as? NSTextAttachment {
 				let append = ZRangedAttachment(glyphRange: inRange, attachment: attach)
 
-//				print("\(append.identifier) range \(inRange)")
-
 				found.append(append)
 			}
 		}

@@ -101,7 +101,7 @@ extension ZEssayView {
 		setNeedsDisplay()
 	}
 
-	// MARK: - events
+	// MARK: - mouse events
 	// MARK: -
 
 	override func mouseDragged(with event: ZEvent) {
@@ -158,8 +158,8 @@ extension ZEssayView {
 	// MARK: - rects
 	// MARK: -
 
-	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
-		return attach.glyphRect(for: textStorage, margin: margin)
+	func rectForRangedAttachment(_ attach: ZRangedAttachment?) -> CGRect? {
+		return attach?.glyphRect(for: textStorage, margin: margin)
 	}
 
 	func rectForUnclippedRangedAttachment(_ attach: ZRangedAttachment, orientedFrom direction: ZDirection) -> CGRect? {      // return nil if image is clipped
@@ -201,14 +201,7 @@ extension ZEssayView {
 	}
 
 	func rectForResizing(around attach: ZRangedAttachment?) -> CGRect? {
-		if  let       rect = resizeDragRect {
-			return    rect
-		} else if let    a = attach,
-				  let rect = rectForRangedAttachment(a) {
-			return    rect
-		}
-
-		return nil
+		return resizeDragRect ?? rectForRangedAttachment(attach)
 	}
 
 	func updateImageResizeRect(for delta: CGSize, _ COMMAND : Bool) {
@@ -231,22 +224,22 @@ extension ZEssayView {
 			let     hGrow = size.height * (1.0 - fraction.height)
 
 			switch direction {
-				case .topLeft:     size   = size  .offsetBy(-wGrow, -hGrow)
-				case .bottomLeft:  size   = size  .offsetBy(-wGrow,  hGrow)
-				case .topRight:    size   = size  .offsetBy( wGrow, -hGrow)
-				case .bottomRight: size   = size  .offsetBy( wGrow,  hGrow)
-				case .left:        size   = size  .offsetBy(-wGrow, .zero)
-				case .right:       size   = size  .offsetBy( wGrow, .zero)
-				case .top:         size   = size  .offsetBy( .zero, -hGrow)
-				case .bottom:      size   = size  .offsetBy( .zero,  hGrow)
+				case .topLeft:     size = size.offsetBy(-wGrow, -hGrow)
+				case .bottomLeft:  size = size.offsetBy(-wGrow,  hGrow)
+				case .topRight:    size = size.offsetBy( wGrow, -hGrow)
+				case .bottomRight: size = size.offsetBy( wGrow,  hGrow)
+				case .left:        size = size.offsetBy(-wGrow, .zero)
+				case .right:       size = size.offsetBy( wGrow, .zero)
+				case .top:         size = size.offsetBy( .zero, -hGrow)
+				case .bottom:      size = size.offsetBy( .zero,  hGrow)
 			}
 
 			switch direction {
 				case .topLeft: origin = origin.offsetBy( wGrow,  hGrow)
 				case .topRight,
-						.top:  origin = origin.offsetBy( .zero,  hGrow)
+					 .top:     origin = origin.offsetBy( .zero,  hGrow)
 				case .bottomLeft,
-						.left: origin = origin.offsetBy( wGrow, .zero)
+					 .left:    origin = origin.offsetBy( wGrow, .zero)
 				default:       break
 			}
 
@@ -274,6 +267,10 @@ extension ZEssayView {
 
 			needsSave = true
 		}
+	}
+
+	func updateResizeDragRect() {
+		resizeDragRect = rectForRangedAttachment(selectedAttachment)    // relocate image rubberband
 	}
 
 	@discardableResult func updateSelectedAttachment(for range: NSRange? = nil) -> ZRangedAttachment? {

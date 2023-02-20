@@ -492,7 +492,7 @@ extension ZoneArray {
 				grabs      = grab.children
 
 				grab.expand()
-			} else if let siblings = grab.parentZone?.children {
+			} else if let siblings = grab.siblings {
 				if  siblings.count == 0 {  // no siblings
 					return nil             // no chance of duplicates
 				}

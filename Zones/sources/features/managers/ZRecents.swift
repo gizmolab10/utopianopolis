@@ -44,7 +44,7 @@ class ZRecents : ZSmallMapRecords {
 		}
 	}
 
-	override func push(_ zone: Zone? = gHere) {
+	override func push(_ zone: Zone? = gHere) -> Zone? {
 		if !gPushIsDisabled,
 		    gHasFinishedStartup, // avoid confusing recents upon relaunch
 		    rootZone != nil,
@@ -56,6 +56,8 @@ class ZRecents : ZSmallMapRecords {
 
 			updateCurrentFavorite()
 		}
+
+		return zone
 	}
 
 	func object(for id: String) -> NSObject? {
