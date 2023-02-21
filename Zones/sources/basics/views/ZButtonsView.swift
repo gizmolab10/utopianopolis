@@ -58,11 +58,9 @@ class ZButtonsView : ZView {
 			addSubview(button)
 			button.snp.removeConstraints()
 			button.snp.makeConstraints { make in
-				if !distributedEqually {
-					let title = button.title
-					let range = NSRange(location: 0, length: title.length)
-					let  rect = title.rect(using: button.font!, for: range, atStart: true)
-					width     = rect.width + 20.0 // why 20?
+				if  !distributedEqually,
+					let w = button.width {
+					width = w + 20.0 // why 20?
 				}
 
 				make.width.equalTo(width)

@@ -667,14 +667,29 @@ extension ZButtonCell {
 }
 
 extension ZButton {
-    var isCircular: Bool {
-        get { return true }
-        set { bezelStyle = newValue ? .circular : .rounded }
-    }
 
-    var onHit: Selector? {
-        get { return action }
-        set { action = newValue; target = self } }
+	var isCircular: Bool {
+		get { return true }
+		set { bezelStyle = newValue ? .circular : .rounded }
+	}
+
+	var onHit: Selector? {
+		get { return action }
+		set { action = newValue; target = self } }
+
+	var width: CGFloat? {
+		if  image != nil {
+			return 9.0
+		} else if title.length > 0 {
+			let range = NSRange(location: 0, length: title.length)
+			let  rect = title.rect(using: font!, for: range, atStart: true)
+
+			return rect.width
+		}
+
+		return nil
+	}
+
 }
 
 extension ZAlert {

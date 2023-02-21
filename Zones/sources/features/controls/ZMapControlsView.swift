@@ -15,31 +15,47 @@ import UIKit
 #endif
 
 enum ZModeButtonType: String {
+	case tBack    = "go back"
+	case tForward = "go forward"
 	case tConfine = "browse" // down / up
 	case tGrowth  = "grow"   // list / all
+
+	var image: ZImage {
+		let direction = (self == .tBack) ? "left" : "right"
+
+		return ZImage(named: direction)!
+	}
 }
 
 var gMapControlsView : ZMapControlsView? { return gControlsController?.mapControlsView }
 
 class ZMapControlsView : ZButtonsView, ZToolTipper {
 
-	override  var           centered : Bool { return true }
-	override  var distributedEqually : Bool { return true }
-	override  var  verticalLineIndex : Int? { return 1 }
-
 	override func setupButtons() {
 		super.setupButtons()
 
 		buttons                   = [ZHoverableButton]()
-		let t : [ZModeButtonType] = [.tGrowth, .tConfine]
+		let t : [ZModeButtonType] = [.tBack, .tForward, .tGrowth, .tConfine]
 		for type in t {
-			let             title = type.rawValue
-			let            button = ZHoverableButton(title: title, target: self, action: #selector(handleButtonPress))
+			let            button = buttonFor(type: type)
 			button.modeButtonType = type
-			button.isBordered     = true
+			button.isBordered     = true // ZDarkableImageButton
 
 			button.setButtonType(.momentaryLight)
 			buttons.append(button)
+		}
+	}
+
+	func buttonFor(type: ZModeButtonType) -> ZButton {
+		switch type {
+			case .tGrowth, .tConfine:
+				return ZHoverableButton(title:           type.rawValue, target: self, action: #selector(handleButtonPress))
+			default:
+				let button = ZDarkableImageButton(image: type.image,    target: self, action: #selector(handleButtonPress))
+
+				button.setEnabledAndTracking(true)
+
+				return button
 		}
 	}
 
@@ -52,8 +68,9 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 		for button in buttons {
 			if  let    type = button.modeButtonType {
 				switch type {
-				case .tConfine: button.title = gConfinementMode.rawValue
-				case .tGrowth:  button.title = gListGrowthMode .rawValue
+					case .tGrowth:  button.title = gListGrowthMode .rawValue
+					case .tConfine: button.title = gConfinementMode.rawValue
+					default:        break
 				}
 			}
 
@@ -65,9 +82,11 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 		gTextEditor.stopCurrentEdit(forceCapture: true) // don't discard user's work
 
 		if  let    type = button.modeButtonType {
+			let    down = type == .tForward
 			switch type {
 				case .tGrowth:  gListGrowthMode  = gListGrowthMode .next
 				case .tConfine: gConfinementMode = gConfinementMode.next
+				default:        gIsEssayMode ? gEssayView?.nextNotemark(down: down) : gFavorites.nextBookmark(down: down, withinRecents: true)
 			}
 		}
 
