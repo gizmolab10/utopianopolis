@@ -603,60 +603,57 @@ extension ZoneArray {
 			return
 		}
 
-		let    zones = sortedByReverseOrdering()
-		let     grab = !iShouldGrab ? nil : appropriateNext
-		var doneOnce = false
+		let  grab = !iShouldGrab ? nil : appropriateNext
+		let zones = sortedByReverseOrdering()
+		var count = zones.count
 
-		if !doneOnce {
-			doneOnce  = true
-			var count = zones.count
+		let finish: Closure = {
+			grab?.grab()
+			onCompletion?()
+		}
 
-			let finish: Closure = {
-				grab?.grab()
-				onCompletion?()
-			}
+		if  count == 0 {
+			finish()
+		} else {
+			let deleteBookmarks: Closure = {
+				count -= 1
 
-			if  count == 0 {
-				finish()
-			} else {
-				let deleteBookmarks: Closure = {
-					count -= 1
+				if  count == 0 {
+					finish()
 
-					if  count == 0 {
-						finish()
+					gBatches.bookmarks { iSame in
+						var bookmarks = ZoneArray ()
 
-						gBatches.bookmarks { iSame in
-							var bookmarks = ZoneArray ()
+						for zone in zones {
+							bookmarks += zone.bookmarksTargetingSelf
+						}
 
-							for zone in zones {
-								bookmarks += zone.bookmarksTargetingSelf
-							}
+						if  bookmarks.count != 0 {
 
-							if  bookmarks.count != 0 {
+							// ///////////////////////////////////////////////////////////
+							// remove any bookmarks the target of which is one of zones //
+							// ///////////////////////////////////////////////////////////
 
-								// ///////////////////////////////////////////////////////////
-								// remove any bookmarks the target of which is one of zones //
-								// ///////////////////////////////////////////////////////////
-
-								bookmarks.deleteZones(permanently: permanently, iShouldGrab: false) { // recurse
-									finish()
-								}
+							bookmarks.deleteZones(permanently: permanently, iShouldGrab: false) { // recurse
+								finish()
 							}
 						}
 					}
 				}
+			}
 
-				for zone in zones {
-					if  zone == iParent { // detect and avoid infinite recursion
+			for zone in zones {
+				if  zone == iParent { // detect and avoid infinite recursion
+					deleteBookmarks()
+				} else {
+					zone.deleteSelf(permanently: permanently) { flag in
 						deleteBookmarks()
-					} else {
-						zone.deleteSelf(permanently: permanently) {
-							deleteBookmarks()
-						}
 					}
 				}
 			}
 		}
+
+		gFavorites.resetRecents()
 	}
 
 	var firstUndeleted : Zone? {

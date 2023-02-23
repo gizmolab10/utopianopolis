@@ -258,7 +258,7 @@ extension ZEvent {
 		return nil
 	}
 
-	func location(in view: ZView) -> CGRect {
+	func locationRect(in view: ZView) -> CGRect {
 		let  point = locationInWindow
 		let origin = view.convert(point, from: nil)
 

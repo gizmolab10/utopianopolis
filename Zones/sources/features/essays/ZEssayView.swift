@@ -569,7 +569,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	func handleClick(with event: ZEvent) -> Bool { // true means do not further process this event
 		var              result = true
 		if  !gIgnoreEvents {
-			let               rect = event.location(in: self)
+			let               rect = event.locationRect(in: self)
 			if  let         attach = hitTestForAttachment(in: rect) {
 				selectedAttachment = attach
 				resizeDragStart    = rect.origin
@@ -649,18 +649,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 
 		return false
-	}
-
-	override func mouseDown(with event: ZEvent) {
-		if  !handleClick   (with: event) {
-			super.mouseDown(with: event)
-			updateCursor    (for: event)
-		}
-	}
-
-	override func mouseMoved(with event: ZEvent) {
-//		super.mouseMoved(with: event) // not call super method: avoid a console warning when a linefeed is selected (sheesh!!!!)
-		updateCursor(for: event)
 	}
 
 	// MARK: - locked ranges

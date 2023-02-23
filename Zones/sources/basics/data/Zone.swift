@@ -1221,7 +1221,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			UNDO(self) { iUndoSelf in
-				newIdea.deleteSelf {
+				newIdea.deleteSelf { flag in
 					onCompletion?(nil)
 				}
 			}
@@ -1231,9 +1231,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func deleteSelf(permanently: Bool = false, onCompletion: Closure?) {
+	func deleteSelf(permanently: Bool = false, onCompletion: BooleanClosure?) {
 		if  isARoot {
-			onCompletion?() // deleting root would be a disaster
+			onCompletion?(false) // deleting root would be a disaster
 		} else {
 			maybeRestoreParent()
 
@@ -1266,7 +1266,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				}
 			} else {
-				let finishDeletion: Closure = { [self] in
+				let finishDeletion: BooleanClosure = { [self] flag in
 					if  let            p = parent, p != self {
 						p.fetchableCount = p.count       // delete alters the count
 
@@ -1284,7 +1284,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// //////////
 
 					bookmarksTargetingSelf.deleteZones(permanently: permanently) {
-						onCompletion?()
+						onCompletion?(flag)
 					}
 				}
 
@@ -1292,11 +1292,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				if  isInTrash {
 					moveZone(to: destroyZone) {
-						finishDeletion()
+						finishDeletion(true)
 					}
 				} else if !permanently, !isInDestroy {
 					moveZone(to: trashZone) {
-						finishDeletion()
+						finishDeletion(true)
 					}
 				} else {
 					concealAllProgeny()            // shrink gExpandedZones list
@@ -1313,10 +1313,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					if  zRecords?.cloudUnavailable ?? true, !gIsUsingCoreData {
 						moveZone(to: destroyZone) {
-							finishDeletion()
+							finishDeletion(true)
 						}
 					} else {
-						finishDeletion()
+						finishDeletion(false)
 					}
 				}
 			}
@@ -2050,7 +2050,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				text.append(t)
-				child.deleteSelf {}
+				child.deleteSelf { flag in }
 			}
 		}
 
@@ -3830,7 +3830,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "o":      importFromFile(.eSeriously)     { gRelayoutMaps(for: self) }
 				case "t":      swapWithParent                  { gRelayoutMaps(for: self) }
 				case "/":      gFocusing.grabAndFocusOn(self)  { gRelayoutMaps() }
-				case "\u{08}", kDelete: deleteSelf             { gRelayoutMaps() }
+				case "\u{08}", kDelete: deleteSelf             { flag in if flag { gRelayoutMaps() } }
 				case kSpace:   addIdea()
 				default:       break
 			}

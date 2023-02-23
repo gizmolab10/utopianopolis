@@ -290,7 +290,7 @@ class ZSearchResultsController: ZGenericTableController {
 				filteredResultsDict[dbID] = records
 
 				if  let              zone = zoneFor(record) {
-					zone.deleteSelf {}
+					zone.deleteSelf { flag in }
 				}
 
 				return true

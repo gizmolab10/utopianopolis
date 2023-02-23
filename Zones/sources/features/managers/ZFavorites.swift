@@ -522,38 +522,34 @@ class ZFavorites: ZRecords {
 	}
 
 	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, withinRecents: Bool = false) {
-		var current             = current(mustBeRecents: withinRecents)
-		if  current            == nil {
-			current             = push()
+		var current   = current(mustBeRecents: withinRecents)
+		if  current  == nil {
+			current   = push()
 		}
-
-		if  let		       root = withinRecents ? recentsGroupZone : rootZone {
-			let           zones = amongNotes    ? root.notemarks   : root.bookmarks
-			let           count = zones.count
-			if  count           > 1 {        // there is no next for count == 0 or 1
-				let      adjust = moveCurrent ? 2 : 1
-				let    maxIndex = zones.count - adjust
-				var     toIndex = down ? 0 : maxIndex
+		if  let  root = withinRecents ? recentsGroupZone : rootZone {
+			let zones = amongNotes    ? root.notemarks   : root.bookmarks
+			let count = zones.count
+			if  count > 1 {           // there is no next for count == 0 or 1
+				let    maxIndex = zones.count - (moveCurrent ? 2 : 1)
+				var     toIndex = down ? maxIndex : 0
 				if  let  target = current?.zoneLink {
 					for (index, bookmark) in zones.enumerated() {
 						if  target       == bookmark.zoneLink,
-							var n         = index .next(forward: !down, max: maxIndex) {
-
-							while  !zones[n].isBookmark {
-								if  let m = n.next(forward: !down, max: maxIndex) {
-									n     = m
+							var next      = index.next(forward: down, max: maxIndex) {
+							while    !zones[next].isBookmark {
+								if  let m = next .next(forward: down, max: maxIndex) {
+									next  = m
 								} else {
 									break
 								}
 							}
 
-							toIndex  = n
+							toIndex       = next
 						}
 					}
 
 					if  toIndex.isWithin(0 ... maxIndex) {
-						let newCurrent = zones[toIndex]
-
+						let  newCurrent = zones[toIndex]
 						if  moveCurrent {
 							moveCurrentTo(newCurrent)
 						} else {
@@ -568,6 +564,10 @@ class ZFavorites: ZRecords {
 	// MARK: - pop and push
 	// MARK: -
 
+	func resetRecents() {
+		recentsMaybe = nil // gotta re-traverse recents
+	}
+
 	@discardableResult func push(_ zone: Zone? = gHere) -> Zone? {
 		if  let target     = zone {
 			let bookmarks  = recentsTargeting(target)
@@ -580,11 +580,11 @@ class ZFavorites: ZRecords {
 			let here       = recentsGroupZone
 			let bookmark   = ZBookmarks.newBookmark(targeting: target)
 			let index      = currentRecent?.nextSiblingIndex
-			recentsMaybe   = nil // gotta re-traverse recents
 
 			here.addChildNoDuplicate(bookmark, at: index)
 			gBookmarks.addToReverseLookup(bookmark)
 			setCurrent(bookmark)
+			resetRecents()
 
 			return bookmark
 		}
@@ -595,13 +595,19 @@ class ZFavorites: ZRecords {
 	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
 		if  let zone = iZone {
 			if  zone.isInFavorites {
-				zone.deleteSelf(permanently: true) {}
+				zone.deleteSelf(permanently: true) { [self] flag in
+					if  flag {
+						resetRecents()
+					}
+				}
 
 				return true
 			} else if let bookmarks = favoritesTargeting(zone) {
 				for bookmark in bookmarks {
-					bookmark.deleteSelf(permanently: true) {}
+					bookmark.deleteSelf(permanently: true) { flag in }
 				}
+
+				resetRecents()
 
 				return true
 			}
@@ -658,7 +664,9 @@ class ZFavorites: ZRecords {
 		if  let      zone = iZone,
 			let bookmarks = workingBookmarks(for: zone) {
 			for bookmark in bookmarks {
-				bookmark.deleteSelf(permanently: true) {}
+				bookmark.deleteSelf(permanently: true) { [self] flag in
+					resetRecents()
+				}
 			}
 		}
 	}

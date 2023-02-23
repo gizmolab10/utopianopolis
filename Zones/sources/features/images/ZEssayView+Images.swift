@@ -71,7 +71,7 @@ extension ZEssayView {
 	// and possibly display a tool tip
 
 	func updateCursor(for event: ZEvent) {
-		let rect = event.location(in: self)
+		let rect = event.locationRect(in: self)
 
 		if  linkHit(at: rect) {
 			NSCursor.arrow.set()
@@ -104,13 +104,24 @@ extension ZEssayView {
 	// MARK: - mouse events
 	// MARK: -
 
-	override func mouseDragged(with event: ZEvent) {
-		super.mouseDragged(with: event)
+	override func mouseDown(with event: ZEvent) {
+		if  !handleClick   (with: event) {
+			super.mouseDown(with: event)
+			mouseMoved     (with: event)
+		}
+	}
+
+	override func mouseMoved(with event: ZEvent) {
+//		super.mouseMoved(with: event) // not call super method: avoid a console warning when a linefeed is selected (sheesh!!!!)
+		updateCursor(for: event)
 
 		if  resizeDot    != nil,
 			let     start = resizeDragStart {
 			let     flags = event.modifierFlags
-			let sizeDelta = CGSize(event.location(in: self).origin - start)
+			let    origin = event.locationRect(in: self).origin
+			let sizeDelta = CGSize(origin - start)
+
+			print("\(origin)")
 
 			updateImageResizeRect(for: sizeDelta, flags.hasCommand)
 			setNeedsDisplay()
