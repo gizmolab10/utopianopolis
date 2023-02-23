@@ -33,15 +33,65 @@ func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
 
 class ZFavorites: ZRecords {
 
-	var currentRecent    : Zone?
 	var currentFavorite  : Zone?
+	var currentRecent    : Zone?
+	var recentsMaybe     : Zone?
+	var rootsMaybe       : Zone?
 	var working          : ZoneArray { return  gIsEssayMode ? workingNotemarks : workingBookmarks }
 	var workingGroups    : ZoneArray { return  rootZone?.allGroups ?? [] }
-	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.allBookmarkProgeny) ?? [] }
-	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.allNotemarkProgeny) ?? [] }
+	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.bookmarks) ?? [] }
+	var workingNotemarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.notemarks) ?? [] }
 
-    // MARK: - initialization
-    // MARK: -
+	func working(amongNotes: Bool = false, withinRecents: Bool = false) -> ZoneArray? {
+		let root = withinRecents ? recentsGroupZone : rootZone
+
+		return amongNotes ? root?.bookmarks : root?.notemarks
+	}
+
+	// MARK: - initialization
+	// MARK: -
+
+	var rootsGroupZone: Zone {
+		var r          = rootsMaybe
+		if  r         == nil {
+			r          = getOrSetupGroup(with: kRootsName)
+			rootsMaybe = r
+		}
+
+		return r!
+	}
+
+	var recentsGroupZone: Zone {
+		var r            = recentsMaybe
+		if  r           == nil {
+			r            = getOrSetupGroup(with: kRecentsName)
+			recentsMaybe = r
+		}
+
+		return r!
+	}
+
+	func getOrSetupGroup(with name: String) -> Zone {
+		for zone in all {
+			if  zone.recordName == kRecentsName {
+				return zone
+			}
+		}
+
+		// ///////////////// //
+		// add missing group //
+		// ///////////////// //
+
+		let          group = Zone.uniqueZone(recordName: name, in: .mineID)
+		group    .zoneName = name
+		group.directAccess = .eReadOnly
+
+		group.collapse()
+		group.alterAttribute(.groupOwner, remove: false)
+		gFavoritesRoot?.addChildAndRespectOrder(group)
+
+		return group
+	}
 
 	var hasTrash: Bool {
 		for favorite in workingBookmarks {
@@ -61,49 +111,6 @@ class ZFavorites: ZRecords {
 		set {
 			gMineCloud?.favoritesZone = newValue
 		}
-	}
-
-	var rootsGroupZone: Zone {
-		for zone in all {
-			if  zone.recordName == kRootsName {
-				return zone
-			}
-		}
-
-		// /////////////////////////
-		// add missing root group //
-		// /////////////////////////
-
-		let          rootsGroup = Zone.uniqueZone(recordName: kRootsName, in: .mineID)
-		rootsGroup    .zoneName = kRootsName
-		rootsGroup.directAccess = .eReadOnly
-
-		rootsGroup.alterAttribute(.groupOwner, remove: false)
-		gFavoritesRoot?.addChildAndRespectOrder(rootsGroup)
-
-		return rootsGroup
-	}
-
-	var recentsGroupZone: Zone {
-		for zone in all {
-			if  zone.recordName == kRecentsName {
-				return zone
-			}
-		}
-
-		// /////////////////////////
-		// add missing root group //
-		// /////////////////////////
-
-		let          recentsGroup = Zone.uniqueZone(recordName: kRecentsName, in: .mineID)
-		recentsGroup    .zoneName = kRecentsName
-		recentsGroup.directAccess = .eReadOnly
-
-		recentsGroup.collapse()
-		recentsGroup.alterAttribute(.groupOwner, remove: false)
-		gFavoritesRoot?.addChildAndRespectOrder(recentsGroup)
-
-		return recentsGroup
 	}
 
 	func setup(_ onCompletion: IntClosure?) {
@@ -252,7 +259,7 @@ class ZFavorites: ZRecords {
 				}
 			} else if gCurrentEssayZone != target {
 				gEssayView?.resetCurrentEssay(target.note)
-				gSignal([.spCrumbs, .spRelayout, .spDataDetails])
+				gSignal([.spCrumbs, .sDetails])
 			}
 		}
 	}
@@ -266,11 +273,11 @@ class ZFavorites: ZRecords {
 	}
 
 	func favoritesTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
-		return targeting(target, in: rootZone?.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
+		return targeting(target, in: rootZone?.bookmarks, orSpawnsIt: orSpawnsIt)
 	}
 
 	func recentsTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
-		return targeting(target, in: recentsGroupZone.allBookmarkProgeny, orSpawnsIt: orSpawnsIt)
+		return targeting(target, in: recentsGroupZone.bookmarks, orSpawnsIt: orSpawnsIt)
 	}
 
 	func object(for id: String) -> NSObject? {
@@ -338,8 +345,7 @@ class ZFavorites: ZRecords {
 		// call every time favorites MIGHT be altered //
 		// /////////////////////////////////////////////
 
-		if  let      bookmarks = rootZone?.allBookmarkProgeny {
-			let     rootsGroup = rootsGroupZone
+		if  let      bookmarks = rootZone?.bookmarks {
 			var hasDatabaseIDs = [ZDatabaseID] ()
 			var       discards = IndexPath()
 			var    testedSoFar = ZoneArray ()
@@ -354,7 +360,7 @@ class ZFavorites: ZRecords {
 
 			for bookmark in bookmarks {
 				var         hasDuplicate = false
-				if  let            link  = bookmark.zoneLink {     // always true: allBookmarkProgeny have a zone link
+				if  let            link  = bookmark.zoneLink {     // always true: all bookmarks have a zone link
 					if             link == kTrashLink {
 						if  missingTrash {
 							missingTrash = false
@@ -374,7 +380,7 @@ class ZFavorites: ZRecords {
 							hasDuplicate   = true
 						}
 					} else if let     dbID = bookmark.linkDatabaseID, bookmark.linkIsRoot,
-							  let        p = bookmark.parentZone, p == rootsGroup {
+							  let        p = bookmark.parentZone, p == rootsGroupZone {
 						if !hasDatabaseIDs.contains(dbID) {
 							hasDatabaseIDs.append(dbID)
 						} else {
@@ -429,7 +435,7 @@ class ZFavorites: ZRecords {
 					bookmark.zoneLink = name + kColonSeparator + kColonSeparator
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? name
 
-					rootsGroup.addChildAndUpdateOrder(bookmark)
+					rootsGroupZone.addChildAndUpdateOrder(bookmark)
 				}
 			}
 
@@ -438,7 +444,7 @@ class ZFavorites: ZRecords {
 				bookmark.zoneLink = kColonSeparator + kColonSeparator + named                           // convert into a bookmark
 				bookmark.zoneName = named
 
-				rootsGroup.addChildAndUpdateOrder(bookmark)
+				rootsGroupZone.addChildAndUpdateOrder(bookmark)
 			}
 
 			// //////////////////////////////////////////////
@@ -457,7 +463,7 @@ class ZFavorites: ZRecords {
 				createRootsBookmark(named: kDestroyName)
 			}
 
-			for zone in rootsGroup.children {
+			for zone in rootsGroupZone.children {
 				zone.directAccess = .eReadOnly
 			}
 
@@ -516,42 +522,43 @@ class ZFavorites: ZRecords {
 	}
 
 	func nextBookmark(down: Bool, amongNotes: Bool = false, moveCurrent: Bool = false, withinRecents: Bool = false) {
-		var current         = current(mustBeRecents: withinRecents)
-		if  current        == nil {
-			current         = push()
+		var current             = current(mustBeRecents: withinRecents)
+		if  current            == nil {
+			current             = push()
 		}
 
-		let         recents = recentsGroupZone.children
-		let        notNotes = withinRecents ? recents.count > 0 ? recents : working : working
-		let           zones = amongNotes ? workingNotemarks : notNotes
-		let           count = zones.count
-		if  count           > 1 {            // there is no next for count == 0 or 1
-			let      adjust = moveCurrent ? 2 : 1
-			let    maxIndex = count - adjust
-			var     toIndex = down ? 0 : maxIndex
-			if  let  target = current?.zoneLink {
-				for (index, bookmark) in zones.enumerated() {
-					var next         = index
-					while target    == bookmark.zoneLink,
-						  let realNext = next.next(forward: !down, max: maxIndex) {
+		if  let		       root = withinRecents ? recentsGroupZone : rootZone {
+			let           zones = amongNotes    ? root.notemarks   : root.bookmarks
+			let           count = zones.count
+			if  count           > 1 {        // there is no next for count == 0 or 1
+				let      adjust = moveCurrent ? 2 : 1
+				let    maxIndex = zones.count - adjust
+				var     toIndex = down ? 0 : maxIndex
+				if  let  target = current?.zoneLink {
+					for (index, bookmark) in zones.enumerated() {
+						if  target       == bookmark.zoneLink,
+							var n         = index .next(forward: !down, max: maxIndex) {
 
-						if  !zones[realNext].isBookmark {
-							next     = realNext
-						} else {
-							toIndex  = realNext
+							while  !zones[n].isBookmark {
+								if  let m = n.next(forward: !down, max: maxIndex) {
+									n     = m
+								} else {
+									break
+								}
+							}
 
-							break
+							toIndex  = n
 						}
 					}
-				}
 
-				if  toIndex.isWithin(0 ... maxIndex) {
-					let newCurrent = zones[toIndex]
+					if  toIndex.isWithin(0 ... maxIndex) {
+						let newCurrent = zones[toIndex]
 
-					if  moveCurrent {
-						moveCurrentTo(newCurrent)
-					} else {
-						setAsCurrent (newCurrent, alterBigMapFocus: !amongNotes, makeVisible: false)
+						if  moveCurrent {
+							moveCurrentTo(newCurrent)
+						} else {
+							setAsCurrent (newCurrent, alterBigMapFocus: !amongNotes, makeVisible: false)
+						}
 					}
 				}
 			}
@@ -562,31 +569,22 @@ class ZFavorites: ZRecords {
 	// MARK: -
 
 	@discardableResult func push(_ zone: Zone? = gHere) -> Zone? {
-		if  let target            = zone {
-			let bookmarks         = recentsTargeting(target)
-			if  let existing      = bookmarks?.firstUndeleted,
-				maybeSetCurrentWithinHere(existing) {
+		if  let target     = zone {
+			let bookmarks  = recentsTargeting(target)
+			if  let exists = bookmarks?.firstUndeleted,
+				maybeSetCurrentWithinHere(exists) {
 
-				return existing
+				return exists
 			}
 
-			let here          = recentsGroupZone
-			var bookmark      = ZBookmarks.newBookmark(targeting: target)
-			let index         = currentRecent?.nextSiblingIndex
+			let here       = recentsGroupZone
+			let bookmark   = ZBookmarks.newBookmark(targeting: target)
+			let index      = currentRecent?.nextSiblingIndex
+			recentsMaybe   = nil // gotta re-traverse recents
+
 			here.addChildNoDuplicate(bookmark, at: index)
 			gBookmarks.addToReverseLookup(bookmark)
 			setCurrent(bookmark)
-
-			if  !here.isInRecentsGroup,
-				let b         = bookmarks?.intersection(recentsGroupZone.children) {
-				if  b.count  == 0 {
-					let index = currentRecent?.nextSiblingIndex
-					bookmark  = ZBookmarks.newBookmark(targeting: target)
-
-					recentsGroupZone.addChildNoDuplicate(bookmark, at: index)
-					gBookmarks.addToReverseLookup(bookmark)
-				}
-			}
 
 			return bookmark
 		}
@@ -600,7 +598,7 @@ class ZFavorites: ZRecords {
 				zone.deleteSelf(permanently: true) {}
 
 				return true
-			} else if let bookmarks = workingBookmarks(for: zone) {
+			} else if let bookmarks = favoritesTargeting(zone) {
 				for bookmark in bookmarks {
 					bookmark.deleteSelf(permanently: true) {}
 				}
@@ -713,7 +711,7 @@ class ZFavorites: ZRecords {
 	}
 
 	var bookmarksTargetingHere: ZoneArray? {
-		if  let bookmarks = rootZone?.allBookmarkProgeny, bookmarks.count > 0 {
+		if  let bookmarks = rootZone?.bookmarks, bookmarks.count > 0 {
 			let matches   = bookmarks.whoseTargetIntersects(with: currentTargets, orSpawnsIt: false)
 			if  matches.count > 0 {
 				return matches

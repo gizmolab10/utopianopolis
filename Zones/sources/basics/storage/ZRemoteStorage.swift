@@ -96,7 +96,7 @@ class ZRemoteStorage: NSObject {
 		let lCount  = Double(totalLoadableRecordsCount)
 		if  lCount == .zero { return kEmpty }
 		let tCount  = Double(totalRecordsCount)
-		let  ratio  = (tCount * 10.0 / lCount).float.roundedToNearestInt * 10
+		let  ratio  = (tCount * 20.0 / lCount).float.roundedToNearestInt * 5
 
 		return "\(ratio) %"
 	}

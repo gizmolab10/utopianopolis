@@ -86,11 +86,19 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 			switch type {
 				case .tGrowth:  gListGrowthMode  = gListGrowthMode .next
 				case .tConfine: gConfinementMode = gConfinementMode.next
-				default:        gIsEssayMode ? gEssayView?.nextNotemark(down: down) : gFavorites.nextBookmark(down: down, withinRecents: true)
+				default:        go(down)
 			}
 		}
 
 		gSignal([.sDetails])
+	}
+
+	func go(_ down: Bool) {
+		if  gIsEssayMode {
+			gEssayView?.nextNotemark(down: down)
+		} else {
+			gFavorites .nextBookmark(down: down, withinRecents: true)
+		}
 	}
 
 	func controlsUpdate() {

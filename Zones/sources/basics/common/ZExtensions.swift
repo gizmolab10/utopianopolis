@@ -1476,6 +1476,15 @@ extension Array {
 		return false
 	}
 
+	@discardableResult mutating func prependUnique(item: Any?, compare: CompareClosure? = nil) -> Bool {
+		if  let e = item as? Element,
+			!containsCompare(with: item, using: compare) {
+			insert(e, at: 0)
+			return true
+		}
+		return false
+	}
+
 	mutating func appendUnique(contentsOf items: Array, compare: CompareClosure? = nil) {
 		let existing = self as NSArray
 

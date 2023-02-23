@@ -46,12 +46,20 @@ struct ZWorkingListType: OptionSet {
 		var  result = ZoneArray()
 
 		zone.traverseAllProgeny { iZone in
-			let notSelf = zone != iZone
+			let    notSelf = zone != iZone // ignore root of traversal
+			let isBookmark = matchesTypeOfBookmark(for: iZone)
 
 			if  all ||
-				!groups && (!progeny || notSelf) && matchesTypeOfBookmark(for: iZone) ||
-				notSelf && ( progeny || (groups  && (iZone.count > 0))) {
-				result.appendUnique(item: iZone)
+				!groups && (!progeny || notSelf) && isBookmark ||
+				notSelf && ( progeny || isBookmark || (groups  && (iZone.count > 0))) {
+				result.prependUnique(item: iZone) { (a, b) in
+					if  let aZone = a as? Zone,
+						let bZone = b as? Zone {
+						return aZone.hasSameTarget(as:bZone)
+					}
+
+					return false
+				}
 			}
 		}
 
@@ -166,13 +174,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                    duplicateZones =          ZoneArray  ()
 	var                                          children =          ZoneArray  ()
 	var                                   bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
-	var                                   bookmarks       :          ZoneArray  { return zones(of:  .wBookmarks) }
-	var                                   notemarks       :          ZoneArray  { return zones(of:  .wNotemarks) }
-	var                                allNotemarkProgeny :          ZoneArray  { return zones(of: [.wNotemarks, .wProgeny]) }
-	var                                allBookmarkProgeny :          ZoneArray  { return zones(of: [.wBookmarks, .wProgeny]) }
-	var                                        allProgeny :          ZoneArray  { return zones(of:               .wProgeny ) }
-	var                                         allGroups :          ZoneArray  { return zones(of:               .wGroups  ) }
-	var                                               all :          ZoneArray  { return zones(of:               .wAll     ) }
+	var                                   notemarks       :          ZoneArray  { return zones(of: .wNotemarks) }
+	var                                   bookmarks       :          ZoneArray  { return zones(of: .wBookmarks) }
+	var                                        allProgeny :          ZoneArray  { return zones(of: .wProgeny  ) }
+	var                                         allGroups :          ZoneArray  { return zones(of: .wGroups   ) }
+	var                                               all :          ZoneArray  { return zones(of: .wAll      ) }
 	var                                   visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
 	var                                           getRoot :               Zone  { return parentZone?.getRoot ?? self }
 	func identifier()                                    ->             String? { return isARoot ? databaseID.rawValue : recordName }
@@ -330,14 +336,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var crossLink: ZRecord? {
 		get {
-			if  crossLinkMaybe == nil {
-				if  zoneLink?.contains("Optional(") ?? false {    // repair consequences of an old, but now fixed, bookmark bug
-					zoneLink   = zoneLink?.replacingOccurrences(of: "Optional(\"", with: kEmpty).replacingOccurrences(of: "\")", with: kEmpty)
+			if  crossLinkMaybe == nil,
+				var l           = zoneLink {
+				if  l.contains("Optional(") {    // repair consequences of an old, but now fixed, bookmark bug
+					l           = l.replacingOccurrences(of: "Optional(\"", with: kEmpty).replacingOccurrences(of: "\")", with: kEmpty)
+					zoneLink    = l
 				}
-			}
 
-			if  let l = zoneLink {
 				crossLinkMaybe = l.maybeZone
+
 			}
 
 			return crossLinkMaybe
@@ -511,6 +518,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  isBookmark {
 			d.append("B")
+
+			if  bookmarkTarget?.hasNote ?? false {
+				d.append("N")
+			}
+		} else if hasNote {
+			d.append("N")
 		}
 
 		if  count != 0 {
@@ -1734,7 +1747,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			default:     return  true
 		}
 	}
-	
+
+	func hasSameTarget(as other: Zone) -> Bool {
+		if  let    aTarget  =       bookmarkTarget?.recordName,
+			let    bTarget  = other.bookmarkTarget?.recordName {
+			return aTarget == bTarget
+		}
+
+		return false
+	}
+
 	// MARK: - traits
 	// MARK: -
 
@@ -1921,6 +1943,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deleteNote() {
 		removeTrait(for: .tNote)
+		gFavorites.pop(self)
 
 		noteMaybe     = nil
 		gNeedsRecount = true          // trigger recount on next timer fire
@@ -1943,13 +1966,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let               ALL  = flags?.exactlyAll     ?? false
 			let            OPTION  = flags?.hasOption      ?? true
 			let           SPECIAL  = flags?.exactlySpecial ?? false
-			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple, OPTION drives it to single
+			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple         (OPTION -> single)
 
 			if  ALL {
 				convertChildrenToNote()
 			} else {
-				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior essay or create one fresh (OPTION forces the latter)
+				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior or create new (OPTION -> create)
 					gCurrentEssay  = note
+
+					gFavorites.push(note?.zone)
 				}
 
 				if  SPECIAL {

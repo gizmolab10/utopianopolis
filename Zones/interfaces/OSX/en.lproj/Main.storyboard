@@ -1350,64 +1350,13 @@ CA
                                 </scroller>
                             </scrollView>
                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Bm-oC-5lh" userLabel="Essay Controls View" customClass="ZEssayControlsView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="135" width="261" height="18"/>
+                                <rect key="frame" x="0.0" y="135" width="213" height="21"/>
                                 <subviews>
-                                    <button identifier="left.arrow" toolTip="show previous" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RN5-Of-rTw" userLabel="left.arrow" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="-1" y="-2" width="22" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="Hbe-G7-0qQ"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="left.arrow" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="ek5-jE-GJg">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="Gzj-2a-iUp"/>
-                                        </connections>
-                                    </button>
-                                    <button identifier="right.arrow" toolTip="show next" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lZL-XS-Be7" userLabel="right.arrow" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="23" y="-2" width="22" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="P3Z-ez-bha"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="right.arrow" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="IwO-bS-D1R">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="G2M-R5-EDK"/>
-                                        </connections>
-                                    </button>
-                                    <button identifier="save" toolTip="save" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oEH-Lm-TYQ" userLabel="save" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="47" y="-2" width="22" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="bGK-SG-7dR"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="save" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="a6v-h8-5qw">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="RKg-Mj-n5E"/>
-                                        </connections>
-                                    </button>
-                                    <button identifier="printer" toolTip="print" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j4W-F3-JHg" userLabel="printer" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="71" y="-2" width="22" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="zag-SG-G7g"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="printer" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="gSL-L0-bUv">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="wId-4b-3QH"/>
-                                        </connections>
-                                    </button>
                                     <button identifier="exit" toolTip="save changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sJ-7J-RbI" userLabel="exit" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="95" y="-2" width="22" height="23"/>
+                                        <rect key="frame" x="-1" y="-3" width="23" height="24"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="dbx-WR-CTS"/>
+                                            <constraint firstAttribute="height" constant="21" id="EjV-sM-NJ5"/>
+                                            <constraint firstAttribute="width" constant="21" id="dbx-WR-CTS"/>
                                         </constraints>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="exit" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="rrN-Ei-4H8">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1417,23 +1366,11 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="eZA-QY-DOh"/>
                                         </connections>
                                     </button>
-                                    <button identifier="trash" toolTip="delete" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7F-Fr-RQL" userLabel="trash" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="119" y="-2" width="22" height="23"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="QKc-KO-gIL"/>
-                                        </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="trash" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="rPw-RL-NX6">
-                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                            <font key="font" metaFont="system"/>
-                                        </buttonCell>
-                                        <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="2tm-CL-1xj"/>
-                                        </connections>
-                                    </button>
                                     <button identifier="discard" toolTip="discard changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Bk-q7-w37" userLabel="cancel" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="143" y="-2" width="22" height="23"/>
+                                        <rect key="frame" x="24" y="-3" width="23" height="24"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="20" id="2od-Um-DWP"/>
+                                            <constraint firstAttribute="width" constant="21" id="2od-Um-DWP"/>
+                                            <constraint firstAttribute="height" constant="21" id="COk-D3-jDS"/>
                                         </constraints>
                                         <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="cancel" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="5fi-r5-fH0">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -1443,8 +1380,53 @@ CA
                                             <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="sWu-zt-sYJ"/>
                                         </connections>
                                     </button>
+                                    <button identifier="save" toolTip="save changes" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oEH-Lm-TYQ" userLabel="save" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="49" y="-3" width="23" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="21" id="alo-jW-X15"/>
+                                            <constraint firstAttribute="width" constant="21" id="bGK-SG-7dR"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="save" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="a6v-h8-5qw">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="RKg-Mj-n5E"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="trash" toolTip="delete and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7F-Fr-RQL" userLabel="trash" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="74" y="-3" width="23" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="21" id="QKc-KO-gIL"/>
+                                            <constraint firstAttribute="height" constant="21" id="RZ5-fq-MYH"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="trash" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="rPw-RL-NX6">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="2tm-CL-1xj"/>
+                                        </connections>
+                                    </button>
+                                    <button identifier="printer" toolTip="print" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j4W-F3-JHg" userLabel="printer" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
+                                        <rect key="frame" x="99" y="-3" width="23" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="21" id="wwJ-Yh-Uqb"/>
+                                            <constraint firstAttribute="width" constant="21" id="zag-SG-G7g"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="printer" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="gSL-L0-bUv">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="wId-4b-3QH"/>
+                                        </connections>
+                                    </button>
                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">
-                                        <rect key="frame" x="166" y="-2" width="96" height="23"/>
+                                        <rect key="frame" x="123" y="-2" width="96" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="21" id="C1y-jx-vbD"/>
+                                        </constraints>
                                         <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" style="texturedRounded" trackingMode="selectOne" id="rwX-zm-gqJ">
                                             <font key="font" metaFont="message" size="11"/>
                                             <segments>
@@ -1461,37 +1443,24 @@ CA
                                     </segmentedControl>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="RN5-Of-rTw" secondAttribute="bottom" id="7LM-JI-faM"/>
-                                    <constraint firstAttribute="bottom" secondItem="a5S-OQ-l6Y" secondAttribute="bottom" id="A4R-oy-mn9"/>
-                                    <constraint firstItem="6Bk-q7-w37" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="BTW-wo-P5G"/>
-                                    <constraint firstItem="M7F-Fr-RQL" firstAttribute="leading" secondItem="3sJ-7J-RbI" secondAttribute="trailing" constant="4" id="BZt-c9-Gd1"/>
-                                    <constraint firstItem="RN5-Of-rTw" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="DHY-Tv-9dX"/>
-                                    <constraint firstItem="a5S-OQ-l6Y" firstAttribute="leading" secondItem="6Bk-q7-w37" secondAttribute="trailing" constant="4" id="EsQ-5s-kiF"/>
-                                    <constraint firstAttribute="bottom" secondItem="6Bk-q7-w37" secondAttribute="bottom" id="HG6-vN-Dkf"/>
+                                    <constraint firstItem="a5S-OQ-l6Y" firstAttribute="leading" secondItem="j4W-F3-JHg" secondAttribute="trailing" constant="4" id="1oI-dy-IOs"/>
+                                    <constraint firstItem="a5S-OQ-l6Y" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" id="4Zv-o1-sAF"/>
+                                    <constraint firstItem="6Bk-q7-w37" firstAttribute="leading" secondItem="3sJ-7J-RbI" secondAttribute="trailing" constant="4" id="5Q0-ZE-e8z"/>
+                                    <constraint firstItem="3sJ-7J-RbI" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="6Uf-86-Uz8"/>
+                                    <constraint firstItem="3sJ-7J-RbI" firstAttribute="leading" secondItem="5Bm-oC-5lh" secondAttribute="leading" id="Djd-3D-rfm"/>
+                                    <constraint firstItem="M7F-Fr-RQL" firstAttribute="leading" secondItem="oEH-Lm-TYQ" secondAttribute="trailing" constant="4" id="Eig-C7-yg9"/>
                                     <constraint firstAttribute="trailing" secondItem="a5S-OQ-l6Y" secondAttribute="trailing" id="Hwu-Rb-vKz"/>
-                                    <constraint firstAttribute="bottom" secondItem="oEH-Lm-TYQ" secondAttribute="bottom" id="Jzh-AR-BVc"/>
-                                    <constraint firstItem="lZL-XS-Be7" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="L4H-iq-CWn"/>
-                                    <constraint firstItem="6Bk-q7-w37" firstAttribute="leading" secondItem="M7F-Fr-RQL" secondAttribute="trailing" constant="4" id="NIG-M1-LKf"/>
-                                    <constraint firstItem="M7F-Fr-RQL" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="O3u-a8-O6k"/>
-                                    <constraint firstItem="3sJ-7J-RbI" firstAttribute="leading" secondItem="j4W-F3-JHg" secondAttribute="trailing" constant="4" id="Yx9-4o-6xg"/>
-                                    <constraint firstItem="3sJ-7J-RbI" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="eaH-E6-ncg"/>
-                                    <constraint firstAttribute="bottom" secondItem="3sJ-7J-RbI" secondAttribute="bottom" id="fmD-6X-let"/>
-                                    <constraint firstItem="lZL-XS-Be7" firstAttribute="leading" secondItem="RN5-Of-rTw" secondAttribute="trailing" constant="4" id="ikd-6o-UNA"/>
-                                    <constraint firstItem="oEH-Lm-TYQ" firstAttribute="leading" secondItem="lZL-XS-Be7" secondAttribute="trailing" constant="4" id="mFr-Rv-7WT"/>
-                                    <constraint firstAttribute="bottom" secondItem="j4W-F3-JHg" secondAttribute="bottom" id="oM6-bc-QNv"/>
-                                    <constraint firstItem="a5S-OQ-l6Y" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="qEc-EM-SPW"/>
-                                    <constraint firstItem="oEH-Lm-TYQ" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="u6L-NZ-DAD"/>
-                                    <constraint firstAttribute="bottom" secondItem="M7F-Fr-RQL" secondAttribute="bottom" id="vSb-ay-J7f"/>
-                                    <constraint firstItem="j4W-F3-JHg" firstAttribute="top" secondItem="5Bm-oC-5lh" secondAttribute="top" id="vdj-Bx-Wky"/>
-                                    <constraint firstItem="j4W-F3-JHg" firstAttribute="leading" secondItem="oEH-Lm-TYQ" secondAttribute="trailing" constant="4" id="vgH-yj-x3E"/>
-                                    <constraint firstAttribute="bottom" secondItem="lZL-XS-Be7" secondAttribute="bottom" id="xjx-oZ-yvo"/>
-                                    <constraint firstItem="RN5-Of-rTw" firstAttribute="leading" secondItem="5Bm-oC-5lh" secondAttribute="leading" id="zSJ-PQ-UrS"/>
+                                    <constraint firstItem="6Bk-q7-w37" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="JGM-80-gk0"/>
+                                    <constraint firstItem="j4W-F3-JHg" firstAttribute="leading" secondItem="M7F-Fr-RQL" secondAttribute="trailing" constant="4" id="Jef-om-VLz"/>
+                                    <constraint firstItem="M7F-Fr-RQL" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="Ql2-20-EJh"/>
+                                    <constraint firstAttribute="height" constant="21" id="azi-HZ-1VY"/>
+                                    <constraint firstItem="oEH-Lm-TYQ" firstAttribute="leading" secondItem="6Bk-q7-w37" secondAttribute="trailing" constant="4" id="ecd-fc-U9d"/>
+                                    <constraint firstItem="j4W-F3-JHg" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="gk0-DO-d5f"/>
+                                    <constraint firstItem="oEH-Lm-TYQ" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="jQp-nl-ZfK"/>
                                 </constraints>
                                 <connections>
-                                    <outlet property="backwardButton" destination="RN5-Of-rTw" id="pPo-9I-Y3N"/>
                                     <outlet property="cancelButton" destination="6Bk-q7-w37" id="d1j-DG-1mn"/>
                                     <outlet property="deleteButton" destination="M7F-Fr-RQL" id="YmA-ty-Ttt"/>
-                                    <outlet property="forwardButton" destination="lZL-XS-Be7" id="Tjq-NG-SFK"/>
                                     <outlet property="hideButton" destination="3sJ-7J-RbI" id="Rdb-22-U0b"/>
                                     <outlet property="printButton" destination="j4W-F3-JHg" id="aPU-S1-pha"/>
                                     <outlet property="saveButton" destination="oEH-Lm-TYQ" id="vyu-Au-79j"/>
@@ -2569,15 +2538,13 @@ CA
         <image name="NSRevealFreestandingTemplate" width="19" height="19"/>
         <image name="NSStopProgressFreestandingTemplate" width="19" height="19"/>
         <image name="cancel" width="24" height="24"/>
-        <image name="exit" width="26" height="26"/>
-        <image name="left.arrow" width="860" height="785"/>
-        <image name="printer" width="225" height="225"/>
-        <image name="right.arrow" width="860" height="785"/>
+        <image name="exit" width="24" height="24"/>
+        <image name="printer" width="24" height="24"/>
         <image name="save" width="24" height="24"/>
         <image name="settings" width="736" height="736"/>
         <image name="show.drag.dot" width="512" height="512"/>
         <image name="show.note" width="512" height="512"/>
         <image name="show.title" width="512" height="512"/>
-        <image name="trash" width="16" height="16"/>
+        <image name="trash" width="24" height="24"/>
     </resources>
 </document>

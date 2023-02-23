@@ -883,13 +883,13 @@ class ZRecords: NSObject {
 	func    maybeZRecordForRecordID (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }
 
 	func maybeZRecordForRecordName (_ recordName: String?, trackMissing: Bool = true) -> ZRecord? {
-		if  let name = recordName {
-			if  let record = zRecordsLookup[name] {
+		if  let name          = recordName {
+			if  let    record = zRecordsLookup[name] {
 				return record
 			}
 
-			let found = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing)
-			if  found.count > 0 {
+			let found         = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing)
+			if  found.count   > 0 {
 				return found[0] as? ZRecord
 			}
 		}
