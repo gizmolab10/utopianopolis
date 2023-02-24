@@ -158,7 +158,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                     isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
 	var                                  isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
 	var                                 isInFavoritesHere :               Bool  { return spawnedByOrEquals(gFavorites.currentHere) }
-	var                                  isInRecentsGroup :               Bool  { return spawnedByOrEquals(gFavorites.recentsGroupZone) }
+	var                                  isInRecentsGroup :               Bool  { return spawnedByOrEquals(gFavorites.getRecentsGroup()) }
 	var                                    isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                                    spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
 	var                                        spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
