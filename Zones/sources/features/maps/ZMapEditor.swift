@@ -1274,7 +1274,7 @@ class ZMapEditor: ZBaseEditor {
 							p.revealParentAndSiblings()
 						}
 
-						if  gp.spawnedBy(gHere) || gp == gHere {
+						if  gp.isProgenyOf(gHere) || gp == gHere {
 							moveOut(to: gp, onCompletion: onCompletion)
 
 							return

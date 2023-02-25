@@ -199,17 +199,15 @@ class ZFavorites: ZRecords {
 	}
 
 	func setCurrent(_ zone: Zone?, mustBeRecents: Bool = false) {
-		let useRecents = mustBeRecents || currentHere.isInRecentsGroup || (zone?.isInRecentsGroup ?? false)
+		currentRecent = zone
 
-		if  useRecents {
-			currentRecent   = zone
-		} else {
+		if !mustBeRecents, !currentHere.isInRecentsGroup, !(zone?.isInRecentsGroup ?? false) {
 			currentFavorite = zone
 		}
 	}
 
 	func maybeSetCurrentWithinHere(_ zone: Zone) -> Bool {
-		if  let here = hereZoneMaybe, zone.spawnedBy(here) {
+		if  let here = hereZoneMaybe, zone.isProgenyOf(here) {
 			if  here.isInRecentsGroup {
 				currentRecent   = zone
 			} else {
@@ -570,10 +568,10 @@ class ZFavorites: ZRecords {
 
 	@discardableResult func push(_ zone: Zone? = gHere) -> Zone? {
 		if  let    target = zone {
-			let bookmarks = recentsTargeting(target)
+			let   recents = recentsTargeting(target)
 			let     index = currentRecent?.nextSiblingIndex
 			let      here = getRecentsGroup()
-			if  let exant = bookmarks?.firstUndeleted,
+			if  let exant = recents?.firstUndeleted,
 				maybeSetCurrentWithinHere(exant) {
 
 				return exant

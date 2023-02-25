@@ -157,12 +157,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                       isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                                     isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
 	var                                  isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
-	var                                 isInFavoritesHere :               Bool  { return spawnedByOrEquals(gFavorites.currentHere) }
-	var                                  isInRecentsGroup :               Bool  { return spawnedByOrEquals(gFavorites.getRecentsGroup()) }
+	var                                 isInFavoritesHere :               Bool  { return isProgenyOfOrEqualTo(gFavorites.currentHere) }
+	var                                  isInRecentsGroup :               Bool  { return isProgenyOfOrEqualTo(gFavorites.getRecentsGroup()) }
 	var                                    isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
-	var                                    spawnedByAGrab :               Bool  { return spawnedByAny(of: gSelecting.currentMapGrabs) }
-	var                                        spawnCycle :               Bool  { return spawnedByAGrab || dropCycle }
-	var                                         dropCycle :               Bool  { return gDragging.draggedZones.contains(self) || spawnedByAny(of: gDragging.draggedZones) || (bookmarkTarget?.dropCycle ?? false) }
+	var                                    isProgenyOfAGrab :               Bool  { return isProgenyOfAny(of: gSelecting.currentMapGrabs) }
+	var                                        spawnCycle :               Bool  { return isProgenyOfAGrab || dropCycle }
+	var                                         dropCycle :               Bool  { return gDragging.draggedZones.contains(self) || isProgenyOfAny(of: gDragging.draggedZones) || (bookmarkTarget?.dropCycle ?? false) }
 	var                                        isInAGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
 	var                                     isAGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
 	var                                       userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
@@ -1423,15 +1423,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			moveZone(into: there, at: gListsGrowDown ? nil : 0, orphan: true) {
 				onCompletion?()
 			}
-		} else if !there.isABookmark(spawnedBy: self),
-				  let targetLink = there.crossLink {
+		} else if let bookmark = there.bookmarkTarget {
 
 			// ///////////////////////////////
 			// MOVE ZONE THROUGH A BOOKMARK //
 			// ///////////////////////////////
 
 			var     movedZone = self
-			let    targetDBID = targetLink.databaseID
+			let    targetDBID = bookmark.databaseID
 			let       sameMap = databaseID == targetDBID
 			let grabAndTravel = {
 				there.focusOnBookmarkTarget() { object, kind in
@@ -2223,10 +2222,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func focusOnBookmarkTarget(atArrival: @escaping SignalClosure) {
-		if  let    targetZRecord = crossLink,
-			let targetRecordName = targetZRecord.recordName {
-			let       targetDBID = targetZRecord.databaseID
-			let           target = bookmarkTarget
+		if  let           target = bookmarkTarget,
+			let targetRecordName = target.recordName {
+			let       targetDBID = target.databaseID
 
 			let complete : SignalClosure = { [self] (iObject, kind) in
 				showTopLevelFunctions()
@@ -2241,12 +2239,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				gFavorites.currentRecent   = self
 			}
 
-			if  let t = target, t.spawnedByOrEquals(gHereMaybe) {
-				if !t.isGrabbed {
-					t.asssureIsVisible()
-					t.grab()
+			if      target.isProgenyOfOrEqualTo(gHereMaybe) {
+				if !target.isGrabbed {
+					target.asssureIsVisible()
+					target.grab()
 				} else {
-					gHere = t
+					gHere = target
 				}
 
 				gShowSmallMapForIOS = targetDBID.isFavoritesDB
@@ -2262,17 +2260,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// TRAVEL TO A DIFFERENT MAP //
 					// ///////////////////////// //
 
-					if  let here = target { // e.g., default root favorite
-						gFocusing.focusOnGrab(.eSelected) {
-							here.expandGrabAndFocusOn()
-							complete(gHere, .spRelayout)
-						}
-					} else if let here = gCloud?.maybeZoneForRecordName(targetRecordName) {
-						here.expandGrabAndFocusOn()
-						gFocusing.focusOnGrab {
-							complete(gHere, .spRelayout)
-						}
-					} else {
+					target.expandGrabAndFocusOn()
+					gFocusing.focusOnGrab(.eSelected) {
 						complete(gHere, .spRelayout)
 					}
 				} else {
@@ -2449,7 +2438,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .spBigMap])
+			gSignal([.spCrumbs, .spDataDetails])
 		}
 	}
 
@@ -2489,7 +2478,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		// separate zones that are connected back to themselves
 
 		for (index, zone) in zones.enumerated() {
-			if  spawnedBy(zone) {
+			if  isProgenyOf(zone) {
 				cyclicals.insert(index)
 			} else if let parent = zone.parentZone {
 				let siblingIndex = zone.siblingIndex
@@ -2602,28 +2591,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: - traverse ancestors
 	// MARK: -
 
-	func isABookmark(spawnedBy: Zone) -> Bool {
-		if  let          link = crossLink {
-			let      linkDBID = link.databaseID
-			var      linkName = link.recordName
-			let spawnedByName = spawnedBy.recordName
-			var       visited = StringsArray ()
-
-			while let    name = linkName, !visited.contains(name) {
-				visited.append(name)
-
-				if  name     == spawnedByName {
-					return true
-				}
-
-				let newLink   = gRemoteStorage.zRecords(for: linkDBID)?.maybeZoneForRecordName(name)
-				linkName      = newLink?.recordName
-			}
-		}
-
-		return false
-	}
-
 	var isVisible: Bool {
 		var isVisible = true
 
@@ -2668,11 +2635,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func spawnedByOrEquals(_ iZone: Zone?) -> Bool { return self == iZone || spawnedBy(iZone) }
-	func spawnedBy(_ iZone: Zone?) -> Bool { return iZone == nil ? false : spawnedByAny(of: [iZone!]) }
+	func isProgenyOfOrEqualTo(_ iZone: Zone?) -> Bool { return self == iZone || isProgenyOf(iZone) }
+	func isProgenyOf(_ iZone: Zone?) -> Bool { return iZone == nil ? false : isProgenyOfAny(of: [iZone!]) }
 	func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
-	func spawnedByAny(of zones: ZoneArray) -> Bool {
+	func isProgenyOfAny(of zones: ZoneArray) -> Bool {
 		var wasSpawned = false
 
 		if  zones.count > 0 {
@@ -3505,7 +3472,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func ungrabProgeny() {
 		for     grabbed in gSelecting.currentMapGrabs {
-			if  grabbed != self && grabbed.spawnedBy(self) {
+			if  grabbed != self && grabbed.isProgenyOf(self) {
 				grabbed.ungrab()
 			}
 		}

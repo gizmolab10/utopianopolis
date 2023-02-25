@@ -353,7 +353,7 @@ class ZSelecting: NSObject {
                 gCurrentBrowseLevel = level
             }
 
-			gSignal([.spCrumbs, .sDetails, .spSmallMap, .spPreferences])                // so color wells and breadcrumbs are updated
+			gSignal([.spCrumbs, .sDetails, .spPreferences])                // so color wells and breadcrumbs are updated
         }
     }
     

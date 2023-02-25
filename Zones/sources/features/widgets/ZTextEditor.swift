@@ -418,34 +418,38 @@ class ZTextEditor: ZTextView {
 
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
-    func moveOut(_ iMoveOut: Bool) {
-        let revealed = currentlyEditedZone?.isExpanded ?? false
+	func moveOut(_ iMoveOut: Bool) {
+		let revealed = currentlyEditedZone?.isExpanded ?? false
 
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
 		let editAtOffset: FloatClosure = { [self] iOffset in
-            if  let grabbed = gSelecting.firstSortedGrab {
-                gSelecting.ungrabAll()
-                edit(grabbed, setOffset: iOffset, immediately: revealed)
-            }
+			if  let grabbed = gSelecting.firstSortedGrab {
+				gSelecting.ungrabAll()
+				edit(grabbed, setOffset: iOffset, immediately: revealed)
+			}
 
 			gTextEditorHandlesArrows = false       // done last
-        }
+		}
 
-        if  iMoveOut {
-            quickStopCurrentEdit()
-            gMapEditor.moveOut { reveal in
-                editAtOffset(100000000.0)
-            }
-        } else if currentlyEditedZone?.children.count ?? 0 > 0 {
-            quickStopCurrentEdit()
-            gMapEditor.moveInto { [self] reveal in
-				gRelayoutMaps(for: currentlyEditedZone) {
+		if  iMoveOut {
+			quickStopCurrentEdit()
+			gMapEditor.moveOut { reveal in
+				editAtOffset(100000000.0)
+			}
+		} else if currentlyEditedZone?.children.count ?? 0 > 0 {
+			quickStopCurrentEdit()
+			gMapEditor.moveInto { [self] reveal in
+				if  !reveal {
 					editAtOffset(.zero)
+				} else {
+					gRelayoutMaps(for: currentlyEditedZone) {
+						editAtOffset(.zero)
+					}
 				}
-            }
-        }
-    }
+			}
+		}
+	}
 
 	func editingOffset(_ atStart: Bool) -> CGFloat {
         return currentTextWidget?.offset(for: selectedRange, atStart) ?? .zero

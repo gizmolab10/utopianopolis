@@ -674,7 +674,7 @@ extension ZoneArray {
 					if  let  zoneTarget = zone.bookmarkTarget, !zone.isDeleted,
 						dbid           == zoneTarget.dbid {
 
-						if  zoneTarget == target || (orSpawnsIt && target.spawnedBy(zoneTarget)) {
+						if  zoneTarget == target || (orSpawnsIt && target.isProgenyOf(zoneTarget)) {
 							intersection.append(zone)
 						}
 					}
