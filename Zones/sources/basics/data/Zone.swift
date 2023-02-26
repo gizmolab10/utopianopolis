@@ -1393,14 +1393,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func restoreParentFrom(_ root: Zone?) {
-		root?.traverseProgeny { (iCandidate) -> (ZTraverseStatus) in
+		root?.traverseAllProgeny { iCandidate in
 			if  iCandidate.children.contains(self) {
 				self.parentZone = iCandidate
-
-				return .eStop
 			}
-
-			return .eContinue
 		}
 	}
 
