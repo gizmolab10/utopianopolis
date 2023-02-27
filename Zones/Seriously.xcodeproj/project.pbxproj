@@ -182,6 +182,9 @@
 		A72808B224A8688C00238889 /* ZDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72808B124A8688C00238889 /* ZDebug.swift */; };
 		A72808B324A8688C00238889 /* ZDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72808B124A8688C00238889 /* ZDebug.swift */; };
 		A72808B424A8688C00238889 /* ZDebug.swift in Sources */ = {isa = PBXBuildFile; fileRef = A72808B124A8688C00238889 /* ZDebug.swift */; };
+		A7283E0D29AC04970033A558 /* ZFavorites+pushpop.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7283E0C29AC04970033A558 /* ZFavorites+pushpop.swift */; };
+		A7283E0E29AC04970033A558 /* ZFavorites+pushpop.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7283E0C29AC04970033A558 /* ZFavorites+pushpop.swift */; };
+		A7283E0F29AC04970033A558 /* ZFavorites+pushpop.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7283E0C29AC04970033A558 /* ZFavorites+pushpop.swift */; };
 		A7290E7E2920DD8F00716109 /* ZFavoritesTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7290E7D2920DD8F00716109 /* ZFavoritesTogglingView.swift */; };
 		A7290E7F2920DD8F00716109 /* ZFavoritesTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7290E7D2920DD8F00716109 /* ZFavoritesTogglingView.swift */; };
 		A7290E802920DD8F00716109 /* ZFavoritesTogglingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7290E7D2920DD8F00716109 /* ZFavoritesTogglingView.swift */; };
@@ -584,6 +587,7 @@
 		A7245E0221729B18003D4BDA /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Details.storyboard; sourceTree = "<group>"; };
 		A7245E0821729FFE003D4BDA /* ZHelpController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpController.swift; sourceTree = "<group>"; };
 		A72808B124A8688C00238889 /* ZDebug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebug.swift; sourceTree = "<group>"; };
+		A7283E0C29AC04970033A558 /* ZFavorites+pushpop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZFavorites+pushpop.swift"; sourceTree = "<group>"; };
 		A7290E7D2920DD8F00716109 /* ZFavoritesTogglingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFavoritesTogglingView.swift; sourceTree = "<group>"; };
 		A72A0B6823B13CE6002A97E9 /* ZBaseEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBaseEditor.swift; sourceTree = "<group>"; };
 		A72A470A299436C10087E2B7 /* ZImageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZImageAttachment.swift; sourceTree = "<group>"; };
@@ -1052,6 +1056,7 @@
 			children = (
 				0CAC18E02006A84800D641C4 /* ZBookmarks.swift */,
 				0C63DA6C1FCF837C005EC548 /* ZFavorites.swift */,
+				A7283E0C29AC04970033A558 /* ZFavorites+pushpop.swift */,
 				A73175632638CCA900DF1CE5 /* ZFilesRegistry.swift */,
 				A752FC2B24512D7700603A54 /* ZoneArray.swift */,
 				0C43EFC921010F62000976CE /* ZRecords.swift */,
@@ -1608,6 +1613,7 @@
 				A7B48AA223E0E80C00654DBD /* ZHelpLineView.swift in Sources */,
 				0C39B2AD1F182EBB0091F4D1 /* ZConstants.swift in Sources */,
 				A741C78A27DC0A0D00149200 /* ZFocusing.swift in Sources */,
+				A7283E0D29AC04970033A558 /* ZFavorites+pushpop.swift in Sources */,
 				A7D947DF21EC127E00B7DBFC /* ZSearchResultsController.swift in Sources */,
 				0C2E22D21F75BEEA00B50A71 /* ZPhoneController.swift in Sources */,
 				A78460EC2727B332006A4075 /* ZGeometry.swift in Sources */,
@@ -1773,6 +1779,7 @@
 				A7B48AA723E0E80C00654DBD /* ZoneTextWidget.swift in Sources */,
 				A72A470D299436C10087E2B7 /* ZImageAttachment.swift in Sources */,
 				A700F95024AFBFFB009C87AA /* seriously.xcdatamodel in Sources */,
+				A7283E0F29AC04970033A558 /* ZFavorites+pushpop.swift in Sources */,
 				A77976F924996EC200A6734B /* ZHelpDotsExemplarController.swift in Sources */,
 				0C43EFD921010F62000976CE /* ZRemoteStorage.swift in Sources */,
 				0C39B3151F182EBB0091F4D1 /* ZAction.swift in Sources */,
@@ -1875,6 +1882,7 @@
 				A706443C246F720700F90B86 /* ZMapControlsView.swift in Sources */,
 				0C4118DF1FA8110200A58004 /* ZAlerts.swift in Sources */,
 				A741C78B27DC0A0D00149200 /* ZFocusing.swift in Sources */,
+				A7283E0E29AC04970033A558 /* ZFavorites+pushpop.swift in Sources */,
 				0C63DA6E1FCF837D005EC548 /* ZFavorites.swift in Sources */,
 				A78460ED2727B332006A4075 /* ZGeometry.swift in Sources */,
 				A752FC33245222D200603A54 /* ZoneContextualMenu.swift in Sources */,

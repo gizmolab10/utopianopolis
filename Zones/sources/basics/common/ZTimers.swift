@@ -105,6 +105,17 @@ class ZTimers: NSObject {
 			}
 
 			// //
+			// some timers should not be triggered when app is hidden (the default)
+			// //
+
+			var requiresFront = false
+
+			switch tid {
+				case .tStartup, .tLicense, .tRecount, .tCloudAvailable: requiresFront = true
+				default: break
+			}
+
+			// //
 			// associate closure with timer id
 			// //
 
@@ -130,10 +141,10 @@ class ZTimers: NSObject {
 			// //
 
 			let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tPersist]  // only these tasks repeat (forever)
-			let repeats = repeaters.contains(tid)
+			let repeats               = repeaters.contains(tid)
 
-			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats) {
-				gCurrentTimerID     = timerID      // this is for cloudStatusLabel, in data details
+			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, requiresFront: requiresFront) {
+				gCurrentTimerID       = timerID      // this is for cloudStatusLabel, in data details
 
 				block()
 
@@ -150,12 +161,15 @@ class ZTimers: NSObject {
 		}
 	}
 
-	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping Closure) {
+	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, requiresFront: Bool = false, block: @escaping Closure) {
 		if  let id = timerID {
 			FOREGROUND(forced: true) { [self] in // timers require a runloop
 				timers[id]?.invalidate() // do not leave the old one "floating around and uncontrollable"
 				timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { iTimer in
-					block()
+					let name = NSWorkspace.shared.frontmostApplication?.localizedName
+					if  !requiresFront || name == "Seriously" {
+						block()
+					}
 				})
 			}
 		}

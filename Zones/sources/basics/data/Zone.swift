@@ -15,185 +15,126 @@ import Cocoa
 import UIKit
 #endif
 
-enum ZoneAccess: Int, CaseIterable {
-	case eInherit
-	case eReadOnly
-	case eProgenyWritable
-	case eWritable
-
-	static func isDirectlyValid(_ value: Int) -> Bool {
-		return ZoneAccess.allCases.filter { iItem -> Bool in
-			return iItem != .eInherit && iItem.rawValue == value
-		} != []
-	}
-}
-
-struct ZWorkingListType: OptionSet {
-	let rawValue : Int
-	
-	init(rawValue: Int) { self.rawValue = rawValue }
-
-	static let wBookmarks = ZWorkingListType(rawValue: 1 << 0)
-	static let wNotemarks = ZWorkingListType(rawValue: 1 << 1)
-	static let   wProgeny = ZWorkingListType(rawValue: 1 << 2)
-	static let    wGroups = ZWorkingListType(rawValue: 1 << 3)
-	static let       wAll = ZWorkingListType(rawValue: 1 << 4)
-
-	func matchingZones(within zone: Zone) -> ZoneArray {
-		let progeny = contains(.wProgeny)
-		let  groups = contains(.wGroups)
-		let     all = contains(.wAll)
-		var  result = ZoneArray()
-
-		zone.traverseAllProgeny { iZone in
-			let    notSelf = zone != iZone // ignore root of traversal
-			let isBookmark = matchesTypeOfBookmark(for: iZone)
-
-			if  all ||
-				!groups && (!progeny || notSelf) && isBookmark ||
-				notSelf && ( progeny || isBookmark || (groups  && (iZone.count > 0))) {
-				result.prependUnique(item: iZone) { (a, b) in
-					if  let aZone = a as? Zone,
-						let bZone = b as? Zone {
-						return aZone.hasSameTarget(as:bZone)
-					}
-
-					return false
-				}
-			}
-		}
-
-		return result
-	}
-
-	func matchesTypeOfBookmark(for zone: Zone) -> Bool {
-		guard let target = zone.bookmarkTarget else { return false }
-
-		return contains(.wBookmarks) || (contains(.wNotemarks) && target.hasNote)
-	}
-
-}
-
 @objc (Zone)
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
-	@NSManaged var                              zoneOrder :           NSNumber?
-	@NSManaged var                              zoneCount :           NSNumber?
-	@NSManaged var                             zoneAccess :           NSNumber?
-	@NSManaged var                            zoneProgeny :           NSNumber?
-	@NSManaged var                              parentRID :             String?
-	@NSManaged var                               zoneName :             String?
-	@NSManaged var                               zoneLink :             String?
-	@NSManaged var                              zoneColor :             String?
-	@NSManaged var                             parentLink :             String?
-	@NSManaged var                             zoneAuthor :             String?
-	@NSManaged var                         zoneAttributes :             String?
-	var                                    hyperLinkMaybe :             String?
-	var                                        emailMaybe :             String?
-	var                                        assetMaybe :            CKAsset?
-	var                                        colorMaybe :             ZColor?
-	var                                         noteMaybe :              ZNote?
-	var                                    crossLinkMaybe :            ZRecord?
-	var                                   parentZoneMaybe :               Zone?
-	var                                              root :               Zone?
-	var                                        groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
-	var                                    bookmarkTarget :               Zone? { return crossLink as? Zone }
-	var                                       destroyZone :               Zone? { return zRecords?.destroyZone }
-	var                                         trashZone :               Zone? { return zRecords?.trashZone }
-	var                                          siblings :          ZoneArray? { return parentZone?.children }
-	var                                          manifest :          ZManifest? { return zRecords?.manifest }
-	var                                            widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
-	var                                      widgetObject :      ZWidgetObject? { return widget?.widgetObject }
-	var                                    linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
-	var                             maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
-	var                                       widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color : kBlackColor }
-	var                                         textColor :             ZColor? { return isDragged ? gActiveColor : widgetColor }
-	var                                      lighterColor :             ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
-	var                                    highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
-	var                                         emailLink :             String? { return email == nil ? nil : kMailTo + email! }
-	var                                    linkRecordName :             String? { return zoneLink?.maybeRecordName }
-	var                                     lowestExposed :                Int? { return exposed(upTo: highestExposed) }
-	var                                         halfCount :                Int  { return Int((Double(count) + 0.5) / 2.0) }
-	var                                             count :                Int  { return children.count }
-	var                                          dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
-	var                                       clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
-	override var                                emptyName :             String  { return kEmptyIdea }
-	override var                                debugName :             String  { return zoneName ?? kUnknown }
-	override var                              description :             String  { return decoratedName }
-	override var                            unwrappedName :             String  { return zoneName ?? (isFavoritesRoot ? kFavoritesRootName : emptyName) }
-	override var                            decoratedName :             String  { return decoration + unwrappedName }
-	override var                          cloudProperties :       StringsArray  { return Zone.cloudProperties }
-	override var                  optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
-	override var                               isBrandNew :               Bool  { return zoneName == nil || zoneName == kEmpty }
-	override var                              isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
-	override var                                  isAZone :               Bool  { return true }
-	override var                                  isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
-	override var                             passesFilter :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
-	var                                         isDragged :               Bool  { return gDragging.isDragged(self) }
-	var                                        isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
-	var                                        isBookmark :               Bool  { return bookmarkTarget != nil }
-	var                                hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
-	var                                   dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
-	var                                canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
-	var                                  hasBadRecordName :               Bool  { return recordName == nil }
-	var                                     showRevealDot :               Bool  { return count > 0 || isTraveller }
-	var                                     hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
-	var                                     hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
-	var                                     hasChildNotes :               Bool  { return zonesWithNotes.count > 1 }
-	var                                      hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
-	var                                       hasSiblings :               Bool  { return parentZoneMaybe?.count ?? 0 > 1 }
-	var                                       isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
-	var                                        linkIsRoot :               Bool  { return linkRecordName == kRootName }
-	var                                        isSelected :               Bool  { return gSelecting.isSelected(self) }
-	var                                         isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-	var                                          hasColor :               Bool  { return zoneColor != nil && !zoneColor!.isEmpty }
-	var                                          hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
-	var                                          hasAsset :               Bool  { return hasTrait(for: .tAssets) }
-	var                                           hasNote :               Bool  { return hasTrait(for: .tNote) }
-	var                                    hasNoteOrEssay :               Bool  { return hasTrait(matchingAny: [.tNote, .tEssay]) }
-	var                                         isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
-	var                                        isInBigMap :               Bool  { return root?.isBigMapRoot       ?? false }
-	var                                        isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
-	var                                       isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
-	var                                     isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
-	var                                  isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
-	var                                 isInFavoritesHere :               Bool  { return isProgenyOfOrEqualTo(gFavorites.currentHere) }
-	var                                  isInRecentsGroup :               Bool  { return isProgenyOfOrEqualTo(gFavorites.getRecentsGroup()) }
-	var                                    isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
+	@NSManaged var                                zoneOrder :           NSNumber?
+	@NSManaged var                                zoneCount :           NSNumber?
+	@NSManaged var                               zoneAccess :           NSNumber?
+	@NSManaged var                              zoneProgeny :           NSNumber?
+	@NSManaged var                                parentRID :             String?
+	@NSManaged var                                 zoneName :             String?
+	@NSManaged var                                 zoneLink :             String?
+	@NSManaged var                                zoneColor :             String?
+	@NSManaged var                               parentLink :             String?
+	@NSManaged var                               zoneAuthor :             String?
+	@NSManaged var                           zoneAttributes :             String?
+	var                                      hyperLinkMaybe :             String?
+	var                                          emailMaybe :             String?
+	var                                          assetMaybe :            CKAsset?
+	var                                          colorMaybe :             ZColor?
+	var                                           noteMaybe :              ZNote?
+	var                                      crossLinkMaybe :            ZRecord?
+	var                                     parentZoneMaybe :               Zone?
+	var                                                root :               Zone?
+	var                                          groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
+	var                                      bookmarkTarget :               Zone? { return crossLink as? Zone }
+	var                                         destroyZone :               Zone? { return zRecords?.destroyZone }
+	var                                           trashZone :               Zone? { return zRecords?.trashZone }
+	var                                             getRoot :               Zone  { return parentZone?.getRoot ?? self }
+	var                                            siblings :          ZoneArray? { return parentZone?.children }
+	var                                            manifest :          ZManifest? { return zRecords?.manifest }
+	var                                              widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
+	var                                        widgetObject :      ZWidgetObject? { return widget?.widgetObject }
+	var                                      linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
+	var                               maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
+	var                                         widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color : kBlackColor }
+	var                                           textColor :             ZColor? { return isDragged ? gActiveColor : widgetColor }
+	var                                        lighterColor :             ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
+	var                                      highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
+	var                                            dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
+	var                                       lowestExposed :                Int? { return exposed(upTo: highestExposed) }
+	var                                           halfCount :                Int  { return Int((Double(count) + 0.5) / 2.0) }
+	var                                               count :                Int  { return children.count }
+	var                                           emailLink :             String? { return email == nil ? nil : kMailTo + email! }
+	var                                      linkRecordName :             String? { return zoneLink?.maybeRecordName }
+	var                                         clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
+	override var                                  emptyName :             String  { return kEmptyIdea }
+	override var                                  debugName :             String  { return zoneName ?? kUnknown }
+	override var                                description :             String  { return decoratedName }
+	override var                              unwrappedName :             String  { return zoneName ?? (isFavoritesRoot ? kFavoritesRootName : emptyName) }
+	override var                              decoratedName :             String  { return decoration + unwrappedName }
+	override var                            cloudProperties :       StringsArray  { return Zone.cloudProperties }
+	override var                    optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
+	override var                                 isBrandNew :               Bool  { return zoneName == nil || zoneName == kEmpty }
+	override var                                isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
+	override var                                    isAZone :               Bool  { return true }
+	override var                                    isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
+	override var                               passesFilter :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
+	var                                           isDragged :               Bool  { return gDragging.isDragged(self) }
+	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
+	var                                          isBookmark :               Bool  { return bookmarkTarget != nil }
+	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
+	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
+	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
+	var                                    hasBadRecordName :               Bool  { return recordName == nil }
+	var                                       showRevealDot :               Bool  { return count > 0 || isTraveller }
+	var                                       hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
+	var                                       hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
+	var                                       hasChildNotes :               Bool  { return zonesWithNotes.count > 1 }
+	var                                        hasHyperlink :               Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
+	var                                         hasSiblings :               Bool  { return parentZoneMaybe?.count ?? 0 > 1 }
+	var                                         isTraveller :               Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
+	var                                          linkIsRoot :               Bool  { return linkRecordName == kRootName }
+	var                                          isSelected :               Bool  { return gSelecting.isSelected(self) }
+	var                                           isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
+	var                                            hasColor :               Bool  { return zoneColor != nil && !zoneColor!.isEmpty }
+	var                                            hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
+	var                                            hasAsset :               Bool  { return hasTrait(for: .tAssets) }
+	var                                             hasNote :               Bool  { return hasTrait(for: .tNote) }
+	var                                      hasNoteOrEssay :               Bool  { return hasTrait(matchingAny: [.tNote, .tEssay]) }
+	var                                           isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
+	var                                          isInBigMap :               Bool  { return root?.isBigMapRoot       ?? false }
+	var                                          isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
+	var                                         isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
+	var                                       isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
+	var                                    isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
+	var                                   isInFavoritesHere :               Bool  { return isProgenyOfOrEqualTo(gFavorites.currentHere) }
+	var                                    isInRecentsGroup :               Bool  { return isProgenyOfOrEqualTo(gFavorites.getRecentsGroup()) }
+	var                                      isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
 	var                                    isProgenyOfAGrab :               Bool  { return isProgenyOfAny(of: gSelecting.currentMapGrabs) }
-	var                                        spawnCycle :               Bool  { return isProgenyOfAGrab || dropCycle }
-	var                                         dropCycle :               Bool  { return gDragging.draggedZones.contains(self) || isProgenyOfAny(of: gDragging.draggedZones) || (bookmarkTarget?.dropCycle ?? false) }
-	var                                        isInAGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
-	var                                     isAGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
-	var                                       userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
-	var                                      userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
-	var                              userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
-	var                                       hideDragDot :               Bool  { return isExpanded && (isFavoritesHere || (kIsPhone && (self == gHereMaybe))) }
-	var                                   inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
-	var                                            traits =   ZTraitDictionary  ()
-	var                                    duplicateZones =          ZoneArray  ()
-	var                                          children =          ZoneArray  ()
-	var                                   bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
-	var                                   notemarks       :          ZoneArray  { return zones(of: .wNotemarks) }
-	var                                   bookmarks       :          ZoneArray  { return zones(of: .wBookmarks) }
-	var                                        allProgeny :          ZoneArray  { return zones(of: .wProgeny  ) }
-	var                                         allGroups :          ZoneArray  { return zones(of: .wGroups   ) }
-	var                                               all :          ZoneArray  { return zones(of: .wAll      ) }
-	var                                   visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
-	var                                           getRoot :               Zone  { return parentZone?.getRoot ?? self }
-	func identifier()                                    ->             String? { return isARoot ? databaseID.rawValue : recordName }
-	func toolName()                                      ->             String? { return clippedName }
-	func toolColor()                                     ->             ZColor? { return color?.lighter(by: 3.0) }
-	func maybeTraitFor(_ iType: ZTraitType)              ->             ZTrait? { return traits[iType] }
-	func zones(of type: ZWorkingListType)                ->           ZoneArray { return type.matchingZones(within: self) }
-	static func randomZone(in dbID: ZDatabaseID)         ->               Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
-	static func object(for id: String, isExpanded: Bool) ->           NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
-	override func hasMissingChildren()                   ->               Bool  { return count < fetchableCount }
-	override func orphan()                                                      { parentZone?.removeChild(self) }
-	func updateRootFromParent()                                                 { setRoot(getRoot) }
-	func setRoot(_ iRoot: Zone?)                                                { if let r = iRoot { root = r } }
-	func toggleShowing()                                                        { isShowing ? hide() : show() }
-	func recount()                                                              { updateAllProgenyCounts() }
+	var                                          spawnCycle :               Bool  { return isProgenyOfAGrab || dropCycle }
+	var                                           dropCycle :               Bool  { return gDragging.draggedZones.contains(self) || isProgenyOfAny(of: gDragging.draggedZones) || (bookmarkTarget?.dropCycle ?? false) }
+	var                                          isInAGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
+	var                                       isAGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
+	var                                         userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
+	var                                        userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
+	var                                userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
+	var                                         hideDragDot :               Bool  { return isExpanded && (isFavoritesHere || (kIsPhone && (self == gHereMaybe))) }
+	var                                     inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
+	var                                              traits =   ZTraitDictionary  ()
+	var                                      duplicateZones =          ZoneArray  ()
+	var                                            children =          ZoneArray  ()
+	var                                     bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
+	var                                           notemarks :          ZoneArray  { return zones(of: .wNotemarks) }
+	var                                           bookmarks :          ZoneArray  { return zones(of: .wBookmarks) }
+	var                                          allProgeny :          ZoneArray  { return zones(of: .wProgeny  ) }
+	var                                           allGroups :          ZoneArray  { return zones(of: .wGroups   ) }
+	var                                                 all :          ZoneArray  { return zones(of: .wAll      ) }
+	var                                     visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
+	func          zones(of type: ZWorkingListType)         ->          ZoneArray  { return type.matchingZones(within: self) }
+	func          identifier()                             ->             String? { return isARoot ? databaseID.rawValue : recordName }
+	func          toolName()                               ->             String? { return clippedName }
+	func          toolColor()                              ->             ZColor? { return color?.lighter(by: 3.0) }
+	func          maybeTraitFor(_ iType: ZTraitType)       ->             ZTrait? { return traits[iType] }
+	static   func object(for id: String, isExpanded: Bool) ->           NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
+	static   func randomZone(in dbID: ZDatabaseID)         ->               Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
+	override func hasMissingChildren()                     ->               Bool  { return count < fetchableCount }
+	override func orphan()                                                        { parentZone?.removeChild(self) }
+	func          updateRootFromParent()                                          { setRoot(getRoot) }
+	func          setRoot(_ iRoot: Zone?)                                         { if let r = iRoot { root = r } }
+	func          toggleShowing()                                                 { isShowing ? hide() : show() }
+	func          recount()                                                       { updateAllProgenyCounts() }
 
 	override var isInScope: Bool {
 		if  root == nil {
@@ -2229,11 +2170,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			var there: Zone?
 
-			if  isInFavorites {
-				gFavorites.currentFavorite = self
-			} else if isInRecentsGroup {
-				gFavorites.currentRecent   = self
-			}
+			gFavorites.setFavoriteCurrents(self)
+//			if  isInFavorites {
+//				gFavorites.otherCurrent   = self
+//			} else if isInRecentsGroup {
+//				gFavorites.recentsCurrent = self
+//			}
 
 			if      target.isProgenyOfOrEqualTo(gHereMaybe) {
 				if !target.isGrabbed {
@@ -3939,6 +3881,65 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return values
+	}
+
+}
+
+enum ZoneAccess: Int, CaseIterable {
+	case eInherit
+	case eReadOnly
+	case eProgenyWritable
+	case eWritable
+
+	static func isDirectlyValid(_ value: Int) -> Bool {
+		return ZoneAccess.allCases.filter { iItem -> Bool in
+			return iItem != .eInherit && iItem.rawValue == value
+		} != []
+	}
+}
+
+struct ZWorkingListType: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let wBookmarks = ZWorkingListType(rawValue: 1 << 0)
+	static let wNotemarks = ZWorkingListType(rawValue: 1 << 1)
+	static let   wProgeny = ZWorkingListType(rawValue: 1 << 2)
+	static let    wGroups = ZWorkingListType(rawValue: 1 << 3)
+	static let       wAll = ZWorkingListType(rawValue: 1 << 4)
+
+	func matchingZones(within zone: Zone) -> ZoneArray {
+		let progeny = contains(.wProgeny)
+		let  groups = contains(.wGroups)
+		let     all = contains(.wAll)
+		var  result = ZoneArray()
+
+		zone.traverseAllProgeny { iZone in
+			let    notSelf = zone != iZone // ignore root of traversal
+			let isBookmark = matchesTypeOfBookmark(for: iZone)
+
+			if  all ||
+					!groups && (!progeny || notSelf) && isBookmark ||
+					notSelf && ( progeny || isBookmark || (groups  && (iZone.count > 0))) {
+				result.prependUnique(item: iZone) { (a, b) in
+					if  let aZone = a as? Zone,
+						let bZone = b as? Zone {
+						return aZone.hasSameTarget(as:bZone)
+					}
+
+					return false
+				}
+			}
+		}
+
+		return result
+	}
+
+	func matchesTypeOfBookmark(for zone: Zone) -> Bool {
+		guard let target = zone.bookmarkTarget else { return false }
+
+		return contains(.wBookmarks) || (contains(.wNotemarks) && target.hasNote)
 	}
 
 }
