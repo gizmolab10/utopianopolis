@@ -134,7 +134,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	}
 
 	var doNotLayout: Bool {
-		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || gIsEditIdeaMode || (gIsEssayMode && isBigMap)
+		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || (isBigMap && gIsEditIdeaMode) || (isBigMap && gIsEssayMode)
 	}
 
 	func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {

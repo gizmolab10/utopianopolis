@@ -188,7 +188,7 @@ var gHere: Zone {
 		gRecords.currentHere = newValue
 
 		newValue.assureAdoption()
-		gFavorites.push()
+		gFavorites.push(newValue)
 	}
 }
 

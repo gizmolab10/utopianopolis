@@ -73,6 +73,10 @@ class ZFavoritesTogglingView : ZTogglingView {
 				make.right.equalTo(v.snp.left).offset(-1.0)
 			}
 		}
+
+		if  gIsEditIdeaMode {
+			gSignal([.spSmallMap])
+		}
 	}
 
 }

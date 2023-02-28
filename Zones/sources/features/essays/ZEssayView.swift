@@ -243,12 +243,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func nextNotemark(down: Bool) {
-		save()
-		clearResizing()
-		gFavorites.nextBookmark(down: down, amongNotes: true)
-	}
-
 	// MARK: - clean up
 	// MARK: -
 
@@ -822,7 +816,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	func grabNextNote(up: Bool, ungrab: Bool) {
 		let      dots = dragDots
 		if  let index = grabbedIndex(goingUp: up),
-			let   dot = dots.next(from: index, forward: up),
+			let   dot = dots.next(increasing: up, from: index),
 			let  note = dot.note {
 
 			if  ungrab {

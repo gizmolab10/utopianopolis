@@ -632,14 +632,6 @@ class ZMapEditor: ZBaseEditor {
         }
     }
 
-	func nextBookmark(down: Bool, flags: ZEventFlags) {
-		if !flags.exactlySplayed ||
-		   !gSelecting.currentMoveable.cycleToNextInGroup(down) {
-			gFavorites.nextBookmark(down: down, flags: flags)
-			gRelayoutMaps()
-		}
-	}
-
 	func debugAnalyze() {
 		var count = 0
 

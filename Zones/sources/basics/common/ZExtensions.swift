@@ -669,16 +669,6 @@ extension Int {
 	var  stringInHundreds                     : String  { return "\((float / 100.0).rounded(.toNearestOrAwayFromZero).stringTo(precision: 0))" }
 	var  float                                : CGFloat { return CGFloat(self) }
 
-	func next(forward: Bool, max: Int) -> Int? {
-		if  max <= 0                  { return nil }
-		if self <= 0   &&  forward    { return max }
-		if self >= max && !forward    { return 0 }
-
-		let    next = self + (forward ? -1 : 1)
-		if     next < 0 || next > max { return nil }
-		return next
-	}
-
 	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
 		var angles             = [Double]()
 		if  self              > 0 {
@@ -1411,14 +1401,6 @@ extension Array {
 
         return string
     }
-
-	func next(from: Int, forward: Bool) -> Element? {
-		if  let index = from.next(forward: forward, max: count - 1) {
-			return self[index]
-		}
-
-		return nil
-	}
 
 	func intersects(_ other: Array) -> Bool {
 		return intersection(other).count > 0

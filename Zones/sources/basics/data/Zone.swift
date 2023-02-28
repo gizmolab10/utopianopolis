@@ -797,8 +797,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return super.convertFromCoreData(visited: visited) // call super, too
 	}
 
-	static var oops = 0
-
 	override func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray {
 		var      converted = StringsArray()
 		var              v = visited ?? StringsArray()
@@ -824,15 +822,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  needed > 0, databaseID == .mineID,
 				let       name = recordName,
 			    let      zones = gCoreDataStack.fetchChildrenOf(name, in: .mineID) {
-//				let      still = fetchableCount - zones.count
 				fetchableCount = zones.count
 				childArray     = zones
-
-//				if  still > 0 {
-//					Zone.oops += 1
-//
-//					print("\(Zone.oops) \(needed) \(still) \(self) Zone:updateFromCoreDataHierarchyRelationships")
-//				}
 			}
 
 			for child in childArray {
@@ -989,7 +980,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var nextAccess: ZoneAccess? {
 		let  inherited  = parentZone?.inheritedAccess ?? .eProgenyWritable
-		var     access  = next(after: directAccess) ?? next(after: inherited)
+		var     access  = nextAccess(after: directAccess) ?? nextAccess(after: inherited)
 
 		if  inherited  == .eProgenyWritable {
 			if  access == .eWritable {
@@ -1004,7 +995,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return access
 	}
 
-	func next(after: ZoneAccess?) -> ZoneAccess? {
+	func nextAccess(after: ZoneAccess?) -> ZoneAccess? {
 		if  let    access = after {
 			switch access {
 				case .eProgenyWritable: return .eReadOnly
@@ -2093,10 +2084,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	@discardableResult func cycleToNextInGroup(_ forward: Bool) -> Bool {
+	@discardableResult func cycleToNextInGroup(_ increasing: Bool) -> Bool {
 		guard   let   rr = groupOwner else {
 			if  self    != gHere {
-				gHere.cycleToNextInGroup(forward)
+				gHere.cycleToNextInGroup(increasing)
 			}
 
 			return true
@@ -2104,7 +2095,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let     r = rr.ownedGroup([]), r.count > 1,
 			let index = indexIn(r),
-			let  zone = r.next(from: index, forward: forward) {
+			let  zone = r.next(increasing: increasing, from: index) {
 			gHere     = zone
 
 //			print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
@@ -2164,13 +2155,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let       targetDBID = target.databaseID
 
 			let complete : SignalClosure = { [self] (iObject, kind) in
+				gFavorites.setFavoriteCurrents(self)
 				showTopLevelFunctions()
 				atArrival(iObject, kind)
 			}
 
 			var there: Zone?
 
-			gFavorites.setFavoriteCurrents(self)
 //			if  isInFavorites {
 //				gFavorites.otherCurrent   = self
 //			} else if isInRecentsGroup {
@@ -2208,7 +2199,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// STAY WITHIN MAP //
 					// /////////////// //
 
-					there = gRecords.maybeZoneForRecordName(targetRecordName)
+					there       = gRecords.maybeZoneForRecordName(targetRecordName)
 					let grabbed = gSelecting.firstSortedGrab
 					let    here = gHere
 
@@ -3009,7 +3000,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			func rearange(from index: Int) -> Int {
 				if  index != toIndex {
-					moveChildIndex(from: index, to: toIndex)
+					moveChild(from: index, to: toIndex)
 				}
 
 				return finish()
@@ -3267,7 +3258,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	@discardableResult func moveChildIndex(from: Int, to: Int) -> Bool {
+	@discardableResult func moveChild(from: Int, to: Int) -> Bool {
 		if  from < count, to <= count, from != to,
 			let child = self[from] {
 
@@ -3282,7 +3273,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  from > to {
 				children.remove(at: from)
 				add()
-			} else if from < to {
+			} else if from < (to - 1) {
 				add()
 				children.remove(at: from)
 			}

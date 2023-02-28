@@ -31,6 +31,7 @@ enum ZMapType : Int {
 class ZGenericController: ZController, ZGeneric {
 
 	var        isVisible = false
+	var isHandlingSignal = false
 	var     controllerID : ZControllerID { return .idUndefined }
 	var     allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
 	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
@@ -95,10 +96,22 @@ class ZGenericController: ZController, ZGeneric {
 			view.zlayer.backgroundColor = gControllers.backgroundColorFor(controllerID).cgColor
 
 			if  shouldHandle(kind) {
-                handleSignal(object, kind: kind)
+				markAsHandlingWhile {
+					handleSignal(object, kind: kind)
+				}
             }
         }
     }
+
+	func markAsHandlingWhile(execute: Closure) {
+		if !isHandlingSignal {
+			isHandlingSignal = true
+
+			execute()
+
+			isHandlingSignal = false
+		}
+	}
 
 #if os(OSX)
 
