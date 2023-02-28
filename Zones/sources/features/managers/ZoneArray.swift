@@ -123,22 +123,6 @@ extension ZoneArray {
 		gSelecting.updateCousinList()
 	}
 
-	func traverseAncestors(_ block: ZoneToStatusClosure) {
-		forEach { zone in
-			zone.safeTraverseAncestors(visited: [], block)
-		}
-	}
-
-	func traverseAllAncestors(_ block: @escaping ZoneClosure) {
-		forEach { zone in
-			zone.safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
-				block(iZone)
-
-				return .eContinue
-			}
-		}
-	}
-
 	func rootMost(goingUp: Bool) -> Zone? {
 		guard count > 0 else { return nil }
 

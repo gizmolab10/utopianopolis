@@ -179,24 +179,6 @@ extension ZoneWidget {
 		}
 	}
 
-	func traverseAllWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
-		var    level = 1
-		var  widgets = childrenWidgets
-
-		while widgets.count != 0 {
-			block(level, widgets)
-
-			level   += 1
-			var next = ZoneWidgetArray()
-
-			for widget in widgets {
-				next.append(contentsOf: widget.childrenWidgets)
-			}
-
-			widgets  = next
-		}
-	}
-
 }
 
 // MARK: - widgets static methods
@@ -262,18 +244,6 @@ extension ZWidgets {
 		}
 
 		return maxVisible
-	}
-
-	static func traverseAllVisibleWidgetsByLevel(_ block: IntZoneWidgetsClosure) {
-		var   level = 0
-		var widgets = visibleChildren(at: level)
-
-		while widgets.count != 0 {
-			block(level, widgets)
-
-			level  += 1
-			widgets = visibleChildren(at: level)
-		}
 	}
 
 	static func hasVisibleChildren(at level: Int) -> Bool {

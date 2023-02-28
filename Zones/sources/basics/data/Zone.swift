@@ -2566,7 +2566,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func isProgenyOfOrEqualTo(_ iZone: Zone?) -> Bool { return self == iZone || isProgenyOf(iZone) }
 	func isProgenyOf(_ iZone: Zone?) -> Bool { return iZone == nil ? false : isProgenyOfAny(of: [iZone!]) }
-	func traverseAncestors(_ block: ZoneToStatusClosure) { safeTraverseAncestors(visited: [], block) }
 
 	func isProgenyOfAny(of zones: ZoneArray) -> Bool {
 		var wasSpawned = false
@@ -2585,23 +2584,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return wasSpawned
-	}
-
-	func traverseAllAncestors(_ block: @escaping ZoneClosure) {
-		safeTraverseAncestors(visited: []) { iZone -> ZTraverseStatus in
-			block(iZone)
-
-			return .eContinue
-		}
-	}
-
-	func safeTraverseAncestors(visited: ZoneArray, _ block: ZoneToStatusClosure) {
-		if  block(self) == .eContinue,  //       skip == stop
-			!isARoot,                   //    isARoot == stop
-			!visited.contains(self),    //  map cycle == stop
-			let p = parentZone {        // nil parent == stop
-			p.safeTraverseAncestors(visited: visited + [self], block)
-		}
 	}
 
 	// MARK: - traverse progeny
@@ -2625,54 +2607,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		traverseAllProgeny(inReverse: true) { iChild in
 			iChild.collapse()
 		}
-	}
-
-	func traverseAllProgeny(inReverse: Bool = false, _ block: ZoneClosure) {
-		safeTraverseProgeny(visited: [], inReverse: inReverse) { iZone -> ZTraverseStatus in
-			block(iZone)
-
-			return .eContinue
-		}
-	}
-
-	@discardableResult func traverseProgeny(inReverse: Bool = false, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
-		return safeTraverseProgeny(visited: [], inReverse: inReverse, block)
-	}
-
-	func traverseAllVisibleProgeny(inReverse: Bool = false, _ block: ZoneClosure) {
-		safeTraverseProgeny(visited: [], inReverse: inReverse) { iZone -> ZTraverseStatus in
-			block(iZone)
-
-			return iZone.isExpanded ? .eContinue : .eSkip
-		}
-	}
-
-	@discardableResult func safeTraverseProgeny(visited: ZoneArray, inReverse: Bool = false, _ block: ZoneToStatusClosure) -> ZTraverseStatus {
-		var status  = ZTraverseStatus.eContinue
-
-		if !inReverse {
-			status  = block(self)               // first call block on self, then recurse on each child
-		}
-
-		if  status == .eContinue {
-			for child in children {
-				if  visited.contains(child) {
-					break						// do not revisit or traverse further inward
-				}
-
-				status = child.safeTraverseProgeny(visited: visited + [self], inReverse: inReverse, block)
-
-				if  status == .eStop {
-					break						// halt traversal
-				}
-			}
-		}
-
-		if  inReverse {
-			status  = block(self)
-		}
-
-		return status
 	}
 
 	enum ZCycleType: Int {

@@ -320,63 +320,6 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		}
 	}
 
-	func traverseAllWidgetAncestors(visited: ZoneWidgetArray = [], _ block: ZoneWidgetClosure) {
-		if !visited.contains(self) {
-			block(self)
-			parentWidget?.traverseAllWidgetAncestors(visited: visited + [self], block)
-		}
-	}
-
-	func traverseAllVisibleWidgetProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
-		traverseAllWidgetProgeny(inReverse: inReverse) { widget in
-			if  let zone = widget.widgetZone, zone.isVisible {
-				block(widget)
-			}
-		}
-	}
-
-	func traverseAllWidgetProgeny(inReverse: Bool = false, _ block: ZoneWidgetClosure) {
-		safeTraverseWidgetProgeny(visited: [], inReverse: inReverse) { widget -> ZTraverseStatus in
-			block(widget)
-
-			return .eContinue
-		}
-	}
-
-	@discardableResult func traverseWidgetProgeny(inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
-		return safeTraverseWidgetProgeny(visited: [], inReverse: inReverse, block)
-	}
-
-	@discardableResult func safeTraverseWidgetProgeny(visited: ZoneWidgetArray, inReverse: Bool = false, _ block: ZWidgetToStatusClosure) -> ZTraverseStatus {
-		var status  = ZTraverseStatus.eContinue
-
-		if  visited.contains(self) {
-			return status			        // do not revisit or traverse further inward
-		}
-
-		if !inReverse {
-			status  = block(self)           // first call block on self, then recurse on each child
-
-			if  status == .eStop {
-				return status               // halt traversal
-			}
-		}
-
-		for child in childrenWidgets {
-			status = child.safeTraverseWidgetProgeny(visited: visited + [self], inReverse: inReverse, block)
-
-			if  status == .eStop {
-				return status               // halt traversal
-			}
-		}
-
-		if  inReverse {
-			status  = block(self)
-		}
-
-		return status
-	}
-
 	// MARK: - compute sizes and frames
 	// MARK: -
 
@@ -384,20 +327,20 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		setFrameSize(drawnSize)
 	}
 
-    func dot(at iIndex: Int) -> ZoneDot? {
-        if  let zone = widgetZone {
-            if  zone.count == 0 || iIndex < 0 {
-                return nil
-            }
+	func dot(at iIndex: Int) -> ZoneDot? {
+		if  let zone = widgetZone {
+			if  zone.count == 0 || iIndex < 0 {
+				return nil
+			}
 
-            let  index = min(iIndex, zone.count - 1)
-            let target = zone.children[index]
+			let  index = min(iIndex, zone.count - 1)
+			let target = zone.children[index]
 
-            return target.widget?.parentLine?.dragDot
-        } else {
-            return nil
-        }
-    }
+			return target.widget?.parentLine?.dragDot
+		} else {
+			return nil
+		}
+	}
 
 	// MARK: - draw
 	// MARK: -
