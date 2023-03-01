@@ -49,6 +49,14 @@ extension ZoneArray {
 		return next
 	}
 
+	func nextBookmark(increasing: Bool, from: Int) -> Zone? {
+		if  let next = nextBookmarkIndex(increasing: increasing, from: from) {
+			return self[next]
+		}
+
+		return nil
+	}
+
 }
 
 extension ZMapEditor {

@@ -3186,7 +3186,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult func moveChild(from: Int, to: Int) -> Bool {
 		if  from < count, to <= count, from != to,
-			let child = self[from] {
+			let child = self[from] { // nothing is created or destroyed
 
 			func add() {
 				if  to < count {

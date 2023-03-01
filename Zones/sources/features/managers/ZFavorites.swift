@@ -36,7 +36,7 @@ class ZFavorites: ZRecords {
 	var rootsMaybe       : Zone?
 	var otherCurrent     : Zone?
 	var recentsMaybe     : Zone?
-	var recentsCurrent   : Zone?
+	var recentCurrent   : Zone?
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.bookmarks) ?? [] }
 
 	var hasMultipleNotes : Bool {
@@ -453,7 +453,7 @@ class ZFavorites: ZRecords {
 				if  toRecents {
 					if !markedRecent {
 						markedRecent   = true
-						recentsCurrent  = bookmark
+						recentCurrent  = bookmark
 					}
 				} else if !markedFavorite, !inRecents {
 					otherCurrent    = bookmark
