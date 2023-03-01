@@ -96,7 +96,7 @@ extension ZFavorites {
 			let  index = cIndex.next(increasing: !gListsGrowDown, max: r.count - 1)
 
 			r.addChildNoDuplicate(zone, at: index)
-			setFavoriteCurrents(zone)
+			setCurrentFavoriteBoomkarks(to: zone)
 		}
 	}
 

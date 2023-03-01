@@ -122,6 +122,7 @@ class ZFavorites: ZRecords {
 				hereZoneMaybe = getRootsGroup()
 			}
 
+			push(gHereZoneForIDMaybe(gDatabaseID))
 			rootZone?.concealAllProgeny()
 			hereZoneMaybe?.expand()
 			onCompletion?(0)
@@ -409,7 +410,7 @@ class ZFavorites: ZRecords {
 			}
 
 			currentHere.expand()
-			setFavoriteCurrents(zone)
+			setCurrentFavoriteBoomkarks(to: zone)
 		}
 	}
 

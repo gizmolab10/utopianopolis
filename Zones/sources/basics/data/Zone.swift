@@ -2153,20 +2153,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let           target = bookmarkTarget,
 			let targetRecordName = target.recordName {
 			let       targetDBID = target.databaseID
+			var            there : Zone?
 
 			let complete : SignalClosure = { [self] (iObject, kind) in
-				gFavorites.setFavoriteCurrents(self)
+				gFavorites.setCurrentFavoriteBoomkarks(to: self)
 				showTopLevelFunctions()
 				atArrival(iObject, kind)
 			}
-
-			var there: Zone?
-
-//			if  isInFavorites {
-//				gFavorites.otherCurrent   = self
-//			} else if isInRecentsGroup {
-//				gFavorites.recentsCurrent = self
-//			}
 
 			if      target.isProgenyOfOrEqualTo(gHereMaybe) {
 				if !target.isGrabbed {
@@ -2568,13 +2561,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func isProgenyOf(_ iZone: Zone?) -> Bool { return iZone == nil ? false : isProgenyOfAny(of: [iZone!]) }
 
 	func isProgenyOfAny(of zones: ZoneArray) -> Bool {
-		var wasSpawned = false
-
-		if  zones.count > 0 {
-			traverseAncestors { iAncestor -> ZTraverseStatus in
-				if  iAncestor != self,
-					zones.contains(iAncestor) {
-					wasSpawned = true
+		var isProgeny         = false
+		if  zones.count       > 0 {
+			traverseAncestors { ancestor -> ZTraverseStatus in
+				if  ancestor != self,
+					zones.contains(ancestor) {
+					isProgeny = true
 
 					return .eStop
 				}
@@ -2583,7 +2575,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		return wasSpawned
+		return isProgeny
 	}
 
 	// MARK: - traverse progeny

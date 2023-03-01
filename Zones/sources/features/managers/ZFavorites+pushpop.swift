@@ -16,8 +16,8 @@ extension ZFavorites {
 	func resetRecents() { recentsMaybe = nil } // gotta re-construct recents group
 
 	@discardableResult func push(_ zone: Zone? = gHere, down: Bool = true) -> Zone? {
-		if  let prior     = recentsCurrent?.siblingIndex,
-			let target    = zone {
+		if  let target    = zone {
+			let prior     = recentsCurrent?.siblingIndex ?? 0
 			let recents   = getRecentsGroup()
 			var bookmark  = recentsTargeting(target)?.firstUndeleted           // bookmark pointing to target already is in recents
 			if  let from  = bookmark?.siblingIndex,
@@ -33,8 +33,9 @@ extension ZFavorites {
 			}
 
 			gBookmarks.addToReverseLookup(bookmark)
-			setFavoriteCurrents(bookmark)
+			setCurrentFavoriteBoomkarks(to: bookmark)
 			resetRecents()
+			gSignal([.spSmallMap])
 
 			return bookmark
 		}
@@ -72,7 +73,7 @@ extension ZFavorites {
 			let    children = c.siblings,
 			let        next = children.next(increasing: !gListsGrowDown, from: index),
 			pop(c) {
-			setFavoriteCurrents(next)
+			setCurrentFavoriteBoomkarks(to: next)
 
 			if  let    here = next.bookmarkTarget {
 				gHere       = here
@@ -126,12 +127,16 @@ extension ZFavorites {
 		return [recentsCurrent, otherCurrent].contains(zone)
 	}
 
-	func setFavoriteCurrents(_ zone: Zone?, mustBeRecents: Bool = false) {
-		guard    let z = zone else { return }
-		recentsCurrent = z
+	func setCurrentFavoriteBoomkarks(to zone: Zone?, mustBeRecents: Bool = false) {
+		if      let          z = zone {
+			if  let          t = z.bookmarkTarget,
+				let          r = recentsTargeting(t)?.firstUndeleted {
+				recentsCurrent = r
+			}
 
-		if !mustBeRecents, !currentHere.isInRecentsGroup, !z.isInRecentsGroup {
-			otherCurrent = z
+			if !mustBeRecents, !currentHere.isInRecentsGroup, !z.isInRecentsGroup {
+				otherCurrent   = z
+			}
 		}
 	}
 
