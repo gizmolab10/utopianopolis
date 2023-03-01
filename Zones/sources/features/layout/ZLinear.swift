@@ -319,6 +319,23 @@ extension ZoneLine {
 // MARK: - dot
 // MARK: -
 
+extension CGRect {
+
+	func center(_ dot: ZoneDot) -> CGPoint? {
+		if  let      controller = dot.controller {
+			if !dot.isReveal {
+				return centerLeft.offsetBy(-controller.dotHalfWidth, .zero)
+			} else if let count = dot.widgetZone?.count {
+				let  isNarrower = [0, 1, 3].contains(count)
+				let       width = isNarrower ? controller.dotThirdWidth : controller.dotWidth
+				return centerRight.offsetBy(width + controller.coreThickness * 5.0, .zero)
+			}
+		}
+
+		return nil
+	}
+}
+
 extension ZoneDot {
 
 	var linearIsDragDrop : Bool {
@@ -336,8 +353,8 @@ extension ZoneDot {
 	}
 
 	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		if  let           c = controller {
-			let      center = isReveal ? absoluteTextFrame.centerRight.offsetBy(c.dotWidth + c.coreThickness * 5.0, .zero) : absoluteTextFrame.centerLeft.offsetBy(-c.dotHalfWidth, .zero)
+		if  let           c = controller,
+			let      center = absoluteTextFrame.center(self) {
 			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
 			absoluteHitRect = absoluteFrame.expandedEquallyBy(c.dotHalfWidth)
 		}
