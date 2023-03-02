@@ -50,8 +50,8 @@ class ZSearching: NSObject, ZSearcher {
 	func setSearchStateTo(_ iState: ZSearchState) {
 		searchState = iState
 
-		gControlsController?     .searchStateDidChange()
 		gSearchBarController?    .searchStateDidChange()
+		gSearchOptionsController?.searchStateDidChange()
 		gSearchResultsController?.searchStateDidChange()
 
 		switch searchState {
@@ -60,14 +60,6 @@ class ZSearching: NSObject, ZSearcher {
 
 			default: break
 		}
-	}
-
-	func showSearch(_ OPTION: Bool = false) {
-//		if  gProducts.hasEnabledSubscription {
-		searchState = .sEntry // don't call setSearchStateTo, it has unwanted side-effects
-
-		gSignal([OPTION ? .sFound : .sSearch])
-//		}
 	}
 
 	func performSearch(for searchString: String, closure: Closure?) {

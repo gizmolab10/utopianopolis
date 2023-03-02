@@ -9,10 +9,9 @@
 import Foundation
 import CloudKit
 import SnapKit
-import AppKit
 
 #if os(OSX)
-import Cocoa
+import AppKit
 #elseif os(iOS)
 import UIKit
 #endif
@@ -50,6 +49,7 @@ public typealias ZTableView                  = NSTableView
 public typealias ZStackView                  = NSStackView
 public typealias ZImageView                  = NSImageView
 public typealias ZColorWell                  = NSColorWell
+public typealias ZEventType                  = ZEvent.EventType
 public typealias ZButtonCell                 = NSButtonCell
 public typealias ZBezierPath                 = NSBezierPath
 public typealias ZScrollView                 = NSScrollView
@@ -418,29 +418,6 @@ extension ZEssayView {
 		return result
 	}
 
-	@objc override func printView() { // ZTextView
-		if  gProducts.hasEnabledSubscription {
-			gIsPrinting      = true
-			var view: NSView = self
-			let    printInfo = NSPrintInfo.shared
-			let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-			if  let    tView = view as? NSTextView {
-				let    frame = CGRect(origin: .zero, size: CGSize(width: 6.5 * 72.0, height: 9.5 * 72.0))
-				let    nView = NSTextView(frame: frame)
-				view         = nView
-
-				nView.insertText(tView.textStorage as Any, replacementRange: NSRange())
-			}
-
-			PMSetScale(pmPageFormat, 100.0)
-			PMSetOrientation(pmPageFormat, PMOrientation(kPMPortrait), false)
-			printInfo.updateFromPMPrintSettings()
-			printInfo.updateFromPMPageFormat()
-			NSPrintOperation(view: view, printInfo: printInfo).run()
-			gIsPrinting      = false
-		}
-	}
-
 }
 
 extension CALayer {
@@ -525,31 +502,6 @@ extension ZView {
 
         return min(wScale, hScale)
     }
-
-	@objc func printView() { // ZView
-		if  gProducts.hasEnabledSubscription {
-			gIsPrinting         = true
-			let       printInfo = NSPrintInfo.shared
-			printInfo.topMargin = 72.0
-			let         isWider = bounds.width > bounds.height
-			let     orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-			let    pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-			var            size = printInfo.paperSize.multiplyBy(0.8)
-
-			if  isWider {
-				size            = size.swapped
-			}
-
-			let           scale = 100.0 * Double(bounds.size.scaleToFit(size))
-
-			PMSetScale(pmPageFormat, scale)
-			PMSetOrientation(pmPageFormat, orientation, false)
-			printInfo.updateFromPMPrintSettings()
-			printInfo.updateFromPMPageFormat()
-			NSPrintOperation(view: self, printInfo: printInfo).run()
-			gIsPrinting         = false
-		}
-	}
 
 	func drawBox(in view: ZView, inset: CGFloat = 0, with color: ZColor) {
 		convert(bounds, to: view).insetEquallyBy(inset).drawColoredRect(color)

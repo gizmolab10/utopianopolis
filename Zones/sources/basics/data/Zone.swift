@@ -143,16 +143,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let name = root?.recordName {
 			switch databaseID {
-				case .favoritesID: if gSearchScopeOption.contains(.fFavorites), name == kFavoritesRootName { return true }
-				case .everyoneID:  if gSearchScopeOption.contains(.fPublic),    name == kRootName          { return true }
-				case .mineID:      if gSearchScopeOption.contains(.fMine),      name == kRootName          { return true }
+				case .favoritesID: if gSearchScope.contains(.fFavorites), name == kFavoritesRootName { return true }
+				case .everyoneID:  if gSearchScope.contains(.fPublic),    name == kRootName          { return true }
+				case .mineID:      if gSearchScope.contains(.fMine),      name == kRootName          { return true }
 			}
 
-			if  gSearchScopeOption.contains(.fTrash) {
+			if  gSearchScope.contains(.fTrash) {
 				return name == kTrashName || name == kDestroyName
 			}
 		} else {
-			return gSearchScopeOption.contains(.fOrphan)
+			return gSearchScope.contains(.fOrphan)
 		}
 
 		return false

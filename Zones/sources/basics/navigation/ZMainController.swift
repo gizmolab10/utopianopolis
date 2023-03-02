@@ -16,21 +16,22 @@ var gMainController : ZMainController? { return gControllers.controllerForID(.id
 
 class ZMainController: ZGesturesController {
 
-	override  var controllerID       : ZControllerID { return .idMain }
-	@IBOutlet var explainPopover     : ZExplanationPopover?
-	@IBOutlet var alternateLeading   : NSLayoutConstraint?
-	@IBOutlet var essayContainerView : ZView?
-	@IBOutlet var searchResultsView  : ZView?
-	@IBOutlet var permissionView     : ZView?
-	@IBOutlet var experimentView     : ZView?
-	@IBOutlet var searchBarView      : ZView?
-	@IBOutlet var controlsView       : ZView?
-	@IBOutlet var detailView         : ZView?
-	@IBOutlet var debugView          : ZView?
-	@IBOutlet var searchButton       : ZButton?
-	@IBOutlet var dismissButton      : ZButton?
-	@IBOutlet var hamburgerButton    : ZButton?
-	@IBOutlet var helpButton         : ZHelpButton?
+	override  var controllerID               : ZControllerID { return .idMain }
+	@IBOutlet var explainPopover             : ZExplanationPopover?
+	@IBOutlet var alternateLeading           : NSLayoutConstraint?
+	@IBOutlet var searchOptionsContainerView : ZView?
+	@IBOutlet var essayContainerView         : ZView?
+	@IBOutlet var searchResultsView          : ZView?
+	@IBOutlet var permissionView             : ZView?
+	@IBOutlet var experimentView             : ZView?
+	@IBOutlet var searchBarView              : ZView?
+	@IBOutlet var controlsView               : ZView?
+	@IBOutlet var detailView                 : ZView?
+	@IBOutlet var debugView                  : ZView?
+	@IBOutlet var searchButton               : ZButton?
+	@IBOutlet var dismissButton              : ZButton?
+	@IBOutlet var hamburgerButton            : ZButton?
+	@IBOutlet var helpButton                 : ZHelpButton?
 	@IBAction func helpButtonAction(_ button: NSButton) { gHelpController?.show() }
 
 	var hamburgerImage: ZImage? {

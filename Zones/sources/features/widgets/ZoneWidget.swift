@@ -437,25 +437,4 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		childrenView?.absoluteFrame.drawColoredRect(.red,    thickness: extraThick ? 5.0 : 1.0)
 	}
 
-	func printWidget() {
-		if  gProducts.hasEnabledSubscription,
-			let   mapView = controller?.mapView {
-			let   current = frame.expandedEquallyBy(40.0).offsetBy(dx: 15.0, dy: 22.0)
-			let     prior = mapView.frame
-			let    offset = gMapOffset
-			mapView.frame = current
-			gMapOffset    = .zero
-
-			gDetailsController?.temporarilyHideView(for: .vFavorites) {
-				gRelayoutMaps()
-				mapView.printView()
-			}
-
-			mapView.frame = prior
-			gMapOffset    = offset
-
-			gRelayoutMaps()
-		}
-	}
-
 }

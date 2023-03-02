@@ -133,14 +133,14 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	override func awakeFromNib() {
 		super.awakeFromNib()
 
-		usesRuler            = true
-		isRulerVisible       = true
-		importsGraphics      = true
-		usesInspectorBar     = true
-		allowsImageEditing   = true
-		displaysLinkToolTips = true
+		usesRuler                            = true
+		isRulerVisible                       = true
+		importsGraphics                      = true
+		usesInspectorBar                     = true
+		allowsImageEditing                   = true
+		displaysLinkToolTips                 = true
 		isAutomaticSpellingCorrectionEnabled = false
-		textContainerInset   = NSSize(width: margin, height: margin)
+		textContainerInset                   = NSSize(width: margin, height: margin)
 
 		resetForDarkMode()
 	}
@@ -218,6 +218,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		// grab record id of essay to indicate that this essay has not been saved
 		// saves time by not needlessly overwriting it later
 
+		updateTracking()
 		gEssayControlsView?.updateTitleSegments()
 		resetForDarkMode()
 		save()
@@ -355,7 +356,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return false
 		}
 
-		let enabled = gProducts.hasEnabledSubscription || true
+		let enabled = gHasEnabledSubscription
 		let SPECIAL = flags.exactlySpecial
 		let COMMAND = flags.hasCommand
 		let CONTROL = flags.hasControl

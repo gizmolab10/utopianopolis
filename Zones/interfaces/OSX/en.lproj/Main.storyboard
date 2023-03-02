@@ -623,7 +623,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Seriously" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="927" y="175"/>
+            <point key="canvasLocation" x="264" y="364"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -935,10 +935,17 @@ CA
                                     <action selector="hamburgerButtonAction:" target="MXk-17-6Dz" id="Jmy-Uu-Ilu"/>
                                 </connections>
                             </button>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="whm-tf-fPZ" userLabel="map and search controls view">
+                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="whm-tf-fPZ" userLabel="map controls">
                                 <rect key="frame" x="34" y="256" width="192" height="44"/>
                                 <connections>
                                     <segue destination="c3F-r9-TYw" kind="embed" id="bZN-yX-DFc"/>
+                                </connections>
+                            </containerView>
+                            <containerView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="10y-P6-4wC" userLabel="search options">
+                                <rect key="frame" x="30" y="280" width="421" height="20"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <connections>
+                                    <segue destination="HFF-P1-gxp" kind="embed" id="qJM-Df-hvJ"/>
                                 </connections>
                             </containerView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Right Bar View">
@@ -1196,6 +1203,7 @@ CA
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBarView" destination="58m-fY-Oaa" id="hjR-i2-r49"/>
                         <outlet property="searchButton" destination="RjV-tY-a8J" id="c5P-Qf-wOO"/>
+                        <outlet property="searchOptionsContainerView" destination="10y-P6-4wC" id="NHe-eo-567"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
                     </connections>
                 </viewController>
@@ -1238,7 +1246,7 @@ CA
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="957" y="659"/>
+            <point key="canvasLocation" x="975" y="521"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1312,7 +1320,7 @@ CA
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="903" y="716"/>
+            <point key="canvasLocation" x="921" y="653"/>
         </scene>
         <!--Essay Controller-->
         <scene sceneID="YUn-EI-h0m">
@@ -1624,7 +1632,7 @@ Gw
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="902" y="1640"/>
+            <point key="canvasLocation" x="1424" y="1556"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">
@@ -1671,7 +1679,7 @@ Gw
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="957" y="561"/>
+            <point key="canvasLocation" x="975" y="615"/>
         </scene>
         <!--Startup Controller-->
         <scene sceneID="r3B-ju-S2a">
@@ -2182,7 +2190,7 @@ DQ
                 <customObject id="T49-Ar-q9j" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="CX0-7s-ZzA"/>
             </objects>
-            <point key="canvasLocation" x="1830" y="1128"/>
+            <point key="canvasLocation" x="1311" y="679"/>
         </scene>
         <!--Debug Controller-->
         <scene sceneID="xPN-n7-b66">
@@ -2297,61 +2305,8 @@ DQ
                                     <constraint firstItem="Rct-nF-Qx4" firstAttribute="leading" secondItem="LcE-Ba-uvs" secondAttribute="leading" id="ylz-Nw-BCW"/>
                                 </constraints>
                             </customView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="jbD-YT-XOW">
-                                <rect key="frame" x="0.0" y="0.0" width="182" height="44"/>
-                                <subviews>
-                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
-                                        <rect key="frame" x="-2" y="20" width="186" height="21"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="16" id="fuA-YK-5ve"/>
-                                        </constraints>
-                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
-                                            <font key="font" metaFont="system"/>
-                                            <segments>
-                                                <segment label="bookmarks"/>
-                                                <segment label="notes" selected="YES" tag="1"/>
-                                                <segment label="ideas"/>
-                                            </segments>
-                                        </segmentedCell>
-                                        <connections>
-                                            <action selector="searchFilterActionWithSender:" target="c3F-r9-TYw" id="SGR-eN-sUS"/>
-                                        </connections>
-                                    </segmentedControl>
-                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
-                                        <rect key="frame" x="-1" y="3" width="184" height="16"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="13" id="cnb-Bz-45J"/>
-                                        </constraints>
-                                        <segmentedCell key="cell" controlSize="mini" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
-                                            <font key="font" metaFont="miniSystem"/>
-                                            <segments>
-                                                <segment label="public"/>
-                                                <segment label="mine" selected="YES" tag="1"/>
-                                                <segment label="trash"/>
-                                                <segment label="favorites"/>
-                                                <segment label="orphan"/>
-                                            </segments>
-                                        </segmentedCell>
-                                        <connections>
-                                            <action selector="searchScopeActionWithSender:" target="c3F-r9-TYw" id="tI9-6j-mO8"/>
-                                        </connections>
-                                    </segmentedControl>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="e16-JP-Abj" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" constant="11" id="FVP-QG-ppX"/>
-                                    <constraint firstItem="e16-JP-Abj" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" constant="1" id="WkX-Sj-n8o"/>
-                                    <constraint firstAttribute="trailing" secondItem="e16-JP-Abj" secondAttribute="trailing" constant="1" id="YK6-XZ-o7v"/>
-                                    <constraint firstItem="zJL-q5-otI" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" constant="1" id="kgY-L1-g43"/>
-                                    <constraint firstAttribute="trailing" secondItem="zJL-q5-otI" secondAttribute="trailing" constant="1" id="nAT-qw-ZBN"/>
-                                    <constraint firstItem="zJL-q5-otI" firstAttribute="centerY" secondItem="jbD-YT-XOW" secondAttribute="centerY" constant="-9" id="rB4-0W-OCA"/>
-                                </constraints>
-                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="jbD-YT-XOW" secondAttribute="trailing" id="1xX-R2-mGg"/>
-                            <constraint firstAttribute="bottom" secondItem="jbD-YT-XOW" secondAttribute="bottom" id="IDj-f3-8jL"/>
-                            <constraint firstItem="jbD-YT-XOW" firstAttribute="leading" secondItem="inW-Gh-k1T" secondAttribute="leading" id="V90-UG-ShE"/>
-                            <constraint firstItem="jbD-YT-XOW" firstAttribute="top" secondItem="inW-Gh-k1T" secondAttribute="top" id="cJF-Tq-JQC"/>
                             <constraint firstItem="LcE-Ba-uvs" firstAttribute="leading" secondItem="inW-Gh-k1T" secondAttribute="leading" id="iHc-Q4-H4D"/>
                             <constraint firstAttribute="bottom" secondItem="LcE-Ba-uvs" secondAttribute="bottom" id="k7W-9M-0fg"/>
                             <constraint firstAttribute="trailing" secondItem="LcE-Ba-uvs" secondAttribute="trailing" id="nym-hC-CSP"/>
@@ -2360,14 +2315,11 @@ DQ
                     </view>
                     <connections>
                         <outlet property="mapControlsView" destination="Rct-nF-Qx4" id="oFp-OH-Ee5"/>
-                        <outlet property="searchFilterControl" destination="zJL-q5-otI" id="VAN-a0-naJ"/>
-                        <outlet property="searchOptionsView" destination="jbD-YT-XOW" id="pwl-8w-hVd"/>
-                        <outlet property="searchScopeControl" destination="e16-JP-Abj" id="onY-hr-cBb"/>
                     </connections>
                 </viewController>
                 <customObject id="933-fU-289" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="957" y="468"/>
+            <point key="canvasLocation" x="975" y="425"/>
         </scene>
         <!--Small Map-->
         <scene sceneID="fRz-nE-ecT">
@@ -2531,7 +2483,80 @@ CA
                     </items>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="290.5" y="969.5"/>
+            <point key="canvasLocation" x="945" y="717"/>
+        </scene>
+        <!--Search Options Controller-->
+        <scene sceneID="LDf-k9-cxj">
+            <objects>
+                <viewController id="HFF-P1-gxp" userLabel="Search Options Controller" customClass="ZSearchOptionsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="15u-xb-tt9">
+                        <rect key="frame" x="0.0" y="0.0" width="421" height="20"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="jbD-YT-XOW">
+                                <rect key="frame" x="0.0" y="0.0" width="421" height="20"/>
+                                <subviews>
+                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
+                                        <rect key="frame" x="-2" y="-3" width="166" height="25"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="6Kp-ba-iAD"/>
+                                            <constraint firstAttribute="width" constant="160" id="WQW-XV-5d8"/>
+                                        </constraints>
+                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
+                                            <font key="font" metaFont="system"/>
+                                            <segments>
+                                                <segment label="bookmarks"/>
+                                                <segment label="notes" selected="YES" tag="1"/>
+                                                <segment label="ideas"/>
+                                            </segments>
+                                        </segmentedCell>
+                                        <connections>
+                                            <action selector="searchTypeActionWithSender:" target="HFF-P1-gxp" id="ciK-DL-0aq"/>
+                                        </connections>
+                                    </segmentedControl>
+                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
+                                        <rect key="frame" x="169" y="-3" width="254" height="25"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="cnb-Bz-45J"/>
+                                        </constraints>
+                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <segments>
+                                                <segment label="public"/>
+                                                <segment label="mine" selected="YES" tag="1"/>
+                                                <segment label="trash"/>
+                                                <segment label="favorites"/>
+                                                <segment label="orphan"/>
+                                            </segments>
+                                        </segmentedCell>
+                                    </segmentedControl>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="e16-JP-Abj" firstAttribute="top" secondItem="jbD-YT-XOW" secondAttribute="top" id="LqU-8V-vqv"/>
+                                    <constraint firstAttribute="trailing" secondItem="e16-JP-Abj" secondAttribute="trailing" constant="1" id="YK6-XZ-o7v"/>
+                                    <constraint firstItem="e16-JP-Abj" firstAttribute="leading" secondItem="zJL-q5-otI" secondAttribute="trailing" constant="11" id="cxb-0Z-uWp"/>
+                                    <constraint firstAttribute="bottom" secondItem="zJL-q5-otI" secondAttribute="bottom" id="ioi-J7-pr0"/>
+                                    <constraint firstItem="zJL-q5-otI" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" constant="1" id="kgY-L1-g43"/>
+                                    <constraint firstItem="zJL-q5-otI" firstAttribute="top" secondItem="jbD-YT-XOW" secondAttribute="top" id="mhU-c6-QHR"/>
+                                    <constraint firstAttribute="bottom" secondItem="e16-JP-Abj" secondAttribute="bottom" id="ppO-Rt-d5n"/>
+                                </constraints>
+                            </customView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="jbD-YT-XOW" firstAttribute="top" secondItem="15u-xb-tt9" secondAttribute="top" id="I3q-4F-8gI"/>
+                            <constraint firstAttribute="trailing" secondItem="jbD-YT-XOW" secondAttribute="trailing" id="ozl-fV-3eE"/>
+                            <constraint firstItem="jbD-YT-XOW" firstAttribute="leading" secondItem="15u-xb-tt9" secondAttribute="leading" id="x6H-cy-N1W"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="searchOptionsView" destination="jbD-YT-XOW" id="5QK-Cw-hBM"/>
+                        <outlet property="searchScopeControl" destination="e16-JP-Abj" id="4QH-du-pyg"/>
+                        <outlet property="searchTypeControl" destination="zJL-q5-otI" id="7Xf-HM-S3d"/>
+                    </connections>
+                </viewController>
+                <customObject id="b2l-mp-Wt0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-38" y="960"/>
         </scene>
     </scenes>
     <resources>

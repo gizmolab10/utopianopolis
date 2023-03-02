@@ -341,24 +341,24 @@ var gFilterOption: ZFilterOption {
 	set { setPreferencesInt(newValue.rawValue, for: kFilterOption) }
 }
 
-struct ZSearchScopeOption: OptionSet {
+struct ZSearchScope: OptionSet {
 	let rawValue : Int
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let    fPublic = ZSearchScopeOption(rawValue: 1 << 0)
-//	static let    fShared = ZSearchScopeOption(rawValue: 1 << 1)
-	static let      fMine = ZSearchScopeOption(rawValue: 1 << 1)
-	static let     fTrash = ZSearchScopeOption(rawValue: 1 << 2)
-	static let fFavorites = ZSearchScopeOption(rawValue: 1 << 3)
-	static let    fOrphan = ZSearchScopeOption(rawValue: 1 << 4)
-	static let      fNone = ZSearchScopeOption([])
-	static let       fAll = ZSearchScopeOption(rawValue: 0x11)
+	static let    fPublic = ZSearchScope(rawValue: 1 << 0)
+//	static let    fShared = ZSearchScope(rawValue: 1 << 1)
+	static let      fMine = ZSearchScope(rawValue: 1 << 1)
+	static let     fTrash = ZSearchScope(rawValue: 1 << 2)
+	static let fFavorites = ZSearchScope(rawValue: 1 << 3)
+	static let    fOrphan = ZSearchScope(rawValue: 1 << 4)
+	static let      fNone = ZSearchScope([])
+	static let       fAll = ZSearchScope(rawValue: 0x11)
 }
 
-var gSearchScopeOption: ZSearchScopeOption {
-	get { return ZSearchScopeOption(rawValue: getPreferencesInt(for: kSearchScopeOption, defaultInt: ZSearchScopeOption.fMine.rawValue)) }
-	set { setPreferencesInt(newValue.rawValue, for: kSearchScopeOption) }
+var gSearchScope: ZSearchScope {
+	get { return ZSearchScope(rawValue: getPreferencesInt(for: kSearchScope, defaultInt: ZSearchScope.fMine.rawValue)) }
+	set { setPreferencesInt(newValue.rawValue, for: kSearchScope) }
 }
 
 var gWindowRect: CGRect {

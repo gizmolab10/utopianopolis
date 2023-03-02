@@ -137,7 +137,7 @@ func gRemoveAllTracking() {
 extension ZView {
 
 	func addTracking(for owner: NSObject, in rect: CGRect) {
-		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .mouseMoved, .activeInKeyWindow, .cursorUpdate]
+		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .enabledDuringMouseDrag, .activeInKeyWindow, .cursorUpdate, .mouseMoved]
 		let    area = NSTrackingArea(rect:rect, options: options, owner: owner, userInfo: nil)
 		let tracked = ZTrackedArea(self, area)
 
@@ -178,6 +178,11 @@ extension ZoneTextWidget {
 
 	func updateTracking() { addTracking(for: self, in: frame) }
 
+}
+
+extension ZEssayView {
+
+	func updateTracking() { addTracking(for: self, in: frame) }
 }
 
 extension ZMapView {

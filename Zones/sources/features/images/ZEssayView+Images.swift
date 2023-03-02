@@ -111,29 +111,30 @@ extension ZEssayView {
 		}
 	}
 
-	override func mouseMoved(with event: ZEvent) {
-//		super.mouseMoved(with: event) // not call super method: avoid a console warning when a linefeed is selected (sheesh!!!!)
-		updateCursor(for: event)
+	override func mouseDragged(with event: ZEvent) {
+		super.mouseDragged(with: event)
 
 		if  resizeDot    != nil,
 			let     start = resizeDragStart {
 			let     flags = event.modifierFlags
-			let    origin = event.locationRect(in: self).origin
-			let sizeDelta = CGSize(origin - start)
-
-			print("\(origin)")
+			let sizeDelta = CGSize(event.locationRect(in: self).origin - start)
 
 			updateImageResizeRect(for: sizeDelta, flags.hasCommand)
 			setNeedsDisplay()
 		}
 	}
 
+	override func mouseMoved(with event: ZEvent) {
+//		super.mouseMoved(with: event) // not call super method: avoid a console warning when a linefeed is selected (sheesh!!!!)
+		updateCursor(for: event)
+	}
+
 	override func mouseUp(with event: ZEvent) {
 		super.mouseUp(with: event)
 		save()
 
-		if  let     attach = selectedAttachment {
-			let      range = attach.glyphRange
+		if  let attach = selectedAttachment {
+			let  range = attach.glyphRange
 
 			updateSelectedImage()
 			updateTextStorageRestoringSelection(range)  // recreate essay after an image is dropped
