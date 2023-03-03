@@ -14,20 +14,20 @@ import SnapKit
     import UIKit
 #endif
 
-var gMapController    : ZMapController? { return gControllers.controllerForID(.idBigMap) as? ZMapController }
+var gMapController    : ZMapController? { return gControllers.controllerForID(.idMainMap) as? ZMapController }
 var gMapView          : ZMapView?       { return gMapController?.view as? ZMapView }
 var gLinesAndDotsView : ZMapView?       { return gMapView?.decorationsView }
 
 class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 	var                priorLocation = CGPoint.zero
-	override  var       controllerID : ZControllerID  { return .idBigMap }
+	override  var       controllerID : ZControllerID  { return .idMainMap }
 	var                mapLayoutMode : ZMapLayoutMode { return gMapLayoutMode }
 	var                 inLinearMode : Bool           { return mapLayoutMode == .linearMode }
 	var               inCircularMode : Bool           { return mapLayoutMode == .circularMode }
 	var               canDrawWidgets : Bool           { return gCanDrawWidgets } // overridden by help dots controller
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
-	var                     isBigMap : Bool           { return controllerID == .idBigMap }
+	var                     isBigMap : Bool           { return controllerID == .idMainMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
 	var                   widgetType : ZWidgetType    { return .tBigMap }
 	var                mapPseudoView : ZPseudoView?

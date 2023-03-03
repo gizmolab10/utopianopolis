@@ -19,7 +19,6 @@ class ZMainController: ZGesturesController {
 	override  var controllerID               : ZControllerID { return .idMain }
 	@IBOutlet var explainPopover             : ZExplanationPopover?
 	@IBOutlet var alternateLeading           : NSLayoutConstraint?
-	@IBOutlet var searchOptionsContainerView : ZView?
 	@IBOutlet var essayContainerView         : ZView?
 	@IBOutlet var searchResultsView          : ZView?
 	@IBOutlet var permissionView             : ZView?
@@ -32,7 +31,6 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var dismissButton              : ZButton?
 	@IBOutlet var hamburgerButton            : ZButton?
 	@IBOutlet var helpButton                 : ZHelpButton?
-	@IBAction func helpButtonAction(_ button: NSButton) { gHelpController?.show() }
 
 	var hamburgerImage: ZImage? {
 		var image = kHamburgerImage
@@ -52,27 +50,6 @@ class ZMainController: ZGesturesController {
 		mainUpdate()
 	}
 
-	@IBAction func hamburgerButtonAction(_ button: NSButton) {
-		gShowDetailsView = gDetailsViewIsHidden
-
-		gTextEditor.stopCurrentEdit()
-		gMapView?.removeAllTextViews(ofType: .small)
-		gSignal([.spMain, .sDetails, .spRelayout])
-	}
-
-	@IBAction func searchButtonAction(_ sender: ZButton) {
-		gSearching.showSearch()
-	}
-
-	@IBAction func dismissButtonAction(_ sender: ZButton) {
-		gSearchBarController?.endSearch()
-	}
-
-	func searchStateDidChange() {
-		searchButton? .isHidden = !gIsNotSearching
-		dismissButton?.isHidden =  gIsNotSearching
-	}
-
 	func mainUpdate() {
 		let            showDetails =  gShowDetailsView
 		alternateLeading?.constant = !showDetails ? .zero : 226.0
@@ -81,6 +58,36 @@ class ZMainController: ZGesturesController {
 		controlsView?    .isHidden = !gShowMainControls
 		hamburgerButton?  .toolTip =  gConcealmentString(hide: gShowDetailsView) + " detail views"
 		hamburgerButton?    .image =  hamburgerImage
+	}
+
+	// MARK: - search
+	// MARK: -
+
+	@IBAction func searchButtonAction(_ sender: ZButton) {
+		gSearching.showSearch()
+		searchStateDidChange()
+	}
+
+	@IBAction func dismissButtonAction(_ sender: ZButton) {
+		gSearchBarController?.endSearch()
+		searchStateDidChange()
+	}
+
+	func searchStateDidChange() {
+		dismissButton?.isHidden =  gIsNotSearching
+		searchButton? .isHidden = !gIsNotSearching
+	}
+
+	// MARK: - help, settings, drag and signal
+	// MARK: -
+
+	@IBAction func      helpButtonAction(_ button: NSButton) { gHelpController?.show() }
+	@IBAction func hamburgerButtonAction(_ button: NSButton) {
+		gShowDetailsView = gDetailsViewIsHidden
+
+		gTextEditor.stopCurrentEdit()
+		gMapView?.removeAllTextViews(ofType: .small)
+		gSignal([.spMain, .sDetails, .spRelayout])
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {         // false means not handled

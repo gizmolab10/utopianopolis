@@ -6,8 +6,10 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
+import Foundation
+
 #if os(OSX)
-    import Cocoa
+    import AppKit
 #elseif os(iOS)
     import UIKit
 #endif
@@ -16,9 +18,9 @@ var gMainWindow : ZoneWindow? { return ZoneWindow.mainWindow }
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
-    static var mainWindow : ZoneWindow?
-    var          observer : NSKeyValueObservation?
-	var      inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
+    static var                    mainWindow : ZoneWindow?
+    var                             observer : NSKeyValueObservation?
+	var                         inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
 
 	func draw() {
 		if  let v = contentView {

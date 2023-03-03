@@ -28,8 +28,8 @@ let gSearching = ZSearching()
 
 class ZSearching: NSObject, ZSearcher {
 
-	var         searchState = ZSearchState.sNot
-	var    hasResults : Bool { return gSearchResultsController?.hasResults ?? false }
+	var searchState = ZSearchState.sNot
+	var  hasResults : Bool                       { return gSearchResultsController?.hasResults ?? false }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
 	var essaySearchText: String? {
@@ -50,8 +50,8 @@ class ZSearching: NSObject, ZSearcher {
 	func setSearchStateTo(_ iState: ZSearchState) {
 		searchState = iState
 
+		gMainController?         .searchStateDidChange()
 		gSearchBarController?    .searchStateDidChange()
-		gSearchOptionsController?.searchStateDidChange()
 		gSearchResultsController?.searchStateDidChange()
 
 		switch searchState {

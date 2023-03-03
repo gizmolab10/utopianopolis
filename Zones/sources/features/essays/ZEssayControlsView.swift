@@ -43,8 +43,6 @@ class ZEssayControlsView: ZView {
 	var      isTitlesControlDark = false
 	var           inspectorBar   : ZView?   { return gMainWindow?.inspectorBar }
 	@IBOutlet var titlesControl  : ZSegmentedControl?
-	@IBOutlet var backwardButton : ZHoverableButton?
-	@IBOutlet var forwardButton  : ZHoverableButton?
 	@IBOutlet var cancelButton   : ZHoverableButton?
 	@IBOutlet var deleteButton   : ZHoverableButton?
 	@IBOutlet var printButton    : ZHoverableButton?
@@ -56,7 +54,7 @@ class ZEssayControlsView: ZView {
 		if  let           b = inspectorBar, !b.subviews.contains(self) {
 			var        rect = bounds
 			let           x = b.maxX + 4.0
-			rect    .origin = CGPoint(x: x, y: 4.0)
+			rect    .origin = CGPoint(x: x, y: 6.0)
 			rect.size.width = 100.0
 			frame           = rect
 
@@ -65,15 +63,11 @@ class ZEssayControlsView: ZView {
 	}
 
 	func enableEssayControls(_ enabled: Bool) {
-		let showDirection = gFavorites.hasMultipleNotes
-
-		backwardButton?.setEnabledAndTracking(enabled && showDirection)
-		forwardButton? .setEnabledAndTracking(enabled && showDirection)
-		deleteButton?  .setEnabledAndTracking(enabled)
-		cancelButton?  .setEnabledAndTracking(enabled)
-		printButton?   .setEnabledAndTracking(enabled)
-		hideButton?    .setEnabledAndTracking(enabled)
-		saveButton?    .setEnabledAndTracking(enabled)
+		deleteButton?.setEnabledAndTracking(enabled)
+		cancelButton?.setEnabledAndTracking(enabled)
+		printButton? .setEnabledAndTracking(enabled)
+		hideButton?  .setEnabledAndTracking(enabled)
+		saveButton?  .setEnabledAndTracking(enabled)
 
 		updateTitleSegments(enabled)
 	}

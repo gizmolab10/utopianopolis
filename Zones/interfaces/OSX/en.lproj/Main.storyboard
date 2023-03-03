@@ -623,7 +623,7 @@ DQ
                 <customObject id="Voe-Tx-rLC" customClass="ZDesktopAppDelegate" customModule="Seriously" customModuleProvider="target"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="264" y="364"/>
+            <point key="canvasLocation" x="1064" y="319"/>
         </scene>
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
@@ -639,12 +639,13 @@ DQ
                         </connections>
                     </window>
                     <connections>
+                        <outlet property="searchOptionsContainerView" destination="PbK-YT-573" id="Xvn-zt-NW7"/>
                         <segue destination="MXk-17-6Dz" kind="relationship" relationship="window.shadowedContentViewController" id="ABc-7c-Gf5"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="485" y="176"/>
+            <point key="canvasLocation" x="-58" y="603"/>
         </scene>
         <!--Map-->
         <scene sceneID="hIz-AP-VOD">
@@ -870,7 +871,7 @@ CA
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="675" y="1178"/>
+            <point key="canvasLocation" x="330" y="1208"/>
         </scene>
         <!--Main Controller-->
         <scene sceneID="Mui-kI-Ybx">
@@ -939,13 +940,6 @@ CA
                                 <rect key="frame" x="34" y="256" width="192" height="44"/>
                                 <connections>
                                     <segue destination="c3F-r9-TYw" kind="embed" id="bZN-yX-DFc"/>
-                                </connections>
-                            </containerView>
-                            <containerView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="10y-P6-4wC" userLabel="search options">
-                                <rect key="frame" x="30" y="280" width="421" height="20"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <connections>
-                                    <segue destination="HFF-P1-gxp" kind="embed" id="qJM-Df-hvJ"/>
                                 </connections>
                             </containerView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Right Bar View">
@@ -1203,24 +1197,31 @@ CA
                         <outlet property="permissionView" destination="5oi-yK-PC4" id="5TP-04-XLC"/>
                         <outlet property="searchBarView" destination="58m-fY-Oaa" id="hjR-i2-r49"/>
                         <outlet property="searchButton" destination="RjV-tY-a8J" id="c5P-Qf-wOO"/>
-                        <outlet property="searchOptionsContainerView" destination="10y-P6-4wC" id="NHe-eo-567"/>
+                        <outlet property="searchOptionsContainerView" destination="PbK-YT-573" id="2dq-2y-PfM"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="485.5" y="596"/>
+            <point key="canvasLocation" x="487" y="592"/>
         </scene>
         <!--Search Bar Controller-->
         <scene sceneID="Gwm-hS-Ozn">
             <objects>
                 <viewController id="cYL-kx-LTL" customClass="ZSearchBarController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="Vov-Ty-huu">
-                        <rect key="frame" x="0.0" y="0.0" width="182" height="46"/>
+                        <rect key="frame" x="0.0" y="0.0" width="446" height="46"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <containerView hidden="YES" id="PbK-YT-573" userLabel="search options">
+                                <rect key="frame" x="4" y="26" width="421" height="20"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <connections>
+                                    <segue destination="HFF-P1-gxp" kind="embed" id="cOH-S4-3vt"/>
+                                </connections>
+                            </containerView>
                             <searchField wantsLayer="YES" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bct-LL-Igg">
-                                <rect key="frame" x="2" y="12" width="160" height="22"/>
+                                <rect key="frame" x="2" y="2" width="424" height="22"/>
                                 <searchFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" borderStyle="bezel" usesSingleLineMode="YES" bezelStyle="round" id="8N3-HP-82v">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -1228,25 +1229,28 @@ CA
                                 </searchFieldCell>
                             </searchField>
                             <progressIndicator hidden="YES" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Lgp-gv-Jfw">
-                                <rect key="frame" x="8" y="15" width="16" height="16"/>
+                                <rect key="frame" x="8" y="5" width="16" height="16"/>
                             </progressIndicator>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="bct-LL-Igg" firstAttribute="top" secondItem="PbK-YT-573" secondAttribute="bottom" constant="2" id="5Cm-bc-Ufn"/>
                             <constraint firstAttribute="trailing" secondItem="bct-LL-Igg" secondAttribute="trailing" constant="20" id="8Dj-DB-JIO"/>
-                            <constraint firstItem="Lgp-gv-Jfw" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="8Ea-hk-eT0"/>
+                            <constraint firstAttribute="bottom" secondItem="Lgp-gv-Jfw" secondAttribute="bottom" constant="5" id="UqK-a9-vpA"/>
+                            <constraint firstItem="Lgp-gv-Jfw" firstAttribute="top" secondItem="PbK-YT-573" secondAttribute="bottom" constant="5" id="gRV-Yr-t6q"/>
+                            <constraint firstAttribute="bottom" secondItem="bct-LL-Igg" secondAttribute="bottom" constant="2" id="htF-oJ-aOw"/>
                             <constraint firstItem="Lgp-gv-Jfw" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="8" id="jRA-8c-FdX"/>
                             <constraint firstItem="bct-LL-Igg" firstAttribute="leading" secondItem="Vov-Ty-huu" secondAttribute="leading" constant="2" id="k59-Lm-2Cw"/>
-                            <constraint firstItem="bct-LL-Igg" firstAttribute="centerY" secondItem="Vov-Ty-huu" secondAttribute="centerY" id="neh-h0-Oac"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="searchBar" destination="bct-LL-Igg" id="j4R-SR-DD9"/>
+                        <outlet property="searchOptionsContainerView" destination="PbK-YT-573" id="XPw-dW-pSK"/>
                         <outlet property="spinner" destination="Lgp-gv-Jfw" id="OXr-rq-qhh"/>
                     </connections>
                 </viewController>
                 <customObject id="3sr-dW-htM" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="975" y="521"/>
+            <point key="canvasLocation" x="1107" y="613"/>
         </scene>
         <!--Search Results Controller-->
         <scene sceneID="Bi1-iO-heM">
@@ -1312,7 +1316,7 @@ CA
                 </viewController>
                 <customObject id="EA1-lt-5Ic" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1073" y="1173"/>
+            <point key="canvasLocation" x="1102" y="1203"/>
         </scene>
         <!--Details-->
         <scene sceneID="gOc-vA-WsZ">
@@ -1320,7 +1324,7 @@ CA
                 <controllerPlaceholder storyboardName="Details" id="yWa-SA-l1V" sceneMemberID="viewController"/>
                 <customObject id="j6X-Bm-Ffa" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="921" y="653"/>
+            <point key="canvasLocation" x="921" y="663"/>
         </scene>
         <!--Essay Controller-->
         <scene sceneID="YUn-EI-h0m">
@@ -1491,7 +1495,7 @@ CA
                 </viewController>
                 <customObject id="MZE-8q-Thd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1423" y="1172.5"/>
+            <point key="canvasLocation" x="752" y="1203"/>
         </scene>
         <!--Create a Link-->
         <scene sceneID="yhj-YB-Xij">
@@ -1632,18 +1636,18 @@ Gw
                     </connections>
                 </viewController>
             </objects>
-            <point key="canvasLocation" x="1424" y="1556"/>
+            <point key="canvasLocation" x="753" y="1619"/>
         </scene>
         <!--Breadcrumbs Controller-->
         <scene sceneID="wXo-la-8OL">
             <objects>
                 <viewController id="auf-AV-5qA" customClass="ZBreadcrumbsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="W43-uk-txK">
-                        <rect key="frame" x="0.0" y="0.0" width="182" height="34"/>
+                        <rect key="frame" x="0.0" y="0.0" width="446" height="34"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ch1-Y5-6sD" userLabel="Crumbs Clipper Button">
-                                <rect key="frame" x="160" y="10" width="14" height="14"/>
+                                <rect key="frame" x="424" y="10" width="14" height="14"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="Ch1-Y5-6sD" secondAttribute="height" multiplier="1:1" id="LnI-A6-9C4"/>
                                     <constraint firstAttribute="height" constant="14" id="N1c-fL-mHS"/>
@@ -1657,7 +1661,7 @@ Gw
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Tsd-bp-vCV" customClass="ZBreadcrumbsView" customModule="Seriously">
-                                <rect key="frame" x="2" y="0.0" width="150" height="34"/>
+                                <rect key="frame" x="2" y="0.0" width="414" height="34"/>
                                 <connections>
                                     <outlet property="clipCrumbsButton" destination="Ch1-Y5-6sD" id="dTT-6R-3f5"/>
                                 </connections>
@@ -1679,7 +1683,7 @@ Gw
                 </viewController>
                 <customObject id="kZt-p9-sNr" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="975" y="615"/>
+            <point key="canvasLocation" x="1107" y="519"/>
         </scene>
         <!--Startup Controller-->
         <scene sceneID="r3B-ju-S2a">
@@ -1898,7 +1902,7 @@ DQ
                 </viewController>
                 <customObject id="2Ip-rP-SYE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="204" y="1259"/>
+            <point key="canvasLocation" x="-142" y="1289"/>
         </scene>
         <!--Debug Angles Controls-->
         <scene sceneID="nGL-an-oE5">
@@ -2190,7 +2194,7 @@ DQ
                 <customObject id="T49-Ar-q9j" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="CX0-7s-ZzA"/>
             </objects>
-            <point key="canvasLocation" x="1311" y="679"/>
+            <point key="canvasLocation" x="266" y="1538"/>
         </scene>
         <!--Debug Controller-->
         <scene sceneID="xPN-n7-b66">
@@ -2280,7 +2284,7 @@ DQ
                 </viewController>
                 <customObject id="RFu-gD-UY8" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-122" y="1178"/>
+            <point key="canvasLocation" x="1101" y="1588"/>
         </scene>
         <!--Controls Controller-->
         <scene sceneID="wJL-gd-zyS">
@@ -2321,10 +2325,10 @@ DQ
             </objects>
             <point key="canvasLocation" x="975" y="425"/>
         </scene>
-        <!--Small Map-->
+        <!--Favorites Map-->
         <scene sceneID="fRz-nE-ecT">
             <objects>
-                <viewController title="small" id="SUz-Nq-f3E" userLabel="Small Map" customClass="ZFavoritesMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="small" id="SUz-Nq-f3E" userLabel="Favorites Map" customClass="ZFavoritesMapController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="kOn-SC-u0e">
                         <rect key="frame" x="0.0" y="0.0" width="121" height="1"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -2483,7 +2487,7 @@ CA
                     </items>
                 </menu>
             </objects>
-            <point key="canvasLocation" x="945" y="717"/>
+            <point key="canvasLocation" x="945" y="736"/>
         </scene>
         <!--Search Options Controller-->
         <scene sceneID="LDf-k9-cxj">
@@ -2493,70 +2497,62 @@ CA
                         <rect key="frame" x="0.0" y="0.0" width="421" height="20"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="jbD-YT-XOW">
-                                <rect key="frame" x="0.0" y="0.0" width="421" height="20"/>
-                                <subviews>
-                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
-                                        <rect key="frame" x="-2" y="-3" width="166" height="25"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="6Kp-ba-iAD"/>
-                                            <constraint firstAttribute="width" constant="160" id="WQW-XV-5d8"/>
-                                        </constraints>
-                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
-                                            <font key="font" metaFont="system"/>
-                                            <segments>
-                                                <segment label="bookmarks"/>
-                                                <segment label="notes" selected="YES" tag="1"/>
-                                                <segment label="ideas"/>
-                                            </segments>
-                                        </segmentedCell>
-                                        <connections>
-                                            <action selector="searchTypeActionWithSender:" target="HFF-P1-gxp" id="ciK-DL-0aq"/>
-                                        </connections>
-                                    </segmentedControl>
-                                    <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
-                                        <rect key="frame" x="169" y="-3" width="254" height="25"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="cnb-Bz-45J"/>
-                                        </constraints>
-                                        <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
-                                            <font key="font" metaFont="smallSystem"/>
-                                            <segments>
-                                                <segment label="public"/>
-                                                <segment label="mine" selected="YES" tag="1"/>
-                                                <segment label="trash"/>
-                                                <segment label="favorites"/>
-                                                <segment label="orphan"/>
-                                            </segments>
-                                        </segmentedCell>
-                                    </segmentedControl>
-                                </subviews>
+                            <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
+                                <rect key="frame" x="206" y="-3" width="218" height="25"/>
                                 <constraints>
-                                    <constraint firstItem="e16-JP-Abj" firstAttribute="top" secondItem="jbD-YT-XOW" secondAttribute="top" id="LqU-8V-vqv"/>
-                                    <constraint firstAttribute="trailing" secondItem="e16-JP-Abj" secondAttribute="trailing" constant="1" id="YK6-XZ-o7v"/>
-                                    <constraint firstItem="e16-JP-Abj" firstAttribute="leading" secondItem="zJL-q5-otI" secondAttribute="trailing" constant="11" id="cxb-0Z-uWp"/>
-                                    <constraint firstAttribute="bottom" secondItem="zJL-q5-otI" secondAttribute="bottom" id="ioi-J7-pr0"/>
-                                    <constraint firstItem="zJL-q5-otI" firstAttribute="leading" secondItem="jbD-YT-XOW" secondAttribute="leading" constant="1" id="kgY-L1-g43"/>
-                                    <constraint firstItem="zJL-q5-otI" firstAttribute="top" secondItem="jbD-YT-XOW" secondAttribute="top" id="mhU-c6-QHR"/>
-                                    <constraint firstAttribute="bottom" secondItem="e16-JP-Abj" secondAttribute="bottom" id="ppO-Rt-d5n"/>
+                                    <constraint firstAttribute="height" constant="20" id="cnb-Bz-45J"/>
                                 </constraints>
-                            </customView>
+                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <segments>
+                                        <segment label="public"/>
+                                        <segment label="mine" selected="YES" tag="1"/>
+                                        <segment label="trash"/>
+                                        <segment label="favorites"/>
+                                        <segment label="orphan"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="searchScopeActionWithSender:" target="HFF-P1-gxp" id="04Y-3F-gP5"/>
+                                </connections>
+                            </segmentedControl>
+                            <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
+                                <rect key="frame" x="-3" y="-3" width="166" height="25"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="6Kp-ba-iAD"/>
+                                    <constraint firstAttribute="width" constant="160" id="WQW-XV-5d8"/>
+                                </constraints>
+                                <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="CBB-Tf-ohZ">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment label="bookmarks"/>
+                                        <segment label="notes" selected="YES" tag="1"/>
+                                        <segment label="ideas"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="searchTypeActionWithSender:" target="HFF-P1-gxp" id="ciK-DL-0aq"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="jbD-YT-XOW" firstAttribute="top" secondItem="15u-xb-tt9" secondAttribute="top" id="I3q-4F-8gI"/>
-                            <constraint firstAttribute="trailing" secondItem="jbD-YT-XOW" secondAttribute="trailing" id="ozl-fV-3eE"/>
-                            <constraint firstItem="jbD-YT-XOW" firstAttribute="leading" secondItem="15u-xb-tt9" secondAttribute="leading" id="x6H-cy-N1W"/>
+                            <constraint firstAttribute="bottom" secondItem="zJL-q5-otI" secondAttribute="bottom" id="0dw-Iz-Djs"/>
+                            <constraint firstItem="e16-JP-Abj" firstAttribute="top" secondItem="15u-xb-tt9" secondAttribute="top" id="5fG-Aa-4hn"/>
+                            <constraint firstItem="zJL-q5-otI" firstAttribute="top" secondItem="15u-xb-tt9" secondAttribute="top" id="Mi8-Sk-FWp"/>
+                            <constraint firstItem="zJL-q5-otI" firstAttribute="leading" secondItem="15u-xb-tt9" secondAttribute="leading" id="QAX-Uf-yaO"/>
+                            <constraint firstAttribute="trailing" secondItem="e16-JP-Abj" secondAttribute="trailing" id="VHL-if-7DP"/>
+                            <constraint firstAttribute="bottom" secondItem="e16-JP-Abj" secondAttribute="bottom" id="Wt6-ag-qkh"/>
+                            <constraint firstItem="e16-JP-Abj" firstAttribute="leading" secondItem="zJL-q5-otI" secondAttribute="trailing" constant="49" id="m9t-QU-VIV"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="searchOptionsView" destination="jbD-YT-XOW" id="5QK-Cw-hBM"/>
                         <outlet property="searchScopeControl" destination="e16-JP-Abj" id="4QH-du-pyg"/>
                         <outlet property="searchTypeControl" destination="zJL-q5-otI" id="7Xf-HM-S3d"/>
                     </connections>
                 </viewController>
                 <customObject id="b2l-mp-Wt0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-38" y="960"/>
+            <point key="canvasLocation" x="1108" y="810"/>
         </scene>
     </scenes>
     <resources>

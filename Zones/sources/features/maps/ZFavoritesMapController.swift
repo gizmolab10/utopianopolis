@@ -12,13 +12,13 @@ import Cocoa
 import UIKit
 #endif
 
-var gFavoritesMapController : ZFavoritesMapController { return gControllers.controllerForID(.idSmallMap) as? ZFavoritesMapController ?? ZFavoritesMapController() }
+var gFavoritesMapController : ZFavoritesMapController { return gControllers.controllerForID(.idFavoritesMap) as? ZFavoritesMapController ?? ZFavoritesMapController() }
 
 class ZFavoritesMapController: ZMapController {
 
 	override var       hereZone : Zone?          { return gFavoritesHereMaybe }
 	override var     widgetType : ZWidgetType    { return .tFavorite }
-	override var   controllerID : ZControllerID  { return .idSmallMap }
+	override var   controllerID : ZControllerID  { return .idFavoritesMap }
 	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }
 

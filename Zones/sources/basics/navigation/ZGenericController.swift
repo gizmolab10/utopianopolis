@@ -15,15 +15,15 @@ import Foundation
 #endif
 
 enum ZMapType : Int {
-	case mSmall
+	case mFavorites
+	case mMain
 	case mHelp
-	case mBig
 
 	var divisor: CGFloat {
 		switch self {
-			case .mSmall: return kSmallMapReduction
-			case .mHelp:  return .zero
-			case .mBig:   return 1.0
+			case .mFavorites: return kSmallMapReduction
+			case .mHelp:      return .zero
+			case .mMain:      return 1.0
 		}
 	}
 }
@@ -36,14 +36,14 @@ class ZGenericController: ZController, ZGeneric {
 	var     allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
 	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
     func handleSignal(_ object: Any?, kind: ZSignalKind) {}
-	func controllerStartup() {}
 	func controllerSetup(with mapView: ZMapView?) {}
+	func controllerStartup() {}
 
 	var mapType : ZMapType {
 		switch controllerID {
-			case .idSmallMap: return .mSmall
-			case .idBigMap:   return .mBig
-			default:          return .mHelp
+			case .idFavoritesMap: return .mFavorites
+			case .idMainMap:      return .mMain
+			default:              return .mHelp
 		}
 	}
 
@@ -54,8 +54,8 @@ class ZGenericController: ZController, ZGeneric {
 			 .idMain:    return [.sResize, .spStartupStatus]
 		case .idActions: return [.sResize, .sSearch, .sFound]
 		case .idPreferences,
-			 .idSmallMap,
-			 .idBigMap,
+			 .idFavoritesMap,
+			 .idMainMap,
 			 .idCrumbs:  return [.sData]             // ignore the signal from the end of process next batch
 		default: break
 		}
@@ -66,9 +66,9 @@ class ZGenericController: ZController, ZGeneric {
 	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
 			case .idHelpEssayIntroduction, .idHelpEssayGraphicals,
-					.idHelpDots:   return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
-			case .idBigMap:        return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .spBigMap]
-			case .idSmallMap:      return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .sDetails]
+				 .idHelpDots:      return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
+			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .spBigMap]
+			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .sDetails]
 			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                                .sDetails]
 			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
 			case .idSearch:        return [.sSearch]

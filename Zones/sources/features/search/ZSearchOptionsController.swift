@@ -15,12 +15,9 @@ class ZSearchOptionsController: ZGenericController {
 	override  var controllerID        : ZControllerID { return .idSearchOptions }
 	@IBOutlet var searchScopeControl  : ZSegmentedControl?
 	@IBOutlet var searchTypeControl   : ZSegmentedControl?
-	@IBOutlet var searchOptionsView   : ZView?
-
-	func updateOptionView() { searchStateDidChange() }
 
 	override func controllerSetup(with mapView: ZMapView?) {
-		searchOptionsView?.zlayer.backgroundColor = kClearColor.cgColor
+		view.zlayer.backgroundColor = kClearColor.cgColor
 
 		searchStateDidChange()
 	}
@@ -32,9 +29,8 @@ class ZSearchOptionsController: ZGenericController {
 	}
 
 	func searchStateDidChange() {
-		searchOptionsView?.isHidden = gIsNotSearching
-
-		gMainController?.searchStateDidChange() // moved dismiss button to main controller
+		gMainController?     .searchStateDidChange()
+		gSearchBarController?.searchStateDidChange()
 	}
 
 	func scopeDidChange() {

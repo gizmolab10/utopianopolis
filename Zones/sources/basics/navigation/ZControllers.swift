@@ -15,17 +15,17 @@ enum ZControllerID: Int {
 	case idSearchResults
 	case idSearchOptions
 	case idSubscription
+	case idFavoritesMap
 	case idDataDetails
 	case idPreferences
 	case idDebugAngles
 	case idStartHere
-    case idSmallMap
 	case idHelpDots
 	case idControls
 	case idStartup
     case idDetails
     case idActions   // iPhone
-	case idBigMap
+	case idMainMap
     case idSearch
 	case idCrumbs
 	case idDebug
@@ -126,11 +126,11 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idSmallMap,
+				case .idFavoritesMap,
 					 .idDetails,
-					 .idBigMap: return kClearColor      // so rubberband is visible on both map and favorites
-				case .idNote:   return .white           // override dark mode, otherwise essay view looks like crap
-				default:        return gBackgroundColor // respects dark mode
+					 .idMainMap: return kClearColor      // so rubberband is visible on both map and favorites
+				case .idNote:    return .white           // override dark mode, otherwise essay view looks like crap
+				default:         return gBackgroundColor // respects dark mode
 			}
 		}
 
@@ -168,19 +168,19 @@ class ZControllers: NSObject {
 						case (.spMain,         .idMain):         closure()
 						case (.spDebug,        .idDebug):        closure()
 						case (.spCrumbs,       .idCrumbs):       closure()
-						case (.spBigMap,       .idBigMap):       closure()
-						case (.spSmallMap,     .idSmallMap):     closure()
+						case (.spBigMap,       .idMainMap):      closure()
+						case (.spSmallMap,     .idFavoritesMap): closure()
 						case (.spDataDetails,  .idDataDetails):  closure()
 						case (.spPreferences,  .idPreferences):  closure()
 						case (.spSubscription, .idSubscription): closure()
 						default:
-							let     mapCIDs : [ZControllerID] = [.idBigMap,  .idSmallMap]
+							let     mapCIDs : [ZControllerID] = [.idMainMap, .idFavoritesMap]
 							let startupCIDs : [ZControllerID] = [.idStartup, .idHelpDots]
 
 							switch regarding {
 								case .spRelayout:      if     mapCIDs.contains(controllerID) { closure() }
 								case .spStartupStatus: if startupCIDs.contains(controllerID) { closure() }
-								default:                                              closure()
+								default:                                                       closure()
 							}
 					}
                 }
