@@ -149,15 +149,6 @@ class ZRecord: ZManagedObject {
 	func register()   { zRecords?  .registerZRecord(self) }
 	func adopt(recursively: Bool = false) {}
 
-	class func cloudProperties(for className: String) -> StringsArray {
-		switch className {
-			case kZoneType:     return Zone     .cloudProperties
-			case kTraitType:    return ZTrait   .cloudProperties
-			case kManifestType: return ZManifest.cloudProperties
-			default:			return []
-		}
-	}
-
 	// MARK: - core data
 	// MARK: -
 

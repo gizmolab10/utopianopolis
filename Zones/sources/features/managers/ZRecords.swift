@@ -417,16 +417,6 @@ class ZRecords: NSObject {
 
         return name == nil ? nil : "Seriously." + name!
     }
-    
-    func properties(for recordType: String?) -> StringsArray {
-        if  let   name = className(for: recordType),
-            let  klass = NSClassFromString(name),
-            let zClass = klass as? ZRecord.Type {
-                return zClass.cloudProperties
-        }
-
-		return []
-    }
 
     // MARK: - registries
     // MARK: -

@@ -9,7 +9,7 @@
 import Foundation
 
 #if os(OSX)
-    import Cocoa
+    import AppKit
 #elseif os(iOS)
     import UIKit
 #endif
@@ -22,9 +22,8 @@ var gSearchBarController: ZSearchBarController? { return gControllers.controller
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-	@IBOutlet var searchOptionsContainerView : ZView?
-	@IBOutlet var                  searchBar : ZSearchField?
 	@IBOutlet var                    spinner : ZProgressIndicator?
+	@IBOutlet var                  searchBar : ZSearchField?
 	override  var               controllerID : ZControllerID { return .idSearch }
 	var                  activeSearchBarText : String?       { return searchBar?.text?.searchable }
 
@@ -32,10 +31,6 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		super.awakeFromNib()
 
 		spinner?.zlayer.backgroundColor = gBackgroundColor.cgColor
-
-		if  let   o = searchOptionsContainerView {
-			o.frame = CGRect(origin: CGPoint(x: .zero, y: 26.0), size: CGSize(width: o.frame.width, height: 20.0))
-		}
 	}
 
 	var searchBarIsFirstResponder : Bool {
@@ -54,8 +49,6 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 				assignAsFirstResponder(searchBar)
 			default: break
 		}
-
-		searchOptionsContainerView?.isHidden = gIsNotSearching
 	}
 
 	// MARK: - events

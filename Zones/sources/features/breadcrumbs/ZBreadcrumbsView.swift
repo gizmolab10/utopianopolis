@@ -9,6 +9,12 @@
 import Foundation
 import SnapKit
 
+#if os(OSX)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
+
 var gBreadcrumbsView: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsView }
 
 class ZBreadcrumbsView : ZButtonsView {
@@ -57,17 +63,20 @@ class ZBreadcrumbsView : ZButtonsView {
 		buttons = [ZBreadcrumbButton]()
 
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
-			let          name = zone.unwrappedName
-			let        button = ZBreadcrumbButton(title: name, target: self, action: #selector(crumbButtonAction(_:)))
-			button.font       = gSmallFont // needed for computing button width
-			button.tag        = index
-			button.zone       = zone
-			button.isBordered = true
-			var    attributes = ZAttributesDictionary()
-			let    attributed = NSMutableAttributedString(string: name)
-			let         range = NSRange(location:0, length: name.length)
-			attributes[.font] = gSmallFont
+			let                     name = zone.unwrappedNameWithEllipses(noLongerThan: 20)
+			let                    range = NSRange(location:0, length: name.length)
+			let                    style = NSMutableParagraphStyle()
+			let                   button = ZBreadcrumbButton(title: name, target: self, action: #selector(crumbButtonAction(_:)))
+			let               attributed = NSMutableAttributedString(string: name)
+			var               attributes = ZAttributesDictionary()
+			style         .lineBreakMode = .byClipping
+			button                 .font = gSmallFont // needed for computing button width
+			button                  .tag = index
+			button                 .zone = zone
+			button           .isBordered = true
+			attributes[           .font] = gSmallFont
 			attributes[.foregroundColor] = zone.color
+			attributes[ .paragraphStyle] = style
 
 			if  zone.hasNote {
 				attributes[.underlineStyle] = 1

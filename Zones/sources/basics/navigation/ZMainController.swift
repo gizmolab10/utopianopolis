@@ -19,6 +19,7 @@ class ZMainController: ZGesturesController {
 	override  var controllerID               : ZControllerID { return .idMain }
 	@IBOutlet var explainPopover             : ZExplanationPopover?
 	@IBOutlet var alternateLeading           : NSLayoutConstraint?
+	@IBOutlet var searchOptionsContainerView : ZView?
 	@IBOutlet var essayContainerView         : ZView?
 	@IBOutlet var searchResultsView          : ZView?
 	@IBOutlet var permissionView             : ZView?
@@ -74,8 +75,9 @@ class ZMainController: ZGesturesController {
 	}
 
 	func searchStateDidChange() {
-		dismissButton?.isHidden =  gIsNotSearching
-		searchButton? .isHidden = !gIsNotSearching
+		searchOptionsContainerView?.isHidden =  gIsNotSearching
+		dismissButton?             .isHidden =  gIsNotSearching
+		searchButton?              .isHidden = !gIsNotSearching
 	}
 
 	// MARK: - help, settings, drag and signal

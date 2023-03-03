@@ -92,9 +92,11 @@ class ZSearchOptionsController: ZGenericController {
 	}
 
 	func searchOptionsDidChange() {
-		gSearchBarController?.updateSearchBar(allowSearchToEnd: false)
-		gSearchResultsController?.applyFilter()
-		gSearchResultsController?.genericTableUpdate()
+		if  gSearching.searchState == .sList {
+			gSearchBarController?.updateSearchBar(allowSearchToEnd: false)
+			gSearchResultsController?.applyFilter()
+			gSearchResultsController?.genericTableUpdate()
+		}
 	}
 
 	func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool { // false means not handled

@@ -155,10 +155,10 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <stackView hidden="YES" wantsLayer="YES" distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1wo-H2-e9s">
-                                <rect key="frame" x="0.0" y="2" width="226" height="3384"/>
+                                <rect key="frame" x="0.0" y="2" width="226" height="3387"/>
                                 <subviews>
                                     <customView identifier="subscribe" translatesAutoresizingMaskIntoConstraints="NO" id="t4I-OM-7sJ" userLabel="Subscription View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="3265" width="226" height="119"/>
+                                        <rect key="frame" x="0.0" y="3268" width="226" height="119"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="avu-F1-Lm0" userLabel="Subscription Banner">
                                                 <rect key="frame" x="0.0" y="101" width="226" height="18"/>
@@ -229,7 +229,7 @@
                                         </connections>
                                     </customView>
                                     <customView identifier="kickoffTools" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dSG-o4-XPL" userLabel="Kickoff Tools View" customClass="ZTogglingView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1825" width="226" height="1440"/>
+                                        <rect key="frame" x="0.0" y="1825" width="226" height="1443"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="h9A-Dp-8sZ" userLabel="Kickoff Tools Banner">
                                                 <rect key="frame" x="0.0" y="704" width="226" height="21"/>
@@ -257,7 +257,7 @@
                                                 </constraints>
                                             </customView>
                                             <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="juv-af-AUt" userLabel="Kickoff Tools Hideable">
-                                                <rect key="frame" x="0.0" y="597" width="226" height="300"/>
+                                                <rect key="frame" x="0.0" y="600" width="226" height="300"/>
                                                 <connections>
                                                     <segue destination="YdN-bY-sSj" kind="embed" id="bHo-7A-xgJ"/>
                                                 </connections>
@@ -515,7 +515,7 @@
                         </subviews>
                         <constraints>
                             <constraint firstItem="1wo-H2-e9s" firstAttribute="leading" secondItem="3tA-Ue-bZS" secondAttribute="leading" id="1WF-pU-wVa"/>
-                            <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" constant="3" id="ART-li-M2I"/>
+                            <constraint firstItem="1wo-H2-e9s" firstAttribute="top" secondItem="3tA-Ue-bZS" secondAttribute="top" id="ART-li-M2I"/>
                             <constraint firstAttribute="trailing" secondItem="1wo-H2-e9s" secondAttribute="trailing" id="NxT-zU-3MZ"/>
                             <constraint firstAttribute="bottom" secondItem="1wo-H2-e9s" secondAttribute="bottom" constant="2" id="gIv-Hg-KHJ"/>
                         </constraints>

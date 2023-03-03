@@ -52,7 +52,7 @@ class ZTextPack: NSObject {
         var   result = emptyName
 
         if  let zone = packedZone {
-            result   = zone.unwrappedNameWithEllipses
+			result   = zone.unwrappedNameWithEllipses(zone.isInFavorites)
 			let dups = zone.duplicateZones.count
 			let  bad = zone.hasBadRecordName
             var need = dups
@@ -154,10 +154,9 @@ class ZTextPack: NSObject {
 			if  let     trait  = packedTrait {                             // traits take logical priority
 				trait.ownerZone?.setTraitText(text, for: trait.traitType)
 			} else if let zone = packedZone {                              // ignore zone if editing a trait, above
+				zone.zoneName  = text.unescaped
+
 				zone.zRecords?.removeFromLocalSearchIndex(nameOf: zone)
-
-				zone.zoneName  = text
-
 				zone.addToLocalSearchIndex()
 			}
 		}

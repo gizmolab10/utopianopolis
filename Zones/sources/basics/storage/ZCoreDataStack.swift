@@ -276,12 +276,12 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func loadFile(for descriptor: ZFileDescriptor) -> ZFile? {
-		if  let name = descriptor.name,
-			let type = descriptor.type,
-			let dbID = descriptor.dbID {
-			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kFileType)
-			request.predicate = NSPredicate(format: "name = %@ AND type = %@", name, type, dbID.identifier).and(dbidPredicate(from: dbID))
-			let      zRecords = fetchUsing(request: request)
+		if  let            name = descriptor.name,
+			let            type = descriptor.type,
+			let            dbID = descriptor.dbID {
+			let         request = NSFetchRequest<NSFetchRequestResult>(entityName: kFileType)
+			request  .predicate = NSPredicate(format: "name = %@ AND type = %@", name, type, dbID.identifier).and(dbidPredicate(from: dbID))
+			let        zRecords = fetchUsing(request: request)
 
 			for zRecord in zRecords {
 				if  let    file = zRecord as? ZFile {

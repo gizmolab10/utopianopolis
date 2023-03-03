@@ -183,14 +183,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return value
 	}
 
-	var unwrappedNameWithEllipses : String {
-		var   name = unwrappedName
-		let length = name.length
+	func unwrappedNameWithEllipses(_ forceTruncation: Bool = true, noLongerThan threshold: Int = 25) -> String {
+		var      name = unwrappedName
+		let    length = name.length
+		let   breakAt = threshold / 2
 
-		if  isInFavorites,
-		    length > 25 {
-			let first = name.substring(toExclusive: 12)
-			let  last = name.substring(fromInclusive: length - 12)
+		if  threshold < length, forceTruncation {
+			let first = name.substring(toExclusive: breakAt)
+			let  last = name.substring(fromInclusive: length - breakAt)
 			name      = first + kEllipsis + last
 		}
 

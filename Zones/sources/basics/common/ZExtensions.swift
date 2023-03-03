@@ -2112,12 +2112,25 @@ extension String {
 		}
     }
 
+	var unescaped: String {
+		var     result    = "\(self)"
+		for character in "\\\n\r\t\"\'" {
+			let separator = "\(character)"
+			if  result.contains(separator) {
+				result    = result.replacingOccurrences(of: separator, with: kEmpty)
+			}
+		}
+
+		return result
+	}
+
     var escaped: String {
-        var result = "\(self)"
+        var     result    = "\(self)"
         for character in "\\\"\'`" {
             let separator = "\(character)"
-            let components = result.components(separatedBy: separator)
-            result = components.joined(separator: kBackSlash + separator)
+			if  result.contains(separator) {
+				result    = result.replacingOccurrences(of: separator, with: kBackSlash + separator)
+			}
         }
 
         return result

@@ -145,6 +145,7 @@ class ZSearchResultsController: ZGenericTableController {
 				size  += 1
 
 				prefix.addAttribute(.backgroundColor, value: ZColor.systemYellow, range: r)
+				prefix.addAttribute(.foregroundColor, value: ZColor.black,        range: r)
 			}
 
 			if  let color = z.color {

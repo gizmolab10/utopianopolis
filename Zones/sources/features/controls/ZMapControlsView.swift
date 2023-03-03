@@ -15,16 +15,12 @@ import UIKit
 #endif
 
 enum ZModeButtonType: String {
-	case tBack    = "go back"
-	case tForward = "go forward"
-	case tConfine = "browse" // down / up
-	case tGrowth  = "grow"   // list / all
+	case tBack    = "left"
+	case tForward = "right"
+	case tConfine = "browse"       // down / up
+	case tGrowth  = "grow"         // list / all
 
-	var image: ZImage {
-		let direction = (self == .tBack) ? "left" : "right"
-
-		return ZImage(named: direction)!
-	}
+	var image: ZImage { return ZImage(named: rawValue)! }
 }
 
 var gMapControlsView : ZMapControlsView? { return gControlsController?.mapControlsView }
@@ -34,12 +30,12 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 	override func setupButtons() {
 		super.setupButtons()
 
-		buttons                   = [ZHoverableButton]()
-		let t : [ZModeButtonType] = [.tBack, .tForward, .tGrowth, .tConfine]
-		for type in t {
-			let            button = buttonFor(type: type)
-			button.modeButtonType = type
-			button.isBordered     = true // ZDarkableImageButton
+		buttons                       = [ZHoverableButton]()
+		let types : [ZModeButtonType] = [.tBack, .tForward, .tGrowth, .tConfine]
+		for type in types {
+			let                button = buttonFor(type: type)
+			button        .isBordered = true                   // ZDarkableImageButton
+			button    .modeButtonType = type
 
 			button.setButtonType(.momentaryLight)
 			buttons.append(button)
