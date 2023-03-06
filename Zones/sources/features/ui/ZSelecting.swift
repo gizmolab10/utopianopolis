@@ -90,7 +90,7 @@ class ZSelecting: NSObject {
 		var start: Zone?
 
 		if  let zone = firstGrab() {
-			start = zone.isInFavorites ? gFavoritesRoot : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
+			start = zone.isInFavorites ? gFavorites.hereZoneMaybe : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
 		}
 
 		return start
@@ -442,7 +442,7 @@ class ZSelecting: NSObject {
         _cousinList .removeAll()
         _sortedGrabs.removeAll()
         
-        if  let level = gCurrentBrowseLevel,
+        if  let level = iZone?.level,
             let start = traversalStart {
             start.traverseAllVisibleProgeny { iChild in
                 let  cLevel  = iChild.level

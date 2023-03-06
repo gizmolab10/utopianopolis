@@ -235,11 +235,18 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
 	func resolveAsZone(_ dbID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {
-		let zone = zRecord as? Zone
+		if  let zone = zRecord as? Zone {
+			if !zone.isInFavorites {
+				zone.resolveAsHere()
+			} else {
+				zone.grab()
+				gSignal([.spSmallMap])
+			}
 
-		zone?.resolveAsHere()
+			return true
+		}
 
-		return zone != nil
+		return false
 	}
 
 	func resolveAsTrait(_ dbID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {

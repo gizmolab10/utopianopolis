@@ -141,18 +141,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			updateRootFromParent()
 		}
 
-		if  let name = root?.recordName {
-			switch databaseID {
-				case .favoritesID: if gSearchScope.contains(.fFavorites), name == kFavoritesRootName { return true }
-				case .everyoneID:  if gSearchScope.contains(.fPublic),    name == kRootName          { return true }
-				case .mineID:      if gSearchScope.contains(.fMine),      name == kRootName          { return true }
+		if  parentZone == nil {
+			return gSearchScope.contains(.fOrphan)
+		} else if let name  = root?.recordName {
+			if  name == kRootName {
+				switch databaseID {
+					case .everyoneID: if gSearchScope.contains(.fPublic) { return true }
+					case .mineID:     if gSearchScope.contains(.fMine)   { return true }
+					default: break
+				}
+			}
+
+			if  gSearchScope.contains(.fFavorites), isInFavorites {
+				return true
 			}
 
 			if  gSearchScope.contains(.fTrash) {
 				return name == kTrashName || name == kDestroyName
 			}
-		} else {
-			return gSearchScope.contains(.fOrphan)
 		}
 
 		return false
