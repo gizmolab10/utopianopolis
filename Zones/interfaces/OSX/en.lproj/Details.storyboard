@@ -691,19 +691,6 @@
                                     </constraints>
                                 </view>
                             </box>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dkn-tQ-U5p" userLabel="colorful">
-                                <rect key="frame" x="142" y="133" width="72" height="17"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="16" id="ctp-Vy-MUv"/>
-                                </constraints>
-                                <buttonCell key="cell" type="roundRect" title="hide colors" bezelStyle="roundedRect" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9zw-D0-dHl">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="smallSystem"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="colorfulModeAction:" target="Naq-se-Exq" id="6oW-J3-6sH"/>
-                                </connections>
-                            </button>
                             <box borderType="line" title="colors" translatesAutoresizingMaskIntoConstraints="NO" id="mS1-t0-150" userLabel="colors">
                                 <rect key="frame" x="5" y="51" width="216" height="95"/>
                                 <view key="contentView" id="rb6-oU-fw8">
@@ -835,17 +822,17 @@
                                     </constraints>
                                 </view>
                             </box>
-                            <button identifier="layout" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vAa-ia-x3J" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="163" y="30" width="50" height="17"/>
+                            <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dkn-tQ-U5p" userLabel="colorful">
+                                <rect key="frame" x="142" y="130" width="72" height="17"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="16" id="HfG-RP-p6j"/>
+                                    <constraint firstAttribute="height" constant="16" id="ctp-Vy-MUv"/>
                                 </constraints>
-                                <buttonCell key="cell" type="roundRect" title="Button" bezelStyle="roundedRect" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="m2Q-Ae-ZQl">
+                                <buttonCell key="cell" type="roundRect" title="hide colors" bezelStyle="roundedRect" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="9zw-D0-dHl">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="smallSystem"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="layoutButtonAction:" target="Naq-se-Exq" id="jbS-0Y-0sC"/>
+                                    <action selector="colorfulModeAction:" target="Naq-se-Exq" id="6oW-J3-6sH"/>
                                 </connections>
                             </button>
                             <box borderType="none" title="circles show for" translatesAutoresizingMaskIntoConstraints="NO" id="EBA-0Z-ZoM" userLabel="circles">
@@ -878,6 +865,19 @@
                                     <constraint firstAttribute="height" constant="31" id="ISZ-w9-xNH"/>
                                 </constraints>
                             </box>
+                            <button identifier="layout" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vAa-ia-x3J" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
+                                <rect key="frame" x="163" y="27" width="50" height="17"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="16" id="HfG-RP-p6j"/>
+                                </constraints>
+                                <buttonCell key="cell" type="roundRect" title="Button" bezelStyle="roundedRect" alignment="center" controlSize="small" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="m2Q-Ae-ZQl">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="smallSystem"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="layoutButtonAction:" target="Naq-se-Exq" id="jbS-0Y-0sC"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="NaT-UR-V9P" secondAttribute="bottom" id="1jr-uO-969"/>

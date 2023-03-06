@@ -52,8 +52,8 @@ class ZDisplayPreferencesController: ZGenericController {
 			zoneColorBox?                   .color =   grabbed?.color ?? kDefaultIdeaColor
 			activeMineColorBox?             .color = gActiveColor
 			backgroundColorBox?             .color = gAccentColor
-			colorfulModeButton?             .title = gColorfulMode ? "colorful" : "monochrome"
-			layoutButton?                   .title = gMapLayoutMode.title
+			colorfulModeButton?             .title = "Switch to " + (gColorfulMode ? "monochrome" : "colorful")
+			layoutButton?                   .title = "Switch to " + gMapLayoutMode.next.title
 
 			circlesDisplayControl?.selectSegments(from: gCirclesDisplayMode.indexSet)
             view.setAllSubviewsNeedDisplay()

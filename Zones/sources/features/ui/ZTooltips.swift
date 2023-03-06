@@ -154,6 +154,7 @@ extension Zone {
 
 	func dotToolTipText(_ isReveal: Bool, _ flags: ZEventFlags) -> String {
 		let COMMAND = flags.hasCommand
+		let  prefix = "This is a"
 		let noChild = count      == 0
 		let special =  COMMAND   || noChild
 		let  oneGen = !COMMAND   || isExpanded || isTraveller
@@ -182,7 +183,7 @@ extension Zone {
 			}
 		}
 
-		return title + action + " \"\(name)\""
+		return prefix + title + action + kSpace + kDoubleQuote + name + kDoubleQuote
 	}
 
 }
@@ -246,7 +247,7 @@ extension ZoneTextWidget {
 
 		if  gShowToolTips,
 			let name = widgetZone?.zoneName {
-			toolTip  = "Idea\n\nedit \"\(name)\""
+			toolTip  = "This is an Idea\n\nedit \"\(name)\""
 		}
 
 		updateTracking() // needed because text field is a subview of the map, not the text widget
@@ -351,7 +352,7 @@ extension ZBreadcrumbButton {
 
 		if  gShowToolTips {
 			var  body : String?
-			let title = "Breadcrumb\n\n"
+			let title = "This is a Breadcrumb\n\n"
 			let  name = "\"\(zone.unwrappedName)\""
 			let alter = zone.ancestralPath.contains(gHere) ? "shrink" : "expand"
 
