@@ -1,5 +1,5 @@
 //
-//  ZSearchController.swift
+//  ZSearchBarController.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 12/15/16.
@@ -7,162 +7,132 @@
 //
 
 import Foundation
-import CloudKit
 
 #if os(OSX)
-    import Cocoa
+    import AppKit
 #elseif os(iOS)
     import UIKit
 #endif
+
+protocol ZSearcher {
+	func performSearch(for searchString: String, closure: Closure?)
+}
 
 var gSearchBarController: ZSearchBarController? { return gControllers.controllerForID(.idSearch) as? ZSearchBarController }
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-	@IBOutlet var searchBox            : ZSearchField?
-	@IBOutlet var dismissButton        : ZButton?
-	@IBOutlet var searchOptionsControl : ZSegmentedControl?
-	override  var controllerID         : ZControllerID { return .idSearch }
+	@IBOutlet var                    spinner : ZProgressIndicator?
+	@IBOutlet var                  searchBar : ZSearchField?
+	override  var               controllerID : ZControllerID { return .idSearch }
+	var                  activeSearchBarText : String?       { return searchBar?.text?.searchable }
 
-	var activeSearchBoxText: String? {
-		let searchString = searchBox?.text?.searchable
+	override func awakeFromNib() {
+		super.awakeFromNib()
 
-		if  ["", " ", "  "].contains(searchString) {
-			endSearch()
-
-			return nil
-		}
-
-		return searchString
+		spinner?.zlayer.backgroundColor = gBackgroundColor.cgColor
 	}
 
-	var searchBoxIsFirstResponder : Bool {
+	var searchBarIsFirstResponder : Bool {
 		#if os(OSX)
-		if  let    first  = searchBox?.window?.firstResponder {
-			return first == searchBox?.currentEditor()
+		if  let    first  = searchBar?.window?.firstResponder {
+			return first == searchBar?.currentEditor()
 		}
 		#endif
 
 		return false
 	}
 
-	func updateForState() {
-		switch gSearching.state {
-			case .sList:
-				searchBox?.isHidden = true
+	func searchStateDidChange() {
+		switch gSearching.searchState {
 			case .sEntry, .sFind:
-				searchBox?.isHidden = false
-				searchBox?.becomeFirstResponder()
+				assignAsFirstResponder(searchBar)
 			default: break
 		}
 	}
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  iKind == .sSearch && gIsSearchMode {
-			gSearching.setStateTo(.sEntry)
-
-			updateSearchOptions()
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+		if  gIsSearching, !gWaitingForSearchEntry {
+			gSearching.setSearchStateTo(.sEntry)
 		}
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
 		#if os(OSX)
-		searchBox?.currentEditor()?.handleArrow(arrow, with: flags)
+		if  searchBarIsFirstResponder {
+			searchBar?.currentEditor()?.handleArrow(arrow, with: flags)
+		} else if gIsResultsMode {
+		} else if gIsEssayMode {
+			gEssayView?.handleArrow(arrow, flags: flags)
+		}
 		#endif
 	}
 
 	func handleEvent(_ event: ZEvent) -> ZEvent? {
-		let    string = event.input ?? ""
+		let    string = event.input ?? kEmpty
 		let     flags = event.modifierFlags
-		let   COMMAND = flags.isCommand
+		let   COMMAND = flags.hasCommand
 		let       key = string[string.startIndex].description
-		let  isReturn = key == kReturn
-		let     isTab = key == kTab
 		let       isF = key == "f"
-		let    isExit = kExitKeys.contains(key)
-		let     state = gSearching.state
-		let   isInBox = searchBoxIsFirstResponder
-		let   isEntry = state == .sEntry
-		let    isList = state == .sList
+		let     isTab = key == kTab
+		let  isReturn = key == kReturn
+		let  isEscape = key == kEscape
+		let    isList = gSearchResultsVisible
+		let isWaiting = gWaitingForSearchEntry
+		let   isInBar = searchBarIsFirstResponder
 
-		if  isList && !isInBox {
-			return gSearchResultsController?.handleEvent(event)
-		} else if isReturn, isInBox, let text = activeSearchBoxText {
-			gSearching.performSearch(for: text)
-        } else if  key == "a" && COMMAND {
-            searchBox?.selectAllText()
-        } else if (isReturn && isEntry) || (isExit && !isF) || (isF && COMMAND) {
+		if (gIsEssayMode && !isInBar) || (key == "g" && COMMAND) {
+			gEssayView?.handleKey(key, flags: flags)
+		} else if isList, !isInBar {
+			if !isF {
+				return gSearchResultsController?.handleEvent(event)
+			}
+
+			gSearching.setSearchStateTo(.sEntry)
+		} else if (isReturn && isInBar) || (COMMAND && isF) {
+			updateSearchBar()
+		} else if COMMAND, key == "a" {
+            searchBar?.selectAllText()
+        } else if isEscape || (isReturn && isWaiting) {
             endSearch()
 		} else if isTab {
-			gSearching.switchToList()
+			gSearching.setSearchStateTo(.sList)
 		} else if let arrow = key.arrow {
 			handleArrow(arrow, with: flags)
 		} else {
-			if !isReturn, isEntry {
-				gSearching.state = .sFind
+			if !isReturn, isWaiting {
+				gSearching.searchState = .sFind    // don't call setSearchStateTo, it has unwanted side-effects
 			}
             
             return event
         }
-        
+
         return nil
     }
 
-	func control(_ control: ZControl, textView: ZTextView, doCommandBy commandSelector: Selector) -> Bool { // false means not handled
-		let done = commandSelector == Selector(("noop:"))
+    func endSearch() {
+        searchBar?.resignFirstResponder()
+		gExitSearchMode()
+    }
 
-		if  done {
+	func updateSearchBar(allowSearchToEnd: Bool = true) {
+		if  let text = activeSearchBarText,
+			text.length > 0,
+			![kEmpty, kSpace, "  "].contains(text) {
+
+			if  let searcher: ZSearcher = gIsEssayMode ? gEssayView : gSearching {
+				spinner?.startAnimating()
+				searcher.performSearch(for: text) { [self] in
+					spinner?.stopAnimating()
+				}
+			}
+
+		} else if allowSearchToEnd {
 			endSearch()
 		}
-
-		return done
 	}
-
-	@IBAction func searchOptionAction(sender: ZSegmentedControl) {
-		var options = ZFilterOption.fNone
-
-		for index in 0..<sender.segmentCount {
-			if  sender.isSelected(forSegment: index) {
-				let option = ZFilterOption(rawValue: Int(2.0 ** Double(index)))
-				options.insert(option)
-			}
-		}
-
-		if  options == .fNone {
-			options  = .fIdeas
-		}
-
-		gFilterOption = options
-
-		if  let text = activeSearchBoxText,
-			text.length > 0 {
-			gSearching.performSearch(for: text)
-		}
-	}
-
-	@IBAction func dismissAction(_ sender: ZButton) {
-		endSearch()
-	}
-
-	// MARK:- private
-	// MARK:-
-
-	func updateSearchOptions() {
-		let o = gFilterOption
-
-		searchOptionsControl?.setSelected(o.contains(.fBookmarks), forSegment: 0)
-		searchOptionsControl?.setSelected(o.contains(.fNotes),     forSegment: 1)
-		searchOptionsControl?.setSelected(o.contains(.fIdeas),     forSegment: 2)
-		searchOptionsControl?.action = #selector(searchOptionAction)
-		searchOptionsControl?.target = self
-	}
-
-    func endSearch() {
-        searchBox?.resignFirstResponder()
-        gSearching.exitSearchMode()
-    }
 
 }

@@ -14,5 +14,5 @@ import Foundation
 // a widget  is a node, whose zone points to widgetZone, whose parent is nil
 // a zrecord is a node, whose zone points to itself. need a safety tactic for this. a zone's parent returns parentZone
 // a note    is a node, whose note points to itself. a note's parent returns ownerZone
-
+// how about a crumb?
 

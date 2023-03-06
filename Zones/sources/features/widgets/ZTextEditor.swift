@@ -28,16 +28,6 @@ class ZTextPack: NSObject {
     var             widget :     ZoneWidget? { return packedZone?.widget }
     var   adequatelyPaused :           Bool  { return Date().timeIntervalSince(createdAt) > 0.1 }
 
-    var displayType: String {
-        if  let        trait = packedTrait {
-            return     trait.emptyName
-        } else if let  zone  = packedZone {
-            return     zone.emptyName
-        }
-
-        return kNoValue
-    }
-
 	var emptyName: String {
 		if  let        trait = packedTrait {
 			return     trait  .emptyName
@@ -59,11 +49,11 @@ class ZTextPack: NSObject {
     }
 
     var textWithSuffix: String {
-        var   result = displayType
+        var   result = emptyName
 
         if  let zone = packedZone {
-            result   = zone.unwrappedNameWithEllipses
-			let dups = zone.duplicates.count
+			result   = zone.unwrappedNameWithEllipses(zone.isInFavorites)
+			let dups = zone.duplicateZones.count
 			let  bad = zone.hasBadRecordName
             var need = dups
 
@@ -72,7 +62,7 @@ class ZTextPack: NSObject {
 			} else if need == 0 {                // dups trump count mode
 				switch gCountsMode {
 					case .fetchable: need = zone.indirectCount
-					case .progeny:   need = zone.progenyCount + 1
+					case .progeny:   need = zone.progenyCount
 					default:         return result
 				}
 			}
@@ -83,12 +73,12 @@ class ZTextPack: NSObject {
             // add suffix for "show counts as" //
             // //////////////////////////////////
 
-			if  gPrintModes.contains(.dNames) && zone.ckRecord != nil {
-                suffix = zone.ckRecordName
+			if  gPrintModes.contains(.dNames), let name = zone.recordName {
+                suffix = name
 			} else {
-				var showNeed = (need > 1) && (!zone.expanded || (gCountsMode == .progeny))
+				var showNeed = (need > 1) && (!zone.isExpanded || (gCountsMode == .progeny))
 
-				if (dups > 0 && need > 0 && gShowDuplicates) || bad {
+				if (dups > 0 && need > 0 && gIsShowingDuplicates) || bad {
 					showNeed = true
 				}
 
@@ -105,39 +95,43 @@ class ZTextPack: NSObject {
         return result
     }
 
-    // MARK:- internals: editing zones and traits
-    // MARK:-
+    // MARK: - internals: editing zones and traits
+    // MARK: -
 
 	convenience init(_ iZRecord: ZRecord) {
         self.init()
         self.setup(for: iZRecord)
     }
 
-    func updateText(isEditing: Bool = false) {
-		var        text = isEditing ? unwrappedName : textWithSuffix
+	func updateText(isEditing: Bool = false) {
+		var          text = isEditing ? unwrappedName : textWithSuffix
 
-		if !isEditing,
-			text.length > 18,
-			let    type = widget?.type,
-			!type.contains(.tExemplar),
-			!type.contains(.tBigMap) {                                  // is in small map
-			let  isLine = text[0] == "-"
-			text        = text.substring(toExclusive: isLine ? 20 : 15) // shorten to fit (in small map area)
+		if  !isEditing,
+		    let         w = widget {
+			let  isLinear = w.isLinearMode
+			let threshold = isLinear ? 18 : 20
+			let      type = w.widgetType
+			if  threshold < text.length,
+				!type.contains(.tExemplar),
+				!type.contains(.tBigMap) || !isLinear {                       // is in favorites or is circular
+				let  isLine = text[0] == kHyphen
+				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 10) // shorten to fit (in small map area or in circles)
 
-			if !isLine {
-				text.append("...")
+				if !isLine {
+					text.append(kEllipsis)
+				}
 			}
 		}
 
-		textWidget?.text = text
+		textWidget?.setText(text)
 	}
 
     func setup(for iZRecord: ZRecord) {
-        packedTrait  = iZRecord as? ZTrait
-        packedZone   = iZRecord as? Zone ?? packedTrait?.ownerZone
+		packedTrait  = iZRecord as? ZTrait                          // do this first
+		packedZone   = iZRecord as? Zone ?? packedTrait?.ownerZone
         originalText = unwrappedName
 
-        textWidget?.text = originalText
+		textWidget?.setText(originalText)
     }
 
     func isEditing(_ iZRecord: ZRecord) -> Bool {
@@ -146,32 +140,27 @@ class ZTextPack: NSObject {
 
     func updateWidgetsForEndEdit() {
 		if  let z = packedZone,
-			let w = gWidgets.widgetForZone(z) {
-			let t = w.textWidget
-			w.layoutDots()
-			w.revealDot.setNeedsDisplay()
-			w.setNeedsDisplay()
+			let w = gWidgets.widgetForZone(z),
+			let t = w.textWidget {
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
 			t.deselectAllText()
 			t.updateTextColor()
-			t.layoutText()
+			t.updateText()
 		}
     }
 
     func capture(_ iText: String?) {
-        let text           = iText == displayType ? nil : iText
+		if  let text           = iText == emptyName ? nil : iText {
+			if  let     trait  = packedTrait {                             // traits take logical priority
+				trait.ownerZone?.setTraitText(text, for: trait.traitType)
+			} else if let zone = packedZone {                              // ignore zone if editing a trait, above
+				zone.zoneName  = text.unescaped
 
-        if  let     trait  = packedTrait {      // traits take logical priority
-            trait.ownerZone?.setTraitText(text, for: trait.traitType)
-        } else if let zone = packedZone {       // ignore zone if editing a trait, above
-            zone.records?.removeFromLocalSearchIndex(nameOf: zone)
-
-            zone.zoneName  = text
-
-            zone.records?.addToLocalSearchIndex(nameOf: zone)
-            zone.maybeNeedSave()
-        }
-    }
+				zone.zRecords?.removeFromLocalSearchIndex(nameOf: zone)
+				zone.addToLocalSearchIndex()
+			}
+		}
+	}
 
 
     func removeSuffix(from iText: String?) -> String? {
@@ -180,8 +169,8 @@ class ZTextPack: NSObject {
         if  let components = iText?.components(separatedBy: "  (") {
             newText        = components[0]
 
-            if  newText == displayType || newText == kEmpty {
-                newText  = nil
+            if  newText   == emptyName || newText == kEmpty {
+                newText    = nil
             }
         }
 
@@ -194,19 +183,20 @@ class ZTextPack: NSObject {
     }
 
 	func captureText(_ iText: String?, redrawSync: Bool = false) {
-		if [emptyName, kEmpty].contains(iText),
-			let                 type  = packedTrait?.traitType {
-			packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
+		if (iText == emptyName || iText == kEmpty) {
+			if  let             type  = packedTrait?.traitType {
+				packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
+			}
 		} else if              iText != originalText {
             let              newText  = removeSuffix(from: iText)
             gTextCapturing            = true
 
             if  let                w  = textWidget {
                 let         original  = originalText
-                prepareUndoForTextChange(gUndoManager) {
-                    self.originalText = w.text
+                prepareUndoForTextChange(gUndoManager) { [self] in
+                    originalText = w.text
 
-					self.captureText(original, redrawSync: true)
+					captureText(original, redrawSync: true)
                     w.updateGUI()
                 }
             }
@@ -221,7 +211,7 @@ class ZTextPack: NSObject {
 		gTextCapturing = false
 
 		if  redrawSync {
-			gRedrawMaps()
+			gRelayoutMaps()
 		}
     }
 
@@ -245,10 +235,10 @@ class ZTextPack: NSObject {
         if  let text = textWidget?.text,
             text    != originalText {
             manager?.registerUndo(withTarget:self) { iUndoSelf in
-                let                newText = iUndoSelf.textWidget?.text ?? kEmpty
-                iUndoSelf.textWidget?.text = iUndoSelf.originalText
-                iUndoSelf.originalText     = newText
+                let            newText = iUndoSelf.textWidget?.text ?? kEmpty
+				iUndoSelf.originalText = newText
 
+				iUndoSelf.textWidget?.setText(iUndoSelf.originalText)
                 onUndo()
             }
         }
@@ -264,12 +254,12 @@ class ZTextEditor: ZTextView {
 	var currentlyEditedZone : Zone?           { return currentEdit?.packedZone }
 	var currentTextWidget   : ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
 	var currentZoneName	    : String          { return currentlyEditedZone?.zoneName ?? kEmpty }
-	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gWidgetFont }
+	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gBigFont }
 	var atEnd 	            : Bool            { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
 	var atStart  	        : Bool            { return selectedRange.upperBound == 0 }
 
-    // MARK:- editing
-    // MARK:-
+    // MARK: - editing
+    // MARK: -
 
     func clearOffset() { currentOffset = nil }
 
@@ -278,7 +268,7 @@ class ZTextEditor: ZTextView {
 
 		clearOffset()
 		fullResign()
-		gSetBigMapMode()
+		gSetMapWorkMode()
 	}
 
     func cancel() {
@@ -310,21 +300,20 @@ class ZTextEditor: ZTextView {
 
 				printDebug(.dEdit, " MAYBE   " + zone.unwrappedName)
 				deferEditingStateChange()
-				pack.updateText(isEditing: true)
+				pack.updateText(isEditing: true)            // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
 
-				if  let textWidget = zone.widget?.textWidget {
-					textWidget.enableUndo()
-					textWidget.applyConstraints()
-					textWidget.becomeFirstResponder()
+				if  let t = zone.widget?.textWidget {
+					t.enableUndo()
+					assignAsFirstResponder(t)
 				}
 
 				if  let at = setOffset ?? gCurrentMouseDownLocation {
 					setCursor(at: at)
 				}
 
-				gSignal([.sCrumbs, .sPreferences])
+				gSignal([.spCrumbs, .spPreferences])
 			}
         }
 
@@ -374,7 +363,7 @@ class ZTextEditor: ZTextView {
 			zone?.grab()
 
 			if  andRedraw {
-				gRedrawMaps(for: zone)
+				gRelayoutMaps(for: zone)
 			}
         }
     }
@@ -403,10 +392,9 @@ class ZTextEditor: ZTextView {
     func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         currentEdit?.prepareUndoForTextChange(manager, onUndo)
     }
-
 	
-	// MARK:- selecting
-	// MARK:-
+	// MARK: - selecting
+	// MARK: -
 
 	func selectAllText() {
 		let range = NSRange(location: 0, length: currentTextWidget?.text?.length ?? 0)
@@ -424,78 +412,82 @@ class ZTextEditor: ZTextView {
 		}
 	}
 	
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
-    func moveOut(_ iMoveOut: Bool) {
-        let revealed = currentlyEditedZone?.expanded ?? false
+	func moveOut(_ iMoveOut: Bool) {
+		let revealed = currentlyEditedZone?.isExpanded ?? false
 
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
-        let editAtOffset: FloatClosure = { iOffset in
-            if  let grabbed = gSelecting.firstSortedGrab {
-                gSelecting.ungrabAll()
-                self.edit(grabbed, setOffset: iOffset, immediately: revealed)
-            }
+		let editAtOffset: FloatClosure = { [self] iOffset in
+			if  let grabbed = gSelecting.firstSortedGrab {
+				gSelecting.ungrabAll()
+				edit(grabbed, setOffset: iOffset, immediately: revealed)
+			}
 
 			gTextEditorHandlesArrows = false       // done last
-        }
+		}
 
-        if  iMoveOut {
-            quickStopCurrentEdit()
-            gMapEditor.moveOut { reveal in
-                editAtOffset(100000000.0)
-            }
-        } else if currentlyEditedZone?.children.count ?? 0 > 0 {
-            quickStopCurrentEdit()
-            gMapEditor.moveInto { reveal in
-                editAtOffset(0.0)
-            }
-        }
-    }
+		if  iMoveOut {
+			quickStopCurrentEdit()
+			gMapEditor.moveOut { reveal in
+				editAtOffset(100000000.0)
+			}
+		} else if currentlyEditedZone?.children.count ?? 0 > 0 {
+			quickStopCurrentEdit()
+			gMapEditor.moveInto { [self] reveal in
+				if  !reveal {
+					editAtOffset(.zero)
+				} else {
+					gRelayoutMaps(for: currentlyEditedZone) {
+						editAtOffset(.zero)
+					}
+				}
+			}
+		}
+	}
 
 	func editingOffset(_ atStart: Bool) -> CGFloat {
-        return currentTextWidget?.offset(for: selectedRange, atStart) ?? 0.0
+        return currentTextWidget?.offset(for: selectedRange, atStart) ?? .zero
     }
 
-	func moveUp(_ iMoveUp: Bool, stopEdit: Bool) {
-        currentOffset   = currentOffset ?? editingOffset(iMoveUp)
-        let currentZone = currentlyEditedZone
-        let      isHere = currentZone == gHere
-        let           e = currentEdit // for the case where stopEdit is true
+	func moveUp(_ up: Bool, stopEdit: Bool) {
+        currentOffset = currentOffset ?? editingOffset(up)
+        let         e = currentEdit // for the case where stopEdit is true
 
         if  stopEdit {
             applyPreservingOffset {
                 capture()
-                currentZone?.grab()
+                currentlyEditedZone?.grab()
             }
         }
         
-        if  var original = currentZone {
-            gMapEditor.moveUp(iMoveUp, [original], targeting: currentOffset) { iKinds in
-                gControllers.signalFor(nil, multiple: iKinds) {
-                    if  isHere {
-                        self.currentOffset = currentZone?.widget?.textWidget.offset(for: self.selectedRange, iMoveUp)  // offset will have changed when current == here
+        if  var original = e?.packedZone {
+            gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
+				gControllers.signalFor(nil, multiple: kinds) { [self] in
+					if  let widget = original.widget, widget.isHere {       // offset has changed
+                        currentOffset = widget.textWidget?.offset(for: selectedRange, up)
                     }
                     
-                    if  stopEdit,
-                        let first = gSelecting.firstSortedGrab {
+					if  let first = gSelecting.firstSortedGrab, stopEdit {
                         original  = first
                         
-                        if  original != currentZone { // if move up (above) does nothing, ignore
-                            self.edit(original)
+						if  original != currentlyEditedZone { // if move up (above) does nothing, ignore
+                            edit(original)
                         } else {
-                            self.currentEdit = e // restore after capture sets it to nil
+                            currentEdit = e // restore after capture sets it to nil
 
                             gSelecting.ungrabAll()
-                            e?.textWidget?.becomeFirstResponder()
+							assignAsFirstResponder(e?.textWidget)
                         }
                     } // else widgets are wrong
-                    
-                    FOREGROUND(after: 0.01) {
-                        self.setCursor(at: self.currentOffset)
+
+                    FOREGROUND(after: 0.01) { [self] in
+                        setCursor(at: currentOffset)
+						gMapView?.setNeedsDisplay()
                     }
                 }
             }
@@ -514,7 +506,7 @@ class ZTextEditor: ZTextView {
             let   location = name.location(of: offset, using: currentFont)
 
 			printDebug(.dEdit, " AT \(location)    \(name)")
-            self.selectedRange = NSMakeRange(location, 0)
+            selectedRange = NSMakeRange(location, 0)
         }
     }
     

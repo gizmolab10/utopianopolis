@@ -6,16 +6,21 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import CloudKit
+
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 class ZAction : ZRecord {
 
     @objc var action: NSDictionary?
     @objc var  owner: Zone?
 
-    override var cloudProperties: [String] {
+    override var cloudProperties: StringsArray {
         return super.cloudProperties + [#keyPath(action), #keyPath(owner)]
     }
 

@@ -18,57 +18,28 @@ let gTimers = ZTimers()
 var gCurrentTimerID: ZTimerID?
 
 enum ZTimerID : Int {
+
 	case tTextEditorHandlesArrows
 	case tNeedCloudDriveEnabled
-	case tCoreDataDeferral
-	case tRecordsEveryone
+	case tCoreDataDeferral         // repeat forever
 	case tNeedUserAccess
-	case tCloudAvailable
+	case tCloudAvailable           // repeat forever
 	case tMouseLocation
-	case tWriteEveryone
-	case tRecordsMine
-	case tWriteMine
 	case tMouseZone
 	case tOperation
-	case tRecount
+	case tLicense
 	case tStartup
-	case tSync
+	case tRecount                  // repeat forever
+	case tPersist                  // "
+	case tHover                    // "
 	case tKey
-
-	static func recordsTimerID(for databaseID: ZDatabaseID?) -> ZTimerID? {
-		if  let    index = databaseID?.databaseIndex {
-			switch index {
-				case .mineIndex:     return .tRecordsMine
-				case .everyoneIndex: return .tRecordsEveryone
-				default:             break
-			}
-		}
-
-		return nil
-	}
-
-	static func convert(from databaseID: ZDatabaseID?) -> ZTimerID? {
-		if  let id = databaseID {
-			switch id {
-				case .everyoneID: return .tWriteEveryone
-				case .mineID:     return .tWriteMine
-				default:          return nil
-			}
-		}
-
-		return nil
-	}
 
 	var string: String { return "\(self)" }
 
 	var description: String? {
 		switch self {
-			case .tSync:            return "saving data"
-			case .tWriteEveryone:   return "writing public local data"
-			case .tWriteMine:       return "writing private local data"
-			case .tRecordsEveryone: return "acquiring public cloud data"
-			case .tRecordsMine:     return "acquiring private cloud data"
-			default:                return nil
+			case .tPersist: return "saving data"
+			default:        return nil
 		}
 	}
 
@@ -102,13 +73,13 @@ class ZTimers: NSObject {
 
 	var timers = [ZTimerID : Timer]()
 
-	var statusText: String? { return gCurrentTimerID?.description }
+	var statusText: String? { return gCurrentTimerID?.description ?? kEmpty }
 
 	func stopTimer(for timerID: ZTimerID?) {
 		if  let id = timerID {
-			FOREGROUND {
-				self.timers[id]?.invalidate()
-				self.timers[id] = nil
+			FOREGROUND { [self] in
+				timers[id]?.invalidate()
+				timers[id] = nil
 
 				if  gCurrentTimerID == id {
 					gCurrentTimerID  = nil
@@ -118,36 +89,64 @@ class ZTimers: NSObject {
 	}
 
 	func startTimer(for timerID: ZTimerID?) {
-		if  let       tid = timerID {
-			let repeaters : [ZTimerID]   = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tSync]
-			var     block : TimerClosure = { iTimer in }        // do nothing by default
-			let   repeats = repeaters.contains(tid)
-			var   waitFor = 1.0                                 // one second
+		if  let     tid = timerID {
+
+			// //
+			// interval of time before firing, also between repeats
+			// //
+
+			var waitFor = 1.0                   // one second
 
 			switch tid {
-				case .tSync:                    waitFor = 15.0  // seconds
-				case .tRecount:                 waitFor = 60.0  // one minute
-				case .tStartup, .tMouseZone:    waitFor =  0.5  // half second
+				case .tKey,     .tPersist:   waitFor =  5.0              // five seconds
+				case .tLicense, .tRecount:   waitFor = 60.0              // one minute
+				case .tHover,   .tMouseZone: waitFor = kOneHoverInterval // one fifth second
+				default:                     break
+			}
+
+			// //
+			// some timers should not be triggered when app is hidden (the default)
+			// //
+
+			var requiresFront = false
+
+			switch tid {
+				case .tStartup, .tLicense, .tRecount, .tCloudAvailable: requiresFront = true
+				default: break
+			}
+
+			// //
+			// associate closure with timer id
+			// //
+
+			var block : Closure = {}          // do nothing by default
+
+			switch tid {
+				case .tKey:                     block = { gCurrentKeyPressed        = nil }
+				case .tMouseZone:               block = { gCurrentMouseDownZone     = nil }
+				case .tMouseLocation:           block = { gCurrentMouseDownLocation = nil }
+				case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
+				case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
+				case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }
+				case .tStartup:                 block = { gStartupController?.startupUpdate() }
+				case .tCloudAvailable:          block = { gBatches.cloudFire() }
+				case .tRecount:                 block = { gRecountMaybe() }
+				case .tHover:                   block = { gUpdateHover() }
+				case .tPersist:                 block = { gSaveContext() }
 				default:                        break
 			}
 
-			switch tid {
-				case .tKey:                     block = { iTimer in gCurrentKeyPressed        = nil }
-				case .tMouseZone:               block = { iTimer in gCurrentMouseDownZone     = nil }
-				case .tMouseLocation:           block = { iTimer in gCurrentMouseDownLocation = nil }
-				case .tTextEditorHandlesArrows: block = { iTimer in gTextEditorHandlesArrows  = false }
-				case .tStartup:                 block = { iTimer in gIncrementStartupProgress(waitFor) }
-				case .tSync:                    block = { iTimer in if gIsReadyToShowUI { gSaveContext(); gBatches.save { iSame in } } }
-				case .tRecount:                 block = { iTimer in if gNeedsRecount    { gNeedsRecount = false; gRemoteStorage.recount(); gSignal([.sStatus]) } }
-				case .tCloudAvailable:          block = { iTimer in FOREGROUND(canBeDirect: true) { gBatches.cloudFire() } }
-				case .tCoreDataDeferral:        block = { iTimer in gCoreDataStack.invokeDeferralMaybe(iTimer) }
-				default:                        break
-			}
+			// //
+			// create the timer. while it fires, set the current timer id
+			// //
 
-			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats) { timer in
-				gCurrentTimerID     = timerID
+			let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tPersist]  // only these tasks repeat (forever)
+			let repeats               = repeaters.contains(tid)
 
-				block(timer)
+			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, requiresFront: requiresFront) {
+				gCurrentTimerID       = timerID      // this is for cloudStatusLabel, in data details
+
+				block()
 
 				if !repeats {
 					gCurrentTimerID = nil
@@ -162,12 +161,16 @@ class ZTimers: NSObject {
 		}
 	}
 
-	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, block: @escaping TimerClosure) {
+	func resetTimer(for timerID: ZTimerID?, withTimeInterval interval: TimeInterval, repeats: Bool = false, requiresFront: Bool = false, block: @escaping Closure) {
 		if  let id = timerID {
-			FOREGROUND { // timers must have a runloop
-				self.timers[id]?.invalidate()
-				self.timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: block)
-				self.timers[id]?.fire()
+			FOREGROUND(forced: true) { [self] in // timers require a runloop
+				timers[id]?.invalidate() // do not leave the old one "floating around and uncontrollable"
+				timers[id] = Timer.scheduledTimer(withTimeInterval: interval, repeats: repeats, block: { iTimer in
+					let name = NSWorkspace.shared.frontmostApplication?.localizedName
+					if  !requiresFront || name == "Seriously" {
+						block()
+					}
+				})
 			}
 		}
 	}
@@ -182,8 +185,8 @@ class ZTimers: NSObject {
 	}
 
 	func assureCompletion(for timerID: ZTimerID, now: Bool = false, withTimeInterval interval: TimeInterval, restartTimer: Bool = false, block: @escaping ThrowsClosure) {
-		FOREGROUND { // timers must have a runloop
-			if  restartTimer || self.isInvalidTimer(for: timerID) {
+		FOREGROUND { [self] in // timers must have a runloop
+			if  restartTimer || isInvalidTimer(for: timerID) {
 				var tryCatch : Closure = {}
 				let    start = Date()
 
@@ -213,10 +216,10 @@ class ZTimers: NSObject {
 						do {
 							try block()
 							debug("•")
-							gSignal([.sStatus]) // show change in timer status
+							gSignal([.spDataDetails]) // show change in timer status
 						} catch {
 							startTimer()
-							debug("-")
+							debug(kHyphen)
 						}
 					}
 				}

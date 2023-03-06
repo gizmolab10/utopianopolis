@@ -11,48 +11,43 @@ import UIKit
 import CloudKit
 import UserNotifications
 
-@UIApplicationMain
-
 var gAppDelegate: ZMobileAppDelegate?
+
+@UIApplicationMain
 
 class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 
+	var needsSetup = true
     var window: UIWindow?
 
 
-    // MARK:- delegation
-    // MARK:-
+    // MARK: - delegation
+    // MARK: -
 
     
     public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        application.applicationSupportsShakeToEdit = true
-		gAppDelegate = self
+		if  needsSetup {
+			needsSetup                                 = false
+			gAppDelegate                               = self
+			application.applicationSupportsShakeToEdit = true
 
-        // application.registerUserNotificationSettings(.badgeSetting)
-        application.registerForRemoteNotifications()
-        gControllers.startupCloudAndUI()
+			gStartup.startupCloudAndUI()
+		}
 
         return true
     }
 
 
-    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {
-        let note: CKNotification = CKNotification(fromRemoteNotificationDictionary: userInfo)
-        
-        if  note.notificationType == .query,
-            let queryNote = note as? CKQueryNotification {
-            gRemoteStorage.receiveFromCloud(queryNote)
-        }
-    }
+    public func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any]) {}
 
 
     public func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        printDebug(.dError, deviceToken)
+		printDebug(.dError, deviceToken.description)
     }
 
 
     @nonobjc public func application(_ application: UIApplication, didRegister notificationSettings: UNNotificationSettings) {
-        printDebug(.dError, notificationSettings)
+		printDebug(.dError, notificationSettings.description)
     }
 
 

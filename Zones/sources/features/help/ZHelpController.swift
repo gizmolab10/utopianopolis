@@ -15,28 +15,72 @@ import SnapKit
     import UIKit
 #endif
 
-var gHelpWindowController       : NSWindowController?         // instantiated once, in startupCloudAndUI
-var gHelpController             : ZHelpController? { return gControllers.controllerForID(.idHelp) as? ZHelpController }
-let gAllHelpModes : [ZHelpMode] = [.dotMode, .basicMode, .middleMode, .proMode, .essayMode]
+var gHelpWindowController : NSWindowController?         // instantiated once, in startupCloudAndUI
+var gHelpController       : ZHelpController? { return gHelpWindowController?.contentViewController as? ZHelpController }
+var gHelpWindow           : ZWindow?         { return gHelpWindowController?.window }
 
-class ZHelpController: ZGenericTableController {
+enum ZHelpMode: String {
+
+	case intermedMode = "i"
+	case mouseMode    = "m" // save for later!!!
+	case basicMode    = "b"
+	case essayMode    = "e"
+	case proMode      = "a"
+	case dotMode      = "d"
+	case noMode       = " "
+
+	static let all: [ZHelpMode] = [.dotMode, .basicMode, .intermedMode, .proMode, .essayMode] // , .mouseMode]
+
+	var title: String {
+		switch self {
+			case .intermedMode: return "intermediate keys"
+			case .essayMode:    return "notes & essays"
+			case .basicMode:    return "basic keys"
+			case .mouseMode:    return "mouse"
+			case .proMode:      return "all keys"
+			case .dotMode:      return "dots"
+			default:            return kEmpty
+		}
+	}
+
+	func isEqual(to mode: ZHelpMode) -> Bool {
+		return rawValue == mode.rawValue
+	}
+
+	var showsDots: Bool {
+		switch self {
+			case .dotMode, .essayMode, .mouseMode: return true
+			default:                               return false
+		}
+	}
+
+}
+
+class ZHelpController: ZGenericTableController, ZGeometry {
 
 	@IBOutlet var      clipView : ZView?
 	@IBOutlet var   mapHelpGrid : ZHelpGridView?
 	@IBOutlet var  dotsHelpGrid : ZHelpGridView?
 	@IBOutlet var essayHelpGrid : ZHelpGridView?
-	override  var  controllerID : ZControllerID  { return .idHelp }
+	@IBOutlet var mouseHelpGrid : ZHelpGridView?
 	var                helpData : ZHelpData      { return helpData(for: gCurrentHelpMode) }
 	var                gridView : ZHelpGridView? { return gridView(for: gCurrentHelpMode) }
 	var         titleBarButtons = ZHelpButtonsView()
 	let           essayHelpData = ZHelpEssayData()
+	let           mouseHelpData = ZHelpMouseData()
 	let            dotsHelpData = ZHelpDotsData()
 	let             mapHelpData = ZHelpMapData()
 	var               isShowing = false
+	override func handleSignal(_ object: Any?, kind: ZSignalKind)            { genericTableUpdate() }
+	override func shouldHandle(_ kind: ZSignalKind) -> Bool                  { return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false) }
+	func           showHelpFor(_ mode: ZHelpMode)                            { show(true, mode: mode) }   // side-effect: sets gCurrentHelpMode
+	func tableView(_ tableView: ZTableView, heightOfRow row: Int) -> CGFloat { return helpData.rowHeight }
+	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? { return helpData.objectValueFor(row) }
 
 	func helpData(for iMode: ZHelpMode) -> ZHelpData {
 		switch iMode {
 			case .essayMode: return essayHelpData
+			case .mouseMode: return mouseHelpData
 			case   .dotMode: return  dotsHelpData
 			default:         return   mapHelpData
 		}
@@ -45,20 +89,16 @@ class ZHelpController: ZGenericTableController {
 	func gridView(for iMode: ZHelpMode) -> ZHelpGridView? {
 		switch iMode {
 			case .essayMode: return essayHelpGrid
-			case .dotMode:   return dotsHelpGrid
-			default:         return mapHelpGrid
+			case .mouseMode: return mouseHelpGrid
+			case .dotMode:   return  dotsHelpGrid
+			default:         return   mapHelpGrid
 		}
 	}
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - display
+	// MARK: -
 
-	override func viewWillAppear() {
-		super.viewWillAppear()
-		update()
-	}
-
-	func update() {
+	func helpUpdate() {
 		view.zlayer.backgroundColor = gBackgroundColor.cgColor
 
 		titleBarButtons.updateAndRedraw()
@@ -66,106 +106,24 @@ class ZHelpController: ZGenericTableController {
 		updateGridVisibility()
 	}
 
-	override func setup() {
+	override func controllerSetup(with mapView: ZMapView?) {
 		view.zlayer.backgroundColor = .white
 		let                       m = gCurrentHelpMode
 
-		super         .setup()
-		essayHelpData .setup(for: m)
-		dotsHelpData  .setup(for: m)
-		mapHelpData   .setup(for: m)
+		super        .controllerSetup(with: mapView)
+		essayHelpData.setupForMode(m)
+		dotsHelpData .setupForMode(m)
+		mapHelpData  .setupForMode(m)
+		gSignal([.sAppearance]) // redraw dots map
 		setupGridViews()
 		setupTitleBar()
 
 		if !isShowing {
-			gCurrentHelpMode = .noMode // set temporarily so show does not dismiss window
+			gCurrentHelpMode = .noMode // set temporarily so show (just below) does not dismiss window
 
 			show(mode: m)
 		}
 	}
-
-	func show(_ iShow: Bool? = nil, flags: ZEventFlags = ZEventFlags()) {
-		var nextMode = gCurrentHelpMode
- 		let  COMMAND = flags.isCommand
-		let  CONTROL = flags.isControl
-		let   OPTION = flags.isOption
-
-		if             COMMAND {
-			if         OPTION && !CONTROL {
-				nextMode = .basicMode
-			} else if  OPTION &&  CONTROL {
-				nextMode =   .dotMode
-			} else if !OPTION &&  CONTROL {
-				nextMode = .essayMode
-			}
-		}
-
-		show(iShow, mode: nextMode)
-	}
-
-	func showHelp(for mode: ZHelpMode) {
-		show(true, mode: mode)         // side-effect: sets gCurrentHelpMode
-		gSignal([.sStartupButtons])    // change highlight of help buttons in startup view
-	}
-
-	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
-		if  let         next = mode {
-			let   controller = gHelpWindowController
-			let        isKey = gHelpWindow?.isKeyWindow ?? false
-			let         same = gCurrentHelpMode == next
-			let         show = iShow ?? !(isKey && same)
-
-			if !show  {
-				gHelpWindow?.close()
-			} else {
-				gCurrentHelpMode = next
-				isShowing        = true   // prevent infinite recursion (where show window causes view did appear, which calls update, which calls show)
-
-				gHelpWindow?.close()      // workaround for dots draw method not being called (perhaps an apple bug?)
-				controller?.showWindow(nil)
-				update()
-				isShowing        = false
-			}
-		}
-	}
-
-	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
-		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
-	}
-
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		genericTableView?.reloadData()
-	}
-
-	func handleEvent(_ iEvent: ZEvent) -> ZEvent? {
-		if  let      key = iEvent.key {
-			let    flags = iEvent.modifierFlags
-			let  COMMAND = flags.isCommand
-			let  SPECIAL = flags.isSpecial
-			switch   key {
-				case "?", "/":         show(       flags: flags)
-				case "w":              show(false, flags: flags)
-				case "p":              view.printView()
-				case "q":              gApplication.terminate(self)
-				case "a": if SPECIAL { gApplication.showHideAbout() }
-				case "r": if COMMAND { sendEmailBugReport() }
-
-				default: break
-			}
-
-			if  let arrow = key.arrow {
-				switch arrow {
-					case .left, .right: titleBarButtons.actuateNextButton(forward: arrow == .right)
-					default: break
-				}
-			}
-		}
-
-		return nil
-	}
-
-	// MARK:- title bar
-	// MARK:-
 
 	func setupTitleBar() {
 		if  let                   window = view.window {
@@ -184,14 +142,86 @@ class ZHelpController: ZGenericTableController {
 		}
 	}
 
-	// MARK:- grid
-	// MARK:-
+	func show(_ iShow: Bool? = nil, flags: ZEventFlags = ZEventFlags()) {
+		var     nextMode = gCurrentHelpMode
+
+		if  gIsEssayMode || flags.exactlySplayed {
+			nextMode     = .essayMode
+		} else if !gIsEssayMode {
+			if              flags.exactlyOtherSpecial {
+				nextMode = .basicMode
+			} else if       flags.exactlyAll {
+				nextMode = .proMode
+			} else {
+				nextMode = .dotMode // prefer this
+			}
+		}
+
+		show(iShow, mode: nextMode)
+	}
+
+	func show(_ iShow: Bool? = nil, mode: ZHelpMode?) {
+		if  let next = mode {
+			let show = iShow ?? (!gIsHelpVisible || next != gCurrentHelpMode)
+
+			if !show  {
+				gHelpWindow?.close()
+			} else {
+				gCurrentHelpMode = next
+				isShowing        = true                   // prevent infinite recursion (where update (below) calls show)
+
+				gHelpWindow?.close()                      // workaround to force a call to the dots draw method (perhaps an apple bug?)
+				gHelpController?.helpData.prepareStrings()
+				gHelpWindowController?.showWindow(self)   // bring to front
+				helpUpdate()
+
+				isShowing        = false
+			}
+		}
+	}
+
+	// MARK: - events
+	// MARK: -
+
+	func handleKey(_ key: String, flags: ZEventFlags) -> Bool {   // false means key not handled
+		let  COMMAND = flags.hasCommand
+		let  SPECIAL = flags.exactlySpecial
+
+		switch key {
+			case "?", "/":         show(       flags: flags)
+			case "w":              show(false, flags: flags)
+			case "p":              view.printView()
+			case "q":              gApplication?.terminate(self)
+			case "a": if SPECIAL { gApplication?.showHideAbout() }
+			case "r": if COMMAND { sendEmailBugReport() }
+			default:  if  let arrow = key.arrow {
+				switch arrow {
+					case .left, .right: titleBarButtons.showNextHelp(forward: arrow == .right)
+					default: return false
+				}
+			}
+		}
+
+		return true
+	}
+
+	func handleEvent(_ event: ZEvent) -> ZEvent? {
+		if  let   key = event.key {
+			let flags = event.modifierFlags
+			return handleKey(key, flags: flags) ? nil : event
+		}
+
+		return nil
+	}
+
+	// MARK: - grid
+	// MARK: -
 
 	func setupGridViews() {
 		if  let c = clipView {
 			c.zlayer.backgroundColor = .clear
 
-			for m in gAllHelpModes {
+			for m in ZHelpMode.all {
 				if  let         g = gridView(for: m) {
 					let      data = helpData(for: m)
 					g.helpData    = data
@@ -213,7 +243,7 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	func updateGridVisibility() {
-		let graphModes: [ZHelpMode] = [.basicMode, .middleMode, .proMode]
+		let graphModes: [ZHelpMode] = [.basicMode, .intermedMode, .proMode]
 
 		func shouldShow(_ mode: ZHelpMode) -> Bool {
 			let sameMode  = mode == gCurrentHelpMode
@@ -223,7 +253,7 @@ class ZHelpController: ZGenericTableController {
 			return sameMode || showGraph
 		}
 
-		for mode in gAllHelpModes {
+		for mode in ZHelpMode.all {
 			let hide = !shouldShow(mode)
 			gridView(for: mode)?.isHidden = hide
 		}
@@ -231,8 +261,8 @@ class ZHelpController: ZGenericTableController {
 		gridView?.setNeedsDisplay()
 	}
 
-	// MARK:- help table
-    // MARK:-
+	// MARK: - help table
+    // MARK: -
 
 	var clickCoordinates: (Int, Int)? {
 
@@ -240,10 +270,8 @@ class ZHelpController: ZGenericTableController {
 
 		if  let              table = genericTableView,
 			let                row = table.selectedRowIndexes.first {
-			let     screenLocation = ZEvent.mouseLocation
-			if  let windowLocation = table.window?.convertPoint(fromScreen: screenLocation) {
-				let              l = table.convert(windowLocation, from: nil)
-				let         column = Int(floor(l.x / CGFloat(helpData.columnWidth)))
+			if  let       location = table.currentMouseLocation {
+				let         column = Int(floor(location.x / helpData.columnWidth.float))
 
 				table.deselectRow(row)
 				
@@ -257,19 +285,13 @@ class ZHelpController: ZGenericTableController {
 	}
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
+		helpData.prepareStrings()
+
 		return helpData.countOfRows
     }
 
-	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-		return helpData.rowHeight
-	}
-
-	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: ZTableColumn?, row: Int) -> Any? {
-		return helpData.objectValueFor(row)
-	}
-
 	func tableViewSelectionIsChanging(_ notification: Notification) {
-		if  let (row, column) = clickCoordinates,
+		if  let (row, column) = clickCoordinates, column >= 0,
 			let hyperlink = helpData.url(for: row, column: column) {
 			hyperlink.openAsURL()
 		}

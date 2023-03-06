@@ -13,123 +13,128 @@
 #endif
 
 var gMainController : ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
-var gDragView       : ZDragView?       { return gMainController?.dragView }
 
 class ZMainController: ZGesturesController {
 
-	@IBOutlet var detailsWidth       : NSLayoutConstraint?
-	@IBOutlet var hamburgerButton    : ZButton?
-	@IBOutlet var essayContainerView : ZView?
-	@IBOutlet var searchResultsView  : ZView?
-	@IBOutlet var mapContainerView   : ZView?
-	@IBOutlet var permissionView     : ZView?
-	@IBOutlet var searchBoxView      : ZView?
-	@IBOutlet var detailView         : ZView?
-	@IBOutlet var debugView          : ZView?
-	@IBOutlet var dragView           : ZDragView?
-    override  var controllerID       : ZControllerID { return .idMain }
+	override  var controllerID               : ZControllerID { return .idMain }
+	@IBOutlet var explainPopover             : ZExplanationPopover?
+	@IBOutlet var alternateLeading           : NSLayoutConstraint?
+	@IBOutlet var searchOptionsContainerView : ZView?
+	@IBOutlet var essayContainerView         : ZView?
+	@IBOutlet var searchResultsView          : ZView?
+	@IBOutlet var permissionView             : ZView?
+	@IBOutlet var experimentView             : ZView?
+	@IBOutlet var searchBarView              : ZView?
+	@IBOutlet var controlsView               : ZView?
+	@IBOutlet var detailView                 : ZView?
+	@IBOutlet var debugView                  : ZView?
+	@IBOutlet var searchButton               : ZButton?
+	@IBOutlet var dismissButton              : ZButton?
+	@IBOutlet var hamburgerButton            : ZButton?
+	@IBOutlet var helpButton                 : ZHelpButton?
 
-	override func setup() {
-		searchResultsView?.isHidden = true
-		searchBoxView?    .isHidden = true
-		view.gestureHandler         = self
-
-		update()
-	}
-
-	@IBAction func helpButtonAction(_ button: NSButton) {
-		gHelpController?.show()
-	}
-
-	@IBAction func hamburgerButtonAction(_ button: NSButton) {
-		gShowDetailsView = gDetailsViewIsHidden
-
-		update()
-	}
-
-	@IBAction func debugInfoButtonAction(_ button: NSButton) {
-		if  gDebugModes.contains(.dDebugInfo) {
-			gDebugModes  .remove(.dDebugInfo)
-		} else {
-			gDebugModes  .insert(.dDebugInfo)
-		}
-
-		update()
-	}
-
-	func updateForState() {
-		switch gSearching.state {
-			case .sList:
-				searchBoxView?.isHidden = true
-			case .sEntry, .sFind:
-				searchBoxView?.isHidden = false
-			default: break
-		}
-	}
-
-	func update() {
-		hamburgerButton?.toolTip = kClickTo + gConcealmentString(for: gShowDetailsView) + " detail views"
-		detailsWidth?  .constant =  gShowDetailsView ? 226.0 :  0.0
-		detailView?    .isHidden = !gShowDetailsView
-		debugView?     .isHidden = !gDebugInfo || [.wSearchMode, .wEssayMode].contains(gWorkMode)
-
-		updateHamburgerImage()
-	}
-
-	func updateHamburgerImage() {
-		var image = ZImage(named: "settings.jpg")
+	var hamburgerImage: ZImage? {
+		var image = kHamburgerImage
 
 		if  gIsDark {
 			image = image?.invertedImage
 		}
 
-		hamburgerButton?.image = image
+		return image
+	}
+
+	override func controllerSetup(with mapView: ZMapView?) {
+		searchResultsView?.isHidden = true
+		view.gestureHandler         = self
+
+		super.controllerSetup(with: mapView)
+		mainUpdate()
+	}
+
+	func mainUpdate() {
+		let            showDetails =  gShowDetailsView
+		alternateLeading?.constant = !showDetails ? .zero : 226.0
+		detailView?      .isHidden = !showDetails
+		debugView?       .isHidden = !gDebugInfo || [.wResultsMode, .wEssayMode].contains(gWorkMode)
+		controlsView?    .isHidden = !gShowMainControls
+		hamburgerButton?  .toolTip =  gConcealmentString(hide: gShowDetailsView) + " detail views"
+		hamburgerButton?    .image =  hamburgerImage
+	}
+
+	// MARK: - search
+	// MARK: -
+
+	@IBAction func searchButtonAction(_ sender: ZButton) {
+		gSearching.showSearch()
+		searchStateDidChange()
+	}
+
+	@IBAction func dismissButtonAction(_ sender: ZButton) {
+		gSearchBarController?.endSearch()
+		searchStateDidChange()
+	}
+
+	func searchStateDidChange() {
+		searchOptionsContainerView?.isHidden =  gIsNotSearching
+		dismissButton?             .isHidden =  gIsNotSearching
+		searchButton?              .isHidden = !gIsNotSearching
+	}
+
+	// MARK: - help, settings, drag and signal
+	// MARK: -
+
+	@IBAction func      helpButtonAction(_ button: NSButton) { gHelpController?.show() }
+	@IBAction func hamburgerButtonAction(_ button: NSButton) {
+		gShowDetailsView = gDetailsViewIsHidden
+
+		gTextEditor.stopCurrentEdit()
+		gMapView?.removeAllTextViews(ofType: .small)
+		gSignal([.spMain, .sDetails, .spRelayout])
+	}
+
+	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {         // false means not handled
+		if  gIgnoreEvents {
+			return true
+		}
+
+		return gIsEssayMode ? false : (gMapController?.handleDragGesture(iGesture) ?? false)
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gIsEssayMode,
-			let    eView = gEssayView,
-			let  gesture = iGesture {
-			let location = gesture.location(in: eView)
+		if  let         gesture = iGesture, !gIgnoreEvents {
+			if  !gIsEssayMode {
+				gMapController?.handleClickGesture(iGesture)
+			} else if let eView = gEssayView {
+				let    location = gesture.location(in: eView)
 
-			if  location.x < 0.0 {				// is gesture located outside essay view?
-				eView.save()
-				gControllers.swapMapAndEssay(force: .wMapMode)
+				if  location.x < .zero {				// is gesture located outside essay view?
+					eView.save()
+					gControllers.swapMapAndEssay(force: .wMapMode) {
+						gMapController?.handleClickGesture(iGesture)
+					}
+				}
 			}
 		}
 	}
 
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		let   hideEssay = !gIsEssayMode
-		let  hideSearch = !gIsSearchMode || gSearching.state == .sList
-        let hideResults = !gIsSearchMode || !(gSearchResultsController?.hasResults ?? false)
-
-		permissionView?               .isHidden = !gIsStartupMode
-
-		switch iKind {
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+		switch kind {
 			case .sSearch:
-				searchBoxView?        .isHidden =  hideSearch
-				if  hideSearch {
-					searchResultsView?.isHidden =  hideSearch
-
-					assignAsFirstResponder(nil)
-				}
-			case .sFound:
-				if !gIsEssayMode {
-					mapContainerView? .isHidden = !hideResults
-				}
-				searchBoxView?        .isHidden =  hideSearch
-				searchResultsView?    .isHidden =  hideResults
+				assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBar)
 			case .sSwap:
-				gRefusesFirstResponder          = true          // prevent the exit from essay from beginning an edit
-				essayContainerView?   .isHidden =  hideEssay
-				mapContainerView? 	  .isHidden = !hideEssay
-				gRefusesFirstResponder          = false
+				gRefusesFirstResponder       = true          // prevent the exit from essay from beginning an edit
+				essayContainerView?.isHidden = !gIsEssayMode
+				gRefusesFirstResponder       = false
 
-				dragView?.setNeedsDisplay()
-				update()
+				gMapController?.setNeedsDisplay()
 			default: break
         }
+
+		permissionView?   .isHidden = !gIsStartupMode
+		searchBarView?    .isHidden =  gIsNotSearching || (gSearchResultsVisible && gSearchResultsController?.hasResults ?? false)
+		searchResultsView?.isHidden =  gIsNotSearching || gWaitingForSearchEntry || gIsEssayMode
+
+		mainUpdate()
     }
 
 }

@@ -7,9 +7,14 @@
 //
 
 import Foundation
-import AppKit
-import Cocoa
 import CloudKit
+import SnapKit
+
+#if os(OSX)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum ZArrowKey: Int8 {
     case up    = -128
@@ -44,19 +49,21 @@ public typealias ZTableView                  = NSTableView
 public typealias ZStackView                  = NSStackView
 public typealias ZImageView                  = NSImageView
 public typealias ZColorWell                  = NSColorWell
+public typealias ZEventType                  = ZEvent.EventType
 public typealias ZButtonCell                 = NSButtonCell
 public typealias ZBezierPath                 = NSBezierPath
 public typealias ZScrollView                 = NSScrollView
 public typealias ZController                 = NSViewController
+public typealias ZToolTipTag                 = ZView.ToolTipTag
 public typealias ZEventFlags                 = ZEvent.ModifierFlags
 public typealias ZSearchField                = NSSearchField
-public typealias ZApplication                = NSApplication
 public typealias ZTableColumn                = NSTableColumn
 public typealias ZTableRowView               = NSTableRowView
 public typealias ZMenuDelegate               = NSMenuDelegate
 public typealias ZTableCellView              = NSTableCellView
 public typealias ZBitmapImageRep             = NSBitmapImageRep
 public typealias ZWindowDelegate             = NSWindowDelegate
+public typealias ZFontDescriptor             = NSFontDescriptor
 public typealias ZWindowController           = NSWindowController
 public typealias ZSegmentedControl           = NSSegmentedControl
 public typealias ZTextViewDelegate           = NSTextViewDelegate
@@ -67,19 +74,14 @@ public typealias ZTableViewDelegate          = NSTableViewDelegate
 public typealias ZTableViewDataSource        = NSTableViewDataSource
 public typealias ZSearchFieldDelegate        = NSSearchFieldDelegate
 public typealias ZApplicationDelegate        = NSApplicationDelegate
-public typealias ZPanGestureRecognizer       = NSPanGestureRecognizer
 public typealias ZClickGestureRecognizer     = NSClickGestureRecognizer
 public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
 public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
 public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
-let        gVerticalWeight = 1.0
-let gHighlightHeightOffset = CGFloat(-3.0)
-
-var gIsPrinting: Bool {
-    return NSPrintOperation.current != nil
-}
-
+let kVerticalWeight      = CGFloat(1)
+var gIsPrinting          = false
+var gFavoritesAreVisible : Bool { return gDetailsViewIsVisible(for: .vFavorites) }
 protocol ZScrollDelegate : NSObjectProtocol {}
 
 func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
@@ -99,34 +101,50 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 }
 
 // Helper function inserted by Swift 4.2 migrator.
-func convertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
+func gConvertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
     guard let input = input else { return nil }
-    return input.rawValue
+
+	return input.rawValue
 }
 
-func convertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceItemIdentifier {
+func gConvertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceItemIdentifier {
+
 	return NSUserInterfaceItemIdentifier(rawValue: string)
+
 }
 
 extension NSObject {
-    func assignAsFirstResponder(_ responder: NSResponder?) {
-        if  let window = gMainWindow,
-            ![window, responder].contains(window.firstResponder) {
-            window.makeFirstResponder(responder)
-        }
+
+	func assignAsFirstResponder(_ responder: NSResponder?) {
+		gMainWindow?.makeFirstResponder(responder)
 	}
 	
 	func showTopLevelFunctions() {}
+
+}
+
+extension NSIndexSet {
+
+	var string : String {
+		var result = ""
+		var separator = ""
+		enumerate { (index, _) in
+			result = result + separator + "\(index)"
+			separator = ", "
+		}
+
+		return "(" + result + ")"
+	}
 }
 
 extension String {
 
+	func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 	func heightForFont(_ font: ZFont, options: NSString.DrawingOptions = .usesDeviceMetrics) -> CGFloat { return sizeWithFont(font, options: options).height }
     func sizeWithFont (_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
-    
-    
+
     func  rectWithFont(_ font: ZFont, options: NSString.DrawingOptions = .usesFontLeading) -> CGRect {
-        return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font])
+		return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font])
     }
     
     var cgPoint: CGPoint {
@@ -148,7 +166,7 @@ extension String {
     }
 
     var arrow: ZArrowKey? {
-        if  containsNonAscii {
+        if  containsNoAscii {
             let character = utf8CString[2]
             
             for arrowKey in ZArrowKey.up.rawValue...ZArrowKey.right.rawValue {
@@ -160,12 +178,11 @@ extension String {
         
         return nil
     }
-    
-    
+
     func openAsURL() {
         let fileScheme = "file"
         let filePrefix = fileScheme + "://"
-        let  urlString = (replacingOccurrences(of: kBackSlash, with: "").replacingOccurrences(of: " ", with: "%20") as NSString).expandingTildeInPath
+        let  urlString = (replacingOccurrences(of: kBackSlash, with: kEmpty).replacingOccurrences(of: kSpace, with: "%20") as NSString).expandingTildeInPath
         
         if  var url = NSURL(string: urlString) {
             if  urlString.character(at: 0) == "/" {
@@ -190,67 +207,64 @@ extension NSURL {
         return nil
     }
 
-    
     func open() {
         NSWorkspace.shared.open(self as URL)
     }
 
-    
     func openAsFile() {
-        if !self.openSecurely() {
-            ZFiles.presentOpenPanel() { (iAny) in
-                if  let url = iAny as? NSURL {
-                    url.open()
-                } else if let panel = iAny as? NSPanel {
-                    if    let  name = self.lastPathComponent {
-                        panel.title = "Open \(name)"
-                    }
-                    
-                    panel.setDirectoryAndExtensionFor(self as URL)
-                }
-            }
-        }
+//        if !openSecurely() {
+//            ZFiles.presentOpenPanel() { (iAny) in
+//                if  let url = iAny as? NSURL {
+//                    url.open()
+//                } else if let panel = iAny as? NSPanel {
+//                    if    let  name = lastPathComponent {
+//                        panel.title = "Open \(name)"
+//                    }
+//                    
+//                    panel.setDirectoryAndExtensionFor(self as URL)
+//                }
+//            }
+//        }
     }
 
-}
-
-extension ZApplication {
-
-    func clearBadge() {
-        dockTile.badgeLabel = ""
-    }
-    
-    func showHideAbout() {
-        for     window in windows {
-			if  window.isKeyWindow,
-				window.isKind(of: NSPanel.self) { // check if about box is visible
-                window.close()
-
-				return
-            }
-        }
-        
-        orderFrontStandardAboutPanel(nil)
-    }
-    
 }
 
 extension ZEventFlags {
-	var isAny:        Bool { return isCommand || isOption || isControl }
-	var isAll:        Bool { return isCommand && isOption && isControl }
-	var isSpecial:    Bool { return isCommand && isOption }
-	var isDual:       Bool { return isControl && isOption }
-    var isNumericPad: Bool { return contains(.numericPad) }
-    var isControl:    Bool { get { return contains(.control) } set { if newValue { insert(.control) } else { remove(.control) } } }
-	var isCommand:    Bool { get { return contains(.command) } set { if newValue { insert(.command) } else { remove(.command) } } }
-    var isOption:     Bool { get { return contains(.option)  } set { if newValue { insert(.option)  } else { remove(.option) } } }
-    var isShift:      Bool { get { return contains(.shift)   } set { if newValue { insert(.shift)   } else { remove(.shift) } } }
+
+	var isAnyMultiple:       Bool       { return  exactlySplayed || exactlySpecial || exactlyOtherSpecial || exactlyAll }
+	var isAny:               Bool       { return  hasCommand ||  hasOption ||  hasControl }
+	var exactlyAll:          Bool       { return  hasCommand &&  hasOption &&  hasControl }
+	var exactlySpecial:      Bool       { return  hasCommand &&  hasOption && !hasControl }
+	var exactlySplayed:      Bool       { return  hasCommand && !hasOption &&  hasControl }
+	var exactlyOtherSpecial: Bool       { return !hasCommand &&  hasOption &&  hasControl }
+    var hasNumericPad:       Bool { get { return  contains(.numericPad) } set { if newValue { insert(.numericPad) } else { remove(.numericPad) } } }
+	var hasControl:          Bool { get { return  contains(.control)    } set { if newValue { insert(.control)    } else { remove(.control) } } }
+	var hasCommand:          Bool { get { return  contains(.command)    } set { if newValue { insert(.command)    } else { remove(.command) } } }
+    var hasOption:           Bool { get { return  contains(.option)     } set { if newValue { insert(.option)     } else { remove(.option) } } }
+    var hasShift:            Bool { get { return  contains(.shift)      } set { if newValue { insert(.shift)      } else { remove(.shift) } } }
+
 }
 
 extension ZEvent {
-    var arrow: ZArrowKey? { return key?.arrow }
-    var   key:    String? { return input?.character(at: 0) }
+
+	var arrow: ZArrowKey? { return key?.arrow }
     var input:    String? { return charactersIgnoringModifiers }
+
+	var key: String? {
+		if  let    i = input, i.length > 0 {
+			return i.character(at: 0)
+		}
+
+		return nil
+	}
+
+	func locationRect(in view: ZView) -> CGRect {
+		let  point = locationInWindow
+		let origin = view.convert(point, from: nil)
+
+		return CGRect(origin: origin, size: CGSize(width: 1.0, height: 1.0))
+	}
+
 }
 
 extension ZColor {
@@ -266,7 +280,7 @@ extension ZColor {
 			if  items.count > 1 {
 				let key = items[0]
 				let value = items[1]
-				let f = CGFloat(Double(value) ?? 1.0)
+				let f = CGFloat(Double(value) ?? 1)
 				switch key {
 					case "red":   r = f
 					case "blue":  b = f
@@ -288,38 +302,60 @@ extension ZColor {
 		return nil
 	}
 
-	var accountingForDarkMode: NSColor {
-		return gIsDark ? inverted : self
-	}
+	var accountingForDarkMode: NSColor { return gIsDark ? invertedColor : self }
 
     func darker(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2.0), brightness: brightnessComponent / (by / 3.0), alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2), brightness: brightnessComponent / (by / 3), alpha: alphaComponent)
     }
 
     func lighter(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2.0), brightness: brightnessComponent * (by / 3.0), alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent / (by / 2), brightness: brightnessComponent * (by / 3), alpha: alphaComponent)
     }
     
     func lightish(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent,              brightness: brightnessComponent * by,         alpha: alphaComponent)
     }
 
-    var inverted: ZColor {
-        let b = max(0.0, min(1.0, 1.25 - brightnessComponent))
-        let s = max(0.0, min(1.0, 1.45 - saturationComponent))
+    var invertedColor: ZColor {
+        let b = max(.zero, min(1.0, 1.25 - brightnessComponent))
+        let s = max(.zero, min(1.0, 1.45 - saturationComponent))
         
         return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
     }
-    
+
+	var invertedBlackAndWhite: ZColor {
+		if  brightnessComponent < 0.5 {
+			return kWhiteColor
+		}
+
+		return kBlackColor
+	}
+
+}
+
+extension CGRect {
+
+	var centerTop:    CGPoint { return CGPoint(x: midX, y: minY) }
+	var centerLeft:   CGPoint { return CGPoint(x: minX, y: midY) }
+	var centerRight:  CGPoint { return CGPoint(x: maxX, y: midY) }
+	var center:       CGPoint { return CGPoint(x: midX, y: midY) }
+	var centerBottom: CGPoint { return CGPoint(x: midX, y: maxY) }
+	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var bottomLeft:   CGPoint { return origin }
+	var topLeft:      CGPoint { return CGPoint(x: minX, y: minY) }
+	var topRight:     CGPoint { return extent }
+	var extent:       CGPoint { return CGPoint(x: maxX, y: minY) }
+
 }
 
 extension NSBezierPath {
-    public var cgPath: CGPath {
+
+	public var cgPath: CGPath {
         let   path = CGMutablePath()
         var points = [CGPoint](repeating: .zero, count: 3)
 
-        for i in 0 ..< self.elementCount {
-            let type = self.element(at: i, associatedPoints: &points)
+        for i in 0 ..< elementCount {
+            let type = element(at: i, associatedPoints: &points)
 
             switch type {
             case .closePath: path.closeSubpath()
@@ -328,7 +364,9 @@ extension NSBezierPath {
             case .curveTo:   path.addCurve(to: CGPoint(x: points[2].x, y: points[2].y),
                                                       control1: CGPoint(x: points[0].x, y: points[0].y),
                                                       control2: CGPoint(x: points[1].x, y: points[1].y) )
-            }
+			@unknown default:
+				fatalError()
+			}
         }
 
         return path
@@ -337,23 +375,23 @@ extension NSBezierPath {
     public convenience init(roundedRect rect: CGRect, cornerRadius: CGFloat) {
         self.init(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius)
     }
+
 }
 
-extension ZTextView {
+extension ZEssayView {
 
 	func setText(_ text: Any) {
-		let range = NSRange(location: 0, length: textStorage?.length ?? 0)
-
-		guard let string = text as? NSMutableAttributedString else {
+		let            range = NSRange(location: 0, length: textStorage?.length ?? 0)
+		guard let attributed = text as? NSMutableAttributedString else {
 			insertText(text, replacementRange: range)
 
 			return
 		}
 
-		insertText(string.string, replacementRange: range)
+		insertText(attributed.string, replacementRange: range)
 		textStorage?.removeAllAttributes()
 
-		textStorage?.attributesAsString = string.attributesAsString
+		textStorage?.attributesAsString = attributed.attributesAsString
 	}
 
 	func rectForRange(_ range: NSRange) -> CGRect? {
@@ -373,30 +411,11 @@ extension ZTextView {
 			let  c = textContainer {
 
 			m.enumerateEnclosingRects(forGlyphRange: range, withinSelectedGlyphRange: NSRange(location: NSNotFound, length: 0), in: c) { (rect, flag) in
-				result.append(rect.offsetBy(dx: 20.0, dy: 0.0))
+				result.append(rect.offsetBy(dx: 20.0, dy: .zero))
 			}
 		}
 
 		return result
-	}
-
-	@objc override func printView() { // ZTextView
-		var view: NSView = self
-		let    printInfo = NSPrintInfo.shared
-		let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
-		if  let    tView = view as? NSTextView {
-			let    frame = CGRect(origin: .zero, size: CGSize(width: 6.5 * 72.0, height: 9.5 * 72.0))
-			let    nView = NSTextView(frame: frame)
-			view         = nView
-
-			nView.insertText(tView.textStorage as Any, replacementRange: NSRange())
-		}
-
-		PMSetScale(pmPageFormat, 100.0)
-		PMSetOrientation(pmPageFormat, PMOrientation(kPMPortrait), false)
-		printInfo.updateFromPMPrintSettings()
-		printInfo.updateFromPMPageFormat()
-		NSPrintOperation(view: view, printInfo: printInfo).run()
 	}
 
 }
@@ -410,14 +429,21 @@ extension CALayer {
 			}
 		}
 	}
+
 }
 
-extension NSView {
+extension ZView {
     var      zlayer:                CALayer { get { wantsLayer = true; return layer! } set { layer = newValue } }
     var recognizers: [NSGestureRecognizer]? { return gestureRecognizers }
 
     var gestureHandler: ZGesturesController? {
-        get { return nil }
+        get {
+			if  let r = recognizers, r.count > 0 {
+				return r[0].delegate as? ZGesturesController
+			}
+
+			return nil
+		}
         set {
             clearGestures()
 
@@ -428,7 +454,7 @@ extension NSView {
         }
     }
 
-    func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true } }
+	@objc func setNeedsDisplay() { if !gDeferringRedraw { needsDisplay = true } }
     func setNeedsLayout () { needsLayout  = true }
     func insertSubview(_ view: ZView, belowSubview siblingSubview: ZView) { addSubview(view, positioned: .below, relativeTo: siblingSubview) }
 
@@ -440,8 +466,8 @@ extension NSView {
         }
     }
 
-    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
-        let                            gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZPanGestureRecognizer {
+        let                            gesture = ZPanGestureRecognizer(target: target, action: action)
         gesture                      .delegate = target
         gesture               .delaysKeyEvents = false
         gesture.delaysPrimaryMouseButtonEvents = false
@@ -477,28 +503,42 @@ extension NSView {
         return min(wScale, hScale)
     }
 
-	@objc func printView() { // NSView
-		let view: NSView = self
-		let    printInfo = NSPrintInfo.shared
-		let      isWider = view.bounds.size.width > view.bounds.size.height
-		let  orientation = PMOrientation(isWider ? kPMLandscape : kPMPortrait)
-		let pmPageFormat = PMPageFormat(printInfo.pmPageFormat())
+	func drawBox(in view: ZView, inset: CGFloat = 0, with color: ZColor) {
+		convert(bounds, to: view).insetEquallyBy(inset).drawColoredRect(color)
+	}
 
-        PMSetScale(pmPageFormat, 100.0)
-        PMSetOrientation(pmPageFormat, orientation, false)
-        printInfo.updateFromPMPrintSettings()
-        printInfo.updateFromPMPageFormat()
-        NSPrintOperation(view: view, printInfo: printInfo).run()
-    }
-        
-}
+	func rearrangeInspectorTools() {
 
-extension ZTogglingView {
-	
-    func turnOnTitleButton() {
-        titleButton?.state = .on
-		titleButton?.highlight(false)
-    }
+		// workaround bug in OS 10.12
+		// discarded by display() arrrgh!!!!!!
+
+		var             x = CGFloat(7.0)
+		for tool in subviews {
+			var      rect = tool.frame
+			rect          = CGRect(origin: CGPoint(x: x, y: rect.minY), size: rect.size)
+			x             = rect.maxX + 3.0
+			tool   .frame = rect
+		}
+	}
+
+	func relayoutInspectorTools() {
+
+		// another workaround for bug in OS 10.12
+
+		var x = 7.0
+
+		for tool in subviews {
+			let y = tool.isHidden ? -3.0 : -8.0
+			tool.removeConstraints(tool.constraints)
+			tool.snp.makeConstraints { make in
+				make.left  .equalToSuperview().offset(x)
+				make.bottom.equalToSuperview().offset(y)
+			}
+
+			x += 3.0 + Double(tool.bounds.width)
+			tool.isHidden = false
+		}
+	}
 
 }
 
@@ -510,17 +550,13 @@ extension ZMapView {
         gScaling      *= Double(adjustment)
     }
 
-}
-
-extension ZMapView {
-
     override func scrollWheel(with event: ZEvent) {
-        if  event.modifierFlags.isCommand {
+        if  event.modifierFlags.hasCommand {
             updateMagnification(with: event)
         } else {
             let     multiply = CGFloat(1.5 * gScaling)
-            gScrollOffset.x += event.deltaX * multiply
-            gScrollOffset.y += event.deltaY * multiply
+            gMapOffset.x += event.deltaX * multiply
+            gMapOffset.y += event.deltaY * multiply
         }
         
         gMapController?.layoutForCurrentScrollOffset()
@@ -549,8 +585,8 @@ extension ZoneWindow {
 
 extension ZWindow {
 
-	@IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.view(for: .vPreferences)?.toggleAction(self) }
-	@IBAction func displayHelp       (_ sender:      Any?) { openBrowserForFocusWebsite() }
+	@IBAction func displayPreferences(_ sender:      Any?) { gDetailsController?.displayPreferences() }
+	@IBAction func displayHelp       (_ sender:      Any?) { openBrowserForSeriouslyWebsite() }
 	@IBAction func copy              (_ iItem: ZMenuItem?) { gSelecting.simplifiedGrabs.copyToPaste() }
 	@IBAction func cut               (_ iItem: ZMenuItem?) { gMapEditor.delete() }
 	@IBAction func delete            (_ iItem: ZMenuItem?) { gMapEditor.delete() }
@@ -559,11 +595,8 @@ extension ZWindow {
 	@IBAction func undo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.undo() }
 	@IBAction func redo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.redo() }
 
-	var keyPressed: Bool {
-		let    e  = nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false)
-
-		return e != nil
-	}
+	var userIsActive: Bool { return isKeyWindow && currentEvent != nil }
+	var keyPressed: Bool { return nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false) != nil }
 
 	var mouseMoved: Bool {
 		let last = gLastLocation
@@ -576,105 +609,118 @@ extension ZWindow {
 		return last != gLastLocation
 	}
 
-	var userIsActive: Bool {
-		return isKeyWindow && (mouseMoved || keyPressed)
-	}
-
 }
 
 extension ZButtonCell {
     override open var objectValue: Any? {
         get { return title }
-        set { title = newValue as? String ?? "" }
+        set { title = newValue as? String ?? kEmpty }
     }
 }
 
 extension ZButton {
-    var isCircular: Bool {
-        get { return true }
-        set { bezelStyle = newValue ? .circular : .rounded }
-    }
 
-    var onHit: Selector? {
-        get { return action }
-        set { action = newValue; target = self } }
+	var isCircular: Bool {
+		get { return true }
+		set { bezelStyle = newValue ? .circular : .rounded }
+	}
+
+	var onHit: Selector? {
+		get { return action }
+		set { action = newValue; target = self } }
+
+	var width: CGFloat? {
+		if  image != nil {
+			return 9.0
+		} else if title.length > 0 {
+			let range = NSRange(location: 0, length: title.length)
+			let  rect = title.rect(using: font!, for: range, atStart: true)
+
+			return rect.width
+		}
+
+		return nil
+	}
+
 }
 
 extension ZAlert {
 
-    func showAlert(closure: AlertStatusClosure? = nil) {
-        let             response = runModal()
-        let              success = response == NSApplication.ModalResponse.alertFirstButtonReturn
-        let status: ZAlertStatus = success ? .eStatusYes : .eStatusNo
-
-        closure?(status)
+    func showModal(closure: AlertStatusClosure? = nil) {
+        closure?((runModal() == .alertFirstButtonReturn) ? ZAlertStatus.sYes : ZAlertStatus.sNo)
     }
 
 }
 
 extension ZAlerts {
     
-    
     func openSystemPreferences() {
         if  let url = NSURL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
             url.open()
         }
     }
-    
-    
-    func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
-        alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
-            switch iState {
-            case .eStatusShow:
-                iAlert?.showAlert { iResponse in
+
+	func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, alertWidth width: CGFloat? = nil, _ closure: AlertStatusClosure? = nil) {
+		alertWithClosure(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage, width) { iAlert, status in
+            switch status {
+            case .sShow:
+					iAlert?.showModal { status in
                     let window = iAlert?.window
                     
-                    gApplication.abortModal()
+                    gApplication?.abortModal()
                     window?.orderOut(iAlert)
-                    closure?(iResponse)
+                    closure?(status)
                 }
             default:
-                closure?(iState)
+                closure?(status)
             }
         }
     }
-    
-    
-    func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
-        FOREGROUND(canBeDirect: true) {
-            let             a = ZAlert()
-            a    .messageText = iMessage
-            a.informativeText = iExplain ?? ""
-            
-            a.addButton(withTitle: iOKTitle)
-            
-            if  let cancel = iCancelTitle {
-                a.addButton(withTitle: cancel)
-            }
-            
-            if  let image = iImage {
-                let size = image.size
-                let frame = NSMakeRect(50, 50, size.width, size.height)
-                a.accessoryView = NSImageView(image: image)
-                a.accessoryView?.frame = frame
-                a.layout()
-            }
-            
-            closure?(a, .eStatusShow)
-        }
-    }
-    
+
+	func alertWithClosure(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
+		FOREGROUND { [self] in
+			let a = alert(iMessage, iExplain, iOKTitle, iCancelTitle, iImage, width)
+
+			closure?(a, .sShow)
+		}
+	}
+
+	func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil) -> ZAlert {
+		let             a = ZAlert()
+		a    .messageText = iMessage
+		a.informativeText = iExplain ?? kEmpty
+
+		a.addButton(withTitle: iOKTitle)
+
+		if  let cancel = iCancelTitle {
+			a.addButton(withTitle: cancel)
+		}
+
+		if  let image = iImage {
+			let size = image.size
+			let frame = NSMakeRect(50, 50, size.width, size.height)
+			a.accessoryView = NSImageView(image: image)
+			a.accessoryView?.frame = frame
+			a.layout()
+		} else if let     w = width {
+			let       frame = CGRect(x: .zero, y: .zero, width: w, height: .zero)
+			a.accessoryView = ZView(frame: frame)
+			a.layout()
+		}
+
+		return a
+	}
+
 }
 
 extension ZTextField {
-    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? "" } }
-    var textAlignment: NSTextAlignment { get { return alignment }   set { alignment = newValue } }
+    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? kEmpty } }
+    var textAlignment: NSTextAlignment { get { return alignment }   set {   alignment = newValue } }
 
     func enableUndo() {
         cell?.allowsUndo = true
     }
-    
-    
+
     func select(range: NSRange) {
         select(from: range.lowerBound, to: range.upperBound)
     }
@@ -684,8 +730,7 @@ extension ZTextField {
             select(withFrame: bounds, editor: editor, delegate: self, start: from, length: to - from)
         }
     }
-    
-    
+
     func selectFromStart(toEnd: Bool = false) {
         if  let t = text {
             select(from: 0, to: toEnd ? t.length : 0)
@@ -718,9 +763,11 @@ extension ZoneTextWidget {
     }
 
     override func textDidChange(_ iNote: Notification) {
-        gTextEditor.prepareUndoForTextChange(undoManager) {
-            self.textDidChange(iNote)
+		gTextEditor.prepareUndoForTextChange(undoManager) { [self] in
+            textDidChange(iNote)
         }
+
+		updateSize()
 
         if  text?.contains(kHalfLineOfDashes + " - ") ?? false {
             widgetZone?.zoneName = kLineOfDashes
@@ -735,13 +782,12 @@ extension ZoneTextWidget {
 	override func textDidEndEditing(_ notification: Notification) {
 		if !gIsEditingStateChanging,
 			gIsEditIdeaMode,
-			let       number = notification.userInfo?["NSTextMovement"] as? NSNumber {
-            let        value = number.intValue
-			let        flags = gModifierFlags
-			let      isShift = flags.isShift
-            var key: String?
+			let number = notification.userInfo?["NSTextMovement"] as? NSNumber {
+            let  value = number.intValue
+			let  flags = gModifierFlags
+            var    key : String?
 
-            gTextEditor.stopCurrentEdit(forceCapture: isShift)
+			gTextEditor.stopCurrentEdit(forceCapture: true, andRedraw: false)
 
             switch value {
             case NSBacktabTextMovement: key = kSpace
@@ -761,9 +807,12 @@ extension ZoneTextWidget {
 extension ZTextEditor {
     
     func fullResign()  { assignAsFirstResponder (nil) }
-	
+
 	func showSpecialCharactersPopup() {
-		ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:))).popUp(positioning: nil, at: CGPoint.zero, in: gTextEditor.currentTextWidget)
+		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:)))
+		let point = CGPoint(x: -165.0, y: -60.0)
+
+		menu.popUp(positioning: nil, at: point, in: gTextEditor.currentTextWidget)
 	}
 
 	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
@@ -782,16 +831,13 @@ extension ZTextEditor {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()
         case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? true { gSelecting.rootMostMoveable?.addNext() } // stupid OSX issues tab twice (to create the new idea, then once MORE
-		case #selector(cancelOperation(_:)): if gSearching.state.isOneOf([.sList, .sEntry]) { gSearching.exitSearchMode() }
+		case #selector(cancelOperation(_:)): if gWaitingForSearchEntry || gSearchResultsVisible { gExitSearchMode() }
         default:                             super.doCommand(by: selector)
         }
     }
 	
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  var        key = iKey {
-//			let    CONTROL = flags.isControl
-//			let    COMMAND = flags.isCommand
-//			let     OPTION = flags.isOption
 			let        ANY = flags.isAny
 			let editedZone = currentTextWidget?.widgetZone
 			let      arrow = key.arrow
@@ -800,22 +846,29 @@ extension ZTextEditor {
 				key        = key.lowercased()
 			}
 
+
+			gHideExplanation()
+
 			if  let      a = arrow {
 				gTextEditor.handleArrow(a, flags: flags)
 			} else if ANY {
 				switch key {
-					case "i": showSpecialCharactersPopup()
-					case "?": gHelpController?.show(flags: flags)
-					case "-": return editedZone?.convertToFromLine() ?? false // false means key not handled
-					default:  return false
+					case kReturn: stopCurrentEdit()
+					case kSpace:  editedZone?.addIdea()
+					case "e":     gToggleShowExplanations()
+					case "i":     showSpecialCharactersPopup()
+					case "?":     gHelpController?.show(flags: flags)
+					case kHyphen: return editedZone?.convertToFromLine() ?? false // false means key not handled
+					default:      return false
 				}
-			} else if "|<>[]{}() \'\"".contains(key) {
-				return        editedZone?.surround(by: key) ?? false
+			} else if "|<>[]{}()\'\"".contains(key) {
+				return            editedZone?.surround(by: key) ?? false
 			} else {
 				switch key {
-					case "-":     return editedZone?.convertToFromLine() ?? false
-					case kReturn: stopCurrentEdit()
 					case kEscape: cancel()
+					case kReturn: stopCurrentEdit()
+					case kTab:    gSelecting.addSibling()
+					case kHyphen: return editedZone?.convertToFromLine() ?? false
 					default:      return false // false means key not handled
 				}
 			}
@@ -829,7 +882,7 @@ extension ZTextEditor {
 
         switch arrow {
         case .up,
-             .down: moveUp(arrow == .up, stopEdit: !flags.isOption)
+             .down: moveUp(arrow == .up, stopEdit: !flags.hasOption)
         case .left:
             if  atStart {
                 moveOut(true)
@@ -878,23 +931,89 @@ extension ZMenu {
 		return item
 	}
 
-	static func reorderPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "reorder")
+	static func mutateTextPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "change text")
 
-		for type in ZReorderMenuType.activeTypes {
-			menu.addItem(reorderingItem(type: type, target: target, action: action))
+		for type in ZMutateTextMenuType.allTypes {
+			menu.addItem(mutateTextItem(type: type, target: target, action: action))
 		}
 
 		return menu
 	}
 
-	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let                       item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+	static func mutateTextItem(type: ZMutateTextMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
+		let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+		item.isEnabled = true
+		item.target    = target
+		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
+
+		return item
+	}
+
+	static func reorderPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "reorder")
+
+		for type in ZReorderMenuType.activeTypes {
+			menu.addItem(reorderingItem(type: type, target: target, action: action))
+
+			if  type != .eReversed {
+				menu.addItem(reorderingItem(type: type, target: target, action: action, flagged: true))
+			}
+
+			menu.addItem(.separator())
+		}
+
+		return menu
+	}
+
+	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector, flagged: Bool = false) -> ZMenuItem {
+		let                      title = flagged ? "\(type.title) reversed" : type.title
+		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
+		item.keyEquivalentModifierMask = flagged ? ZEventFlags.shift : ZEventFlags(rawValue: 0)
+		item                   .target = target
+		item                .isEnabled = true
+
+		return item
+	}
+
+	static func traitsPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "traits")
+
+		for type in ZTraitType.activeTypes {
+			menu.addItem(traitsItem(type: type, target: target, action: action))
+		}
+
+		return menu
+	}
+
+	static func traitsItem(type: ZTraitType, target: AnyObject, action: Selector) -> ZMenuItem {
+		let                      title = type.title ?? ""
+		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
 		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
 		item                   .target = target
 		item                .isEnabled = true
 
 		return item
+	}
+
+	enum ZRefetchMenuType: String {
+		case eList    = "l"
+		case eIdeas   = "g"
+		case eAdopt   = "a"
+		case eTraits  = "t"
+		case eProgeny = "p"
+
+		static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits, .eProgeny, .eList, .eAdopt] }
+
+		var title: String {
+			switch self {
+			case .eList:    return "list"
+			case .eAdopt:   return "adopt"
+			case .eIdeas:   return "all ideas"
+			case .eTraits:  return "all traits"
+			case .eProgeny: return "all progeny"
+			}
+		}
 	}
 
 	static func refetchPopup(target: AnyObject, action: Selector) -> ZMenu {
@@ -921,9 +1040,9 @@ extension ZMenu {
 extension NSText {
 	
 	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
-		let COMMAND = flags.isCommand
-		let  OPTION = flags.isOption
-		let   SHIFT = flags.isShift
+		let COMMAND = flags.hasCommand
+		let  OPTION = flags.hasOption
+		let   SHIFT = flags.hasShift
 		
 		switch arrow {
 		case .up:    moveToBeginningOfLine(self)
@@ -972,8 +1091,8 @@ extension NSSegmentedControl {
 
 extension NSProgressIndicator {
 
-    func startAnimating() { startAnimation(self) }
-    func  stopAnimating() {  stopAnimation(self) }
+	func startAnimating() { isHidden = false; startAnimation(self) }
+	func  stopAnimating() { isHidden = true;   stopAnimation(self) }
 
 }
 
@@ -982,21 +1101,40 @@ public extension ZImage {
 	var  png: Data? { return tiffRepresentation?.bitmap?.png }
 	var jpeg: Data? { return tiffRepresentation?.bitmap?.jpeg }
 
-	func resizedTo(_ newSize: CGSize) -> ZImage {
-		let newImage = ZImage(size: newSize)
-		newImage.lockFocus()
-		draw(in: CGRect(origin: CGPoint(), size: newSize), from: CGRect(origin: CGPoint(), size: size), operation: .sourceOver, fraction: CGFloat(1))
-		newImage.unlockFocus()
-		newImage.size = newSize
+	func imageResizedTo(_ newSize: CGSize) -> ZImage? {
+		if  let bitmapRep = NSBitmapImageRep(
+			bitmapDataPlanes      : nil,
+			pixelsWide            : Int(newSize.width  * 2.0),
+			pixelsHigh            : Int(newSize.height * 2.0),
+			bitsPerSample         : 8,
+			samplesPerPixel       : 4,
+			hasAlpha              : true,
+			isPlanar              : false,
+			colorSpaceName        : .calibratedRGB,
+			bytesPerRow           : 0,
+			bitsPerPixel          : 0 ) {
+			NSGraphicsContext.saveGraphicsState()
 
-		return newImage
+			let              newImage = ZImage(size: newSize)
+			let               newRect = CGRect(origin: CGPoint(), size: newSize)
+			bitmapRep           .size = newSize
+			NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: bitmapRep)
+
+			draw(in: newRect, from: .zero, operation: .copy, fraction: 1.0)
+			NSGraphicsContext.restoreGraphicsState()
+			newImage.addRepresentation(bitmapRep)
+
+			return newImage
+		}
+
+		return nil
 	}
 
     func imageRotatedByDegrees(_ degrees: CGFloat) -> ZImage {
-        var imageBounds = NSZeroRect ; imageBounds.size = self.size
+        var imageBounds = NSZeroRect ; imageBounds.size = size
         let pathBounds = NSBezierPath(rect: imageBounds)
         var transform = NSAffineTransform()
-		let rotatedBounds:CGRect = NSMakeRect(NSZeroPoint.x, NSZeroPoint.y , self.size.width, self.size.height )
+		let rotatedBounds:CGRect = NSMakeRect(NSZeroPoint.x, NSZeroPoint.y , size.width, size.height )
 		let rotatedImage = NSImage(size: rotatedBounds.size)
 
 		//Center the image within the rotated bounds
@@ -1016,7 +1154,7 @@ public extension ZImage {
         // Draw the original image, rotated, into the new image
         rotatedImage.lockFocus()
         transform.concat()
-        draw(in: imageBounds, from: NSZeroRect, operation: .copy, fraction: 1.0)
+		draw(in: imageBounds, from: .zero, operation: .copy, fraction: 1.0)
         rotatedImage.unlockFocus()
 
         return rotatedImage
@@ -1039,23 +1177,8 @@ extension ZFiles {
         (filesURL as NSURL).open()
     }
     
-    func saveAs() {
-        let panel = NSSavePanel()
-        panel.nameFieldStringValue = "mine.seriously"
-        panel.begin { (response: NSApplication.ModalResponse) in
-            if  let path = panel.url?.path {
-                self.needWrite(for: .mineID)
-				do {
-					try self.writeFile(at: path, from: .mineID)
-				} catch {
-					
-				}
-            }
-        }
-    }
-    
     class func presentOpenPanel(_ callback: AnyClosure? = nil) {
-        if  let  window = gApplication.mainWindow {
+		if  let  window = gApplication?.mainWindow {
             let   panel = NSOpenPanel()
 
             callback?(panel)
@@ -1090,95 +1213,89 @@ extension Zone {
 
 }
 
-extension ZoneWidget {
+extension ZoneLine {
 
-    func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
-		var result     = CGRect.zero
-		if  let   view = iView {
-			let   text = textWidget
-            let isHere = widgetZone == iHere
-            let cFrame =      convert(childrenView.frame, to: view)
-            let tFrame = text.convert(       text.bounds, to: view)
-            let   left =    isHere ? 0.0 :                                  tFrame.minX - gGenericOffset.width - CGFloat(gDotWidth)
-            let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
-            let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
-            let  right =                                                                  view.bounds .maxX
-			result     = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-        }
+	func lineRect(for kind: ZLineCurveKind?) -> CGRect {
+		switch mode {
+		case .linearMode:   return   linearLineRect(for: kind)
+		case .circularMode: return circularLineRect()
+		}
+	}
 
-        return result
-    }
+	func circularLineRect() -> CGRect {
+		if  let origin = revealDot?.absoluteCenter,
+			let center =   dragDot?.absoluteCenter {
+			let   size = CGSize(center - origin).absSize
+			return CGRect(origin: origin, size: size)
+		}
 
-    func lineRect(to targetFrame: CGRect, kind: ZLineKind?) -> CGRect {
-        var             frame = CGRect ()
+		return .zero
+	}
 
-        if  let     sourceDot = revealDot.innerDot, kind != nil {
-            let   sourceFrame = sourceDot.convert( sourceDot.bounds, to: self)
-            let     thickness = CGFloat(gLineThickness)
-			let     dotHeight = CGFloat(gDotHeight)
-			let    adjustment = CGFloat(2.0)
-            let halfDotHeight = dotHeight / 2.0
-            let thinThickness = thickness / 2.0
-            let    targetMidY = targetFrame.midY
-            let    sourceMidY = sourceFrame.midY
-            frame.origin   .x = sourceFrame.midX
+    func linearLineRect(for kind: ZLineCurveKind?) -> CGRect {
+		var                 rect = CGRect.zero
+		if  kind                != nil,
+			let                c = controller ?? gHelpController, // for help dots, widget and controller are nil; so use help controller
+        	let        fromFrame = revealDot?.absoluteFrame,
+			let          toFrame = dragDot?.absoluteFrame {
+			let        thickness = c.coreThickness
+			let            delta = CGFloat(4)
+			let       smallDelta = CGFloat(1)
+			rect       .origin.x = fromFrame    .midX
+			rect     .size.width = abs(  toFrame.minX - rect.minX)
 
             switch kind! {
             case .above:
-				frame.origin   .y = sourceFrame.maxY - adjustment
-				frame.size.height = abs(  targetMidY + thinThickness - frame.minY)
-				frame.size .width = abs(  targetFrame.minX           - frame.minX)
+				rect.origin   .y =     fromFrame.midY              - delta
+				rect.size.height = abs(  toFrame.midY - rect.minY)
             case .below:
-                frame.origin   .y = targetFrame.minY + halfDotHeight - thickness  - thinThickness
-                frame.size.height = abs(  sourceMidY - frame.minY    - halfDotHeight + 2.0)
-				frame.size .width = abs( targetFrame.minX            - frame.minX)
+				rect.origin   .y =       toFrame.midY              - smallDelta
+				rect.size.height = abs(fromFrame.midY - rect.minY) - delta
             case .straight:
-                frame.origin   .y =       targetMidY - thinThickness / 2.0
-                frame.origin   .x = sourceFrame.maxX - adjustment           // adjust to eliminate gap
-                frame.size.height =                    thinThickness
-				frame.size .width = abs(targetFrame.minX - frame.minX)
+				rect.origin   .y =     fromFrame.midY              - smallDelta
+                rect.size.height = thickness
             }
-
         }
         
-        return frame
+        return rect
     }
 
-    func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
-        ZBezierPath(rect: iRect).setClip()
-
-        let      dotHeight = CGFloat(gDotHeight)
-        let   halfDotWidth = CGFloat(gDotWidth) / 2.0
-        let  halfDotHeight = dotHeight / 2.0
-        let        isAbove = iKind == .above
+    func curvedLinePath(in iRect: CGRect, kind: ZLineCurveKind) -> ZBezierPath {
+		guard let        c = controller else { return ZBezierPath() }
+        let        isAbove = kind == .above
+		let     aboveDelta = c.dotHalfHeight / 7.0
+		let     belowDelta =     c.dotHeight * 0.85
         var           rect = iRect
 
-        if isAbove {
-            rect.origin.y -= rect.height + halfDotHeight
-        }
+        if  isAbove {
+            rect.origin.y -= rect.height + aboveDelta    // do this first. height is altered below
+		} else if kind == .below {
+			rect.origin.y += c.dotHalfHeight / 4.0
+		}
 
-        rect.size   .width = rect.width  * 2.0 + halfDotWidth
-        rect.size  .height = rect.height * 2.0 + (isAbove ? halfDotHeight : dotHeight)
+		rect.size   .width = rect.width  * 2.0 + c.dotHalfWidth
+		rect.size  .height = rect.height * 2.0 + (isAbove ? aboveDelta : belowDelta)
+
+		ZBezierPath.setClip(to: iRect)
 
         return ZBezierPath(ovalIn: rect)
     }
+
 }
 
 extension ZOnboarding {
     
     func getMAC() {
-        if let intfIterator = findEthernetInterfaces() {
-            if  let macAddressAsArray = getMACAddress(intfIterator) {
-                let macAddressAsString = macAddressAsArray.map( { String(format:"%02x", $0) } )
-                    .joined(separator: kColonSeparator)
-                macAddress = macAddressAsString
+        if  let   iterator = findEthernetInterfaces() {
+            if  let  array = getMACAddress(iterator) {
+                let string = array.map( { String(format:"%02x", $0) } ).joined(separator: kColonSeparator)
+                macAddress = string
             }
             
-            IOObjectRelease(intfIterator)
+            IOObjectRelease(iterator)
         }
     }
-    
-    
+
     func findEthernetInterfaces() -> io_iterator_t? {
         
         let matchingDict = IOServiceMatching("IOEthernetInterface") as NSMutableDictionary
@@ -1191,31 +1308,34 @@ extension ZOnboarding {
         
         return matchingServices
     }
-    
-    
-    func getMACAddress(_ intfIterator : io_iterator_t) -> [UInt8]? {
-        
-        var macAddress : [UInt8]?
-        
-        var intfService = IOIteratorNext(intfIterator)
-        while intfService != 0 {
+
+    func getMACAddress(_ iterator : io_iterator_t) -> [UInt8]? {
+        var     address  : [UInt8]?
+        while true {
+			var service  : io_object_t = 0
+			let next     = IOIteratorNext(iterator)
+			if  next    != 0,
+				IORegistryEntryGetParentEntry(next, "IOService", &service) == KERN_SUCCESS {
+                let  ioData = IORegistryEntryCreateCFProperty(service, "IOMACAddress" as CFString, kCFAllocatorDefault, 0)
+
+				IOObjectRelease(service)
+
+				if  let data = ioData?.takeRetainedValue() as? NSData {
+					address  = [0, 0, 0, 0, 0, 0]
+					data.getBytes(&address!, length: address!.count)
+				}
+
+				break
+			}
             
-            var controllerService : io_object_t = 0
-            if IORegistryEntryGetParentEntry(intfService, "IOService", &controllerService) == KERN_SUCCESS {
-                
-                let dataUM = IORegistryEntryCreateCFProperty(controllerService, "IOMACAddress" as CFString, kCFAllocatorDefault, 0)
-                if let data = dataUM?.takeRetainedValue() as? NSData {
-                    macAddress = [0, 0, 0, 0, 0, 0]
-                    data.getBytes(&macAddress!, length: macAddress!.count)
-                }
-                IOObjectRelease(controllerService)
-            }
-            
-            IOObjectRelease(intfService)
-            intfService = IOIteratorNext(intfIterator)
+            IOObjectRelease(next)
+
+			if  next == 0 {
+				break
+			}
         }
         
-        return macAddress
+        return address
     }
 
 }

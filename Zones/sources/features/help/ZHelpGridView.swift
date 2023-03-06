@@ -12,59 +12,65 @@ class ZHelpGridView: ZView {
 
 	var helpData: ZHelpData?
 
-	override func draw(_ dirtyRect: NSRect) {
-		super.draw(dirtyRect)
+	override func draw(_ iDirtyRect: NSRect) {
+		super.draw(iDirtyRect)
 
-		if  !isHidden,
-			let      data  = helpData,
-			[.dotMode, .essayMode].contains(data.helpMode) {
-			drawDotsHelp(in: dirtyRect, using: data)
+		if  let data = helpData, !isHidden,
+			data.helpMode.showsDots {
+			gBaseFontSize = ZFont.systemFontSize * 0.7
+			drawDotsHelp(in: iDirtyRect, using: data)
 		}
 	}
 
-	func drawDotsHelp(in dirtyRect: NSRect, using data: ZHelpData) {
+	func drawDotsHelp(in iDirtyRect: NSRect, using data: ZHelpData) {
 		for row        in  0..<data.countOfRows {
 			for column in  0...data.indexOfLastColumn {
-				let (dc, ft) = data.dotTypes(for: row, column: column)
-				if  let c = dc,
-					let t = ft {
-					var e = true
-					var f = true
-					let v = Double(data.rowHeight) + 2.0
-					let y = Double(row)    *    -v + Double(dirtyRect.extent.y) - 24.0
-					let x = Double(column) * 580.0 + Double(dirtyRect.origin.x) + 30.0
-					let d = ZoneDot()
-
-					switch t {
-						case .filled: e = false
-						case .empty:  f = false
-						default:      break
-					}
+				let (dotType, fillType) = data.dotTypes(for: row, column: column)
+				if  let dt = dotType,
+					let ft = fillType {
+					let  e = ft != .fFilled
+					let  f = ft != .fEmpty
+					let  t = ft == .fThree
+					let vo = Double(data.rowHeight) + data.dotOffset
+					let  x = Double(column) * 580.0 + Double(iDirtyRect.minX)   + 30.0
+					let  y = Double(row)    *   -vo + Double(iDirtyRect.height) - 24.0
+					let  d = ZoneDot(view: self)
 
 					if  e {
-						// draw empty in first column
+						// draw empty dot in first column
 
 						let p = CGPoint(x: x, y: y)
-						let r = c.rect(p)
-						let m = c.dotParameters()
+						let r = dt.rect(p)
+						let m = dt.helpDotParameters()
 
-						d.drawInnerDot(r, m)
+						d.drawDot(r, m)
 
-						if  c == .favorite {
+						if  dt == .favorite {
 							m.color.withAlphaComponent(0.7).setFill()
-							d.drawOuterDot(r, m)
+							d.drawDotExterior(r, m)
 						}
 					}
 
 					if  f {
-						// draw filled in second column
+						// draw filled dot in second column
 
 						let p = CGPoint(x: x + 20.0, y: y)
-						let r = c.rect(p)
-						let m = c.dotParameters(isFilled: true)
+						let r = dt.rect(p)
+						let m = dt.helpDotParameters(isFilled: true)
 
-						d.drawInnerDot(r, m)
-						d.drawOuterDot(r, m)
+						d.drawDot(r, m)
+						d.drawDotExterior(r, m)
+					}
+
+					if  t {
+						// draw filled circle in third column
+
+						let p = CGPoint(x: x + 40.0, y: y)
+						let r = dt.rect(p)
+						let m = dt.helpDotParameters(isFilled: true, showAsACircle: true)
+
+						d.drawDot(r, m)
+						d.drawDotExterior(r, m)
 					}
 				}
 			}

@@ -12,12 +12,12 @@ class ZHelpButton : ZButton {
 
 	var helpButtonsView : ZHelpButtonsView?
 
-	override func draw(_ dirtyRect: NSRect) {
+	override func draw(_ iDirtyRect: NSRect) {
 		let isInTitle = helpButtonsView?.isInTitleBar ?? false
 		let isCurrent = isInTitle && helpMode == gCurrentHelpMode
 		isHighlighted = isCurrent              // work around another pissy apple os bug!
 
-		super.draw(dirtyRect)
+		super.draw(iDirtyRect)
 	}
 
 }
@@ -30,7 +30,7 @@ class ZHelpButtonsView : ZButtonsView {
 
 	func addButton(_ mode: ZHelpMode) -> ZHelpButton {
 		let              title = mode.title.capitalized
-		let             button = ZHelpButton(title: title, target: self, action: #selector(self.handleButtonPress))
+		let             button = ZHelpButton(title: title, target: self, action: #selector(handleButtonPress))
 		button.helpMode        = mode
 		button.helpButtonsView = self
 
@@ -50,39 +50,35 @@ class ZHelpButtonsView : ZButtonsView {
 	}
 
 	override func setupButtons() {
-		for mode in gAllHelpModes {
+		for mode in ZHelpMode.all {
 			buttonForMode(mode)
 		}
 	}
 
 	override func updateButtons() {
-		for mode in gAllHelpModes {
+		for mode in ZHelpMode.all {
 			buttonForMode(mode).isEnabled = true
 		}
 	}
 
 	@objc private func handleButtonPress(_ button: ZButton) {
-		if  let mode = button.helpMode { // eliminate no-op cpu time
-			gHelpController?.showHelp(for: mode)
+		if  let mode = button.helpMode {
+			gHelpController?.showHelpFor(mode)
 		}
 	}
 
-	func actuateNextButton(forward: Bool) {
+	func showNextHelp(forward: Bool) {
 		var    mode = gCurrentHelpMode
 		switch mode {
-			case .basicMode:  mode = forward ? .middleMode : .dotMode
-			case .middleMode: mode = forward ? .proMode    : .basicMode
-			case .proMode:    mode = forward ? .essayMode  : .middleMode
-			case .essayMode:  mode = forward ? .dotMode    : .proMode
-			case .dotMode:    mode = forward ? .basicMode  : .essayMode
-			default:          break
+			case .basicMode:    mode = forward ? .intermedMode : .dotMode
+			case .intermedMode: mode = forward ? .proMode      : .basicMode
+			case .proMode:      mode = forward ? .essayMode    : .intermedMode
+			case .essayMode:    mode = forward ? .dotMode      : .proMode
+			case .dotMode:      mode = forward ? .basicMode    : .essayMode
+			default:            break
 		}
 
-		gHelpController?.showHelp(for: mode)
-	}
-
-	func update() {
-		updateAndRedraw()
+		gHelpController?.showHelpFor(mode)
 	}
 
 }

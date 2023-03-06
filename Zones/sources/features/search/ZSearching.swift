@@ -14,132 +14,80 @@ import Foundation
     import UIKit
 #endif
 
+func gExitSearchMode(force: Bool = true) { if force || gIsSearching { gSearching.exitSearchMode() } }
+var  gShowsSearchResults  : Bool { return gSearching.searchState == .sList }
+
 enum ZSearchState: Int {
     case sEntry
     case sFind
     case sList
     case sNot
-    
-    func isOneOf(_ states: [ZSearchState]) -> Bool {
-        for state in states {
-            if self == state {
-                return true
-            }
-        }
-        
-        return false
-    }
 }
 
 let gSearching = ZSearching()
 
-class ZSearching: NSObject {
+class ZSearching: NSObject, ZSearcher {
 
-	var state = ZSearchState.sNot
-	var priorWorkMode: ZWorkMode?
-	var hasResults: Bool { return gSearchResultsController?.hasResults ?? false }
-	func switchToList()  { setStateTo(hasResults ? .sList : .sNot) }
+	var searchState = ZSearchState.sNot
+	var  hasResults : Bool                       { return gSearchResultsController?.hasResults ?? false }
 	func handleEvent(_ event: ZEvent) -> ZEvent? { return gSearchBarController?.handleEvent(event) }
 
-	var searchText: String? {
-		get { return gSearchBarController?.searchBox?.text }
-		set { gSearchBarController?.searchBox?.text = newValue }
+	var essaySearchText: String? {
+		get { return gSearchBarController?.searchBar?.text }
+		set { gSearchBarController?.searchBar?.text = newValue }
 	}
 
 	func exitSearchMode() {
-		state = .sNot
+		searchState = .sNot // don't call setSearchStateTo (below), it has unwanted side-effects
 
-		swapModes()
-		gSignal([.sFound, .sSearch])
-	}
+		gSignal([.sFound, .sSearch, .spRelayout])
 
-	func setStateTo(_ iState: ZSearchState) {
-		state = iState
-
-		gMainController?         .updateForState()
-		gSearchBarController?    .updateForState()
-		gSearchResultsController?.updateForState()
-
-		if  state == .sFind {
-			gSignal([.sSearch])
+		if  gIsEssayMode {
+			assignAsFirstResponder(gEssayView)
 		}
 	}
 
-	func swapModes() {
-		let      last = priorWorkMode ??          .wMapMode
-		priorWorkMode = gIsSearchMode ? nil  :    gWorkMode
-		gWorkMode     = gIsSearchMode ? last : .wSearchMode
-	}
+	func setSearchStateTo(_ iState: ZSearchState) {
+		searchState = iState
 
-	func showSearch(_ OPTION: Bool = false) {
-		swapModes()
-		gSignal([OPTION ? .sFound : .sSearch])
-	}
+		gMainController?         .searchStateDidChange()
+		gSearchBarController?    .searchStateDidChange()
+		gSearchResultsController?.searchStateDidChange()
 
-	func performSearch(for searchString: String) {
-		var remaining = kAllDatabaseIDs.count // same count as allClouds
-		var  combined = [ZDatabaseID: [Any]] ()
+		switch searchState {
+			case .sList:          gSignal([.sFound])
+			case .sFind, .sEntry: assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBar)
 
-		let doneMaybe : Closure = {
-			if  remaining == 0 {   // done fetching records, transfer them to results controller
-				gSearchResultsController?.foundRecords = combined as? [ZDatabaseID: CKRecordsArray] ?? [:]
-				self.setStateTo(self.hasResults ? .sList : .sFind)
-				gSignal([.sFound])
-			}
+			default: break
 		}
+	}
+
+	func performSearch(for searchString: String, closure: Closure?) {
+		var combined = ZDBIDRecordsDictionary()
 
 		for cloud in gRemoteStorage.allClouds {
-			let locals = cloud.searchLocal(for: searchString)
-			let   dbID = cloud.databaseID
+			cloud.foundInSearch = []
+			cloud.searchLocal(for: searchString) { [self] in
+				let   dbID  = cloud.databaseID
+				var results = combined[dbID] ?? ZRecordsArray()
 
-			if  gUser == nil || !gHasInternet {
-				combined[dbID] = locals
-				remaining -= 1
-
-				doneMaybe()
-			} else {
-				cloud.search(for: searchString) { iObject in
-					FOREGROUND {
-						remaining   -= 1
-						var orphanedTraits = CKRecordsArray()
-						var records        = iObject as! CKRecordsArray
-						var filtered       = records.filter { record -> Bool in
-							return record.matchesFilterOptions
-						}
-
-						for record in filtered {
-							if  record.recordType == kTraitType {
-								let trait = cloud.maybeZRecordForCKRecord(record) as? ZTrait ?? ZTrait.create(record: record, databaseID: dbID)
-
-								if  trait.ownerZone == nil {
-									orphanedTraits.append(record)   // remove unowned traits from records
-								} else {
-									trait.register()         // some records are being fetched first time
-								}
-							}
-						}
-
-						for orphan in orphanedTraits {
-							if  let index = filtered.firstIndex(of: orphan),
-								index     < records.count {
-								records.remove(at: index)
-							}
-						}
-
-						filtered.appendUnique(contentsOf: locals) { (a, b) in
-							if  let alpha = a as? CKRecord,
-								let  beta = b as? CKRecord {
-								return alpha.recordID.recordName == beta.recordID.recordName
-							}
-
-							return false
-						}
-
-						combined[dbID] = filtered
-
-						doneMaybe()
+				for record in cloud.foundInSearch {
+					if  let zone = record as? Zone {
+						zone.assureRoot()
 					}
 				}
+
+				results.append(contentsOf: cloud.foundInSearch)
+
+				combined[dbID]                             = results
+				gSearchResultsController?.foundRecordsDict = combined
+
+				if  let c = gSearchResultsController {
+					c.applyFilter()
+					setSearchStateTo(.sList)
+				}
+
+				closure?() // hide spinner
 			}
 		}
 	}

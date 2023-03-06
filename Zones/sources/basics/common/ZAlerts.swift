@@ -6,7 +6,7 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
+import Foundation
 import CloudKit
 
 #if os(OSX)
@@ -15,32 +15,20 @@ import CloudKit
     import UIKit
 #endif
 
-
-enum ZAlertType: Int {
-    case eInfo
-    case eNoAuth
-    case eNoInternet
-}
-
-
 enum ZAlertStatus: Int {
-    case eStatusShown
-    case eStatusShow
-    case eStatusYes
-    case eStatusNo
+    case sShown
+    case sShow
+    case sYes
+    case sNo
 }
-
 
 let                  gAlerts = ZAlerts()
 typealias       AlertClosure = (ZAlert?, ZAlertStatus) -> (Void)
 typealias AlertStatusClosure = (ZAlertStatus) -> (Void)
 
-
 class ZAlerts : NSObject {
 
-
     var mostRecentError: Error?
-
 
     func detectError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
         let        hasError = iError != nil
@@ -52,89 +40,85 @@ class ZAlerts : NSObject {
         closure?(hasError)
     }
 
-
     func alertError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
-        detectError(iError, message) { iHasError in
+		detectError(iError, message) { [self] iHasError in
             if !iHasError {
                 closure?(false) // false means no error
             } else {
-                self.report(error: iError) { (iResponse: Any?) in
-                    closure?(iResponse as? Bool ?? true) // true means user rejected alert
+                report(error: iError) { (choice: Any?) in
+                    closure?(choice as? Bool ?? true) // true means user rejected alert
                 }
             }
         }
     }
 
-
     private func report(error iError: Any? = nil, _ iMessage: String? = nil, _ closure: AnyClosure? = nil) {
         let   message = iMessage ?? gBatches.operationText
-        let      text = kSpace + (iMessage ?? "")
+        let      text = kSpace + (iMessage ?? kEmpty)
 
         if  let ckError: CKError = iError as? CKError {
-            switch ckError.code {
-           //  case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
-            case .networkUnavailable: gHasInternet = false; closure?(true) // was alertNoInternet
-            default:
-                printDebug(.dError, ckError.localizedDescription + text)
-                closure?(true)
-            }
+			switch ckError.code {
+//				case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
+				case .networkUnavailable: gHasInternet = false; closure?(true) // was alertNoInternet
+				default:
+					printDebug(.dError, ckError.localizedDescription + text)
+					closure?(true)
+			}
         } else if let nsError = iError as? NSError {
-            let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? ""
+            let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? kEmpty
 
-            alert(message, waitForIt) { iAlert, iState in
-                iAlert?.showAlert { iResponse in
-                    closure?(iResponse)
+            alertWithClosure(message, waitForIt) { alert, status in
+				alert?.showModal { choice in
+                    closure?(choice)
                 }
             }
         } else {
-            let error = iError as? String ?? ""
+            let error = iError as? String ?? kEmpty
 
             printDebug(.dError, error + text)
             closure?(true)
         }
     }
 
-
     func alertNoInternet(_ onCompletion: @escaping Closure) {
         let message = "In System Preferences, please enable network access"
 
-        alert("To gain full use of this app,", message, "Click here to begin") { iAlert, iState in
-            switch iState {
-            case .eStatusShow:
-                iAlert?.showAlert { iResponse in
-                    switch iResponse {
-                    case .eStatusYes:
-                        self.openSystemPreferences()
-                        onCompletion()
-                    default: break
-                    }
-                }
-            default:
-                self.openSystemPreferences()
-                onCompletion()
-            }
+		alertWithClosure("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
+			switch status {
+				case .sShow:
+					alert?.showModal { [self] choice in
+						switch choice {
+							case .sYes:
+								openSystemPreferences()
+								onCompletion()
+							default: break
+						}
+					}
+				default:
+					openSystemPreferences()
+					onCompletion()
+			}
         }
     }
-
 
     func alertSystemPreferences(_ onCompletion: @escaping Closure) {
         let message = "In System Preferences, please \n  1. click on iCloud,\n  2. sign in,\n  3. turn on iCloud drive"
 
-        alert("To gain full use of this app,", message, "Click here to begin") { iAlert, iState in
-                switch iState {
-                case .eStatusShow:
-                    iAlert?.showAlert { iResponse in
-                        switch iResponse {
-                        case .eStatusYes:
-                            self.openSystemPreferences()
-                            onCompletion()
-                        default: break
-                        }
-                    }
-                default:
-                    self.openSystemPreferences()
-                    onCompletion()
-                }
+		alertWithClosure("To gain full use of this app,", message, "Click here to begin") { [self] alert, status in
+			switch status {
+				case .sShow:
+					alert?.showModal { [self] choice in
+						switch choice {
+							case .sYes:
+								openSystemPreferences()
+								onCompletion()
+							default: break
+						}
+					}
+				default:
+					openSystemPreferences()
+					onCompletion()
+			}
         }
     }
 }

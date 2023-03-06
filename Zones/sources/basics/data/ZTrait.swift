@@ -9,16 +9,34 @@
 import Foundation
 import CloudKit
 
-enum ZTraitType: String {
-	case tDuration  = "+" // accumulative
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
+struct ZNoteVisibilityMode: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let mSelf     = ZNoteVisibilityMode(rawValue: 1 << 0)
+	static let mChildren = ZNoteVisibilityMode(rawValue: 1 << 1)
+	static let mHidden   = ZNoteVisibilityMode(rawValue: 1 << 2)
+}
+
+enum ZTraitType: String { // stored in database: do not change
+
+	case tDuration  = "!" // accumulative
 	case tMoney     = "$" //      "
-	case tAssets    = "a" // allow multiple
+	case tAssets    = "a" // can have multiple
 	case tHyperlink = "h"
-	case tVideo     = "v"
 	case tEmail     = "e"
 	case tEssay     = "w"
 	case tDate      = "d"
 	case tNote      = "n"
+
+	static var activeTypes: [ZTraitType] { return [.tEmail, .tHyperlink, .tNote] }
 
 	var heightRatio: CGFloat {
 		switch self {
@@ -29,14 +47,23 @@ enum ZTraitType: String {
 		}
 	}
 
+	var title: String? { return description?.capitalized }
+
 	var description: String? {
 		switch self {
-			case .tHyperlink: return "LINK"
+			case .tHyperlink: return "HYPERLINK"
 			case .tEmail:     return "EMAIL"
 			case .tEssay:     return "ESSAY"
-			case .tVideo:     return "VIDEO"
 			case .tNote:      return "NOTE"
 			default:          return nil
+		}
+	}
+
+	var isEssayOrNote: Bool {
+		switch self {
+			case .tNote,
+				 .tEssay: return true
+			default:      return false
 		}
 	}
 
@@ -45,53 +72,32 @@ enum ZTraitType: String {
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@NSManaged    var    owner :  CKReference?
-	@NSManaged    var  strings : [String]?
-	@NSManaged    var   format :  String?
-	@NSManaged    var     type :  String?
-	@NSManaged    var     text :  String?
-    override var unwrappedName :  String  { return text ?? emptyName }
-	var             _ownerZone :  Zone?
-	var             _traitType :  ZTraitType?
+	@NSManaged var      strings : StringsArray?
+	@NSManaged var     ownerRID : String?
+	@NSManaged var       format : String?
+	@NSManaged var         type : String?
+	@NSManaged var         text : String?
+	@NSManaged var   visibility : NSNumber?
+    override var  unwrappedName : String { return text ?? emptyName }
+	override var  decoratedName : String { return text ?? kNoValue }
+	override var     typePrefix : String { return traitType?.description ?? kEmpty }
+	override var   passesFilter : Bool   { return gFilterOption.contains(.fNotes) && (traitType?.isEssayOrNote ?? false) }
+	override var      isInScope : Bool   { return ownerZone?.isInScope ?? false }
+	var               needsSave = false
+	var              _ownerZone : Zone?
+	var              _traitType : ZTraitType?
 
-	// MARK:- initialize
-	// MARK:-
-
-	func deepCopy(dbID: ZDatabaseID?) -> ZTrait {
-		let theRecord = CKRecord(recordType: kTraitType)
-		let theCopy   = ZTrait.create(record: theRecord, databaseID: dbID)
-
-		copyIntoZRecord(theCopy)
-		theCopy.maybeNeedSave() // so KVO won't set needsMerge
-
-		return theCopy
-	}
-
-	static func createAsync(record: CKRecord, databaseID: ZDatabaseID?, onCreation: @escaping ZTraitClosure) {
-		hasMaybeAsync(record: record, entityName: kTraitType, databaseID: databaseID) { zRecord in           // first check if already exists
-			onCreation(zRecord as? ZTrait ?? ZTrait(record: record, databaseID: databaseID))
+	var attributedText : NSMutableAttributedString? {
+		didSet {
+			text   = attributedText?.string;
+			format = attributedText?.attributesAsString
 		}
 	}
 
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZTrait {
-		return hasMaybe(record: record, entityName: kTraitType, databaseID: databaseID) as? ZTrait ??        // first check if already exists
-			ZTrait(record: record, entityName: kTraitType, databaseID: databaseID)
-	}
+	override var         cloudProperties: StringsArray { return ZTrait.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return ZTrait.optionalCloudProperties }
 
-	convenience init(databaseID: ZDatabaseID?) {
-		self.init(record: CKRecord(recordType: kTraitType), databaseID: databaseID)
-	}
-
-	convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-		self.init(entityName: kTraitType, databaseID: dbID)
-
-		try extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
-	}
-
-	override var cloudProperties: [String] { return ZTrait.cloudProperties }
-	override var optionalCloudProperties: [String] { return ZTrait.optionalCloudProperties }
-
-	override class var cloudProperties: [String] {
+	override class var cloudProperties: StringsArray {
 		return [#keyPath(type),
 				#keyPath(text),
 				#keyPath(strings)] +
@@ -99,23 +105,138 @@ class ZTrait: ZTraitAssets {
 			super.cloudProperties
 	}
 
-	override class var optionalCloudProperties: [String] {
-		return [#keyPath(owner),
+	override class var optionalCloudProperties: StringsArray {
+		return [#keyPath(ownerRID),
 				#keyPath(format)] +
 			super.optionalCloudProperties
 	}
 
-	// MARK:- text
-	// MARK:-
+	// MARK: - visibility
+	// MARK: -
+
+	var     showsSelf : Bool { get { return visibilityMode?.contains(.mSelf)     ?? false } set { setVisibilityMode(.mSelf,     to: newValue) } }
+	var   showsHidden : Bool { get { return visibilityMode?.contains(.mHidden)   ?? false } set { setVisibilityMode(.mHidden,   to: newValue) } }
+	var showsChildren : Bool { get { return visibilityMode?.contains(.mChildren) ?? false } set { setVisibilityMode(.mChildren, to: newValue) } }
+
+	func setVisibilityMode(_ mode: ZNoteVisibilityMode, to: Bool) {
+		if  var v = visibilityMode {
+			if  to {
+				v.insert(mode)
+			} else {
+				v.remove(mode)
+			}
+
+			visibilityMode = v
+		} else {
+			visibilityMode = mode
+		}
+	}
+
+	var visibilityMode : ZNoteVisibilityMode? {
+		get {
+			if  let n = visibility?.intValue {
+				return ZNoteVisibilityMode(rawValue: n)
+			}
+
+			return nil
+		}
+
+		set {
+			let      n = newValue?.rawValue ?? 0
+			visibility = NSNumber(value: n)
+		}
+	}
+
+	func stateFor(_ type: ZNoteVisibilityIconType) -> Bool? {
+		switch type {
+			case .tSelf:     return showsSelf
+			case .tHidden:   return showsHidden
+			case .tChildren: return showsChildren
+		}
+	}
+
+	func toggleVisibilityFor(_ type: ZNoteVisibilityIconType) {
+		switch type {
+			case .tSelf:     showsSelf     = !showsSelf
+			case .tHidden:   showsHidden   = !showsHidden
+			case .tChildren: showsChildren = !showsChildren
+		}
+	}
+
+	// MARK: - initialize
+	// MARK: -
+
+	static func uniqueTrait(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZTrait {
+		let result = uniqueTrait(recordName: dict.recordName, in: dbID)
+
+		result.temporarilyIgnoreNeeds {
+			do {
+				try result.extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
+			} catch {
+				printDebug(.dError, "\(error)")    // de-serialization
+			}
+		}
+
+		return result
+	}
+
+	func deepCopy(dbID: ZDatabaseID) -> ZTrait {
+		let theCopy = ZTrait.uniqueTrait(recordName: gUniqueRecordName, in: dbID)
+
+		copyInto(theCopy)
+
+		return theCopy
+	}
+
+	static func uniqueTrait(recordName: String?, in dbID: ZDatabaseID) -> ZTrait {
+		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
+	}
+
+	// MARK: - owner
+	// MARK: -
+
+	override var isAdoptable: Bool { return ownerRID != nil }
+
+	var ownerZone: Zone? {
+		if  _ownerZone == nil {
+			_ownerZone  = gRemoteStorage.maybeZoneForRecordName(ownerRID)
+		}
+
+		return _ownerZone
+	}
+
+	override var color: ZColor? {
+		get { return ownerZone?.color }
+		set { ownerZone?.color = newValue }
+	}
+
+	override func orphan() {
+		ownerZone?.setTraitText(nil, for: traitType)
+
+		ownerRID = nil
+	}
+
+	override func adopt(recursively: Bool = false) {
+		if  let      o = ownerZone,
+			let traits = ownerZone?.traits,
+			let      t = traitType, traits[t] == nil {
+			removeState(.needsAdoption)
+
+			o.addTrait(self)
+		}
+	}
+
+	// MARK: - text
+	// MARK: -
 
 	var noteText: NSMutableAttributedString? {
 		get {
 			var        string : NSMutableAttributedString?
-			let       isEmpty = text == nil || text!.isEmpty || text! == kEssayDefault
+			let       isEmpty = text == nil || text!.isEmpty
 
-			setCurrentTrait {
+			whileSelfIsCurrentTrait {
 				if  isEmpty {
-					text      = kEssayDefault
+					text      = kDefaultNoteText
 
 					updateSearchables()
 				}
@@ -125,8 +246,8 @@ class ZTrait: ZTraitAssets {
 
 					if  let f = format {
 						string?.attributesAsString = f
-					} else if isEmpty {
-						string?.addAttribute(.font, value: gDefaultEssayFont, range: NSRange(location: 0, length: text!.length))
+					} else if isEmpty || text! == kDefaultNoteText {
+						string?.addAttribute(.font, value: kDefaultEssayFont, range: NSRange(location: 0, length: string!.length))
 					}
 				}
 			}
@@ -135,13 +256,13 @@ class ZTrait: ZTraitAssets {
 		}
 
 		set {
-			setCurrentTrait {
+			whileSelfIsCurrentTrait {
 				if  let string = newValue {
 					text 	   = string.string
 					format 	   = string.attributesAsString
 
 					if  text?.isEmpty ?? true {
-						text = kEssayDefault
+						text = kDefaultNoteText
 					}
 
 					// THE NEXT STATEMENT IS THE ONLY code which gathers assets for images,
@@ -150,7 +271,6 @@ class ZTrait: ZTraitAssets {
 
 					extractAssets(from: string)
 					updateSearchables()
-					updateCKRecordProperties()
 				}
 			}
 		}
@@ -159,71 +279,47 @@ class ZTrait: ZTraitAssets {
     override var emptyName: String {
         if  let tType = traitType {
             switch tType {
-				case .tVideo:     return "video file name"
 				case .tEmail:     return "email address"
 				case .tHyperlink: return "hyperlink"
 				default:          break
             }
         }
 
-        return ""
+        return kEmpty
     }
 
     var traitType: ZTraitType? {
         get {
-            if  _traitType == nil, type != nil {
-                _traitType  = ZTraitType(rawValue: type!)
+            if  _traitType == nil,
+				var t       = type {
+				if  t      == ZTraitType.tEssay.rawValue {
+					t       = ZTraitType.tNote .rawValue
+					type    = t
+				}
+
+				_traitType  = ZTraitType(rawValue: t)
             }
 
             return _traitType
         }
 
         set {
-            if newValue != _traitType {
-                _traitType = newValue
-                type       = newValue?.rawValue
+            if newValue    != _traitType {
+                _traitType  = newValue
+                type        = newValue?.rawValue
             }
         }
     }
 
-    var ownerZone: Zone? {
-        if  _ownerZone == nil {
-            _ownerZone  = gRemoteStorage.maybeZoneForRecordName(owner?.recordID.recordName)
-        }
-
-        return _ownerZone
-    }
-
-	func setCurrentTrait(during: Closure) {
+	func whileSelfIsCurrentTrait(during: Closure) {
 		let     prior = gCurrentTrait // can be called within recursive traversal of notes within notes, etc.
 		gCurrentTrait = self
 		during()
 		gCurrentTrait = prior
 	}
 
-    override func orphan() {
-        ownerZone?.setTraitText(nil, for: traitType)
-
-        owner = nil
-
-        updateCKRecordProperties()
-    }
-
-	override var isAdoptable: Bool { return owner != nil }
-
-	override func adopt(recursively: Bool = false) {
-        if  let      o = ownerZone,
-			let traits = ownerZone?.traits,
-			let      t = traitType, traits[t] == nil {
-            o.maybeMarkNotFetched()
-			removeState(.needsAdoption)
-
-			o.addTrait(self)
-        }
-    }
-
 	func updateSearchables() {
-		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tVideo, .tHyperlink]
+		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
 		if  let  tt = traitType, searchables.contains(tt) {
 			strings = text?.searchable.components(separatedBy: kSpace)

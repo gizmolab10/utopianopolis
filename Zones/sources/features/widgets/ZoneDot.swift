@@ -22,215 +22,141 @@ enum ZDecorationType: Int {
 
 struct  ZDotParameters {
 
-	var childCount     = 0
-	var sideDotRadius  = 4.0
-	var traitType      = ""
-	var isDrop         = false
-	var filled         = false
-	var isReveal       = false
-	var isGrouped      = false
-	var isGroupOwner   = false
-	var badRecordName  = false
-	var hasTargetNote  = false
-	var hasTarget      = false
-	var showList       = false
-	var showAccess     = false
-	var showSideDot    = false
-	var fill           = gBackgroundColor
-	var color          = gDefaultTextColor
-	var accessType     = ZDecorationType.vertical
+	var childCount    = 0
+	var isDrop        = false
+	var isReveal      = false
+	var isFilled      = false
+	var isCircle      = false
+	var isDragged     = false
+	var isGrouped     = false
+	var isGroupOwner  = false
+	var badRecordName = false
+	var hasTargetNote = false
+	var hasTarget     = false
+	var showList      = false
+	var showAccess    = false
+	var showSideDot   = false
+	var typeOfTrait   = kEmpty
+	var fill          = gBackgroundColor
+	var color         = kDefaultIdeaColor
+	var accessType    = ZDecorationType.vertical
 
 }
 
-class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
+@objc (ZoneDot)
+class ZoneDot: ZPseudoView, ZToolTipper {
 
-    // MARK:- properties
-    // MARK:-
+    // MARK: - properties
+    // MARK: -
 
-    weak var     widget: ZoneWidget?
-    var        innerDot: ZoneDot?
-    var       dragStart: CGPoint?
-    var        isReveal: Bool    = true
-    var      isInnerDot: Bool    = false
-	var      isDragDrop: Bool    { return widgetZone == gDragDropZone }
-	var dragDotIsHidden: Bool    { return widgetZone?.dragDotIsHidden ?? true }
-    var      widgetZone: Zone?   { return widget?.widgetZone }
-	var           ratio: CGFloat { return widget?.ratio ?? 1.0 }
-	var   innerDotWidth: CGFloat { return ratio * CGFloat(isReveal ? gDotHeight : dragDotIsHidden ? 0.0 : gDotWidth) }
-	var  innerDotHeight: CGFloat { return ratio * CGFloat(gDotHeight) }
+	var                   line : ZoneLine?
+	weak var            widget : ZoneWidget?
+	var                  ratio : CGFloat         { return widget?.mapReduction ?? 1.0 }
+	var             widgetZone : Zone?           { return widget?.widgetZone }
+	override var    controller : ZMapController? { return widget?.controller }
+	override var zClassInitial : String          { return isReveal ? "R" : "D" }
+	override var     debugName : String          { return widgetZone?.zoneName ?? kUnknown }
+	var        dragDotIsHidden : Bool            { return widgetZone?.dragDotIsHidden ?? true }
+	var               isReveal = true
 
-    var innerOrigin: CGPoint? {
-        if  let inner = innerDot {
-            let  rect = inner.convert(inner.bounds, to: self)
-
-            return rect.origin
-        }
-
-        return nil
-    }
-
-
-    var innerExtent: CGPoint? {
-        if  let inner = innerDot {
-            let  rect = inner.convert(inner.bounds, to: self)
-
-            return rect.extent
-        }
-
-        return nil
-    }
-
-    var isVisible: Bool {
-		guard let zone = widgetZone else {
-			return false
-		}
-
-		if  isReveal {
-			return isDragDrop || zone.isTraveller || zone.count > 0
-		}   else {
-			return !zone.isSmallMapHere
-		}
-    }
-
-	var isFilled: Bool {
+	var dotIsVisible: Bool {
 		guard let zone = widgetZone else {
 			return false
 		}
 
 		if !isReveal {
-			return zone.isGrabbed
-		} else {
-			let childlessTraveller = zone.isTraveller && zone.count == 0
-
-			return !zone.expanded || childlessTraveller
+			return !zone.isFavoritesHere
+		}   else {
+			return  isDragDrop       ||
+				(   zone.isTraveller ||
+					zone.count > 0)
 		}
+    }
+
+	var isFilled: Bool {
+		var     filled = false
+		if  let zone   = widgetZone {
+			if  isReveal {
+				filled = ((!zone.isExpanded || (zone.isTraveller && zone.count == 0)) && isLinearMode) != isHovering
+			} else {
+				filled =   zone.isGrabbed   || isHovering
+			}
+		}
+
+		return  filled
 	}
 
-    // MARK:- initialization
-    // MARK:-
+	// MARK: - initialization
+	// MARK: -
 
-    func setupForWidget(_ iWidget: ZoneWidget, asReveal: Bool) {
+    func setupForWidget(_ w: ZoneWidget?, asReveal: Bool) {
         isReveal = asReveal
-        widget   = iWidget
-		
-        if  isInnerDot {
-			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? "unknown")")
-            snp.removeConstraints()
-            snp.makeConstraints { make in
-                let  size = CGSize(width: innerDotWidth, height: innerDotHeight)
+        widget   = w
 
-                make.size.equalTo(size)
-            }
+		updateDotDrawnSize()
+	}
+	
+	override func setupDrawnView() {
+		super.setupDrawnView()
 
-            setNeedsDisplay(frame)
-        } else {
-            if  innerDot            == nil {
-                innerDot             = ZoneDot()
-                innerDot!.isInnerDot = true
-
-                addSubview(innerDot!)
-            }
-
-            innerDot?.setupForWidget(iWidget, asReveal: isReveal)
-			snp.setLabel("<\(isReveal ? "r" : "d")> \(widgetZone?.zoneName ?? "unknown")")
-            snp.removeConstraints()
-            snp.makeConstraints { make in
-                var   width = !isReveal && dragDotIsHidden ? CGFloat(0.0) : (gGenericOffset.width * 2.0) - (gGenericOffset.height / 6.0) - 42.0 + innerDotWidth
-                let  height = innerDotHeight + 5.0 + (gGenericOffset.height * 3.0)
-
-				if !iWidget.type.isBigMap {
-                    width  *= kSmallMapReduction
-                }
-
-                make.size.equalTo(CGSize(width: width, height: height))
-                make.center.equalTo(innerDot!)
-            }
-        }
-
-		#if os(iOS)
-		backgroundColor = kClearColor
-		#endif
-
-        updateConstraints()
-        setNeedsDisplay()
-		updateTooltips()
-    }
-
-    // MARK:- draw
-    // MARK:-
-
-    func isVisible(_ rect: CGRect) -> Bool {
-        return isVisible && window?.contentView?.bounds.intersects(rect) ?? false
-    }
-
-	func drawSmallMapSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let       radius = parameters.sideDotRadius
-		let   tinyRadius =     radius * 0.7
-		let tinyDiameter = tinyRadius * 2.0
-		let       center = iDirtyRect.center
-		let            x = center.x - CGFloat(tinyDiameter + radius)
-		let            y = center.y - CGFloat(tinyRadius)
-		let         rect = CGRect(x: x, y: y, width: CGFloat(tinyDiameter), height: CGFloat(tinyDiameter))
-		let         path = ZBezierPath(ovalIn: rect)
-		path.lineWidth   = CGFloat(gLineThickness * 1.2)
-		path.flatness    = 0.0001
-
-		if  let zone = widgetZone, zone.isInFavorites == gIsRecentlyMode {
-			path.stroke()
-		} else {
-			path.fill()
+		if  let     m = absoluteView as? ZMapView {
+			drawnView = m.decorationsView
 		}
 	}
 
-	func drawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
-        let  thickness = CGFloat(gLineThickness)
-		var       path = ZBezierPath()
+    // MARK: - draw
+    // MARK: -
 
-		if  parameters.isReveal {
-			path       = ZBezierPath.bloatedTrianglePath(aimedRight: parameters.showList, in: iDirtyRect)
-		} else {
-			path       = ZBezierPath(ovalIn: iDirtyRect.insetEquallyBy(thickness))
-		}
+	func drawFavoriteSideDot(in iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		guard let      c = controller ?? gHelpController else { return }    // for help dots, widget and controller are nil; so use help controller
+		let  strokeColor = parameters.color.withAlphaComponent(0.7)
+		let    fillColor = parameters.isFilled ? gBackgroundColor : strokeColor
 
-		path.lineWidth = thickness * 2.0
-		path .flatness = 0.0001
+		let       radius = c.sideDotRadius
+		let     diameter = radius * 2.0
+		let         size = CGSize.squared(diameter)
+		let       origin = iDirtyRect.center - CGPoint.squared(radius) - CGPoint(x: c.dotThirdWidth, y: .zero)
+		let         rect = CGRect(origin: origin, size: size)
+		let         path = ZBezierPath(ovalIn: rect)
+		path.lineWidth   = c.coreThickness * 2.0
+		path.flatness    = kDefaultFlatness
 
+		strokeColor.setStroke()
+		fillColor  .setFill()
 		path.stroke()
 		path.fill()
 	}
 
 	func drawTinyCountDots(_ iDirtyRect: CGRect, parameters: ZDotParameters) {
+		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
 		let count      = parameters.childCount
 		if  count      > 0 {
-			let  frame = iDirtyRect.offsetEquallyBy(-0.1)
+			let  frame = iDirtyRect.offsetEquallyBy(-0.1).expandedEquallyBy(c.coreThickness)
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
-			let radius = ((Double(frame.size.height) * gLineThickness / 24.0) + 0.4)
+			let radius = (frame.size.height * c.coreThickness / 60.0) + 0.7
 
 			drawTinyDots(surrounding: frame, count: count, radius: radius, color: color)
 		}
 	}
 
+	func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
+		guard let   c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
+		var thickness = CGFloat(c.coreThickness + 0.5) * ratio
+		var      path = ZBezierPath(rect: .zero)
+		var      rect = CGRect.zero
 
-    func drawWriteAccessDecoration(of type: ZDecorationType, in iDirtyRect: CGRect) {
-        var thickness = CGFloat(gLineThickness + 0.5) * ratio
-        var      path = ZBezierPath(rect: CGRect.zero)
-        var      rect = CGRect.zero
+		switch type {
+			case .vertical:
+				rect      = iDirtyRect.insetEquallyBy(fraction: 0.175).centeredVerticalLine(thick: thickness)
+				path      = ZBezierPath(rect: rect)
+			case .sideDot:
+				thickness = (thickness + 2.0) * iDirtyRect.size.height / 12.0
+				rect      = CGRect(origin: CGPoint(x: iDirtyRect.maxX -  thickness - 1.0,   y: iDirtyRect.midY - thickness / 2.0), size: CGSize.squared(thickness))
+				path      = ZBezierPath(ovalIn: rect)
+		}
 
-        switch type {
-        case .vertical:
-			rect      = iDirtyRect.insetEquallyBy(fraction: 0.175).centeredVerticalLine(thick: thickness)
-            path      = ZBezierPath(rect: rect)
-        case .sideDot:
-            thickness = (thickness + 2.0) * iDirtyRect.size.height / 12.0
-            rect      = CGRect(origin: CGPoint(x: iDirtyRect.maxX -  thickness - 1.0,   y: iDirtyRect.midY - thickness / 2.0), size: CGSize(width: thickness, height: thickness))
-            path      = ZBezierPath(ovalIn: rect)
-        }
-
-        path.fill()
+		path.fill()
 	}
-
-	func drawCenterDuplicatesDecorations(in iDirtyRect: CGRect) {
-    }
 
 	func drawCenterBookmarkDecorations(in iDirtyRect: CGRect, hasNote: Bool = false) {
 		var rect = iDirtyRect.insetEquallyBy(fraction: 0.3)
@@ -242,83 +168,85 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 			path.append(ZBezierPath(ovalIn: rect.offsetBy(fractionY:  0.7)))
 		}
 
-		path.flatness = 0.0001
+		path.flatness = kDefaultFlatness
 
 		path.fill()
 	}
 
 	func drawGroupingDecorations(for parameters: ZDotParameters, in iDirtyRect: CGRect) {
+		var path      = ZBezierPath()
+
 		if  parameters.isGroupOwner {
 			let (a,b) = iDirtyRect.insetEquallyBy(fraction: 0.25).twoDotsVertically(fractionalDiameter: 0.7)
-			let  path = ZBezierPath(ovalIn: a)
+			path      = ZBezierPath(ovalIn: a)
 
 			path.append(ZBezierPath(ovalIn: b))
-			path.fill()
 		} else {
 			let  rect = iDirtyRect.insetEquallyBy(fraction: 0.10).centeredHorizontalLine(thick: 1.25)
+			path      = ZBezierPath(rect: rect)
+		}
 
-			ZBezierPath(rect: rect).fill()
+		path.fill()
+	}
+
+	func offsetFor(_ string: String) -> CGFloat {
+		switch string {
+			case "=", "+": return 0.9
+			default:       return .zero
 		}
 	}
 
-	func drawStringDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, isForMap: Bool = true) {
-		let  width = CGFloat(gDotHeight - 2.0) * ratio
-		let   font = ZFont.boldSystemFont(ofSize: width)
-		let   size = string.sizeWithFont(font)
-		let  ratio = ZTraitType(rawValue: string)?.heightRatio ?? 1.0
-		let height = size.height * ratio + (isForMap ? 1.0 : -8.0)
-		let xDelta = (iDirtyRect.width - size.width) / CGFloat(2.0)
-		let yDelta = (height - iDirtyRect.height) / CGFloat(4.0)
-		let   rect = iDirtyRect.insetBy(dx: xDelta, dy: yDelta).offsetBy(dx: 0.0, dy: (height / 12.0) - 1)
+	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForBigMap: Bool = true) {
+		if  let      c = controller ?? gHelpController { // for help dots, widget and controller are nil; so use help controller
+			let   char = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
+			let  width = c.dotWidth * ratio * 1.4
+			let   font = ZFont.boldSystemFont(ofSize: width)
+			let   size = char.sizeWithFont(font)
+			let offset = size.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.8))
+			let origin = iDirtyRect.center.retreatBy(offset) //  * factor)
+			let   rect = CGRect(origin: origin, size: size)
 
-		string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+			char.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+		}
 	}
 
-	func drawInnerRevealDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let fillColor = parameters.filled ? gBackgroundColor : parameters.color
+	func drawRevealDotDecoration(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		let fillColor = parameters.isFilled ? gBackgroundColor : parameters.color
 
-		if parameters.hasTarget || parameters.hasTargetNote {
+		if  parameters.hasTarget || parameters.hasTargetNote {
 
 			// //////////////////////////////// //
 			// TINY CENTER BOOKMARK DECORATIONS //
 			// //////////////////////////////// //
 
-			gBackgroundColor.setFill()
+			fillColor.setFill()
 			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
-		} else if parameters.traitType != "" {
+		}
+	}
+
+	func drawDotInterior(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		let fillColor = parameters.isFilled ? gBackgroundColor : parameters.color
+
+		if  parameters.typeOfTrait != kEmpty, controller?.inCircularMode != isReveal {
 
 			// ///////////////// //
 			// TRAIT DECORATIONS //
 			// ///////////////// //
 
-			drawStringDecoration(in: iDirtyRect, string: parameters.traitType, color: fillColor)
+			drawTraitDecoration(in: iDirtyRect, string: parameters.typeOfTrait, color: fillColor)
 		}
 
-//		if  parameters.hasDuplicate {
-//			let string = "\(widgetZone?.duplicates.count ?? 1)"
-//
-//			drawStringDecoration(in: iDirtyRect, string: string, color: fillColor)
-//		}
-	}
+		if  parameters.isReveal {
 
-	func drawInnerDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let decorationFillColor = parameters.filled ? gBackgroundColor : parameters.color
+			// //////////////////// //
+			// BOOKMARK DECORATIONS //
+			// //////////////////// //
 
-		parameters.color.setStroke()
-		parameters.fill .setFill()
-
-		// //////// //
-		// MAIN DOT //
-		// //////// //
-
-		drawMainDot(in: iDirtyRect, using: parameters)
-
-		if      parameters.isReveal {
-			drawInnerRevealDot(iDirtyRect, parameters)
+			drawRevealDotDecoration(iDirtyRect, parameters)
 		} else {
-			decorationFillColor.setFill()
+			fillColor.setFill()
 
-			if  parameters.isGrouped {
+			if  parameters.isGrouped, !(controller?.inCircularMode ?? false) {
 
 				// //////////////////// //
 				// GROUPING DECORATIONS //
@@ -327,7 +255,7 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 				drawGroupingDecorations(for: parameters, in: iDirtyRect)
 			}
 
-			if parameters.showAccess {
+			if  parameters.showAccess {
 
 				// /////////////////////// //
 				// WRITE-ACCESS DECORATION //
@@ -336,59 +264,56 @@ class ZoneDot: ZView, ZGestureRecognizerDelegate, ZTooltips {
 				drawWriteAccessDecoration(of: parameters.accessType, in: iDirtyRect)
 			}
 		}
-
 	}
 
-	func drawOuterDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+	func drawDotExterior(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		if  parameters.showSideDot,
+			!parameters.isReveal {
 
-		// /////////////////////////////
-		// MOSTLY INVISIBLE OUTER DOT //
-		// /////////////////////////////
+			// ////////////////////////////////
+			// INDICATE CURRENT IN SMALL MAP //
+			// ////////////////////////////////
 
-		if  parameters.isReveal {
+			drawFavoriteSideDot(in: iDirtyRect, parameters)
+		} else if  isLinearMode,
+			gCountsMode == .dots,
+			parameters.isReveal,
+			!parameters.hasTarget,
+			!parameters.showList {
 
 			// //////////////////
 			// TINY COUNT DOTS //
 			// //////////////////
 
-			if !parameters.hasTarget,
-			    gCountsMode == .dots {
-
-				drawTinyCountDots(iDirtyRect, parameters: parameters)
-			}
-		} else if parameters.showSideDot {
-
-			// ////////////////////////////////
-			// HIGHLIGHT OF CURRENT FAVORITE //
-			// ////////////////////////////////
-
-			let color = parameters.color.withAlphaComponent(0.7)
-
-			color.setFill()
-			color.setStroke()
-			drawSmallMapSideDot(in: iDirtyRect, parameters)
+			drawTinyCountDots(iDirtyRect, parameters: parameters)
 		}
 	}
 
-    override func draw(_ iDirtyRect: CGRect) {
-        super.draw(iDirtyRect)
-
-		if  isVisible(iDirtyRect),
-			let parameters = widgetZone?.dotParameters(isFilled, isReveal) {
-			if  isInnerDot {
-				drawInnerDot(iDirtyRect, parameters)
-			} else if  innerDot != nil,
-				let rect = innerDot?.frame.offsetBy(dx: -0.1, dy: -0.1),
-				let zone = widgetZone,
-				(!zone.expanded || zone.isBookmark) {
-				drawOuterDot(rect, parameters)
-			}
+	func drawDot(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
+		if (parameters.isDragged && !parameters.isReveal) || (parameters.isDrop && parameters.isReveal) {
+			gActiveColor.setStroke()
+			gActiveColor.setFill()
+		} else {
+			parameters.color.setStroke()
+			parameters .fill.setFill()
 		}
-    }
 
-}
+		drawMainDot    (iDirtyRect, parameters)
+		drawDotExterior(iDirtyRect, parameters)
+		drawDotInterior(iDirtyRect, parameters)
+	}
 
-// Helper function inserted by Swift 4.2 migrator.
-fileprivate func convertFromNSAttributedStringKey(_ input: NSAttributedString.Key) -> String {
-	return input.rawValue
+    func draw() {
+		let rect  = absoluteFrame
+		if  rect.hasSize, dotIsVisible,
+			let p = widgetZone?.plainDotParameters(isFilled, isReveal, isDragDrop) {
+
+			if  isCircularMode, gDebugDraw {
+				absoluteHitRect.drawColoredRect(.blue, radius: 2.0, thickness: 1.0)
+			}
+			
+			drawDot(rect, p)
+		}
+	}
+
 }

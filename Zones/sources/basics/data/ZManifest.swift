@@ -9,7 +9,13 @@
 import Foundation
 import CloudKit
 
-var gManifest: ZManifest? { return gRecords?.manifest }
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
+var gManifest: ZManifest? { return gRecords.manifest }
 
 @objc(ZManifest)
 class ZManifest : ZRecord {
@@ -17,43 +23,21 @@ class ZManifest : ZRecord {
     class ZDeleted: NSObject {
         
         var name: String?
-        var date: Date?
-        var string: String? { if let n = name, let d = date { return ZDeleted.string(with: n, date: d) } else { return nil } }
-        class func string(with iName: String, date iDate: Date) -> String? { return iName + kColonSeparator + "\(iDate.timeIntervalSince1970)" }
 
-        init(with iName: String, date iDate: Date?) {
+        init(with iName: String) {
             name = iName
-            date = iDate ?? Date()
         }
 
-        init(with string: String) {
-            let    parts = string.components(separatedBy: kColonSeparator)
-            name         = parts[0]
-            let interval = parts[1]
-            
-            if  let    i = Double(interval) {
-                date     = Date(timeIntervalSince1970: i)
-            }
-        }
-        
     }
 
 	var zDeleted = [ZDeleted]()
-    @NSManaged var deletedRecordNames: [String]?
-	override var cloudProperties: [String] { return ZManifest.cloudProperties }
-	override class var cloudProperties: [String] { return super.cloudProperties + [#keyPath(deletedRecordNames)] }
-	override func ignoreKeyPathsForStorage() -> [String] { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
-	convenience init(databaseID: ZDatabaseID?) { self.init(record: CKRecord(recordType: kManifestType), databaseID: databaseID) }
+	@NSManaged var count: NSNumber?
+	@NSManaged var deletedRecordNames: StringsArray?
+	override var cloudProperties: StringsArray { return ZManifest.cloudProperties }
+	override class var cloudProperties: StringsArray { return super.cloudProperties + [#keyPath(deletedRecordNames), #keyPath(count)] }
+//	override func ignoreKeyPathsForStorage() -> StringsArray { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
 
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZManifest {
-		if  let    has = hasMaybe(record: record, entityName: kManifestType, databaseID: databaseID) as? ZManifest {        // first check if already exists
-			return has
-		}
-
-		return ZManifest.init(record: record, databaseID: databaseID)
-	}
-
-    var updatedRefs: [String]? {
+    var updatedRefs: StringsArray? {
         if  let d = deletedRecordNames {                 // FIRST: merge deleted into zDeleted
             for ref in d {
                 smartAppend(ref)
@@ -68,7 +52,7 @@ class ZManifest : ZRecord {
             
             // create deleted from zDeleted
             for zd in zDeleted {
-                if  let s = zd.string {
+                if  let s = zd.name {
 					deletedRecordNames?.append(s)
                 }
             }
@@ -77,15 +61,14 @@ class ZManifest : ZRecord {
         return deletedRecordNames
     }
 
-    func apply() {
+    func applyDeleted() {
         for deleteMe in zDeleted {
-            if  let      name = deleteMe.name,
-                let      dbID = databaseID {
-                let   records = gRemoteStorage.cloud(for: dbID)
+            if  let      name = deleteMe.name {
+                let   records = gRemoteStorage.zRecords(for: databaseID)
                 if  let  zone = records?.maybeZRecordForRecordName(name) as? Zone,
                     let trash = records?.trashZone {
                     zone.orphan()
-                    trash.addChild(zone)
+                    trash.addChildNoDuplicate(zone)
                 }
             }
         }
@@ -95,13 +78,11 @@ class ZManifest : ZRecord {
         let refString  = iItem as? String
         let zRecord    = iItem as? ZRecord
         var zd         = iItem as? ZDeleted
-        var name       = zd?.name ?? zRecord?.ckRecordName
-        var date       = zd?.date ?? zRecord?.ckRecord?.creationDate
+        var name       = zd?.name ?? zRecord?.recordName
 
         if  let     s  = refString {
             zd         = ZDeleted(with: s)
             name       = zd?.name
-            date       = zd?.date
         }
 
         if  let     n  = name {
@@ -112,31 +93,42 @@ class ZManifest : ZRecord {
             }
             
             if  zd == nil {
-                zd  = ZDeleted(with: n, date: date)
+                zd  = ZDeleted(with: n)
             }
             
             zDeleted.append(zd!)
-            needSave()
             
             return true
         }
 
         return false
-    }
+	}
 
-    convenience init(dict: ZStorageDictionary, in dbID: ZDatabaseID) throws {
-		self.init(entityName: kManifestType, ckRecordName: nil, databaseID: dbID)
+	static func uniqueManifest(recordName: String?, in dbID: ZDatabaseID) -> ZManifest {
+		return uniqueZRecord(entityName: kManifestType, recordName: recordName, in: dbID) as! ZManifest
+	}
 
-		try extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
-    }
+	static func uniqueManifest(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZManifest? {
+		let result = uniqueManifest(recordName: dict.recordName, in: dbID)
+
+		result.temporarilyIgnoreNeeds {
+			do {
+				try result.extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
+			} catch {
+				printDebug(.dError, "\(error)")    // de-serialization
+			}
+		}
+
+		return result
+	}
 
     override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
         try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
         
         if  let deletedsArray = dict[.deleted] as? [ZStorageDictionary] {
             for d in deletedsArray {
-                cloud?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
-                    self.smartAppend(d)
+				zRecords?.temporarilyIgnoreAllNeeds() { // prevent needsSave caused by child's parent (intentionally) not being in childDict
+                    smartAppend(d)
                 }
             }
         }

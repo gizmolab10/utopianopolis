@@ -5,310 +5,204 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
+import CoreData
 import Foundation
 import CloudKit
 
-class ZRecord: ZManagedRecord { // NSObject {
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
+enum ZRootID: String {
+	case rootID      = "root"
+	case trashID     = "trash"
+	case destroyID   = "destroy"
+	case favoritesID = "favorites"
+	case lostID      = "lost and found"
+}
+
+enum ZStorageType: String {
+	case lost            = "lostAndFound"    // general
+	case bookmarks       = "bookmarks"
+	case favorites       = "favorites"
+	case manifest        = "manifest"
+	case minimal         = "minimal"
+	case destroy         = "destroy"
+	case userID          = "user ID"
+	case model           = "model"
+	case graph           = "graph"
+	case trash           = "trash"
+	case date            = "date"
+
+	case recordName      = "recordName"		 // zones
+	case parentLink      = "parentLink"
+	case attributes      = "attributes"
+	case children        = "children"
+	case progeny         = "progeny"
+	case strings         = "strings"
+	case traits          = "traits"
+	case access          = "access"
+	case author          = "author"
+	case essay           = "essay"
+	case order           = "order"
+	case color           = "color"
+	case count           = "count"
+	case needs           = "needs"
+	case link            = "link"
+	case name            = "name"
+	case note            = "note"
+
+	case assetNames      = "assetNames"      // traits
+	case assets          = "assets"
+	case format          = "format"
+	case time            = "time"
+	case text            = "text"
+	case data            = "data"
+	case type            = "type"
+
+	case deleted         = "deleted"         // ZManifest
+
+	var rootName: String? {
+		switch self {
+			case .favorites: return kFavoritesRootName
+			case .lost:      return kLostAndFoundName
+			case .trash:     return kTrashName
+			case .graph:     return kRootName
+			default:         return nil
+		}
+	}
+
+	var rootID: ZRootID? {
+		switch self {
+			case .favorites: return .favoritesID
+			case .trash:     return .trashID
+			case .graph:     return .rootID
+			case .lost:      return .lostID
+			default:         return nil
+		}
+	}
+
+}
+
+@objc (ZRecord)
+class ZRecord: ZManagedObject {
 
 	@NSManaged var             dbid: String?
 	@NSManaged var       recordName: String?
 	@NSManaged var modificationDate: Date?
-	var           databaseID: ZDatabaseID?
-	var           kvoContext: UInt8 = 1
-	var             ckRecord: CKRecord?
-	var       _tooltipRecord: Any?
+	var       _toolTipRecord: Any?
 	var    writtenModifyDate: Date?
-	var              records: ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
-	var                cloud: ZCloud?   { return records as? ZCloud }
-	var         ckRecordName: String?   { return ckRecord?.recordID.recordName }
-	var  unwrappedRecordName: String    { return ckRecordName ?? "" }
-	var        unwrappedName: String    { return ckRecordName ?? emptyName }
-	var            emptyName: String    { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var   isInPublicDatabase: Bool      { guard let dbID = databaseID else { return false } ; return dbID == .everyoneID }
-	var            isMapRoot: Bool      { return ckRecordName == kRootName }
-	var          isTrashRoot: Bool      { return ckRecordName == kTrashName }
-	var        isDestroyRoot: Bool      { return ckRecordName == kDestroyName }
-	var        isRecentsRoot: Bool      { return ckRecordName == kRecentsRootName }
-	var   isLostAndFoundRoot: Bool      { return ckRecordName == kLostAndFoundName }
-	var      isFavoritesRoot: Bool      { return ckRecordName == kFavoritesRootName }
-	var      isFavoritesHere: Bool      { return ckRecordName == gFavoritesHereMaybe?.ckRecordName }
-	var        isRecentsHere: Bool      { return ckRecordName == gRecentsHereMaybe?.ckRecordName }
-	var       isSmallMapHere: Bool      { return isFavoritesHere || isRecentsHere }
-	var       isSmallMapRoot: Bool      { return isFavoritesRoot || isRecentsRoot }
-	var      isEitherMapRoot: Bool      { return isSmallMapRoot || isMapRoot }
-	var  canSaveWithoutFetch: Bool      { return !hasState(.requiresFetchBeforeSave) }
-	var            isFetched: Bool      { return !hasState(.notFetched) }
-	var            needsSave: Bool      { return  hasState(.needsSave) }
-	var            needsRoot: Bool      { return  hasState(.needsRoot) }
-	var           notFetched: Bool      { return  hasState(.notFetched) }
-	var           needsCount: Bool      { return  hasState(.needsCount) }
-	var           needsColor: Bool      { return  hasState(.needsColor) }
-	var           needsFetch: Bool      { return  hasState(.needsFetch) }
-	var           needsMerge: Bool      { return  hasState(.needsMerge) }
-	var          needsTraits: Bool      { return  hasState(.needsTraits) }
-	var          needsParent: Bool      { return  hasState(.needsParent) }
-	var         needsDestroy: Bool      { return  hasState(.needsDestroy) }
-	var         needsProgeny: Bool      { return  hasState(.needsProgeny) }
-	var        needsChildren: Bool      { return  hasState(.needsChildren) }
-	var        needsAdoption: Bool      { return  hasState(.needsAdoption) }
-	var       needsBookmarks: Bool      { return  hasState(.needsBookmarks) }
+	var                color: ZColor?    // overridden by Zone and ZTrait (latter grabs from its ownerZone)
+	var      maybeDatabaseID: ZDatabaseID? { return ZDatabaseID.convert(from: dbid) }
+	var           databaseID: ZDatabaseID { return maybeDatabaseID! }
+	var             zRecords: ZRecords?   { return gRemoteStorage.zRecords(for: maybeDatabaseID) }
+	var  unwrappedRecordName: String      { return recordName ?? kEmpty }
+	var        decoratedName: String      { return recordName ?? kNoValue }
+	var        unwrappedName: String      { return recordName ?? emptyName }
+	var           typePrefix: String      { return kEmpty }
+	var            emptyName: String      { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
+	var   isInPublicDatabase: Bool        { return databaseID == .everyoneID }
+	var              isAZone: Bool        { return false }
+	var           isBrandNew: Bool        { return true }
+	var         isBigMapRoot: Bool        { return recordName == kRootName }
+	var          isTrashRoot: Bool        { return recordName == kTrashName }
+	var        isDestroyRoot: Bool        { return recordName == kDestroyName }
+	var   isLostAndFoundRoot: Bool        { return recordName == kLostAndFoundName }
+	var      isFavoritesRoot: Bool        { return recordName == kFavoritesRootName }
+	var      isFavoritesHere: Bool        { return recordName == gFavoritesHereMaybe?.recordName }
+	var         isAnyMapRoot: Bool        { return isFavoritesRoot  || isBigMapRoot }
+	var           needsCount: Bool        { return  hasState(.needsCount) }
+	var           needsColor: Bool        { return  hasState(.needsColor) }
+	var         needsDestroy: Bool        { return  hasState(.needsDestroy) }
+	var        needsAdoption: Bool        { return  hasState(.needsAdoption) }
+	var       needsBookmarks: Bool        { return  hasState(.needsBookmarks) }
 
 	var isARoot: Bool {
-		if  recordName == nil || ckRecordName == nil {
+		if  recordName == nil {
 			return false
 		}
 
-		return kRootNames.contains(recordName!) || (ckRecord != nil && kRootNames.contains(ckRecordName!))
+		return kRootNames.contains(recordName!)
 	}
 
-	// MARK:- overrides
-	// MARK:-
+	// MARK: - overrides
+	// MARK: -
 
-	var isAdoptable: Bool { return false }
-	var cloudProperties: [String] { return ZRecord.cloudProperties }
-	var optionalCloudProperties: [String] { return ZRecord.optionalCloudProperties }
-	class var   cloudProperties: [String] { return [] }
-	class var optionalCloudProperties: [String] { return [] }
+	var isAdoptable          : Bool { return false }
+	var passesFilter         : Bool { return true }
+	var isInScope            : Bool { return true }
+	var matchesFilterOptions : Bool { return passesFilter && isInScope }
+	var               cloudProperties : StringsArray { return ZRecord.cloudProperties }
+	var       optionalCloudProperties : StringsArray { return ZRecord.optionalCloudProperties }
+	class var         cloudProperties : StringsArray { return [] }
+	class var optionalCloudProperties : StringsArray { return [] }
 
 	func orphan() {}
-	func adopt(recursively: Bool = false) {}
 	func maybeNeedRoot() {}
-	func debug(_  iMessage: String) {}
+	func debug(_ iMessage: String) {}
 	func hasMissingChildren() -> Bool { return true }
 	func hasMissingProgeny()  -> Bool { return true }
-	func ignoreKeyPathsForStorage() -> [String] { return [kpParent, kpOwner] }
-	func unregister() { cloud?.unregisterZRecord(self) }
-	@discardableResult func register() -> Bool { return records?.registerZRecord(self) ?? false }
+	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
+	func unregister() { zRecords?.unregisterZRecord(self) }
+	func register()   { zRecords?  .registerZRecord(self) }
+	func adopt(recursively: Bool = false) {}
 
-	class func cloudProperties(for className: String) -> [String] {
-		switch className {
-			case kZoneType:     return Zone     .cloudProperties
-			case kTraitType:    return ZTrait   .cloudProperties
-			case kManifestType: return ZManifest.cloudProperties
-			default:			return []
-		}
-	}
+	// MARK: - core data
+	// MARK: -
 
-	// MARK:- core data
-	// MARK:-
+	var selfInCurrentBackgroundCDContext: ZRecord? { return gCDCurrentBackgroundContext.object(with: objectID) as? ZRecord }
 
-	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: [String]?) -> [String] { return [String]() }
+	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 
-	func updateCKRecordFromCoreData() {
-		if  gUseCoreData,
-			let    dID = dbid {
-			databaseID = ZDatabaseID.convert(from: dID)
-		}
-	}
+	@discardableResult func convertFromCoreData(visited: StringsArray?) -> StringsArray {
+		var         v = visited ?? StringsArray()
+		var converted = StringsArray()
 
-	@discardableResult func convertFromCoreData(into type: String, visited: [String]?) -> [String] {
-		var         v = visited ?? [String]()
-		var converted = [String]()
-
-		assureCKRecordAndName(for: type)
-
-		if  let name = recordName {
-			if (v.isEmpty || !v.contains(name)),
-				records?.maybeZRecordForRecordName(name) == nil {
-				updateCKRecordProperties()                                                      // filled
-				updateCKRecordFromCoreData()
+		if  let name  = recordName {
+			if  v.isEmpty || !v.contains(name) {
 				converted.appendUnique(item: name)
 				v        .appendUnique(item: name)
 			}
 
 			converted.append(contentsOf: updateFromCoreDataHierarchyRelationships(visited: v))
+			gStartupController?.pingRunloop()
 		}
 
 		return converted
 	}
 
-	// MARK:- initialize
-	// MARK:-
+	// MARK: - initialize
+	// MARK: -
 
-	convenience init(record: CKRecord? = nil, entityName: String? = nil, databaseID: ZDatabaseID?) {
-		if  gUseCoreData, let eName = record?.entityName ?? entityName {
-			self.init(entityName: eName, ckRecordName: record?.recordID.recordName, databaseID: databaseID) // initialize managed object from ck record or explicit entity name
-		} else {
-			self.init()
-		}
-
-		self.databaseID = databaseID
-
-		if  gUseCoreData,
-			let t = record?.recordType, t != kUserRecordType,
-			let d = databaseID?.identifier {
-			dbid  = d
-		}
-
-		if  let r = record {
-			self.setRecord(r)
-		}
-
-		self.setupKVO();
-	}
-
-	deinit {
-		teardownKVO()
-	}
-
-	func copyIntoZRecord(_ other: ZRecord) {
-		updateCKRecordProperties()
-		ckRecord?.copy(to: other.ckRecord, properties: cloudProperties)
-		other.updateInstanceProperties()
-	}
-
-	func assureCKRecordAndName(for type: String) {
-		if  ckRecord         == nil {
-			if  recordName   != nil {
-				ckRecord      = CKRecord(recordType: type, recordID: CKRecordID(recordName: recordName!))
-			} else {
-				ckRecord      = CKRecord(recordType: type)
-				recordName    = ckRecord!.recordID.recordName
-			}
-		} else if recordName == nil {
-			recordName        = ckRecord!.recordID.recordName
+	static func uniqueFactoryObject(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
+		switch entityName {
+			case kZoneType:     return Zone     .uniqueZone    (recordName: recordName, in: dbID)
+			case kUserType:     return ZUser    .uniqueUser    (recordName: recordName, in: dbID)
+			case kTraitType:    return ZTrait   .uniqueTrait   (recordName: recordName, in: dbID)
+			case kManifestType: return ZManifest.uniqueManifest(recordName: recordName, in: dbID)
+			default:            return ZRecord  .uniqueZRecord (entityName: entityName, recordName: recordName, in: dbID)
 		}
 	}
 
-	func updateCKRecordProperties() {
-		if  let                     r = ckRecord {
-			for keyPath in cloudProperties {
-				if  let   recordValue =        r[keyPath]          as! NSObject?,
-					let propertyValue = value(forKeyPath: keyPath) as! NSObject?,
-					recordValue      != propertyValue {
-					r[keyPath]        = propertyValue as? CKRecordValue
-				}
-			}
-		}
+	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZRecord {
+		let         object = uniqueObject(entityName: entityName, recordName: recordName, in: dbID)
+		let        zRecord = object as! ZRecord
+		zRecord.recordName = recordName ?? gUniqueRecordName
+		zRecord      .dbid = dbID.identifier
+
+		zRecord.register()
+
+		return zRecord
 	}
 
-	func updateInstanceProperties() {
-		if  let                      r = ckRecord {
-			for keyPath in cloudProperties {
-				if  var    cloudValue  = r[keyPath] as! NSObject? {
-					let propertyValue  = value(forKeyPath: keyPath) as? NSObject
+	func copyInto(_ other: ZRecord) {
+		for keyPath in cloudProperties {
+			let copied = value(forKeyPath: keyPath)
 
-					if  propertyValue != cloudValue {
-						switch keyPath {
-							case "writeAccess": cloudValue = NSNumber(value: Int(cloudValue  as! String) ?? 0)
-							default:            break
-						}
-
-						setValue(cloudValue, forKeyPath: keyPath)
-					}
-				}
-			}
+			other.setValue(copied, forKeyPath: keyPath)
 		}
-	}
-
-	@objc func setRecord(_ newValue: CKRecord?) {
-		guard newValue != nil else {
-			return
-		}
-
-		if  ckRecord != newValue {
-
-			// ///////////////////////////////////////////////
-			// old registrations are likely no longer valid //
-			// ///////////////////////////////////////////////
-
-			clearAllStates() // is this needed or wanted?
-			gBookmarks.forget(self as? Zone)
-			cloud?.unregisterCKRecord(ckRecord)
-
-			if  let      r = newValue {
-				ckRecord   = r
-				recordName = r.recordID.recordName
-
-				updateInstanceProperties()
-			}
-
-			if !register() {
-				bam("zone is a duplicate")
-			} else {
-				updateState()
-			}
-
-			if  isAdoptable {
-				needAdoption()
-			}
-		}
-
-
-		if  ckRecord == nil {
-			print("nil")
-		}
-	}
-
-	static func hasZRecordAsync(recordName: String, entityName: String, databaseID: ZDatabaseID?, onExistence: @escaping ZRecordClosure) {
-		if  let       dbid = databaseID,
-			let      cloud = gRemoteStorage.cloud(for: dbid),
-			let    zRecord = cloud.maybeZRecordForRecordName(recordName) {
-			onExistence(zRecord)
-		} else {
-			let z = ZEntityDescriptor(entityName: entityName, recordName: recordName, databaseID: databaseID)
-			gCoreDataStack.zRecordExistsAsync(for: z, onExistence: onExistence)
-		}
-	}
-
-	static func hasMaybeAsync(record: CKRecord, entityName: String, databaseID: ZDatabaseID?, onExistence: ZRecordClosure? = nil) {
-		hasZRecordAsync(recordName: record.recordID.recordName, entityName: entityName, databaseID: databaseID) { has in       // first check if already exists
-			has?.useBest(record: record)
-			has?.needAdoption()
-			onExistence?(has)
-		}
-	}
-
-	static func hasZRecord(recordName: String, entityName: String, databaseID: ZDatabaseID?) -> ZRecord? {
-		if  let       dbid = databaseID,
-			let      cloud = gRemoteStorage.cloud(for: dbid),
-			let    zRecord = cloud.maybeZRecordForRecordName(recordName) {
-			return zRecord
-		} else {
-			return gCoreDataStack.hasExisting(entityName: entityName, recordName: recordName, databaseID: databaseID) as? ZRecord
-		}
-	}
-
-	static func hasMaybe(record: CKRecord, entityName: String? = nil, databaseID: ZDatabaseID?) -> ZRecord? {
-		if  let name = entityName,
-			let  has = hasZRecord(recordName: record.recordID.recordName, entityName: name, databaseID: databaseID) {        // first check if already exists
-			has.useBest(record: record)
-
-			return has
-		}
-
-		return nil
-	}
-
-	func useBest(record iRecord: CKRecord?) {
-		if  let    r = iRecord,
-			let best = chooseBest(record: r) {
-			setRecord(best)
-		}
-	}
-
-	func mergeIntoAndTake(_ iRecord: CKRecord) {
-		updateCKRecordProperties()
-
-		if  let r = ckRecord, r.copy(to: iRecord, properties: cloudProperties) {
-			setRecord(iRecord)
-			maybeNeedSave()
-		}
-	}
-
-	func chooseBest(record newRecord: CKRecord) -> CKRecord? {
-		var     current = ckRecord
-		let     newDate = newRecord.modificationDate
-		let currentDate = current? .modificationDate ?? writtenModifyDate
-		let      noDate = currentDate == nil
-		if  noDate || (newRecord != current && newDate != nil && newDate!.timeIntervalSince(currentDate!) > 10.0) {
-			if  current?.recordID.recordName == "3FA3E961-663F-4825-ADD1-ABD5A268D9D9" {
-				noop()
-			}
-			current     = newRecord
-		}
-
-		return current
 	}
 
     func setupLinks() {}
@@ -319,17 +213,17 @@ class ZRecord: ZManagedRecord { // NSObject {
 		// temporarily overrides subsequent calls to temporarily ignore needs //
 		// ////////////////////////////////////////////////////////////////// //
 
-		let         saved = cloud?.ignoreNone ?? false
-		cloud?.ignoreNone = true
+		let            saved = zRecords?.ignoreNone ?? false
+		zRecords?.ignoreNone = true
 		closure()
-		cloud?.ignoreNone = saved
+		zRecords?.ignoreNone = saved
 	}
 
-	// MARK:- needs
-	// MARK:-
+	// MARK: - needs
+	// MARK: -
 
 	func temporarilyMarkNeeds(_ closure: Closure) {
-		cloud?.temporarilyForRecordNamed(ckRecordName, ignoreNeeds: false, closure)
+		zRecords?.temporarilyForRecordNamed(recordName, ignoreNeeds: false, closure)
 	}
 
 	func temporarilyIgnoreNeeds(_ closure: Closure) {
@@ -338,14 +232,14 @@ class ZRecord: ZManagedRecord { // NSObject {
 		// temporarily causes set needs to have no effect //
 		// ////////////////////////////////////////////// //
 
-		cloud?.temporarilyForRecordNamed(ckRecordName, ignoreNeeds: true, closure)
+		zRecords?.temporarilyForRecordNamed(recordName, ignoreNeeds: true, closure)
 	}
 
 	func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
-		if  let       r = ckRecord,
-			let manager = gRemoteStorage.cloud(for: iDatabaseID) {
+		if  let       r = recordName,
+			let manager = gRemoteStorage.zRecords(for: iDatabaseID) {
 			let  states = manager.states(for: r)
-			var   marks = [String] ()
+			var   marks = StringsArray ()
 
 			for state in states {
 				marks.append("\(state.rawValue)")
@@ -371,129 +265,24 @@ class ZRecord: ZManagedRecord { // NSObject {
 		}
 	}
 
-    // MARK:- states
-    // MARK:-
+    // MARK: - states
+    // MARK: -
 
-    func    hasState(_ state: ZRecordState) -> Bool { return records?.hasZRecord(self, forAnyOf:[state]) ?? false }
-    func    addState(_ state: ZRecordState)         {        records?.addZRecord(self,     for: [state]) }
-    func removeState(_ state: ZRecordState)         {        records?.clearRecordName(ckRecordName, for:[state]) }
-    func clearAllStates()                           {        records?.clearRecordName(ckRecordName, for: records?.allStates ?? []) }
+    func    hasState(_ state: ZRecordState) -> Bool { return zRecords?.isRegistered(self, forAnyOf:[state]) ?? false }
+    func    addState(_ state: ZRecordState)         {        zRecords?.addZRecord  (self, for:     [state]) }
+    func removeState(_ state: ZRecordState)         {        zRecords?.clearRecordName(recordName, for:[state]) }
+    func clearAllStates()                           {        zRecords?.clearRecordName(recordName, for: zRecords?.allStates ?? []) }
 
-    func needRoot()              {    addState(.needsRoot) }
-    func needFound()             {    addState(.needsFound) }
-    func needFetch()             {    addState(.needsFetch) }
-    func needCount()             {    addState(.needsCount) }
-    func markNotFetched()        {    addState(.notFetched) }
-	func needColor()             {    addState(.needsColor) }
-	func needTraits()            {    addState(.needsTraits) }
-	func needParent()            {    addState(.needsParent) }
-	func needWritable()          {    addState(.needsWritable) }
-	func needAdoption()          {    addState(.needsAdoption) }
-    func fetchBeforeSave()       {    addState(.requiresFetchBeforeSave) }
-    func allowSaveWithoutFetch() { removeState(.requiresFetchBeforeSave)}
-	func clearSave() 			 { removeState(.needsSave) }
+	func needCount()    { addState(.needsCount); gNeedsRecount = true }
+	func needAdoption() { addState(.needsAdoption) }
+	func needDestroy()  { addState(.needsDestroy) }
 
 	func updateState() {
-		maybeMarkAsFetched()
-
-		if  notFetched {
-			setupLinks()
-		}
+		setupLinks()
 	}
 
-	func needProgeny() {
-		addState(.needsProgeny)
-		removeState(.needsChildren)
-	}
-
-    func needSave() {
-        allowSaveWithoutFetch()
-        maybeNeedSave()
-    }
-
-    func needDestroy() {
-        if  canSaveWithoutFetch {
-            addState   (.needsDestroy)
-            removeState(.needsSave)
-            removeState(.needsMerge)
-        }
-    }
-
-    func maybeNeedSave() {
-		updateCKRecordProperties()    // make sure relevant data is in place to be saved
-
-        if !needsDestroy, !needsSave, gHasFinishedStartup, (canSaveWithoutFetch || !needsFetch) {
-            removeState(.needsMerge)
-			addState   (.needsSave)
-
-			if  gUseCoreData {
-				modificationDate = Date()
-			}
-
-			needWrite()
-        }
-    }
-
-    func needWrite() {
-        gFiles.needWrite(for: databaseID)
-    }
-
-    func maybeMarkNotFetched() {
-        if  ckRecord?.creationDate == nil {
-            markNotFetched()
-        }
-    }
-
-    func maybeNeedMerge() {
-        if  isFetched, canSaveWithoutFetch, !needsSave, !needsMerge, !needsDestroy {
-            addState(.needsMerge)
-        }
-    }
-
-    func maybeMarkAsFetched() {
-        if  let r = ckRecord {
-            r.maybeMarkAsFetched(databaseID)
-        }
-    }
-
-    // MARK:- accessors and KVO
-    // MARK:-
-
-    func setValue(_ value: NSObject, for property: String) {
-        cloud?.setIntoObject(self, value: value, for: property)
-    }
-
-    func get(propertyName: String) {
-        cloud?.getFromObject(self, valueForPropertyName: propertyName)
-    }
-
-    func teardownKVO() {
-        for keyPath in cloudProperties { // freaking stupid KVO does not let me check if observer actually exists and if it doesn't then not call remove, gack!
-			addObserver   (self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext) // make sure observer exists
-			removeObserver(self, forKeyPath: keyPath, context: &kvoContext)
-        }
-    }
-
-	func setupKVO() {
-        for keyPath in cloudProperties {
-            addObserver(self, forKeyPath: keyPath, options: [.new, .old], context: &kvoContext)
-        }
-    }
-
-	override func observeValue(forKeyPath keyPath: String?, of iObject: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if context == &kvoContext {
-            let observer = iObject as! NSObject
-
-            if  let value: NSObject = observer.value(forKey: keyPath!) as! NSObject? {
-				if keyPath == "assets", let values = value as? NSArray, values.count == 0 { return }
-
-				setValue(value, for: keyPath!)
-            }
-        }
-    }
-
-    // MARK:- files
-    // MARK:-
+    // MARK: - files
+    // MARK: -
 
     func type(from keyPath: String) -> ZStorageType? {
         func extractType(_ ignored: String) -> (ZStorageType?) {
@@ -520,11 +309,10 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
     func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {     // all properties are extracted from record, using iKeyPath as key
-        switch iKeyPath {
-        case kpRecordName:       return ckRecordName as NSObject?      // except for the record name
-        case kpModificationDate: return ckRecord?.modificationDate?.timeIntervalSince1970 as Double? as NSObject?
-        default:                 return ckRecord?[iKeyPath] as? NSObject
-        }
+		switch iKeyPath {
+			case kpRecordName: return recordName as NSObject?      // except for the record name
+			default:           return value(forKeyPath: iKeyPath) as? NSObject
+		}
     }
 
     func prepare(_ iObject: NSObject, of iType: ZStorageType) -> NSObject? {
@@ -532,7 +320,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 
 		switch iType {
 			case .link, .parentLink:
-				if  let link = object as? String, !isValid(link) {
+				if  let link = object as? String, !link.isValidLink {
 					return nil
 				}
 			case .text:
@@ -545,11 +333,11 @@ class ZRecord: ZManagedRecord { // NSObject {
 				}
 			case .assets:
 				if  let  assets = object as? [CKAsset] {
-					var strings = [String]()
+					var strings = StringsArray()
 
 					for asset in assets {
 						if  let base64 = asset.data?.base64EncodedString() {
-							let fileName = asset.fileURL.lastPathComponent
+							let fileName = asset.fileURL!.lastPathComponent
 
 							printDebug(.dImages, "DICT     " + fileName)
 
@@ -573,27 +361,11 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
 	func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
-		try gThrowOnUserActivity()
-
-		guard ckRecord != nil else {
-			printDebug(.dFile, "missing record")
-
-			return nil
-		}
-
-		guard let name = ckRecordName else {
+		guard recordName != nil else {
 			printDebug(.dFile, "fubar record name \(self)")
 
 			return nil
 		}
-
-		if  gFiles.writtenRecordNames.contains(name) {
-			printDebug(.dFile, "avoid duplicating record name \(self)")
-
-			return nil
-		}
-
-		gFiles.writtenRecordNames.append(name)
 
 		let   keyPaths = cloudProperties + [kpModificationDate, kpDBID] + (includeRecordName ? [kpRecordName] : [])
 		let  optionals = optionalCloudProperties + [kpModificationDate]
@@ -605,7 +377,7 @@ class ZRecord: ZManagedRecord { // NSObject {
 				let  object = prepare(extract, of: type) {
 				dict[type]  = object
 			} else if !optionals.contains(keyPath){
-				printDebug(.dFile, "broken keypath for \"\(self)\" : \(keyPath)")
+				printDebug(.dFile, "broken keypath for " + selfInQuotes + " : " + keyPath)
 			}
 		}
 
@@ -617,8 +389,7 @@ class ZRecord: ZManagedRecord { // NSObject {
     }
 
 	func storageDictionary() throws -> ZStorageDictionary {
-		if  let dbID = databaseID,
-			let dict = try createStorageDictionary(for: dbID, includeRecordName: false) {
+		if  let dict = try createStorageDictionary(for: databaseID, includeRecordName: false) {
 
 			return dict
 		}
@@ -626,25 +397,13 @@ class ZRecord: ZManagedRecord { // NSObject {
 		return [:]
 	}
 
-	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
-		try gThrowOnUserActivity()
+	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
+
+		gStartupController?.pingRunloop()
 
 		// case 1: name is nil
 		// case 2: ck record already exists
 		// case 3: name is not nil
-
-		let     cloud = gRemoteStorage.zRecords(for: iDatabaseID)
-		var newRecord = CKRecord(recordType: iRecordType)           // case 1
-		let      name = dict[.recordName] as? String
-		databaseID    = iDatabaseID
-
-		if  let recordName = name {
-			if  let r = cloud?.maybeCKRecordForRecordName(recordName) {
-				newRecord = r				        		       // case 2
-			} else {		        		        		       // case 3
-				newRecord = CKRecord(recordType: iRecordType, recordID: CKRecordID(recordName: recordName)) // YIKES this may be wildly out of date
-			}
-		}
 
 		for keyPath in cloudProperties + [kpModificationDate, kpDBID] {
 			if  let   type = type(from: keyPath),
@@ -657,9 +416,9 @@ class ZRecord: ZManagedRecord { // NSObject {
 							let trait = ZTraitType(rawValue: string),
 							trait == .tEssay {
 							string = ZTraitType.tNote.rawValue
-							newRecord[keyPath] = string as CKRecordValue
+							setValue(string, forKeyPath: keyPath)
 						} else {
-							newRecord[keyPath] = value
+							setValue(value,  forKeyPath: keyPath)
 						}
 					case .date:
 						if  let      interval = object as? Double {
@@ -683,24 +442,18 @@ class ZRecord: ZManagedRecord { // NSObject {
 							}
 
 							if  assets.count > 0 {
-								newRecord[keyPath] = assets
+								setValue(assets, forKeyPath: keyPath)
 							}
 						}
-
 					default:
-						newRecord[keyPath] = value
+						setValue(value, forKeyPath: keyPath)
 				}
 			}
 		}
 
-		setRecord(newRecord)    // any subsequent changes into any of this object's cloudProperties will save this record to iCloud
-
 		if  let needs = dict[.needs] as? String {
 			addNeedsFromString(needs)
 		}
-
-		updateCKRecordFromCoreData()
-
 	}
 
 }

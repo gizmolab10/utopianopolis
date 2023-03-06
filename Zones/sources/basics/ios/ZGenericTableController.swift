@@ -6,30 +6,21 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
-
 import Foundation
 import UIKit
 
-
 class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableViewDataSource {
 
-
     @IBOutlet var      tableHeight: NSLayoutConstraint?
-    @IBOutlet var genericTableView: UITableView!
+    @IBOutlet var genericTableView: ZTableView!
 
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return 1 }
-    func numberOfRows(in tableView: UITableView) -> Int { return self.tableView(tableView, numberOfRowsInSection: 0) }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
-
-
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-        self.genericTableUpdate()
-    }
-    
+    func tableView(_ tableView: ZTableView, numberOfRowsInSection section: Int) -> Int { return 1 }
+	func numberOfRows(in tableView: ZTableView) -> Int { return 0 } // tableView(tableView, numberOfRowsInSection: 0) }
+	private func tableView(_ tableView: ZTableView, cellForRowAt indexPath: IndexPath) -> ZTableCellView { return ZTableCellView() }
+    override func handleSignal(_ object: Any?, kind: ZSignalKind) { genericTableUpdate() }
 
     func genericTableUpdate() {
         genericTableView.reloadData()
-        tableHeight?.constant = CGFloat(numberOfRows(in: genericTableView)) * genericTableView.rowHeight
+		tableHeight?.constant = numberOfRows(in: genericTableView).float * genericTableView.rowHeight
     }
 }

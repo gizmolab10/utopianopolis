@@ -8,27 +8,35 @@
 
 
 import Foundation
+
+#if os(OSX)
 import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableViewDataSource {
     
     @IBOutlet var tableHeight: NSLayoutConstraint?
-    @IBOutlet var genericTableView: NSTableView?
+    @IBOutlet var genericTableView: ZTableView?
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
 
-		genericTableView?.delegate   = self
-		genericTableView?.dataSource = self
+		if  let                 t = genericTableView {
+			t.delegate            = self
+			t.dataSource          = self
+			tableHeight?.constant = numberOfRows(in: t).float * rowHeight
+		}
 	}
 
-    func numberOfRows(in tableView: NSTableView) -> Int { return 1 }
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) { self.genericTableUpdate() }
+    func numberOfRows(in tableView: ZTableView) -> Int { return 1 }
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) { genericTableUpdate() }
+	var rowHeight: CGFloat { return genericTableView?.rowHeight ?? 17.0 }
 
     func genericTableUpdate() {
         if  let t = genericTableView {
             t.reloadData()
-            tableHeight?.constant = CGFloat(numberOfRows(in: t)) * t.rowHeight
         }
     }
 

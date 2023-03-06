@@ -10,9 +10,17 @@
 import Foundation
 import CloudKit
 
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 enum ZUserAccess: Int {
     case eNormal
     case eFull
+
+	var number : NSNumber { return NSNumber(value: rawValue) }
 }
 
 enum ZSentEmailType: String {
@@ -23,47 +31,28 @@ enum ZSentEmailType: String {
 @objc(ZUser)
 class ZUser : ZRecord {
 
-	@NSManaged var      authorID: String?
-	@NSManaged var   writeAccess: NSNumber?
-	@NSManaged var sentEmailType: String?
+	@NSManaged var        authorID : String?
+	@NSManaged var     writeAccess : NSNumber?
+	@NSManaged var   sentEmailType : String?
+	override   var cloudProperties : StringsArray { return ZUser.cloudProperties }
+	var                   isExempt : Bool { return authorID == "783BF01A-7535-4950-99EE-B63DB2732824" }
+	func save() { gUserRecordName = recordName }
 
 	var access: ZUserAccess {
-        get {
-			if  authorID    == "38AC7308-C627-4F83-B4E0-CAC3FFEAA142" {
-				writeAccess  = NSNumber(value: ZUserAccess.eFull.rawValue)
-			}
-
-            if  writeAccess == nil {
-                writeAccess  = NSNumber(value: ZUserAccess.eNormal.rawValue)
-            }
-
-            return ZUserAccess(rawValue: writeAccess!.intValue)!
-        }
-
-        set {
-			writeAccess = NSNumber(value: newValue.rawValue)
-        }
-    }
-
-	func save() {
-		updateCKRecordProperties()
-
-		gUserRecord = self.ckRecord
-
-		needSave()
-	}
-
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZUser {
-		if  let    has = hasMaybe(record: record, entityName: kUserEntityName, databaseID: databaseID) as? ZUser {        // first check if already exists
-			return has
+		if  isExempt {
+			writeAccess = ZUserAccess.eFull.number
+		} else if writeAccess == nil {
+			writeAccess = ZUserAccess.eNormal.number
 		}
-
-		return ZUser.init(record: record, databaseID: databaseID)
+		
+		return ZUserAccess(rawValue: writeAccess!.intValue)!
 	}
 
-    override var cloudProperties: [String] { return ZUser.cloudProperties }
+	static func uniqueUser(recordName: String?, in dbID: ZDatabaseID) -> ZUser {
+		return uniqueZRecord(entityName: kUserType, recordName: recordName, in: dbID) as! ZUser
+	}
 
-    override class var cloudProperties: [String] {
+    override class var cloudProperties: StringsArray {
         return [#keyPath(authorID),
                 #keyPath(writeAccess),
                 #keyPath(sentEmailType)] +

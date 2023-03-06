@@ -6,6 +6,8 @@
 //  Copyright © 2017 Jonathan Sand. All rights reserved.
 //
 
+import Foundation
+
 #if os(OSX)
     import Cocoa
 #elseif os(iOS)
@@ -13,43 +15,50 @@
 #endif
 
 class ZBannerButton : ZButton {
-	@IBOutlet var   togglingView : ZTogglingView?
+	@IBOutlet var togglingView : ZTogglingView? // point back at the container (specific stack view)
 }
 
-class ZTogglingView: NSStackView {
+class ZTogglingView: ZView {
 
-	@IBOutlet var triangleButton : ZToggleButton?
-	@IBOutlet var    titleButton : ZBannerButton?
-	@IBOutlet var    extraButton : ZBannerButton?
-	@IBOutlet var        spinner : ZProgressIndicator?
-	@IBOutlet var     bannerView : ZView?
-    @IBOutlet var   hideableView : ZView?
+	@IBOutlet var switchConstraint : NSLayoutConstraint?
+	@IBOutlet var          spinner : ZProgressIndicator?
+	@IBOutlet var      titleButton : ZBannerButton?
+	@IBOutlet var  switchingButton : ZButton?
+	@IBOutlet var       bannerView : ZView?
+	@IBOutlet var     hideableView : ZView?
 
-    // MARK:- identity
-    // MARK:-
+	var favoritesTitle : String  { return hideHideable ? "Favorites" : gFavoritesHere?.favoritesTitle ?? "Gerglagaster" }
+	var kind           : String? { return gConvertFromOptionalUserInterfaceItemIdentifier(identifier) }
 
-	var kind: String? {
-		return convertFromOptionalUserInterfaceItemIdentifier(identifier)
+	func toggleHideableVisibility() { hideHideable = !hideHideable }
+
+	func updateTitleBarButtons() {
+		switchingButton?.attributedTitle = "Switch".darkAdaptedTitle
 	}
+
+    // MARK: - identity
+    // MARK: -
 
 	var toolTipText: String {
 		switch identity {
-			case .vPreferences : return "preference controls"
-			case .vSimpleTools : return "some simple tools which can get you oriented"
-			case .vSmallMap    : return "\(gCurrentSmallMapName)s map"
-			case .vData        : return "useful data about Seriously"
-			default            : return ""
+			case .vKickoffTools : return "some simple tools to help get you oriented"
+			case .vPreferences  : return "display preferences"
+			case .vFavorites    : return "favorites map"
+			case .vSubscribe    : return "license details"
+			case .vData         : return "useful data about Seriously"
+			default             : return kEmpty
 		}
 	}
 
 	var identity: ZDetailsViewID {
 		if  let    k = kind {
 			switch k {
-				case "preferences": return .vPreferences
-				case "startHere":   return .vSimpleTools
-				case "smallMap":    return .vSmallMap
-				case "data":        return .vData
-				default:            return .vAll
+				case "kickoffTools": return .vKickoffTools
+				case "preferences":  return .vPreferences
+				case "subscribe":    return .vSubscribe
+				case "smallMap":     return .vFavorites
+				case "data":         return .vData
+				default:             return .vAll
 			}
 		}
 
@@ -58,7 +67,7 @@ class ZTogglingView: NSStackView {
 
     var hideHideable: Bool {
         get {
-            return !gIsReadyToShowUI || gHiddenDetailViewIDs.contains(identity)
+            return gHiddenDetailViewIDs.contains(identity)
         }
 
         set {
@@ -70,51 +79,71 @@ class ZTogglingView: NSStackView {
         }
     }
 
-    // MARK:- update UI
-    // MARK:-
+    // MARK: - events
+    // MARK: -
+
+	@IBAction func toggleAction(_ sender: Any) {
+		gTextEditor.stopCurrentEdit()
+		toggleHideableVisibility()
+		gDetailsController?.redisplayOnToggle()
+	}
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        update()
-
-		zlayer              .backgroundColor =  kClearColor.cgColor
-		hideableView?.zlayer.backgroundColor =  kClearColor.cgColor
 
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
-        }) {
-            gDetailsController?.register(id: self.identity, for: self)
+		}) {
+			gDetailsController?.register(id: self.identity, for: self)
         }
+
+		updateView()
     }
 
-	@IBAction func extraButtonAction(_ sender: Any) {
-		gSwapSmallMapMode()
-	}
+	@IBAction func buttonAction(_ button: ZButton) {
+		switch identity {
+			case .vSubscribe: gSubscriptionController?.toggleViews()
+			case .vData:      gMapController?.toggleMaps()
+			default:          return
+		}
 
-	@IBAction func toggleAction(_ sender: Any) {
-		toggleHideableVisibility()
+		gRelayoutMaps()
 		gSignal([.sDetails])
 	}
 
-    func toggleHideableVisibility() {
-        hideHideable = !hideHideable
-    }
-    
-    func update() {
-		titleButton?.zlayer.backgroundColor =     gAccentColor.cgColor
-		extraButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
+	// MARK: - update UI
+	// MARK: -
 
-		if  identity == .vSmallMap,
-			let  here = gIsRecentlyMode ? gRecentsHereMaybe : gFavoritesHereMaybe {
+	fileprivate func updateTitleButton() {
+		if  gIsReadyToShowUI {
+			var                      title = kEmpty
+			switch identity {
+				case .vData:         title = gDatabaseID.userReadableString.capitalized + " Data"
+				case .vSubscribe:    title = gSubscriptionController?.bannerTitle ?? kSubscribe
+				case .vFavorites:    title = favoritesTitle
+				case .vPreferences:  title = "Display Preferences"
+				case .vKickoffTools: title = "Start with These"
+				default:             title = "Gargleblaster"
+			}
 
-			titleButton?.title = here.ancestralString
+			titleButton?.title =     title
 		}
+	}
 
-		turnOnTitleButton()
-		triangleButton?.setState(!hideHideable)
-		updateHideableView()
+	func updateView() { // gSignal for .sDetails goes here
+		updateColors()
+		updateTitleBarButtons()
 		updateSpinner()
-    }
+		updateTitleButton()
+		updateHideableView()
+	}
+
+	func updateColors() {
+		zlayer                 .backgroundColor =      kClearColor.cgColor
+		hideableView?   .zlayer.backgroundColor =      kClearColor.cgColor
+		titleButton?    .zlayer.backgroundColor =     gAccentColor.cgColor
+		switchingButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
+	}
 
 	func updateSpinner() {
 		if  let      s = spinner {
@@ -128,15 +157,19 @@ class ZTogglingView: NSStackView {
 			}
 		}
 	}
-
+	
     func updateHideableView() {
         let    hide = hideHideable
         let visible = subviews.contains(hideableView!)
 
-		titleButton?.updateTooltips()
+		titleButton?.updateToolTips(gModifierFlags)
 
 		if  hide == visible { // need for update
 			hideableView?.isHidden = hide
+
+			hideableView?.snp.removeConstraints()
+			bannerView?  .snp.removeConstraints()
+
 			if  hide {
 				hideableView?.removeFromSuperview()
 				bannerView?.snp.makeConstraints { make in
@@ -144,13 +177,15 @@ class ZTogglingView: NSStackView {
 				}
 			} else {
 				addSubview(hideableView!)
-
-				bannerView?.snp.removeConstraints()
 				hideableView?.snp.makeConstraints { make in
-					make.top.equalTo((self.bannerView?.snp.bottom)!)
-					make.left.right.bottom.equalTo(self)
+					if  let b = bannerView {
+						make.top.equalTo(b.snp.bottom)
+						make.left.right.equalTo(b)
+						make.bottom.equalTo(self)
+					}
 				}
 			}
 		}
     }
+
 }

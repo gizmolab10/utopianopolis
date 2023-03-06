@@ -21,12 +21,16 @@ enum ZTextType: Int {
     case suffix
 }
 
-class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
+class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 
-	override var preferredFont : ZFont { return (widget?.type.isBigMap ?? true) ? gWidgetFont : gSmallMapFont }
-    var             widgetZone : Zone? { return  widget?.widgetZone }
+	override var     debugName : String          { return   widgetZone?.zoneName ?? kUnknown }
+    var             widgetZone : Zone?           { return   widget?.widgetZone }
+	var             controller : ZMapController? { return   widget?.controller }
     weak var            widget : ZoneWidget?
-    var                   type = ZTextType.name
+	var                   type = ZTextType.name
+	var              drawnSize = CGSize.zero
+	var             isHovering = false
+	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool { return true }
 
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
@@ -43,18 +47,25 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     }
 
     func updateTextColor() {
-        if  let  zone = widgetZone {
-			textColor = zone.textColor
+		if  gDragging.isDragged(widgetZone) {
+			textColor = gActiveColor
+		} else if gIsEssayMode, widgetZone?.isInBigMap ?? true {
+			textColor = kClearColor
+		} else if let tColor = widgetZone?.textColor,
+				  let wColor = widgetZone?.lighterColor?.invertedBlackAndWhite,
+				  let isLinear = widget?.isLinearMode {
+			let plain = !gDrawCirclesAroundIdeas
+			textColor = (isLinear || plain) ? tColor : wColor
         }
     }
 
-	func setup() {
+	func controllerSetup(with mapView: ZMapView?) {
 		delegate                   = self
         isBordered                 = false
         textAlignment              = .left
         backgroundColor            = kClearColor
         zlayer.backgroundColor     = kClearColor.cgColor
-        font                       = preferredFont
+		font                       = widget?.controller?.font ?? gSmallFont
 
         #if os(iOS)
             autocapitalizationType = .none
@@ -63,10 +74,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         #endif
     }
 
-	var controller: ZMapController? {
-		return widget?.controller
-	}
-
 	override func menu(for event: ZEvent) -> ZMenu? {
 		let         contextualMenu = controller?.ideaContextualMenu
 		contextualMenu?.textWidget = self
@@ -74,47 +81,53 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 		return contextualMenu
 	}
 
-	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
-		return true
+	func updateText(isEditing: Bool = false) {
+		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
 	}
 
-	func layoutText(isEditing: Bool = false) {
-		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
-		applyConstraints()
-		updateTooltips()
+	func updateChildrenViewDrawnSizesOfAllAncestors() {
+		widgetZone?.traverseAncestors { ancestor in
+			if  let widget = ancestor.widget {
+				widget.updateLinesViewDrawnSize()
+				widget.updateWidgetDrawnSize()
+
+				return .eContinue
+			}
+
+			return .eStop
+		}
+	}
+
+	func updateFrameSize() {
+		setFrameSize(drawnSize)
 	}
 
     func updateGUI() {
-		updateTooltips()
-        applyConstraints()
-        widget?.setNeedsDisplay()
-		widget?.widgetZone?.needWrite()
+		updateChildrenViewDrawnSizesOfAllAncestors()
+		controller?.layoutForCurrentScrollOffset()
     }
 
-    func applyConstraints() {
-        if  let container = superview {
-			let    offset = ((gGenericOffset.height - 2.0) / 3.0) + 5.0              // add 5 to include tiny dot below
-			let  hideText = widgetZone?.onlyShowRevealDot ?? true
-			let textWidth = text!.widthForFont(preferredFont)
-			let     width = hideText ? 0.0 : textWidth + 1.0
+	func setText(_ iText: String?) {
+		text = iText
 
-			snp.setLabel("<t> \(widgetZone?.zoneName ?? "unknown")")
-			snp.removeConstraints()
-            snp.makeConstraints { make in
-				make  .right.lessThanOrEqualTo(container).offset(-29.0)
-				make .height.lessThanOrEqualTo(container).offset(-offset)		 	 // vertically,   make room for highlight and push siblings apart
-                make.centerY.equalTo(container)                                      //     ",        center within container (widget)
-                make   .left.equalTo(container).offset(gGenericOffset.width + 4.0)   // horizontally, inset into        "
-                make  .width.equalTo(width)										     //     ",        make room for text
-            }
-        }
-    }
+		updateSize()
+	}
+
+	func updateSize() {
+		if  let      f = font,
+			let   size = text?.sizeWithFont(f) {
+			let   hide = widgetZone?.isFavoritesHere ?? false
+			let  width = hide ? .zero : size.width + 6.0
+			let height = size.height + (controller?.dotHalfWidth ?? .zero * 0.8)
+			drawnSize  = CGSize(width: width, height: height)
+		}
+	}
 
 	func offset(for selectedRange: NSRange, _ atStart: Bool) -> CGFloat? {
-        if  let   name = widgetZone?.unwrappedName {
-            let   font = preferredFont
-            let offset = name.offset(using: font, for: selectedRange, atStart: atStart)
-            var   rect = name.rectWithFont(font)
+        if  let   name = widgetZone?.unwrappedName,
+			let      f = font {
+            let offset = name.offset(using: f, for: selectedRange, atStart: atStart)
+            var   rect = name.rectWithFont(f)
             rect       = convert(rect, to: nil)
             
             return rect.minX + offset
@@ -124,7 +137,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
     }
 
 	override func mouseDown(with event: ZEvent) {
-		if !gRefusesFirstResponder { // ignore mouse down during startup
+		if !gRefusesFirstResponder, window == gMainWindow { // ignore mouse down during startup
 			gTemporarilySetMouseDownLocation(event.locationInWindow.x)
 			gTemporarilySetMouseZone(widgetZone)
 
@@ -135,22 +148,22 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 	}
 
     @discardableResult override func becomeFirstResponder() -> Bool {
-		printDebug(.dEdit, " TRY     " + (widgetZone?.unwrappedName ?? ""))
+		printDebug(.dEdit, " TRY     " + (widgetZone?.unwrappedName ?? kEmpty))
 
 		if !isFirstResponder,
 			let zone = widgetZone,
 			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed
 			super.becomeFirstResponder() {   // becomeFirstResponder is called first so delegate methods will be called
 
-			if !gIsMapOrEditIdeaMode {
-                gSearching.exitSearchMode()
-            }
-
-			if  var prior = gSelecting.grabAndNoUI([zone]) {
-				prior.appendUnique(item: zone)
-				gSelecting.updateWidgetsNeedDisplay(for: prior)
+			if  gIsSearching {
+                gExitSearchMode()
+			} else if gIsEssayMode {
+				gControllers.swapMapAndEssay()
+			} else {
+				gSetEditIdeaMode()
 			}
 
+			gSelecting.ungrabAll(retaining: [zone])
 			printDebug(.dEdit, " RESPOND " + zone.unwrappedName)
 			gTextEditor.edit(zone, setOffset: gTextOffset)
 
@@ -160,7 +173,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         return false
 	}
 	
-	override func selectCharacter(in range: NSRange) {
+	func selectCharacter(in range: NSRange) {
         #if os(OSX)
         if  let e = currentEditor() {
             e.selectedRange = range
@@ -168,14 +181,27 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         #endif
     }
 
-    override func alterCase(up: Bool) {
+    func alterCase(up: Bool) {
         if  var t = text {
             t = up ? t.uppercased() : t.lowercased()
 
             gTextEditor.assign(t, to: widgetZone)
             updateGUI()
         }
-    }
+	}
+
+	func swapWithParent() {
+		if  let  zone = widgetZone,
+			let saved = text {
+			let range = gTextEditor.selectedRange
+			zone.swapWithParent {
+				gRelayoutMaps(for: zone) {
+					zone.zoneName = saved
+					zone.editAndSelect(range: range)
+				}
+			}
+		}
+	}
 
     func extractTitleOrSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
         var      extract = extractedTitle
@@ -186,8 +212,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
 
             if  range.length < original.length {
                 if  !requiresAllOrTitleSelected {
-                    text = original.stringBySmartReplacing(range, with: "")
-                    
+					setText(original.stringBySmartReplacing(range, with: kEmpty))                    
                     gSelecting.ungrabAll()
                 } else if range.location != 0 && !original.isLineTitle(enclosing: range) {
                     extract = nil
@@ -211,30 +236,31 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZTooltips, ZGeneric {
         return extract
     }
 
-    override func draw(_ dirtyRect: CGRect) {
-        updateTextColor()
-        super.draw(dirtyRect)
+    override func draw(_ iDirtyRect: CGRect) {
+		updateTextColor()
+        super.draw(iDirtyRect)
 
-		// /////////////////////////////////////////////////////
-		// draw line underneath text indicating it can travel //
-		// /////////////////////////////////////////////////////
+		if  !isFirstResponder,
+			gIsMapOrEditIdeaMode,
+			let zone = widgetZone,
+			!zone.isGrabbed,
+			zone.isTraveller {
 
-        if  let zone = widgetZone,
-             zone.isTraveller,
-            !zone.isGrabbed,
-            !isFirstResponder,
-			gIsMapOrEditIdeaMode {
+			// /////////////////////////////////////////////////////
+			// draw line underneath text indicating it can travel //
+			// /////////////////////////////////////////////////////
 
-			let       deltaX = min(3.0, dirtyRect.width / 2.0)
-            var         rect = dirtyRect.insetBy(dx: deltaX, dy: 0.0)
-            rect.size.height = 0.0
-            rect.origin.y    = dirtyRect.maxY - 1.0
-            let path         = ZBezierPath(rect: rect)
-            path  .lineWidth = 0.4
+			let       deltaX = min(3.0, iDirtyRect.width / 2.0)
+			let        inset = CGFloat(0.5)
+			var         rect = iDirtyRect.insetBy(dx: deltaX, dy: inset)
+			rect.size.height = .zero
+			rect   .origin.y = iDirtyRect.maxY - 1.0
+			let         path = ZBezierPath(rect: rect)
+			path  .lineWidth = 0.4
 
-            zone.color?.setStroke()
-            path.stroke()
-        }
-    }
+			zone.color?.setStroke()
+			path.stroke()
+		}
+	}
 
 }

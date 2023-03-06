@@ -15,28 +15,38 @@ import CloudKit
     import UIKit
 #endif
 
-typealias               ZoneArray = [Zone]
-typealias              CKRecordID = CKRecord.ID
-typealias             ZFilesArray = [ZFile]
-typealias             ZTraitArray = [ZTrait]
-typealias             CKReference = CKRecord.Reference
-typealias           ZRecordsArray = [ZRecord]
-typealias           ZObjectsArray = [NSObject]
-typealias          CKRecordsArray = [CKRecord]
-typealias        CKRecordIDsArray = [CKRecordID]
-typealias        ZTraitDictionary = [ZTraitType : ZTrait]
-typealias        ZStoryboardSegue = NSStoryboardSegue
-typealias       CKReferencesArray = [CKReference]
-typealias       ZAssetsDictionary = [UUID : CKAsset]
-typealias       ZTinyDotTypeArray = [[ZTinyDotType]]
-typealias      ZOperationIDsArray = [ZOperationID]
-typealias      ZStorageDictionary = [ZStorageType : NSObject]
-typealias   ZAttributesDictionary = [NSAttributedString.Key : Any]
-typealias ZStringObjectDictionary = [String : NSObject]
-let                  gApplication = ZApplication.shared
+typealias               CKRecordID = CKRecord.ID
+typealias              CKReference = CKRecord.Reference
+typealias         ZStoryboardSegue = NSStoryboardSegue
+
+typealias                ZoneArray = [Zone]
+typealias              ZOpIDsArray = [ZOperationID]
+typealias              ZFilesArray = [ZFile]
+typealias              ZTraitArray = [ZTrait]
+typealias             StringsArray = [String]
+typealias            ZRecordsArray = [ZRecord]
+typealias            ZObjectsArray = [NSObject]
+typealias          ZoneWidgetArray = [ZoneWidget]
+typealias          ZObjectIDsArray = [NSManagedObjectID]
+typealias         CKRecordIDsArray = [CKRecordID]
+typealias         ZSignalKindArray = [ZSignalKind]
+typealias        CKReferencesArray = [CKReference]
+typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
+typealias     ZManagedObjectsArray = [NSManagedObject]
+
+typealias         ZTraitDictionary = [ZTraitType   : ZTrait]
+typealias        ZAssetsDictionary = [UUID         : CKAsset]
+typealias       ZStorageDictionary = [ZStorageType : NSObject]
+typealias     WidgetHashDictionary = [Int          : ZoneWidget]
+typealias     ZStringAnyDictionary = [String       : Any]
+typealias  ZStringObjectDictionary = [String       : NSObject]
+typealias  StringZRecordDictionary = [String       : ZRecord]
+typealias StringZRecordsDictionary = [String       : ZRecordsArray]
+typealias   ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
+typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
 
 protocol ZGeneric {
-	func setup()
+	func controllerSetup(with mapView: ZMapView?)
 }
 
 func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
@@ -55,30 +65,14 @@ func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, su
 
 func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
-func gSignal(for object: Any? = nil, _ multiple: [ZSignalKind], _ onCompletion: Closure? = nil) {
+func gSignal(for object: Any? = nil, _ multiple: ZSignalKindArray, _ onCompletion: Closure? = nil) {
 	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
 }
 
 private var canUpdate = true
 
-func gUpdateStartupProgress() {
-	if  canUpdate && !gHasFinishedStartup {
-		canUpdate     = false                // semaphore to prevent a race condition while thread switching
-		FOREGROUND(forced: true) {
-			gStartupController?.fullStartupUpdate()
-			canUpdate = true
-		}
-	}
-}
-
-func gIncrementStartupProgress(_ increment: Double = 1.0) {
-	if  gStartup.addShouldDisplay(increment) {
-		gUpdateStartupProgress()
-	}
-}
-
-func gRedrawMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
-	gSignal(for: object, [.sRelayout], onCompletion)
+func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
+	gSignal(for: object, [.spRelayout], onCompletion)
 }
 
 func gDeferRedraw(_ closure: Closure) {
@@ -100,8 +94,8 @@ func gDisablePush(_ closure: Closure) {
 }
 
 func gCompareZones(_ a: AnyObject, _ b: AnyObject) -> Bool {
-	if  let alpha = (a as? Zone)?.ckRecordName,
-		let  beta = (b as? Zone)?.ckRecordName {
+	if  let alpha = (a as? Zone)?.recordName,
+		let  beta = (b as? Zone)?.recordName {
 		return alpha == beta
 	}
 
@@ -128,23 +122,38 @@ func ^^(lhs: Bool, rhs: Bool) -> Bool {
 
 extension NSObject {
 
-	func                  noop()                                {}
-    func           performance(_ iMessage: Any?)                { log(iMessage) }
-    func                   bam(_ iMessage: Any?)                { log("-------------------------------------------------------------------- " + (iMessage as? String ?? "")) }
-	func     printCurrentFocus()                                { gHere.widget?.printView() }
-	func     printCurrentEssay()                                { gEssayView?.printView() }
-
+	func              noop()                 {}
+    func       performance(_ iMessage: Any?) { log(iMessage) }
+	func               bam(_ iMessage: Any?) { log("\(kHyphen.repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
+	func printSelf()                         { print(self) }
+	func printCurrentFocus()                 { gMapController?.hereWidget?.printWidget()}
+	func printCurrentEssay()                 { gEssayView?.printView() }
+	@objc func copyWithZone(_ with: NSZone) -> NSObject { return self }
 	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
+
+	var        selfInQuotes : String { return "\"\(self)\"" }
+	var          debugTitle : String { return zClassInitial + kSpace + debugName }
+	@objc var     debugName : String { return description }
+	@objc var zClassInitial : String { return zClassName[0] }
+
+	@objc var zClassName: String {
+		let parts = className.components(separatedBy: kDotSeparator)
+		let index = parts.count == 1 ? 0 : 1
+		let  name = parts[index].unCamelcased.uppercased()
+		let names = name.components(separatedBy: kSpace).dropFirst()
+
+		return names.joined(separator: kSpace)
+	}
 
 	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
         if  var prefix = iFirst as? String {
             prefix.appendSpacesToLength(kLogTabStop)
-            printDebug(mode, "\(prefix)\(iSecond ?? "")")
+            printDebug(mode, "\(prefix)\(iSecond ?? kEmpty)")
         }
     }
 
     func log(_ iMessage: Any?) {
-        if  let   message = iMessage as? String, message != "" {
+        if  let   message = iMessage as? String, message != kEmpty {
             printDebug(.dLog, message)
         }
     }
@@ -156,7 +165,7 @@ extension NSObject {
 
 		let duration = Date().timeIntervalSince(start)
 
-		printDebug(.dTime, duration.stringToTwoDecimals + " " + message)
+		printDebug(.dTime, duration.stringTo(precision: 2) + kSpace + message)
 	}
 
     func time(of title: String, _ closure: Closure) {
@@ -170,10 +179,19 @@ extension NSObject {
     }
 
     func blankScreenDebug() {
-        if  let w = gMapController?.mapRoot.bounds.size.width, w < 1.0 {
+        if  let w = gMapController?.hereWidget?.bounds.size.width, w < 1.0 {
             bam("blank map !!!!!!")
         }
     }
+
+	func temporarilyApplyThenDelay(for interval: Double, _ closure: BoolClosure?) {
+		closure?(true)
+
+		let _ = Timer.scheduledTimer(withTimeInterval: interval, repeats: false) { iTimer in
+			closure?(false)
+			iTimer.invalidate()
+		}
+	}
 
     func repeatUntil(_ isDone: @escaping ToBooleanClosure, then: @escaping Closure) {
         let _ = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { iTimer in
@@ -208,78 +226,25 @@ extension NSObject {
         })
     }
 
-	func showThesaurus(for string: String = "") {
-		let url = NSURL(string: "https://www.thesaurus.com/browse/\(string)")
-		url?.open()
+	func showThesaurus(for iString: String? = kEmpty) {
+		if  let string = iString {
+			let    url = NSURL(string: "https://www.thesaurus.com/browse/\(string)")
+			url?.open()
+		}
 	}
 
-    func openBrowserForFocusWebsite() {
-        "https://medium.com/@sand_74696/what-you-get-d565b064be7b".openAsURL()
+    func openBrowserForSeriouslyWebsite() {
+		"introduction+b+what-you-get-d565b064be7b".asHelpURL?.openAsURL()
     }
 
     func sendEmailBugReport() {
-        "mailto:sand@gizmolab.com?subject=Regarding Seriously".openAsURL()
+        let url = kMailTo + "sand@gizmolab.com?subject=Regarding Seriously"
 
-//		let service = NSSharingService(named: NSSharingService.Name.composeEmail)
-//		service?.recipients = ["sand@gizmolab.com"]
-//		service?.subject = "Reporting an error"
-//		service?.perform(withItems: ["Something happened"])
+		url.openAsURL()
 	}
 
-    // MARK:- bookmarks
-    // MARK:-
-
-    func isValid(_ iLink: String?) -> Bool {
-        return components(of: iLink) != nil
-    }
-
-    func components(of iLink: String?) -> [String]? {
-        if  let       link = iLink {
-            let components =  link.components(separatedBy: kColonSeparator)
-            if  components.count > 2 {
-                return components
-            }
-        }
-
-        return nil
-    }
-
-    func recordName(from iLink: String?) -> String? {
-        if  let components = components(of: iLink) {
-            let      name  = components[2]
-            return   name != "" ? name : kRootName // by design: empty component means root
-        }
-
-        return nil
-    }
-
-    func databaseID(from iLink: String?) -> ZDatabaseID? {
-        if  let components = components(of: iLink) {
-            let      dbID  = components[0]
-            return   dbID == "" ? nil : ZDatabaseID(rawValue: dbID)
-        }
-
-        return nil
-    }
-
-    func zoneFrom(_ iLink: String?) -> Zone? {
-        if  iLink                   != nil,
-            iLink                   != "",
-            let                 name = recordName(from: iLink) {
-            let components: [String] = iLink!.components(separatedBy: kColonSeparator)
-            let        rawIdentifier = components[0]
-            let   dbID: ZDatabaseID? = rawIdentifier == "" ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
-            let             zRecords = gRemoteStorage.zRecords(for: dbID)
-            let                 zone = zRecords?.maybeZoneForRecordName(name)
-
-            return zone
-        }
-
-        return nil
-    }
-
-    // MARK:- JSON
-    // MARK:-
+    // MARK: - JSON
+    // MARK: -
 
     func dictFromJSON(_ dict: ZStringObjectDictionary) -> ZStorageDictionary {
         var                   result = ZStorageDictionary ()
@@ -292,7 +257,7 @@ extension NSObject {
                 if  let string       = value as? String {
                     let parts        = string.components(separatedBy: kTimeInterval + kColonSeparator)
                     if  parts.count > 1,
-                        parts[0]    == "",
+                        parts[0]    == kEmpty,
                         let interval = TimeInterval(parts[1]) {
                         goodValue    = Date(timeIntervalSinceReferenceDate: interval) as NSObject
                         translated   = true
@@ -322,6 +287,29 @@ extension NSObject {
 }
 
 extension ZStorageDictionary {
+
+	var mainDictionary : ZStorageDictionary? {
+		for (key, value) in self {
+			switch key {
+				case .graph: return value as? ZStorageDictionary
+				default:     break
+			}
+		}
+
+		return self
+	}
+
+	var recordName : String? {
+		for (key, value) in self {
+			switch key {
+				case .graph:      return (value as? ZStorageDictionary)?.recordName
+				case .recordName: return  value as? String
+				default:          break
+			}
+		}
+
+		return nil
+	}
 
 	var jsonDict : ZStringObjectDictionary {
         var    last = ZStorageDictionary ()
@@ -365,20 +353,6 @@ extension ZStorageDictionary {
 
 }
 
-extension Int {
-
-	func within(_ range: ClosedRange<Int>) -> Bool {
-		return range.contains(self)
-	}
-
-	func next(up: Bool, max: Int) -> Int? {
-		if self == 0 &&    up { return max }
-		if self == max && !up { return 0 }
-		if self > max || self < 0 { return nil }
-		return self + (up ? -1 : 1)
-	}
-}
-
 extension Dictionary {
 
 	var byteCount: Int { return data?.count ?? 0 }
@@ -409,6 +383,7 @@ extension Dictionary {
 extension URL {
 
 	var originalImageName: String? { return CGImageSource.readFrom(self)?.originalImageName }
+	func fileExists() -> Bool { return FileManager.default.fileExists(atPath: path) }
 
 	func destination(imageType: CFString = kUTTypeImage) -> CGImageDestination? {
 		return CGImageDestinationCreateWithURL(self as CFURL, imageType, 1, nil)
@@ -435,16 +410,12 @@ extension URL {
 		return nil
 	}
 
-	func readImage() -> ZImage? {
-		return nil
-	}
+	func writeData(_ data: Data?) -> Bool {
+		var success = false
 
-	func writeImage(_ image: ZImage) -> Bool {
-		var  success = false
-
-		if  let data = image.jpeg {
+		if  let d = data {
 			do {
-				try data.write(to: self, options: Data.WritingOptions.atomic)
+				try d.write(to: self, options: Data.WritingOptions.atomic)
 
 				success = true
 			} catch {
@@ -454,22 +425,16 @@ extension URL {
 		return success
 	}
 
-	func testWriteImage(_ image: ZImage, addOriginalImageName: String? = nil) -> Bool {
-		if  let d = destination() {
-			let cgImage = image as! CGImage
-			var metadata = [String : Any]()
+	func replacingPathComponent(_ first: String, with second: String) -> URL {
+		var components = pathComponents
 
-			if  let name = addOriginalImageName {
-				metadata[kOrignalImageName] = name
+		for (index, component) in components.enumerated() {
+			if  component == first {
+				components[index] = second
 			}
-
-			CGImageDestinationAddImage(d, cgImage, metadata as CFDictionary)
-			CGImageDestinationFinalize(d)
-
-			return true
 		}
 
-		return false
+		return URL(fileURLWithPath: components.joined(separator: "/"))
 	}
 
 }
@@ -477,15 +442,15 @@ extension URL {
 extension CGImageSource {
 
 	class func readFrom(_ url: URL) -> CGImageSource? { return CGImageSourceCreateWithURL(url as CFURL, nil) }
-	var metadata: [String : Any]? { return CGImageSourceCopyPropertiesAtIndex(self, 0, nil) as? [String : Any] }
+	var metadata: ZStringAnyDictionary? { return CGImageSourceCopyPropertiesAtIndex(self, 0, nil) as? ZStringAnyDictionary }
 	var originalImageName: String? { return metadata?[kOrignalImageName] as? String }
 
 }
 
 extension CKAsset {
 
-	var data       :   Data? { return FileManager.default.contents(atPath: fileURL.path) }
-	var imageSize  : CGSize? { return fileURL.imageSize }
+	var data       :   Data? { return FileManager.default.contents(atPath: fileURL!.path) }
+	var imageSize  : CGSize? { return fileURL!.imageSize }
 	var uuidString : String? { return value(forKeyPath: "_UUID") as? String }
 	var length     :    Int? { return value(forKeyPath: "_size") as? Int }
 
@@ -507,7 +472,7 @@ extension CKRecord {
 
 		if  parentReference == nil {
 			if  let     link = self[kpZoneParentLink] as? String {
-				parentRecordName = recordName(from: link) // parent is in other db
+				parentRecordName = link.maybeRecordName // parent is in other db
 			} else {
 				parentReference  = self[kpOwner] as? CKReference
 			}
@@ -526,7 +491,7 @@ extension CKRecord {
 
 	var storable: String {
 		get {
-			var pairs = [String]()
+			var pairs = StringsArray()
 			let  keys = allKeys()
 
 			for key in keys {
@@ -565,20 +530,6 @@ extension CKRecord {
         return true
     }
 
-	var matchesFilterOptions: Bool {
-		switch recordType {
-			case kZoneType:
-				let    isBookmark = self[kpZoneLink] != nil
-
-				return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas)
-			case kTraitType:
-				return gFilterOption.contains(.fNotes)
-			default: break
-		}
-
-		return true
-	}
-
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
             return link.contains(kColonSeparator)
@@ -588,62 +539,26 @@ extension CKRecord {
     }
 
 	var traitType: String {
-		var string = ""
+		var string = kEmpty
 
 		if  let        type = self["type"] as? String,
 			let       trait = ZTraitType(rawValue: type),
 			let description = trait.description {
-			string          = description + kSearchSeparator
+			string          = description + kUncommonSeparator
 		}
 
 		return string
 	}
-
-    var decoratedName: String {
-		switch recordType {
-			case kTraitType:
-				let text = self["text"] as? String ?? kNoValue
-
-				return "\(traitType) \(text)"
-			case kZoneType:
-				if  let      name = self[kpZoneName] as? String {
-					let separator = kSpace
-					var    prefix = ""
-					
-					if  isBookmark {
-						prefix.append("L")
-					}
-					
-					if  let fetchable = self[kpZoneCount] as? Int, fetchable > 1 {
-						if  prefix != "" {
-							prefix.append(separator)
-						}
-						
-						prefix.append("\(fetchable)")
-					}
-					
-					if  prefix != "" {
-						prefix  = "(" + prefix + ")  "
-					}
-					
-					return prefix.appending(name)
-				}
-			default:
-				return recordID.recordName
-		}
-
-        return kNoValue
-    }
 
     convenience init(for name: String) {
         self.init(recordType: kZoneType, recordID: CKRecordID(recordName: name))
     }
 
     func isDeleted(dbID: ZDatabaseID) -> Bool {
-        return gRemoteStorage.cloud(for: dbID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
+        return gRemoteStorage.zRecords(for: dbID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
     }
 
-    @discardableResult func copy(to iCopy: CKRecord?, properties: [String]) -> Bool {
+    @discardableResult func copy(to iCopy: CKRecord?, properties: StringsArray) -> Bool {
         var  altered = false
         if  let copy = iCopy {
             for keyPath in properties {
@@ -657,30 +572,6 @@ extension CKRecord {
         }
 
         return altered
-    }
-
-    func hasKey(_ key: String) -> Bool {
-        return allKeys().contains(key)
-    }
-
-    func index(within iReferences: CKRecordIDsArray) -> Int? {
-        for (index, identifier) in iReferences.enumerated() {
-            if  identifier == recordID {
-                return index
-            }
-        }
-
-        return nil
-    }
-
-    func maybeMarkAsFetched(_ databaseID: ZDatabaseID?) {
-        let states        = [ZRecordState.notFetched, ZRecordState.needsFetch]
-        if  creationDate != nil,
-            let dbID      = databaseID,
-            let manager   = gRemoteStorage.cloud(for: dbID),
-            manager.hasCKRecord(self, forAnyOf: states) {
-            manager.clearCKRecords([self], for: states)
-        }
     }
 
 }
@@ -719,19 +610,99 @@ infix operator ** : MultiplicationPrecedence
 
 extension Double {
 
-	static func ** (base: Double, power: Double) -> Double { return pow(base, power) }
-	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
+	static func ** (base: Double, power: Double) -> Double  { return pow(base, power) }
+	func   confine(within: Double)               -> Double  { return Double(float.confine(within: CGFloat(within))) }
+	func   stringTo(precision: Int)              -> String  { return        float.stringTo(precision: precision) }
+	var    roundedToNearestInt                    : Int     { return        float.roundedToNearestInt }
+	var    upward                                 : Bool    { return self < kPI }
+	var    squared                                : Double  { return self * self }
+	var    float                                  : CGFloat { return CGFloat(self) }
+
 }
 
 extension CGFloat {
-	var    stringToTwoDecimals                    : String { return String(format: "%.02f", self) }
+
+	var  roundedToNearestInt                     : Int     { return Int(self + 0.5) }
+	var  upward                                  : Bool    { return     self < kPI.float }
+	var  squared                                 : CGFloat { return     self * self }
+	var  invertedSquared                         : CGFloat { return 1.0 / squared }
+	var  oneDigitString                          : String  { return stringTo(precision: 1) }
+	var  twoDigitString                          : String  { return stringTo(precision: 2) }
+	func stringTo(precision: Int)               -> String  { return String(format: "%.0\(precision)f", self) }
+	func isBetween(low: CGFloat, high: CGFloat) -> Bool    { return low < high && low < self && self < high }
+
+	func confineBetween(low: CGFloat, high: CGFloat) -> CGFloat {
+		return fmax(fmin(self, high), low)
+	}
+
+	func confine(within: CGFloat) -> CGFloat {
+		var       i  = self
+		if   within != .zero {
+			while i  < .zero {
+				i   += within
+			}
+
+			while i >= within {
+				i   -= within
+			}
+		}
+
+		return i
+	}
+
+}
+
+extension Int {
+
+	var ordinal: String {
+		switch self {
+			case 1:  return "first"
+			case 2:  return "second"
+			case 3:  return "third"
+			default: return kEmpty
+		}
+	}
+
+	func isWithin(_ range: ClosedRange<Int>) -> Bool    { return range.contains(self) }
+	func confine(within: Int)                -> Int     { return Int(float.confine(within: CGFloat(within))) }
+	var  stringInThousands                    : String  { return "\(((float * 2.0 / 1000.0).rounded(.toNearestOrAwayFromZero) / 2.0).stringTo(precision: 1))" }
+	var  stringInHundreds                     : String  { return "\((float / 100.0).rounded(.toNearestOrAwayFromZero).stringTo(precision: 0))" }
+	var  float                                : CGFloat { return CGFloat(self) }
+
+	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
+		var angles             = [Double]()
+		if  self              > 0 {
+			let         isEven = self % 2 == 0
+			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? .zero : 0.5)
+			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-self) // negative means clockwise in osx (counterclockwise in ios)
+
+			for index in 0 ... self - 1 {
+				let increments = Double(index) + extra
+				let      angle = startAngle + incrementAngle * increments
+
+				angles.append(angle.confine(within: k2PI))
+			}
+		}
+
+		return angles
+	}
+
 }
 
 infix operator -- : AdditionPrecedence
 
 extension CGPoint {
 
-	var descriptionToTwoDecimals: String { return "(\(x.stringToTwoDecimals), \(y.stringToTwoDecimals))"}
+	var containsNAN     : Bool    { return x.isNaN || y.isNaN }
+	var twoDigitsString : String  { return "(\(x.stringTo(precision: 2)), \(y.stringTo(precision: 2)))"}
+	var oneDigitString  : String  { return "(\(x.stringTo(precision: 1)), \(y.stringTo(precision: 1)))"}
+	var integerString   : String  { return "(\(Int(x)), \(Int(y)))" }
+	var dividedInHalf   : CGPoint { return multiplyBy(0.5) }
+	var inverted        : CGPoint { return CGPoint(x: -x, y: -y) }
+	var length          : CGFloat { return sqrt(x * x + y * y) }
+	var angle           : CGFloat { return atan2(y, x) }
+
+	public static func squared(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 
     public init(_ size: CGSize) {
         self.init()
@@ -740,16 +711,32 @@ extension CGPoint {
         y = size.height
     }
 
-    static func - ( left: CGPoint, right: CGPoint) -> CGSize {
-        return CGSize(width: left.x - right.x, height: left.y - right.y)
+	static func + (left: CGPoint, right: CGPoint) -> CGPoint {
+		return CGPoint(x: left.x + right.x, y: left.y + right.y)
+	}
+
+    static func - (left: CGPoint, right: CGPoint) -> CGPoint {
+		return CGPoint(x: left.x - right.x, y: left.y - right.y)
     }
 
-    static func -- ( left: CGPoint, right: CGPoint) -> CGFloat {
+	static func + (left: CGPoint, right: CGSize) -> CGPoint {
+		return CGPoint(x: left.x + right.width, y: left.y + right.height)
+	}
+
+	static func - (left: CGPoint, right: CGSize) -> CGPoint {
+		return CGPoint(x: left.x - right.width, y: left.y - right.height)
+	}
+
+    static func -- (left: CGPoint, right: CGPoint) -> CGFloat {
         let  width = Double(left.x - right.x)
         let height = Double(left.y - right.y)
 
         return CGFloat(sqrt(width * width + height * height))
     }
+
+	static func * (left: CGPoint, multiplier: CGFloat) -> CGPoint {
+		return CGPoint(x: left.x * multiplier, y: left.y * multiplier)
+	}
 
 	func offsetBy(_ delta: CGPoint) -> CGPoint {
 		return CGPoint(x: x + delta.x, y: y + delta.y)
@@ -763,8 +750,16 @@ extension CGPoint {
 		return CGPoint(x: x + xOffset, y: y + yOffset)
 	}
 
-	func intersectsTriangle(orientedUp: Bool, in iRect: CGRect) -> Bool {
-		return ZBezierPath.trianglePath(orientedUp: orientedUp, in: iRect).contains(self)
+	func retreatBy(_ delta: CGSize) -> CGPoint { // reverse regress backslide goback
+		return CGPoint(x: x - delta.width, y: y - delta.height)
+	}
+
+	func multiplyBy(_ fraction: CGFloat) -> CGPoint {
+		return CGPoint(x: x * fraction, y: y * fraction)
+	}
+
+	func intersectsTriangle(pointingDown: Bool, in iRect: CGRect) -> Bool {
+		return ZBezierPath.trianglePath(pointingDown: pointingDown, in: iRect).contains(self)
 	}
 
 	func intersectsCircle(in iRect: CGRect) -> Bool {
@@ -777,34 +772,82 @@ extension CGPoint {
 		return path.contains(self)
 	}
 
-	var hypontenuse: CGFloat {
-		return sqrt(x * x + y * y)
+	func rotate(by angle: Double, around center: CGPoint = .zero) -> CGPoint {
+		let     r = length
+		let delta = CGPoint(x: r * CGFloat(cos(angle)), y: r * CGFloat(sin(angle)))
+
+		return center + delta
 	}
 
-	func rotate(by angle: Double) -> CGPoint {
-		let r = hypontenuse
+	func drawColoredLine(_ color: ZColor, to endPoint: CGPoint, thickness: CGFloat = 0.5) {
+		ZBezierPath.defaultLineWidth = thickness
 
-		return CGPoint(x: r * CGFloat(cos(angle)), y: r * CGFloat(sin(angle)))
+		color.setStroke()
+		ZBezierPath.strokeLine(from: self, to: endPoint)
+	}
+
+	func printPoint(_ message: String = kEmpty) {
+		print(message + " x: " + x.stringTo(precision: 1) + " y: " + y.stringTo(precision: 1))
 	}
 
 }
 
 extension CGSize {
 
-	static var big: CGSize {
-		return CGSize(width: 1000000, height: 1000000)
+	static var big     : CGSize  { return CGSize.squared(1000000.0) }
+	var swapped        : CGSize  { return CGSize(width: height, height: width) }
+	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
+	var dividedInHalf  : CGSize  { return multiplyBy(0.5) }
+	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
+	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
+	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
+	func isLargerThan(_ other: CGSize)               -> Bool    { return hypotenuse > other.hypotenuse }
+	public static func squared(_ length: CGFloat)    -> CGSize  { return CGSize(width: length, height: length) }
+	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint { return CGPoint(lhs) - rhs }
+	func hypotenuse(relativeTo other: CGSize)        -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
+	func add(width: CGFloat, height: CGFloat)        -> CGSize  { return self + CGSize(width: width, height: height) }
+	func multiplyBy(_ fraction: CGFloat)             -> CGSize  { return CGSize(width: width * fraction, height: height * fraction) }
+	func multiplyBy(_ fraction: CGSize)              -> CGSize  { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
+	func fraction(_ delta: CGSize)                   -> CGSize  { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
+	func expandedEquallyBy(_ expansion: CGFloat)     -> CGSize  { return insetEquallyBy(-expansion) }
+	func    insetEquallyBy(_     inset: CGFloat)     -> CGSize  { return insetBy(inset, inset) }
+	func expandedBy(_ x: CGFloat, _ y: CGFloat)      -> CGSize  { return insetBy(-x, -y) }
+	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize  { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
+	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize  { return CGSize(width: width + x, height: height + y).absSize }
+	func offsetBy(_ delta: CGSize)                   -> CGSize  { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
+
+	func scaleToFit(_ other: CGSize) -> CGFloat {
+		let horizontal = other.width / width
+		let   vertical = other.height / height
+
+		return horizontal < vertical ? horizontal : vertical
 	}
 
-	var smallDimension: CGFloat {
-		return min(abs(height), abs(width))
+	public init(_ point: CGPoint) {
+		self.init()
+
+		width  = point.x
+		height = point.y
 	}
 
-    var hypontenuse: CGFloat {
-        return sqrt(width * width + height * height)
-    }
+	public static func + (lhs: CGSize, rhs: CGSize) -> CGSize {
+		var    size  = lhs
+		size.height += rhs.height
+		size.width  += rhs.width
+
+		return size.absSize
+	}
+
+	public static func - (lhs: CGSize, rhs: CGSize) -> CGSize {
+		var    size  = lhs
+		size.height -= rhs.height
+		size.width  -= rhs.width
+
+		return size.absSize
+	}
 
 	func fractionalScaleToFit(size: CGSize) -> CGFloat {
-		var fraction = CGFloat(1.0)
+		var fraction = CGFloat(1)
 
 		if  width < size.width {
 			fraction = width / size.width
@@ -823,28 +866,16 @@ extension CGSize {
 		return CGSize(width: width * fraction, height: height * fraction)
 	}
 
-	func isLargerThan(_ other: CGSize) -> Bool {
-		return hypontenuse > other.hypontenuse
+	func fractionPreservingRatio(_ delta: CGSize) -> CGSize {
+		let ratio = (width - delta.width) / width
+
+		return CGSize.squared(ratio).absSize
 	}
 
-	func multiplyBy(_ fraction: CGFloat) -> CGSize {
-		return CGSize(width: width * fraction, height: height * fraction)
-	}
+	func rotate(by angle: Double) -> CGSize {
+		let r = hypotenuse
 
-	func multiplyBy(_ fraction: CGSize) -> CGSize {
-		return CGSize(width: width * fraction.width, height: height * fraction.height)
-	}
-
-	func fraction(_ delta: CGSize) -> CGSize {
-		CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height)
-	}
-
-	func offsetBy(_ x: CGFloat, _ y: CGFloat) -> CGSize {
-		return CGSize(width: width + x, height: height + y)
-	}
-
-	func offsetBy(_ delta: CGSize) -> CGSize {
-		return CGSize(width: width + delta.width, height: height + delta.height)
+		return CGSize(width: r * CGFloat(cos(angle)), height: r * CGFloat(sin(angle)))
 	}
 
 	func force(horizotal: Bool, into range: NSRange) -> CGSize {
@@ -857,26 +888,64 @@ extension CGSize {
 		}
 	}
 
+	func ellipticalLengthAt(_ angle: Double) -> Double {
+		let a = Double(width)  / 2.0
+		let b = Double(height) / 2.0
+		let c = sqrt((b * b * cos(angle) * cos(angle)) + (a * a * sin(angle) * sin(angle)))
+		let l = a * b / c // (𝑏*cos(𝜃))2+(𝑎*sin(𝜃))2
+
+		return l
+	}
+
+	func lengthAt(_ angle: CGFloat) -> CGFloat {
+		let a = Double(angle)
+		let x = width / CGFloat(abs(cos(a)))
+
+		if  x < hypotenuse {
+			return x / 2.0
+		}
+
+		return height / CGFloat(abs(sin(a))) / 2.0
+	}
+
+}
+
+enum ZDirection : Int {
+
+	case top
+	case left
+	case right
+	case bottom
+	case topLeft
+	case topRight
+	case bottomLeft
+	case bottomRight
+
+	var isFullResizeCorner : Bool    { return self == .topLeft || self == .bottomRight }
+
+	var cursor: NSCursor {
+		switch self {
+			case .top, .bottom: return .resizeUpDown
+			case .left, .right: return .resizeLeftRight
+			default:            return  kFourArrowsCursor ?? .crosshair
+		}
+	}
+
 }
 
 extension CGRect {
 
-	var topRight:     CGPoint { return CGPoint(x: maxX, y: minY) }
-	var centerTop:    CGPoint { return CGPoint(x: midX, y: minY) }
-	var centerLeft:   CGPoint { return CGPoint(x: minX, y: midY) }
-	var centerRight:  CGPoint { return CGPoint(x: maxX, y: midY) }
-	var center:       CGPoint { return CGPoint(x: midX, y: midY) }
-	var centerBottom: CGPoint { return CGPoint(x: midX, y: maxY) }
-	var bottomLeft:   CGPoint { return CGPoint(x: minX, y: maxY) }
-	var bottomRight:  CGPoint { return CGPoint(x: maxX, y: maxY) }
-	var extent:       CGPoint { return CGPoint(x: maxX, y: maxY) }
+	var minimumDimension: CGFloat { return min(size.height, size.width) }
+	var containsNAN:         Bool { return origin.containsNAN || size.containsNAN }
+	var hasZeroSize:         Bool { return size == .zero }
+	var hasSize:             Bool { return size != .zero }
 
 	var cornerPoints: [ZDirection : CGPoint] {
 		var           result = [ZDirection : CGPoint]()
-		result[.topLeft]     = origin
+		result[.topLeft]     = topLeft
 		result[.topRight]    = topRight
 		result[.bottomLeft]  = bottomLeft
-		result[.bottomRight] = extent
+		result[.bottomRight] = bottomRight
 
 		return result
 	}
@@ -891,11 +960,39 @@ extension CGRect {
 		return result
 	}
 
+	var normalized: CGRect {
+		var r = CGRect(origin: origin, size: size)
+		let h = size.height
+		let w = size.width
+		if  h < .zero {
+			r.size.height = -h
+			r.origin.y   +=  h
+		}
+
+		if  w < .zero {
+			r.size.width  = -w
+			r.origin.x   +=  w
+		}
+
+		return r
+	}
+
+	public init(center: CGPoint, size: CGSize) {
+		self.init()
+
+		origin    = center - size.dividedInHalf
+		self.size = size
+	}
+
+	func printRect(_ message: String = kEmpty) {
+		print(message + " x: " + minX.stringTo(precision: 1) + " X: " + maxX.stringTo(precision: 1))
+	}
+
     public init(start: CGPoint, extent: CGPoint) {
         self.init()
 
 		origin = start
-        size   = extent - origin
+        size   = CGSize(extent - origin)
 
         if  size .width < 0 {
             size .width = -size.width
@@ -917,38 +1014,45 @@ extension CGRect {
         return set
     }
 
-    func offsetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
+	func offsetBy(_ offset: CGPoint) -> CGRect {
+		return offsetBy(dx: offset.x, dy: offset.y)
+	}
+
+	func offsetBy(_ size: CGSize) -> CGRect {
+		return offsetBy(dx: size.width, dy: size.height)
+	}
+
+    func offsetBy(fractionX: CGFloat = .zero, fractionY: CGFloat = .zero) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
         
         return offsetBy(dx:dX, dy:dY)
     }
 
-	func insetBy(fractionX: CGFloat = 0.0, fractionY: CGFloat = 0.0) -> CGRect {
+	func expandedBy(_ expansionSize: CGSize) -> CGRect {
+		let dX = -expansionSize.width
+		let dY = -expansionSize.height
+
+		return insetBy(dx: dX, dy: dY)
+	}
+
+	func        expandedBy(dx: CGFloat, dy: CGFloat) -> CGRect { return insetBy(dx: -dx, dy: -dy) }
+	func expandedEquallyBy(_     expansion: CGFloat) -> CGRect { return insetEquallyBy(-expansion) }
+	func expandedEquallyBy(       fraction: CGFloat) -> CGRect { return insetEquallyBy(fraction: -fraction) }
+	func    insetEquallyBy(       fraction: CGFloat) -> CGRect { return insetBy(fractionX: fraction, fractionY: fraction) }
+	func    insetEquallyBy(_         inset: CGFloat) -> CGRect { return insetBy(dx: inset, dy: inset) }
+	func   offsetEquallyBy(_        offset: CGFloat) -> CGRect { return offsetBy(dx: offset, dy: offset) }
+	func      centeredRect(       diameter: CGFloat) -> CGRect { return centeredEquallyAround(center, diameter: diameter) }
+
+	func insetBy(fractionX: CGFloat = .zero, fractionY: CGFloat = .zero) -> CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
 
         return insetBy(dx: dX, dy: dY)
     }
 
-	func insetEquallyBy(fraction: CGFloat) -> CGRect {
-		return insetBy(fractionX: fraction, fractionY: fraction)
-	}
-
-	func insetEquallyBy(_ inset: CGFloat) -> CGRect {
-		return insetBy(dx: inset, dy: inset)
-	}
-
-	func offsetEquallyBy(_ offset: CGFloat) -> CGRect {
-		return offsetBy(dx: offset, dy: offset)
-	}
-
 	func centeredEquallyAround(_ center: CGPoint, diameter: CGFloat) -> CGRect {
-		return CGRect(origin: center, size: CGSize.zero).insetEquallyBy(-diameter / 2.0)
-	}
-
-	func centeredRect(diameter: CGFloat) -> CGRect {
-		return centeredEquallyAround(center, diameter: diameter)
+		return CGRect(origin: center, size: CGSize.zero).expandedEquallyBy(diameter / 2.0)
 	}
 
 	func twoDotsVertically(fractionalDiameter: CGFloat) -> (CGRect, CGRect) {
@@ -983,7 +1087,7 @@ extension CGRect {
 		let length = size.smallDimension
 		let origin = CGPoint(x: minX + (size.width - length) / 2.0, y: minY + (size.height - length) / 2.0)
 
-		return CGRect(origin: origin, size: CGSize(width: length, height: length))
+		return CGRect(origin: origin, size: CGSize.squared(length))
 	}
 
 	func intersectsOval(within other: CGRect) -> Bool {
@@ -996,47 +1100,122 @@ extension CGRect {
 		return delta > 0
 	}
 
+	func hitTestForResizeDot(in testRect: CGRect) -> ZDirection? {
+		let   points = selectionPoints
+		let        s = size.dividedInHalf      .insetEquallyBy(kEssayImageDotRadius)
+
+		for (direction, point) in points {
+			var rect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
+
+			switch direction {
+				case .bottom, .top: rect = rect.expandedBy(dx: s.width, dy:    .zero)   // extend width
+				case .right, .left: rect = rect.expandedBy(dx:   .zero, dy: s.height)   //    "   height
+				default:            break
+			}
+
+			if  testRect.intersects(rect) {
+				return direction
+			}
+		}
+
+		return nil
+	}
+
+	func drawCenteredVerticalLine(thickness: CGFloat = 0.5) {
+		let rect = centeredVerticalLine(thick: thickness)
+		let path = ZBezierPath(rect: rect)
+
+		path.setClip()
+		kGrayColor.setFill()
+		path.fill()
+
+	}
+
+	func drawColoredRect(_ color: ZColor, radius: CGFloat = .zero, thickness: CGFloat = 0.5) {
+		let       path = ZBezierPath(roundedRect: self, xRadius: radius, yRadius: radius)
+		path.lineWidth = thickness
+
+		color.setStroke()
+		path.stroke()
+	}
+
+	func drawColoredOval(_ color: ZColor, thickness: CGFloat = 0.5, filled: Bool = false, dashes: Bool = false) {
+		let       oval = ZBezierPath(ovalIn: self)
+		oval.lineWidth = thickness
+
+		if  dashes {
+			oval.addDashes()
+		}
+
+		color.setStroke()
+		oval.stroke()
+
+		if  filled {
+			color.setFill()
+			oval.fill()
+		}
+	}
+
+	func drawColoredCircle(_ color: ZColor, thickness: CGFloat = 0.5, filled: Bool = false, dashes: Bool = false) {
+		squareCentered.drawColoredOval(color, thickness: thickness, filled: filled, dashes: dashes)
+	}
+
+	func drawImageResizeDotsAndRubberband() {
+		for point in selectionPoints.values {
+			let   dotRect = CGRect(origin: point, size: .zero).expandedEquallyBy(kEssayImageDotRadius)
+			let      path = ZBezierPath(ovalIn: dotRect)
+			path.flatness = kDefaultFlatness
+
+			path.stroke()
+		}
+
+		drawRubberband()
+	}
+
+	func drawRubberband() {
+		let       path = ZBezierPath(rect: self)
+		path.lineWidth = CGFloat(gLineThickness * (gIsDark ? 3.0 : 2.0))
+		path.flatness  = kDefaultFlatness
+
+		path.addDashes()
+		path.stroke()
+	}
+
 }
 
 extension ZBezierPath {
 
-	func addDashes() {
-		let pattern: [CGFloat] = [3.0, 3.0]
+	static func setClip(to rect: CGRect) { ZBezierPath(rect: rect).setClip() }
 
-		setLineDash(pattern, count: 2, phase: 3.0)
+	static func fillWithColor(_ color: ZColor, in rect: CGRect) {
+		color.setFill()
+		ZBezierPath(rect: rect).fill()
 	}
 
-	static func drawTriangle(orientedUp: Bool, in iRect: CGRect, thickness: CGFloat) {
-		let path = trianglePath(orientedUp: orientedUp, in: iRect)
+	static func drawTriangle(pointingDown: Bool, in iRect: CGRect, thickness: CGFloat) {
+		let path = trianglePath(pointingDown: pointingDown, in: iRect)
 
 		path.draw(thickness: thickness)
 	}
 
-	static func trianglePath(orientedUp: Bool, in iRect: CGRect) -> ZBezierPath {
+	static func trianglePath(pointingDown: Bool, in iRect: CGRect) -> ZBezierPath {
 		let path = ZBezierPath()
 
-		path.appendTriangle(orientedUp: orientedUp, in: iRect)
+		path.appendTriangle(pointingDown: pointingDown, in: iRect)
 
 		return path
-	}
-
-	func appendTriangle(orientedUp: Bool, in iRect: CGRect) {
-		let yStart = orientedUp ? iRect.minY : iRect.maxY
-		let   yEnd = orientedUp ? iRect.maxY : iRect.minY
-		let    tip = CGPoint(x: iRect.midX, y: yStart)
-		let   left = CGPoint(x: iRect.minX, y: yEnd)
-		let  right = CGPoint(x: iRect.maxX, y: yEnd)
-
-		move(to: tip)
-		line(to: left)
-		line(to: right)
-		line(to: tip)
 	}
 
 	static func drawCircle(in iRect: CGRect, thickness: CGFloat) {
 		let path = circlePath(in: iRect)
 
 		path.draw(thickness: thickness)
+	}
+
+	static func circlePath(origin: CGPoint, radius: CGFloat) -> ZBezierPath {
+		let rect = CGRect.zero.offsetBy(origin).expandedEquallyBy(radius)
+
+		return circlePath(in: rect)
 	}
 
 	static func circlePath(in iRect: CGRect) -> ZBezierPath {
@@ -1058,12 +1237,73 @@ extension ZBezierPath {
 		return (path, rect)
 	}
 
+	static func bloatedTrianglePath(in iRect: CGRect, aimedRight: Bool) -> ZBezierPath {
+		let path = ZBezierPath()
+
+		path.appendBloatedTriangle(in: iRect, aimedRight: aimedRight)
+
+		return path
+	}
+
+	static func bloatedTrianglePath(in iRect: CGRect, at angle: CGFloat) -> ZBezierPath {
+		let path = ZBezierPath()
+
+		path.appendBloatedTriangle(in: iRect, startAngle: Double(angle))
+
+		return path
+	}
+
+	static func ovalPath(in iRect: CGRect, at angle: CGFloat) -> ZBezierPath {
+		let   size = iRect.size
+		let center = CGPoint(size).multiplyBy(-0.5)
+		let origin = iRect.origin - center
+		let   rect = CGRect(origin: center, size: size)
+		let   path = ZBezierPath(ovalIn: rect)
+
+		path.transform(using: AffineTransform(rotationByRadians: angle))
+		path.transform(using: AffineTransform(translationByX: origin.x, byY: origin.y))
+
+		return path
+	}
+
+	static func linePath(start: CGPoint, length: CGFloat, angle: CGFloat) -> ZBezierPath {
+		let path = ZBezierPath()
+		let  end = CGPoint(x: .zero, y: length).rotate(by: Double(angle)).offsetBy(start)
+
+		path.move(to: start)
+		path.line(to: end)
+
+		return path
+	}
+
+	func addDashes() {
+		let pattern: [CGFloat] = [3.0, 3.0]
+
+		setLineDash(pattern, count: 2, phase: 3.0)
+	}
+
+	func appendTriangle(pointingDown: Bool, in iRect: CGRect, full: Bool = true) {
+		let yStart = pointingDown ? iRect.minY : iRect.maxY
+		let   yEnd = pointingDown ? iRect.maxY : iRect.minY
+		let    tip = CGPoint(x: iRect.midX, y: yStart)
+		let   left = CGPoint(x: iRect.minX, y: yEnd)
+		let  right = CGPoint(x: iRect.maxX, y: yEnd)
+
+		move(to: left)
+		line(to: tip)
+		line(to: right)
+
+		if  full {
+			line(to: left)
+		}
+	}
+
 	func appendCircles(orientedUp: Bool, in iRect: CGRect) -> CGRect {
-		let   rect = iRect.offsetBy(fractionX: 0.0, fractionY: orientedUp ? 0.1 : -0.1)
-		var    top = rect.insetBy(fractionX: 0.0, fractionY: 0.375)  // shrink to one-fifth size
-		let middle = top.offsetBy(dx: 0.0, dy: top.midY - rect.midY)
-		let bottom = top.offsetBy(dx: 0.0, dy: top.maxY - rect.maxY) // move to bottom
-		top        = top.offsetBy(dx: 0.0, dy: top.minY - rect.minY) // move to top
+		let   rect = iRect.offsetBy(fractionX: .zero, fractionY: orientedUp ? 0.1 : -0.1)
+		var    top = rect.insetBy(fractionX: .zero, fractionY: 0.375)  // shrink to one-fifth size
+		let middle = top.offsetBy(dx: .zero, dy: top.midY - rect.midY)
+		let bottom = top.offsetBy(dx: .zero, dy: top.maxY - rect.maxY) // move to bottom
+		top        = top.offsetBy(dx: .zero, dy: top.minY - rect.minY) // move to top
 
 		appendOval(in: top)
 		appendOval(in: middle)
@@ -1078,33 +1318,22 @@ extension ZBezierPath {
 		stroke()
 	}
 
-	static func drawBloatedTriangle(aimedRight: Bool, in iRect: CGRect, thickness: CGFloat) {
-		let path = bloatedTrianglePath(aimedRight: aimedRight, in: iRect)
-
-		path.draw(thickness: thickness)
+	func appendBloatedTriangle(in iRect: CGRect, aimedRight: Bool) {
+		appendBloatedTriangle(in: iRect, startAngle: aimedRight ? .zero : kPI)
 	}
 
-	static func bloatedTrianglePath(aimedRight: Bool, in iRect: CGRect) -> ZBezierPath {
-		let path = ZBezierPath()
-
-		path.appendBloatedTriangle(aimedRight: aimedRight, in: iRect)
-
-		return path
-	}
-
-	func appendBloatedTriangle(aimedRight: Bool, in iRect: CGRect) {
+	func appendBloatedTriangle(in iRect: CGRect, startAngle: Double) {
 		let      center = iRect.center
 		let  insetRatio = 0.35
 		let      radius = Double(iRect.width) * insetRatio
-		let  startAngle = aimedRight ? 0.0 : Double.pi
-		let    bigAngle = Double.pi /  3.0 // one sixth of a circle
-		let  smallAngle = Double.pi / 15.0 // one thirtieth
-		let innerVector = CGPoint(x: radius,       y: 0.0)
-		let outerVector = CGPoint(x: radius * 1.5, y: 0.0)
+		let    bigAngle = k2PI /  6.0 // one sixth of a circle
+		let  smallAngle = k2PI / 30.0 // one thirtieth of a circle
+		let innerVector = CGPoint(x: radius,       y: .zero)
+		let outerVector = CGPoint(x: radius * 1.5, y: .zero)
 		var  controlOne = CGPoint.zero
 		var  controlTwo = CGPoint.zero
 		var       point = CGPoint.zero
-		var       index = 0.0
+		var       index = Double.zero
 
 		func rotatePoints() {
 			let   angle = index * bigAngle + startAngle
@@ -1143,9 +1372,20 @@ extension Array {
 		}
 	}
 
+	func applyBoolean(closure: AnyObjectToBooleanClosure) -> Bool {
+		var result = false
+		for element in self {
+			if  closure(element as AnyObject) {
+				result = true
+				break
+			}
+		}
+		return result
+	}
+
     func applyIntoString(closure: AnyToStringClosure) -> String {
-        var separator = ""
-        var    string = ""
+        var separator = kEmpty
+        var    string = kEmpty
 
         for object in self {
             if let message = closure(object) {
@@ -1154,7 +1394,7 @@ extension Array {
                 if  separator.isEmpty {
                     separator.appendSpacesToLength(kLogTabStop)
 
-                    separator = "\n\(separator)"
+                    separator = kNewLine + separator
                 }
             }
         }
@@ -1180,28 +1420,30 @@ extension Array {
 		return result
 	}
 
-	func contains(_ other: Any?) -> Bool {
+	func containsAnyOf(_ other: Any?) -> Bool {
 		return (other == nil) ? false : containsCompare(with: other) { (item, another) in
 			return item === another
 		}
 	}
 
     func containsCompare(with other: Any?, using: CompareClosure? = nil) -> Bool {
+
+		// TODO: use a dictionary of record names : records
+
         if  let compare = using,
 			let to = other as AnyObject? {
             for item in self {
                 if  compare(item as AnyObject, to) {
-                    return true     // true means match
+                    return true     // true means has a match
                 }
             }
         }
         
-        return false    // false means unique / missing
+        return false    // false means has no match
     }
 
 	mutating func insertUnique(item: Any?, at index: Int = 0, compare: CompareClosure? = nil) {
 		if  let e = item as? Element,
-			!self.contains(item),
 			!containsCompare(with: item, using: compare) {
 			insert(e, at: index)
 		}
@@ -1209,9 +1451,17 @@ extension Array {
 
 	@discardableResult mutating func appendUnique(item: Any?, compare: CompareClosure? = nil) -> Bool {
 		if  let e = item as? Element,
-			!self.contains(item),
 			!containsCompare(with: item, using: compare) {
 			append(e)
+			return true
+		}
+		return false
+	}
+
+	@discardableResult mutating func prependUnique(item: Any?, compare: CompareClosure? = nil) -> Bool {
+		if  let e = item as? Element,
+			!containsCompare(with: item, using: compare) {
+			insert(e, at: 0)
 			return true
 		}
 		return false
@@ -1229,39 +1479,24 @@ extension Array {
 	}
 
 	mutating func appendUniqueAndRemoveDuplicates(contentsOf items: Array, compare: CompareClosure? = nil) {
-		let   existing = self as NSArray
-		var duplicates = Array<Int>()
+		let    existing = self as NSArray
+		var iDuplicates = Array<Int>()
 
 		for (index, item) in items.enumerated() {
 			if  existing.contains(item) || containsCompare(with: item as AnyObject, using: compare) {
-				duplicates.insert(index, at: 0)
+				iDuplicates.insert(index, at: 0)
 			} else {
 				append(item)
 			}
 		}
 
-		for index in duplicates {
+		for index in iDuplicates {
 			if  count > index {
 				remove(at: index)
 			}
 		}
 	}
 
-}
-
-extension ZRecordsArray {
-
-	var recordNames: [String] {
-		var  names = [String]()
-
-		for zRecord in self {
-			if  let name = zRecord.ckRecordName {
-				names.append(name)
-			}
-		}
-
-		return names
-	}
 }
 
 extension CKReferencesArray {
@@ -1274,11 +1509,11 @@ extension CKReferencesArray {
 
 	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
 		return map { ckReference -> Zone in
-			return gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord(CKRecord(recordType: kZoneType, recordID: ckReference.recordID))
+			return Zone.uniqueZone(recordName: ckReference.recordID.recordName, in: dbID)
 		}
 	}
 
-	var asRecordNames: [String] {
+	var asRecordNames: StringsArray {
 		return map { ckReference -> String in
 			return ckReference.recordID.recordName
 		}
@@ -1288,19 +1523,37 @@ extension CKReferencesArray {
 
 extension ZRecordsArray {
 
+	static func createFromObjectIDs(_ ids: ZObjectIDsArray, in context: NSManagedObjectContext) -> ZRecordsArray {
+		var zRecords = ZRecordsArray()
+
+		for  id in ids {
+			if  let zRecord = context.object(with: id) as? ZRecord {
+				zRecords.append(zRecord)
+			}
+		}
+
+		return zRecords
+	}
+
+	var recordNames: StringsArray {
+		var  names = StringsArray()
+
+		for zRecord in self {
+			if  let name = zRecord.recordName {
+				names.append(name)
+			}
+		}
+
+		return names
+	}
+
 	func createStorageArray(from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
 		if  count > 0 {
 			var result = [ZStorageDictionary] ()
 
 			for zRecord in self {
-//				if  let      zone  = zRecord as? Zone,
-//					zone.zoneName == kLostAndFoundName,
-//					zone.isInFavorites {
-//					print("hah! found it")
-//				}
-
-				if  zRecord.ckRecord == nil {
-					printDebug(.dFile, "no record: \(zRecord)")
+				if  zRecord.recordName == nil {
+					printDebug(.dFile, "no record name: \(zRecord)")
 				} else if (allowEach == nil || allowEach!(zRecord)),
 						  let dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 
@@ -1324,10 +1577,22 @@ extension ZRecordsArray {
 		return nil
 	}
 
+	func appending(_ records: ZRecordsArray?) -> ZRecordsArray {
+		if  let  more = records {
+			var union = ZRecordsArray()
+			union.append(contentsOf: self)
+			union.append(contentsOf: more)
+
+			return union
+		}
+
+		return self
+	}
+
 	@discardableResult mutating func appendUnique(item: ZRecord) -> Bool {
 		return appendUnique(item: item) { (a, b) -> (Bool) in
-			if  let    aName  = (a as? ZRecord)?.ckRecordName,
-				let    bName  = (b as? ZRecord)?.ckRecordName {
+			if  let    aName  = (a as? ZRecord)?.recordName,
+				let    bName  = (b as? ZRecord)?.recordName {
 				return aName ==  bName
 			}
 
@@ -1337,37 +1602,12 @@ extension ZRecordsArray {
 
 	func containsMatch(to other: AnyObject) -> Bool {
 		return containsCompare(with: other) { (a, b) in
-			if  let    aName  = (a as? ZRecord)?.ckRecordName,
-				let    bName  = (b as? ZRecord)?.ckRecordName {
+			if  let    aName  = (a as? ZRecord)?.recordName,
+				let    bName  = (b as? ZRecord)?.recordName {
 				return aName ==  bName
 			}
 
 			return false
-		}
-	}
-
-}
-
-extension CKRecordsArray {
-
-	@discardableResult mutating func appendUnique(item: CKRecord) -> Bool {
-		return appendUnique(item: item) { (a, b) -> (Bool) in
-			if  let aRecordName = (a as? CKRecord)?.recordID.recordName,
-				let bRecordName = (b as? CKRecord)?.recordID.recordName {
-				return aRecordName == bRecordName
-			}
-
-			return false
-		}
-	}
-
-	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
-		return self.filter { $0.recordType == kZoneType }.map { gRemoteStorage.cloud(for: dbID)!.sureZoneForCKRecord($0) }
-	}
-
-	var asRecordNames: [String] {
-		return map { ckRecord -> String in
-			return ckRecord.recordID.recordName
 		}
 	}
 
@@ -1379,7 +1619,6 @@ extension NSRange {
 
 	func insetBy   (_ inset:  Int)    -> NSRange { return NSRange(location:  inset + location, length: length - (inset * 2)) }
 	func offsetBy  (_ offset: Int)    -> NSRange { return NSRange(location: offset + location, length: length) }
-	func contains  (_ other: NSRange) ->    Bool { return inclusiveIntersection(other) == other }
 	func intersects(_ other: NSRange) ->    Bool { return intersection(other) != nil }
 
 	func extendedBy(_ increment: Int) -> NSRange {
@@ -1408,6 +1647,24 @@ extension NSRange {
 
 }
 
+extension NSCursor {
+
+	class func fourArrows() -> NSCursor? {
+		let     length = CGFloat(20)
+		let halfLength = length / 2.0
+		let       size = CGSize.squared(length)
+		let    hotSpot = CGPoint(x: halfLength, y: halfLength)
+		if  let  image = kFourArrowsImage {
+			image.size = size
+
+			return NSCursor(image: image, hotSpot: hotSpot)
+		}
+
+		return nil
+	}
+
+}
+
 extension NSTextTab {
 
 	var string: String {
@@ -1415,7 +1672,7 @@ extension NSTextTab {
 	}
 
 	convenience init(string: String) {
-		var location: CGFloat = 0.0
+		var location: CGFloat = .zero
 		var alignment = NSTextAlignment.natural
 
 		let parts = string.componentsSeparatedAt(level: 5)
@@ -1438,6 +1695,8 @@ extension NSMutableParagraphStyle {
 
 	var string: String {
 		var result = kAlignment + gSeparatorAt(level: 3) + "\(alignment.rawValue)"
+		let indent = firstLineHeadIndent
+		let  lists = textLists
 
 		if  let stops = tabStops {
 			result.append(gSeparatorAt(level: 2) + kStops)
@@ -1445,6 +1704,21 @@ extension NSMutableParagraphStyle {
 			for stop in stops {
 				result.append(gSeparatorAt(level: 3) + stop.string)
 			}
+		}
+
+		if  indent > .zero {
+			result.append(gSeparatorAt(level: 2) + kIndent)
+			result.append(gSeparatorAt(level: 3) + "\(indent.roundedToNearestInt)")
+		}
+
+		result.append(gSeparatorAt(level: 2) + kLists)
+
+		for list in lists {
+			let  format = list.markerFormat.rawValue
+			let options = "\(list.listOptions.rawValue)"
+
+			result.append(gSeparatorAt(level: 3) + format)
+			result.append(gSeparatorAt(level: 4) + options)
 		}
 
 		return result
@@ -1457,18 +1731,44 @@ extension NSMutableParagraphStyle {
 
 		for part in parts {
 			let subparts = part.componentsSeparatedAt(level: 3)
+			let    count = subparts.count
+			var    index = 1
 
-			if  subparts.count > 1 {
+			if  count > 1 {
 				switch subparts[0] {
 					case kAlignment:
 						if  let   raw = subparts[1].integerValue,
 							let     a = NSTextAlignment(rawValue: raw) {
 							alignment = a
 						}
-					case kStops:  // TODO: can have more than one stop
-						let string = subparts[1]
-						let   stop = NSTextTab(string: string)
-						tabStops   = [stop]
+					case kIndent:
+						if  let             raw = subparts[1].integerValue {
+							let          indent = CGFloat(raw) + 6.0 // 8 pixel gap between dot and title
+							firstLineHeadIndent = indent
+						}
+					case kLists:
+						var       lists = [NSTextList]()
+						while     index < count {
+							let subpart = subparts[index]
+							let subsubs = subpart.componentsSeparatedAt(level: 4)
+							let  format = NSTextList.MarkerFormat(subsubs[0])
+							let options = 0 // Int(subsubs[1]) ?? 0
+							index      += 1
+
+							lists.append(NSTextList(markerFormat: format, options: options))
+						}
+
+						textLists = lists
+					case kStops:
+						var       stops = [NSTextTab]()
+						while     index < count {
+							let subpart = subparts[index]
+							index      += 1
+
+							stops.append(NSTextTab(string: subpart))
+						}
+
+						tabStops       = stops
 					default: break
 				}
 			}
@@ -1482,17 +1782,23 @@ extension ZFont {
 	var string: String { return fontDescriptor.string }
 
 	convenience init(string: String) {
-		let descriptor = NSFontDescriptor(string: string)
+		let descriptor = ZFontDescriptor(string: string)
 
 		self.init(descriptor: descriptor, textTransform: nil)!
 	}
+
+	func withTraits(_ traits: ZFontDescriptor.SymbolicTraits...) -> ZFont {
+		let descriptor = self.fontDescriptor.withSymbolicTraits(ZFontDescriptor.SymbolicTraits(traits))
+
+		return ZFont(descriptor: descriptor, size: descriptor.pointSize) ?? self
+	}
 }
 
-extension NSFontDescriptor {
+extension ZFontDescriptor {
 
 	var string: String {
-		var result = ""
-		var separator = ""
+		var    result = kEmpty
+		var separator = kEmpty
 
 		for (name, attribute) in fontAttributes {
 			result.append(separator + name.rawValue + gSeparatorAt(level: 3) + "\(attribute)")
@@ -1504,14 +1810,14 @@ extension NSFontDescriptor {
 
 	convenience init(string: String) {
 		let parts = string.modern.componentsSeparatedAt(level: 2)
-		var dict  = [NSFontDescriptor.AttributeName : Any]()
+		var dict  = [ZFontDescriptor.AttributeName : Any]()
 
 		for part in parts {
 			let subparts   = part.componentsSeparatedAt(level: 3)
 			if  subparts.count > 1 {
 				let    key = subparts[0]
 				let  value = subparts[1]
-				let   name = NSFontDescriptor.AttributeName(key)
+				let   name = ZFontDescriptor.AttributeName(key)
 
 				dict[name] = value
 			}
@@ -1519,22 +1825,18 @@ extension NSFontDescriptor {
 
 		self.init(fontAttributes: dict)
 	}
-}
 
-struct ZRangedAttachment {
-	let range: NSRange
-	let attachment: NSTextAttachment
 }
 
 extension NSMutableAttributedString {
 
-	var allKeys: [NSAttributedString.Key]     { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
+	var allKeys: [NSAttributedString.Key] { return [.font, .link, .attachment, .paragraphStyle, .foregroundColor, .backgroundColor] }
 
 	var linkRanges: [NSRange] {
 		let range = NSRange(location: 0, length: length)
 		var found = [NSRange]()
 
-		enumerateAttribute(.link, in: range, options: []) { (item, inRange, flag) in
+		enumerateAttribute(.link, in: range, options: []) { (_, inRange, _) in
 			if  inRange.length < 100 {
 				found.append(inRange)
 			}
@@ -1543,13 +1845,13 @@ extension NSMutableAttributedString {
 		return found
 	}
 
-	var rangedAttachments: [ZRangedAttachment] {
+	var rangedAttachments: ZRangedAttachmentArray {
 		let range = NSRange(location: 0, length: length)
-		var found = [ZRangedAttachment]()
+		var found = ZRangedAttachmentArray()
 
-		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, flag) in
+		enumerateAttribute(.attachment, in: range, options: .reverse) { (item, inRange, _) in
 			if  let attach = item as? NSTextAttachment {
-				let append = ZRangedAttachment(range: inRange, attachment: attach)
+				let append = ZRangedAttachment(glyphRange: inRange, attachment: attach)
 
 				found.append(append)
 			}
@@ -1558,8 +1860,8 @@ extension NSMutableAttributedString {
 		return found
 	}
 
-	var imageFileNames: [String] {
-		var names = [String]()
+	var imageFileNames: StringsArray {
+		var names = StringsArray()
 
 		for rangedAttach in rangedAttachments {
 			if  let name = rangedAttach.attachment.fileWrapper?.preferredFilename {
@@ -1584,11 +1886,10 @@ extension NSMutableAttributedString {
 
 	var attachedImages: [ZImage] {
 		let array: [ZImage?] = attachmentCells.map { $0.image }
-
-		var result = [ZImage]()
+		var result           = [ZImage]()
 
 		for item in array {
-			if  let image = item {
+			if  let image    = item {
 				result.append(image)
 			}
 		}
@@ -1596,18 +1897,28 @@ extension NSMutableAttributedString {
 		return result
 	}
 
+	func rangedAttachment(in range: NSRange) -> ZRangedAttachment? {
+		for attach in rangedAttachments {
+			if  range.intersects(attach.glyphRange) {
+				return attach
+			}
+		}
+
+		return nil
+	}
+
 	var attributesAsString: String {
 		get { return attributeStrings.joined(separator: gSeparatorAt(level: 1)) }
 		set { attributeStrings = newValue.componentsSeparatedAt(level: 1) }
 	}
 
-	var attributeStrings: [String] {
+	var attributeStrings: StringsArray {
 		get {
-			var result = [String]()
+			var result = StringsArray()
 			let  range = NSRange(location: 0, length: length)
 
 			for key in allKeys {
-				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, flag) in
+				enumerateAttribute(key, in: range, options: .reverse) { (item, inRange, _) in
 					var string: Any?
 
 					if  let value      = item {
@@ -1643,31 +1954,31 @@ extension NSMutableAttributedString {
 		}
 
 		set {
-			for string in newValue {
-				let      parts = string.componentsSeparatedAt(level: 4)
-				if       parts.count > 3,
-					let  start = parts[0].integerValue,
-					let  count = parts[1].integerValue {
-					let    raw = parts[2]
-					let string = parts[3]
-					let    key = NSAttributedString.Key(rawValue: raw)
-					let  range = NSRange(location: start, length: count)
+			for item in newValue {
+				let     parts = item.componentsSeparatedAt(level: 4)
+				if      parts.count > 3,
+					let start = parts[0].integerValue,
+					let count = parts[1].integerValue {
+					let   raw = parts[2]
+					let value = parts[3]
+					let   key = NSAttributedString.Key(rawValue: raw)
+					let range = NSRange(location: start, length: count)
 					var attribute: Any?
 
 					switch key {
-						case .link:            attribute =                                    string
-						case .font:            attribute = ZFont 		   		     (string: string)
-						case .attachment:      attribute = gCurrentTrait?.textAttachment(for: string)
+						case .link:            attribute =                                    value
+						case .font:            attribute = ZFont 		   		     (string: value)
+						case .attachment:      attribute = gCurrentTrait?.textAttachment(for: value)
 						case .foregroundColor,
-							 .backgroundColor: attribute = ZColor				     (string: string)
-						case .paragraphStyle:  attribute = NSMutableParagraphStyle   (string: string)
+							 .backgroundColor: attribute = ZColor				     (string: value)
+						case .paragraphStyle:  attribute = NSMutableParagraphStyle   (string: value)
 						default:    		   break
 					}
 
-					if  let value = attribute {
-						printDebug(.dNotes, "add attribute over \(range) for \(raw): \(value)")
+					if  let v = attribute {
+						printDebug(.dNotes, "add attribute over \(range) for \(raw): \(v)")
 
-						addAttribute(key, value: value, range: range)
+						addAttribute(key, value: v, range: range)
 					}
 				}
 			}
@@ -1703,39 +2014,32 @@ extension NSMutableAttributedString {
 	}
 
 	func fixAllAttributes() {
-		fixAttributes(in: NSRange(location: 0, length: self.length))
+		fixAttributes(in: NSRange(location: 0, length: length))
 	}
 
 }
 
-extension NSTextAttachmentCell {
+extension NSDraggingInfo {
 
-	var frame: CGRect {
-		return CGRect(origin: attachment?.bounds.origin ?? CGPoint.zero, size: cellSize())
+	var pasteboardArray : NSArray? {
+		return draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray
 	}
+
 }
 
 extension ZImage {
 
-	func resize(_ newSize: CGSize) -> NSImage {
-		let newImage = NSImage(size: newSize)
-		newImage.lockFocus()
-		draw(in: CGRect(origin: .zero, size: newSize), from: CGRect(origin: .zero, size: size), operation: .sourceOver, fraction: CGFloat(1))
-		newImage.unlockFocus()
-		return newImage
-	}
-
 	var invertedImage: ZImage? {
-		if  let   tiffData = tiffRepresentation,
-			let     bitMap = NSBitmapImageRep(data: tiffData) {
-			let beginImage = CIImage(bitmapImageRep: bitMap)
-
-			if  let filter = CIFilter(name: "CIColorInvert") {
+		if  let          tiffData = tiffRepresentation,
+			let            bitMap = NSBitmapImageRep(data: tiffData) {
+			let        beginImage = CIImage(bitmapImageRep: bitMap)
+			if  let        filter = CIFilter(name: "CIColorInvert") {
 				filter.setValue(beginImage, forKey: kCIInputImageKey)
 
-				if  let filtered = filter.outputImage {
-					let imageRep = NSCIImageRep(ciImage: filtered)
-					let newImage = NSImage(size: imageRep.size)
+				if  let  filtered = filter.outputImage {
+					let  imageRep = NSCIImageRep(ciImage: filtered)
+					let  newImage = NSImage(size: imageRep.size)
+					newImage.size = size
 
 					newImage.addRepresentation(imageRep)
 
@@ -1749,42 +2053,50 @@ extension ZImage {
 
 }
 
+extension NSTextAttachmentCell {
+
+	var frame: CGRect {
+		return CGRect(origin: attachment?.bounds.origin ?? CGPoint.zero, size: cellSize())
+	}
+
+}
+
 extension NSTextAttachment {
 
-	var image: ZImage? {
+	var cellImage: ZImage? {
 		get {
-			if  let cell = attachmentCell as? NSTextAttachmentCell {
-				return cell.image
+			if  let             cell = attachmentCell as? ZImageAttachmentCell {
+				return          cell.original?.image
 			}
 
 			return nil
 		}
 
 		set {
-			if  let   cell = attachmentCell as? NSTextAttachmentCell {
-				cell.image = newValue
+			if  let             cell = attachmentCell as? ZImageAttachmentCell {
+				cell.original?.image = newValue
 			}
 		}
-	}
-
-	func refreshImage() {
-		// how?
 	}
 
 }
 
 extension String {
-    var   asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
-    var   asciiValue:  UInt32  { return asciiArray[0] }
-    var           length: Int  { return unicodeScalars.count }
-	var         isHyphen: Bool { return self == "-" }
-    var          isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
-    var   isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
-    var          isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
-	var containsNonAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
-	var  containsNonTabs: Bool { return filter{ $0 != kTab.first}.count != 0 }
-    var       isOpposite: Bool { return "]}>)".contains(self) }
-	var     isDashedLine: Bool { return contains(kHalfLineOfDashes) }
+    var        asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
+    var        asciiValue:  UInt32  { return asciiArray[0] }
+	var       smartStripped: String { return substring(fromInclusive: 4).spacesStripped }
+	var   components: StringsArray? { return components(separatedBy: kColonSeparator) }
+    var                length:  Int { return unicodeScalars.count }
+	var              isHyphen: Bool { return self == kHyphen }
+    var               isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
+    var        isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
+    var               isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
+	var       containsNoAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
+	var        containsNoTabs: Bool { return filter{ $0 != kTab.first}.count != 0 }
+    var            isOpposite: Bool { return "]}>)".contains(self) }
+	var          isDashedLine: Bool { return contains(kHalfLineOfDashes) }
+	var           isValidLink: Bool { return components != nil }
+	var  containsLineEndOrTab: Bool { return hasMatchIn(kLineEndingsAndTabArray) }
 
     var opposite: String {
 		switch self {
@@ -1800,16 +2112,42 @@ extension String {
 		}
     }
 
+	var unescaped: String {
+		var     result    = "\(self)"
+		for character in "\\\n\r\t\"\'" {
+			let separator = "\(character)"
+			if  result.contains(separator) {
+				result    = result.replacingOccurrences(of: separator, with: kEmpty)
+			}
+		}
+
+		return result
+	}
+
     var escaped: String {
-        var result = "\(self)"
+        var     result    = "\(self)"
         for character in "\\\"\'`" {
             let separator = "\(character)"
-            let components = result.components(separatedBy: separator)
-            result = components.joined(separator: kBackSlash + separator)
+			if  result.contains(separator) {
+				result    = result.replacingOccurrences(of: separator, with: kBackSlash + separator)
+			}
         }
 
         return result
     }
+
+	var escapeCommasWithinQuotes: String {
+		let parts = components(separatedBy: "\"")
+
+		if  parts.count > 2 {
+			let  bad = parts[1]
+			let good = bad.replacingOccurrences(of: kCommaSeparator, with: kUncommonSeparator)
+
+			return parts[0] + good + parts[2]
+		}
+
+		return self
+	}
 
     var spacesStripped: String {
         var before = self
@@ -1825,21 +2163,6 @@ extension String {
         return before
     }
 
-    /// remove underline from leading spaces
-
-	var smartStripped: String {     //
-        var altered = substring(fromInclusive: 4)
-//        let lastIndex = altered.length - 1
-//
-//        if  altered[lastIndex] == "+" {
-//            altered = altered.substring(toExclusive: lastIndex)
-//        }
-
-        altered = altered.spacesStripped
-
-        return altered
-    }
-
 	var modern: String {
 		return replacingOccurrences(of: kLevelOneSeparator,   with: gSeparatorAt(level: 1))
 			.replacingOccurrences  (of: kLevelTwoSeparator,   with: gSeparatorAt(level: 2))
@@ -1849,32 +2172,93 @@ extension String {
 
 	var searchable: String {
 		return lowercased()
-			.replacingEachCharacter(in: ",;@!(){}\\\"",              with: "")
-			.replacingEachCharacter(in: ".:_-='?/\r\n",              with: " ")
-			.replacingEachString   (in: ["%2f", "%3a", "   ", "  "], with: " ")
+			.replacingEachCharacter(in: ",;@!(){}\\\"",              with: kEmpty)
+			.replacingEachCharacter(in: ".:_-='?/\r\n",              with: kSpace)
+			.replacingEachString   (in: ["%2f", "%3a", "   ", "  "], with: kSpace)
 	}
 
 	var unCamelcased: String {
-		guard self.count > 0 else { return self }
+		guard count > 0 else { return self }
 
-		var newString: String = ""
-		let         uppercase = CharacterSet.uppercaseLetters
-		let             first = unicodeScalars.first!
+		var newString = kEmpty
+		let uppercase = CharacterSet.uppercaseLetters
+		let     first = unicodeScalars.first!
 
 		newString.append(Character(first))
 
 		for scalar in unicodeScalars.dropFirst() {
 			if  uppercase.contains(scalar) {
-				newString.append(" ")
+				newString.append(kSpace)
 			}
-			let character = Character(scalar)
-			newString.append(character)
+
+			newString.append(Character(scalar))
 		}
 
 		return newString.lowercased()
 	}
 
-	func componentsSeparatedAt(level: Int) -> [String] {
+	// MARK: - bookmarks
+	// MARK: -
+
+	var maybeRecordName: String? {
+		if  let   parts  = components, parts.count > 1 {
+			let    name  = parts[2]
+			return name != kEmpty ? name : kRootName // by design: empty component means root
+		}
+
+		return nil
+	}
+
+	var maybeDatabaseID: ZDatabaseID? {
+		if  let   parts  = components {
+			let    dbID  = parts[0]
+			return dbID == kEmpty ? nil : ZDatabaseID(rawValue: dbID)
+		}
+
+		return nil
+	}
+
+	var maybeZone: Zone? {
+		if  self             != kEmpty,
+			let          name = maybeRecordName,
+			let         parts = components {
+			let rawIdentifier = parts[0]
+			let          dbID = rawIdentifier == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
+			let      zRecords = gRemoteStorage.zRecords(for: dbID)
+			let          zone = zRecords?.maybeZoneForRecordName(name)
+
+			return zone
+		}
+
+		return nil
+	}
+
+	var rootID: ZRootID? {
+		switch self {
+			case          kRootName: return .rootID
+			case         kTrashName: return .trashID
+			case       kDestroyName: return .destroyID
+			case  kLostAndFoundName: return .lostID
+			case kFavoritesRootName: return .favoritesID
+			default:                 return nil
+		}
+	}
+
+	func hasMatchIn(_ array: StringsArray) -> Bool {
+		var index = array.count - 1
+
+		while index >= 0 {
+			if  contains(array[index]) {
+				return true
+			}
+
+			index -= 1
+		}
+
+		return false
+	}
+
+	func componentsSeparatedAt(level: Int) -> StringsArray {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}
 
@@ -1888,7 +2272,7 @@ extension String {
 		return result
 	}
 
-	func replacingEachString(in matchAgainst: [String], with: String) -> String {
+	func replacingEachString(in matchAgainst: StringsArray, with: String) -> String {
 		var result = self
 		for string in matchAgainst {
 			result = result.replacingOccurrences(of: string, with: with)
@@ -1898,9 +2282,9 @@ extension String {
 	}
 
 	var asBundleResource: String? {
-		var    parts = components(separatedBy: ".")
+		var    parts = components(separatedBy: kDotSeparator)
 		let     last = parts.removeLast()
-		let resource = parts.joined(separator: ".")
+		let resource = parts.joined(separator: kDotSeparator)
 
 		return Bundle.main.path(forResource: resource, ofType: last)
 	}
@@ -1917,18 +2301,17 @@ extension String {
         return self[i ..< i + 1]
     }
 
-	static func pluralized(_ iValue: Int, unit: String = "", plural: String = "s", followedBy: String = "") -> String { return iValue <= 0 ? "" : "\(iValue) \(unit)\(iValue == 1 ? "" : "\(plural)")\(followedBy)" }
+	static func pluralized(_ iValue: Int, unit: String = kEmpty, plural: String = "s", followedBy: String = kEmpty) -> String { return iValue <= 0 ? kEmpty : "\(iValue) \(unit)\(iValue == 1 ? kEmpty : "\(plural)")\(followedBy)" }
     static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
     func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
     func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
-    func widthForFont  (_ font: ZFont) -> CGFloat { return sizeWithFont(font).width + 4.0 }
 
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
 		let within = substring(with: iRange)
 		let bounds = within.rectWithFont(font)
 		let xDelta = offset(using: font, for: iRange, atStart: atStart)
         
-        return bounds.offsetBy(dx: xDelta, dy: 0.0)
+        return bounds.offsetBy(dx: xDelta, dy: .zero)
     }
 
     func offset(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGFloat {
@@ -1939,7 +2322,7 @@ extension String {
         let          width = selection     .sizeWithFont(font).width
         let     startWidth = startSelection.sizeWithFont(font).width
         
-        return startWidth + (atStart ? 0.0 : width)    // move down, use right side of selection
+        return startWidth + (atStart ? .zero : width)    // move down, use right side of selection
     }
 
 	var integerValue: Int? {
@@ -1963,30 +2346,42 @@ extension String {
     }
 
     var color: ZColor? {
-        if self != "" {
+		if  self == kEmpty {        // special case
+			return nil
+		} else {
             let pairs = components(separatedBy: kCommaSeparator)
-            var   red = 0.0
-            var  blue = 0.0
-            var green = 0.0
+			var green = Double.zero
+			var  blue = Double.zero
+			var   red = Double.zero
 
-            for pair in pairs {
-                let values = pair.components(separatedBy: kColonSeparator)
-                let  value = Double(values[1])!
-                let    key = values[0]
+			if  pairs.count > 2 {
+				for pair in pairs {
+					let values = pair.components(separatedBy: kColonSeparator)
+					let  value = Double(values[1])!
+					let    key = values[0]
 
-				switch key {
-					case   "red":   red = value
-					case  "blue":  blue = value
-					case "green": green = value
-					default:      break
+					switch key {
+						case "green": green = value
+						case  "blue":  blue = value
+						case   "red":   red = value
+						default:              break
+					}
 				}
-            }
+			}
 
             return ZColor(red: CGFloat(red), green: CGFloat(green), blue: CGFloat(blue), alpha: 1.0)
         }
-
-        return nil
     }
+
+	var darkAdaptedTitle: NSAttributedString {
+		let color = gIsDark ? kDarkestGrayColor : kBlackColor
+		let title = NSMutableAttributedString(string: self)
+		let range = NSRange(location: 0, length: length)
+
+		title.addAttribute(.foregroundColor, value: color, range: range)
+
+		return title
+	}
 
     func index(at: Int) -> Index {
         var position = at
@@ -2030,7 +2425,7 @@ extension String {
             after = after.substring(fromInclusive: 1) // strip starting space
         }
 
-        while before.ends(withAnyCharacterIn: kSpace) && after == "" {
+        while before.ends(withAnyCharacterIn: kSpace) && after == kEmpty {
             before = before.substring(toExclusive: before.length - 1) // strip trailing space
         }
 
@@ -2062,7 +2457,7 @@ extension String {
 
     func location(of offset: CGFloat, using font: ZFont) -> Int {
         var location = 0
-        var total = CGFloat(0.0)
+        var    total = CGFloat(0)
         
         for (index, character) in enumerated() {
             let width = String(character).sizeWithFont(font).width
@@ -2082,15 +2477,15 @@ extension String {
     }
 
     func character(at iOffset: Int) -> String {
-        let index = self.index(startIndex, offsetBy: iOffset)
+        let i = index(startIndex, offsetBy: iOffset)
 
-        return self[index].description
+        return self[i].description
     }
 
 	mutating func appendSpacesToLength(_ iLength: Int) {
 		if 0 < iLength {
 			while length < iLength {
-				append(" ")
+				append(kSpace)
 			}
 		}
 	}
@@ -2120,61 +2515,35 @@ extension String {
         return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
 
-    static func forZones(_ zones: ZoneArray?) -> String {
-        return zones?.applyIntoString()  { object -> (String?) in
-            if  let zone  = object as? Zone {
-                let name  = zone.decoratedName
-                if  name != "" {
-                    return name
-                }
-            }
+	static func forZones(_ zones: ZoneArray?) -> String {
+		return zones?.applyIntoString()  { object -> (String?) in
+			if  let zone  = object as? Zone {
+				let name  = zone.decoratedName
+				if  name != kEmpty {
+					return name
+				}
+			}
 
-            return nil
-            } ?? ""
-    }
+			return nil
+		} ?? kEmpty
+	}
 
-    static func forCKRecords(_ records: CKRecordsArray?) -> String {
-        return records?.applyIntoString() { object -> (String?) in
-            if  let  record  = object as? CKRecord {
-                let    name  = record.decoratedName
-                if     name != "" {
-                    return name
-                }
-            }
-
-            return nil
-            } ?? ""
-    }
-
-    static func forReferences(_ references: CKReferencesArray?, in databaseID: ZDatabaseID) -> String {
-        return references?.applyIntoString()  { object -> (String?) in
-            if let reference = object as? CKReference, let zone = gRemoteStorage.zRecords(for: databaseID)?.maybeZoneForReference(reference) {
-                let    name  = zone.decoratedName
-                if     name != "" {
-                    return name
-                }
-            }
-
-            return nil
-            } ?? ""
-    }
-
-    static func forOperationIDs (_ iIDs: ZOperationIDsArray?) -> String {
+    static func forOperationIDs (_ iIDs: ZOpIDsArray?) -> String {
         return iIDs?.applyIntoString()  { object -> (String?) in
             if  let operation  = object as? ZOperationID {
                 let name  = "\(operation)"
-                if  name != "" {
+                if  name != kEmpty {
                     return name
                 }
             }
 
             return nil
-            } ?? ""
+            } ?? kEmpty
     }
 
     static func *(_ input: String, _ multiplier: Int) -> String {
         var  count = multiplier
-        var output = ""
+        var output = kEmpty
 
         while count > 0 {
             count  -= 1
@@ -2195,10 +2564,10 @@ extension String {
     }
 
     static func toRoman(number: Int) -> String {
-        let romanValues = ["m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"]
-        let arabicValues = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        let   romanValues = ["m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"]
+        let  arabicValues = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
         var startingValue = number
-        var romanValue = ""
+        var    romanValue = kEmpty
 
         for (index, romanChar) in romanValues.enumerated() {
             let arabicValue = arabicValues[index]
@@ -2263,9 +2632,9 @@ extension String {
 		return nil
 	}
 
-	func repeatOf(_ length: Int) -> String {
+	func repeatedFor(_ length: Int) -> String {
 		var  count = length
-		var result = ""
+		var result = kEmpty
 
 		while count > 0 {
 			count -= 1
@@ -2277,28 +2646,61 @@ extension String {
 	}
 
 	func surround(with repeater: String) -> String {
-		let inner = smallSurround(with: " ").smallSurround(with: repeater)
-		let outer = repeater.repeatOf(count + 8)
+		let inner = smallSurround(with: kSpace).smallSurround(with: repeater)
+		let outer = repeater.repeatedFor(count + 8)
 
-		if  repeater == "" {
-			return "\n\(inner)\n"
+		if  repeater == kEmpty {
+			return kNewLine + inner + kNewLine
 		} else {
-			return "\n\(outer)\n\(inner)\n\(outer)\n"
+			return kNewLine + outer + kNewLine + inner + kNewLine + outer + kNewLine
 		}
 	}
 
-	func smallSurround(with repeater: String) -> String {
-		let small = repeater.repeatOf(2)
+	func smallSurround(with repeater: String, repeating: Int = 2) -> String {
+		let small = repeater.repeatedFor(repeating)
 
 		return "\(small)\(self)\(small)"
+	}
+
+	func draw(at point: CGPoint, angle: CGFloat, andAttributes attributes: [NSAttributedString.Key : Any]) {
+		let transform = NSAffineTransform()
+		let    offset = CGPoint((self as NSString).size(withAttributes: attributes).dividedInHalf)
+
+		transform.translateX(by: point.x, yBy: point.y)
+		transform.rotate(byRadians: angle)
+		draw(at: .zero - offset, withAttributes: attributes)
+	}
+
+	func rangeOfParagraph(for range: NSRange) -> NSRange {
+		var   result = range
+		while result.location > 0,
+			  substring(with: result)[0] != kReturn {
+			result = result.extendedBy(-1)
+		}
+
+		return result
+	}
+
+}
+
+extension NSPredicate {
+
+	func and(_ predicate: NSPredicate) -> NSPredicate {
+		return NSCompoundPredicate(andPredicateWithSubpredicates: [predicate, self])
+	}
+
+	func or(_ predicate: NSPredicate) -> NSPredicate {
+		return NSCompoundPredicate(orPredicateWithSubpredicates: [predicate, self])
 	}
 
 }
 
 extension Character {
-    var asciiValue: UInt32? {
+
+	var asciiValue: UInt32? {
         return String(self).unicodeScalars.first?.value
     }
+
 }
 
 extension Data {
@@ -2317,6 +2719,58 @@ extension Data {
 		return nil
 	}
 
+	func storeFor(_ key: String) {
+		let query = [
+			kSecValueData   as String : self,
+			kSecAttrAccount as String : key,
+			kSecClass       as String : kSecClassGenericPassword as String
+		] as CFDictionary
+
+		SecItemDelete(query)
+		SecItemAdd   (query, nil)
+	}
+
+	static func loadFor(_ key: String) -> Data? {
+		let query = [
+			kSecClass       as String : kSecClassGenericPassword as String,
+			kSecAttrAccount as String : key,
+			kSecReturnData  as String : kCFBooleanTrue!,
+			kSecMatchLimit  as String : kSecMatchLimitOne
+		] as CFDictionary
+
+		var dataTypeRef : AnyObject? = nil
+
+		if  SecItemCopyMatching(query as CFDictionary, &dataTypeRef) == noErr {
+			return dataTypeRef as! Data?
+		}
+
+		return nil
+	}
+
+	func extractJSONDict() -> ZStringObjectDictionary? {
+		do {
+			if  let    json = try JSONSerialization.jsonObject(with: self) as? ZStringObjectDictionary {
+				return json
+			}
+		} catch {
+			printDebug(.dError, "\(error)")    // de-serialization
+		}
+		return nil
+	}
+
+	func extractCSV() -> [StringsArray] {
+		var           rows  = [StringsArray]()
+		if  let     string  = String(data: self, encoding: .ascii)?.substring(fromInclusive: 3) {
+			let      items  = string.components(separatedBy: kNewLine)
+			for item in items {
+				let fields  = item.escapeCommasWithinQuotes.components(separatedBy: kCommaSeparator)
+				rows.append(fields)
+			}
+		}
+
+		return rows
+	}
+
 }
 
 extension ZColor {
@@ -2333,23 +2787,22 @@ extension ZColor {
 		return ZColor(red: (rLeft + rRight) / 2, green: (gLeft + gRight) / 2, blue: (bLeft + bRight) / 2, alpha: (aLeft + aRight) / 2)
 	}
 
+	func withAlpha(_ alpha: CGFloat) -> ZColor { return ZColor(calibratedRed: redComponent, green: greenComponent, blue: blueComponent, alpha: alpha) }
+
 }
 
 extension Date {
-	
-	var easyToReadDate: String {
+
+	func easyToReadDateFrom(_ format: String) -> String {
 		let f = DateFormatter()
-		f.dateFormat = "MMM d, YYYY"
-		
+		f.dateFormat = format
+
 		return f.string(from: self)
 	}
-	
-	var easyToReadTime: String {
-		let f = DateFormatter()
-		f.dateFormat = "h:mm a"
-		
-		return f.string(from: self)
-	}
+
+	var easyToReadDateTime: String { return easyToReadDateFrom("h:mm a MMM d, YYYY") }
+	var easyToReadDate:     String { return easyToReadDateFrom("MMM d, YYYY") }
+	var easyToReadTime:     String { return easyToReadDateFrom("h:mm a") }
 
     func mid(to iEnd: Date?) -> Date? {
         let      end = iEnd ?? Date()
@@ -2369,19 +2822,59 @@ extension ZGestureRecognizer {
     @objc var isShiftDown:   Bool { return false }
     @objc var isOptionDown:  Bool { return false }
     @objc var isCommandDown: Bool { return false }
+	@objc var isControlDown: Bool { return false }
+	var       isDone:        Bool { return [.ended, .cancelled, .failed, .possible].contains(state) }
 
     func cancel() {
-        isEnabled = false
+        isEnabled = false // Apple says "when changed to NO the gesture recognizer will be cancelled [and] will not receive events"
         isEnabled = true
     }
+
 }
 
 extension ZView {
 
-	var simpleToolID : ZSimpleToolID? {
+	@objc var size: CGSize { return bounds.size }
+
+	var currentMouseLocationInWindow: CGPoint? {
+		return window?.convertPoint(fromScreen: ZEvent.mouseLocation)
+	}
+
+	var maxX: CGFloat {
+		var x = CGFloat.zero
+
+		for subview in subviews {
+			let subX = subview.frame.maxX
+
+			if  x < subX {
+				x = subX
+			}
+		}
+
+		return x
+	}
+
+	var currentMouseLocation: CGPoint? {
+		if  let w = currentMouseLocationInWindow {
+			return convert(w, from: nil)
+		}
+
+		return nil
+	}
+
+	var rootSuperview : ZView {
+		var root    = self
+		while let s = root.superview {
+			root    = s
+		}
+
+		return root
+	}
+
+	var kickoffToolID : ZKickoffToolID? {
 		let           item = self as NSUserInterfaceItemIdentification
-		if  let identifier = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
-			let     itemID = ZSimpleToolID(rawValue: identifier) {
+		if  let identifier = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+			let     itemID = ZKickoffToolID(rawValue: identifier) {
 			return  itemID
 		}
 
@@ -2390,7 +2883,7 @@ extension ZView {
 
 	var linkButtonType : ZLinkButtonType? {
 		let        item = self as NSUserInterfaceItemIdentification
-		if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+		if  let  itemID = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),
 			let    type = ZLinkButtonType(rawValue: itemID) {
 			return type
 		}
@@ -2401,7 +2894,7 @@ extension ZView {
 	var modeButtonType : ZModeButtonType? {
 		get {
 			let        item = self as NSUserInterfaceItemIdentification
-			if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+			if  let  itemID = gConvertFromOptionalUserInterfaceItemIdentifier(item.identifier),
 				let    type = ZModeButtonType(rawValue: itemID) {
 				return type
 			}
@@ -2411,15 +2904,28 @@ extension ZView {
 
 		set {
 			if  let  value = newValue?.rawValue {
-				identifier = convertToUserInterfaceItemIdentifier(value)
+				identifier = gConvertToUserInterfaceItemIdentifier(value)
 			}
 		}
 	}
 
+	var viewIdentifierString: String? {
+		if  let id = viewIdentifier {
+			return gConvertFromOptionalUserInterfaceItemIdentifier(id)
+		}
+
+		return nil
+	}
+
+	var viewIdentifier: NSUserInterfaceItemIdentifier? {
+		let    item = self as NSUserInterfaceItemIdentification
+
+		return item.identifier
+	}
+
 	var helpMode : ZHelpMode? {
 		get {
-			let        item = self as NSUserInterfaceItemIdentification
-			if  let  itemID = convertFromOptionalUserInterfaceItemIdentifier(item.identifier),
+			if  let  itemID = viewIdentifierString,
 				let    mode = ZHelpMode(rawValue: itemID) {
 				return mode
 			}
@@ -2429,7 +2935,7 @@ extension ZView {
 
 		set {
 			if  let  value = newValue?.rawValue {
-				identifier = convertToUserInterfaceItemIdentifier(value)
+				identifier = gConvertToUserInterfaceItemIdentifier(value)
 			}
 		}
 	}
@@ -2449,7 +2955,7 @@ extension ZView {
     }
 
 	func printConstraints() {
-		var result = [String]()
+		var result = StringsArray()
 
 		result.append("\(identifier?.rawValue ?? "dunno") ")
 
@@ -2460,7 +2966,7 @@ extension ZView {
 		print(result.joined(separator: kReturn))
 	}
 
-	func drawColoredRect(_ rect: CGRect, _ color: ZColor, thickness: CGFloat = 2.0) {
+	func drawColoredRect(_ rect: CGRect, _ color: ZColor, thickness: CGFloat = 0.5) {
 		let     radius = CGFloat(8.0)
 		let       path = ZBezierPath(roundedRect: rect, xRadius: radius, yRadius: radius)
 		path.lineWidth = thickness
@@ -2481,26 +2987,43 @@ extension ZView {
 		}
 	}
 
-    func addBorder(thickness: CGFloat, inset: CGFloat = 0.0, radius: CGFloat, color: CGColor) {
+    func drawBorder(thickness: CGFloat, inset: CGFloat = .zero, radius: CGFloat, color: CGColor) {
         zlayer.cornerRadius = radius
         zlayer.borderWidth  = thickness
         zlayer.borderColor  = color
     }
 
-    func addBorderRelative(thickness: CGFloat, radius: CGFloat, color: CGColor) {
-        let            size = self.bounds.size
-        let radius: CGFloat = min(size.height, size.width) * radius
-
-        self.addBorder(thickness: thickness, radius: radius, color: color)
-    }
+	func displayAllSubviews() {
+		if !gDeferringRedraw {
+			applyToAllSubviews { view in
+				view.display()
+			}
+		}
+	}
 
     func setAllSubviewsNeedDisplay() {
         if !gDeferringRedraw {
-            applyToAllSubviews { iView in
-                iView.setNeedsDisplay()
+            applyToAllSubviews { view in
+                view.setNeedsDisplay()
             }
         }
     }
+
+	func layoutAllSubviews() {
+		if !gDeferringRedraw {
+			applyToAllSubviews { view in
+				view.layout()
+			}
+		}
+	}
+
+	func setAllSubviewsNeedLayout() {
+		if !gDeferringRedraw {
+			applyToAllSubviews { view in
+				view.setNeedsLayout()
+			}
+		}
+	}
 
     func applyToAllSubviews(_ closure: ViewClosure) {
 		closure(self)
@@ -2509,6 +3032,16 @@ extension ZView {
             view.applyToAllSubviews(closure)
         }
     }
+
+	func applyToAllVisibleSubviews(_ closure: ViewClosure) {
+		closure(self)
+
+		for view in subviews {
+			if !view.isHidden {
+				view.applyToAllSubviews(closure)
+			}
+		}
+	}
 
     func applyToAllSuperviews(_ closure: ViewClosure) {
         closure(self)
@@ -2520,29 +3053,17 @@ extension ZView {
 		return convert(event.locationInWindow, from: nil)
 	}
 
-	func rectFromEvent(_ event: ZEvent) -> CGRect {
-		return convert(CGRect(origin: event.locationInWindow, size: CGSize.zero), from: nil)
-	}
-
 	func analyze(_ object: AnyObject?) -> (Bool, Bool, Bool, Bool, Bool) {
 		return (false, true, false, false, false)
 	}
 
-	func addTracking(for rect: CGRect, clearFirst: Bool = true) {
-		if  clearFirst {
-			for area in trackingAreas {
-				removeTrackingArea(area)
-			}
-		}
+}
 
-		let options : NSTrackingArea.Options = [.mouseEnteredAndExited, .activeAlways, .inVisibleRect, .cursorUpdate] as NSTrackingArea.Options
-		let tracker = NSTrackingArea(rect:rect, options: options, owner:self, userInfo: nil)
-
-		addTrackingArea(tracker)
-	}
+extension ZPseudoView {
 
 	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {
-		if  var       dotCount = count {
+		if  let              c = controller ?? gHelpController, // for help dots, widget and controller are nil; so use help controller
+			var       dotCount = count {
 			var      fatHollow = false
 			var     tinyHollow = false
 			var      tinyIsFat = false
@@ -2563,20 +3084,18 @@ extension ZView {
 			if  dotCount       > 0 {
 				let  tinyCount = dotCount % countMax
 				let   fatCount = dotCount / countMax
-				let fullCircle = Double.pi * 2.0
 
 				let drawDots: IntBooleanClosure = { (iCount, isFat) in
-					let             oneSet = (isFat ? tinyCount : fatCount) == 0
-					let           isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
+					let     oneSet = (isFat ? tinyCount : fatCount) == 0
+					let   isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
 
-					if  iCount             > 0 {
-						let         isEven = iCount % 2 == 0
-						let incrementAngle = fullCircle / (oneSet ? 1.0 : 2.0) / Double(-iCount)
-						let     startAngle = fullCircle / 4.0 * ((clockwise ? 0.0 : 1.0) * (oneSet ? (isEven ? 0.0 : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? 0.0 : Double.pi)
+					if  iCount     > 0 {
+						let isEven = iCount % 2 == 0
+						let fullCircle = k2PI
+						let startAngle = fullCircle / 4.0 * ((clockwise ? .zero : 1.0) * (oneSet ? (isEven ? .zero : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? .zero : kPI)
+						let angles = iCount.anglesArray(startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
 
-						for index in 0 ... iCount - 1 {
-							let  increment = Double(index) + ((clockwise || (isEven && oneSet)) ? 0.0 : 0.5)
-							let      angle = startAngle + incrementAngle * increment // positive means counterclockwise in osx (clockwise in ios)
+						for (index, angle) in angles.enumerated() {
 							let (ideaFocus, asIdea, asEssay) = (false, true, false)
 
 							// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
@@ -2607,8 +3126,8 @@ extension ZView {
 
 								let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 								let           path = ZBezierPath(ovalIn: ovalRect)
-								path    .lineWidth = CGFloat(gLineThickness * (asEssay ? 7.0 : 3.0))
-								path     .flatness = 0.0001
+								path    .lineWidth = CGFloat(c.coreThickness * (asEssay ? 7.0 : 3.0))
+								path     .flatness = kDefaultFlatness
 
 								if  isHollow {
 									color?.setStroke()
@@ -2636,11 +3155,24 @@ extension ZView {
 
 }
 
-extension ZTextField {
+extension NSSegmentedControl {
 
-    var       isEditingText:  Bool { return gIsEditIdeaMode }
-    @objc var preferredFont: ZFont { return gWidgetFont }
+	var seletedSegments: IndexSet {
+		var set = IndexSet()
 
-    @objc func selectCharacter(in range: NSRange) {}
-    @objc func alterCase(up: Bool) {}
+		for segment in 0..<segmentCount {
+			if  isSelected(forSegment: segment) {
+				set.insert(segment)
+			}
+		}
+
+		return set
+	}
+
+	func selectSegments(from set: IndexSet) {
+		for segment in 0..<segmentCount {
+			setSelected(set.contains(segment), forSegment: segment)
+		}
+	}
+
 }

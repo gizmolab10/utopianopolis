@@ -7,21 +7,20 @@
 //
 
 import Foundation
-import CloudKit
 import CoreData
 
 class ZHelpEssayGraphicalsController : ZGenericController {
 
 	override  var controllerID : ZControllerID { return .idHelpEssayGraphicals }
-	override  var allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sStartupProgress, .sAppearance] }
+	@IBOutlet var controlsView : ZDarkableImageView?
+	@IBOutlet var     grabView : ZDarkableImageView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
 	}
 
-	override func startup() {
-		setup()
-
+	override func controllerStartup() {
+		controllerSetup(with: nil)
 	}
 
 }

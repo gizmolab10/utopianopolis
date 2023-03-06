@@ -7,6 +7,13 @@
 //
 
 import Foundation
+import CloudKit
+
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum ZAlterationType: Int {
 	case eDelete
@@ -15,34 +22,39 @@ enum ZAlterationType: Int {
 	case eExit
 }
 
+typealias ZNoteArray = [ZNote]
+
 class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          essayLength = 0
-	var          titleInsets = 0
+	var          indentCount = 0
 	var           noteOffset = 0
 	var           autoDelete = false		// true means delete this note on exit from essay mode
-	var             children = [ZNote]()
+	var             children = ZNoteArray()
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
 	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }
-	var      offsetTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
 	var        lastTextRange : NSRange?  { return textRange }
-	var       maybeNoteTrait : ZTrait?   { return zone?.traits[  .tNote] }
-	var            noteTrait : ZTrait?   { return zone?.traitFor(.tNote) }
-	var               prefix : String    { return "note" }
+	var        noteTextRange : NSRange   { return textRange.offsetBy(noteOffset) }
+	var       maybeNoteTrait : ZTrait?   { return zone?.maybeTraitFor(.tNote) }
+	var            noteTrait : ZTrait?   { return zone?     .traitFor(.tNote) }
+	var           essayTrait : ZTrait?   { return zone?     .traitFor(.tEssay) }
+	var           recordName : String?   { return zone?.recordName }
+	var                 kind : String    { return "note" }
+	var               suffix : String    { return kTab }
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
-	var          titleOffset : Int       { return titleInsets * kNoteIndentSpacer.length }
-	var      fullTitleOffset : Int       { return noteOffset + titleRange.location - titleOffset }
-	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kEssayDefault }
-	var               isNote : Bool      { return isMember(of: ZNote.self) }
+	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
+	var      fullTitleOffset : Int       { return noteOffset + titleRange.location }
+	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kDefaultNoteText }
+	var               isNote : Bool      { return !(zone?.hasChildNotes ?? false) }
+	var            firstNote : ZNote     { return self }
 	var    	            zone : Zone?
 
-	func setupChildren() {}
+	func updateChildren() {}
 	func updateNoteOffsets() {}
-	func noteIn(_ range: NSRange) -> ZNote { return self }
-	func recordName() -> String? { return zone?.recordName() }
-	func saveEssay(_ attributedString: NSAttributedString?) { saveNote(attributedString) }
-	func updateFontSize(_ increment: Bool) -> Bool { return updateTraitFontSize(increment) }
-	func updateTraitFontSize(_ increment: Bool) -> Bool { return noteTrait?.updateEssayFontSize(increment) ?? false }
+	func notes              (in range: NSRange)   -> ZNoteArray { return [self] }
+	func updateFontSize     (_ increment: Bool)   -> Bool       { return updateTraitFontSize(increment) }
+	func updateTraitFontSize(_ increment: Bool)   -> Bool       { return noteTrait?.updateEssayFontSize(increment) ?? false }
+	func saveAsEssay(_ attributedString: NSAttributedString?)   { saveAsNote(attributedString) }
 
 	init(zones: ZoneArray) {}
 
@@ -50,37 +62,58 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		super.init()
 
 		autoDelete = true
-		self.zone = zone
+		self.zone  = zone
+
+		if  zone?.zoneName == nil {
+			zone?.zoneName  = kEmptyIdea  // cannot leave it nil or note editor will behave poorly (not show title or boilerplate)
+		}
 	}
 
 	static func == ( left: ZNote, right: ZNote) -> Bool {
 		let unequal = left != right // avoid infinite recursion by using negated version of this infix operator
 
-		if  unequal && left.zone?.ckRecord != nil && right.zone?.ckRecord != nil {
-			return left.zone?.ckRecordName == right.zone?.ckRecordName
+		if  unequal,
+			let rName = right.recordName,
+			let lName =  left.recordName {
+			return rName == lName
 		}
 
 		return !unequal
 	}
 
-	// MARK:- persistency
-	// MARK:-
+	// MARK: - persistency
+	// MARK: -
 
-	func saveNote(_ attributedString: NSAttributedString?) {
-		if  let attributed = attributedString,
-			let       note = maybeNoteTrait {
-			let       text = attributed.attributedSubstring(from: textRange)
-			note .noteText = NSMutableAttributedString(attributedString: text)    // invokes note.needSave()
-			autoDelete     = false
+	var needsSave : Bool {
+		get { return zone?.maybeNoteOrEssayTrait?.needsSave ?? false }
+		set { zone?.maybeNoteOrEssayTrait?.needsSave = newValue }
+	}
 
-			if  gShowEssayTitles {
-				let       name = attributed.string.substring(with: titleRange).replacingOccurrences(of: "\n", with: "")
-				zone?.zoneName = name
+	func saveAsNote(_ attributedString: NSAttributedString?, force: Bool = false) {
+		if  let                trait  = noteTrait, force || needsSave,  // textOnly is for replacing only the text, and requires saving
+			let           attributed  = attributedString {
+			let                delta  = attributed.string.length - textRange.upperBound
+			autoDelete                = false
+
+			if  delta != 0 {
+				textRange    .length += delta      // correct text range, to avoid out of range for substring, on next line
 			}
 
-			zone?.updateCoreDataRelationships()
-			noteTrait?.needSave()
-			zone?.needSave()
+			let                 text  = attributed.attributedSubstring(from: textRange)
+			trait          .noteText  = NSMutableAttributedString(attributedString: text)
+
+			if  let z                 = zone {
+				if  gEssayTitleMode  != .sEmpty, titleRange.length != 0 {
+					let          name = attributed.string.substring(with: titleRange).replacingOccurrences(of: kNewLine, with: kEmpty)
+					z.setNameForSelfAndBookmarks(to: name)
+				}
+
+				z.updateCoreDataRelationships()
+			}
+
+			needsSave = false
+
+			gSignal([.spCrumbs, .spRelayout])
 		}
 	}
 
@@ -90,7 +123,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		if  let       zone = gRemoteStorage.maybeZoneForRecordName(id),
 			zone.hasTrait(for: .tNote) {
 
-			object = isExpanded ? ZEssay(zone) : ZNote(zone)
+			object = isExpanded ? gCreateEssay(zone) : ZNote(zone)
 
 			if  let note = object {
 				zone.noteMaybe = note
@@ -100,24 +133,28 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return object
 	}
 
-	// MARK:- properties
-	// MARK:-
+	// MARK: - properties
+	// MARK: -
 
 	func toolName()  -> String? { return zone?.toolName() }
 	func toolColor() -> ZColor? { return zone?.toolColor() }
 
 	func identifier() -> String? {
 		if  let id = zone?.identifier() {
-			return prefix + kColonSeparator + id
+			return kind + kColonSeparator + id
 		}
 
 		return nil
 	}
 
-	var paragraphStyle: NSMutableParagraphStyle {
-		let tabStop = NSTextTab(textAlignment: .right, location: 6000.0, options: [:])
-		let paragraph = NSMutableParagraphStyle()
+	var titleParagraphStyle: NSMutableParagraphStyle {
+		let        tabStop = NSTextTab(textAlignment: .right, location: 6000.0, options: [:])
+		let      paragraph = NSMutableParagraphStyle()
 		paragraph.tabStops = [tabStop]
+
+		if  gEssayTitleMode == .sFull {
+			paragraph.firstLineHeadIndent = titleIndent.sizeWithFont(kEssayTitleFont).width
+		}
 
 		return paragraph
 	}
@@ -126,10 +163,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		var result: ZAttributesDictionary?
 
 		if	let      z = zone {
-			let offset = NSNumber(floatLiteral: Double(gEssayTitleFontSize) / 7.0)
-			result     = [.font : gEssayTitleFont, .paragraphStyle : paragraphStyle, .baselineOffset : offset]
+			let offset = NSNumber(floatLiteral: Double(kDefaultEssayTitleFontSize) / 7.0)
+			result     = [.font : kEssayTitleFont, .paragraphStyle : titleParagraphStyle, .baselineOffset : offset]
 
-			if  let  c = z.textColor {
+			if  let  c = z.widgetColor {
 				result?[.foregroundColor] = c
 			}
 		}
@@ -139,9 +176,9 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	var spacerAttributes: ZAttributesDictionary? {
 		var result = titleAttributes
-		let light  = CGFloat((titleInsets > 1) ? 4.0 : 20.0)
+		let light  = CGFloat((indentCount > 1) ? 4.0 : 20.0)
 		if  let  z = zone,
-			let  c = z.textColor?.lighter(by: light) {
+			let  c = z.widgetColor?.lighter(by: light) {
 			result?[.foregroundColor] = c
 		}
 
@@ -149,7 +186,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	}
 
 	var essayText : NSMutableAttributedString? {
-		titleInsets = 0
+		indentCount = 0
 		let  result = noteText
 		essayLength = result?.length ?? 0
 
@@ -160,29 +197,21 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var noteText: NSMutableAttributedString? {
 		var result : NSMutableAttributedString?
 
-		if  let (text, name) = updatedRanges() {
-			result = NSMutableAttributedString()
+		if  let (text, name) = updatedRangesFrom(noteTrait?.noteText) {
+			result = NSMutableAttributedString(attributedString: text)
 
-			result?        .insert(text,       at: 0)
-
-			if  gShowEssayTitles {
-				var      title = name + kTab
-				var attributes = titleAttributes
-
-				if  titleInsets != 0 {
-					let spacer = kNoteIndentSpacer * titleInsets
-					title      = spacer + title
-				}
-
-				if  let      z = zone, z.colorized,
-					let  color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
+			if  gEssayTitleMode != .sEmpty {
+				let        title = name + suffix
+				var   attributes = titleAttributes
+				if  let        z = zone, z.colorized,
+					let    color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
 
 					attributes?[.backgroundColor] = color
 				}
 
 				let attributedTitle = NSMutableAttributedString(string: title, attributes: attributes)
 
-				result?.insert(gBlankLine,      at: 0)
+				result?.insert(kNoteSeparator,  at: 0)
 				result?.insert(attributedTitle, at: 0)
 			}
 
@@ -192,15 +221,45 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	@discardableResult func updatedRanges() -> (NSMutableAttributedString, String)? {
-		let hideTitles  = !gShowEssayTitles
-		if  let    name = hideTitles ? "" : zone?.zoneName,
-			let    text = noteTrait?.noteText {
-			let  spacer = kNoteIndentSpacer * titleInsets
-			let sOffset = hideTitles ? 0 : spacer.length
-			let hasGoof = name.contains("􀅇")
-			let tOffset = hideTitles ? 1 :  sOffset + name.length + gBlankLine.length + 1 + (hasGoof ? 1 : 0)
-			titleRange  = NSRange(location: sOffset, length: name.length)
+	func titleOffsetFor(_ mode: ZEssayTitleMode) -> Int {
+		let isNotTitle = mode != .sTitle
+		let    isEmpty = mode == .sEmpty
+		let     isFull = mode == .sFull
+		let      space = kNoteIndentSpacer.length
+		let      tween = suffix.length + kNoteSeparator.length
+		let      extra = indentCount - 2
+		let      start = 0
+		var      total = 0
+
+		if  isEmpty {
+			total     += space
+		} else {
+			total     += start
+
+			if  isFull {
+				total += space + tween
+			}
+
+			if  let n  = zone?.zoneName?.length {
+				total += n
+			}
+		}
+
+		if  isNotTitle, extra > 0 {
+			total     += space * extra
+		}
+
+		return total
+	}
+
+	@discardableResult func updatedRangesFrom(_ fromText: NSAttributedString?) -> (NSAttributedString, String)? {
+		let     noTitle = gEssayTitleMode == .sEmpty
+		if  let    text = fromText,
+			let    name = noTitle ? kEmpty : zone?.zoneName {
+			let unicode = name.contains("􀅇") // it is two bytes
+			let tLength = noTitle ? 0 :   name.length
+			let tOffset = noTitle ? 0 : tLength + kBlankLine.length + (unicode ? 2 : 1)
+			titleRange  = NSRange(location: 0,       length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)
 			noteOffset  = 0
 
@@ -210,60 +269,60 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	func updateTitleInsets(relativeTo ancestor: Zone?) {
-		if  let start = ancestor,
-			let level = zone?.level {
+	func updateIndentCount(relativeTo ancestor: Zone?) {
+		if  let      start = ancestor,
+			let      level = zone?.level {
 			let difference = level - start.level
-			titleInsets = difference + 1
+			indentCount    = difference + 1
 		}
 	}
 
-	func bumpRanges(by offset: Int) {
-		titleRange = titleRange.offsetBy(offset)
-		textRange  = textRange .offsetBy(offset)
+	func bumpLocations(by offset: Int) {
+		titleRange.location += offset
+		textRange .location += offset
 	}
 
-	func upperBoundForNoteIn(_ range: NSRange) -> Int {
-		let    note = noteIn(range)
+	func upperBoundForLastNoteIn(_ range: NSRange) -> Int? {
+		if  let note = notes(in: range).last {
+			return note.noteRange.upperBound + note.noteOffset
+		}
 
-		return note.noteRange.upperBound + note.noteOffset
+		return nil
 	}
 
-	// MARK:- mutate
-	// MARK:-
-
-	func reset() {
-		maybeNoteTrait?.clearSave()
-		setupChildren()
-	}
+	// MARK: - mutate
+	// MARK: -
 
 	func isLocked(within range: NSRange) -> Bool {
-		let     ranEnd = range     .upperBound
-		let     titEnd = titleRange.upperBound
-		let   titStart = titleRange.lowerBound
-		let  textStart = textRange .lowerBound
-		let   ranStart = range     .lowerBound
-		let atTitStart = titStart == ranStart                               // range begins at beginning of title
-		let   atTitEnd = titEnd   == ranEnd                                 // range ends at end of title
-		let  beforeTit = NSMakeRange(0, titleRange.lowerBound)
-		let    between = NSMakeRange(titEnd, textStart - titEnd)
-		let   isBefore = beforeTit.intersects(range)         // before title
-		let  isBetween = between  .intersects(range)                        // between title and text
-		let  straddles = range    .intersects(between)                      // begins in title ends in text
-		let   isLocked = ((straddles || isBetween) && !atTitEnd) || (isBefore && !atTitStart)
+		let   titleStart = titleRange.lowerBound
+		let     titleEnd = titleRange.upperBound
+		let    textStart = textRange .lowerBound
+		let      textEnd = textRange .upperBound
+		let   rangeStart = range     .lowerBound
+		let     rangeEnd = range     .upperBound
+		let  beforeTitle = NSMakeRange(0, titleStart)
+		let      between = NSMakeRange(titleEnd, textStart - titleEnd)
+		let    afterText = NSMakeRange(textEnd, 0)
+		let      isAfter = range.intersects(afterText)
+		let     isBefore = range.intersects(beforeTitle)                          // before title
+		let    isBetween = range.intersects(between) && between.length > 0        // between title and text
+		let atTitleStart = titleStart == rangeStart                               // range begins at beginning of title
+		let   atTitleEnd = titleEnd   == rangeEnd                                 // range ends at end of title
+		let       locked = isAfter || (isBefore && !atTitleStart) || (isBetween && !atTitleEnd)
 
-		return isLocked
+		return locked
 	}
 
 	// N.B. mutates title range
 
-	func shouldAlterNote(inRange: NSRange, replacementLength: Int, adjustment: Int = 0) -> (ZAlterationType, Int) {
+	func shouldAlterNote(inRange: NSRange, replacementLength: Int, adjustment: Int = 0, hasReturn: Bool = false) -> (ZAlterationType, Int) {
 		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
 		if  zone?.userCanWrite ?? false,
 		    let range 		            = inRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
-			if  range                  == noteRange.offsetBy(-noteOffset) {
+			if  range                  == noteRange.offsetBy(-noteOffset),
+				replacementLength      == 0 {
 				result				    = .eDelete
 
 				zone?.deleteNote()
@@ -274,7 +333,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 					result              = .eAlter
 				}
 
-				if  let  titleIntersect = range.inclusiveIntersection(titleRange) {
+				if  titleRange  .length > 0, !hasReturn,
+					let  titleIntersect = range.inclusiveIntersection(titleRange) {
 					delta               = replacementLength - titleIntersect.length
 					titleRange .length += delta
 					textRange.location += delta
@@ -285,11 +345,15 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 		noteOffset += adjustment
 
+		if  result != .eLock {
+			needsSave = true
+		}
+
 		return 	(result, delta)
 	}
 
-	func shouldAlterEssay(_ range: NSRange, replacementLength: Int) -> (ZAlterationType, Int) {
-		var (result, delta) = shouldAlterNote(inRange: range, replacementLength: replacementLength)
+	func shouldAlterEssay(in range: NSRange, replacementLength: Int, hasReturn: Bool = false) -> (ZAlterationType, Int) {
+		var (result, delta) = shouldAlterNote(inRange: range, replacementLength: replacementLength, hasReturn: hasReturn)
 
 		if  result == .eDelete {
 			result  = .eExit

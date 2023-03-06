@@ -10,13 +10,17 @@ import Foundation
 
 class ZButtonsView : ZView {
 
-	var           clipped : Bool { return false }
-	var          centered : Bool { return false }
-	var distributeEqually : Bool { return false }
-	var           buttons = [ZButton]()
+	var            clipped : Bool { return false }
+	var           centered : Bool { return false }
+	var distributedEqually : Bool { return false }
+	var  verticalLineIndex : Int? { return nil }
+	var            buttons = [ZButton]()
 
-	func setupButtons()  {}
 	func updateButtons() {}
+
+	func setupButtons() {
+		removeButtons()
+	}
 
 	func removeButtons() {
 		for button in buttons {
@@ -25,6 +29,8 @@ class ZButtonsView : ZView {
 	}
 
 	func setupAndRedraw() {
+		zlayer.backgroundColor = kClearColor.cgColor
+
 		setupButtons() // customize this in subclass
 		updateAndRedraw()
 	}
@@ -32,36 +38,44 @@ class ZButtonsView : ZView {
 	func updateAndRedraw() {
 		updateButtons()
 		layoutButtons()
-		setNeedsDisplay()
 		setNeedsLayout()
+		setNeedsDisplay()
 	}
 
 	func layoutButtons() {
-		var   prior : ZButton?
-		let   array = buttons
-		let lastOne = array.count - 1
-		var   width = (bounds.size.width / CGFloat(buttons.count)) - 3.0 // use this value when distribute equally = true
+		var  prior : ZButton?
+		let  plain = verticalLineIndex == nil
+		let  array = buttons
+		let  count = array.count
+		let    max = count - 1
+		let margin = plain ? 4.0 : 1.0
+		let    gap = plain ? 3.0 : 8.0
+		let  extra = plain ? 0.0 : 8.0
+		let  total = bounds.size.width - CGFloat(gap * Double(max)) - CGFloat(margin * 2.0) - extra
+		var  width = total / CGFloat(count) // use this value when distributing equally
 
 		for (index, button) in array.enumerated() {
 			addSubview(button)
 			button.snp.removeConstraints()
 			button.snp.makeConstraints { make in
-				if !distributeEqually {
-					let title = button.title
-					width     = title.rect(using: button.font!, for: NSRange(location: 0, length: title.length), atStart: true).width + 13.0
+				if  !distributedEqually,
+					let w = button.width {
+					width = w + 20.0 // why 20?
 				}
 
 				make.width.equalTo(width)
 				make.centerY.equalToSuperview()
 
-				if  let previous = prior {
-					make.left.equalTo(previous.snp.right).offset(3.0)
+				let offset = gap + ((index == verticalLineIndex) ? extra : 0.0)
+
+				if  let p = prior {
+					make.left.equalTo(p.snp.right).offset(offset)
 				} else {
-					make.left.equalTo(self).offset(2.0)
+					make.left.equalToSuperview()  .offset(margin)
 				}
 
-				if  index == lastOne { // now supply the trailing constraint
-					make.right.lessThanOrEqualTo(self).offset(distributeEqually ? 2.0 : 0.0) // force window to grow wide enough to fit all breadcrumbs
+				if  index == max { // now supply the trailing constraint
+					make.right.lessThanOrEqualTo(self).offset(margin)
 				}
 			}
 

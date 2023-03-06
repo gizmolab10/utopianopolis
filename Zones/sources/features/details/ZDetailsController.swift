@@ -13,21 +13,46 @@
 #endif
 
 var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
-private let  detailIds : [ZDetailsViewID] = [.vSimpleTools, .vData, .vPreferences, .vSmallMap]
+private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vKickoffTools, .vData, .vPreferences, .vFavorites]
+
+struct ZDetailsViewID: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let  vPreferences = ZDetailsViewID(rawValue: 0x0001)
+	static let         vData = ZDetailsViewID(rawValue: 0x0002)
+	static let vKickoffTools = ZDetailsViewID(rawValue: 0x0004)
+	static let    vFavorites = ZDetailsViewID(rawValue: 0x0008)
+	static let    vSubscribe = ZDetailsViewID(rawValue: 0x0010)
+	static let          vAll = ZDetailsViewID(rawValue: 0x001F)
+	static let  vFirstHidden = ZDetailsViewID(rawValue: 0x001B)
+	static let         vLast = vFavorites
+}
 
 class ZDetailsController: ZGesturesController {
 
-	var              viewsByID = [Int : ZTogglingView]()
-    @IBOutlet var    stackView : ZStackView?
-	override  var controllerID : ZControllerID                 { return .idDetails }
-	func view(for id: ZDetailsViewID) -> ZTogglingView?        { return viewsByID[id.rawValue] }
-	func viewIsVisible(for id: ZDetailsViewID) -> Bool         { return !(view(for: id)?.hideHideable ?? true) }
-	func showViewFor(_ id: ZDetailsViewID)                     { view(for: id)?.hideHideable = false }
-	func register(id: ZDetailsViewID, for view: ZTogglingView) { viewsByID[id.rawValue] = view }
+	var                   viewsByID = [Int : ZTogglingView]()
+	@IBOutlet var         stackView : ZStackView?
+	override  var      controllerID : ZControllerID                            { return .idDetails }
+	func viewIsVisible      (for id : ZDetailsViewID) ->                 Bool  { return !(view(for: id)?.hideHideable ?? true) }
+	func view               (for id : ZDetailsViewID) ->        ZTogglingView? { return viewsByID[id.rawValue] }
+	func register               (id : ZDetailsViewID, for view: ZTogglingView) { viewsByID[id.rawValue] = view }
+	func showViewFor          (_ id : ZDetailsViewID)                          { view(for: id)?.hideHideable = false; detailsUpdate() }
 
-    override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
+	func temporarilyHideView(for id : ZDetailsViewID, _ closure: Closure) {
+		let           view = gDetailsController?.view(for: id)
+		let           save = view?.hideHideable ?? false
+		view?.hideHideable = true
+
+		closure()
+
+		view?.hideHideable = save
+	}
+	
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gShowDetailsView {
-			update()
+			detailsUpdate()
 		}
     }
 
@@ -35,23 +60,26 @@ class ZDetailsController: ZGesturesController {
 		super.viewDidLoad()
 
 		gestureView = view
+		stackView?.layer?.backgroundColor = kClearColor.cgColor
 	}
 
 	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gIsEssayMode {
+		if  gIsEssayMode, !gIgnoreEvents {
 			gEssayView?.save()
 			gControllers.swapMapAndEssay(force: .wMapMode)
 		}
 	}
 
-    func update() {
+    func detailsUpdate() {
 		if  gIsReadyToShowUI {
-			stackView?.isHidden               = false
-			stackView?.layer?.backgroundColor = kClearColor.cgColor
+			stackView?.isHidden = false
 
 			for id in detailIds {
-				view(for: id)?.update()
+				view(for: id)?.updateView()
 			}
+
+			stackView?.layoutAllSubviews()
+			stackView?.setAllSubviewsNeedLayout()
 		}
 	}
 
@@ -61,8 +89,35 @@ class ZDetailsController: ZGesturesController {
 				v.toggleHideableVisibility()
             }
         }
-        
-        update()
+
+		redisplayOnToggle()
     }
+
+	func redisplayOnToggle() {
+		detailsUpdate()
+		stackView?.setAllSubviewsNeedDisplay()
+		stackView?.displayAllSubviews()
+		gSignal([.sDetails])
+		gRelayoutMaps()
+	}
+
+	func removeViewFromStack(for id: ZDetailsViewID) {
+		let v = view(for: id)
+
+		v?.removeFromSuperview()
+		view.display()
+	}
+
+	func displayPreferences() {
+		if  gShowDetailsView {
+			toggleViewsFor(ids: [.vPreferences])
+		} else {
+			gShowDetailsView = true
+
+			showViewFor(.vPreferences)
+		}
+
+		gSignal([.spMain, .sDetails])
+	}
 
 }

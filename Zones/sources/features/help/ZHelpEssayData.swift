@@ -8,64 +8,65 @@
 
 import Foundation
 
-let essayPrefixArray = Array(repeating: "", count: 3 * 14)
+let essayPrefixArray = Array(repeating: kEmpty, count: 3 * 13)
 
 class ZHelpEssayData: ZHelpData {
 
-	override var noTabPrefix   :   String   { return "                    " }
-	override var columnStrings : [[String]] { return [essayColumnOne, essayColumnTwo] }
-	override var tabOffsets    :   [Int]    { return [0, 20, 180] }
-	override var rowHeight     :  CGFloat   { return 14.55 }
+	override var noTabPrefix   :  String        { return "                    " }
+	override var columnStrings : [StringsArray] { return [essayColumnOne, essayColumnTwo] }
+	override var tabOffsets    : [Int]          { return [0, 20, 220] }
+	override var rowHeight     :  CGFloat       { return 14.0 }
+	override var dotOffset     :  CGFloat       { return  2.3 }    
 
-	let essayColumnOne: [String] = essayPrefixArray + [
-		"",																								"",	"",
-		"!GRAPHICS",																					"",	"",
-		"",																								"",	"",
-		"_drag dot",					"filled dot indicates note contains cursor or is grabbed",			"",
-		".b",							"click to grab or ungrab the note",									"",
-		"0        ",					"double-click to toggle between note and essay",					"",
-		"",																								"",	"",
-		"_reveal dot",					"in maps: COMMAND-click it to edit the note or essay, when it ...",	"",
-		".f",							"has two tiny dots inside",											"",
-		"",																								"",	""
+	let essayColumnOne: StringsArray = essayPrefixArray + [
+		"",																							"",	"",
+		"!GRAPHICS",																				"",	"",
+		"",																							"",	"",
+		"_drag dot",					"filled dot indicates note contains cursor or is grabbed",		"",
+		".b",							"click to grab or ungrab the note",								"",
+		"",																							"",	"",
+		"_reveal dot",					"two tiny dots inside indicates a note or essay",				"",
+		".f",							"in maps: COMMAND-click it to edit the note or essay",			"",
+		"",																							"",	""
 	]
 
-	let essayColumnTwo: [String] = essayPrefixArray + [
-		"",																								"",	"",
-		"!KEYS, ALWAYS",							 													"", "",
-		"",																								"",	"",
-		"_KEY",			 																				"", "",
-		"0ESCAPE", 						"discard unsaved changes and exit the editor",			 			"",
-		"",																								"",	"",
-		"_COMMAND + KEY", 																				"", "",
-		"0RETURN", 						"save changes and exit the editor",									"",
-		"0[ or ]",						"save changes and edit the prior or next essay (or note)",			"",
-		"0S",							"save changes",														"",
-		"0T",							"lookup selection in thesaurus",									"",
-		"",																								"",	"",
-		"_COMMAND + OPTION + CONTROL + KEY", 															"", "",
-		"0LEFT ARROW", 					"edit the containing essay",										"",
-		"",																								"",	"",
-		"",																								"",	"",
-		"!KEYS, WHEN NO NOTES ARE GRABBED",			 													"", "",
-		"",																								"",	"",
-		"_COMMAND + KEY", 																				"", "",
-		"0N",							"save changes and toggle between essay and note",					"",
-		"",																								"",	"",
-		"",																								"",	"",
-		"!WHEN ONE OR MORE NOTES ARE GRABBED (e.g., see bottom left)", 									"", "",
-		"",																								"",	"",
-		"_KEY",			 																				"", "",
-		"0ESCAPE", 						"ungrab them",			 											"",
-		"0DELETE", 						"destroy and remove them",											"",
-		"0EQAUALS",						"grab selected text, or clear grab",								"",
-		"0ARROWS (vertical)",			"grab a different note", 											"",
-		"0ARROWS (vertical) + SHIFT",	"grab an additional note", 											"",
-		"0ARROWS + OPTION",				"move them", 														"",
-		"0LEFT ARROW",					"if top is grabbed: save changes and exit the editor",				"",
-		"0         ",					"else: same as N, below",											"",
-		"0N",							"save changes and swap between essay and first grabbed note",		"",
-		"",					 																			"",	""
+	let essayColumnTwo: StringsArray = essayPrefixArray + [
+		"",																							"",	"",
+		"!ALWAYS",									 												"",	"",
+		"",																							"",	"",
+		"_KEY",			 																			"", "",
+		" ESCAPE", 						"discard unsaved changes & exit the editor",			 		"",
+		"",																							"",	"",
+		"_LEFT ARROW KEY", 																			"", "",
+		" COMMAND + OPTION",			"edit the parent essay",										"",
+		"",																							"",	"",
+		"_RIGHT ARROW KEY", 																		"", "",
+		" COMMAND + CONTROL",			"create children (notes) from paragraphs in selected text",		"",
+		" COMMAND + CONTROL + OPTION",	"   \"       \"        \"     from sentences   \"    \"    \"",	"",
+		"",																							"",	"",
+		"_COMMAND + KEY", 																			"", "",
+		" RETURN", 						"save changes & exit the editor",								"",
+		" [ or ]",						"save changes & edit the prior or next essay / note",			"",
+		" D",							"save changes & convert selected text into child note",			"",
+		" J",							"add boilerplate to empty notes (use OPTION to remove)",		"",
+		" N",							"save changes & toggle between essay & note",					"",
+		" S",							"save changes",													"",
+		" T",							"lookup selection in thesaurus",								"",
+		"",																							"",	"",
+		"",																							"",	"",
+		"!WHEN ONE OR MORE NOTES ARE GRABBED (e.g., see bottom left)", 								"", "",
+		"",																							"",	"",
+		"_KEY",			 																			"", "",
+		" ESCAPE", 						"ungrab them",			 										"",
+		" DELETE", 						"destroy & remove them",										"",
+		" EQAUALS",						"grab selected text, or clear grab",							"",
+		" ARROWS (vertical)",			"grab a different note", 										"",
+		" ARROWS (vertical) + SHIFT",	"grab an additional note", 										"",
+		" ARROWS + OPTION",				"move them", 													"",
+		" LEFT ARROW",					"if top is grabbed: save changes & exit the editor",			"",
+		"i         ",					"else: same as N, below",										"",
+		" N",							"save changes & swap between essay & first grabbed note",		"",
+		"",					 																		"",	""
 	]
 
 }

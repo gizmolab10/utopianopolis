@@ -17,52 +17,44 @@ import UIKit
 
 var gEssayView: ZEssayView? { return gEssayController?.essayView }
 
-struct ZEssayDragDot {
-	var     color = kWhiteColor
-	var  dragRect = CGRect.zero
-	var  textRect = CGRect.zero
-	var  lineRect : CGRect?
-	var noteRange : NSRange?
-	var      note : ZNote?
-}
+@objc (ZEssayView)
+class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
+	let margin             = CGFloat(20.0)
+	var dropped            = StringsArray()
+	var visibilities       = ZNoteVisibilityArray()
+	var grabbedNotes       = ZNoteArray()
+	var selectionRect      = CGRect()  { didSet { if selectionRect.origin == .zero { selectedAttachment = nil } } }
+	var grabbedZones       : ZoneArray { return grabbedNotes.map { $0.zone! } }
+	var firstNote          : ZNote?    { return (dragDots.count == 0) ? nil : dragDots[0].note }
+	var firstGrabbedNote   : ZNote?    { return hasGrabbedNote ? grabbedNotes[0] : nil }
+	var firstGrabbedZone   : Zone?     { return firstGrabbedNote?.zone }
+	var selectedNote       : ZNote?    { return selectedNotes.last ?? gCurrentEssay }
+	var selectedZone       : Zone?     { return selectedNote?.zone }
+	var hasGrabbedNote     : Bool      { return grabbedNotes.count != 0 }
+	var lockedSelection    : Bool      { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
+	var firstIsGrabbed     : Bool      { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
+	var selectionString    : String?   { return textStorage?.attributedSubstring(from: selectedRange).string }
+	var essayRecordName    : String?
+	var resizeDragStart    : CGPoint?
+	var resizeDragRect     : CGRect?
+	var resizeDot          : ZDirection?
+	var selectedAttachment : ZRangedAttachment?
 
-class ZEssayView: ZTextView, ZTextViewDelegate {
-	let margin          = CGFloat(20.0)
-	let dotInset        = CGFloat(-5.0)
-	var dropped         = [String]()
-	var grabbedNotes    = [ZNote]()
-	var selectionRect   = CGRect()           { didSet { if selectionRect.origin != CGPoint.zero { imageAttachment = nil } } }
-	var imageAttachment : ZRangedAttachment? { didSet { if imageAttachment != nil { setSelectedRange(NSRange()) } else if oldValue != nil { eraseAttachment = oldValue } } }
-	var eraseAttachment : ZRangedAttachment?
-	var grabbedZones    : [Zone]             { return grabbedNotes.map { $0.zone! } }
-	var firstNote       : ZNote?             { return (dragDots.count == 0) ? nil : dragDots[0].note }
-	var selectedNote    : ZNote?             { return selectedNotes.first ?? gCurrentEssay }
-	var selectedZone    : Zone?              { return selectedNote?.zone }
-	var firstGrabbedNote: ZNote?             { return hasGrabbedNote ? grabbedNotes[0] : nil }
-	var firstGrabbedZone: Zone?              { return firstGrabbedNote?.zone }
-	var hasGrabbedNote  : Bool               { return grabbedNotes.count != 0 }
-	var lockedSelection : Bool               { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
-	var firstIsGrabbed  : Bool               { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
-	var selectionString : String?            { return textStorage?.attributedSubstring(from: selectedRange).string }
-	var selectedNotes   : [ZNote]            { return dragDots.filter { $0.noteRange != nil && selectedRange.intersects($0.noteRange!.extendedBy(1)) } .map { $0.note! } }
-	var backwardButton  : ZButton?
-	var forwardButton   : ZButton?
-	var cancelButton    : ZButton?
-	var deleteButton    : ZButton?
-	var titlesButton    : ZButton?
-	var hideButton      : ZButton?
-	var saveButton      : ZButton?
-	var resizeDragStart : CGPoint?
-	var resizeDragRect  : CGRect?
-	var resizeDot       : ZDirection?
-	var essayID         : CKRecordID?
+	var selectedNotes : ZNoteArray {
+		gCurrentEssay?.updateNoteOffsets()
+
+		return (gCurrentEssay?.zone?.zonesWithVisibleNotes.filter {
+			guard let range = $0.note?.noteRange else { return false }
+			return selectedRange.intersects(range.extendedBy(1))
+		}.map {
+			$0.note!
+		})!
+	}
 
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
-			current.maybeNoteTrait?.needsSave ?? false,
 			current.essayLength != 0,
-			let i                = gCurrentEssayZone?.ckRecord?.recordID,
-			i                   == essayID {	// been here before
+			current.recordName  == essayRecordName {	// been here before
 
 			return false						// has not yet been saved. don't overwrite
 		}
@@ -79,75 +71,319 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return 0
 	}
 
-	// MARK:- output
-	// MARK:-
-
-	override func draw(_ dirtyRect: NSRect) {
-		if  resizeDragRect == nil {
-			let        path = ZBezierPath(rect: bounds)
-
-			kClearColor.setFill()
-			path.fill() // erase rubberband
-		}
-
-		if  imageAttachment != nil {
-			gActiveColor.setStroke()
-			gActiveColor.setFill()
-		} else {
-			kClearColor .setStroke()
-			kClearColor .setFill()
-		}
-
-		if  let       rect = resizeDragRect {
-			let       path = ZBezierPath(rect: rect)
-			let    pattern : [CGFloat] = [4.0, 4.0]
-			path.lineWidth = CGFloat(gLineThickness * 3.0)
-			path.flatness  = 0.0001
-
-			path.setLineDash(pattern, count: 2, phase: 4.0)
-			path.stroke()
-			drawImageResizeDots(onBorderOf: rect)
-		} else if let attach = imageAttachment ?? eraseAttachment,
-				  let   rect = rectForRangedAttachment(attach) {
-			drawImageResizeDots(onBorderOf: rect)
-		}
-
-		super.draw(dirtyRect)
-		drawDragDecorations()
+	var needsSave : Bool {
+		get { return gCurrentEssay?.needsSave ?? false }
+		set {        gCurrentEssay?.needsSave  = newValue }
 	}
 
-	// MARK:- input
-	// MARK:-
+	// MARK: - note visibility
+	// MARK: -
+
+	func resetVisibilities() {
+		visibilities.removeAll()
+
+		if  let essay = gCurrentEssay,
+			let  zone = essay.zone {
+			if  !zone.hasChildNotes {
+				visibilities.append(ZNoteVisibility(zone: zone))
+			} else {
+				for child in zone.zonesWithVisibleNotes {
+					visibilities.append(ZNoteVisibility(zone: child))
+				}
+			}
+		}
+	}
+
+	func drawVisibilityIcons(for index: Int, y: CGFloat, isANote: Bool) {
+		if  gEssayTitleMode   != .sEmpty, !gHideNoteVisibility {
+			var              v = visibilities[index]
+			for type in ZNoteVisibilityIconType.all {
+				if  !(type.forEssayOnly && isANote),
+					let     on = v.stateFor(type),
+					let  image = type.imageForVisibilityState(on) {
+					let origin = CGPoint(x: bounds.maxX, y: y).offsetBy(-type.offset, .zero)
+					let   rect = CGRect(origin: origin, size: .zero).expandedBy(image.size.dividedInHalf)
+
+					v.setRect(rect, for: type)
+					image.draw(in: rect)
+				}
+			}
+
+			visibilities[index] = v
+		}
+	}
+
+	func visibilityIconHit(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
+		if  !gHideNoteVisibility {
+			for visibility in visibilities {
+				for type in ZNoteVisibilityIconType.all {
+					if  visibility.rectFor(type).intersects(rect) {
+						return (visibility.zone, type)
+					}
+				}
+			}
+		}
+
+		return nil
+	}
+
+	// MARK: - setup
+	// MARK: -
+
+	override func awakeFromNib() {
+		super.awakeFromNib()
+
+		usesRuler                            = true
+		isRulerVisible                       = true
+		importsGraphics                      = true
+		usesInspectorBar                     = true
+		allowsImageEditing                   = true
+		displaysLinkToolTips                 = true
+		isAutomaticSpellingCorrectionEnabled = false
+		textContainerInset                   = NSSize(width: margin, height: margin)
+
+		resetForDarkMode()
+	}
+
+	private func discardPriorText() {
+		gCurrentEssayZone?.noteMaybe = nil
+		delegate                     = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
+
+		if  let length = textStorage?.length, length > 0 {
+			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: kEmpty)
+		}
+	}
+
+	func resetForDarkMode() {
+		usesAdaptiveColorMappingForDarkAppearance = true
+		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
+		let                            scrollView = superview?.superview as? NSScrollView
+		let                             rulerView = scrollView?.horizontalRulerView
+		let                              scroller = scrollView?.verticalScroller
+		let modeAppearance                        = NSAppearance(named: gIsDark ? .darkAqua : .aqua)
+		appearance                                = modeAppearance
+		rulerView?                    .appearance = modeAppearance
+		scroller?                     .appearance = modeAppearance
+		scroller?.zlayer         .backgroundColor = backgroundColor
+		zlayer                   .backgroundColor = backgroundColor
+	}
+
+	func essayViewSetup() {
+		updateTextStorage()
+		clearResizing()      // remove leftovers from last essay
+	}
+
+	@discardableResult func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) -> Int {
+		var           delta = 0
+		if  let        note = current {
+			essayRecordName = nil
+			gCurrentEssay   = note
+
+			note.updateChildren()
+
+			delta           = updateTextStorage()
+
+			note.updateNoteOffsets()
+			note.updatedRangesFrom(note.noteTrait?.noteText)
+			setNeedsDisplay()
+
+			if  let r = range {
+				FOREGROUND { [self] in
+					selectAndScrollTo(r.offsetBy(delta))
+				}
+			}
+		}
+
+		return delta
+	}
+
+	@discardableResult func updateTextStorage(restoreSelection: NSRange? = nil) -> Int {
+		var delta = 0
+
+		if  gCurrentEssay == nil {                           // make sure we actually have a current essay
+			gControllers.swapMapAndEssay(force: .wMapMode)   // not show blank essay
+		} else {
+			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
+
+			updateTextStorageRestoringSelection(restoreSelection)
+		}
+
+		return delta
+	}
+
+	func updateTextStorageRestoringSelection(_ range: NSRange?) {
+
+		// activate the buttons in the control bar
+		// grab the current essay text and put it in place
+		// grab record id of essay to indicate that this essay has not been saved
+		// saves time by not needlessly overwriting it later
+
+		updateTracking()
+		gEssayControlsView?.updateTitleSegments()
+		resetForDarkMode()
+		save()
+
+		if  (shouldOverwrite || range != nil),
+			let text = gCurrentEssay?.essayText {
+
+			discardPriorText()
+			gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
+			selectAndScrollTo(range)
+			undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
+		}
+
+		essayRecordName = gCurrentEssayZone?.recordName                           // do this after altering essay zone
+		delegate        = self 					    	                          // set delegate after discarding prior and injecting current text
+
+		if  gIsEssayMode {
+			assignAsFirstResponder(self)                                 // show cursor and respond to key input
+			gMainWindow?.setupEssayInspectorBar()
+
+			gEssayControlsView?.setupEssayControls()
+			gEssayControlsView?.enableEssayControls(true)
+		}
+	}
+
+	// MARK: - clean up
+	// MARK: -
+
+	func done() {
+		prepareToExit()
+		save()
+		exit()
+	}
+
+	func exit() {
+		prepareToExit()
+		gControllers.swapMapAndEssay(force: .wMapMode)
+	}
+
+	func save() {
+		if  let e = gCurrentEssay {
+			e.saveAsEssay(textStorage)
+		}
+	}
+
+	func prepareToExit() {
+		if  let e = gCurrentEssay,
+			e.lastTextIsDefault,
+			e.autoDelete {
+			e.zone?.deleteNote()
+		}
+
+		undoManager?.removeAllActions()
+	}
+
+	func grabSelectionHereDone() {
+		save()
+
+		if  let zone = selectedZone {
+			gHere = zone
+
+			zone.grab()
+			done()
+		} else {
+			grabDone()
+		}
+	}
+
+	func grabDone() {
+		if  let zone = lastGrabbedDot?.note?.zone {
+			zone.grab()
+		} else {
+			gCurrentEssayZone?.grab()
+		}
+
+		done()
+	}
+
+	// MARK: - output
+	// MARK: -
+
+	override func draw(_ iDirtyRect: NSRect) {
+		clearImageResizeRubberband()
+		super.draw(iDirtyRect)
+
+		if  iDirtyRect.width > 1.0 {
+			drawSelectedImage()
+			drawNoteDecorations()
+		}
+	}
+
+	func drawNoteDecorations() {
+		resetVisibilities()
+
+		let dots = dragDots
+		if  dots.count > 0 {
+			for (index, dot) in dots.enumerated() {
+				if  let     note = dot.note?.firstNote,
+					let     zone = note.zone {
+					let  grabbed = grabbedZones.contains(zone)
+					let selected = note.noteRange.inclusiveIntersection(selectedRange) != nil
+					let   filled = selected && !hasGrabbedNote
+					let    color = dot.color
+
+					drawVisibilityIcons(for: index, y: dot.dragRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
+
+					if  gEssayTitleMode == .sFull {
+						dot.dragRect.drawColoredOval(color, thickness: 2.0, filled: filled || grabbed)   // draw drag dot
+
+						if  let lineRect = dot.lineRect {
+							drawColoredRect(lineRect, color, thickness: 0.5)             // draw indent line in front of drag dot
+						}
+
+						if  grabbed {
+							drawColoredRect(dot.textRect, color)                         // draw box around entire note
+						}
+					}
+				}
+			}
+		} else if let  note = gCurrentEssay, visibilities.count > 0,
+				  let  zone = note.zone,
+				  let     c = textContainer,
+				  let     l = layoutManager {
+			let        rect = l.boundingRect(forGlyphRange: note.noteRange, in: c)
+
+			drawVisibilityIcons(for: 0, y: rect.minY + 33.0, isANote: !zone.hasChildNotes)                              // draw visibility icons
+		}
+	}
+
+	// MARK: - input
+	// MARK: -
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard var key = iKey else {
 			return false
 		}
 
-		let COMMAND = flags.isCommand
-		let CONTROL = flags.isControl
-		let  OPTION = flags.isOption
-		let   SHIFT = flags.isShift
-		let     ANY = flags.isAny
-
+		let enabled = gHasEnabledSubscription
+		let SPECIAL = flags.exactlySpecial
+		let COMMAND = flags.hasCommand
+		let CONTROL = flags.hasControl
+		let OPTION  = flags.hasOption
+		var SHIFT   = flags.hasShift
+		let SEVERAL = flags.isAnyMultiple
+		let ANY     = flags.isAny
 		if  key    != key.lowercased() {
 			key     = key.lowercased()
+			SHIFT   = true
 		}
 
 		if  let arrow = key.arrow {
+			clearResizing()
 			handleArrow(arrow, flags: flags)
 
 			return true
 		} else if  hasGrabbedNote {
 			switch key {
 				case "c":      grabbedZones.copyToPaste()
+				case "n":      setGrabbedZoneAsCurrentEssay()
 				case "t":      swapWithParent()
-				case "'":      gSwapSmallMapMode(OPTION)
-				case "/":      swapBetweenNoteAndEssay()
-				case kEscape:  gHelpController?.show(flags: flags)
-				case kEquals:  grabSelected()
-				case kDelete:  deleteGrabbed()
-				case kReturn:  if ANY { grabDone() }
+				case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
+				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
+				case kEscape:  save(); if ANY { grabDone()                      } else { done() }
+				case kReturn:  save(); if ANY { grabDone() }
+				case kDelete:  deleteGrabbedOrSelected()
 				default:       return false
 			}
 
@@ -157,67 +393,101 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				asssureSelectionIsVisible()
 			}
 
-			done()
+			if  ANY {
+				grabSelectionHereDone()
+			} else {
+				done()
+			}
 
 			return true
-		} else if  COMMAND {
+		} else if COMMAND {
+			if  enabled {
+				switch key {
+					case "b":  applyToSelection(BOLD: true)
+					case "d":  convertSelectedTextToChild(); return true
+					case "e":  grabSelectedTextForSearch()
+					case "f":  gSearching.showSearch(OPTION)
+					case "g":  searchAgain(OPTION)
+					case "i":  showSpecialCharactersPopup()
+					case "l":  alterCase(up: false)
+					case "p":  printCurrentEssay()
+					case "s":  save()
+					case "u":  if !OPTION { alterCase(up: true) }
+					case "v":  if  SHIFT  { return pasteTextAndMatchStyle() }
+					case "z":  if  SHIFT  { undoManager?.redo() } else { undoManager?.undo() }
+					default:   break
+				}
+			}
+
 			switch key {
 				case "a":      selectAll(nil)
-				case "b":      applyToSelection(BOLD: true)
-				case "d":      convertToChild(flags)
-				case "e":      grabSelectedTextForSearch()
-				case "f":      gSearching.showSearch(OPTION)
-				case "g":      searchAgain(OPTION)
-				case "i":      showSpecialCharactersPopup()
-				case "l":      alterCase(up: false)
+				case "j":      revealEmptyNotes(OPTION)
 				case "n":      swapBetweenNoteAndEssay()
-				case "p":      printCurrentEssay()
-				case "s":      save()
-				case "t":      if COMMAND, let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
-				case "u":      if OPTION { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
-				case "z":      if  SHIFT { undoManager?.redo() } else { undoManager?.undo() }
+				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
+				case "u":      if OPTION { gControllers.showEssay(forGuide: true) } else { return false }
 				case "/":      gHelpController?.show(flags: flags)
-				case "'":      gSwapSmallMapMode(OPTION)
-				case "}", "{": gCurrentSmallMapRecords?.go(down: key == "}", amongNotes: true) { gRedrawMaps() }
-				case "]", "[": gRecents                .go(down: key == "]", amongNotes: true) { gRedrawMaps() }
-				case kReturn:  grabDone()
-				case kEquals:  grabSelected()
+				case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
+				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
+				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
+				case kDelete:  deleteGrabbedOrSelected()
 				default:       return false
 			}
 
 			return true
 		} else if CONTROL {
 			switch key {
-				case "d":      convertToChild(flags)
-				case "h":      showHyperlinkPopup()
-				case "/":      popNoteAndUpdate()
-				default:       return false
+				case "/":      if gFavorites.popNoteAndUpdate() { updateTextStorage() }
+				default:       if !enabled { return false } else {
+					switch key {
+						case "d": convertSelectedTextToChild()
+						case "w": showLinkPopup()
+						default:  return false
+					}
+				}
 			}
 
 			return true
-		} else if OPTION {
+		} else if OPTION, enabled {
 			switch key {
-				case "d":      convertToChild(flags)
-				default:       return false
+				case "d": convertSelectedTextToChild()
+				default:  return false
 			}
 
 			return true
+		} else if key == kDelete {
+			clearResizing()
 		}
 
-		return false
+		return !enabled
 	}
 
 	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		let   SHIFT = flags.isShift
-		let  OPTION = flags.isOption
-		let COMMAND = flags.isCommand
+		let   SHIFT = flags.hasShift
+		let  OPTION = flags.hasOption
+		let COMMAND = flags.hasCommand
+		let SPECIAL = flags.exactlySpecial
+		let SPLAYED = flags.exactlySplayed
+		let     ALL = flags.exactlyAll
 
 		if  hasGrabbedNote {
 			handleGrabbed(arrow, flags: flags)
-		} else if  COMMAND && OPTION {
+		} else if  lockedSelection {
+			handlePlainArrow(arrow)
+		} else if  SPECIAL {
 			switch arrow {
-				case .left,
-					 .right: move(out: arrow == .left)
+				case .left:  fallthrough
+				case .right: move(out: arrow == .left)
+				default:     break
+			}
+		} else if  ALL {
+			switch arrow {
+				case .left:  break
+				case .right: convertSelectionIntoChildIdeas(asSentences: true)
+				default:     break
+			}
+		} else if  SPLAYED {
+			switch arrow {
+				case .right: convertSelectionIntoChildIdeas(asSentences: false)
 				default:     break
 			}
 		} else if  COMMAND && SHIFT {
@@ -262,12 +532,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		setNeedsDisplay() // to update which drag dot is filled
 	}
 
-	func scrollToGrabbed() {
-		if  let range = lastGrabbedDot?.noteRange {
-			scrollRangeToVisible(range)
-		}
-	}
-
 	func handlePlainArrow(_ arrow: ZArrowKey, permitAnotherRecurse: Bool = true) {
 		let horizontal = [.left, .right].contains(arrow)
 		var canRecurse = true
@@ -281,13 +545,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 		switch arrow {
 			case .left:  canRecurse = selectedRange.lowerBound > 0
-			case .right: canRecurse = selectedRange.upperBound < gCurrentEssay?.upperBoundForNoteIn(selectedRange) ?? 0
+			case .right: canRecurse = selectedRange.upperBound < gCurrentEssay?.upperBoundForLastNoteIn(selectedRange) ?? 0
 			default:     break
 		}
 
 		switch arrow {
-			case .left,
-				 .right: setSelectedRange(selectedRange)     // work around stupid Apple bug
+			case .left:  fallthrough
+			case .right: setSelectedRange(selectedRange)     // work around stupid Apple bug
 			default:     break
 		}
 
@@ -297,316 +561,158 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 	}
 
-	func handleClick(with event: ZEvent) -> Bool {
-		let              rect = rectFromEvent(event)
-		let     singleleClick = event.clickCount < 2
-		if  let        attach = attachmentHit(at: rect) {
-			resizeDot         = resizeDotHit(in: attach, at: rect)
-			resizeDragStart   = rect.origin
-			imageAttachment   = attach
+	func handleClick(with event: ZEvent) -> Bool { // true means do not further process this event
+		var              result = true
+		if  !gIgnoreEvents {
+			let               rect = event.locationRect(in: self)
+			if  let         attach = hitTestForAttachment(in: rect) {
+				selectedAttachment = attach
+				resizeDragStart    = rect.origin
+				resizeDot          = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
+				result             = resizeDot != nil
 
-			return resizeDot != nil // true means do not further process this event
-		} else if let     dot = dragDotHit(at: rect),
-				  let    note = dot.note {
-			if  let     index = grabbedNotes.firstIndex(of: note),
-				singleleClick {
-				grabbedNotes.remove(at: index)
-			} else {
-				if !event.modifierFlags.isShift,
-				   singleleClick {
-					ungrabAll()
-				}
+				setSelectedRange(attach.glyphRange)
+				setNeedsDisplay()
 
-				if !singleleClick {
-					swapBetweenNoteAndEssay()
+			} else if let      dot = dragDotHit(at: rect),
+					  let     note = dot.note {
+				if  let      index = grabbedNotes.firstIndex(of: note) {
+					grabbedNotes.remove(at: index)
 				} else {
+					if !event.modifierFlags.hasShift {
+						ungrabAll()
+					}
+
 					grabbedNotes.appendUnique(item: note)
 					setNeedsDisplay()
 					gSignal([.sDetails])
 				}
+			} else if let (zone, type) = visibilityIconHit(at: rect),
+					  let        trait = zone.maybeNoteOrEssayTrait {
+				save()
+				trait.toggleVisibilityFor(type)
+				resetCurrentEssay()
+				setNeedsDisplay()
+
+				if  type != .tSelf, gCurrentEssay?.zone == zone {
+					swapBetweenNoteAndEssay()
+				}
+			} else {
+				ungrabAll()
+				clearResizing()
+				setNeedsDisplay()
+
+				return false
 			}
+		}
+
+		return result
+	}
+
+	@objc func handleButtonAction(_ iButton: ZHoverableButton) {
+		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
+			switch buttonID {
+				case .idForward:  nextNotemark(down:  true)
+				case .idBack:     nextNotemark(down: false)
+				case .idSave:     save()
+				case .idPrint:    printView()
+				case .idHide:     grabDone()
+				case .idDelete:   if !deleteGrabbedOrSelected() { gCurrentEssayZone?.deleteEssay(); exit() }
+				case .idDiscard:                                  gCurrentEssayZone?.grab();        exit()
+				default:          break
+			}
+		}
+	}
+
+	func pasteTextAndMatchStyle() -> Bool {
+		if  let  clipboard = NSPasteboard.general.string(forType: .string) {
+			let   insertMe = NSMutableAttributedString(string: clipboard)
+			var attributes = selectedTextAttributes
+
+			if  let   back = attributes[.backgroundColor] as? ZColor, back == .selectedTextBackgroundColor {
+				attributes[.backgroundColor] = nil
+			}
+
+			if  let   fore = attributes[.foregroundColor] as? ZColor, fore == .selectedTextColor {
+				attributes[.foregroundColor] = nil
+			}
+
+			insertMe.addAttributes(attributes, range: NSMakeRange(0, clipboard.length))
+			insertText(insertMe, replacementRange: selectedRange())
 
 			return true
-		} else {
-			ungrabAll()
-			clearResizing()
-			setNeedsDisplay()
-
-			return false
-		}
-	}
-
-	override func mouseDown(with event: ZEvent) {
-		if  !handleClick   (with: event) {
-			super.mouseDown(with: event)
-		}
-	}
-
-	override func mouseDragged(with event: ZEvent) {
-		if  resizeDot != nil,
-			let  start = resizeDragStart {
-			let  delta = rectFromEvent(event).origin - start
-
-			updateImageRubberband(for: delta)
-			setNeedsDisplay()
-		}
-	}
-
-	// change cursor to
-	// indicate action possible on what's under cursor
-	// and possibly display a tool tip
-
-	override func mouseMoved(with event: ZEvent) {
-		let rect = rectFromEvent(event)
-
-		if  linkHit(at: rect) {
-			NSCursor.arrow.set()
-		} else if let   dot = dragDotHit(at: rect) {
-			if  let    note = dot.note {
-				let grabbed = grabbedNotes.contains(note)
-				toolTip     = note.tooltipString(grabbed: grabbed)
-			}
-
-			NSCursor.arrow.set()
-		} else if let item = attachmentHit(at: rect),
-				  let  imageRect = rectForRangedAttachment(item) {
-
-			NSCursor.openHand.set()
-
-			for point in imageRect.selectionPoints.values {
-				let cornerRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
-
-				if  cornerRect.intersects(rect) {
-					NSCursor.crosshair.set()
-				}
-			}
-		} else {
-			toolTip = nil
-
-			NSCursor.iBeam.set()
 		}
 
-		setNeedsDisplay()
+		return false
 	}
 
-	override func setSelectedRange(_ range: NSRange) {
-		super.setSelectedRange(range)
+	// MARK: - locked ranges
+	// MARK: -
 
-		if  selectedRange.location != 0,
-			let       rect = rectForRange(selectedRange),
-			selectionRect != rect {
-			selectionRect  = rect
-		}
-	}
-
-	private func select(restoreSelection: Int? = nil) {
-		var point = CGPoint()                     // scroll to top
-
-		if  let e = gCurrentEssay,
-			(e.lastTextIsDefault || restoreSelection != nil),
-			var range      = e.lastTextRange {    // select entire text of final essay
-			if  let offset = restoreSelection {
-				range      = NSRange(location: offset, length: 0)
-			}
-
-			if  let   r = rectForRange(range) {
-				point   = r.origin
-				point.y = max(0.0, point.y - 100.0)
-			}
-
-			setSelectedRange(range)
-		}
-
-		scroll(point)
-	}
-
-	func asssureSelectionIsVisible() {
-		for note in selectedNotes {
-			if  let zone = note.zone {
-				zone.asssureIsVisible()
-			}
-		}
-	}
-
-	// MARK:- setup
-	// MARK:-
-
-	override func awakeFromNib() {
-		super.awakeFromNib()
-
-		usesRuler            = true
-		isRulerVisible       = true
-		importsGraphics      = true
-		allowsImageEditing   = true
-		displaysLinkToolTips = true
-		textContainerInset   = NSSize(width: margin, height: margin)
-
-		resetForDarkMode()
-
-		FOREGROUND { // wait for application to fully load the inspector bar
-			gMainWindow?.updateEssayEditorInspectorBar(show: true)
-
-			for tag in ZEssayButtonID.all {
-				self.addButtonFor(tag)
-			}
-		}
-	}
-
-	private func discardPriorText() {
-		gCurrentEssayZone?.noteMaybe = nil
-		delegate                     = nil		// clear so that shouldChangeTextIn won't be invoked on insertText or replaceCharacters
-
-		if  let length = textStorage?.length, length > 0 {
-			textStorage?.replaceCharacters(in: NSRange(location: 0, length: length), with: "")
-		}
-	}
-
-	func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) {
-		if  let      note = current {
-			gCurrentEssay = note
-
-			gCurrentEssay?.reset()
-			updateText()
-			gCurrentEssay?.updateNoteOffsets()
-
-			if  let r = range {
-				FOREGROUND {
-					self.setSelectedRange(r)
-				}
-			}
-		}
-	}
-
-	func resetForDarkMode() {
-		usesAdaptiveColorMappingForDarkAppearance = true
-		let                       backgroundColor = (gIsDark ?  kDarkestGrayColor : kWhiteColor).cgColor
-		let                            scrollView = superview?.superview as? NSScrollView
-		let                             rulerView = scrollView?.horizontalRulerView
-		let                              scroller = scrollView?.verticalScroller
-		let modeAppearance                        = NSAppearance(named: gIsDark ? .darkAqua : .aqua)
-		appearance                                = modeAppearance
-		rulerView?                    .appearance = modeAppearance
-		scroller?                     .appearance = modeAppearance
-		scroller?.zlayer         .backgroundColor = backgroundColor
-		zlayer                   .backgroundColor = backgroundColor
-	}
-
-	func setup() {
-		updateText()
-	}
-
-	func updateText(restoreSelection: Int? = nil) {
-
-		// make sure we actually have a current essay
-		// activate the buttons in the control bar
-		// grab the current essay text and put it in place
-		// grab record id of essay to indicate that essay
-		// has not been saved, avoids overwriting later
-
-		resetForDarkMode()
-
-		if  gCurrentEssay == nil {
-			gControllers.swapMapAndEssay(force: .wMapMode)                    // not show blank essay
-		} else {
-			setControlBarButtons(enabled: true)
-
-			if  (shouldOverwrite || restoreSelection != nil),
-				let text = gCurrentEssay?.essayText {
-				discardPriorText()
-				gCurrentEssay?.noteTrait?.setCurrentTrait { setText(text) }   // emplace text
-				select(restoreSelection: restoreSelection)
-				undoManager?.removeAllActions()         // clear the undo stack of prior / disastrous information (about prior text)
-			}
-
-			essayID  = gCurrentEssayZone?.ckRecord?.recordID                  // do this after overwriting
-			delegate = self 					    	                      // set delegate after setText
-
-			if  gIsEssayMode {
-				gMainWindow?.makeFirstResponder(self)                         // this should never happen unless already in essay mode
-			}
-		}
-	}
-
-	// MARK:- clean up
-	// MARK:-
-
-	func done() {
-		save()
-		exit()
-	}
-
-	func exit() {
-		prepareToExit()
-		gControllers.swapMapAndEssay(force: .wMapMode)
-	}
-
-	func save() {
-		if  let e = gCurrentEssay {
-			e.saveEssay(textStorage)
-			asssureSelectionIsVisible()
-		}
-	}
-
-	func prepareToExit() {
-		if  let e = gCurrentEssay,
-			e.lastTextIsDefault,
-			e.autoDelete {
-			e.zone?.deleteNote()
-		}
-
-		ungrabAll()
-		undoManager?.removeAllActions()
-
-		if  let zone = gCurrentEssayZone {
-			gHere    = zone
-
-			gHere.grab()
-		}
-	}
-
-	func grabDone() {
-		if  let zone = lastGrabbedDot?.note?.zone {
-			zone.grab()
-		} else {
-			gCurrentEssayZone?.grab()
-		}
-
-		done()
-	}
-
-	// MARK:- locked ranges
-	// MARK:-
-
-	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldSelectedCharRange: NSRange, toCharacterRange newSelectedCharRange: NSRange) -> NSRange {
+	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
 		let     noKeys = gCurrentKeyPressed == nil
-		let     locked = gCurrentEssay?.isLocked(within: newSelectedCharRange) ?? false
-		return (locked && noKeys) ? oldSelectedCharRange : newSelectedCharRange
+		let     locked = gCurrentEssay?.isLocked(within: newRange) ?? false
+		return (locked && noKeys) ? oldRange : newRange
 	}
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
-		if  let   replacementLength = replacement?.length,
-			let   (result,   delta) = gCurrentEssay?.shouldAlterEssay(range, replacementLength: replacementLength) {
+		setNeedsDisplay()                                 // so image resize rubberband will be redrawn
+
+		if  let replacementLength = replacement?.length,
+			let         hasReturn = replacement?.containsLineEndOrTab,
+			let   (result, delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn) {
 			switch result {
-				case .eAlter: return true
-				case .eLock:  return false
-				case .eExit:  exit()
+				case .eAlter:        break
+				case .eLock:         return false
+				case .eExit: exit(); return false
 				case .eDelete:
-					FOREGROUND {										// DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
-						gCurrentEssay?.reset()
-						self.updateText(restoreSelection: delta)		// recreate essay text and restore cursor position within it
+					FOREGROUND { [self] in                // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
+						gCurrentEssay?.updateChildren()
+						updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
 			}
 
-			gCurrentEssay?.essayLength += delta							// compensate for change
-
-			return true
+			gCurrentEssay?.essayLength += delta           // compensate for change
+		} else {
+			updateImageInParagraph(containing: range)     // so image resize rubberband gets relocated correctly
 		}
 
-		return replacement == nil
+		return true // yes, change text
 	}
 
-	// MARK:- grab / drag
-	// MARK:-
+	// MARK: - grabbing notes
+	// MARK: -
+
+	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
+
+		// SHIFT single note expand to essay and vice-versa
+
+		let indents = relativeLevelOfFirstGrabbed
+
+		if  flags.hasOption {
+			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
+				save()
+
+				gMapEditor.handleArrow(arrow, flags: flags) { [self] in
+					resetTextAndGrabs()
+				}
+			}
+		} else if flags.hasShift {
+			if [.left, .right].contains(arrow) {
+				// conceal reveal subnotes of grabbed (NEEDS new ZEssay code)
+			}
+		} else if arrow == .left {
+			if  indents == 0 {
+				done()
+			} else {
+				swapBetweenNoteAndEssay()
+			}
+		} else if [.up, .down].contains(arrow) {
+			grabNextNote(up: arrow == .up, ungrab: !flags.hasShift)
+			scrollToGrabbed()
+			gSignal([.sDetails])
+		}
+	}
 
 	func grabbedIndex(goingUp: Bool) -> Int? {
 		let dots = goingUp ? dragDots : dragDots.reversed()
@@ -623,110 +729,60 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	var lastGrabbedDot : ZEssayDragDot? {
-		var grabbed : ZEssayDragDot?
+		var    grabbed : ZEssayDragDot?
 
 		for dot in dragDots {
 			if  let zone = dot.note?.zone,
 				grabbedZones.contains(zone) {
-				grabbed = dot
+				grabbed  = dot
 			}
 		}
 
 		return grabbed
 	}
 
-	var dragDots:  [ZEssayDragDot] {
-		var dots = [ZEssayDragDot]()
+	var dragDots : ZEssayDragDotArray {
+		var dots = ZEssayDragDotArray()
 
 		if  let essay = gCurrentEssay, !essay.isNote,
-			let zones = essay.zone?.zonesWithNotes,
-			let level = essay.zone?.level,
+			let  zone = essay.zone,
 			let     l = layoutManager,
 			let     c = textContainer {
+			let zones = zone.zonesWithVisibleNotes
+			let level = zone.level
+
+			essay.updateNoteOffsets()
+
 			for (index, zone) in zones.enumerated() {
-				if  var note   = zone.note {
-					if  index == 0 {
-						note   = ZNote(zone)
-						note.updatedRanges()
+				if  var note       = zone.note {
+					if  index     == 0 {
+						note       = essay
 					}
 
 					let dragHeight = 15.0
 					let  dragWidth = 11.75
-					let      color = zone.color ?? kDefaultIdeaColor
-					let     offset = index == 0 ? 0 : (index != zones.count - 1) ? 1 : 2     // first and last note have altered offset (thus, range)
-					let  noteRange = note.noteRange.offsetBy(offset)
 					let      inset = CGFloat(2.0)
-					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).insetEquallyBy(-inset)
+					let     offset = index == 0 ? 0 : 1               // first note has an altered offset ... thus, an altered range
 					let     indent = zone.level - level
 					let     noLine = indent == 0
-					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: dragHeight))
+					let      color = zone.color ?? kDefaultIdeaColor
+					let  noteRange = note.noteRange.offsetBy(offset)
+					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).expandedEquallyBy(inset)
+					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: dragHeight - 2.0))
 					let  lineWidth = dragWidth * Double(indent)
 					let   lineSize = CGSize(width: lineWidth, height: 0.5)
 					let   lineRect = noLine ? nil : CGRect(origin: lineOrigin, size: lineSize)
-					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: -8.0))
+					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: dragHeight / -2.0))
 					let   dragSize = CGSize(width: dragWidth, height: dragHeight)
 					let   dragRect = CGRect(origin: dragOrigin, size: dragSize)
+					let        dot = ZEssayDragDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note)
 
-					dots.append(ZEssayDragDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note))
+					dots.append(dot)
 				}
 			}
 		}
 
 		return dots
-	}
-
-	// SHIFT single note expand to essay and vice-versa
-
-	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
-		let indents = relativeLevelOfFirstGrabbed
-
-		if  flags.isOption {
-			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
-				gCurrentEssay?.saveEssay(textStorage)
-
-				gMapEditor.handleArrow(arrow, flags: flags) {
-					self.resetTextAndGrabs()
-				}
-			}
-		} else if flags.isShift {
-			if [.left, .right].contains(arrow) {
-				// conceal reveal subnotes of grabbed (NEEDS new ZEssay code)
-			}
-		} else if arrow == .left {
-			if  indents == 0 {
-				done()
-			} else {
-				swapBetweenNoteAndEssay()
-			}
-		} else if [.up, .down].contains(arrow) {
-			grabNextNote(up: arrow == .up, ungrab: !flags.isShift)
-			scrollToGrabbed()
-			gSignal([.sDetails])
-		}
-	}
-
-	func drawDragDecorations() {
-		if  gShowEssayTitles {
-			for (index, dot) in dragDots.enumerated() {
-				if  let     zone = dot.note?.zone {
-					let  grabbed = grabbedZones.contains(zone)
-					let extendBy = index == 0 ? kNoteIndentSpacer.length : -1        // fixes intersection computation, first and last note have altered range
-					let selected = dot.noteRange?.extendedBy(extendBy).inclusiveIntersection(selectedRange) != nil
-					let   filled = selected && !hasGrabbedNote
-					let    color = dot.color
-
-					drawColoredOval(dot.dragRect, color, filled: filled || grabbed)
-
-					if  let lineRect = dot.lineRect {
-						drawColoredRect(lineRect, color, thickness: 0.5)
-					}
-
-					if  grabbed {
-						drawColoredRect(dot.textRect, color)
-					}
-				}
-			}
-		}
 	}
 
 	func dragDotHit(at rect: CGRect) -> ZEssayDragDot? {
@@ -737,44 +793,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		}
 
 		return nil
-	}
-
-	func updateImageRubberband(for delta: CGSize) {
-
-		// compute imageDragRect from delta.width, image rect and corner
-		// preserving aspect ratio
-
-		if  let direction = resizeDot,
-			let    attach = imageAttachment,
-			let      rect = rectForRangedAttachment(attach) {
-			var      size = rect.size
-			var    origin = rect.origin
-			let  fraction = size.fraction(delta)
-			let     wGrow = size.width  * (1.0 - fraction.width)
-			let     hGrow = size.height * (1.0 - fraction.height)
-
-			switch direction {
-				case .topLeft:     size   = size  .offsetBy(-wGrow, -hGrow)
-				case .bottomLeft:  size   = size  .offsetBy(-wGrow,  hGrow)
-				case .topRight:    size   = size  .offsetBy( wGrow, -hGrow)
-				case .bottomRight: size   = size  .offsetBy( wGrow,  hGrow)
-				case .left:        size   = size  .offsetBy(-wGrow,  0.0)
-				case .right:       size   = size  .offsetBy( wGrow,  0.0)
-				case .top:         size   = size  .offsetBy( 0.0,   -hGrow)
-				case .bottom:      size   = size  .offsetBy( 0.0,    hGrow)
-			}
-
-			switch direction {
-				case .topLeft:     origin = origin.offsetBy( wGrow,  hGrow)
-				case .top,
-					 .topRight:    origin = origin.offsetBy( 0.0,    hGrow)
-				case .left,
-					 .bottomLeft:  origin = origin.offsetBy( wGrow,  0.0)
-				default:           break
-			}
-
-			resizeDragRect = CGRect(origin: origin, size: size)
-		}
 	}
 
 	func grabSelected() {
@@ -797,44 +815,63 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func grabNextNote(up: Bool, ungrab: Bool) {
-		let       dots = dragDots
-		let     gIndex = grabbedIndex(goingUp: up)
-		if  let nIndex = gIndex?.next(up: up, max: dots.count - 1),
-			let   note = dots[nIndex].note {
+		let      dots = dragDots
+		if  let index = grabbedIndex(goingUp: up),
+			let   dot = dots.next(increasing: up, from: index),
+			let  note = dot.note {
+
 			if  ungrab {
 				ungrabAll()
 			}
 
 			grabbedNotes.append(note)
 			scrollToGrabbed()
+			gSignal([.sDetails])
+		}
+	}
+
+	func scrollToGrabbed() {
+		if  let range = lastGrabbedDot?.noteRange {
+			scrollRangeToVisible(range)
 		}
 	}
 
 	func swapWithParent() {
 		if !firstIsGrabbed,
-		    let note = firstGrabbedNote,
-			let zone = note.zone {
-			gCurrentEssay?.saveEssay(textStorage)
-			gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
+		   let note = firstGrabbedNote,
+		   let zone = note.zone {
+			save()
+			gCurrentEssayZone?.clearAllNoteMaybes()            // discard current essay text and all child note's text
 			ungrabAll()
 
 			gNeedsRecount = true
 			let    parent = zone.parentZone                  // get the parent before we swap
-			let     reset = parent == self.firstNote?.zone   // check if current esssay should change
+			let     reset = parent == firstNote?.zone        // check if current esssay should change
 
 			gDisablePush {
-				zone.swapWithParent {
+				zone.swapWithParent { [self] in
 					if  reset {
-						gCurrentEssay = ZEssay(zone)
+						gCurrentEssay = gCreateEssay(zone)
 					}
 
-					self.resetTextAndGrabs(grab: parent)
+					resetTextAndGrabs(grab: parent)
 				}
 			}
 		}
 	}
 
-	@discardableResult func deleteGrabbed() -> Bool {
+	func setGrabbedZoneAsCurrentEssay() {
+		if  let      note = firstGrabbedNote {
+			gCurrentEssay = note
+
+			ungrabAll()
+			resetTextAndGrabs()
+		}
+	}
+
+	@discardableResult func deleteGrabbedOrSelected() -> Bool {
+		save() // capture all the current changes before deleting
+
 		if  hasGrabbedNote {
 			for zone in grabbedZones {
 				zone.deleteNote()
@@ -846,13 +883,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			return true
 		}
 
+		if  let  zone = selectedNotes.last?.zone,
+			let count = gCurrentEssay?.zone?.zonesWithNotes.count, count > 1 {
+			zone.deleteNote()
+			resetTextAndGrabs()
+
+			return true
+		}
+
 		return false
 	}
 
 	func ungrabAll() { grabbedNotes.removeAll() }
 
 	func regrab(_ ungrabbed: ZoneArray) {
-		for zone in ungrabbed {                         // re-grab notes for set aside zones
+		for zone in ungrabbed {                       // re-grab notes for set aside zones
 			if  let note = zone.note {                // note may not be same
 				grabbedNotes.appendUnique(item: note)
 			}
@@ -870,7 +915,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 
 			if  zone         == gCurrentEssay?.zone,
 				let     first = firstGrabbedZone {
-				gCurrentEssay = ZEssay(first)
+				gCurrentEssay = gCreateEssay(first)
 			}
 		}
 
@@ -878,275 +923,31 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func resetTextAndGrabs(grab: Zone? = nil) {
-		let   grabbed = willRegrab(grab)              // includes logic for optional grab parameter
-		essayID       = nil                           // so shouldOverwrite will return true
+		let     grabbed = willRegrab(grab)              // includes logic for optional grab parameter
+		essayRecordName = nil                           // so shouldOverwrite will return true
 
-		gCurrentEssayZone?.clearAllNotes()            // discard current essay text and all child note's text
-		updateText()                                  // assume text has been altered: re-assemble it
+		gCurrentEssayZone?.clearAllNoteMaybes()         // discard current essay text and all child note's text
+		updateTextStorage()                             // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
-		gSignal([.sCrumbs, .sDetails])
+		gSignal([.spCrumbs, .sDetails])
 	}
 
-	// MARK:- buttons
-	// MARK:-
-
-	func setControlBarButtons(       enabled: Bool) {
-		let      hasMultipleNotes =  gCurrentSmallMapRecords?.workingNotemarks.count ?? 0 > 1
-		let               isEssay = (gCurrentEssay?.isNote ?? true) == false
-		let                   bar =  gMainWindow?.inspectorBar
-		backwardButton?.isEnabled =  enabled && hasMultipleNotes
-		forwardButton? .isEnabled =  enabled && hasMultipleNotes
-		titlesButton?  .isEnabled =  enabled && isEssay
-		deleteButton?  .isEnabled =  enabled
-		cancelButton?  .isEnabled =  enabled
-		hideButton?    .isEnabled =  enabled
-		saveButton?    .isEnabled =  enabled
-		bar?            .isHidden = !enabled
-
-		if  let b = bar {
-			b.draw(b.bounds)
-		}
-	}
-
-	@objc private func handleButtonPress(_ iButton: ZButton) {
-		if  let buttonID = ZEssayButtonID(rawValue: iButton.tag) {
-			switch buttonID {
-				case .idForward: save(); gCurrentSmallMapRecords?.go(down:  true, amongNotes: true) { gRedrawMaps() }
-				case .idBack:    save(); gCurrentSmallMapRecords?.go(down: false, amongNotes: true) { gRedrawMaps() }
-				case .idSave:    save()
-				case .idHide:                          grabDone()
-				case .idCancel:                        gCurrentEssayZone?.grab();       exit()
-				case .idDelete:  if !deleteGrabbed() { gCurrentEssayZone?.deleteNote(); done() }
-				case .idTitles:  toggleEssayTitles()
-			}
-		}
-	}
-
-	func updateButtonTitles() {
-		for tag in ZEssayButtonID.all {
-			var button :ZButton?
-			switch tag {
-				case .idBack:    button = backwardButton
-				case .idForward: button =  forwardButton
-				case .idCancel:  button =   cancelButton
-				case .idDelete:  button =   deleteButton
-				case .idTitles:  button =   titlesButton
-				case .idHide:    button =     hideButton
-				case .idSave:    button =     saveButton
-			}
-
-			if  button?.image == nil {
-				button?.title = tag.title
-			}
-		}
-	}
-
-	func toggleEssayTitles() {
-		gShowEssayTitles = !gShowEssayTitles
-
-		updateText()
-	}
-
-	private func addButtonFor(_ tag: ZEssayButtonID) {
-		if  let inspectorBar = gMainWindow?.inspectorBar {
-
-			func rect(at target: Int) -> CGRect {
-
-				// ////////////////////////////////////////////////// //
-				// Apple bug: subviews are not located where expected //
-				// ////////////////////////////////////////////////// //
-
-				var final = inspectorBar.subviews[0].frame
-				var prior = final
-
-				for index in 1...target {
-					let subview      = inspectorBar.subviews[index]
-					let frame        = subview.frame
-					subview.isHidden = false
-					final.origin.x  += prior.size.width
-					final.size       = frame.size
-					prior            = frame
-				}
-
-				final.origin.x      += 70.0
-
-				return final
-			}
-
-			func buttonWith(_ title: String) -> ZTooltipButton {
-				let    action = #selector(handleButtonPress)
-
-				if  let image = ZImage(named: title)?.resize(CGSize(width: 14.0, height: 14.0)) {
-					return      ZTooltipButton(image: image, target: self, action: action)
-				}
-
-				let    button = ZTooltipButton(title: title, target: self, action: action)
-				button  .font = gTinyFont
-
-				return button
-			}
-
-			func buttonFor(_ tag: ZEssayButtonID) -> ZTooltipButton {
-				let         index = inspectorBar.subviews.count - 1
-				var         frame = rect(at: index).offsetBy(dx: 2.0, dy: -5.0)
-				let         title = tag.title
-				let        button = buttonWith(title)
-				frame       .size = button.bounds.size
-				frame             = frame.insetBy(dx: 12.0, dy: 6.0)
-				button   .toolTip = "\(kClickTo)\(tag.tooltipString)"
-				button       .tag = tag.rawValue
-				button     .frame = frame
-				button .isEnabled = false
-				button.isBordered = false
-				button.bezelStyle = .texturedRounded
-
-				button.setButtonType(.momentaryChange)
-
-				return button
-			}
-
-			func setButton(_ button: ZButton) {
-				if  let    tag = ZEssayButtonID(rawValue: button.tag) {
-					switch tag {
-						case .idBack:   backwardButton = button
-						case .idForward: forwardButton = button
-						case .idCancel:   cancelButton = button
-						case .idDelete:   deleteButton = button
-						case .idTitles:   titlesButton = button
-						case .idHide:       hideButton = button
-						case .idSave:       saveButton = button
-					}
-				}
-			}
-
-			let b = buttonFor(tag)
-
-			inspectorBar.addSubview(b)
-			setButton(b)
-		}
-
-	}
-
-	// MARK:- images
-	// MARK:-
-
-	func drawImageResizeDots(onBorderOf rect: CGRect) {
-		for point in rect.selectionPoints.values {
-			let   dotRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
-			let      path = ZBezierPath(ovalIn: dotRect)
-			path.flatness = 0.0001
-
-			path.fill()
-		}
-	}
-
-	override func draggingEntered(_ drag: NSDraggingInfo) -> NSDragOperation {
-		if  let    board = drag.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
-			let     path = board[0] as? String {
-			let fileName = URL(fileURLWithPath: path).lastPathComponent
-			printDebug(.dImages, "DROP     \(fileName)")
-			dropped.append(fileName)
-		}
-
-		return .copy
-	}
-
-	func clearResizing() {
-		imageAttachment = nil
-		resizeDragStart = nil
-		resizeDragRect  = nil
-		resizeDot       = nil
-	}
-
-	override func mouseUp(with event: ZEvent) {
-		if  resizeDot != nil,
-			updateImage(),
-			let attach = imageAttachment {
-			let  range = attach.range
-
-			save()
-			clearResizing()
-			setNeedsLayout()
-			setNeedsDisplay()
-			updateText(restoreSelection: range.location)  // recreate essay after an image is dropped
-		}
-	}
-
-	func updateImage() -> Bool {
-		if  let    size  = resizeDragRect?.size,
-			let       a  = imageAttachment?.attachment,
-			let   image  = a.image {
-			let oldSize  = image.size
-			if  oldSize != size {
-				a.image  = image.resizedTo(size)
-
-				return true
-			}
-		}
-
-		return false
-	}
-
-	func resizeDotHit(in attach: ZRangedAttachment?, at rect: CGRect) -> ZDirection? {
-		if  let      item = attach,
-			let imageRect = rectForRangedAttachment(item) {
-			let    points = imageRect.selectionPoints
-
-			for dot in points.keys {
-				if  let point = points[dot] {
-					let selectionRect = CGRect(origin: point, size: CGSize.zero).insetEquallyBy(dotInset)
-
-					if  selectionRect.intersects(rect) {
-						return dot
-					}
-				}
-			}
-		}
-
-		return nil
-	}
-
-	func rectForRangedAttachment(_ attach: ZRangedAttachment) -> CGRect? {
-		if  let      managers = textStorage?.layoutManagers, managers.count > 0 {
-			let layoutManager = managers[0] as NSLayoutManager
-			let    containers = layoutManager.textContainers
-
-			if  containers.count > 0 {
-				let textContainer = containers[0]
-				var    glyphRange = NSRange()
-
-				layoutManager.characterRange(forGlyphRange: attach.range, actualGlyphRange: &glyphRange)
-				return layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer).offsetBy(dx: margin, dy: 0.0)
-			}
-		}
-
-		return nil
-	}
-
-	func attachmentHit(at rect: CGRect) -> ZRangedAttachment? {
-		if  let array = textStorage?.rangedAttachments {
-			for item in array {
-				if  let imageRect = rectForRangedAttachment(item)?.insetEquallyBy(dotInset),
-					imageRect.intersects(rect) {
-
-					return item
-				}
-			}
-		}
-
-		return nil
-	}
-
-	// MARK:- search
-	// MARK:-
+	// MARK: - search
+	// MARK: -
 
 	func grabSelectedTextForSearch() {
-		gSearching.searchText = selectionString
+		gSearching.essaySearchText = selectionString
 	}
 
-	func searchAgain(_ OPTION: Bool) {
-	    let    seek = gSearching.searchText
+	func performSearch(for searchString: String, closure: Closure?) {
+		gSearching.essaySearchText = searchString
+
+		searchAgain(false, closure: closure)
+	}
+
+	func searchAgain(_ OPTION: Bool, closure: Closure? = nil) {
+		let    seek = gSearching.essaySearchText
 		var  offset = selectedRange.upperBound + 1
 		let    text = gCurrentEssay?.essayText?.string
 		let   first = text?.substring(toExclusive: offset)
@@ -1158,167 +959,37 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 			offset  = 0
 		}
 
+		closure?()
+
 		if  matches != nil,
 			matches!.count > 0 {
-			scrollToVisible(selectionRect)
+			assignAsFirstResponder(self)
 			setSelectedRange(matches![0].offsetBy(offset))
+			scrollToVisible(selectionRect.expandedEquallyBy(100.0))
 		}
 	}
 
-	// MARK:- more
-	// MARK:-
-
-	func swapBetweenNoteAndEssay() {
-		if  let current = gCurrentEssay,
-			let    zone = current.zone {
-			let   count = zone.countOfNotes
-
-			current.saveEssay(textStorage)
-
-			if  current.isNote {
-				if  count                > 1 {
-					gCreateCombinedEssay = true
-					gCurrentEssay        = ZEssay(zone)
-					zone.clearAllNotes()            // discard current essay text and all child note's text
-					updateText()
-				}
-			} else if count > 0,
-				let note = lastGrabbedDot?.note ?? selectedNote {
-				ungrabAll()
-				resetCurrentEssay(note)
-			}
-
-			gSignal([.sDetails])
-		}
-	}
-
-	func popNoteAndUpdate() {
-		if  gRecents.pop(),
-			let  notemark = gRecents.rootZone?.notemarks.first,
-			let      note = notemark.bookmarkTarget?.note {
-			gCurrentEssay = note
-			gRecents.setAsCurrent(notemark)
-			gSignal([.sSmallMap, .sCrumbs])
-
-			updateText()
-		}
-	}
-
-	func move(out: Bool) {
-		gCreateCombinedEssay = true
-		let        selection = selectedNotes
-
-		save()
-
-		if !out, let last = selection.last {
-			resetCurrentEssay(last)
-		} else if out {
-			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gCurrentEssayZone, ancestor.hasNote {
-					self.resetCurrentEssay(ancestor.note)
-
-					return .eStop
-				}
-
-				return .eContinue
-			}
-		}
-
-		gSignal([.sCrumbs])
-	}
-
-	private func convertToChild(_ flags: ZEventFlags) {
-		if  let   text = selectionString, text.length > 0,
-			let   dbID = gCurrentEssayZone?.databaseID,
-			let parent = selectedZone {
-
-			func child(named name: String, withText: String) {
-				let child = Zone.create(named: name, databaseID: dbID)   	// create new (to be child) zone from text
-
-				parent.addChild(child)
-				child.setTraitText(text, for: .tNote)                       // create note from text in the child
-				gCurrentEssayZone?.createNote()
-
-				resetCurrentEssay(gCurrentEssayZone?.note, selecting: child.noteMaybe?.offsetTextRange)	// redraw essay TODO: WITH NEW NOTE SELECTED
-			}
-
-			if        flags.isDual {
-				child(named: "idea", withText: text)
-			} else if flags.isOption {
-				child(named: text,   withText: "")
-			} else {
-				let child = Zone.create(named: text, databaseID: dbID)   	// create new (to be child) zone from text
-
-				insertText("", replacementRange: selectedRange)	            // remove text
-				parent.addChild(child)
-				child.asssureIsVisible()
-				save()
-
-				child.grab()
-				done()
-
-				FOREGROUND {                                            // defer idea edit until after this function exits
-					child.edit()
-				}
-			}
-		}
-	}
-
-	private func alterCase(up: Bool) {
-		if  let        text = selectionString {
-			let replacement = up ? text.uppercased() : text.lowercased()
-
-			insertText(replacement, replacementRange: selectedRange)
-		}
-	}
-
-	func applyToSelection(BOLD: Bool = false, ITALICS: Bool = false) {
-		if  let dict = textStorage?.fontAttributes(in: selectedRange),
-			let font = dict[.font] as? ZFont {
-			var desc = font.fontDescriptor
-			var traz = desc.symbolicTraits
-
-			if  BOLD {
-				if  traz.contains(.bold) {
-					traz  .remove(.bold)
-				} else {
-					traz  .insert(.bold)
-				}
-			}
-
-			if  ITALICS {
-				if  traz.contains(.italic) {
-					traz  .remove(.italic)
-				} else {
-					traz  .insert(.italic)
-				}
-			}
-
-			desc = desc.withSymbolicTraits(traz)
-			let bold = ZFont(descriptor: desc, size: font.pointSize) as Any
-
-			textStorage?.setAttributes([.font : bold], range: selectedRange)
-		}
-	}
-
-	// MARK:- special characters
-	// MARK:-
+	// MARK: - special characters
+	// MARK: -
 
 	private func showSpecialCharactersPopup() {
-		ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:))).popUp(positioning: nil, at: selectionRect.origin, in: self)
+		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:)))
+		let point = selectionRect.origin.offsetBy(-165.0, -60.0)
+
+		menu.popUp(positioning: nil, at: point, in: self)
 	}
 
 	@objc private func handleSymbolsPopupMenu(_ iItem: ZMenuItem) {
-		if  let  type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
-			type     != .eCancel {
-			let  text = type.text
+		if  let type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
+			type    != .eCancel {
+			let text = type.text
 
 			insertText(text, replacementRange: selectedRange)
 		}
 	}
 
-	// MARK:- hyperlinks
-	// MARK:-
+	// MARK: - hyperlinks
+	// MARK: -
 
 	var currentLink: Any? {
 		var found: Any?
@@ -1365,7 +1036,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return false
 	}
 
-	private func showHyperlinkPopup() {
+	private func showLinkPopup() {
 		let menu = ZMenu(title: "create a link")
 		menu.autoenablesItems = false
 
@@ -1377,7 +1048,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	private func item(type: ZEssayLinkType) -> ZMenuItem {
-		let  	  item = ZMenuItem(title: type.title, action: #selector(handleHyperlinkPopupMenu(_:)), keyEquivalent: type.rawValue)
+		let  	  item = ZMenuItem(title: type.title, action: #selector(handleLinkPopupMenu(_:)), keyEquivalent: type.rawValue)
 		item   .target = self
 		item.isEnabled = true
 
@@ -1386,9 +1057,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 		return item
 	}
 
-	@objc private func handleHyperlinkPopupMenu(_ iItem: ZMenuItem) {
-		if  let type = ZEssayLinkType(rawValue: iItem.keyEquivalent) {
-			var link : String? = type.linkType + kColonSeparator
+	@objc private func handleLinkPopupMenu(_ iItem: ZMenuItem) {
+		if  let   type = ZEssayLinkType(rawValue: iItem.keyEquivalent) {
+			let  range = selectedRange
+			let showAs = textStorage?.string.substring(with: range)
+			var   link : String? = type.linkType + kColonSeparator
 
 			func setLink(to appendToLink: String?, replacement: String? = nil) {
 				if  let a = appendToLink, !a.isEmpty {
@@ -1398,54 +1071,68 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 				}
 
 				if  link == nil {
-					textStorage?.removeAttribute(.link,               range: selectedRange)
+					textStorage?.removeAttribute(.link,               range: range)
 				} else {
-					textStorage?   .addAttribute(.link, value: link!, range: selectedRange)
+					textStorage?   .addAttribute(.link, value: link!, range: range)
 				}
 
 				if  let r = replacement {
-					textStorage?.replaceCharacters(in: selectedRange, with: r)
+					textStorage?.replaceCharacters(in: range, with: r)
+				}
+
+				selectAndScrollTo(range)
+			}
+
+			func displayUploadDialog() {
+				ZFiles.presentOpenPanel() { (iAny) in
+					if  let      url = iAny as? URL {
+						let    asset = CKAsset(fileURL: url)
+						if  let file = ZFile.uniqueFile(asset, databaseID: gDatabaseID),
+							let name = file.recordName {
+
+							setLink(to: name, replacement: showAs)
+						}
+					} else if let panel = iAny as? NSPanel {
+						panel.title = "Import"
+					}
 				}
 			}
 
 			func displayLinkDialog() {
-				let showAs = textStorage?.string.substring(with: selectedRange)
-
 				gEssayController?.modalForLink(type: type, showAs) { path, replacement in
 					setLink(to: path, replacement: replacement)
 				}
 			}
 
 			switch type {
-				case .hClear: setLink(to: nil)
-				case .hFile,
-					 .hEmail,
+				case .hEmail,
 					 .hWeb:   displayLinkDialog()
+				case .hFile:  displayUploadDialog()
+				case .hClear: setLink(to: nil)
 				default:      setLink(to: gSelecting.pastableRecordName)
 			}
 		}
 	}
 
-	@discardableResult private func followCurrentLink(within range: NSRange) -> Bool {
-		setSelectedRange(range)
-
+	func followLinkInSelection() -> Bool {
 		if  let  link = currentLink as? String {
 			let parts = link.components(separatedBy: kColonSeparator)
 
 			if  parts.count > 1,
-				let  one = parts.first?.first,                          // first character of first part
-				let name = parts.last,
-				let type = ZEssayLinkType(rawValue: String(one)) {
-				let zone = gRemoteStorage.maybeZoneForRecordName(name)  // find zone whose record name == name
+				let     one = parts.first?.first,                          // first character of first part
+				let    name = parts.last,
+				let    type = ZEssayLinkType(rawValue: String(one)) {
+				let zRecord = gRemoteStorage.maybeZRecordForRecordName(name)  // find zone whose record name == name
 				switch type {
 					case .hEmail:
 						link.openAsURL()
 						return true
 					case .hFile:
-						name.asBundleResource?.openAsURL()
+						gFilesRegistry.fileWith(name, in: gDatabaseID)?.activate()
+
 						return true
 					case .hIdea:
-						if  let  grab = zone {
+						if  let  grab = zRecord as? Zone {
 							let eZone = gCurrentEssayZone
 
 							FOREGROUND {
@@ -1456,39 +1143,39 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 								grab  .grab()                           // select it, too
 								grab  .asssureIsVisible()
 								eZone?.asssureIsVisible()
-								gRedrawMaps()
+								gRelayoutMaps()
 							}
 
 							return true
 						}
 					case .hEssay, .hNote:
-						if  let target = zone {
+						if  let target = zRecord as? Zone {
 
 							save()
 
 							let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
-							FOREGROUND {
+							FOREGROUND { [self] in
 								if  let  note = target.noteMaybe, gCurrentEssay?.children.contains(note) ?? false {
-									let range = note.offsetTextRange	    // text range of target essay
+									let range = note.noteTextRange	    // text range of target essay
 									let start = NSRange(location: range.location, length: 1)
 
-									self.setSelectedRange(range)
+									setSelectedRange(range)
 
-									if  let    r = self.rectForRange(start) {
-										let rect = self.convert(r, to: self).offsetBy(dx: 0.0, dy: -150.0)
+									if  let    r = rectForRange(start) {
+										let rect = convert(r, to: self).offsetBy(dx: .zero, dy: -150.0)
 
 										// highlight text of note, and scroll it to visible
 
-										self.scroll(rect.origin)
+										scroll(rect.origin)
 									}
 								} else {
 									gCreateCombinedEssay = type == .hEssay
 
-									target .asssureIsVisible()		        // for later, when user exits essay mode
+									target .asssureIsVisible()		   // for later, when user exits essay mode
 									common?.asssureIsVisible()
-									self.resetCurrentEssay(target.note)     // change current note to that of target
-									gSignal([.sSmallMap, .sCrumbs])
+									resetCurrentEssay(target.note)     // change current note to that of target
+									gSignal([.spSmallMap, .spCrumbs])
 								}
 							}
 
@@ -1503,7 +1190,264 @@ class ZEssayView: ZTextView, ZTextViewDelegate {
 	}
 
 	func textView(_ textView: NSTextView, clickedOnLink link: Any, at charIndex: Int) -> Bool {
-		return followCurrentLink(within: NSRange(location: charIndex, length: 0))
+		setSelectedRange(NSRange(location: charIndex, length: 0))
+
+		return followLinkInSelection()
+	}
+
+	// MARK: - child notes
+	// MARK: -
+
+	func revealEmptyNotes(_ conceal: Bool = false) {
+		if  let essay = gCurrentEssay,
+			let  zone = essay.zone {
+			gCreateCombinedEssay = false              // so createNote does the right thing
+
+			zone.traverseAllProgeny { child in
+				if  conceal {
+					if  let string = child.maybeTraitFor(.tNote)?.text,
+						string == kDefaultNoteText {
+						child.deleteNote()
+					}
+				} else {
+					if !child.hasNoteOrEssay {
+						child.setTraitText(kDefaultNoteText, for: .tNote)  // create an empty note trait, add to child
+					}
+				}
+			}
+
+			zone.clearAllNoteMaybes()                 // discard current essay text and all child note's text
+
+			gCreateCombinedEssay = true               // so gCreateEssay does the right thing
+			gCurrentEssay        = gCreateEssay(zone) // create a new essay from the zone
+
+			resetCurrentEssay(gCurrentEssay)
+		}
+	}
+
+	func swapBetweenNoteAndEssay() {
+		let       range = selectedRange()
+		if  var    note = gCurrentEssay?.notes(in: range).first,
+			let    zone = note.zone {
+			let noChild = note.children.count == 0
+			let toEssay = noChild || !gCreateCombinedEssay
+
+			if  toEssay, gEssayTitleMode == .sEmpty, note.essayText!.string.length > 0 {
+				note.updatedRangesFrom(textStorage)
+			}
+
+			save()
+
+			gCreateCombinedEssay = toEssay      // toggle
+
+			if  toEssay {
+				zone.clearAllNoteMaybes()            // discard current essay text and all child note's text
+
+				note = gCreateEssay(zone)       // create a new essay from the zone
+			} else {
+				ungrabAll()
+
+				if !note.isNote {
+					note = ZNote(note.zone)     // convert essay to note
+				}
+			}
+
+			resetCurrentEssay(note, selecting: range)
+			gSignal([.sDetails])
+		}
+	}
+
+	func move(out: Bool) {
+		gCreateCombinedEssay = true
+		let            range = selectedRange()
+		let             note = gCurrentEssay?.notes(in: range).first
+		let            prior = (note?.noteOffset ?? 0) + (note?.indentCount ?? 0)
+
+		save()
+
+		if  out {
+			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
+				if  ancestor != gCurrentEssayZone, ancestor.hasNote,
+					let essay = ancestor.note {
+					let delta = resetCurrentEssay(essay)
+
+					if  let zone = note?.zone {
+						for within in essay.children {
+							if  zone == within.zone {
+								let offset = within.noteOffset
+								let indent = within.indentCount
+								let select = range.offsetBy(offset + delta + indent - prior + 1)
+
+								selectAndScrollTo(select)
+							}
+						}
+					}
+
+					return .eStop
+				}
+
+				return .eContinue
+			}
+		} else if let n = note, n != gCurrentEssay { // go in/right
+			let  offset = n.noteOffset
+			let  indent = n.indentCount
+			let  adjust = indent * (n.isNote ? 1 : 2) + ((indent < 3) ? 0 : indent - 2)
+			let   delta = resetCurrentEssay(n)
+			let  select = range.offsetBy(delta - offset - adjust + 1)
+
+			selectAndScrollTo(select)
+		}
+
+		gSignal([.spCrumbs])
+	}
+
+	func resetAndSelect(_ zone: Zone?) {
+		resetCurrentEssay()
+
+		if  let range = zone?.note?.noteTextRange {
+			setSelectedRange(range)
+		}
+	}
+
+	func convertSelectionIntoChildIdeas(asSentences: Bool) {
+		if  let    parent = selectedZone,
+			let    string = selectionString {
+			let separator = asSentences ? ". " : kNewLine
+			let     ideas = string.components(separatedBy: separator)
+			var      zone : Zone?
+
+			insertText(kDefaultNoteText, replacementRange: selectedRange)       // remove selected text
+
+			for idea in ideas {                                                 // create a child idea from each
+				zone = createNoteNamed(idea, in: parent, atEnd: true)           // add them as notes to the essay
+			}
+
+			resetAndSelect(zone)
+		}
+	}
+
+	private func convertSelectedTextToChild() {
+		if  let   parent = selectedZone,
+			let   string = selectionString {
+
+			insertText(kEmpty, replacementRange: selectedRange)	                // remove selected text
+
+			if  let zone = createNoteNamed(string, in: parent) {
+				resetAndSelect(zone)
+			}
+		}
+	}
+
+	private func createNoteNamed(_ name: String?, in parent: Zone, atEnd: Bool = false) -> Zone? {
+		var      child : Zone?
+		if  let   text = name, text.length > 0 {
+			let   dbID = parent.databaseID
+			let  index = atEnd ? parent.count : 0
+			child      = Zone.uniqueZoneNamed(text, databaseID: dbID)           // create new zone from text
+
+			gCreateCombinedEssay = parent.zonesWithVisibleNotes.count > 0
+
+			save()
+			parent.addChildNoDuplicate(child, at: index)                        // add as new child of parent
+			child?.setTraitText(text, for: .tNote, addDefaultAttributes: true)
+		}
+
+		return child
+	}
+
+	// MARK: - selection
+	// MARK: -
+
+	private func alterCase(up: Bool) {
+		if  let        text = selectionString {
+			let replacement = up ? text.uppercased() : text.lowercased()
+
+			insertText(replacement, replacementRange: selectedRange)
+			setSelectionNeedsSaving()
+		}
+	}
+
+	func applyToSelection(BOLD: Bool = false, ITALICS: Bool = false) {
+		if  let dict = textStorage?.fontAttributes(in: selectedRange),
+			let font = dict[.font] as? ZFont {
+			var desc = font.fontDescriptor
+			var traz = desc.symbolicTraits
+
+			if  BOLD {
+				if  traz.contains(.bold) {
+					traz  .remove(.bold)
+				} else {
+					traz  .insert(.bold)
+				}
+			}
+
+			if  ITALICS {
+				if  traz.contains(.italic) {
+					traz  .remove(.italic)
+				} else {
+					traz  .insert(.italic)
+				}
+			}
+
+			desc = desc.withSymbolicTraits(traz)
+			let bold = ZFont(descriptor: desc, size: font.pointSize) as Any
+
+			textStorage?.setAttributes([.font : bold], range: selectedRange)
+			setSelectionNeedsSaving()
+		}
+	}
+
+	func setSelectionNeedsSaving() {
+		for note in selectedNotes {
+			note.needsSave = true
+		}
+	}
+
+	override func setSelectedRange(_ range: NSRange) {
+		if  let         text = textStorage?.string {
+			let storageRange = NSRange(location: 0, length: text.length)
+			let     endRange = NSRange(location: text.length, length: 0) // immediately beyond final character of text
+			let       common = range.intersection(storageRange) ?? endRange
+
+			super.setSelectedRange(common)
+
+			if  let        rect = rectForRange(common) {
+				selectionRect   = rect
+			}
+		}
+	}
+
+	func selectFirstNote() {
+		if  let essay = gCurrentEssay, essay.children.count > 0 {
+			let child = essay.children[0]
+			let range = child.textRange
+			setSelectedRange(range)
+		}
+	}
+
+	private func selectAndScrollTo(_ range: NSRange? = nil) {
+		var        point = CGPoint()                          // scroll to top
+		if  let    essay = gCurrentEssay,
+			(essay.lastTextIsDefault || range != nil),
+			let range    = range ?? essay.lastTextRange {     // default: select entire text of final essay
+
+			if  let rect = rectForRange(range) {
+				point    = rect.origin
+				point .y = max(.zero, point.y - 100.0)
+			}
+
+			setSelectedRange(range)
+		}
+
+		scroll(point)
+	}
+
+	func asssureSelectionIsVisible() {
+		for note in selectedNotes {
+			if  let zone = note.zone {
+				zone.asssureIsVisible()
+			}
+		}
 	}
 
 }

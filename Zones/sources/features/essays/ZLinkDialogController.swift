@@ -7,6 +7,13 @@
 //
 
 import Foundation
+import CloudKit
+
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 enum ZLinkButtonType: String {
 	case tCancel = "cancel"
@@ -18,8 +25,6 @@ struct ZEssayLinkParameters {
 	let  showAs : String?
 	let closure : StringStringClosure?
 }
-
-var gLinkDialogController : ZLinkDialogController? { return gControllers.controllerForID(.idLink) as? ZLinkDialogController }
 
 class ZLinkDialogController: ZGenericController {
 

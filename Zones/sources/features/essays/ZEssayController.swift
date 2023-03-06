@@ -14,36 +14,39 @@ import Cocoa
 import UIKit
 #endif
 
-var gEssayController: ZEssayController? { return gControllers.controllerForID(.idNote) as? ZEssayController }
+var gEssayController   : ZEssayController? { return gControllers.controllerForID(.idNote) as? ZEssayController }
+var gEssayControlsView : ZEssayControlsView? { return gEssayController?.essayControlsView }
 
-class ZEssayController: ZGesturesController, ZScrollDelegate {
+class ZEssayController : ZGesturesController, ZScrollDelegate {
 	override  var         controllerID : ZControllerID { return .idNote }
 	var           linkDialogController : ZLinkDialogController?
-	var                         params : ZEssayLinkParameters?
+	var                     parameters : ZEssayLinkParameters?
+	@IBOutlet var    essayControlsView : ZEssayControlsView?
 	@IBOutlet var            essayView : ZEssayView?
 
-	override func setup() {
+	override func controllerSetup(with mapView: ZMapView?) {
 		gestureView = essayView    // do this before calling super setup
 
-		super.setup()
-		essayView?.setup()
+		super.controllerSetup(with: mapView)
+		essayView?.essayViewSetup()
 	}
 
-	override func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {
-		if  gIsEssayMode,
-			[.sEssay, .sAppearance].contains(iKind) {        // ignore the signal from the end of process next batch
-			essayView?.updateText()
+	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+		if  gIsEssayMode {
+			essayView?.essayRecordName = nil // force shouldOverwrite to true
+
+			essayView?.updateTextStorage()
 		}
 	}
 
 	override func prepare(for segue: ZStoryboardSegue, sender: Any?) {
 		linkDialogController  = segue.destinationController as? ZLinkDialogController
 		linkDialogController?.loadView()
-		linkDialogController?.setupWith(params)
+		linkDialogController?.setupWith(parameters)
 	}
 
 	func modalForLink(type: ZEssayLinkType, _ showAs: String?, onCompletion: StringStringClosure?) {
-		params = ZEssayLinkParameters(type: type, showAs: showAs, closure: onCompletion)
+		parameters = ZEssayLinkParameters(type: type, showAs: showAs, closure: onCompletion)
 
 		performSegue(withIdentifier: "link", sender: self)
 	}

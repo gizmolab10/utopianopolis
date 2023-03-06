@@ -21,14 +21,11 @@ class ZEssayEditor: ZBaseEditor {
 	override var canHandleKey: Bool { return gIsEssayMode }
 
 	override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
-		if !gIsEssayMode || !inWindow {
-			return false
-		}
-
-		return true
+		return gIsEssayMode && inWindow
 	}
 
 	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
+		// let super try first
 		return super.handleKey(iKey, flags: flags, isWindow: isWindow) || gEssayView?.handleKey(iKey, flags: flags) ?? false
 	}
 

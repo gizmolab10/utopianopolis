@@ -9,19 +9,42 @@
 import Foundation
 import SnapKit
 
+#if os(OSX)
+import AppKit
+#elseif os(iOS)
+import UIKit
+#endif
+
+var gBreadcrumbsView: ZBreadcrumbsView? { return gBreadcrumbsController?.crumbsView }
+
 class ZBreadcrumbsView : ZButtonsView {
 
 	override  var          clipped : Bool     { return gClipBreadcrumbs }
 	@IBOutlet var clipCrumbsButton : ZButton?
 
 	var crumbButtonsWidth: CGFloat {
-		var width = CGFloat(0.0)
+		var width = CGFloat.zero
 
 		for button in buttons {
 			width += button.bounds.width
 		}
 
 		return width
+	}
+
+	func detectCrumb(_ iGesture: ZGestureRecognizer?) -> ZBreadcrumbButton? {
+		var detected: ZBreadcrumbButton?
+		if  let location = iGesture?.location(in: self), bounds.contains(location) {
+			for button in buttons {
+				button.highlight(false)
+				let rect = button.frame
+				if  rect.contains(location) {
+					detected = button as? ZBreadcrumbButton
+				}
+			}
+		}
+
+		return detected
 	}
 
 	func fitBreadcrumbsToWindow() {
@@ -35,37 +58,38 @@ class ZBreadcrumbsView : ZButtonsView {
 	}
 
 	override func setupButtons() {
-		removeButtons()
+		super.setupButtons()
 
 		buttons = [ZBreadcrumbButton]()
 
 		for (index, zone) in gBreadcrumbs.crumbZones.enumerated() {
-			let        button = ZBreadcrumbButton(title: zone.unwrappedName, target: self, action: #selector(crumbButtonAction(_:)))
-			button.font       = gSmallMapFont
-			button.tag        = index
-			button.zone       = zone
-			button.isBordered = true
-			let         title = NSMutableAttributedString(string: zone.unwrappedName)
-			let         range = NSRange(location:0, length: title.length)
-			var    attributes = ZAttributesDictionary()
-			attributes[.font] = gSmallMapFont
+			let                     name = zone.unwrappedNameWithEllipses(noLongerThan: 20)
+			let                    range = NSRange(location:0, length: name.length)
+			let                    style = NSMutableParagraphStyle()
+			let                   button = ZBreadcrumbButton(title: name, target: self, action: #selector(crumbButtonAction(_:)))
+			let               attributed = NSMutableAttributedString(string: name)
+			var               attributes = ZAttributesDictionary()
+			style         .lineBreakMode = .byClipping
+			button                 .font = gSmallFont // needed for computing button width
+			button                  .tag = index
+			button                 .zone = zone
+			button           .isBordered = true
+			attributes[           .font] = gSmallFont
+			attributes[.foregroundColor] = zone.color
+			attributes[ .paragraphStyle] = style
 
 			if  zone.hasNote {
 				attributes[.underlineStyle] = 1
 			}
 
-			title.addAttributes(attributes, range: range)
-			button.showsBorderOnlyWhileMouseInside = true
+			attributed.addAttributes(attributes, range: range)
 			button.setButtonType(.momentaryPushIn)
-
-			if  let color = zone.color {
-				title.addAttributes([.foregroundColor : color], range: range)
-			}
-
-			button.attributedTitle = title
-
-			button.updateTooltips()
+			button.updateTracking()
+			button.updateToolTips(gModifierFlags)
 			buttons.append(button)
+
+			button.attributedTitle = attributed
+			button.showsBorderOnlyWhileMouseInside = true
 		}
 
 		fitBreadcrumbsToWindow()   // side effect: updates clipped
@@ -74,17 +98,28 @@ class ZBreadcrumbsView : ZButtonsView {
 	override func setupAndRedraw() {
 		super.setupAndRedraw()   // side effect: updates clipped, used below
 
-		clipCrumbsButton?.image = !clipped ? nil : ZImage(named: kTriangleImageName)?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
+		clipCrumbsButton?.image = !clipped ? nil : kDownImage?.imageRotatedByDegrees(gClipBreadcrumbs ? 90.0 : -90.0)
 	}
 
-	override func draw(_ dirtyRect: NSRect) {
+	override func draw(_ iDirtyRect: NSRect) {
 		if  gIsReadyToShowUI {
-			super.draw(dirtyRect)
+			super.draw(iDirtyRect)
+
+			for (index, button) in buttons.enumerated() {
+				if  index > 0,
+					let crumb = button as? ZBreadcrumbButton {
+					let extra = 14.66 - (gFavoritesMapController.fontSize) / 3.0
+					let point = crumb.frame.bottomLeft.offsetBy(.zero, extra)
+					let color = crumb.zone.color ?? kDefaultIdeaColor
+
+					">".draw(at: point, withAttributes: [.foregroundColor : color, .font: gSmallFont])
+				}
+			}
 		}
 	}
 
-	// MARK:- events
-	// MARK:-
+	// MARK: - events
+	// MARK: -
 
 	@IBAction func handleClipper(_ sender: Any?) {
 		gClipBreadcrumbs = !gClipBreadcrumbs
@@ -98,28 +133,29 @@ class ZBreadcrumbsView : ZButtonsView {
 		if        index < crumbs.count {
 			let    zone = crumbs[index]
 			let   flags = button.currentEvent?.modifierFlags
-			let  OPTION = flags?.isOption  ?? false
-			let COMMAND = flags?.isCommand ?? false
+			let  OPTION = flags?.hasOption  ?? false
+			let COMMAND = flags?.hasCommand ?? false
 
 			if    zone == gHere, !gIsEssayMode, !COMMAND { return }
 
-			func displayEssay(_ asEssay: Bool = true) {
-				let            saved = gCreateCombinedEssay
-				gCreateCombinedEssay = (OPTION && asEssay)
-
-				if  gCreateCombinedEssay {
-					zone.noteMaybe   = nil                // forget note so essay will be constructed
-				}
-
-				gEssayView?.resetCurrentEssay(zone.note)  // note creates an essay when gCreateCombinedEssay is true
-
-				gCreateCombinedEssay = saved
+			if  gIsEssayMode {
+				gEssayView?.done()
 			}
 
-			zone.focusOn() {
+			func displayEssay(_ asEssay: Bool = true) {
+				gCreateCombinedEssay = !OPTION && asEssay
+
+				if  gCreateCombinedEssay {
+					zone.noteMaybe = nil                    // forget note so essay will be constructed
+				}
+
+				gEssayView?.resetCurrentEssay(zone.note)    // note creates an essay when gCreateCombinedEssay is true
+			}
+
+			gFocusing.grabAndFocusOn(zone) {
 				switch (gWorkMode) {
-					case .wSearchMode:
-						gSearching.exitSearchMode()
+					case .wResultsMode:
+						gExitSearchMode()
 					case .wEditIdeaMode:
 						if  let edit = gCurrentlyEditingWidget?.widgetZone {
 							let span = gTextEditor.selectedRange()
@@ -144,15 +180,15 @@ class ZBreadcrumbsView : ZButtonsView {
 					case .wEssayMode:
 						let sameNote  = (zone == gCurrentEssayZone)
 						if  sameNote || !(zone.hasNote || COMMAND) {
-							gEssayView?.setControlBarButtons(enabled: false)
-							gSetBigMapMode()                                 // no note in zone so exit essay editor
+							gEssayControlsView?.enableEssayControls(false)
+							gSetMapWorkMode()                                 // no note in zone so exit essay editor
 						} else {
 							displayEssay(!sameNote)
 						}
 					default: break
 				}
 
-				gSignal([.sSwap, .sRelayout])
+				gSignal([.sSwap, .spDataDetails, .spRelayout])
 			}
 		}
 	}

@@ -8,152 +8,68 @@
 
 import Foundation
 
-enum ZHelpDotType: String {
-	case one        = "single"
-	case ten        = "10"
-	case has        = "has"
-	case note       = "note"
-	case drag       = "editable"
-	case three      = "3"
-	case click      = "points"
-	case email      = "email"
-	case video      = "video"
-	case essay      = "click"
-	case cycle      = "cycle"
-	case group      = "owner"
-	case twelve     = "12"
-	case progeny    = "only"
-	case favorite   = "this"
-	case bookmark   = "bookmark"
-	case notemark   = "target"
-	case oneTwenty  = "120"
-	case hyperlink  = "hyperlink"
-	case twelveHund = "1200"
-	case unwritable = "not"
-
-	var isReveal    : Bool            { return ![.drag, .essay, .cycle, .group, .favorite].contains(self) && !showAccess }
-	var showAccess  : Bool            { return  [.progeny,                      .unwritable].contains(self) }
-	var pointLeft   : Bool            { return self == .click }
-	var accessType  : ZDecorationType { return self == .progeny ? .sideDot : .vertical }
-
-	var size: CGSize {
-		let w = isReveal ? gDotHeight : gDotWidth
-
-		return CGSize(width: w, height: gDotHeight)
-	}
-
-	func rect(_ origin: CGPoint) -> CGRect {
-		var r = CGRect(origin: origin, size: size)
-
-		if  self == .favorite {
-			r = r.insetEquallyBy(fraction: (1.0 - kSmallMapReduction) / 2.0)
-		}
-
-		return r
-	}
-
-	var traitType: String {
-		switch self {
-			case .note,
-				 .essay:     return ZTraitType.tNote     .rawValue
-			case .email:     return ZTraitType.tEmail    .rawValue
-			case .video:     return ZTraitType.tVideo    .rawValue
-			case .hyperlink: return ZTraitType.tHyperlink.rawValue
-			default:         return ""
-		}
-	}
-
-	var count: Int {
-		switch self {
-			case .twelveHund: return 1200
-			case .oneTwenty:  return  120
-			case .twelve:     return   12
-			case .ten:        return   10
-			case .three:      return    3
-			case .one:        return    1
-			default:          return    0
-		}
-	}
-
-	func dotParameters(isFilled: Bool = false) -> ZDotParameters {
-		var p           = ZDotParameters()
-		p.color         = gHelpHyperlinkColor
-		p.fill          = isFilled ? p.color : gBackgroundColor
-		p.filled        = isFilled
-		p.isReveal      = isReveal
-		p.traitType     = traitType
-		p.showAccess    = showAccess
-		p.accessType    = accessType
-		p.showList      = pointLeft || !isFilled
-		p.isGroupOwner  = self == .group
-		p.isGrouped     = self == .group    || self == .cycle
-		p.hasTargetNote = self == .notemark || self == .has
-		p.hasTarget     = self == .bookmark
-		p.showSideDot   = self == .favorite
-		p.childCount    = count
-
-		return p
-	}
-
-}
-
-enum ZFillType: String {
-	case filled = "f"
-	case empty  = "e"
-	case both   = "b"
-}
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 class ZHelpData: NSObject {
 
-	let linesBeforeSearch = 32
+	let rowsBeforeSearch  = 33
 	var helpMode          = ZHelpMode.noMode
 	var tabStops          = [NSTextTab]()
-	var rowHeight         :   CGFloat  { return 16.0 }
-	var noTabPrefix       :   String   { return "   " }
-	var columnStrings     : [[String]] { return [[]] }
-	var tabOffsets        :   [Int]    { return [0, 20, 85] } // default for graph shortcuts
-	var columnWidth       :    Int     { return 580 }         // "
-	var indexOfLastColumn :    Int     { return 1 }           // "
-	var stringsPerRow     :    Int     { return 3 }
-	var isPro             :    Bool    { return gCurrentHelpMode == .proMode }
-	var isDots            :    Bool    { return gCurrentHelpMode == .dotMode }
-	var isBasic           :    Bool    { return gCurrentHelpMode == .basicMode }
-	var isEssay           :    Bool    { return gCurrentHelpMode == .essayMode }
-	var isIntermediate    :    Bool    { return gCurrentHelpMode == .middleMode }
-	var boldFont          :    ZFont   { return kBoldFont }
+	var strippedStrings   = [StringsArray]()
+	var columnStrings     : [StringsArray] { return [[]] }
+	var rowHeight         :  CGFloat       { return 16.0 }
+	var dotOffset         :  CGFloat       { return  2.1 }
+	var noTabPrefix       :  String        { return "   " }
+	var tabOffsets        : [Int]          { return [0, 20, 85] }
+	var columnWidth       :  Int           { return 580 }
+	var indexOfLastColumn :  Int           { return 1 }
+	var stringsPerColumn  :  Int           { return 3 }
+	var isPro             :  Bool          { return gCurrentHelpMode == .proMode }
+	var isDots            :  Bool          { return gCurrentHelpMode == .dotMode }
+	var isBasic           :  Bool          { return gCurrentHelpMode == .basicMode }
+	var isEssay           :  Bool          { return gCurrentHelpMode == .essayMode }
+	var isIntermediate    :  Bool          { return gCurrentHelpMode == .intermedMode }
+	var italicsFont       :  ZFont         { return kItalicsFont }
+	var boldFont          :  ZFont         { return kBoldFont }
 
 	func dotTypes(for row: Int, column: Int) -> (ZHelpDotType?, ZFillType?) {
 		let (first, second, _) = strings(for: row, column: column)
-		let     shortcutLower  = first.substring(with: NSMakeRange(0, 1)).lowercased()
-		let       filledLower  = first.substring(with: NSMakeRange(1, 2)).lowercased()
-		let            filled  = ZFillType(rawValue: filledLower)
+		let       helpTypeRaw  = first.substring(with: NSMakeRange(0, 1)).lowercased()
+		let         filledRaw  = first.substring(with: NSMakeRange(1, 2)).lowercased()
+		let          fillType  = ZFillType(rawValue: filledRaw)
 		var           dotType  : ZHelpDotType?
-		if  let      helpType  = ZHelpType(rawValue: shortcutLower),
+		if  let      helpType  = ZHelpType(rawValue: helpTypeRaw),
 			helpType == .hDots {
-			let         value  = second.components(separatedBy: " ")[0]
-			dotType            = ZHelpDotType(rawValue: value)
+			let    dotTypeRaw  = second.components(separatedBy: kSpace)[0]
+			dotType            = ZHelpDotType(rawValue: dotTypeRaw)
 		}
 
-		return (dotType, filled)
+		return (dotType, fillType)
 	}
 
 	var countOfRows : Int {
-		var result = 0
+		var count = 0
 
-		for array in columnStrings {
-			result = max(result, array.count)
+		for column in 0...indexOfLastColumn {
+			let a = strippedStrings[column]
+			let c = a.count / stringsPerColumn
+			count = max(count, c)
 		}
 
-		return result / stringsPerRow
+		return count
 	}
 
-	func setup(for iMode: ZHelpMode) {
+	func setupForMode(_ iMode: ZHelpMode) {
 		helpMode   = iMode
 		var offset = 0
 		var values : [Int] = []
 
 		for _ in 0...indexOfLastColumn {
-			for index in 0..<stringsPerRow {
+			for index in 0..<stringsPerColumn {
 				values.append(offset + tabOffsets[index])
 			}
 
@@ -162,33 +78,35 @@ class ZHelpData: NSObject {
 
 		for     value in values {
 			if  value != 0 {
-				tabStops.append(NSTextTab(textAlignment: .left, location: CGFloat(value), options: [:]))
+				tabStops.append(NSTextTab(textAlignment: .left, location: value.float, options: [:]))
 			}
 		}
 	}
 
 	func objectValueFor(_ row: Int) -> NSMutableAttributedString {
-		let         result = NSMutableAttributedString()
+		let    objectValue = NSMutableAttributedString()
 		let      paragraph = NSMutableParagraphStyle()
 		paragraph.tabStops = tabStops
 
 		for column in 0...indexOfLastColumn {
 			let a = attributedString(for: row, column: column)
 
-			result.append(a)
+			objectValue.append(a)
 		}
 
-		result.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, result.length))
+		objectValue.addAttribute(.paragraphStyle, value: paragraph as Any, range: NSMakeRange(0, objectValue.length))
 
-		return result
+		return objectValue
 	}
 
 	func strings(for row: Int, column: Int) -> (String, String, String) {
-		let strings = strippedStrings(for: column)
-		let   index = row * stringsPerRow
-		let   final = index + 2
+		let strings = strippedStrings[column]
+		let index   = row * stringsPerColumn
+		if  index   > (strings.count - 2) {
+			return (kEmpty, kEmpty, kEmpty)
+		}
 
-		return final >= strings.count ? ("", "", "") : (strings[index], strings[index + 1], strings[final])
+		return (strings[index], strings[index + 1], strings[index + 2])
 	}
 
 	func matches(_ types: [ZHelpType]) -> Bool {
@@ -197,39 +115,42 @@ class ZHelpData: NSObject {
 			|| (types.contains(.hIntermed) && (isIntermediate || isPro))
 	}
 
-	func strippedStrings(for column: Int) -> [String] {
-		var             result = [String]()
-		if              column > -1 {
-			let     rawStrings = columnStrings[column]
-			let          limit = rawStrings.count / stringsPerRow
+	func prepareStrings() {
+		strippedStrings.removeAll()
+
+		for column in 0...indexOfLastColumn {
+			let        strings = columnStrings
+			var       prepared = StringsArray()
+			let     rawStrings = strings.count <= column ? [kEmpty] : strings[column]
+			let          limit = rawStrings.count / stringsPerColumn
 			var            row = 0
 			while          row < limit {
-				let     offset = row * stringsPerRow
-				let      first = rawStrings[offset]
-				let     second = rawStrings[offset + 1]
-				let      third = rawStrings[offset + 2]
+				let      index = row * stringsPerColumn
+				let      first = rawStrings[index]
+				let     second = rawStrings[index + 1]
+				let      third = rawStrings[index + 2]
 				let (_, types) = extractTypes(from: first)
 				let    isMatch = matches(types)
 				row           += 1
 
 				if     !types.contains(.hPro) || isPro {
 					if  types.contains(.hExtra) {
-						while result.count < linesBeforeSearch * 3 {
-							result.append("")
+						while prepared.count < rowsBeforeSearch * 3 {
+							prepared.append(kEmpty)
 						}
 					} else if isPro || isDots || isEssay
 								||  types.intersects([.hBold, .hBasic, .hEmpty])
 								||  types.contains(.hUnderline) && isMatch
 								|| (types.contains(.hIntermed)  && isIntermediate) {
-						result.append(first)
-						result.append(second)
-						result.append(third)
+						prepared.append(first)
+						prepared.append(second)
+						prepared.append(third)
 					}
 				}
 			}
-		}
 
-		return result
+			strippedStrings.append(prepared)
+		}
 	}
 
 	func extractTypes(from string: String) -> (Int, [ZHelpType]) {
@@ -259,7 +180,7 @@ class ZHelpData: NSObject {
 		var           attributes = ZAttributesDictionary ()
 		attributes[.font]        = isDots ? kLargeHelpFont : nil
 		let               hasURL = !url.isEmpty
-		var               prefix = ""
+		var               prefix = kEmpty
 
 		if !isPro && !isDots && !isEssay && (types.contains(.hPro) || (!isIntermediate && types.contains(.hIntermed))) {
 			return NSMutableAttributedString(string: kTab + kTab + kTab)
@@ -268,11 +189,14 @@ class ZHelpData: NSObject {
 		for type in types {
 			switch type {
 				case .hDots:
-					prefix = noTabPrefix
-				case .hBold:
-					attributes[.font] = boldFont
-				case .hUnderline:
-					attributes[.underlineStyle] = 1
+					prefix                           = noTabPrefix
+				case .hBold:               
+					attributes[.font]                = boldFont
+					attributes[.foregroundColor]     = gHelpTitleColor
+				case .hItalics:               
+					attributes[.font]                = italicsFont
+				case .hUnderline:     
+					attributes[.underlineStyle]      = 1
 				case .hBasic, .hIntermed, .hPro:
 					if  hasURL {
 						attributes[.foregroundColor] = gHelpHyperlinkColor
@@ -315,7 +239,7 @@ class ZHelpData: NSObject {
 
 			if  first.length == 0 {
 				appendTab()
-				if  column == 2, attributedString(for: row, column: 1).string.containsNonTabs {
+				if  column == 2, attributedString(for: row, column: 1).string.containsNoTabs {
 					appendTab()
 				}
 			}
@@ -347,7 +271,7 @@ class ZHelpData: NSObject {
 		appendTab()
 
 		let    length = (first.length + second.length)
-		let   isShort = (first == "SHIFT + KEY")  // length is 10, but still too short
+		let   isShort = (first == "ARROW KEY")  // length is 8, but still too short
 		let threshold = (helpMode == .essayMode) || isShort ? 12 : 6
 
 		if  length < threshold {                  // short string: needs an extra tab
@@ -358,14 +282,149 @@ class ZHelpData: NSObject {
 	}
 
 	func url(for row: Int, column: Int) -> String? {
-		let m = "https://medium.com/@sand_74696/"
-		let (_, _, url) = strings(for: row, column: column)
+		let (first, _, name) = strings(for: row, column: column)
 
-		if  url.isHyphen || url.isEmpty {
-			return nil
+		if  !name.isHyphen, !name.isEmpty {
+			let (_, types) = extractTypes(from: first)
+			for type in types {
+				if  type.isVisibleForCurrentMode {
+					return name.asHelpURL
+				}
+			}
 		}
 
-		return m + url
+		return nil
 	}
 
+}
+
+extension String {
+
+	var asHelpURL: String? {
+		let   parts = components(separatedBy: "+")
+		let   count = parts.count
+		guard count > 0 else { return nil }
+		let   proto = "https://"
+		let  medium = "medium.com/@sand_74696/"
+		let    wiki = "seriouslythink.com/"
+		let    base = count == 1 ? medium : wiki + (ZHelpSectionID(rawValue: parts[1])?.description ?? kEmpty)
+
+		return proto + base + parts[0]
+	}
+
+}
+
+enum ZHelpDotType: String {
+	case one        = "single"
+	case ten        = "10"
+	case has        = "in"
+	case note       = "note"
+	case drag       = "editable"
+	case five       = "5"
+	case click      = "points"
+	case email      = "email"
+	case essay      = "click"
+	case owner      = "owner"
+	case member     = "member"
+	case eleven     = "11"
+	case progeny    = "only"
+	case favorite   = "this"
+	case bookmark   = "bookmark"
+	case notemark   = "target"
+	case hyperlink  = "hyperlink"
+	case oneEleven  = "111"
+	case unwritable = "not"
+
+	var accessType    :    ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+	var pointLeft     :               Bool { return self == .click }
+	var showAccess    :               Bool { return  [.progeny,                     .unwritable].contains(self) }
+	var isReveal      :               Bool { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
+	var size          :             CGSize { return gHelpController?.dotSize(forReveal: isReveal) ?? .zero }
+	func rect(_ origin: CGPoint) -> CGRect { return CGRect(origin: origin, size: size) }
+
+	var traitType: String {
+		switch self {
+			case .note, .essay: return ZTraitType.tNote     .rawValue
+			case .email:        return ZTraitType.tEmail    .rawValue
+			case .hyperlink:    return ZTraitType.tHyperlink.rawValue
+			default:            return kEmpty
+		}
+	}
+
+	var childCount: Int {
+		switch self {
+			case .oneEleven: return 111
+			case .eleven:    return  11
+			case .ten:       return  10
+			case .five:      return   5
+			case .one:       return   1
+			default:         return   0
+		}
+	}
+
+	func helpDotParameters(isFilled: Bool = false, showAsACircle: Bool = false) -> ZDotParameters {
+		var p           = ZDotParameters()
+		p.color         = gHelpHyperlinkColor
+		p.fill          = isFilled ? p.color : gBackgroundColor
+		p.isFilled      = isFilled
+		p.isReveal      = isReveal
+		p.typeOfTrait   = traitType
+		p.showAccess    = showAccess
+		p.accessType    = accessType
+		p.showList      = pointLeft || !isFilled
+		p.isGroupOwner  = self == .owner
+		p.isGrouped     = self == .owner    || self == .member
+		p.hasTargetNote = self == .notemark || self == .has
+		p.hasTarget     = self == .bookmark
+		p.showSideDot   = self == .favorite
+		p.childCount    = showAsACircle ? 0 : childCount
+		p.isCircle      = showAsACircle || p.hasTarget || p.hasTargetNote
+
+		return p
+	}
+
+}
+
+enum ZHelpType: String {
+	case hPro       = "2"
+	case hBold      = "!"
+	case hDots      = "."
+	case hSkip      = "="
+	case hExtra     = "+"
+	case hEmpty     = "-"
+	case hBasic     = "0"
+	case hPlain     = " "
+	case hItalics   = "i"
+	case hIntermed  = "1"
+	case hUnderline = "_"
+
+	var isVisibleForCurrentMode: Bool {
+		switch gCurrentHelpMode {
+			case .basicMode:    return self == .hBasic
+			case .intermedMode: return self == .hBasic || self == .hIntermed
+			case .proMode:      return self == .hBasic || self == .hIntermed || self == .hPro
+			default:            return false
+		}
+	}
+}
+
+enum ZFillType: String {
+	case fFilled = "f"
+	case fEmpty  = "e"
+	case fBoth   = "b"
+	case fThree  = "3"
+}
+
+enum ZHelpSectionID: String {
+	case sBasic        = "b"
+	case sIntermediate = "i"
+	case sAdvanced     = "a"
+
+	var description : String {
+		switch self {
+			case .sBasic:        return "basic/"
+			case .sIntermediate: return "intermediate/"
+			case .sAdvanced:     return "advanced/"
+		}
+	}
 }

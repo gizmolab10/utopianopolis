@@ -14,37 +14,103 @@ import Foundation
     import UIKit
 #endif
 
+enum ZMapType : Int {
+	case mFavorites
+	case mMain
+	case mHelp
+
+	var divisor: CGFloat {
+		switch self {
+			case .mFavorites: return kSmallMapReduction
+			case .mHelp:      return .zero
+			case .mMain:      return 1.0
+		}
+	}
+}
+
 class ZGenericController: ZController, ZGeneric {
 
-	var     isVisible = false
-	var  controllerID : ZControllerID { return .idUndefined }
-	var  allowedKinds : [ZSignalKind] { return [] }
-    func handleSignal(_ object: Any?, kind iKind: ZSignalKind) {}
-	func startup() {}
-	func setup() {}
+	var        isVisible = false
+	var isHandlingSignal = false
+	var     controllerID : ZControllerID { return .idUndefined }
+	var     allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
+	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
+    func handleSignal(_ object: Any?, kind: ZSignalKind) {}
+	func controllerSetup(with mapView: ZMapView?) {}
+	func controllerStartup() {}
+
+	var mapType : ZMapType {
+		switch controllerID {
+			case .idFavoritesMap: return .mFavorites
+			case .idMainMap:      return .mMain
+			default:              return .mHelp
+		}
+	}
+
+	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
+		switch id {
+		case .idSubscription,
+			 .idDataDetails,
+			 .idMain:    return [.sResize, .spStartupStatus]
+		case .idActions: return [.sResize, .sSearch, .sFound]
+		case .idPreferences,
+			 .idFavoritesMap,
+			 .idMainMap,
+			 .idCrumbs:  return [.sData]             // ignore the signal from the end of process next batch
+		default: break
+		}
+
+		return [.sResize]
+	}
+
+	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
+		switch id {
+			case .idHelpEssayIntroduction, .idHelpEssayGraphicals,
+				 .idHelpDots:      return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
+			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .spBigMap]
+			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .sDetails]
+			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                                .sDetails]
+			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
+			case .idSearch:        return [.sSearch]
+			case .idStartup:       return [.spStartupStatus]
+			case .idSubscription:  return [.spSubscription]
+			case .idSearchResults: return [.sFound]
+			default:               break
+		}
+
+		return []
+	}
 
 	func shouldHandle(_ kind: ZSignalKind) -> Bool {
-		return (allowedKinds.count == 0 || allowedKinds.contains(kind))
-			&& (( gHasFinishedStartup && ![.sStartupProgress, .sError].contains(kind)) ||
-				(!gHasFinishedStartup &&  [.sStartupProgress,  .sMain].contains(kind)))
+		return    (allowedKinds.count == 0 ||                   allowedKinds.contains(kind))
+			&& (disallowedKinds.count == 0 ||               !disallowedKinds.contains(kind))
+			&& ((gHasFinishedStartup && ![.spStartupStatus,         .sError].contains(kind))
+			|| (!gHasFinishedStartup &&  [.spStartupStatus, .spMain, .sData].contains(kind)))
 	}
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		startup()
+		controllerStartup()
 
-        gControllers.setSignalHandler(for: self, iID: controllerID) { object, kind in
-			self.view.zlayer.backgroundColor = gControllers.backgroundColorFor(self.controllerID).cgColor
+		gControllers.setSignalHandler(for: self, iID: controllerID) { [self] object, kind in
+			view.zlayer.backgroundColor = gControllers.backgroundColorFor(controllerID).cgColor
 
-			if  self.shouldHandle(kind) {
-                self.handleSignal(object, kind: kind)
+			if  shouldHandle(kind) {
+				markAsHandlingWhile {
+					handleSignal(object, kind: kind)
+				}
             }
         }
     }
 
-	override func viewDidLayout() {
-		super.viewDidLayout()
-		gMainWindow?.updateEssayEditorInspectorBar(show: gIsEssayMode)
+	func markAsHandlingWhile(execute: Closure) {
+		if !isHandlingSignal {
+			isHandlingSignal = true
+
+			execute()
+
+			isHandlingSignal = false
+		}
 	}
 
 #if os(OSX)
@@ -52,7 +118,7 @@ class ZGenericController: ZController, ZGeneric {
     override func viewDidAppear() {
         super.viewDidAppear()
 		isVisible = true
-        setup()
+        controllerSetup(with: view as? ZMapView)
     }
 
 	override func viewDidDisappear() {
@@ -64,13 +130,13 @@ class ZGenericController: ZController, ZGeneric {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-		isVisible = true
-        setup()
+		showsSelf = true
+        setupForMode()
     }
 
 	override func viewDidDisappear(_ animated: Bool) {
 		super.viewDidDisappear(animated)
-		isVisible = false
+		showsSelf = false
 	}
 
 

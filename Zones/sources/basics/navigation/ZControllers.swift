@@ -12,46 +12,55 @@ enum ZControllerID: Int {
     case idUndefined
 	case idHelpEssayIntroduction
 	case idHelpEssayGraphicals
-    case idSearchResults
+	case idSearchResults
+	case idSearchOptions
+	case idSubscription
+	case idFavoritesMap
+	case idDataDetails
 	case idPreferences
+	case idDebugAngles
 	case idStartHere
-    case idSmallMap
 	case idHelpDots
+	case idControls
 	case idStartup
     case idDetails
     case idActions   // iPhone
-	case idBigMap
+	case idMainMap
     case idSearch
 	case idCrumbs
 	case idDebug
-	case idData
 	case idLink
-	case idHelp
 	case idNote
 	case idMain
 }
 
 enum ZSignalKind: Int {
-    case sData
-    case sMain
-	case sSwap
-    case sDatum
+	case sAll
+	case sData            // relayout all ideas
+	case sSwap            // between notes and map
+    case sDatum           // redraw single idea
     case sError
-	case sEssay
+	case sEssay           // redraw titles in essays (indent, drag dot)
     case sFound
-	case sStatus
-	case sResize
+	case sResize          // resize window
 	case sSearch
-	case sCrumbs
-	case sBigMap
-	case sDetails
-    case sRelayout
-    case sSmallMap
+	case sDetails         // recompute and display all details except small map
+	case sToolTips        // remove and reassign all tool tips
 	case sLaunchDone
     case sAppearance
-    case sPreferences
-	case sStartupButtons
-	case sStartupProgress
+
+	// the following are sent to one (* or two) specific controller(s)
+
+	case spBigMap         // relayout main map
+	case spRelayout       // relayout both maps *
+	case spSmallMap       // relayout favorites map
+	case spDataDetails    // update the data view in details
+	case spPreferences
+	case spSubscription
+	case spStartupStatus  // startup and help *
+	case spCrumbs
+	case spDebug
+	case spMain
 }
 
 let gControllers = ZControllers()
@@ -61,32 +70,40 @@ class ZControllers: NSObject {
 	var currentController: ZGenericController?
     var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
 
-	// MARK:- hide / reveal
-	// MARK:-
+	// MARK: - hide / reveal
+	// MARK: -
 
 	func showEssay(forGuide: Bool) {
-		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "42F338C4-9055-4921-BBD8-1984DF406052"
-
+		let recordName = forGuide ? "75F7C2D3-4493-4E30-80D8-2F1F60DA7069" : "8F42BAA6-55CC-42F3-A3E3-5F76423B3887"
 		if  let    e = gEssayView,
 			let zone = gRemoteStorage.maybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapMapAndEssay(force: .wEssayMode)
-			gSignal([.sCrumbs, .sDetails])
+			gSignal([.spCrumbs, .sDetails])
 		}
 	}
 
-	func swapMapAndEssay(force mode: ZWorkMode? = nil) {
+	func swapMapAndEssay(force mode: ZWorkMode? = nil, _ closure: Closure? = nil) {
+		// FOREGROUND { // TODO: avoid infinite recursion (generic menu handler invoking map editor's handle key)
+		// do not use FOREGROUND: so click on small map will fully exit the essay editor
+		gTextEditor.stopCurrentEdit()
+		gHideExplanation()
+
 		gWorkMode = mode ?? (gIsEssayMode ? .wMapMode : .wEssayMode)
 
-		FOREGROUND { 	                                // avoid infinite recursion (generic menu handler invoking map editor's handle key)
-			gTextEditor.stopCurrentEdit()
-			gEssayView?.setControlBarButtons(enabled: gWorkMode == .wEssayMode)
-			self.signalFor(nil, multiple: [.sSwap, .sCrumbs, .sRelayout, .sSmallMap])
+		if  gIsEssayMode {
+			gEssayControlsView?.updateTitlesControlAndMode()
+		} else {
+			gMainWindow?.revealEssayEditorInspectorBar(false)
 		}
+
+		gSignal([.sSwap, .spRelayout, .spCrumbs, .spSmallMap])
+
+		closure?()
 	}
 
-	// MARK:- registry
-	// MARK:-
+	// MARK: - registry
+	// MARK: -
 
 	func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
 		if  let identifier = iID,
@@ -109,19 +126,19 @@ class ZControllers: NSObject {
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
 		if  let id = iID {
 			switch id {
-				case .idSmallMap,
+				case .idFavoritesMap,
 					 .idDetails,
-					 .idBigMap: return kClearColor      // so rubberband is visible on both map and favorites
-				case .idNote:   return .white           // override dark mode, otherwise essay view looks like crap
-				default:        return gBackgroundColor // respects dark mode
+					 .idMainMap: return kClearColor      // so rubberband is visible on both map and favorites
+				case .idNote:    return .white           // override dark mode, otherwise essay view looks like crap
+				default:         return gBackgroundColor // respects dark mode
 			}
 		}
 
 		return gAccentColor
 	}
 
-	// MARK:- signals
-    // MARK:-
+	// MARK: - signals
+    // MARK: -
 
 	class ZSignalObject {
 		let    closure : SignalClosure!
@@ -133,25 +150,38 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func signalFor(_ object: Any? = nil, multiple: [ZSignalKind], onCompletion: Closure? = nil) {
-		let startupIDs : [ZControllerID] = [.idStartup, .idHelpDots]
+	func signalFor(_ object: Any? = nil, multiple regards: ZSignalKindArray, onCompletion: Closure? = nil) {
+		FOREGROUND { [self] in
+			if  regards.contains(.spRelayout) {
+				gWidgets.clearAll()
+				gMapView?.updateTracking()
+				gMapView?.removeAllTextViews(ofType: .both)
+			}
 
-		FOREGROUND(canBeDirect: true) {
-			for regarding in multiple {
-				for (identifier, signalObject) in self.signalObjectsByControllerID {
+			for regarding in regards {
+				for (controllerID, signalObject) in signalObjectsByControllerID {
                     let closure = {
                         signalObject.closure(object, regarding)
                     }
                     
-					switch regarding {  // these non-default cases send a signal only to the one corresponding controller
-						case .sMain:            if identifier == .idMain           { closure() }
-						case .sStatus:          if identifier == .idData           { closure() }
-						case .sCrumbs:          if identifier == .idCrumbs         { closure() }
-						case .sBigMap:          if identifier == .idBigMap         { closure() }
-						case .sSmallMap:        if identifier == .idSmallMap       { closure() }
-						case .sPreferences:     if identifier == .idPreferences    { closure() }
-						case .sStartupProgress: if startupIDs.contains(identifier) { closure() }
-						default:                                                     closure()
+					switch (regarding, controllerID) {  // these non-default cases send a signal only to the one (or two) corresponding controller)s)
+						case (.spMain,         .idMain):         closure()
+						case (.spDebug,        .idDebug):        closure()
+						case (.spCrumbs,       .idCrumbs):       closure()
+						case (.spBigMap,       .idMainMap):      closure()
+						case (.spSmallMap,     .idFavoritesMap): closure()
+						case (.spDataDetails,  .idDataDetails):  closure()
+						case (.spPreferences,  .idPreferences):  closure()
+						case (.spSubscription, .idSubscription): closure()
+						default:
+							let     mapCIDs : [ZControllerID] = [.idMainMap, .idFavoritesMap]
+							let startupCIDs : [ZControllerID] = [.idStartup, .idHelpDots]
+
+							switch regarding {
+								case .spRelayout:      if     mapCIDs.contains(controllerID) { closure() }
+								case .spStartupStatus: if startupCIDs.contains(controllerID) { closure() }
+								default:                                                       closure()
+							}
 					}
                 }
             }

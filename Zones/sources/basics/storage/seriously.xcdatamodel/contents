@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="SPreferences" representedClassName="SPreferences" syncable="YES"/>
     <entity name="SState" representedClassName="SState" syncable="YES">
         <attribute name="expandedIdeas" optional="YES" attributeType="String"/>
@@ -14,6 +14,7 @@
         <relationship name="owners" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZTraitAssets" inverseName="files" inverseEntity="ZTraitAssets"/>
     </entity>
     <entity name="ZManifest" representedClassName="ZManifest" syncable="YES">
+        <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="deletedRecordNames" optional="YES" attributeType="String"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -45,6 +46,7 @@
         <attribute name="strings" optional="YES" attributeType="Transformable" valueTransformerName="ZStringArrayTransformer"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="visibility" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
         <relationship name="ownerRef" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="traitArray" inverseEntity="Zone"/>
     </entity>
     <entity name="ZTraitAssets" representedClassName="ZTraitAssets" syncable="YES">
@@ -57,12 +59,17 @@
     </entity>
     <entity name="ZUser" representedClassName="ZUser" syncable="YES">
         <attribute name="authorID" optional="YES" attributeType="String"/>
+        <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
         <attribute name="sentEmailType" optional="YES" attributeType="String"/>
         <attribute name="writeAccess" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
-    <configuration name="Cloud" usedWithCloudKit="YES">
+    <configuration name="Local">
+        <memberEntity name="SState"/>
+        <memberEntity name="SPreferences"/>
+    </configuration>
+    <configuration name="Private" usedWithCloudKit="YES">
         <memberEntity name="ZManifest"/>
         <memberEntity name="Zone"/>
         <memberEntity name="ZTrait"/>
@@ -70,18 +77,22 @@
         <memberEntity name="ZUser"/>
         <memberEntity name="ZFile"/>
     </configuration>
-    <configuration name="Local">
-        <memberEntity name="SState"/>
-        <memberEntity name="SPreferences"/>
+    <configuration name="Public" usedWithCloudKit="YES">
+        <memberEntity name="ZManifest"/>
+        <memberEntity name="Zone"/>
+        <memberEntity name="ZTrait"/>
+        <memberEntity name="ZTraitAssets"/>
+        <memberEntity name="ZUser"/>
+        <memberEntity name="ZFile"/>
     </configuration>
     <elements>
         <element name="SPreferences" positionX="-141.64697265625" positionY="295.1240997314453" width="128" height="43"/>
         <element name="SState" positionX="-141.5458984375" positionY="357.7412414550781" width="128" height="58"/>
         <element name="ZFile" positionX="266.14306640625" positionY="314.0946960449219" width="128" height="148"/>
-        <element name="ZManifest" positionX="-141.881103515625" positionY="172.7405090332031" width="128" height="103"/>
+        <element name="ZManifest" positionX="-141.881103515625" positionY="172.7405090332031" width="128" height="104"/>
         <element name="Zone" positionX="259.5447998046875" positionY="-57.4827880859375" width="128" height="284"/>
-        <element name="ZTrait" positionX="45.648193359375" positionY="107.6937255859375" width="128" height="148"/>
+        <element name="ZTrait" positionX="45.648193359375" positionY="107.6937255859375" width="128" height="149"/>
         <element name="ZTraitAssets" positionX="44.0966796875" positionY="284.1622619628906" width="128" height="133"/>
-        <element name="ZUser" positionX="-139.369873046875" positionY="39.45416259765625" width="128" height="118"/>
+        <element name="ZUser" positionX="-139.369873046875" positionY="39.45416259765625" width="128" height="119"/>
     </elements>
 </model>

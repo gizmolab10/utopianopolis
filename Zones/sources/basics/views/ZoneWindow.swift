@@ -6,24 +6,55 @@
 //  Copyright © 2016 Jonathan Sand. All rights reserved.
 //
 
+import Foundation
+
 #if os(OSX)
-    import Cocoa
+    import AppKit
 #elseif os(iOS)
     import UIKit
 #endif
 
 var gMainWindow : ZoneWindow? { return ZoneWindow.mainWindow }
-var gHelpWindow : ZWindow?    { return gHelpWindowController?.window }
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
-    static var mainWindow : ZoneWindow?
-    var          observer : NSKeyValueObservation?
-	var      inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
+    static var                    mainWindow : ZoneWindow?
+    var                             observer : NSKeyValueObservation?
+	var                         inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
+
+	func draw() {
+		if  let v = contentView {
+			v.draw(v.bounds)
+		}
+	}
+
+	func revealEssayEditorInspectorBar(_ show: Bool = false) {
+		if  let            bar  = inspectorBar,
+			bar      .isHidden ==  show {
+			bar      .isHidden  = !show
+			showsToolbarButton  =  show
+			if  show {
+				bar.setNeedsDisplay()
+			}
+		}
+	}
+
+	func setupEssayInspectorBar() {
+		if  let      bar = inspectorBar,
+			let controls = gEssayControlsView {
+			if  bar.subviews.contains(controls) {
+				revealEssayEditorInspectorBar(true)                      // show inspector bar
+			} else {
+				bar.rearrangeInspectorTools()
+				revealEssayEditorInspectorBar(true)
+				bar.relayoutInspectorTools()
+			}
+		}
+	}
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  let            key = iKey {
-			gCurrentKeyPressed = key // enable become first responder
+			gTemporarilySetKey(key)      // enable become first responder
 
 			// //////////////////////////////////////// //
 			// dispatch key handling to various editors //
@@ -32,7 +63,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 			switch gWorkMode {
 				case .wEssayMode:    return gEssayEditor             .handleKey(key, flags: flags, isWindow: true)
 				case .wMapMode:      return gMapEditor               .handleKey(key, flags: flags, isWindow: true)
-				case .wSearchMode:   return gSearchResultsController?.handleKey(key, flags: flags) ?? false
+				case .wResultsMode:  return gSearchResultsController?.handleKey(key, flags: flags) ?? false
 				case .wEditIdeaMode: return gTextEditor              .handleKey(key, flags: flags)
 				default:             break
 			}
@@ -50,7 +81,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     #if os(OSX)
 
 	func windowWillClose(_ notification: Notification) {
-		gApplication.terminate(self)
+		gApplication?.terminate(self)
 	}
 
     override open var acceptsFirstResponder: Bool { return true }
@@ -67,23 +98,6 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
     func windowWillReturnFieldEditor(_ sender: NSWindow, to client: Any?) -> Any? {
         return gTextEditor
     }
-
-	func updateEssayEditorInspectorBar(show: Bool = false) {
-		if  let         tools = inspectorBar?.subviews {
-			for index in 1..<tools.count {
-				let      tool = tools[index]
-				let     prior = tools[index - 1].frame.maxX
-				tool.isHidden = false
-
-				if  tool.frame.minX < prior {
-					tool.frame.origin.x = prior
-				}
-			}
-		}
-
-		showsToolbarButton     =  show
-		inspectorBar?.isHidden = !show
-	}
 
     #endif
 }

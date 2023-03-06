@@ -6,30 +6,34 @@
 //  Copyright © 2020 Zones. All rights reserved.
 //
 
-import Foundation
-import CloudKit
 import CoreData
+import Foundation
+
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 class ZHelpEssayIntroductionController : ZGenericController {
 
 	override  var controllerID : ZControllerID { return .idHelpEssayIntroduction }
-	override  var allowedKinds : [ZSignalKind] { return [.sRelayout, .sData, .sDatum, .sStartupProgress, .sAppearance] }
+	@IBOutlet var    imageView : ZDarkableImageView?
 	@IBOutlet var     topLabel : ZTextField?
 	@IBOutlet var  bottomLabel : ZTextField?
-	@IBOutlet var    imageView : NSImageView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
 		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
 	}
 
-	override func startup() {
-		setup()
+	override func controllerStartup() {
+		controllerSetup(with: nil)
 
 		topLabel?   .font = kLargeHelpFont
-		topLabel?   .text = "Any idea can [optionally] have a note, which can be viewed, edited, saved and printed in the essay editor. Each note has a title at top (the idea text) followed by the full text of the note (like this, ignoring the grey rectangle)."
+		topLabel?   .text = "Any idea can have a note. Notes are normally hidden. To see one, COMMAND-N opens it in the Note Editor. From there you can edit, save and print it. Each note has a title at top (the idea text) followed by the full text of the note, as below."
 		bottomLabel?.font = kLargeHelpFont
-		bottomLabel?.text = "An essay is made from a note when any of the listed ideas within its idea also contain a note. Each such note displays a drag dot preceding its title (like the grabbed note at bottom left)."
-		imageView?.addBorder(thickness: 0.5, radius: 0.0, color: kDarkGrayColor.cgColor)
+		bottomLabel?.text = "An essay appears when an idea has a note, and at least one child that also has a note."
+		imageView?.drawBorder(thickness: 0.5, radius: .zero, color: kDarkGrayColor.cgColor)
 	}
 
 }

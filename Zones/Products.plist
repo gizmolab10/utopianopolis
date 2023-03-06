@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.seriously.promotion</key>
+	<string>Introductory</string>
+	<key>com.seriously.daily</key>
+	<string>One Day</string>
+	<key>com.seriously.weekly</key>
+	<string>One Week</string>
+	<key>com.seriously.monthly</key>
+	<string>One Month</string>
+	<key>com.seriously.annual</key>
+	<string>One Year</string>
+	<key>com.seriously.lifetime</key>
+	<string>Lifetime</string>
+</dict>
+</plist>

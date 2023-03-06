@@ -22,9 +22,10 @@ let gEvents             = ZEvents()
 
 class ZEvents: ZGeneric {
 
-    var monitor: Any?
+	var      keyDownMonitor: Any?
+	var flagsChangedMonitor: Any?
 
-    func clear() { removeMonitorAsync() }
+    func clear() { removeAllMonitorsAsync() }
 
 //    func createCalendarEvent(named iName: String) -> EKEvent {
 //        var event = EKCalendarItem(eventStore: gEventStore)
@@ -33,56 +34,64 @@ class ZEvents: ZGeneric {
 //        return event
 //    }
 
-    func setup() {
-        setupGlobalEventsMonitor()
-        gNotificationCenter.addObserver(self, selector: #selector(ZEvents.handleDarkModeChange), name: Notification.Name("AppleInterfaceThemeChangedNotification"), object: nil)
+    func controllerSetup(with mainView: ZMapView?) {
+        setupLocalEventsMonitor()
     }
     
-    
-    @objc func handleDarkModeChange(iNote: Notification) {
-        gRedrawMaps()
-		gEssayView?.resetForDarkMode()
-    }
-    
-    
-    func removeMonitorAsync(_ closure: Closure? = nil) {
-        #if os(OSX)
-            if  let save = monitor {
-                monitor  = nil
+	func removeMonitor(_ monitor: inout Any?, _ closure: Closure? = nil) -> Bool {
+		if  let save = monitor {
+			monitor  = nil
 
-                FOREGROUND(after: 0.001) {
-                    ZEvent.removeMonitor(save)
-                    closure?()
-                }
-            } else {
-                closure?()
-            }
+			FOREGROUND(after: 0.001) {
+				ZEvent.removeMonitor(save)
+				closure?()
+			}
+
+			return false
+		}
+
+		return true
+	}
+
+	func removeAllMonitorsAsync(_ closure: Closure? = nil) {
+#if os(OSX)
+		let  key = removeMonitor(&keyDownMonitor,                  closure)
+		let flag = removeMonitor(&flagsChangedMonitor, !key ? nil: closure)
+
+		if  key && flag {
+			closure?()
+		}
         #endif
     }
 
 
-    func setupGlobalEventsMonitor() {
+    func setupLocalEventsMonitor() {
         #if os(OSX)
 
-            self.monitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
-                if !isDuplicate(event: event) {
-                    switch gWorkMode {
-						case .wSearchMode:
-							return     gSearching      .handleEvent(event)
-						case .wEssayMode:
-							if  gIsHelpFrontmost {
-								return gHelpController?.handleEvent(event) ?? nil
-							} else {
-								return gEssayEditor    .handleEvent(event, isWindow: true)
-							}
-						case .wMapMode, .wEditIdeaMode:
-							if !gIsHelpFrontmost {
-								return gMapEditor      .handleEvent(event, isWindow: true)
-							}
+		flagsChangedMonitor = ZEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event -> ZEvent? in
+			let flags = event.modifierFlags
+			if  flags.rawValue != 0 {
+				gMapController?.replaceAllToolTips(flags)
+			}
 
-							fallthrough
-						default:
-							return     gHelpController?.handleEvent(event) ?? nil
+			return event
+		}
+
+		keyDownMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
+                if !isDuplicate(event: event) {
+					// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
+					let isWindow = (event.type == .keyDown) || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
+
+					if  gIsEssayMode,
+						gMapIsResponder {
+						return gMapEditor.handleEvent(event, isWindow: isWindow, forced: true)   // if in essay mode and first responder is in a map
+					}
+
+					switch gWorkMode {
+						case .wResultsMode:             return gSearchBarController?.handleEvent(event)
+						case .wEssayMode:               return gEssayEditor         .handleEvent(event, isWindow: isWindow)
+						case .wMapMode, .wEditIdeaMode: return gMapEditor           .handleEvent(event, isWindow: isWindow)
+						default:                        return gHelpController?     .handleEvent(event) ?? event
 					}
 				}
 

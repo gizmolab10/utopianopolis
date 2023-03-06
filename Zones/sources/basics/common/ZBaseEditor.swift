@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ZBaseEditor: NSObject {
+class ZBaseEditor : NSObject {
 	var previousEvent: ZEvent?
 	var canHandleKey: Bool { return false }   // filter whether menu and event handlers will call handle key
 
@@ -22,35 +22,38 @@ class ZBaseEditor: NSObject {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
-		var     handled = false
-		if  var     key = iKey {
-			let COMMAND = flags.isCommand
-			let SPECIAL = flags.isSpecial
-			let  OPTION = flags.isOption
-
-			if  key    != key.lowercased() {
-				key     = key.lowercased()
+		if  var key  = iKey {
+			if  key != key.lowercased() {
+				key  = key.lowercased()
 			}
 
 			gTemporarilySetKey(key)
 
-			switch key {
-				case "w": if COMMAND { gHelpController?.show(false, flags: flags); handled = true }
-				case "/": if SPECIAL { gHelpController?.show(       flags: flags); handled = true }
-				case "a": if SPECIAL { gApplication.showHideAbout();               handled = true }
-				case "h": if COMMAND { gApplication.hide(nil);                     handled = true }
-				case "k": if SPECIAL { toggleColorfulMode();                       handled = true }
-				case "o": if SPECIAL { gFiles.showInFinder();                      handled = true }
-				case "q": if COMMAND { gApplication.terminate(self);               handled = true }
-				case "r": if SPECIAL { sendEmailBugReport();                       handled = true }
-				case "t": if OPTION  { fetchTraits();                              handled = true }
-				case "x": if SPECIAL { clearRecents();                             handled = true }
-				case "y": if COMMAND { gToggleShowTooltips();                      handled = true }
-				default:  break
+			if  flags.exactlySpecial {
+				switch key {
+					case "a": gApplication?.showHideAbout();              return true
+					case "k": toggleColorfulMode();                       return true
+					case "o": gFiles.showInFinder();                      return true
+					case "r": sendEmailBugReport();                       return true
+					case "w": reopenMainWindow();                         return true
+					case "x": clearRecents();                             return true
+					case "/": gHelpController?.show(       flags: flags); return true
+					default:  break
+				}
+			} else if flags.hasCommand {
+				switch key {
+					case "e": gToggleShowExplanations();                  return true
+					case "h": gApplication?.hide(nil);                    return true
+					case "q": gApplication?.terminate(self);              return true
+					case "w": gApplication?.keyWindow?.orderOut(self);    return true
+					case "y": gToggleShowToolTips();                      return true
+					case "'": gToggleLayoutMode();                        return true
+					default:  break
+				}
 			}
 		}
 
-		return handled
+		return false
 	}
 
 	func handleMenuItem(_ iItem: ZMenuItem?) {
@@ -63,16 +66,23 @@ class ZBaseEditor: NSObject {
 		}
 	}
 
+	func invalidMenuItemAlert(_ menuItem: ZMenuItem) -> ZAlert? { return nil }
+
 	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool {
 		return isValid(menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
 	}
 
-	@discardableResult func handleEvent(_ event: ZEvent, isWindow: Bool) -> ZEvent? {
-		if  canHandleKey,
+	@discardableResult func handleEvent(_ event: ZEvent, isWindow: Bool, forced: Bool = false) -> ZEvent? {
+		if  (canHandleKey || forced),
+			!gIgnoreEvents,
 			!matchesPrevious(event) {
 			previousEvent  = event
 			
-			if  handleKey(event.key, flags: event.modifierFlags, isWindow: isWindow) {
+			if         gIsHelpFrontmost {
+				return gHelpController?.handleEvent(event) // better to detect here than in ZEvents.keyDownMonitor
+			} else if  gIsSearching {
+				return gSearchBarController?.handleEvent(event)
+			} else if  handleKey(event.key, flags: event.modifierFlags, isWindow: isWindow) {
 				return nil
 			}
 		}
@@ -96,16 +106,16 @@ class ZBaseEditor: NSObject {
 		gCurrentEssay = nil
 	}
 
-	func fetchTraits() {
-		gBatches.allTraits { flag in
-			gRedrawMaps()
-		}
-	}
-
 	func toggleColorfulMode() {
 		gColorfulMode = !gColorfulMode
 
-		gSignal([.sRelayout, .sPreferences])
+		gSignal([.spRelayout, .spPreferences, .sDetails])
+	}
+
+	func reopenMainWindow() {
+		gMainWindow?.makeKeyAndOrderFront(self)
+		assignAsFirstResponder(gMapView)
+		gSignal([.spRelayout])
 	}
 
 }

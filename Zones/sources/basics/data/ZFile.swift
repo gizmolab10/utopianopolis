@@ -7,6 +7,13 @@
 //
 
 import Foundation
+import CloudKit
+
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
 
 struct ZFileDescriptor {
 	let name: String?
@@ -17,59 +24,69 @@ struct ZFileDescriptor {
 @objc(ZFile)
 class ZFile : ZRecord {
 
-	@NSManaged var                asset :  Data?
-	@NSManaged var                 name :  String?
-	@NSManaged var                 type :  String?
-	override var        cloudProperties : [String] { return Zone.cloudProperties }
-	override var optionalCloudProperties: [String] { return Zone.optionalCloudProperties }
+	@NSManaged var asset : Data?
+	@NSManaged var  name : String?
+	@NSManaged var  type : String?
 
-	static func create(record: CKRecord, databaseID: ZDatabaseID?) -> ZFile {
-		if  let    has = hasMaybe(record: record, entityName: kFileType, databaseID: databaseID) as? ZFile {        // first check if already exists
-			return has
+	var filename : String? {
+		if  let n = name, let t = type {
+			return databaseID.identifier + kDotSeparator + n + kDotSeparator + t
 		}
 
-		return ZFile(record: record, databaseID: databaseID)
+		return nil
 	}
 
-	static func assetExists(for descriptor: ZFileDescriptor, dbID: ZDatabaseID?, onCompletion: ZRecordClosure? = nil) {
-		gFilesRegistry.assetExists(for: descriptor) { iZRecord in
-			if  iZRecord != nil {
-				onCompletion?(iZRecord)
-			} else {
-				gCoreDataStack.fileExistsAsync(for: descriptor, dbID: dbID) { iZRecord in
-					onCompletion?(iZRecord)
-				}
+	func activate() { gFiles.unqiueAssetPath(for: self)?.openAsURL() }
+
+	// MARK: - create
+	// MARK: -
+
+	static func uniqueFile(recordName: String?, in dbID: ZDatabaseID) -> ZFile {
+		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: dbID) as! ZFile
+	}
+
+	static func assetExists(for descriptor: ZFileDescriptor, dbID: ZDatabaseID) -> ZFile? {
+		return gFilesRegistry.assetExists(for: descriptor) ?? gCoreDataStack.loadFile(for: descriptor)
+	}
+
+	static func uniqueFile(_ asset: CKAsset, databaseID: ZDatabaseID) -> ZFile? {
+		let  url  = asset.fileURL!
+		do {
+			let data  = try Data(contentsOf: url)
+			let name  = url.deletingPathExtension().lastPathComponent
+			let type  = url.pathExtension
+			let desc  = ZFileDescriptor(name: name, type: type, dbID: databaseID)
+			var file  = assetExists(for: desc, dbID: databaseID)
+			if  file == nil {
+				file  = ZFile.uniqueFile(recordName: nil, in: databaseID)
+				file! .name = name
+				file! .type = type
+				file!.asset = data
+				file!.modificationDate = Date()
+
+				gFilesRegistry.register(file!, in: databaseID)
 			}
+
+			return file!
+		} catch {
+			print(error)
 		}
+
+		return nil
 	}
 
-	static func createFrom(_ asset: CKAsset, databaseID: ZDatabaseID?) {
-		let  url = asset.fileURL
-		let name = url.deletingPathExtension().lastPathComponent
-		let type = url.pathExtension
-		let desc = ZFileDescriptor(name: name, type: type, dbID: databaseID)
+	// MARK: - properties
+	// MARK: -
 
-		assetExists(for: desc, dbID: databaseID) { iZRecord in
-			if  iZRecord == nil {
-				let   file = ZFile.create(record: CKRecord(recordType: kFileType), databaseID: databaseID)
-				file .name = name
-				file .type = type
-				file.asset = url.dataRepresentation
+	override var        cloudProperties : StringsArray { return Zone.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return Zone.optionalCloudProperties }
 
-				gFilesRegistry.register(file, in: databaseID)
-			}
-		}
-	}
-
-	// MARK:- properties
-	// MARK:-
-
-	override class var cloudProperties: [String] {
+	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties +
 			super.cloudProperties
 	}
 
-	override class var optionalCloudProperties: [String] {
+	override class var optionalCloudProperties: StringsArray {
 		return [#keyPath(asset),
 				#keyPath(name),
 				#keyPath(type)] +

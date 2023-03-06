@@ -9,26 +9,32 @@
 import Foundation
 import CloudKit
 
+#if os(OSX)
+import Cocoa
+#elseif os(iOS)
+import UIKit
+#endif
+
 @objc(ZTraitAssets)
 class ZTraitAssets : ZRecord {
 
 	@NSManaged    var     assets : [CKAsset]?
 	@NSManaged    var assetNames :  String?
-	override var cloudProperties : [String] { return ZTraitAssets.cloudProperties }
-	override var optionalCloudProperties: [String] { return ZTraitAssets.optionalCloudProperties }
+	override var cloudProperties : StringsArray { return ZTraitAssets.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return ZTraitAssets.optionalCloudProperties }
 
-	override class var cloudProperties: [String] {
+	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties + super.cloudProperties
 	}
 
-	override class var optionalCloudProperties: [String] {
+	override class var optionalCloudProperties: StringsArray {
 		return [#keyPath(assets),
 				#keyPath(assetNames)] +
 			super.optionalCloudProperties
 	}
 
-	// MARK:- attachment
-	// MARK:-
+	// MARK: - attachment
+	// MARK: -
 
 	func extractAssets(from attributed: NSMutableAttributedString) {
 		assets = attributed.assets(for: self)
@@ -39,7 +45,7 @@ class ZTraitAssets : ZRecord {
 	func updateFilesFromAssets() {
 		if  let a = assets {
 			for asset in a {
-				ZFile.createFrom(asset, databaseID: databaseID)
+				let _ = ZFile.uniqueFile(asset, databaseID: databaseID)
 			}
 		}
 	}
@@ -50,11 +56,11 @@ class ZTraitAssets : ZRecord {
 	// check if file actually exist in assets folder
 	// by successfully creating a wrapper
 	// try using the filename passed in
-	// then look up the the corresponding ASSET and try using ITS fileurl
+	// then look up the the corresponding ASSET and try using ITS fileURL
 	// if either exists, create a text attachment from the wrapper
 
 	func textAttachment(for fileName: String) -> NSTextAttachment? {
-		var     url = gFiles.imageURLInAssetsFolder(for: fileName)
+		var     url = gFiles.assetURL(for: fileName)
 		var wrapper : FileWrapper?
 		var  extend : String?
 
@@ -72,7 +78,7 @@ class ZTraitAssets : ZRecord {
 		if  wrapper     == nil,
 			let    asset = assetFromAssetNames(for: fileName) {
 			let original = url
-			url          = asset.fileURL
+			url          = asset.fileURL!
 
 			grabWrapper()
 
@@ -98,11 +104,11 @@ class ZTraitAssets : ZRecord {
 			return nil
 		}
 
-		return NSTextAttachment(fileWrapper: wrapper)
+		return ZImageAttachment(fileWrapper: wrapper)
 	}
 
-	// MARK:- persistence
-	// MARK:-
+	// MARK: - persistence
+	// MARK: -
 
 	// called during save note (in set note text)
 	// and in read file (extract from storage dictionary)
@@ -110,12 +116,11 @@ class ZTraitAssets : ZRecord {
 	func assetFromImage(_ image: ZImage, for fileName: String) -> CKAsset? {
 		if  let     asset = assetFromAssetNames(for: fileName) {
 			return  asset
-		} else if let url = writeImageIntoAssetsFolder(image, using: fileName) {
+		} else if let url = gFiles.writeImage(image, using: fileName) {
 			let     asset = CKAsset(fileURL: url)    // side-effect creates asset for dropped image
 
 			if  appendUniquelyToAssetNames(fileName, from: asset) {
 				assets?.append(asset)
-				needSave()
 			}
 
 			return asset
@@ -177,20 +182,6 @@ class ZTraitAssets : ZRecord {
 				}
 			}
 		}
-
-		return nil
-	}
-
-	private func writeImageIntoAssetsFolder(_ image: ZImage, using originalName: String? = nil) -> URL? {
-		if  let name = originalName {
-			let url = gFiles.imageURLInAssetsFolder(for: name)
-
-			if  url.writeImage(image) {
-				return url
-			}
-		}
-
-		// check if file exists at url
 
 		return nil
 	}

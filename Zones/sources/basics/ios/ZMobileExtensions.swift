@@ -40,6 +40,7 @@ public typealias ZBezierPath                 = UIBezierPath
 public typealias ZSearchField                = UISearchBar
 public typealias ZApplication                = UIApplication
 public typealias ZTableColumn                = ZNullProtocol
+//public typealias ZTableCellView              = UITableCellView
 public typealias ZWindowDelegate             = ZNullProtocol
 public typealias ZScrollDelegate             = UIScrollViewDelegate
 public typealias ZWindowController           = ZNullProtocol
@@ -60,14 +61,18 @@ public typealias ZEdgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer
 
 public protocol ZNullProtocol {}
 
-let      gHighlightHeightOffset = CGFloat(-3.0)
-let             gVerticalWeight = -1.0
+let             kVerticalWeight = CGFloat(-1)
 var                  windowKeys : [UIKeyCommand]?
 var                 gIsPrinting : Bool                                                { return false }
 func           NSStringFromSize                    (_ size:        CGSize) -> String  { return NSCoder.string(for: size) }
 func           NSStringFromPoint                   (_ point:      CGPoint) -> String  { return NSCoder.string(for: point) }
 func           NSStringFromRect                    (_ rect:        CGRect) -> String? { return NSCoder.string(for: rect) }
 func convertFromOptionalUserInterfaceItemIdentifier(_ identifier: String?) -> String? { return identifier } // Helper function inserted by Swift 4.2 migrator.
+
+var gSmallMapIsVisible: Bool {
+	get { return getPreferencesBool(   for: kSmallMapIsVisibleKey, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kSmallMapIsVisibleKey) }
+}
 
 extension NSObject {
 
@@ -132,7 +137,7 @@ extension String {
 
     func openAsURL() {
         if let url = URL(string: self) {
-            gApplication.open(url)
+//            gApplication?.open(url)
         }
     }
 
@@ -160,27 +165,29 @@ extension ZColor {
         var b: CGFloat = 0
         var a: CGFloat = 0
         
-        self.getRed(&r, green: &g, blue: &b, alpha: &a)
+        getRed(&r, green: &g, blue: &b, alpha: &a)
         
         return (r, g, b, a)
     }
     
     var hsba: (hue: CGFloat, saturation: CGFloat, brightness: CGFloat, alpha: CGFloat) {
-		var h: CGFloat = 0.0
-		var s: CGFloat = 0.0
-		var b: CGFloat = 0.0
-		var a: CGFloat = 0.0
-		let      color = CGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent) // avoid crash due to grey color space
+		var h:    CGFloat = .zero
+		var s:    CGFloat = .zero
+		var b:    CGFloat = .zero
+		var a:    CGFloat = .zero
+		if  let coreColor = cgColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil) {
+			let     color = ZColor(cgColor: coreColor) // avoid crash due to grey color space
 
-		color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+			color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+		}
         
         return (h, s, b, a)
     }
 
     var inverted: ZColor {
         let components = hsba
-        let b = max(0.0, min(1.0, 1.25 - components.brightness))
-        let s = max(0.0, min(1.0, 1.45 - components.saturation))
+        let b = max(.zero, min(1.0, 1.25 - components.brightness))
+        let s = max(.zero, min(1.0, 1.45 - components.saturation))
         
         return ZColor(hue: components.hue, saturation: s, brightness: b, alpha: components.alpha)
     }
@@ -247,9 +254,10 @@ extension UIView {
             clearGestures()
 
             if  let e = newValue {
-                e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZMapController      .handleClickGesture),                     clicksRequired: 1)
-                gDraggedZone   = nil
-            }
+				gDragging.draggedZones.removeAll()
+
+                e.clickGesture = createPointGestureRecognizer(e, action: #selector(ZMapController.handleClickGesture), clicksRequired: 1)
+			}
         }
     }
 
@@ -266,8 +274,8 @@ extension UIView {
         return gesture
     }
 
-    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZKeyPanGestureRecognizer {
-        let                    gesture = ZKeyPanGestureRecognizer(target: target, action: action)
+    @discardableResult func createDragGestureRecognizer(_ target: ZGestureRecognizerDelegate, action: Selector?) -> ZPanGestureRecognizer {
+        let                    gesture = ZPanGestureRecognizer(target: target, action: action)
         gesture              .delegate = target
         gesture.maximumNumberOfTouches = 1
 
@@ -295,16 +303,8 @@ extension UIView {
         }
     }
 
-	@objc func printView() {}
+	func printView() {}
 
-}
-
-extension ZStackableView {
-    
-    var identity: ZDetailsViewID { return .All }    
-
-    func turnOnTitleButton() {}
-    
 }
 
 extension UITableView {
@@ -326,7 +326,7 @@ extension UITableView {
     
 }
 
-extension ZDragView {
+extension ZMapView {
     
     func updateMagnification(with event: ZEvent) {}
     
@@ -338,7 +338,7 @@ extension ZWindow {
     override open var canBecomeFirstResponder: Bool { return true }
 
     override open var keyCommands: [UIKeyCommand]? {
-        if  gIsIdeaMode {
+        if  gIsEditIdeaMode { // TODO: should be gIsMapMode?
             return nil
         }
 
@@ -417,8 +417,8 @@ extension UISearchBar {
 extension ZoneTextWidget {
 
     @objc(textField:shouldChangeCharactersInRange:replacementString:) func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        layoutTextField()
-        gDragView?.setAllSubviewsNeedDisplay()
+		updateGUI()
+        gMapView?.setAllSubviewsNeedDisplay()
 
         return true
     }
@@ -495,9 +495,9 @@ extension ZAlert {
     func showAlert(closure: AlertStatusClosure? = nil) {
         modalPresentationStyle = .popover
 
-        gControllers.currentController?.present(self, animated: true) {
-            self.dismiss(animated: false) {
-                closure?(.eStatusShown)
+        gControllers.currentController?.present(self, animated: true) { [self] in
+            dismiss(animated: false) {
+                closure?(.sShown)
             }
         }
     }
@@ -507,15 +507,13 @@ extension ZAlert {
 extension ZAlerts {
 
     func openSystemPreferences() {
-        if let url = URL(string: "App-Prefs:root=General&path=Network") {
-            gApplication.open(url)
-        }
+		"App-Prefs:root=General&path=Network".openAsURL()
     }
     
     func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertStatusClosure? = nil) {
         alert(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage) { iAlert, iState in
 			switch iState {
-				case .eStatusShow:
+				case .sShow:
 					iAlert?.showAlert { iResponse in
 						closure?(iResponse)
 				}
@@ -526,15 +524,15 @@ extension ZAlerts {
     }
     
     func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ closure: AlertClosure? = nil) {
-        FOREGROUND(canBeDirect: true) {
+        FOREGROUND {
             let        a = ZAlert(title: iMessage, message: iExplain, preferredStyle: .alert)
             let okAction = UIAlertAction(title: iOKTitle, style: .default) { iAction in
-                closure?(a, .eStatusYes)
+                closure?(a, .sYes)
             }
             
             a.addAction(okAction)
             
-            closure?(a, .eStatusShow)
+            closure?(a, .sShow)
         }
     }
 
@@ -555,88 +553,18 @@ extension ZTextEditor {
 	func showSpecialCharactersPopup() {}
 
     func fullResign()  {
-        assignAsFirstResponder (nil) // ios broken?
-        gMapController?.mobileKeyInput?.becomeFirstResponder()
+        assignAsFirstResponder(nil) // ios broken?
+		assignAsFirstResponder(gMapController?.mobileKeyInput)
 	}
 	
 }
 
-extension ZoneWidget {
-
-    func dragHitFrame(in iView: ZView?, _ iHere: Zone) -> CGRect {
-		var hitRect = CGRect.zero
-
-        if  let   view = iView,
-            let    dot = dragDot.innerDot {
-            let isHere = widgetZone == iHere
-            let cFrame =     convert(childrenView.frame, to: view)
-            let dFrame = dot.convert(        dot.bounds, to: view)
-            let bottom =  (!isHere && widgetZone?.hasZonesBelow ?? false) ? cFrame.minY : 0.0
-            let    top = ((!isHere && widgetZone?.hasZonesAbove ?? false) ? cFrame      : view.bounds).maxY
-            let  right =                                                        view.bounds .maxX
-            let   left =    isHere ? 0.0 : dFrame.minX - gGenericOffset.width
-            hitRect    = CGRect(x: left, y: bottom, width: right - left, height: top - bottom)
-        }
-
-        return hitRect
-    }
-
-    func lineRect(to rightFrame: CGRect, kind: ZLineKind?) -> CGRect {
-        var frame = CGRect ()
-
-        if  let       leftDot = revealDot.innerDot, kind != nil {
-            let     leftFrame = leftDot.convert( leftDot.bounds, to: self)
-            let     thickness = CGFloat(gLineThickness)
-            let     dotHeight = CGFloat(gDotHeight)
-            let halfDotHeight = dotHeight / 2.0
-            let thinThickness = thickness / 2.0
-            let     rightMidY = rightFrame.midY
-            let      leftMidY = leftFrame .midY
-            frame.origin   .x = leftFrame .midX
-
-			switch kind! {
-				case .below:
-					frame.origin   .y = leftFrame .minY + thinThickness + halfDotHeight
-					frame.size.height = abs(  rightMidY + thinThickness - frame.minY)
-				case .above:
-					frame.origin   .y = rightFrame.maxY + halfDotHeight / 2.0
-					frame.size.height = abs(   leftMidY - thinThickness - frame.minY)
-				case .straight:
-					frame.origin   .y =       rightMidY - thinThickness / 8.0
-					frame.origin   .x = leftFrame .maxX
-					frame.size.height =                   thinThickness / 4.0
-			}
-
-            frame.size         .width = abs(rightFrame.midX - frame.minX)
-        }
-
-        return frame
-    }
-
-    func curvedPath(in iRect: CGRect, kind iKind: ZLineKind) -> ZBezierPath {
-        let    isBelow = iKind == .below
-        let startAngle = CGFloat(Double.pi)
-        let deltaAngle = CGFloat(Double.pi / 2.0)
-        let multiplier = CGFloat(isBelow ? -1.0 : 1.0)
-        let   endAngle = startAngle + (multiplier * deltaAngle)
-        let     scaleY = iRect.height / iRect.width
-        let    centerY = isBelow ? iRect.minY : iRect.maxY
-        let     center = CGPoint(x: iRect.maxX, y: centerY / scaleY)
-        let       path = ZBezierPath(arcCenter: center, radius: iRect.width, startAngle: startAngle, endAngle: endAngle, clockwise: !isBelow)
-
-        path.apply(CGAffineTransform(scaleX: 1.0, y: scaleY))
-
-        return path
-    }
-
-}
-
 extension ZMapController {
     
-    @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(up: true) }
-    @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(up: false) }
-    @objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: true)  { gSelecting.updateAfterMove() } }
-    @objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: false) { gSelecting.updateAfterMove() } }
+    @objc func    moveUpEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.moveUp(true) }
+    @objc func  moveDownEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.moveUp(false) }
+	@objc func  moveLeftEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: true)  { _ in gSelecting.updateAfterMove(needsRedraw: true) } }
+	@objc func moveRightEvent(_ iGesture: ZGestureRecognizer?) { gMapEditor.move(out: false) { _ in gSelecting.updateAfterMove(needsRedraw: true) } }
         
 }
 
