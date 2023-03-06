@@ -65,7 +65,7 @@ var             gUserIsExempt :                Bool { return gIgnoreExemption ? 
 var               gUserIsIdle :                Bool { return gUserActiveInWindow == nil }
 var         gCurrentEssayZone :               Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName :              String { return CKRecordID().recordName }
-var                  gRecords :            ZRecords { return (kIsPhone && gShowSmallMapForIOS) ? gFavorites : gRemoteStorage.currentRecords }
+var                  gRecords :            ZRecords { return (kIsPhone && gShowFavoritesMapForIOS) ? gFavorites : gRemoteStorage.currentRecords }
 var                 gDarkMode :      InterfaceStyle { return InterfaceStyle() }
 var            gModifierFlags :         ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
 var    gTimeSinceCurrentEvent :        TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
@@ -252,9 +252,9 @@ var gColorfulMode : Bool {
 	set { setPreferencesBool(newValue, for: kColorfulMode) }
 }
 
-var gShowSmallMapForIOS : Bool {
-	get { return getPreferencesBool(   for: kShowSmallMap, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kShowSmallMap) }
+var gShowFavoritesMapForIOS : Bool {
+	get { return getPreferencesBool(   for: kShowFavoritesMap, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kShowFavoritesMap) }
 }
 
 var gShowExplanations : Bool {

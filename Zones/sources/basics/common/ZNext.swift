@@ -90,7 +90,7 @@ extension ZFavorites {
 			}
 
 			setHere(to: here)
-			gSignal([.spCrumbs, .spSmallMap])
+			gSignal([.spCrumbs, .spFavoritesMap])
 
 			return here
 		}
@@ -171,7 +171,7 @@ extension ZFavorites {
 							moveOtherCurrentTo(newCurrent)
 						} else {
 							push(newCurrent.bookmarkTarget, down: down)
-							setAsCurrent(newCurrent, alterBigMapFocus: !amongNotes)
+							setAsCurrent(newCurrent, alterMainMapFocus: !amongNotes)
 						}
 					}
 				}

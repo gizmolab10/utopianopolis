@@ -382,12 +382,12 @@ class ZFavorites: ZRecords {
 
 		if  let bookmarks = favoritesTargeting(target, orSpawnsIt: false) {
 			for bookmark in bookmarks {
-				revealAndMarkInSmallMap(bookmark)
+				revealAndMarkInFavoritesMap(bookmark)
 			}
 		}
 	}
 
-	func revealInSmallMap(_    iZone: Zone? = nil) {
+	func revealInFavoritesMap(_    iZone: Zone? = nil) {
 		if  let zone         = iZone {
 			if  let parent   = zone.parentZone,
 				currentHere != parent {
@@ -401,8 +401,8 @@ class ZFavorites: ZRecords {
 		}
 	}
 
-	func revealAndMarkInSmallMap(_  iZone: Zone? = nil) {
-		revealInSmallMap(iZone)
+	func revealAndMarkInFavoritesMap(_  iZone: Zone? = nil) {
+		revealInFavoritesMap(iZone)
 		setCurrentFavoriteBoomkarks(to: iZone)
 	}
 
@@ -490,8 +490,8 @@ class ZFavorites: ZRecords {
 
 	@discardableResult func swapBetweenBookmarkAndTarget(_ flags: ZEventFlags = ZEventFlags(), doNotGrab: Bool = true) -> Bool {
 		if  let cb = otherCurrent,
-			cb.isGrabbed {            // grabbed in small map, so ...
-			cb.bookmarkTarget?.grab() // grab target in big map
+			cb.isGrabbed {            // grabbed in favorites map, so ...
+			cb.bookmarkTarget?.grab() // grab target in main map
 		} else if doNotGrab {
 			return false
 		} else {
@@ -504,7 +504,7 @@ class ZFavorites: ZRecords {
 					gShowDetailsView = true
 
 					if  !isInHere {
-						revealAndMarkInSmallMap(bookmark)
+						revealAndMarkInFavoritesMap(bookmark)
 					}
 
 					bookmark.grab()

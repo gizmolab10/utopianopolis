@@ -35,7 +35,7 @@ extension ZFavorites {
 				gBookmarks.addToReverseLookup(bookmark)
 				setCurrentFavoriteBoomkarks(to: bookmark)
 				resetRecents()
-				gSignal([.spSmallMap])
+				gSignal([.spFavoritesMap])
 			}
 			return bookmark
 		}
@@ -95,7 +95,7 @@ extension ZFavorites {
 
 			push(target)
 			setAsCurrent(notemark)
-			gSignal([.spSmallMap, .spCrumbs])
+			gSignal([.spFavoritesMap, .spCrumbs])
 
 			return true
 		}
@@ -140,9 +140,9 @@ extension ZFavorites {
 		}
 	}
 
-	func setAsCurrent(_ zone: Zone?, alterBigMapFocus: Bool = false) {
+	func setAsCurrent(_ zone: Zone?, alterMainMapFocus: Bool = false) {
 		if  let target = zone?.bookmarkTarget {
-			if  alterBigMapFocus {
+			if  alterMainMapFocus {
 				gDatabaseID          = target.databaseID
 				gRecords.currentHere = target // avoid push
 

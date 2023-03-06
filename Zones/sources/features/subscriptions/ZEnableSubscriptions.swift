@@ -80,6 +80,7 @@ extension ZEssayView {
 
 }
 
+#if os(OSX)
 extension ZView {
 
 	@objc func printView() { // ZView
@@ -108,3 +109,4 @@ extension ZView {
 	}
 
 }
+#endif

@@ -133,17 +133,17 @@ class ZActionsController : ZGenericController {
 	}
 
 	func switchView(to iFunction: ZFunction) {
-		let priorShown = gShowSmallMapForIOS
+		let priorShown = gShowFavoritesMapForIOS
 		let    priorID = gDatabaseID
 
 		switch iFunction {
-			case .eMe:        gShowSmallMapForIOS = false; gDatabaseID = .mineID
-			case .ePublic:    gShowSmallMapForIOS = false; gDatabaseID = .everyoneID
-			case .eFavorites: gShowSmallMapForIOS = true
+			case .eMe:        gShowFavoritesMapForIOS = false; gDatabaseID = .mineID
+			case .ePublic:    gShowFavoritesMapForIOS = false; gDatabaseID = .everyoneID
+			case .eFavorites: gShowFavoritesMapForIOS = true
 			default:          break
 		}
 		
-		if  gDatabaseID != priorID || gShowSmallMapForIOS != priorShown {
+		if  gDatabaseID != priorID || gShowFavoritesMapForIOS != priorShown {
 			gSelecting.updateAfterMove(needsRedraw: true)
 			gRelayoutMaps()
 		}

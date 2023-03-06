@@ -41,9 +41,9 @@ class ZFocusing : NSObject {
 	func focusOnGrab(_ kind: ZFocusKind = .eEdited, _ flags: ZEventFlags = ZEventFlags(), shouldGrab: Bool = false, _ atArrival: @escaping Closure) {
 
 		// regarding grabbed/edited zone, five states:
-		// 1. is a bookmark        -> target becomes here, if in big map then do as for state 2
-		// 2. is here              -> update in small map
-		// 3. in small map         -> grab here, if grabbed then do as for state 4
+		// 1. is a bookmark        -> target becomes here, if in main map then do as for state 2
+		// 2. is here              -> update in favorites map
+		// 3. in favorites map     -> grab here, if grabbed then do as for state 4
 		// 4. not here, COMMAND    -> change here
 		// 5. not COMMAND          -> select here, create a bookmark
 
@@ -54,7 +54,7 @@ class ZFocusing : NSObject {
 		}
 
 		let finishAndGrabHere = {
-			gSignal([.spSmallMap])
+			gSignal([.spFavoritesMap])
 			gHere.grab()               // NOTE: changes work mode
 			atArrival()
 		}

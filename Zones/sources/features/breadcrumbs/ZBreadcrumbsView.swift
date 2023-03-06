@@ -70,11 +70,11 @@ class ZBreadcrumbsView : ZButtonsView {
 			let               attributed = NSMutableAttributedString(string: name)
 			var               attributes = ZAttributesDictionary()
 			style         .lineBreakMode = .byClipping
-			button                 .font = gSmallFont // needed for computing button width
+			button                 .font = gFavoritesFont // needed for computing button width
 			button                  .tag = index
 			button                 .zone = zone
 			button           .isBordered = true
-			attributes[           .font] = gSmallFont
+			attributes[           .font] = gFavoritesFont
 			attributes[.foregroundColor] = zone.color
 			attributes[ .paragraphStyle] = style
 
@@ -112,7 +112,7 @@ class ZBreadcrumbsView : ZButtonsView {
 					let point = crumb.frame.bottomLeft.offsetBy(.zero, extra)
 					let color = crumb.zone.color ?? kDefaultIdeaColor
 
-					">".draw(at: point, withAttributes: [.foregroundColor : color, .font: gSmallFont])
+					">".draw(at: point, withAttributes: [.foregroundColor : color, .font: gFavoritesFont])
 				}
 			}
 		}

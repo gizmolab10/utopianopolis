@@ -36,7 +36,7 @@ class ZPseudoView: NSObject {
 	var  absoluteCenter : CGPoint         { return  absoluteFrame.center }
 	var    isLinearMode : Bool            { return  mode == .linearMode }
 	var  isCircularMode : Bool            { return  mode == .circularMode }
-	var        isBigMap : Bool            { return  controller?.isBigMap ?? true }
+	var       isMainMap : Bool            { return  controller?.isMainMap ?? true }
 	var     gapDistance : CGFloat         { return (controller?.fontSize ?? kDefaultFontSize) * 0.6 }
 	var      dotPlusGap : CGFloat         { return (controller?.dotWidth ?? .zero) + gapDistance }
 	var            mode : ZMapLayoutMode  { return  controller?.mapLayoutMode ?? .linearMode }

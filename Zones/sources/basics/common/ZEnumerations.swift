@@ -107,9 +107,9 @@ enum ZoneAttributeType: String {
 }
 
 enum ZRelayoutMapType: Int {
-	case small
+	case favorites
+	case main
 	case both
-	case big
 }
 
 struct ZTinyDotType: OptionSet {

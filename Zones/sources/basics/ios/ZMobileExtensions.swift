@@ -69,9 +69,9 @@ func           NSStringFromPoint                   (_ point:      CGPoint) -> St
 func           NSStringFromRect                    (_ rect:        CGRect) -> String? { return NSCoder.string(for: rect) }
 func convertFromOptionalUserInterfaceItemIdentifier(_ identifier: String?) -> String? { return identifier } // Helper function inserted by Swift 4.2 migrator.
 
-var gSmallMapIsVisible: Bool {
-	get { return getPreferencesBool(   for: kSmallMapIsVisibleKey, defaultBool: false) }
-	set { setPreferencesBool(newValue, for: kSmallMapIsVisibleKey) }
+var gFavoritesMapIsVisible: Bool {
+	get { return getPreferencesBool(   for: kFavoritesMapIsVisibleKey, defaultBool: false) }
+	set { setPreferencesBool(newValue, for: kFavoritesMapIsVisibleKey) }
 }
 
 extension NSObject {

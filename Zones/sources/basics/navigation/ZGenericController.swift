@@ -21,7 +21,7 @@ enum ZMapType : Int {
 
 	var divisor: CGFloat {
 		switch self {
-			case .mFavorites: return kSmallMapReduction
+			case .mFavorites: return kFavoritesMapReduction
 			case .mHelp:      return .zero
 			case .mMain:      return 1.0
 		}
@@ -53,8 +53,8 @@ class ZGenericController: ZController, ZGeneric {
 			 .idDataDetails,
 			 .idMain:    return [.sResize, .spStartupStatus]
 		case .idActions: return [.sResize, .sSearch, .sFound]
-		case .idPreferences,
-			 .idFavoritesMap,
+			case .idFavoritesMap,
+			 .idPreferences,
 			 .idMainMap,
 			 .idCrumbs:  return [.sData]             // ignore the signal from the end of process next batch
 		default: break
@@ -67,8 +67,8 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 			case .idHelpEssayIntroduction, .idHelpEssayGraphicals,
 				 .idHelpDots:      return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
-			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .spBigMap]
-			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spSmallMap, .sDetails]
+			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spFavoritesMap, .spMainMap]
+			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spFavoritesMap, .sDetails]
 			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                                .sDetails]
 			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
 			case .idSearch:        return [.sSearch]

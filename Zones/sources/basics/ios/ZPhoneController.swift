@@ -61,7 +61,7 @@ class ZPhoneController: ZGenericController, UITabBarDelegate {
         let               selectorHeight = CGFloat(48)
         let                    hereTitle = gHereMaybe?.zoneName ?? kEmpty
         editorBottomConstraint?.constant = gKeyboardIsVisible ? keyboardHeight : selectorHeight
-        editorTopConstraint?   .constant = gSmallMapIsVisible ? selectorHeight : 2.0
+        editorTopConstraint?   .constant = gFavoritesMapIsVisible ? selectorHeight : 2.0
         hereTextWidget?            .text = hereTitle
 		mapsButton? 			  .title = gCurrentMapFunction.rawValue
 		mapsButton?            .isHidden = false

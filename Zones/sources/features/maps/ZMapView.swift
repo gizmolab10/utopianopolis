@@ -74,7 +74,7 @@ class ZMapView: ZView {
 		for subview in subviews {
 			if  let textView = subview as? ZoneTextWidget,
 				let   widget = textView.widget {
-				if widget.isBigMap ? (ofType != .small) : (ofType != .big) {
+				if widget.isMainMap ? (ofType != .favorites) : (ofType != .main) {
 					textView.removeFromSuperview()
 				}
 			}

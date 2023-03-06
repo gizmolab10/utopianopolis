@@ -1175,7 +1175,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 									target .asssureIsVisible()		   // for later, when user exits essay mode
 									common?.asssureIsVisible()
 									resetCurrentEssay(target.note)     // change current note to that of target
-									gSignal([.spSmallMap, .spCrumbs])
+									gSignal([.spFavoritesMap, .spCrumbs])
 								}
 							}
 

@@ -14,7 +14,7 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var   bigMapWidgets: WidgetHashDictionary = [:]
+	var   mainMapWidgets: WidgetHashDictionary = [:]
 	var favoriteWidgets: WidgetHashDictionary = [:]
 	var exemplarWidgets: WidgetHashDictionary = [:]
     var currentlyEditedWidget : ZoneWidget?     { return widgetForZone(gTextEditor.currentlyEditedZone) }
@@ -23,7 +23,7 @@ class ZWidgets: NSObject {
     var        visibleWidgets : ZoneWidgetArray { return gHere.visibleWidgets + (gFavoritesHere?.visibleWidgets ?? []) }
 
 	func clearAll() {
-		bigMapWidgets  .clear()
+		mainMapWidgets  .clear()
 		favoriteWidgets.clear()
 		exemplarWidgets.clear()
 	}
@@ -31,13 +31,13 @@ class ZWidgets: NSObject {
 	func allWidgets(for type: ZWidgetType) -> ZoneWidgetArray? {
 		switch type {
 			case .tExemplar: return exemplarWidgets.justWidgets
-			default:         return   bigMapWidgets.justWidgets + favoriteWidgets.justWidgets
+			default:         return   mainMapWidgets.justWidgets + favoriteWidgets.justWidgets
 		}
 	}
 
 	func getZoneWidgetRegistry(for type: ZWidgetType?) -> WidgetHashDictionary? {
 		if  let t = type {
-			if  t.isBigMap   { return   bigMapWidgets }
+			if  t.isMainMap  { return  mainMapWidgets }
 			if  t.isFavorite { return favoriteWidgets }
 			if  t.isExemplar { return exemplarWidgets }
 		}
@@ -46,7 +46,7 @@ class ZWidgets: NSObject {
 	}
 
 	func setZoneWidgetRegistry(_ dict: WidgetHashDictionary, for type: ZWidgetType) {
-		if      type.isBigMap   {   bigMapWidgets = dict }
+		if      type.isMainMap  {  mainMapWidgets = dict }
 		else if type.isFavorite { favoriteWidgets = dict }
 		else if type.isExemplar { exemplarWidgets = dict }
 	}

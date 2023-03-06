@@ -27,9 +27,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	var               inCircularMode : Bool           { return mapLayoutMode == .circularMode }
 	var               canDrawWidgets : Bool           { return gCanDrawWidgets } // overridden by help dots controller
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
-	var                     isBigMap : Bool           { return controllerID == .idMainMap }
+	var                    isMainMap : Bool           { return controllerID == .idMainMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
-	var                   widgetType : ZWidgetType    { return .tBigMap }
+	var                   widgetType : ZWidgetType    { return .tMainMap }
 	var                mapPseudoView : ZPseudoView?
 	var                   hereWidget : ZoneWidget?
 	var                     rootLine : ZoneLine?
@@ -47,7 +47,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 			view.layer?.backgroundColor = kClearColor.cgColor
 			mapPseudoView?       .frame = map.frame
 
-			if  isBigMap || isExemplar {
+			if  isMainMap || isExemplar {
 				map.setup(with: self)
 			}
 
@@ -134,7 +134,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	}
 
 	var doNotLayout: Bool {
-		return (kIsPhone && (isBigMap == gShowSmallMapForIOS)) || (isBigMap && gIsEditIdeaMode) || (isBigMap && gIsEssayMode)
+		return (kIsPhone && (isMainMap == gShowFavoritesMapForIOS)) || (isMainMap && gIsEditIdeaMode) || (isMainMap && gIsEssayMode)
 	}
 
 	func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
@@ -144,9 +144,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
     func createWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize {
-			if  kind != .sResize, isBigMap, gIsEssayMode {   // do not create widgets behind essay view
-				mapView?.removeAllTextViews(ofType: .big)
-				clearAllToolTips(for: isBigMap ? .big : .small)
+			if  kind != .sResize, isMainMap, gIsEssayMode {   // do not create widgets behind essay view
+				mapView?.removeAllTextViews(ofType: .main)
+				clearAllToolTips(for: isMainMap ? .main : .favorites)
 			}
 
 			return
@@ -169,7 +169,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
             recursing              = [.sData, .spRelayout].contains(kind)
         }
 
-		let type : ZRelayoutMapType = isBigMap ? .big : .small
+		let type : ZRelayoutMapType = isMainMap ? .main : .favorites
 
 		// //////////////////////////// //
 		// clear remnants of prior loop //
@@ -183,7 +183,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 		let    total = specificWidget?.createChildPseudoViews(for: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
 
-		if  let    r = hereWidget, (!isBigMap || gMapLayoutMode == .linearMode) {
+		if  let    r = hereWidget, (!isMainMap || gMapLayoutMode == .linearMode) {
 			let line = r.createLineFor(child: r)
 			rootLine = line
 
@@ -196,16 +196,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
     }
 
 	var mapOrigin: CGPoint? {
-		if  let  mapSize = mapView?.frame.size.dividedInHalf {
-			let   bigMap = gMapOffset.offsetBy(-dotHeight, 22.0)
-			let smallMap = CGPoint(x: -12.0, y: -6.0)
-			let exemplar = CGPoint(x: .zero, y: -8.0)
-			var   offset = isExemplar ? exemplar : isBigMap ? bigMap : smallMap
+		if  let      mapSize = mapView?.frame.size.dividedInHalf {
+			let      mainMap = gMapOffset.offsetBy(-dotHeight, 22.0)
+			let favoritesMap = CGPoint(x: -12.0, y: -6.0)
+			let     exemplar = CGPoint(x: .zero, y: -8.0)
+			var       offset = isExemplar ? exemplar : isMainMap ? mainMap : favoritesMap
 			if  !kIsPhone {
-				offset.y = -offset.y    // default values are in iphone coordinates whereas y coordination is opposite in non-iphone devices
+				offset.y     = -offset.y    // default values are in iphone coordinates whereas y coordination is opposite in non-iphone devices
 			}
 
-			return (isBigMap ? CGPoint(mapSize) : .zero) + offset
+			return (isMainMap ? CGPoint(mapSize) : .zero) + offset
 		}
 
 		return nil
@@ -245,17 +245,17 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	func layoutForCurrentScrollOffset() {
 		printDebug(.dSpeed, "\(zClassName) layoutForCurrentScrollOffset")
 
-		clearAllToolTips(for: isBigMap ? .big : .small)
+		clearAllToolTips(for: isMainMap ? .main : .favorites)
 		gRemoveAllTracking()
 
-		if  isBigMap, gIsEssayMode {
-			return               // when in essay mode, do not process big map's widgets
+		if  isMainMap, gIsEssayMode {
+			return               // when in essay mode, do not process main map's widgets
 		}
 
 		if  let  mOrigin = mapOrigin,
 			let   widget = hereWidget {
 			let     size = widget.drawnSize.dividedInHalf
-			let   origin = isBigMap ? mOrigin - size : mOrigin
+			let   origin = isMainMap ? mOrigin - size : mOrigin
 			widget.frame = CGRect(origin: origin, size: size)
 
 			widget.grandRelayout()

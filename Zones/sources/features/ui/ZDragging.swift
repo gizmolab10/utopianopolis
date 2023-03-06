@@ -201,7 +201,7 @@ class ZDragging: NSObject {
 			} else if let parent = gFavorites.showNextList(down: down) {
 				var zones = draggedZones
 
-				if  controller.isBigMap {
+				if  controller.isMainMap {
 					zones = draggedZones.map { $0.isBookmark ? $0 : gFavorites.matchOrCreateBookmark(for: $0, addToRecents: false) }
 				}
 

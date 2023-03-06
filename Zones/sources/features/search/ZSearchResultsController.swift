@@ -241,8 +241,8 @@ class ZSearchResultsController: ZGenericTableController {
 				zone.resolveAsHere()
 			} else {
 				zone.grab()
-				gFavorites.revealInSmallMap(zone)
-				gSignal([.spSmallMap])
+				gFavorites.revealInFavoritesMap(zone)
+				gSignal([.spFavoritesMap])
 			}
 
 			return true

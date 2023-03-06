@@ -108,7 +108,7 @@ class ZDisplayPreferencesController: ZGenericController {
 	@IBAction func colorfulModeAction(_ button: ZButton) {
 		gColorfulMode = !gColorfulMode
 
-		gSignal([.spRelayout, .spPreferences, .spSmallMap])
+		gSignal([.spRelayout, .spPreferences, .spFavoritesMap])
 	}
 
 	@IBAction func clearColorAction(_ button: ZButton) {

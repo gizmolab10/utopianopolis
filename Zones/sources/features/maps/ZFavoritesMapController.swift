@@ -24,7 +24,7 @@ class ZFavoritesMapController: ZMapController {
 
 	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gFavoritesAreVisible, super.shouldHandle(kind) {
-			FOREGROUND(after: kind == .sLaunchDone ? 0.01 : .zero) { // so small map is not too high when other details views are shown
+			FOREGROUND(after: kind == .sLaunchDone ? 0.01 : .zero) { // so favorites map is not too high when other details views are shown
 				super.createAndLayoutWidgets(for: iZone, kind)
 			}
 		}
@@ -65,7 +65,7 @@ class ZFavoritesMapController: ZMapController {
 	}
 
 	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {   // true means handled
-		return gMapController?.handleDragGesture(iGesture) ?? false                    // use drag view coordinates from big (not small) map controller
+		return gMapController?.handleDragGesture(iGesture) ?? false                    // use drag view coordinates from main (not favorites) map controller
 	}
 
 }

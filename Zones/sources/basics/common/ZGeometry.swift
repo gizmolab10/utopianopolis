@@ -20,11 +20,11 @@ let kDotFactor = CGFloat(1.25)
 var gTextOffset: CGFloat? { return gTextEditor.currentOffset }
 #endif
 
-var gSmallFontSize : CGFloat { return   gBigFontSize * kSmallMapReduction }
-var   gBigFontSize : CGFloat { return  gBaseFontSize + kFontDelta }          // 15 ... 28
-var     gSmallFont :   ZFont { return  gFavoritesMapController.font }
-var     gMicroFont :   ZFont { return .systemFont(ofSize: gSmallFontSize * kSmallMapReduction * kSmallMapReduction) }
-var       gBigFont :   ZFont { return .systemFont(ofSize: gBigFontSize) }
+var gFavoritesFontSize : CGFloat { return  gMainFontSize * kFavoritesMapReduction }
+var     gFavoritesFont :   ZFont { return  gFavoritesMapController.font }
+var      gMainFontSize : CGFloat { return  gBaseFontSize + kFontDelta }          // 15 ... 28
+var         gMicroFont :   ZFont { return .systemFont(ofSize: gFavoritesFontSize * kFavoritesMapReduction * kFavoritesMapReduction) }
+var          gMainFont :   ZFont { return .systemFont(ofSize: gMainFontSize) }
 
 protocol ZGeometry {
 
@@ -64,7 +64,7 @@ extension ZGenericController {
 
 extension ZFavoritesMapController {
 
-	override var  coreFontSize: CGFloat { return super .coreFontSize * kSmallMapReduction }
+	override var  coreFontSize: CGFloat { return super .coreFontSize * kFavoritesMapReduction }
 
 }
 

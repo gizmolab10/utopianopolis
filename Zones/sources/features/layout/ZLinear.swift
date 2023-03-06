@@ -120,7 +120,7 @@ extension ZoneWidget {
 			if  absolute {
 				c.relayoutAbsoluteFrame(relativeTo: controller)
 			} else if let tFrame = pseudoTextWidget?.frame {
-				let    reduction = widgetType.isBigMap ? 0.8 : kSmallMapReduction / 1.5
+				let    reduction = widgetType.isMainMap ? 0.8 : kFavoritesMapReduction / 1.5
 				let            x = tFrame.maxX + dotPlusGap * reduction
 				let       origin = CGPoint(x: x, y: .zero)
 				let       cFrame = CGRect(origin: origin, size: c.drawnSize)
@@ -410,7 +410,7 @@ extension ZDragging {
 		var            totalGrabs = draggedZones
 		totalGrabs.appendUnique(contentsOf: gSelecting.currentMapGrabs)
 		if  let           gesture = iGesture,
-			let   (widget, point) = controller.linearNearestWidget(by: gesture, locatedInBigMap: controller.isBigMap),
+			let   (widget, point) = controller.linearNearestWidget(by: gesture, locatedInMainMap: controller.isMainMap),
 			var       nearestZone = widget?.widgetZone, !totalGrabs.contains(nearestZone),
 			var     nearestWidget = widget {
 			let relationToNearest = controller.relationOf(point, to: nearestWidget)
@@ -427,7 +427,7 @@ extension ZDragging {
 
 			let   nearestIsParent = nearestZone.children.intersects(draggedZones)
 			let        spawnCycle = nearestZone.spawnCycle
-			let       isForbidden = gIsEssayMode && nearestZone.isInBigMap
+			let       isForbidden = gIsEssayMode && nearestZone.isInMainMap
 			let            isNoop = spawnCycle || (sameIndex && nearestIsParent) || nearestIndex < 0 || isForbidden
 			var dropAt:      Int? = nearestIndex
 
@@ -471,11 +471,11 @@ extension ZDragging {
 
 extension ZMapController {
 
-	func linearNearestWidget(by gesture: ZGestureRecognizer?, locatedInBigMap: Bool = true) -> (ZoneWidget?, CGPoint)? {
+	func linearNearestWidget(by gesture: ZGestureRecognizer?, locatedInMainMap: Bool = true) -> (ZoneWidget?, CGPoint)? {
 		if  let         viewG = gesture?.view,
 			let     locationM = gesture?.location(in: viewG),
 			let       widgetM = hereWidget?.widgetNearestTo(locationM) {
-			let     alternate = isBigMap ? gFavoritesMapController : gMapController
+			let     alternate = isMainMap ? gFavoritesMapController : gMapController
 			if  let  mapViewA = alternate?.mapPseudoView, !kIsPhone,
 				let locationA = mapPseudoView?.convertPoint(locationM, toRootPseudoView: mapViewA),
 				let   widgetA = alternate?.hereWidget?.widgetNearestTo(locationA),
@@ -491,7 +491,7 @@ extension ZMapController {
 				// ////////////////////////////////////////////////////// //
 
 				if  lengthA < lengthM {
-					return (widgetA, locatedInBigMap ? locationM : locationA)
+					return (widgetA, locatedInMainMap ? locationM : locationA)
 				}
 			}
 

@@ -75,7 +75,7 @@ class ZFavoritesTogglingView : ZTogglingView {
 		}
 
 		if  gIsEditIdeaMode {
-			gSignal([.spSmallMap])
+			gSignal([.spFavoritesMap])
 		}
 	}
 

@@ -113,9 +113,9 @@ class ZTextPack: NSObject {
 			let      type = w.widgetType
 			if  threshold < text.length,
 				!type.contains(.tExemplar),
-				!type.contains(.tBigMap) || !isLinear {                       // is in favorites or is circular
+				!type.contains(.tMainMap) || !isLinear {                       // is in favorites or is circular
 				let  isLine = text[0] == kHyphen
-				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 10) // shorten to fit (in small map area or in circles)
+				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 10) // shorten to fit (in favorites map area or in circles)
 
 				if !isLine {
 					text.append(kEllipsis)
@@ -254,7 +254,7 @@ class ZTextEditor: ZTextView {
 	var currentlyEditedZone : Zone?           { return currentEdit?.packedZone }
 	var currentTextWidget   : ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
 	var currentZoneName	    : String          { return currentlyEditedZone?.zoneName ?? kEmpty }
-	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gBigFont }
+	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gMainFont }
 	var atEnd 	            : Bool            { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
 	var atStart  	        : Bool            { return selectedRange.upperBound == 0 }
 

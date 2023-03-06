@@ -398,7 +398,7 @@
                                             <outlet property="titleButton" destination="Jzv-og-1RG" id="hSD-AO-alL"/>
                                         </connections>
                                     </customView>
-                                    <customView identifier="smallMap" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZFavoritesTogglingView" customModule="Seriously" customModuleProvider="target">
+                                    <customView identifier="favoritesMap" wantsLayer="YES" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Utx-K3-0a0" userLabel="Favorites View" customClass="ZFavoritesTogglingView" customModule="Seriously" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="226" height="50"/>
                                         <subviews>
                                             <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s1s-Ki-o6t" userLabel="Favorites Banner">

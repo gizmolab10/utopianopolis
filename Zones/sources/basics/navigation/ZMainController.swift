@@ -88,7 +88,7 @@ class ZMainController: ZGesturesController {
 		gShowDetailsView = gDetailsViewIsHidden
 
 		gTextEditor.stopCurrentEdit()
-		gMapView?.removeAllTextViews(ofType: .small)
+		gMapView?.removeAllTextViews(ofType: .favorites)
 		gSignal([.spMain, .sDetails, .spRelayout])
 	}
 

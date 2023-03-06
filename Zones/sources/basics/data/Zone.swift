@@ -76,7 +76,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                                          isBookmark :               Bool  { return bookmarkTarget != nil }
 	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
-	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isBigMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
+	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isMainMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
 	var                                    hasBadRecordName :               Bool  { return recordName == nil }
 	var                                       showRevealDot :               Bool  { return count > 0 || isTraveller }
@@ -95,8 +95,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                             hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                                      hasNoteOrEssay :               Bool  { return hasTrait(matchingAny: [.tNote, .tEssay]) }
 	var                                           isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
-	var                                          isInBigMap :               Bool  { return root?.isBigMapRoot       ?? false }
 	var                                          isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
+	var                                         isInMainMap :               Bool  { return root?.isMainMapRoot      ?? false }
 	var                                         isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                                       isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
 	var                                    isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
@@ -251,7 +251,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		return .tBigMap
+		return .tMainMap
 	}
 
 	// MARK: - bookmarks
@@ -1400,13 +1400,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			invokeBookmark(onCompletion: onCompletion)
 		} else if isTraveller && fetchableCount == 0 && count == 0 {
 			invokeTravel(onCompletion: onCompletion)
-		} else if isInBigMap {
+		} else if isInMainMap {
 			addAGrab(extreme: extreme, onCompletion: onCompletion)
 		} else if let next = gListsGrowDown ? children.last : children.first {
 			next.grab()
 			gFavorites.setHere(to: self)
 			gFavorites.updateFavoritesAndRedraw {
-				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+				gSignal([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
 			}
 		}
 	}
@@ -1439,11 +1439,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// FUBAR: parent sometimes disappears!!!!!!!!!
 				} else if p.isARoot {
 					onCompletion?(true)
-					return // do nothing if p is root of either small map
+					return // do nothing if p is root of either favorites map
 				}
 
 				p.grab()
-				gSignal([.spCrumbs, .spDataDetails, .spSmallMap, .sDetails])
+				gSignal([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
 			}
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
@@ -1580,7 +1580,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func asssureIsVisibleAndGrab(updateBrowsingLevel: Bool = true) {
-		gShowSmallMapForIOS = kIsPhone && isInFavorites
+		gShowFavoritesMapForIOS = kIsPhone && isInFavorites
 
 		asssureIsVisible()
 		grab(updateBrowsingLevel: updateBrowsingLevel)
@@ -1674,11 +1674,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func isInMap(of type: ZRelayoutMapType = .both) -> Bool {
-		guard let isSmall = root?.isInFavorites else { return false }
+		guard let isFavorites = root?.isInFavorites else { return false }
 		switch type {
-			case .small: return  isSmall
-			case   .big: return !isSmall
-			default:     return  true
+			case .favorites: return  isFavorites
+			case      .main: return !isFavorites
+			default:         return  true
 		}
 	}
 
@@ -2176,11 +2176,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere = target
 				}
 
-				gShowSmallMapForIOS = targetDBID.isFavoritesDB
+				gShowFavoritesMapForIOS = targetDBID.isFavoritesDB
 
 				complete(target, .spRelayout)
 			} else {
-				gShowSmallMapForIOS = targetDBID.isFavoritesDB
+				gShowFavoritesMapForIOS = targetDBID.isFavoritesDB
 
 				if  gDatabaseID != targetDBID {
 					gDatabaseID  = targetDBID
@@ -2216,7 +2216,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					if  there != nil {
 						there?.expandGrabAndFocusOn()
-					} else if !gRecords.databaseID.isFavoritesDB, // small maps have no lookup???
+					} else if !gRecords.databaseID.isFavoritesDB, // favorites map has no lookup???
 							  let here = gRecords.maybeZoneForRecordName(targetRecordName) {
 						here.expandGrabAndFocusOn()
 					} // else ignore: favorites id with an unresolvable bookmark target
@@ -2313,7 +2313,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gSignal([.spSmallMap, .spRelayout])
+				gSignal([.spFavoritesMap, .spRelayout])
 			}
 		}
 	}
@@ -2377,16 +2377,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return
 		}
 
-		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// 1. move a normal zone into another normal zone                                                            //
-		// 2. move a normal zone through a bookmark                                                                  //
-		// 3. move a normal zone into small map -- create a bookmark pointing at normal zone, then add it to the map //
-		// 4. move from small map into a normal zone -- convert to a bookmark, then move the bookmark                //
-		//                                                                                                           //
-		// OPTION  = copy                                                                                            //
-		// SPECIAL = don't create bookmark              (case 3)                                                     //
-		// CONTROL = don't change here or expand into                                                                //
-		// ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// ///////////////////////////////////////////////////////////////////////////////////////////////////////////// //
+		// 1. move a normal zone into another normal zone                                                                //
+		// 2. move a normal zone through a bookmark                                                                      //
+		// 3. move a normal zone into favorites map -- create a bookmark pointing at normal zone, then add it to the map //
+		// 4. move from favorites map into a normal zone -- convert to a bookmark, then move the bookmark                //
+		//                                                                                                               //
+		// OPTION  = copy                                                                                                //
+		// SPECIAL = don't create bookmark              (case 3)                                                         //
+		// CONTROL = don't change here or expand into                                                                    //
+		// ///////////////////////////////////////////////////////////////////////////////////////////////////////////// //
 
 		guard let undoManager = iUndoManager else {
 			onCompletion?()
@@ -2486,7 +2486,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						bookmark.addToGrabs()
 
 						if  toFavorites {
-							into.updateVisibilityInSmallMap(true)
+							into.updateVisibilityInFavoritesMap(true)
 						}
 					}
 
@@ -2530,7 +2530,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return .eStop
 			}
 
-			if  let  here  = widget?.controller?.hereZone,     // so this will also be correct for small map
+			if  let  here  = widget?.controller?.hereZone,     // so this will also be correct for favorites map
 				iAncestor == here {
 				return .eStop
 			}
@@ -3383,7 +3383,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let show = !isExpanded
 
 			if  isInFavorites {
-				updateVisibilityInSmallMap(show)
+				updateVisibilityInFavoritesMap(show)
 				gRelayoutMaps()
 			} else {
 				let goal = (COMMAND && show) ? Int.max : nil
@@ -3403,11 +3403,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	}
 
-	func updateVisibilityInSmallMap(_ show: Bool) {
+	func updateVisibilityInFavoritesMap(_ show: Bool) {
 
-		// //////////////////////////////////////////////////////////
-		// avoid annoying user: treat small map non-generationally //
-		// //////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////// //
+		// avoid annoying user: treat favorites map non-generationally //
+		// /////////////////////////////////////////////////////////// //
 
 		// show -> collapse parent, expand self, here = parent
 		// hide -> collapse self, expand parent, here = self

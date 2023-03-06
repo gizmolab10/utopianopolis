@@ -23,12 +23,12 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	static let tExemplar = ZWidgetType(rawValue: 1 << 0)
 	static let tHelpDots = ZWidgetType(rawValue: 1 << 1)
 	static let tFavorite = ZWidgetType(rawValue: 1 << 2)
-	static let   tBigMap = ZWidgetType(rawValue: 1 << 3)
+	static let  tMainMap = ZWidgetType(rawValue: 1 << 3)
 	static let     tNote = ZWidgetType(rawValue: 1 << 4)
 	static let     tIdea = ZWidgetType(rawValue: 1 << 5)
 	static let     tNone = ZWidgetType(rawValue: 1 << 6)
 
-	var isBigMap:   Bool { return contains(.tBigMap) }
+	var isMainMap:  Bool { return contains(.tMainMap) }
 	var isFavorite: Bool { return contains(.tFavorite) }
 	var isExemplar: Bool { return contains(.tExemplar) }
 	var isHelpDots: Bool { return contains(.tHelpDots) }
@@ -37,7 +37,7 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 		return [(.tNone,        "     none"),
 				(.tIdea,        "     idea"),
 				(.tNote,        "     note"),
-				(.tBigMap,      "  big map"),
+				(.tMainMap,     " main map"),
 				(.tFavorite,    " favorite"),
 				(.tExemplar,    " exemplar"),
 				(.tHelpDots,    "help dots")]
@@ -90,7 +90,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	var      sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var         parentWidget :      ZoneWidget?
-	var         mapReduction :         CGFloat  { return widgetType.isBigMap ? 1.0 : kSmallMapReduction }
+	var         mapReduction :         CGFloat  { return widgetType.isMainMap ? 1.0 : kFavoritesMapReduction }
 	override var description :          String  { return widgetZone?       .description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?       .hideDragDot ?? false }
@@ -105,7 +105,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
 	var widgetType : ZWidgetType {
-		var type  = widgetZone?.widgetType ?? .tBigMap
+		var type  = widgetZone?.widgetType ?? .tMainMap
 		if  let t = widgetObject.widgetType {
 			type.insert(t)
 		}
@@ -114,7 +114,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
 	override var controller : ZMapController? {
-		if widgetType.isBigMap   { return              gMapController }
+		if widgetType.isMainMap  { return              gMapController }
 		if widgetType.isFavorite { return     gFavoritesMapController }
 		if widgetType.isExemplar { return gHelpDotsExemplarController }
 
@@ -385,7 +385,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
     override func draw(_ phase: ZDrawPhase) {
-		if (gCanDrawWidgets || !widgetType.isBigMap),
+		if (gCanDrawWidgets || !widgetType.isMainMap),
 			let zone = widgetZone {
 
 			switch phase {

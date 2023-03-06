@@ -49,7 +49,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
     func updateTextColor() {
 		if  gDragging.isDragged(widgetZone) {
 			textColor = gActiveColor
-		} else if gIsEssayMode, widgetZone?.isInBigMap ?? true {
+		} else if gIsEssayMode, widgetZone?.isInMainMap ?? true {
 			textColor = kClearColor
 		} else if let tColor = widgetZone?.textColor,
 				  let wColor = widgetZone?.lighterColor?.invertedBlackAndWhite,
@@ -65,7 +65,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
         textAlignment              = .left
         backgroundColor            = kClearColor
         zlayer.backgroundColor     = kClearColor.cgColor
-		font                       = widget?.controller?.font ?? gSmallFont
+		font                       = widget?.controller?.font ?? gFavoritesFont
 
         #if os(iOS)
             autocapitalizationType = .none

@@ -44,19 +44,19 @@ enum ZSignalKind: Int {
     case sFound
 	case sResize          // resize window
 	case sSearch
-	case sDetails         // recompute and display all details except small map
+	case sDetails         // recompute and display all details except favorites map
 	case sToolTips        // remove and reassign all tool tips
 	case sLaunchDone
     case sAppearance
 
 	// the following are sent to one (* or two) specific controller(s)
 
-	case spBigMap         // relayout main map
+	case spMainMap        // relayout main map
 	case spRelayout       // relayout both maps *
-	case spSmallMap       // relayout favorites map
 	case spDataDetails    // update the data view in details
 	case spPreferences
 	case spSubscription
+	case spFavoritesMap   // relayout favorites map
 	case spStartupStatus  // startup and help *
 	case spCrumbs
 	case spDebug
@@ -85,7 +85,7 @@ class ZControllers: NSObject {
 
 	func swapMapAndEssay(force mode: ZWorkMode? = nil, _ closure: Closure? = nil) {
 		// FOREGROUND { // TODO: avoid infinite recursion (generic menu handler invoking map editor's handle key)
-		// do not use FOREGROUND: so click on small map will fully exit the essay editor
+		// do not use FOREGROUND: so click on favorites map will fully exit the essay editor
 		gTextEditor.stopCurrentEdit()
 		gHideExplanation()
 
@@ -97,7 +97,7 @@ class ZControllers: NSObject {
 			gMainWindow?.revealEssayEditorInspectorBar(false)
 		}
 
-		gSignal([.sSwap, .spRelayout, .spCrumbs, .spSmallMap])
+		gSignal([.sSwap, .spRelayout, .spCrumbs, .spFavoritesMap])
 
 		closure?()
 	}
@@ -168,10 +168,10 @@ class ZControllers: NSObject {
 						case (.spMain,         .idMain):         closure()
 						case (.spDebug,        .idDebug):        closure()
 						case (.spCrumbs,       .idCrumbs):       closure()
-						case (.spBigMap,       .idMainMap):      closure()
-						case (.spSmallMap,     .idFavoritesMap): closure()
+						case (.spMainMap,      .idMainMap):      closure()
 						case (.spDataDetails,  .idDataDetails):  closure()
 						case (.spPreferences,  .idPreferences):  closure()
+						case (.spFavoritesMap, .idFavoritesMap): closure()
 						case (.spSubscription, .idSubscription): closure()
 						default:
 							let     mapCIDs : [ZControllerID] = [.idMainMap, .idFavoritesMap]

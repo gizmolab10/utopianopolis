@@ -54,9 +54,9 @@ class ZTogglingView: ZView {
 		if  let    k = kind {
 			switch k {
 				case "kickoffTools": return .vKickoffTools
+				case "favoritesMap": return .vFavorites
 				case "preferences":  return .vPreferences
 				case "subscribe":    return .vSubscribe
-				case "smallMap":     return .vFavorites
 				case "data":         return .vData
 				default:             return .vAll
 			}

@@ -524,7 +524,7 @@ class ZMapEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-			gSignal([.spMain, .sDetails, .spBigMap])
+			gSignal([.spMain, .sDetails, .spMainMap])
         } else if COMMA {
 			gDetailsController?.displayPreferences()
         } else if gIsEditIdeaMode {
@@ -801,14 +801,14 @@ class ZMapEditor: ZBaseEditor {
 				}
 			}
 		} else if let grab = gSelecting.rootMostMoveable {
-			let    inSmall = grab.isInFavorites // these three values
-			let     parent = grab.parentZone    // are out of date
-			let      index = grab.siblingIndex  // after delete zones, below
+			let inFavorites = grab.isInFavorites // these three values
+			let      parent = grab.parentZone    // are out of date
+			let       index = grab.siblingIndex  // after delete zones, below
 
 			prepareUndoForDelete()
 
 			gSelecting.simplifiedGrabs.deleteZones(permanently: permanently) {
-				if  inSmall,
+				if  inFavorites,
 					let i  = index,
 					let p  = parent {
 					let c  = p.count
@@ -818,7 +818,7 @@ class ZMapEditor: ZBaseEditor {
 						} else if c == 0 {
 							ZBookmarks.newOrExistingBookmark(targeting: gHere, addTo: gFavoritesHere)  // assure at least one bookmark in recents (targeting here)
 
-							if  p.isInBigMap {
+							if  p.isInMainMap {
 								gHere.grab()                                               // as though user clicked on background
 							}
 						}
@@ -1256,9 +1256,9 @@ class ZMapEditor: ZBaseEditor {
 							return
 						}
 					} else if let gp = grandParentZone {
-						let inSmallMap = p.isInFavorites
+						let inFavoritesMap = p.isInFavorites
 
-						if  inSmallMap {
+						if  inFavoritesMap {
 							p.collapse()
 						}
 
@@ -1270,7 +1270,7 @@ class ZMapEditor: ZBaseEditor {
 							moveOut(to: gp, onCompletion: onCompletion)
 
 							return
-						} else if inSmallMap {
+						} else if inFavoritesMap {
 							moveOut(to: gp) { reveal in
 								zone.grab()
 								gFavorites.setHere(to: gp)

@@ -1,5 +1,5 @@
 //
-//  ZHelpBigMapData.swift
+//  ZHelpMainMapData.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 1/4/20.
@@ -161,7 +161,7 @@ class ZHelpMapData : ZHelpData {
 		"2RETURN", 		"edit with cursor at end", 							"edit+b+edit-d05d18996df7",
 		"2HYPHEN", 		"convert text to/from 'titled line'", 				"lines+a+lines-37426469b7c6",
 		"2TAB", 		"new idea containing", 								"edit+b+edit-d05d18996df7",
-		"2'", 			"move ideas between small maps",					"",
+		"2'", 			"move ideas between favorites maps",				"",
 		"28",			"prefix with an arrow",								"",
 		"2S", 			"export to a outline file", 						"data+a+cloud-vs-file-f3543f7281ac",
 		"2",			 												"", "",
