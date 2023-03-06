@@ -33,8 +33,9 @@ class ZSearchResultsController: ZGenericTableController {
 			var matches = ZRecordsArray()
 
 			for record in records {
-				if  record.matchesFilterOptions {
-					matches.append(record)
+				if  record.matchesFilterOptions,
+					record.isActualChild {
+					matches.appendUnique(item: record)
 				}
 			}
 
@@ -240,6 +241,7 @@ class ZSearchResultsController: ZGenericTableController {
 				zone.resolveAsHere()
 			} else {
 				zone.grab()
+				gFavorites.revealInSmallMap(zone)
 				gSignal([.spSmallMap])
 			}
 

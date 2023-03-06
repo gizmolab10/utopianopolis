@@ -19,18 +19,6 @@ var gFavoritesHereMaybe: Zone? {
 	set { gSetHereZoneForID(here: newValue, .favoritesID) }
 }
 
-func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
-	gRemoteStorage.zRecords(for: dbID)?.hereZoneMaybe = here
-}
-
-func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
-	if  let    cloud = gRemoteStorage.zRecords(for: dbID) {
-		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
-	}
-
-	return nil
-}
-
 class ZFavorites: ZRecords {
 
 	var rootsMaybe       : Zone?
@@ -394,12 +382,12 @@ class ZFavorites: ZRecords {
 
 		if  let bookmarks = favoritesTargeting(target, orSpawnsIt: false) {
 			for bookmark in bookmarks {
-				makeVisibleAndMarkInSmallMap(bookmark)
+				revealAndMarkInSmallMap(bookmark)
 			}
 		}
 	}
 
-	func makeVisibleAndMarkInSmallMap(_  iZone: Zone? = nil) {
+	func revealInSmallMap(_    iZone: Zone? = nil) {
 		if  let zone         = iZone {
 			if  let parent   = zone.parentZone,
 				currentHere != parent {
@@ -410,8 +398,12 @@ class ZFavorites: ZRecords {
 			}
 
 			currentHere.expand()
-			setCurrentFavoriteBoomkarks(to: zone)
 		}
+	}
+
+	func revealAndMarkInSmallMap(_  iZone: Zone? = nil) {
+		revealInSmallMap(iZone)
+		setCurrentFavoriteBoomkarks(to: iZone)
 	}
 
 	var currentTargets: ZoneArray {
@@ -512,7 +504,7 @@ class ZFavorites: ZRecords {
 					gShowDetailsView = true
 
 					if  !isInHere {
-						makeVisibleAndMarkInSmallMap(bookmark)
+						revealAndMarkInSmallMap(bookmark)
 					}
 
 					bookmark.grab()

@@ -23,6 +23,8 @@ typealias ZManagedObject = NSManagedObject
 
 extension ZManagedObject {
 
+	@objc var isActualChild: Bool { return true }
+
 	convenience init(entityName: String?, databaseID: ZDatabaseID) {
 		let     context = gCDCurrentBackgroundContext
 

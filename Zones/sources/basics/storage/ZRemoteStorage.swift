@@ -19,6 +19,18 @@ var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
 
+func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
+	gRemoteStorage.zRecords(for: dbID)?.hereZoneMaybe = here
+}
+
+func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
+	if  let    cloud = gRemoteStorage.zRecords(for: dbID) {
+		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
+	}
+
+	return nil
+}
+
 func gRecountMaybe() {
 	if  gNeedsRecount {
 		gNeedsRecount = false

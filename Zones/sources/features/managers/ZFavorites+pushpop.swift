@@ -94,7 +94,7 @@ extension ZFavorites {
 			gCurrentEssay = note
 
 			push(target)
-			setAsCurrent(notemark, makeVisible: true)
+			setAsCurrent(notemark)
 			gSignal([.spSmallMap, .spCrumbs])
 
 			return true
@@ -140,7 +140,7 @@ extension ZFavorites {
 		}
 	}
 
-	func setAsCurrent(_ zone: Zone?, alterBigMapFocus: Bool = false, makeVisible: Bool = false) {
+	func setAsCurrent(_ zone: Zone?, alterBigMapFocus: Bool = false) {
 		if  let target = zone?.bookmarkTarget {
 			if  alterBigMapFocus {
 				gDatabaseID          = target.databaseID

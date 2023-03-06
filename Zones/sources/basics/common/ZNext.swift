@@ -171,7 +171,7 @@ extension ZFavorites {
 							moveOtherCurrentTo(newCurrent)
 						} else {
 							push(newCurrent.bookmarkTarget, down: down)
-							setAsCurrent      (newCurrent, alterBigMapFocus: !amongNotes, makeVisible: false)
+							setAsCurrent(newCurrent, alterBigMapFocus: !amongNotes)
 						}
 					}
 				}

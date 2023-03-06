@@ -483,7 +483,8 @@ class ZCoreDataStack: NSObject {
 					do {
 						let items = try context.fetch(request)
 						for item in items {
-							if  let object = item as? ZManagedObject {
+							if  let object = item as? ZManagedObject,
+								object.isActualChild {
 								objectIDs.append(object.objectID)
 							}
 						}

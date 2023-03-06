@@ -66,6 +66,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                              decoratedName :             String  { return decoration + unwrappedName }
 	override var                            cloudProperties :       StringsArray  { return Zone.cloudProperties }
 	override var                    optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
+	override var                              isActualChild :               Bool  { return siblingIndex != nil }
 	override var                                 isBrandNew :               Bool  { return zoneName == nil || zoneName == kEmpty }
 	override var                                isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                                    isAZone :               Bool  { return true }
@@ -771,8 +772,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				return index
 			} else {
 				for (index, sibling) in siblingZones.enumerated() {
-					if  sibling.order > order {
-						return index == 0 ? 0 : index - 1
+					if  sibling.recordName == recordName {
+						return index
 					}
 				}
 			}
