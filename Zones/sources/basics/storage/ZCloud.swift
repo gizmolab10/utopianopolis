@@ -9,7 +9,7 @@
 import Foundation
 import CloudKit
 
-let gContainer = CKContainer(identifier: kCloudID)
+var gCloudContainer : CKContainer { return CKContainer(identifier: gCDCloudID.cloudID) }
 
 class ZCloud: ZRecords {
 
@@ -25,7 +25,7 @@ class ZCloud: ZRecords {
 			let                        configuration = operation.configuration ?? CKOperation.Configuration()
 			configuration.timeoutIntervalForResource = kRemoteTimeout
             configuration.timeoutIntervalForRequest  = kRemoteTimeout
-            configuration                 .container = gContainer
+            configuration                 .container = gCloudContainer
 			operation                 .configuration = configuration
 			operation              .qualityOfService = .background
 

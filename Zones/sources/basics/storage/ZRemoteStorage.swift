@@ -260,8 +260,8 @@ class ZRemoteStorage: NSObject {
 
     func databaseForID(_ iID: ZDatabaseID) -> CKDatabase? {
         switch iID {
-        case .everyoneID: return gContainer .publicCloudDatabase
-        case     .mineID: return gContainer.privateCloudDatabase
+        case .everyoneID: return gCloudContainer .publicCloudDatabase
+        case     .mineID: return gCloudContainer.privateCloudDatabase
         default:          return nil
         }
     }
@@ -296,7 +296,7 @@ class ZRemoteStorage: NSObject {
 //                }
 //            }
 //
-//            gContainer.add(badgeResetOperation)
+//            gCloudContainer.add(badgeResetOperation)
 //        }
 //    }
 

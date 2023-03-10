@@ -122,6 +122,11 @@ var gCoreDataMode : ZCoreDataMode {
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
+var gCDCloudID : ZCDCloudID {
+	get { return ZCDCloudID(         rawValue: getPreferencesInt(for: kCDCloudID, defaultInt: ZCDCloudID.testing.rawValue)) ?? .original }
+	set { setPreferencesInt(newValue.rawValue,                   for: kCDCloudID) }
+}
+
 fileprivate var gCollapsed : StringsArray?
 fileprivate var gExpanded  : StringsArray?
 
@@ -769,6 +774,17 @@ var gWorkMode: ZWorkMode = .wStartupMode {
 	}
 }
 
+func gRefreshPersistentWorkMode() {
+	if  let             mode = getPreferencesString(for: kWorkMode, defaultString: ZWorkMode.wMapMode.rawValue),
+		let         workMode = ZWorkMode(rawValue: mode) {
+		gWorkMode            = workMode
+		gAllowSavingWorkMode = true
+	}
+}
+
+// MARK: - essay
+// MARK: -
+
 var gCurrentEssay: ZNote? {
 	didSet {
 		setPreferencesString(gCurrentEssay?.identifier() ?? kEmpty, for: kCurrentEssay)
@@ -790,6 +806,13 @@ var gAdjustedEssayTitleMode: ZEssayTitleMode {
 	}
 
 	return mode
+}
+
+func gRefreshCurrentEssay() {
+	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: kTutorialRecordName),
+		let      essay = gFavorites.object(for: identifier) as? ZNote {
+		gCurrentEssay  = essay
+	}
 }
 
 // MARK: - actions
@@ -836,23 +859,11 @@ func gThrowOnUserActivity() throws {
 	}
 }
 
+// MARK: - other
+// MARK: -
+
 func gDetailsViewIsVisible(for id: ZDetailsViewID) -> Bool {
 	return gShowDetailsView && (gDetailsController?.viewIsVisible(for: id) ?? false)
-}
-
-func gRefreshCurrentEssay() {
-	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: kTutorialRecordName),
-		let      essay = gFavorites.object(for: identifier) as? ZNote {
-		gCurrentEssay  = essay
-	}
-}
-
-func gRefreshPersistentWorkMode() {
-	if  let             mode = getPreferencesString(for: kWorkMode, defaultString: ZWorkMode.wMapMode.rawValue),
-		let         workMode = ZWorkMode(rawValue: mode) {
-		gWorkMode            = workMode
-		gAllowSavingWorkMode = true
-	}
 }
 
 @discardableResult func toggleGrowthAndConfinementModes(changesDirection: Bool) -> Bool {

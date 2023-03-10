@@ -78,7 +78,7 @@ class ZOnboarding : ZOperations {
 		if !gHasInternet {
 			onCompletion()
 		} else {
-			gContainer.accountStatus { (iStatus, iError) in
+			gCloudContainer.accountStatus { (iStatus, iError) in
 				if  iStatus            == .available {
 					gCloudAccountStatus = .available
 
@@ -109,7 +109,7 @@ class ZOnboarding : ZOperations {
         if  gCloudAccountStatus != .available {
             onCompletion()
         } else {
-            gContainer.fetchUserRecordID() { iRecordID, iError in
+            gCloudContainer.fetchUserRecordID() { iRecordID, iError in
 				FOREGROUND {
 					gAlerts.alertError(iError, "failed to fetch user record id") { iHasError in
 						if !iHasError {

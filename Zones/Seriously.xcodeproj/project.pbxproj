@@ -278,6 +278,9 @@
 		A76F9B95275ADCBB00FAF55A /* ZSliderLabelCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B94275ADCBB00FAF55A /* ZSliderLabelCombo.swift */; };
 		A76F9B96275ADCBB00FAF55A /* ZSliderLabelCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B94275ADCBB00FAF55A /* ZSliderLabelCombo.swift */; };
 		A76F9B97275ADCBB00FAF55A /* ZSliderLabelCombo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B94275ADCBB00FAF55A /* ZSliderLabelCombo.swift */; };
+		A76FC95E29BBBA8F005B6F18 /* ZCoreData+Deferral.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76FC95D29BBBA8F005B6F18 /* ZCoreData+Deferral.swift */; };
+		A76FC95F29BBBA8F005B6F18 /* ZCoreData+Deferral.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76FC95D29BBBA8F005B6F18 /* ZCoreData+Deferral.swift */; };
+		A76FC96029BBBA8F005B6F18 /* ZCoreData+Deferral.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76FC95D29BBBA8F005B6F18 /* ZCoreData+Deferral.swift */; };
 		A7738FE12628C3390040B9CD /* tutorial.idea.and.list.mov in Resources */ = {isa = PBXBuildFile; fileRef = A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */; };
 		A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
 		A774ED1D23E2268D00080DC9 /* ZGesturesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A774ED1923E225A500080DC9 /* ZGesturesController.swift */; };
@@ -637,6 +640,7 @@
 		A76D19472703FEBD00E04044 /* simple.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = simple.entitlements; sourceTree = "<group>"; };
 		A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebugAnglesController.swift; sourceTree = "<group>"; };
 		A76F9B94275ADCBB00FAF55A /* ZSliderLabelCombo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSliderLabelCombo.swift; sourceTree = "<group>"; };
+		A76FC95D29BBBA8F005B6F18 /* ZCoreData+Deferral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZCoreData+Deferral.swift"; sourceTree = "<group>"; };
 		A7738FDF2628C3390040B9CD /* tutorial.idea.and.list.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = tutorial.idea.and.list.mov; sourceTree = "<group>"; };
 		A774ED1923E225A500080DC9 /* ZGesturesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZGesturesController.swift; sourceTree = "<group>"; };
 		A777A7AE260FAC0300361265 /* ZMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMapView.swift; sourceTree = "<group>"; };
@@ -949,6 +953,7 @@
 				A700F94D24AFBFFB009C87AA /* seriously.xcdatamodel */,
 				0C43EFCD21010F62000976CE /* ZCloud.swift */,
 				A700F94824AFBE8F009C87AA /* ZCoreDataStack.swift */,
+				A76FC95D29BBBA8F005B6F18 /* ZCoreData+Deferral.swift */,
 				0C43EFBD21010F17000976CE /* ZFiles.swift */,
 				A7E44A2A2558CD6A00DA4B13 /* ZManagedObject.swift */,
 				0C39B2331F182EBB0091F4D1 /* ZReachability.swift */,
@@ -1610,6 +1615,7 @@
 				A774ED1A23E225A500080DC9 /* ZGesturesController.swift in Sources */,
 				A7B78D42244C04F900DB2C14 /* ZBreadcrumbButton.swift in Sources */,
 				A76F9B91275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */,
+				A76FC95E29BBBA8F005B6F18 /* ZCoreData+Deferral.swift in Sources */,
 				A7CF3209260D7D9B00285A03 /* ZHelpEditor.swift in Sources */,
 				A73175642638CCA900DF1CE5 /* ZFilesRegistry.swift in Sources */,
 				A777A7AF260FAC0300361265 /* ZMapView.swift in Sources */,
@@ -1783,6 +1789,7 @@
 				A73A6029273DAAA900703459 /* ZLayout.swift in Sources */,
 				A7245E0921729FFE003D4BDA /* ZHelpController.swift in Sources */,
 				0C63DA6F1FCF837D005EC548 /* ZFavorites.swift in Sources */,
+				A76FC96029BBBA8F005B6F18 /* ZCoreData+Deferral.swift in Sources */,
 				0C39B2A01F182EBB0091F4D1 /* ZDataDetailsController.swift in Sources */,
 				A7D2D65124902EDF00F652B0 /* ZHelpData.swift in Sources */,
 				0C43EFC021010F17000976CE /* ZFiles.swift in Sources */,
@@ -1885,6 +1892,7 @@
 				A7064438246F6D2700F90B86 /* ZButtonsView.swift in Sources */,
 				A76F9B92275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */,
 				A7CF320A260D7D9B00285A03 /* ZHelpEditor.swift in Sources */,
+				A76FC95F29BBBA8F005B6F18 /* ZCoreData+Deferral.swift in Sources */,
 				A73175652638CCA900DF1CE5 /* ZFilesRegistry.swift in Sources */,
 				A777A7B0260FAC0300361265 /* ZMapView.swift in Sources */,
 				A7DF486A249B1AC0008B35AC /* ZGridController.swift in Sources */,
