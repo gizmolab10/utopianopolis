@@ -31,12 +31,13 @@ extension ZFavorites {
 
 					recents.addChildNoDuplicate(bookmark, at: to)
 				}
-
-				gBookmarks.addToReverseLookup(bookmark)
-				setCurrentFavoriteBoomkarks(to: bookmark)
-				resetRecents()
-				gSignal([.spFavoritesMap])
 			}
+
+			gBookmarks.addToReverseLookup(bookmark)
+			setCurrentFavoriteBoomkarks(to: bookmark)
+			resetRecents()
+			gSignal([.spFavoritesMap])
+
 			return bookmark
 		}
 

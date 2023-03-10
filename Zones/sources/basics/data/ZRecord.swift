@@ -191,7 +191,7 @@ class ZRecord: ZManagedObject {
 		let        zRecord = object as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 		zRecord      .dbid = dbID.identifier
-
+		
 		zRecord.register()
 
 		return zRecord

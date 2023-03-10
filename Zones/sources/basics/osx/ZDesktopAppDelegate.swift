@@ -84,7 +84,9 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        return .terminateNow
+		gSaveContext()
+
+		return .terminateNow
     }
 
 	var workingEditor: ZBaseEditor? {

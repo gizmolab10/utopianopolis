@@ -154,8 +154,7 @@ class ZTextPack: NSObject {
 			if  let     trait  = packedTrait {                             // traits take logical priority
 				trait.ownerZone?.setTraitText(text, for: trait.traitType)
 			} else if let zone = packedZone {                              // ignore zone if editing a trait, above
-				zone.zoneName  = text.unescaped
-
+				zone.setNameForSelfAndBookmarks(to: text.unescaped)
 				zone.zRecords?.removeFromLocalSearchIndex(nameOf: zone)
 				zone.addToLocalSearchIndex()
 			}
@@ -379,7 +378,7 @@ class ZTextEditor: ZTextView {
 	func capture(force: Bool = false) {
         if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
 			printDebug(.dEdit, " CAPTURE \(text)")
-            current.captureText(text)
+            current.captureText(text, redrawSync: true)
         }
     }
 

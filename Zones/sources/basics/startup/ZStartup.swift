@@ -21,11 +21,11 @@ class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
 
-		gPrintModes                          = []
-		gDebugModes                          = []
-		gCoreDataMode                        = []
+		gPrintModes   = []
+		gDebugModes   = []
+		gCoreDataMode = []
 //		gPrintModes  .insert(.dTime)
-		gCoreDataMode.insert(.dNoCloudKit)
+//		gCoreDataMode.insert(.dNoCloudKit)
 		gDebugModes  .insert(.dNoSubscriptions)
 		gDebugModes  .insert(.dHideNoteVisibility)
 

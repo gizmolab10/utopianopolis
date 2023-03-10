@@ -57,20 +57,32 @@ class ZFavoritesTogglingView : ZTogglingView {
 	}
 
 	override func updateTitleBarButtons() {
-		let           hidden = hideHideable || gFavorites.hideUpDownView
-		upDownView?.isHidden = hidden
+		let       bothHidden = gFavorites.hideUpDownView || hideHideable
+		let       downHidden = gFavorites.hideDownButton
+		upDownView?.isHidden = bothHidden
 
-		if !hidden {
-			downButton?.attributedTitle = gFavorites.nextListAttributed(down:  true)
-			upButton?  .attributedTitle = gFavorites.nextListAttributed(down: false)
+		if !bothHidden {
+			downButton?.attributedTitle = gFavorites.nextListAttributedTitle(down:  true)
+			upButton?  .attributedTitle = gFavorites.nextListAttributedTitle(down: false)
 		}
 
-		titleButton?.snp.removeConstraints()
-		titleButton?.snp.makeConstraints{ make in
-			if  hidden {
-				make.right.equalToSuperview() .offset(-1.0)
-			} else if let v = upDownView {
-				make.right.equalTo(v.snp.left).offset(-1.0)
+		if  let t = titleButton {
+			t.snp.removeConstraints()
+			t.snp.makeConstraints{ make in
+				if  bothHidden {
+					make.right.equalToSuperview() .offset(-1.0)
+				} else if let v = upDownView {
+					make.right.equalTo(v.snp.left).offset(-1.0)
+				}
+			}
+		}
+
+		if  let d = downButton {
+			d.snp.removeConstraints()
+			d.snp.makeConstraints{ make in
+				if  downHidden {
+					make.right.equalTo(d.snp.left)
+				}
 			}
 		}
 

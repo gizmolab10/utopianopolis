@@ -15,126 +15,6 @@ import Cocoa
 import UIKit
 #endif
 
-struct ZDeferral {
-	let closure : Closure?         // for deferralHappensMaybe to invoke
-	let    opID : ZCDOperationID   // so status text can show it
-}
-
-struct ZEntityDescriptor {
-	let entityName : String
-	let recordName : String?
-	let databaseID : ZDatabaseID
-}
-
-struct ZExistence {
-	var zRecord : ZRecord? = nil
-	var closure : ZRecordClosure?
-	let  entity : ZEntityDescriptor?
-	let    file : ZFileDescriptor?
-}
-
-enum ZCDMigrationState: Int {
-	case firstTime
-	case migrateFileData
-	case normal
-}
-
-enum ZCDOperationID: Int {
-	case oLoad
-	case oSave
-	case oFetch
-	case oSearch
-	case oAssets
-	case oProgeny
-	case oExistence
-
-	var description : String {
-		var string = "\(self)".lowercased().substring(fromInclusive: 1)
-
-		switch self {
-			case .oProgeny:   return   "loading " + string
-			case .oExistence: string = "checking exist"
-			case .oSave:      string = "sav"
-			default:          break
-		}
-
-		return string + "ing local data"
-	}
-}
-
-typealias ZExistenceArray      =        [ZExistence]
-typealias ZExistenceDictionary = [String:ZExistenceArray]
-
-extension ZExistenceArray {
-
-	func fireClosures() {
-		var counter = [ZDatabaseID : Int]()
-
-		func count(_ r: ZRecord?) {
-			if  let i = r?.databaseID {
-				if  let x = counter[i] {
-					counter[i] = x + 1
-				} else {
-					counter[i] = 1
-				}
-			}
-		}
-
-		for e in self {
-			if  let close = e.closure {
-				let     r = e.zRecord
-
-				count(r)
-				close(r)   // invoke closure
-			}
-		}
-
-		for (i, x) in counter {
-			printDebug(.dExist, "\(i.identifier) ! \(x)")
-		}
-	}
-
-	mutating func updateClosureForZRecord(_ zRecord: ZRecord, of type: String) {
-		let name = (type == kFileType) ? (zRecord as? ZFile)?.name : (zRecord.recordName)
-
-		for (index, e) in enumerated() {
-			var ee = e
-
-			if  name == e.file?.name || name == e.entity?.recordName {
-				ee.zRecord  = zRecord
-				self[index] = ee
-			}
-		}
-	}
-
-	func predicate(_ type: String) -> NSPredicate {
-		let    isFile = type == kFileType
-		let   keyPath = isFile ? "name" : "recordName"
-		var     items = kEmpty
-		var separator = kEmpty
-
-		for e in self {
-			if  isFile {
-				if  let  file = e.file,
-					let  name = file.name {
-					items.append("\(separator)'\(name)'")
-					separator = kCommaSeparator
-				}
-			} else {
-				if  let entity = e.entity,
-					let   name = entity.recordName {
-					items.append("\(separator)'\(name)'")
-					separator  = kCommaSeparator
-				}
-			}
-		}
-
-		let format = "\(keyPath) in { \(items) }"
-
-		return NSPredicate(format: format)
-	}
-}
-
 func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
 func gSaveContext()                                                        { gCoreDataStack.saveContext() }
 let  gCoreDataStack  = ZCoreDataStack()
@@ -183,7 +63,7 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func saveContext() {
-		if  gCanSave, gIsReadyToShowUI { // , !gIsUsingCloudKit, false {
+		if  gCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) {
 				FOREBACKGROUND { [self] in
 					if  context.hasChanges {
@@ -376,11 +256,6 @@ class ZCoreDataStack: NSObject {
 
 					objects.append(object)
 
-//					if  let        zRecord = object as? ZRecord,
-//						let       ckRecord = persistentContainer.record(for: object.objectID) {
-//						zRecord.recordName = ckRecord.recordID.recordName
-//					}
-
 					if  onlyOne {
 
 						// //////////////////////////////////////////////////////////////////////////////// //
@@ -404,7 +279,7 @@ class ZCoreDataStack: NSObject {
 	func fetch(type: String, recordName: String = kEmpty, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
 		var objects       = ZManagedObjectsArray()
 		let request       = fetchRequest(type: type, recordName: recordName, into: dbID)
-		var items         = fetchUsing(request: request, onlyOne: false)
+		let items         = fetchUsing(request: request, onlyOne: onlyOne)
 		if  items.count  == 0 {
 			registerAsMissing(recordName: recordName, dbID: dbID)
 		} else {
@@ -412,20 +287,8 @@ class ZCoreDataStack: NSObject {
 				for item in items {
 					objects.append(item)
 				}
-			} else {
-				while items.count > 0 {
-					if  let object = items.last {
-						if  object.isPublicRootDefault(recordName: recordName, into: dbID) {
-							items.removeLast()
-						} else {
-							objects.append(object)
-
-							break
-						}
-					} else {
-						break
-					}
-				}
+			} else if let item = items.first {
+				objects.append(item)
 			}
 
 			let ids = objects.map { $0.objectID }
@@ -557,7 +420,6 @@ class ZCoreDataStack: NSObject {
 		ValueTransformer.setValueTransformer( ZAssetArrayTransformer(), forName:  gAssetArrayTransformerName)
 		ValueTransformer.setValueTransformer(ZStringArrayTransformer(), forName: gStringArrayTransformerName)
 
-		// Update the container's list of store descriptions
 		container.persistentStoreDescriptions = [
 			privateDescription,
 			publicDescription,
@@ -661,56 +523,6 @@ class ZCoreDataStack: NSObject {
 
 		return nil
 	}
-//
-//	func searchPredicate(entityNames: StringsArray, string: String) -> NSPredicate? {
-//		var predicate: NSPredicate?
-//		for entityName in entityNames {
-//			if  let subpredicate = searchPredicate(entityName: entityName, string: string) {
-//				if  let     p = predicate {
-//					predicate = p.or(subpredicate)
-//				} else {
-//					predicate = subpredicate
-//				}
-//			}
-//		}
-//
-//		return predicate != nil ? predicate! : NSPredicate(value: true)
-//	}
-//
-//	func searchPredicate(entityName: String, strings: StringsArray) -> NSPredicate? {
-//		switch entityName {
-//			case kZoneType:  return zoneNamePredicate(from: strings)
-//			case kTraitType: return traitPredicate   (from: strings)
-//			default:         return nil
-//		}
-//	}
-//
-//	func predicateFrom(_ strings: StringsArray, _ onEach: StringToPredicateClosure) -> NSPredicate {
-//		var predicate: NSPredicate?
-//		for string in strings {
-//			let subpredicate = onEach(string)
-//
-//			if  let     p = predicate {
-//				predicate = p.or(subpredicate)
-//			} else {
-//				predicate = subpredicate
-//			}
-//		}
-//
-//		return predicate != nil ? predicate! : NSPredicate(value: true)
-//	}
-//
-//	func zoneNamePredicate(from strings: StringsArray) -> NSPredicate {
-//		return predicateFrom(strings) { string in
-//			return zoneNamePredicate(from: string)
-//		}
-//	}
-//
-//	func traitPredicate(from strings: StringsArray) -> NSPredicate {
-//		return predicateFrom(strings) { string in
-//			return traitPredicate(from: string)
-//		}
-//	}
 
 	func existencePredicate(entityName: String, recordName: String?, databaseID: ZDatabaseID) -> NSPredicate? {
 		if  let          name = recordName {
@@ -887,4 +699,124 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
+}
+
+struct ZDeferral {
+	let closure : Closure?         // for deferralHappensMaybe to invoke
+	let    opID : ZCDOperationID   // so status text can show it
+}
+
+struct ZEntityDescriptor {
+	let entityName : String
+	let recordName : String?
+	let databaseID : ZDatabaseID
+}
+
+struct ZExistence {
+	var zRecord : ZRecord? = nil
+	var closure : ZRecordClosure?
+	let  entity : ZEntityDescriptor?
+	let    file : ZFileDescriptor?
+}
+
+enum ZCDMigrationState: Int {
+	case firstTime
+	case migrateFileData
+	case normal
+}
+
+enum ZCDOperationID: Int {
+	case oLoad
+	case oSave
+	case oFetch
+	case oSearch
+	case oAssets
+	case oProgeny
+	case oExistence
+
+	var description : String {
+		var string = "\(self)".lowercased().substring(fromInclusive: 1)
+
+		switch self {
+			case .oProgeny:   return   "loading " + string
+			case .oExistence: string = "checking exist"
+			case .oSave:      string = "sav"
+			default:          break
+		}
+
+		return string + "ing local data"
+	}
+}
+
+typealias ZExistenceArray      =        [ZExistence]
+typealias ZExistenceDictionary = [String:ZExistenceArray]
+
+extension ZExistenceArray {
+
+	func fireClosures() {
+		var counter = [ZDatabaseID : Int]()
+
+		func count(_ r: ZRecord?) {
+			if  let i = r?.databaseID {
+				if  let x = counter[i] {
+					counter[i] = x + 1
+				} else {
+					counter[i] = 1
+				}
+			}
+		}
+
+		for e in self {
+			if  let close = e.closure {
+				let     r = e.zRecord
+
+				count(r)
+				close(r)   // invoke closure
+			}
+		}
+
+		for (i, x) in counter {
+			printDebug(.dExist, "\(i.identifier) ! \(x)")
+		}
+	}
+
+	mutating func updateClosureForZRecord(_ zRecord: ZRecord, of type: String) {
+		let name = (type == kFileType) ? (zRecord as? ZFile)?.name : (zRecord.recordName)
+
+		for (index, e) in enumerated() {
+			var ee = e
+
+			if  name == e.file?.name || name == e.entity?.recordName {
+				ee.zRecord  = zRecord
+				self[index] = ee
+			}
+		}
+	}
+
+	func predicate(_ type: String) -> NSPredicate {
+		let    isFile = type == kFileType
+		let   keyPath = isFile ? "name" : "recordName"
+		var     items = kEmpty
+		var separator = kEmpty
+
+		for e in self {
+			if  isFile {
+				if  let  file = e.file,
+					let  name = file.name {
+					items.append("\(separator)'\(name)'")
+					separator = kCommaSeparator
+				}
+			} else {
+				if  let entity = e.entity,
+					let   name = entity.recordName {
+					items.append("\(separator)'\(name)'")
+					separator  = kCommaSeparator
+				}
+			}
+		}
+
+		let format = "\(keyPath) in { \(items) }"
+
+		return NSPredicate(format: format)
+	}
 }

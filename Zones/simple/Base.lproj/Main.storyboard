@@ -721,11 +721,22 @@
                                     <action selector="handleTextInputWithSender:" target="XfG-lQ-9wD" id="l8I-OG-tBd"/>
                                 </connections>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6be-Nd-qUx">
+                                <rect key="frame" x="18" y="160" width="444" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Enter a new Simple name and press Enter to save it to the cloud" id="0LC-eT-5NN">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="f7W-dP-T6J" secondAttribute="trailing" constant="20" id="7VY-MP-jAd"/>
                             <constraint firstItem="f7W-dP-T6J" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="AsY-35-4zt"/>
                             <constraint firstItem="f7W-dP-T6J" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="Nzl-OO-ufs"/>
+                            <constraint firstAttribute="trailing" secondItem="6be-Nd-qUx" secondAttribute="trailing" constant="20" symbolic="YES" id="fTa-nB-wCF"/>
+                            <constraint firstItem="6be-Nd-qUx" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="nKm-2O-mqB"/>
+                            <constraint firstItem="f7W-dP-T6J" firstAttribute="top" secondItem="6be-Nd-qUx" secondAttribute="bottom" constant="14" id="zey-Zp-73o"/>
                         </constraints>
                     </view>
                     <connections>

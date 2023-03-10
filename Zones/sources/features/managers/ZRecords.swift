@@ -113,8 +113,8 @@ enum ZDatabaseID: String {
 class ZRecords: NSObject {
 
 	var            maxLevel = 0
-	var          duplicates =  ZRecordsArray                ()
 	var       foundInSearch =  ZRecordsArray                ()
+	var          duplicates =  StringZRecordDictionary      ()
 	var      zRecordsLookup =  StringZRecordDictionary      ()
 	var     recordsMistyped =  StringZRecordDictionary      ()
 	var zRecordsArrayLookup =  StringZRecordsDictionary     ()
@@ -477,7 +477,7 @@ class ZRecords: NSObject {
                     // if already registered, must ignore //
                     // /////////////////////////////////////
 
-					duplicates.appendUnique(item: zRecord)
+					duplicates[name] = zRecord
 
 					return false
 				}
@@ -530,7 +530,7 @@ class ZRecords: NSObject {
 	}
 
     func removeDuplicates() {
-        for duplicate in duplicates {
+        for (_, duplicate) in duplicates {
             duplicate.orphan()
 
             if  let zone = duplicate as? Zone {

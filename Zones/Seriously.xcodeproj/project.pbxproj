@@ -428,8 +428,8 @@
 		A7E9A3B023C115470064C89A /* ZHelpMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpMapData.swift */; };
 		A7E9A3B123C115470064C89A /* ZHelpMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpMapData.swift */; };
 		A7E9A3B223C115470064C89A /* ZHelpMapData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7E9A3AF23C115470064C89A /* ZHelpMapData.swift */; };
+		A7EC319A29B7C4F600CE15D0 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A7EE245725292B03003BF3C0 /* ZFavoritesMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A70644212461EC3600F90B86 /* ZFavoritesMapController.swift */; };
-		A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; };
 		A7FC59BA2262798A005280D2 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485732256AAAF00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A7FDB3DF227648B800033337 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
@@ -708,7 +708,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A7FC59B92262798A005280D2 /* SnapKit.framework in Frameworks */,
-				A7F7C42E226D343400D52637 /* CloudKit.framework in Frameworks */,
+				A7EC319A29B7C4F600CE15D0 /* CloudKit.framework in Frameworks */,
 				A7CC53AD267C2A7F00370BC0 /* CryptoKit.framework in Frameworks */,
 				A74ECDBD2963BD82005191A9 /* StoreKit.framework in Frameworks */,
 			);
@@ -2257,7 +2257,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2063;
+				CURRENT_PROJECT_VERSION = 2064;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -2282,7 +2282,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.8.23;
+				MARKETING_VERSION = 0.8.24;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2315,7 +2315,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				CURRENT_PROJECT_VERSION = 2063;
+				CURRENT_PROJECT_VERSION = 2064;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
 				DEVELOPMENT_TEAM = F8M94NY2TV;
@@ -2340,7 +2340,7 @@
 					"$(PROJECT_DIR)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 11.0;
-				MARKETING_VERSION = 0.8.23;
+				MARKETING_VERSION = 0.8.24;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -2452,11 +2452,13 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = simple/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Simple test of core data and cloud kit";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 0.0.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.simple;
@@ -2486,11 +2488,13 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				INFOPLIST_FILE = simple/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Simple test of core data and cloud kit";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 0.0.2;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.seriously.simple;
 				PRODUCT_NAME = "$(TARGET_NAME)";

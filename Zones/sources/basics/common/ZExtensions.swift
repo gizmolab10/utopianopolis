@@ -1479,18 +1479,18 @@ extension Array {
 	}
 
 	mutating func appendUniqueAndRemoveDuplicates(contentsOf items: Array, compare: CompareClosure? = nil) {
-		let    existing = self as NSArray
-		var iDuplicates = Array<Int>()
+		let   existing = self as NSArray
+		var duplicates = Array<Int>()
 
 		for (index, item) in items.enumerated() {
 			if  existing.contains(item) || containsCompare(with: item as AnyObject, using: compare) {
-				iDuplicates.insert(index, at: 0)
+				duplicates.insert(index, at: 0)
 			} else {
 				append(item)
 			}
 		}
 
-		for index in iDuplicates {
+		for index in duplicates {
 			if  count > index {
 				remove(at: index)
 			}
@@ -2219,13 +2219,13 @@ extension String {
 	}
 
 	var maybeZone: Zone? {
-		if  self             != kEmpty,
-			let          name = maybeRecordName,
-			let         parts = components {
-			let rawIdentifier = parts[0]
-			let          dbID = rawIdentifier == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawIdentifier)
-			let      zRecords = gRemoteStorage.zRecords(for: dbID)
-			let          zone = zRecords?.maybeZoneForRecordName(name)
+		if  self        != kEmpty,
+			let     name = maybeRecordName,
+			let    parts = components {
+			let  rawDBID = parts[0]
+			let     dbID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
+			let zRecords = gRemoteStorage.zRecords(for: dbID)
+			let     zone = zRecords?.maybeZoneForRecordName(name)
 
 			return zone
 		}

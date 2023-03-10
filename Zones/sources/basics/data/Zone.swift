@@ -1553,9 +1553,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// grows with each unique search
 
 	func addToLocalSearchIndex() {
-		if  let  name = zoneName,
-			let array = zRecords {
-			array.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
+		if  let    name = zoneName,
+			let records = zRecords {
+			records.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
 				guard var r = iRecords else { return [] }
 
 				r.appendUnique(item: self)
@@ -3700,8 +3700,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// never use closure
 	static func create(within rootName: String, for index: Int = 0, databaseID: ZDatabaseID) -> Zone {
-		let           name = recordNameFor(rootName, at: index)
-		let        created = Zone.uniqueZone(recordName: name, in: databaseID)
+		let               name = recordNameFor(rootName, at: index)
+		var            created : Zone
+		if  let          cloud = gRemoteStorage.cloud(for: .everyoneID),
+			let          found = cloud.maybeZoneForRecordName(name) {
+			created            = found
+		} else {
+			created            = Zone.uniqueZone(recordName: name, in: databaseID)
+		}
+
 		created.parentLink = kNullLink
 
 		return created

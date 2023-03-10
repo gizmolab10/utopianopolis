@@ -156,9 +156,17 @@ class ZFavorites: ZRecords {
 		return nil
 	}
 
+	var hideDownButton: Bool {
+		if  let zones = allGroups {
+			return zones.count < 3
+		}
+
+		return true
+	}
+
 	var hideUpDownView: Bool {
 		if  let zones = allGroups {
-			return zones.count < 1
+			return zones.count < 2
 		}
 
 		return true
@@ -172,12 +180,12 @@ class ZFavorites: ZRecords {
 		return targeting(target, in: workingBookmarks, orSpawnsIt: false)
 	}
 
-	func favoritesTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
-		return targeting(target, in: rootZone?.bookmarks, orSpawnsIt: orSpawnsIt)
-	}
-
 	func recentsTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
 		return targeting(target, in: getRecentsGroup().bookmarks, orSpawnsIt: orSpawnsIt)
+	}
+
+	func favoritesTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
+		return targeting(target, in: rootZone?.bookmarks, orSpawnsIt: orSpawnsIt)
 	}
 
 	func object(for id: String) -> NSObject? {
@@ -495,9 +503,7 @@ class ZFavorites: ZRecords {
 		} else if doNotGrab {
 			return false
 		} else {
-			let bookmarks = gHere.bookmarksTargetingSelf
-
-			for bookmark in bookmarks {
+			for bookmark in gHere.bookmarksTargetingSelf {
 				let isInHere = bookmark.isInFavoritesHere
 
 				if !bookmark.isDeleted, flags.hasCommand ? bookmark.isInRecentsGroup : isInHere {

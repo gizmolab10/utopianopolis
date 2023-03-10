@@ -120,7 +120,7 @@ extension ZFavorites {
 		return rootZone
 	}
 
-	func nextListAttributed(down: Bool) -> NSAttributedString {
+	func nextListAttributedTitle(down: Bool) -> NSAttributedString {
 		let string = nextList(down: down)?.unwrappedName.capitalized ?? kEmpty
 
 		return string.darkAdaptedTitle

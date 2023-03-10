@@ -65,7 +65,7 @@ class SimpleAppDelegate: NSObject, NSApplicationDelegate {
 			try container.initializeCloudKitSchema(options: [])
 		} catch {
 			let e = error
-			print(e)
+//			print(e)
 		}
         return container
     }()

@@ -165,7 +165,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 
 			gSelecting.ungrabAll(retaining: [zone])
 			printDebug(.dEdit, " RESPOND " + zone.unwrappedName)
-			gTextEditor.edit(zone, setOffset: gTextOffset)
+			gTextEditor.edit(zone, setOffset: gTextOffset) // recurses back to here if has not already been invoked in call chain
 
 			return true
         }
