@@ -26,9 +26,8 @@ extension ZManagedObject {
 	@objc var isActualChild: Bool { return true }
 
 	convenience init(entityName: String?, databaseID: ZDatabaseID) {
-		let     context = gCDCurrentBackgroundContext
-
 		if  let    name = entityName,
+			let context = gCDCurrentBackgroundContext,
 			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {
 			self.init(entity: entity, insertInto: context)
 

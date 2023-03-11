@@ -15,8 +15,8 @@ import Cocoa
 import UIKit
 #endif
 
-let  gCoreDataStack                                 = ZCoreDataStack()
-var  gCDCurrentBackgroundContext                    : NSManagedObjectContext { return gCoreDataStack.context }
+let  gCoreDataStack                                = ZCoreDataStack()
+var  gCDCurrentBackgroundContext                   : NSManagedObjectContext? { return gCoreDataStack.context }
 var  gCoreDataIsBusy                                                  : Bool { return gCoreDataStack.currentOpID != nil }
 func gDataURLAt(_ pathComponent: String)                              -> URL { return gFilesURL.appendingPathComponent(pathComponent) }
 func gUrlFor(_ type: ZCDStoreType, at pathComponent: String = "data") -> URL { return gDataURLAt(pathComponent).appendingPathComponent(type.rawValue + ".store") }
@@ -24,40 +24,51 @@ func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil)   { g
 func gSaveContext()                                                          { gCoreDataStack.saveContext() }
 
 enum ZCDStoreType: String {
+
 	case sLocal   = "local"
 	case sPublic  = "cloud.public"
 	case sPrivate = "cloud.private"
 
 	static var all: [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
-
 	var url: URL { gUrlFor(self) }
+
+	var configuration: String {
+		switch self {
+			case .sLocal:   return "Local"
+			case .sPublic:  return "Public"
+			case .sPrivate: return "Private"
+		}
+	}
+
 }
 
 class ZCoreDataStack: NSObject {
 
-	var existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
-	var   fetchedRegistry = [ZDatabaseID : [String : ZManagedObject]]()
-	var   missingRegistry = [ZDatabaseID : StringsArray]()
-	var     deferralStack = [ZDeferral]()
-	var       currentOpID : ZCDOperationID?
-	var        statusOpID : ZCDOperationID?                  { return currentOpID ?? deferralStack.first?.opID }
-	lazy var        model : NSManagedObjectModel           = { return NSManagedObjectModel.mergedModel(from: nil)! }   ()
-	lazy var  coordinator : NSPersistentStoreCoordinator?  = { return persistentContainer.persistentStoreCoordinator } ()
-	lazy var      context : NSManagedObjectContext         = { return persistentContainer.viewContext }                ()
-	var          isDoneOp : Bool                             { return currentOpID == nil }
-	var        statusText : String?                          { return statusOpID?.description }
+	var   existenceClosures = [ZDatabaseID : ZExistenceDictionary]()
+	var     fetchedRegistry = [ZDatabaseID : ZManagedObjectsDictionary]()
+	var     missingRegistry = [ZDatabaseID : StringsArray]()
+	var       deferralStack = [ZDeferral]()
+	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }    ()
+	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer?.persistentStoreCoordinator } ()
+	lazy var        context : NSManagedObjectContext?       = { return persistentContainer?.viewContext }                ()
+	var            isDoneOp : Bool                            { return currentOpID == nil }
+	var          statusText : String?                         { return statusOpID?.description }
+	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
+	var         currentOpID : ZCDOperationID?
+	var persistentContainer : NSPersistentCloudKitContainer?
 
 	func persistentStore(for type: ZCDStoreType) -> NSPersistentStore? {
 		return coordinator?.persistentStore(for: gUrlFor(type))
 	}
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
-		if  gIsUsingCoreData {
+		if  gIsUsingCoreData,
+			let             c = context {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 			request.predicate = dbidPredicate(from: databaseID)
 
 			do {
-				let flag = try context.count(for: request) > 10
+				let flag = try c.count(for: request) > 10
 
 				return flag
 			} catch {
@@ -74,11 +85,11 @@ class ZCoreDataStack: NSObject {
 		if  gCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) {
 				FOREBACKGROUND { [self] in
-					if  context.hasChanges {
+					if  let c = context, c.hasChanges {
 						checkCrossStore()
 
 						do {
-							try context.save()
+							try c.save()
 						} catch {
 							print(error)
 						}
@@ -132,7 +143,7 @@ class ZCoreDataStack: NSObject {
 					zone.respectOrder()
 
 					FOREGROUND {
-						if  let root = self.context.object(with: oid) as? Zone {
+						if  let root = self.context?.object(with: oid) as? Zone {
 							zRecords.setRoot(root, for: recordName.rootID)
 						}
 					}
@@ -151,7 +162,7 @@ class ZCoreDataStack: NSObject {
 			let ids = objects.map { $0.objectID }
 			for id in ids {
 				FOREGROUND() { [self] in
-					let      object = context.object(with: id)
+					let      object = context?.object(with: id)
 					if  let zRecord = object as? ZRecord {
 						zRecord.convertFromCoreData(visited: [])
 						zRecord.register()
@@ -185,16 +196,17 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func registerObject(_ objectID: NSManagedObjectID, recordName: String, dbID: ZDatabaseID) {
-		let object = context.object(with: objectID)
-		var dict   = fetchedRegistry[dbID]
-		if  dict  == nil {
-			dict   = [String : ZManagedObject]()
+		if  let object = context?.object(with: objectID) {
+			var dict   = fetchedRegistry[dbID]
+			if  dict  == nil {
+				dict   = ZManagedObjectsDictionary()
+			}
+
+			dict?[recordName]     = object
+			fetchedRegistry[dbID] = dict
+
+			(object as? ZRecord)?.register() // for records read from file
 		}
-
-		dict?[recordName]     = object
-		fetchedRegistry[dbID] = dict
-
-		(object as? ZRecord)?.register() // for records read from file
 	}
 
 	func missingFrom(_ dbID: ZDatabaseID) -> StringsArray {
@@ -258,19 +270,20 @@ class ZCoreDataStack: NSObject {
 		var   objects = ZManagedObjectsArray()
 
 		do {
-			let items = try context.fetch(request)
-			for item in items {
-				if  let object = item as? ZManagedObject {
+			if  let items = try context?.fetch(request) {
+				for item in items {
+					if  let object = item as? ZManagedObject {
 
-					objects.append(object)
+						objects.append(object)
 
-					if  onlyOne {
+						if  onlyOne {
 
-						// //////////////////////////////////////////////////////////////////////////////// //
-						// NOTE: all but the first of multiple values found are duplicates and thus ignored //
-						// //////////////////////////////////////////////////////////////////////////////// //
+							// //////////////////////////////////////////////////////////////////////////////// //
+							// NOTE: all but the first of multiple values found are duplicates and thus ignored //
+							// //////////////////////////////////////////////////////////////////////////////// //
 
-						break
+							break
+						}
 					}
 				}
 			}
@@ -340,12 +353,12 @@ class ZCoreDataStack: NSObject {
 	func search(within dbID: ZDatabaseID, entityName: String, using predicate: NSPredicate, onCompletion: ZRecordsClosure? = nil) {
 		if !gCanLoad || !gIsReadyToShowUI {
 			onCompletion?(ZRecordsArray())
-		} else {
+		} else if let       c = persistentContainer {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
 			request.predicate = predicate.and(dbidPredicate(from: dbID))
 
 			deferUntilAvailable(for: .oSearch) { [self] in
-				persistentContainer.performBackgroundTask { [self] context in
+				c.performBackgroundTask { [self] context in
 					var objectIDs = ZObjectIDsArray()
 					do {
 						let items = try context.fetch(request)
@@ -363,8 +376,8 @@ class ZCoreDataStack: NSObject {
 
 					makeAvailable() // before calling closure
 
-					FOREGROUND { [self] in
-						onCompletion?(ZRecordsArray.createFromObjectIDs(objectIDs, in: persistentContainer.viewContext))
+					FOREGROUND {
+						onCompletion?(ZRecordsArray.createFromObjectIDs(objectIDs, in: c.viewContext))
 					}
 				}
 			}
@@ -381,43 +394,32 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	lazy var localDescription: NSPersistentStoreDescription = {
-		let           desc = NSPersistentStoreDescription(url: gUrlFor(.sLocal))
-		desc.configuration = "Local"
+	func storeDescription(for type: ZCDStoreType, at pathComponent: String = "data") -> NSPersistentStoreDescription{
+		let desc = NSPersistentStoreDescription(url: gUrlFor(type))
+		desc.configuration = type.configuration
 
-		return desc
-	}()
+		if  type != .sLocal {
+			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 
-	lazy var privateDescription: NSPersistentStoreDescription = {
-		let                          desc = NSPersistentStoreDescription(url: gUrlFor(.sPrivate))
-		desc.configuration                = "Private"
+			if  gIsUsingCloudKit {
+				let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCDCloudID.cloudID)
 
-		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+				if  type == .sPublic {
+					options.databaseScope     = CKDatabase.Scope.public // default is private. needs osx v11.0
+				}
 
-		if  gIsUsingCloudKit {
-			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCDCloudID.cloudID)
-			desc.cloudKitContainerOptions = options
+				desc.cloudKitContainerOptions = options
+			}
 		}
 
 		return desc
-	}()
+	}
 
-	lazy var publicDescription: NSPersistentStoreDescription = {
-		let                          desc = NSPersistentStoreDescription(url: gUrlFor(.sPublic))
-		desc.configuration                = "Public"
+	func setup() {
+		persistentContainer = getPersistentContainer()
+	}
 
-		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-
-		if  gIsUsingCloudKit {
-			let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCDCloudID.cloudID)
-			options.databaseScope         = CKDatabase.Scope.public // default is private. needs osx v11.0
-			desc.cloudKitContainerOptions = options
-		}
-
-		return desc
-	}()
-
-	lazy var persistentContainer: NSPersistentCloudKitContainer = {
+	func getPersistentContainer(at pathComponent: String = "data") -> NSPersistentCloudKitContainer {
 		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
 
 		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)
@@ -425,9 +427,9 @@ class ZCoreDataStack: NSObject {
 		ValueTransformer.setValueTransformer(ZStringArrayTransformer(), forName: gStringArrayTransformerName)
 
 		container.persistentStoreDescriptions = [
-			privateDescription,
-			publicDescription,
-			localDescription
+			storeDescription(for: .sPrivate),
+			storeDescription(for: .sPublic),
+			storeDescription(for: .sLocal)
 		]
 
 		container.loadPersistentStores() { (storeDescription, iError) in
@@ -448,7 +450,7 @@ class ZCoreDataStack: NSObject {
 		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .overwriteMergePolicyType)
 
 		return container
-	}()
+	}
 
 
 	// MARK: - internal
@@ -492,8 +494,8 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func checkCrossStore() {
-		if  gPrintModes.contains(.dCross) {
-			for updated in context.updatedObjects {
+		if  let c = context, gPrintModes.contains(.dCross) {
+			for updated in c.updatedObjects {
 				if  let  zone  = updated as? Zone,
 					let zdbid  = zone.dbid,
 					let pdbid  = zone.parentZone?.dbid {
@@ -529,7 +531,7 @@ class ZCoreDataStack: NSObject {
 					FOREGROUND {
 						for extra in extras {
 							extra.unregister()
-							gCDCurrentBackgroundContext.delete(extra)
+							gCDCurrentBackgroundContext?.delete(extra)
 						}
 					}
 				}

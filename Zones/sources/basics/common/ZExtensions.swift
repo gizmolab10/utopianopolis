@@ -15,35 +15,36 @@ import CloudKit
     import UIKit
 #endif
 
-typealias               CKRecordID = CKRecord.ID
-typealias              CKReference = CKRecord.Reference
-typealias         ZStoryboardSegue = NSStoryboardSegue
+typealias                CKRecordID = CKRecord.ID
+typealias               CKReference = CKRecord.Reference
+typealias          ZStoryboardSegue = NSStoryboardSegue
 
-typealias                ZoneArray = [Zone]
-typealias              ZOpIDsArray = [ZOperationID]
-typealias              ZFilesArray = [ZFile]
-typealias              ZTraitArray = [ZTrait]
-typealias             StringsArray = [String]
-typealias            ZRecordsArray = [ZRecord]
-typealias            ZObjectsArray = [NSObject]
-typealias          ZoneWidgetArray = [ZoneWidget]
-typealias          ZObjectIDsArray = [NSManagedObjectID]
-typealias         CKRecordIDsArray = [CKRecordID]
-typealias         ZSignalKindArray = [ZSignalKind]
-typealias        CKReferencesArray = [CKReference]
-typealias        ZTinyDotTypeArray = [[ZTinyDotType]]
-typealias     ZManagedObjectsArray = [NSManagedObject]
+typealias                 ZoneArray = [Zone]
+typealias               ZOpIDsArray = [ZOperationID]
+typealias               ZFilesArray = [ZFile]
+typealias               ZTraitArray = [ZTrait]
+typealias              StringsArray = [String]
+typealias             ZRecordsArray = [ZRecord]
+typealias             ZObjectsArray = [NSObject]
+typealias           ZoneWidgetArray = [ZoneWidget]
+typealias           ZObjectIDsArray = [NSManagedObjectID]
+typealias          CKRecordIDsArray = [CKRecordID]
+typealias          ZSignalKindArray = [ZSignalKind]
+typealias         CKReferencesArray = [CKReference]
+typealias         ZTinyDotTypeArray = [[ZTinyDotType]]
+typealias      ZManagedObjectsArray = [NSManagedObject]
 
-typealias         ZTraitDictionary = [ZTraitType   : ZTrait]
-typealias        ZAssetsDictionary = [UUID         : CKAsset]
-typealias       ZStorageDictionary = [ZStorageType : NSObject]
-typealias     WidgetHashDictionary = [Int          : ZoneWidget]
-typealias     ZStringAnyDictionary = [String       : Any]
-typealias  ZStringObjectDictionary = [String       : NSObject]
-typealias  StringZRecordDictionary = [String       : ZRecord]
-typealias StringZRecordsDictionary = [String       : ZRecordsArray]
-typealias   ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
-typealias    ZAttributesDictionary = [NSAttributedString.Key : Any]
+typealias          ZTraitDictionary = [ZTraitType   : ZTrait]
+typealias         ZAssetsDictionary = [UUID         : CKAsset]
+typealias        ZStorageDictionary = [ZStorageType : NSObject]
+typealias      WidgetHashDictionary = [Int          : ZoneWidget]
+typealias      ZStringAnyDictionary = [String       : Any]
+typealias   StringZRecordDictionary = [String       : ZRecord]
+typealias   ZStringObjectDictionary = [String       : NSObject]
+typealias ZManagedObjectsDictionary = [String       : ZManagedObject]
+typealias  StringZRecordsDictionary = [String       : ZRecordsArray]
+typealias    ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
+typealias     ZAttributesDictionary = [NSAttributedString.Key : Any]
 
 protocol ZGeneric {
 	func controllerSetup(with mapView: ZMapView?)

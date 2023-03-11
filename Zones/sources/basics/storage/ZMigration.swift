@@ -19,15 +19,17 @@ enum ZCDCloudID: Int {
 	case testing
 	case current
 
-	static var all: [ZCDCloudID] { return [.original, .testing, .current] }
+	static var all : [ZCDCloudID] { return [.original, .testing, .current] }
+	var cloudID    : String       { return "\(kBaseCloudID).\(lastPathComponent)" }
 
-	var cloudID: String {
+	var lastPathComponent: String {
 		switch self {
-			case .original: return kOriginalCloudID
-			case .testing:  return kTestingCloudID
-			case .current:  return kCoreDataCloudID
+			case .original: return "Zones"
+			case .testing:  return "test2"
+			case .current:  return "coredata"
 		}
 	}
+
 }
 
 extension ZCoreDataMode {

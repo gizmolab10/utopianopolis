@@ -52,7 +52,7 @@ extension ZCoreDataStack {
 
 		if  array.count == 0 {
 			onCompletion?(0)
-		} else {
+		} else if let       c = context {
 			let         count = "\(array.count)".appendingSpacesToLength(6)
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
 			request.predicate = array.predicate(entityName)
@@ -62,7 +62,7 @@ extension ZCoreDataStack {
 			deferUntilAvailable(for: .oExistence) {
 				FOREBACKGROUND { [self] in
 					do {
-						let items = try context.fetch(request)
+						let items = try c.fetch(request)
 
 						FOREGROUND { [self] in
 							for item in items {

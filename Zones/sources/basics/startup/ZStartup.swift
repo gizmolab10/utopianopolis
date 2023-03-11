@@ -29,6 +29,7 @@ class ZStartup: NSObject {
 		gDebugModes  .insert(.dNoSubscriptions)
 		gDebugModes  .insert(.dHideNoteVisibility)
 
+		gCoreDataStack.setup()
 		gRefusesFirstResponder               = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController                = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gCDMigrationState                    = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime

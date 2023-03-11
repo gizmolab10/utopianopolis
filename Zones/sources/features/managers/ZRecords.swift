@@ -149,7 +149,7 @@ class ZRecords: NSObject {
 
 			old.unregister()
 			root.register()
-			gCDCurrentBackgroundContext.delete(old)
+			gCDCurrentBackgroundContext?.delete(old)
 		}
 
 		oldRoot = root

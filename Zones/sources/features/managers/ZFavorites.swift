@@ -332,7 +332,7 @@ class ZFavorites: ZRecords {
 					let discard = workingBookmarks[index]
 					discard.needDestroy()
 					discard.orphan()
-					gCDCurrentBackgroundContext.delete(discard)
+					gCDCurrentBackgroundContext?.delete(discard)
 				}
 			}
 

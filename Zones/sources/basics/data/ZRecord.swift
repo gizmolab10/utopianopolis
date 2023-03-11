@@ -152,7 +152,7 @@ class ZRecord: ZManagedObject {
 	// MARK: - core data
 	// MARK: -
 
-	var selfInCurrentBackgroundCDContext: ZRecord? { return gCDCurrentBackgroundContext.object(with: objectID) as? ZRecord }
+	var selfInCurrentBackgroundCDContext: ZRecord? { return gCDCurrentBackgroundContext?.object(with: objectID) as? ZRecord }
 
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 
