@@ -15,33 +15,22 @@ import Cocoa
 import UIKit
 #endif
 
-func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
-func gSaveContext()                                                        { gCoreDataStack.saveContext() }
-let  gCoreDataStack                    = ZCoreDataStack()
-let  gCoreDataURL                : URL =                  { return gFilesURL.appendingPathComponent("data") }()
-var  gCoreDataIsBusy             : Bool                   { return gCoreDataStack.currentOpID != nil }
-var  gCDCurrentBackgroundContext : NSManagedObjectContext { return gCoreDataStack.context }
+let  gCoreDataStack                                 = ZCoreDataStack()
+var  gCDCurrentBackgroundContext                    : NSManagedObjectContext { return gCoreDataStack.context }
+var  gCoreDataIsBusy                                                  : Bool { return gCoreDataStack.currentOpID != nil }
+func gDataURLAt(_ pathComponent: String)                              -> URL { return gFilesURL.appendingPathComponent(pathComponent) }
+func gUrlFor(_ type: ZCDStoreType, at pathComponent: String = "data") -> URL { return gDataURLAt(pathComponent).appendingPathComponent(type.rawValue + ".store") }
+func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil)   { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
+func gSaveContext()                                                          { gCoreDataStack.saveContext() }
 
-enum ZCDMigrationState: Int {
-	case firstTime
-	case migrateFileData
-	case normal
-}
+enum ZCDStoreType: String {
+	case sLocal   = "local"
+	case sPublic  = "cloud.public"
+	case sPrivate = "cloud.private"
 
-enum ZCDCloudID: Int {
-	case original
-	case testing
-	case current
+	static var all: [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
 
-	static var all: [ZCDCloudID] { return [.original, .testing, .current] }
-
-	var cloudID: String {
-		switch self {
-			case .original: return kOriginalCloudID
-			case .testing:  return kTestingCloudID
-			case .current:  return kCoreDataCloudID
-		}
-	}
+	var url: URL { gUrlFor(self) }
 }
 
 class ZCoreDataStack: NSObject {
@@ -50,20 +39,17 @@ class ZCoreDataStack: NSObject {
 	var   fetchedRegistry = [ZDatabaseID : [String : ZManagedObject]]()
 	var   missingRegistry = [ZDatabaseID : StringsArray]()
 	var     deferralStack = [ZDeferral]()
-	let          localURL = gCoreDataURL.appendingPathComponent("local.store")
-	let         publicURL = gCoreDataURL.appendingPathComponent("cloud.public.store")
-	let        privateURL = gCoreDataURL.appendingPathComponent("cloud.private.store")
 	var       currentOpID : ZCDOperationID?
 	var        statusOpID : ZCDOperationID?                  { return currentOpID ?? deferralStack.first?.opID }
 	lazy var        model : NSManagedObjectModel           = { return NSManagedObjectModel.mergedModel(from: nil)! }   ()
-	lazy var   localStore : NSPersistentStore?             = { return persistentStore(for:   localURL) }               ()
-	lazy var  publicStore : NSPersistentStore?             = { return persistentStore(for:  publicURL) }               ()
-	lazy var privateStore : NSPersistentStore?             = { return persistentStore(for: privateURL) }               ()
 	lazy var  coordinator : NSPersistentStoreCoordinator?  = { return persistentContainer.persistentStoreCoordinator } ()
 	lazy var      context : NSManagedObjectContext         = { return persistentContainer.viewContext }                ()
 	var          isDoneOp : Bool                             { return currentOpID == nil }
 	var        statusText : String?                          { return statusOpID?.description }
-	func persistentStore(for url: URL) -> NSPersistentStore? { return coordinator?.persistentStore(for: url) }
+
+	func persistentStore(for type: ZCDStoreType) -> NSPersistentStore? {
+		return coordinator?.persistentStore(for: gUrlFor(type))
+	}
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
 		if  gIsUsingCoreData {
@@ -390,20 +376,20 @@ class ZCoreDataStack: NSObject {
 
 	func persistentStore(for databaseID: ZDatabaseID) -> NSPersistentStore? {
 		switch databaseID {
-			case .everyoneID: return  publicStore
-			default:          return privateStore
+			case .everyoneID: return persistentStore(for:  .sPublic)
+			default:          return persistentStore(for: .sPrivate)
 		}
 	}
 
 	lazy var localDescription: NSPersistentStoreDescription = {
-		let           desc = NSPersistentStoreDescription(url: localURL)
+		let           desc = NSPersistentStoreDescription(url: gUrlFor(.sLocal))
 		desc.configuration = "Local"
 
 		return desc
 	}()
 
 	lazy var privateDescription: NSPersistentStoreDescription = {
-		let                          desc = NSPersistentStoreDescription(url: privateURL)
+		let                          desc = NSPersistentStoreDescription(url: gUrlFor(.sPrivate))
 		desc.configuration                = "Private"
 
 		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
@@ -417,7 +403,7 @@ class ZCoreDataStack: NSObject {
 	}()
 
 	lazy var publicDescription: NSPersistentStoreDescription = {
-		let                          desc = NSPersistentStoreDescription(url: publicURL)
+		let                          desc = NSPersistentStoreDescription(url: gUrlFor(.sPublic))
 		desc.configuration                = "Public"
 
 		desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)

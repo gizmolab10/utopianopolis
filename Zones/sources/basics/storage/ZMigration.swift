@@ -8,20 +8,44 @@
 
 import Foundation
 
+enum ZCDMigrationState: Int {
+	case firstTime
+	case migrateFileData
+	case normal
+}
+
+enum ZCDCloudID: Int {
+	case original
+	case testing
+	case current
+
+	static var all: [ZCDCloudID] { return [.original, .testing, .current] }
+
+	var cloudID: String {
+		switch self {
+			case .original: return kOriginalCloudID
+			case .testing:  return kTestingCloudID
+			case .current:  return kCoreDataCloudID
+		}
+	}
+}
+
 extension ZCoreDataMode {
 
-	// MARK: - migrating data between ck containers
+	// MARK: - migrating data between persistent containers
 	// MARK: -
 
 	func migrateToLatest() {
-		let id = detectCurrentCloudID()
+		for type in ZCDStoreType.all {
+			let id = detectCurrentCloudID(for: type)
 
-		print(id)
+			print("\(id) \(type.rawValue)")
+		}
 	}
 
-	func detectCurrentCloudID() -> ZCDCloudID {
+	func detectCurrentCloudID(for type: ZCDStoreType) -> ZCDCloudID {
 		for id in ZCDCloudID.all {
-			if  containerExistsFor(id) {
+			if  containerExistsFor(id, type: type) {
 				return id
 			}
 		}
@@ -29,7 +53,8 @@ extension ZCoreDataMode {
 		return gCDCloudID
 	}
 
-	func containerExistsFor(_ id: ZCDCloudID) -> Bool {
+	func containerExistsFor(_ id: ZCDCloudID, type: ZCDStoreType) -> Bool {
+		let cloudID = id.cloudID
 		return false
 	}
 
