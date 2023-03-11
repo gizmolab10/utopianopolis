@@ -299,13 +299,6 @@ class ZBatches: ZOnboarding {
         }
     }
 
-	func load(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		switch gCDMigrationState {
-			case .normal:  gLoadContext(into: databaseID, onCompletion: onCompletion)
-			default: try gFiles.migrate(into: databaseID, onCompletion: onCompletion)
-		}
-	}
-
     override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 

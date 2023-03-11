@@ -41,14 +41,6 @@ class ZFiles: NSObject {
 	lazy var         filesURL : URL = { return createDataDirectory() }()
 	var               hasMine : Bool  { return fileExistsFor(.mineIndex) }
 	func assetURL(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
-
-	var migrationFilesSize : Int {
-		switch gCDMigrationState {
-			case .firstTime:       return fileSizeFor(.everyoneID)
-			case .migrateFileData: return totalFilesSize
-			default:               return 0
-		}
-	}
 	
 	lazy var totalFilesSize : Int = {
 		var result = 0
@@ -91,18 +83,6 @@ class ZFiles: NSObject {
 		}
 
 		return false
-	}
-
-	func migrate(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  !hasMine, databaseID == .mineID {
-			onCompletion?(0)                   // mine file does not exist, do nothing
-		} else {
-			try readFile(into: databaseID) { [self] (iResult: Any?) in
-				setupFirstTime()
-
-				onCompletion?(iResult)
-			}
-		}
 	}
 
 	func setupFirstTime() {

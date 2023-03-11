@@ -100,7 +100,7 @@ class ZRemoteStorage: NSObject {
 	var totalLoadableRecordsCount: Int {
 		switch gCDMigrationState {
 			case .normal: return totalManifestCount
-			default:      return gFiles.migrationFilesSize / kFileRecordSize
+			default:      return gFiles.migrationFilesSize() / kFileRecordSize
 		}
 	}
 

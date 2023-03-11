@@ -33,6 +33,8 @@ enum ZCDCloudID: Int {
 	case testing
 	case current
 
+	static var all: [ZCDCloudID] { return [.original, .testing, .current] }
+
 	var cloudID: String {
 		switch self {
 			case .original: return kOriginalCloudID
