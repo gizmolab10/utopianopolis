@@ -78,6 +78,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isMainMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
+	var                                  hasNarrowRevealDot :               Bool  { return isExpanded || [0, 1, 3].contains(count) || (gCountsMode != .dots) }
 	var                                    hasBadRecordName :               Bool  { return recordName == nil }
 	var                                       showRevealDot :               Bool  { return count > 0 || isTraveller }
 	var                                       hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
@@ -2750,7 +2751,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		return true
 	}
-	
+
 	func add(to type: ZIdeaVisibilityMode) {
 		var a = type.array
 
@@ -3658,7 +3659,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					"r":	   children.sortAccordingToKey(key); gRelayoutMaps(for: self)
 				case "o":      importFromFile(.eSeriously)     { gRelayoutMaps(for: self) }
 				case "t":      swapWithParent                  { gRelayoutMaps(for: self) }
-				case "/":      gFocusing.grabAndFocusOn(self)  { gRelayoutMaps() }
+				case kSlash:   gFocusing.grabAndFocusOn(self)  { gRelayoutMaps() }
 				case "\u{08}", kDelete: deleteSelf             { flag in if flag { gRelayoutMaps() } }
 				case kSpace:   addIdea()
 				default:       break

@@ -381,10 +381,21 @@ extension Dictionary {
 
 }
 
+extension FileManager {
+
+	func moveSubpath(from: String, to: String, relativeTo: String) throws {
+		let fromPath = relativeTo + kSlash + from
+		let   toPath = relativeTo + kSlash + to
+
+		try moveItem(atPath: fromPath, toPath: toPath)
+	}
+
+}
+
 extension URL {
 
-	var originalImageName: String? { return CGImageSource.readFrom(self)?.originalImageName }
-	func fileExists() -> Bool { return FileManager.default.fileExists(atPath: path) }
+	var originalImageName : String? { return CGImageSource.readFrom(self)?.originalImageName }
+	var fileExists        :    Bool { return gFileManager.fileExists(atPath: path) }
 
 	func destination(imageType: CFString = kUTTypeImage) -> CGImageDestination? {
 		return CGImageDestinationCreateWithURL(self as CFURL, imageType, 1, nil)
@@ -435,7 +446,7 @@ extension URL {
 			}
 		}
 
-		return URL(fileURLWithPath: components.joined(separator: "/"))
+		return URL(fileURLWithPath: components.joined(separator: kSlash))
 	}
 
 }

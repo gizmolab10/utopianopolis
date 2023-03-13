@@ -352,6 +352,7 @@ class ZFavorites: ZRecords {
 				bookmark.zoneLink = kColonSeparator + kColonSeparator + named                           // convert into a bookmark
 				bookmark.zoneName = named
 
+				gBookmarks.addToReverseLookup(bookmark)
 				getRootsGroup().addChildAndUpdateOrder(bookmark)
 			}
 

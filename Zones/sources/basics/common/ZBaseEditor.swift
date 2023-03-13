@@ -31,24 +31,24 @@ class ZBaseEditor : NSObject {
 
 			if  flags.exactlySpecial {
 				switch key {
-					case "a": gApplication?.showHideAbout();              return true
-					case "k": toggleColorfulMode();                       return true
-					case "o": gFiles.showInFinder();                      return true
-					case "r": sendEmailBugReport();                       return true
-					case "w": reopenMainWindow();                         return true
-					case "x": clearRecents();                             return true
-					case "/": gHelpController?.show(       flags: flags); return true
-					default:  break
+					case "a":    gApplication?.showHideAbout();              return true
+					case "k":    toggleColorfulMode();                       return true
+					case "o":    gFiles.showInFinder();                      return true
+					case "r":    sendEmailBugReport();                       return true
+					case "w":    reopenMainWindow();                         return true
+					case "x":    clearRecents();                             return true
+					case kSlash: gHelpController?.show(       flags: flags); return true
+					default:     break
 				}
 			} else if flags.hasCommand {
 				switch key {
-					case "e": gToggleShowExplanations();                  return true
-					case "h": gApplication?.hide(nil);                    return true
-					case "q": gApplication?.terminate(self);              return true
-					case "w": gApplication?.keyWindow?.orderOut(self);    return true
-					case "y": gToggleShowToolTips();                      return true
-					case "'": gToggleLayoutMode();                        return true
-					default:  break
+					case "e":    gToggleShowExplanations();                  return true
+					case "h":    gApplication?.hide(nil);                    return true
+					case "q":    gApplication?.terminate(self);              return true
+					case "w":    gApplication?.keyWindow?.orderOut(self);    return true
+					case "y":    gToggleShowToolTips();                      return true
+					case "'":    gToggleLayoutMode();                        return true
+					default:     break
 				}
 			}
 		}

@@ -18,8 +18,8 @@ class ZHelpEditor: ZBaseEditor {
 		if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
 			if  let    key = iKey {
 				switch key {
-					case "/": gHelpController?.show(flags: flags); return true
-					default:  break
+					case kSlash: gHelpController?.show(flags: flags); return true
+					default:     break
 				}
 			}
 

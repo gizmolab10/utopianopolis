@@ -108,7 +108,7 @@ class ZMapEditor: ZBaseEditor {
 						case "n":      editNote(flags: flags)
 						case "p":      printCurrentFocus()
 						case "t":      if SPECIAL { gCurrentlyEditingWidget?.swapWithParent() } else if COMMAND { showThesaurus(for: gCurrentlySelectedText) } 
-						case "/":      return handleSlash(flags)
+						case kSlash:   return handleSlash(flags)
 						case kComma,
 						     kPeriod:  commaAndPeriod(COMMAND, OPTION, with: key == kComma)
 						case kTab:     gSelecting.addSibling(OPTION)
@@ -156,10 +156,10 @@ class ZMapEditor: ZBaseEditor {
 						case "8":        if  OPTION { prefix(with: kSoftArrow, withParentheses: false) } // option-8 is a dot
 						case "#":        if gSelecting.hasMultipleGrabs { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
-						case "/":        return handleSlash(flags)
 						case "?":        if CONTROL { openBrowserForSeriouslyWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   nextBookmark(down: key == "]", flags: flags)
 						case kTab:       gSelecting.addSibling(OPTION)
+						case kSlash:     return handleSlash(flags)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kReturn:    if COMMAND { editNote(flags: flags) } else { editIdea(OPTION) }
 						case kEscape:    editNote(flags: flags, useGrabbed: false)
@@ -230,8 +230,8 @@ class ZMapEditor: ZBaseEditor {
 				case "z":            return .eUndo
 				case "k":            return .eColor
 				case "g":            return .eCloud
-				case "?", "/":       return .eHelp
 				case "o", "s":       return .eFiles
+				case "?", kSlash:    return .eHelp
 				case "x", kSpace:    return .eChild
 				case "b", "t", kTab: return .eParent
 				case "d":            return  COMMAND ? .eAlter  : .eParent

@@ -18,6 +18,7 @@ var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)    && gIsUsingCoreData }
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)    && gIsUsingCoreData }
 var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit) && gIsUsingCoreData }
+var  gCDLocationIsNormal : Bool { return !gCoreDataMode.contains(.dTesting)    && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
@@ -49,6 +50,7 @@ struct ZCoreDataMode: OptionSet {
 	static let dNoCloudKit = ZCoreDataMode(rawValue: 1 << 1) // store in cloud kit
 	static let dNotSave    = ZCoreDataMode(rawValue: 1 << 2) // save is not operational
 	static let dNotLoad    = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
+	static let dTesting    = ZCoreDataMode(rawValue: 1 << 4) // testing mygration
 }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {

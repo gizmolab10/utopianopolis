@@ -112,7 +112,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		gToggleDatabaseID()
 		gHere.grab()
 		gHere.expand()
-		gFavorites.updateCurrentWithBookmarksTargetingHere()
+		gFavorites.push(gHere)
 	}
 
 	func recenter(_ SPECIAL: Bool = false) {

@@ -185,7 +185,7 @@ extension String {
         let  urlString = (replacingOccurrences(of: kBackSlash, with: kEmpty).replacingOccurrences(of: kSpace, with: "%20") as NSString).expandingTildeInPath
         
         if  var url = NSURL(string: urlString) {
-            if  urlString.character(at: 0) == "/" {
+            if  urlString.character(at: 0) == kSlash {
                 url = NSURL(string: filePrefix + urlString)!
             }
 

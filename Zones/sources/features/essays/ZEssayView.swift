@@ -379,7 +379,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "c":      grabbedZones.copyToPaste()
 				case "n":      setGrabbedZoneAsCurrentEssay()
 				case "t":      swapWithParent()
-				case "/":      if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
+				case kSlash:   if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
 				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
 				case kEscape:  save(); if ANY { grabDone()                      } else { done() }
 				case kReturn:  save(); if ANY { grabDone() }
@@ -425,8 +425,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "n":      swapBetweenNoteAndEssay()
 				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide: true) } else { return false }
-				case "/":      gHelpController?.show(flags: flags)
 				case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
+				case kSlash:   gHelpController?.show(flags: flags)
 				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
 				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
 				case kDelete:  deleteGrabbedOrSelected()
@@ -436,7 +436,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		} else if CONTROL {
 			switch key {
-				case "/":      if gFavorites.popNoteAndUpdate() { updateTextStorage() }
+				case kSlash:   if gFavorites.popNoteAndUpdate() { updateTextStorage() }
 				default:       if !enabled { return false } else {
 					switch key {
 						case "d": convertSelectedTextToChild()

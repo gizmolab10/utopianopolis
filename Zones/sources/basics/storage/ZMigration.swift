@@ -14,50 +14,59 @@ enum ZCDMigrationState: Int {
 	case normal
 }
 
-enum ZCDCloudID: Int {
-	case original
-	case testing
-	case current
+enum ZCDCloudID: String {
+	case original = "Zones"
+	case testing  = "test2"
+	case latest   = "coredata"
 
-	static var all : [ZCDCloudID] { return [.original, .testing, .current] }
-	var cloudID    : String       { return "\(kBaseCloudID).\(lastPathComponent)" }
-
-	var lastPathComponent: String {
-		switch self {
-			case .original: return "Zones"
-			case .testing:  return "test2"
-			case .current:  return "coredata"
-		}
-	}
+	static var defaultIDs : [ZCDCloudID] { return [.testing, .latest] }
+	static var        all : [ZCDCloudID] { return [.original, .testing, .latest] }
+	var           cloudID : String       { return kBaseCloudID + kPeriod + rawValue }
+	var lastPathComponent : String       { return ZCDStoreLocation.current.rawValue + kDataDirectoryName + kSlash + rawValue }
+	var        fileExists : Bool         { return gFilesURL.appendingPathComponent(lastPathComponent).fileExists }
 
 }
 
-extension ZCoreDataMode {
+enum ZCDStoreLocation: String {
+	case normal  = ""
+	case migrate = "migration.testing."
 
-	// MARK: - migrating data between persistent containers
-	// MARK: -
+	static var    current : ZCDStoreLocation { return gCDLocationIsNormal ? .normal : .migrate }
+	var basePathComponent :           String { return rawValue + kDataDirectoryName }
+	var lastPathComponent :           String { return "\(basePathComponent)/\(gCDCloudID.rawValue)" }
+}
+
+extension ZCoreDataStack {
+
+	// //////////////////////////////////////////// //
+	// migrating data between persistent containers //
+	// //////////////////////////////////////////// //
 
 	func migrateToLatest() {
-		for type in ZCDStoreType.all {
-			let id = detectCurrentCloudID(for: type)
+		migrateDataDirectory()
 
-			print("\(id) \(type.rawValue)")
-		}
+		persistentContainer = getPersistentContainer(cloudID: gCDCloudID, at: ZCDStoreLocation.current.lastPathComponent)
+		gCDMigrationState   = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
 	}
 
-	func detectCurrentCloudID(for type: ZCDStoreType) -> ZCDCloudID {
-		for id in ZCDCloudID.all {
-			if  containerExistsFor(id, type: type) {
-				return id
+	func migrateDataDirectory() {
+		for id in ZCDCloudID.all.reversed() {
+			if  id.fileExists {
+				gCDCloudID = id
+
+				return
 			}
 		}
 
-		return gCDCloudID
-	}
+		do {
+			let location = ZCDStoreLocation.current.basePathComponent
 
-	func containerExistsFor(_ id: ZCDCloudID, type: ZCDStoreType) -> Bool {
-		let cloudID = id.cloudID
-		return false
+			try gFileManager.moveSubpath(from: location, to: gCDCloudID.rawValue, relativeTo: gFilesURL.path)
+			try gFileManager.createDirectory(atPath: gFilesURL.appendingPathComponent(location).path, withIntermediateDirectories: true)
+			try gFileManager.moveSubpath(from: gCDCloudID.rawValue, to: location + kSlash + gCDCloudID.rawValue, relativeTo: gFilesURL.path)
+		} catch {
+			print("\(error)")
+		}
 	}
 
 }

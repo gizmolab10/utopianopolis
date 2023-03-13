@@ -35,7 +35,7 @@ class ZUser : ZRecord {
 	@NSManaged var     writeAccess : NSNumber?
 	@NSManaged var   sentEmailType : String?
 	override   var cloudProperties : StringsArray { return ZUser.cloudProperties }
-	var                   isExempt : Bool { return authorID == "783BF01A-7535-4950-99EE-B63DB2732824" }
+	var                   isExempt : Bool { return recordName == "_8b4d2b5f3c5307d20e3d5da52be62689" } // authorID == "783BF01A-7535-4950-99EE-B63DB2732824" }
 	func save() { gUserRecordName = recordName }
 
 	var access: ZUserAccess {

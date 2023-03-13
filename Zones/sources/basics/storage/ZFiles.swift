@@ -17,7 +17,7 @@ import CoreFoundation
 
 let gFiles    = ZFiles()
 let gFilesURL : URL = {
-	return try! FileManager.default.url(for: .applicationSupportDirectory, in: .allDomainsMask, appropriateFor: nil, create: true)
+	return try! gFileManager.url(for: .applicationSupportDirectory, in: .allDomainsMask, appropriateFor: nil, create: true)
 		.appendingPathComponent("Seriously", isDirectory: true) // .replacingPathComponent("com.seriously.mac", with: "Seriously")
 }()
 
@@ -34,7 +34,6 @@ enum ZInterruptionError : Error {
 
 class ZFiles: NSObject {
 
-	let               manager = FileManager.default
 	var             isReading = [false, false]
     var  filePaths: [String?] = [nil, nil]
 	lazy var        assetsURL : URL = { return createAssetsDirectory() }()
@@ -58,7 +57,7 @@ class ZFiles: NSObject {
 			if  let      index = databaseID.index,
 				let    dbIndex = ZDatabaseIndex(rawValue: index) {
 				let       path = filePath(for: dbIndex)
-				let       dict = try manager.attributesOfItem(atPath: path)
+				let       dict = try gFileManager.attributesOfItem(atPath: path)
 				if  let length = dict[.size] as? Int {
 					result     = length
 				}
@@ -79,7 +78,7 @@ class ZFiles: NSObject {
 			let extend = "seriously"
 			let   gURL = filesURL.appendingPathComponent(gName).appendingPathExtension(extend)
 			let    url = filesURL.appendingPathComponent( name).appendingPathExtension(extend)
-			return url.fileExists() || gURL.fileExists()
+			return url.fileExists || gURL.fileExists
 		}
 
 		return false
@@ -199,7 +198,7 @@ class ZFiles: NSObject {
 			let filename = file.filename {
 			let url = assetURL(for: filename)
 
-			if !url.fileExists(),
+			if !url.fileExists,
 			    url.writeData(data) {
 			}
 
@@ -346,25 +345,25 @@ class ZFiles: NSObject {
             let    genericFileURL = filesURL.appendingPathComponent(name + normalExtension)
             let      cloudFileURL = filesURL.appendingPathComponent(cloudName + normalExtension)
             let    cloudBackupURL = filesURL.appendingPathComponent(cloudName + backupExtension)
-            let cloudBackupExists = cloudBackupURL.fileExists()
-            var     genericExists = genericFileURL.fileExists()
-            let      backupExists =      backupURL.fileExists()
-            let       cloudExists =   cloudFileURL.fileExists()
+            let cloudBackupExists = cloudBackupURL.fileExists
+            var     genericExists = genericFileURL.fileExists
+            let      backupExists =      backupURL.fileExists
+            let       cloudExists =   cloudFileURL.fileExists
             path                  = genericFileURL.path
 
             do {
                 if   useGeneric {
                     if !genericExists && (cloudExists || cloudBackupExists) && !isEveryone {
                         if                cloudExists {
-                            try manager.moveItem(at: cloudFileURL,   to: genericFileURL)
+                            try gFileManager.moveItem(at: cloudFileURL,   to: genericFileURL)
 
                             if      cloudBackupExists {
-                                try manager.removeItem(at: cloudBackupURL)
+                                try gFileManager.removeItem(at: cloudBackupURL)
                             }
 
                             genericExists = true
                         } else if   cloudBackupExists {
-                            try manager.moveItem(at: cloudBackupURL, to: genericFileURL)
+                            try gFileManager.moveItem(at: cloudBackupURL, to: genericFileURL)
                             
                             genericExists = true
                         }
@@ -372,43 +371,43 @@ class ZFiles: NSObject {
 
                     if     genericExists {
                         if  backupExists {
-                            try manager.removeItem(at: backupURL)                       // remove before replacing, below
+                            try gFileManager.removeItem(at: backupURL)                       // remove before replacing, below
                         }
 
-                        try manager.copyItem(at: genericFileURL,     to: backupURL)
+                        try gFileManager.copyItem(at: genericFileURL,     to: backupURL)
                     } else if backupExists {
-                        try manager.copyItem(at: backupURL,     to: genericFileURL)     // should only happen when prior write fails due to power failure
+                        try gFileManager.copyItem(at: backupURL,     to: genericFileURL)     // should only happen when prior write fails due to power failure
                     } else if isEveryone,    let bundleFileURL = Bundle.main.url(forResource: "everyone", withExtension: "seriously") {
-                        try manager.copyItem(at: bundleFileURL, to: genericFileURL)
+                        try gFileManager.copyItem(at: bundleFileURL, to: genericFileURL)
                     } else {
-                        manager.createFile(atPath: genericFileURL.path, contents: nil)
+						gFileManager.createFile(atPath: genericFileURL.path, contents: nil)
                     }
                 } else {
                     path        = cloudFileURL.path
 
                     if            cloudExists {
                         if  cloudBackupExists {
-                            try manager.removeItem(at:  cloudBackupURL)             // remove before replacing, below
+                            try gFileManager.removeItem(at:  cloudBackupURL)             // remove before replacing, below
                         }
 
-                        try manager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
+                        try gFileManager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
                     } else if cloudBackupExists {
-                        try manager.copyItem(at: cloudBackupURL, to:   cloudFileURL) // should only happen when prior write fails due to power failure
+                        try gFileManager.copyItem(at: cloudBackupURL, to:   cloudFileURL) // should only happen when prior write fails due to power failure
                     } else if    !genericExists {
-                        manager.createFile(atPath: cloudFileURL.path, contents: nil)
+						gFileManager.createFile(atPath: cloudFileURL.path, contents: nil)
                     } else {
-                        try manager.moveItem(at: genericFileURL, to:   cloudFileURL)
-                        try manager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
+                        try gFileManager.moveItem(at: genericFileURL, to:   cloudFileURL)
+                        try gFileManager.copyItem(at:   cloudFileURL, to: cloudBackupURL)
                         
                         genericExists = false
                     }
                     
                     if  backupExists {
-                        try manager.removeItem(at:      backupURL)
+                        try gFileManager.removeItem(at:      backupURL)
                     }
 
                     if  genericExists {
-                        try manager.removeItem(at: genericFileURL)
+                        try gFileManager.removeItem(at: genericFileURL)
                     }
                 }
             } catch {
@@ -426,7 +425,7 @@ class ZFiles: NSObject {
 
     func createDataDirectory() -> URL {
         do {
-            try manager.createDirectory(atPath: gFilesURL.path, withIntermediateDirectories: true, attributes: nil)
+            try gFileManager.createDirectory(atPath: gFilesURL.path, withIntermediateDirectories: true, attributes: nil)
         } catch {
             printDebug(.dError, "\(error)")
         }
@@ -438,7 +437,7 @@ class ZFiles: NSObject {
 		let url = gFilesURL.appendingPathComponent("assets")
 
 		do {
-			try manager.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
+			try gFileManager.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
 		} catch {
 			printDebug(.dError, "\(error)")
 		}

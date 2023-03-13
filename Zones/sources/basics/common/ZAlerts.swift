@@ -30,7 +30,7 @@ class ZAlerts : NSObject {
 
     var mostRecentError: Error?
 
-    func detectError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
+    func detectError(_ iError: Any? = nil, _ closure: BooleanClosure? = nil) {
         let        hasError = iError != nil
 
         if  let       error = iError as? Error {
@@ -41,11 +41,11 @@ class ZAlerts : NSObject {
     }
 
     func alertError(_ iError: Any? = nil, _ message: String? = nil, _ closure: BooleanClosure? = nil) {
-		detectError(iError, message) { [self] iHasError in
+		detectError(iError) { [self] iHasError in
             if !iHasError {
                 closure?(false) // false means no error
             } else {
-                report(error: iError) { (choice: Any?) in
+				report(error: iError, message) { (choice: Any?) in
                     closure?(choice as? Bool ?? true) // true means user rejected alert
                 }
             }

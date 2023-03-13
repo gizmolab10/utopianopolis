@@ -1,5 +1,5 @@
 //
-//  ZLinear.swift
+//  ZLayout.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 11/11/21.

@@ -42,7 +42,7 @@ class ZDisplayPreferencesController: ZGenericController {
     override func handleSignal(_ object: Any?, kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vPreferences) {
             let                            grabbed = gSelecting.firstSortedGrab
-            countsModeControl?    .selectedSegment = gCountsMode   .rawValue
+            countsModeControl?    .selectedSegment = gCountsMode.rawValue
             lineThickness?            .doubleValue = Double(gLineThickness)
             baseFontSize?             .doubleValue = Double(gBaseFontSize)
             horizontalSpacing?        .doubleValue = Double(gHorizontalGap)

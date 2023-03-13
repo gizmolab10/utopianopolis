@@ -188,7 +188,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 		let  SPECIAL = flags.exactlySpecial
 
 		switch key {
-			case "?", "/":         show(       flags: flags)
+			case "?", kSlash:      show(       flags: flags)
 			case "w":              show(false, flags: flags)
 			case "p":              view.printView()
 			case "q":              gApplication?.terminate(self)

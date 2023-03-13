@@ -15,32 +15,32 @@ import Cocoa
 import UIKit
 #endif
 
-let  gCoreDataStack                                = ZCoreDataStack()
-var  gCDCurrentBackgroundContext                   : NSManagedObjectContext? { return gCoreDataStack.context }
-var  gCoreDataIsBusy                                                  : Bool { return gCoreDataStack.currentOpID != nil }
-func gDataURLAt(_ pathComponent: String)                              -> URL { return gFilesURL.appendingPathComponent(pathComponent) }
-func gUrlFor(_ type: ZCDStoreType, at pathComponent: String = "data") -> URL { return gDataURLAt(pathComponent).appendingPathComponent(type.rawValue + ".store") }
-func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil)   { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
-func gSaveContext()                                                          { gCoreDataStack.saveContext() }
+enum ZCDStoreScope: String {
 
-enum ZCDStoreType: String {
+	case sLocal   = "Local"
+	case sPublic  = "Public"
+	case sPrivate = "Private"
 
-	case sLocal   = "local"
-	case sPublic  = "cloud.public"
-	case sPrivate = "cloud.private"
+	static var all: [ZCDStoreScope] { return [.sLocal, .sPublic, .sPrivate] }
 
-	static var all: [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
-	var url: URL { gUrlFor(self) }
-
-	var configuration: String {
-		switch self {
-			case .sLocal:   return "Local"
-			case .sPublic:  return "Public"
-			case .sPrivate: return "Private"
+	var lastComponent: String {
+		var last  = rawValue.lowercased()
+		if  self != .sLocal {
+			last  = "cloud." + last
 		}
+
+		return last + ".store"
 	}
 
 }
+
+let  gCoreDataStack                                = ZCoreDataStack()
+var  gCDCurrentBackgroundContext                   : NSManagedObjectContext? { return gCoreDataStack.context }
+var  gCoreDataIsBusy                                                  : Bool { return gCoreDataStack.currentOpID != nil }
+func gDataURLAt(_ lastPathComponent: String)                          -> URL { return gFilesURL.appendingPathComponent(lastPathComponent) }
+func gUrlFor(_ type: ZCDStoreScope, at lastPathComponent: String)     -> URL { return gDataURLAt(lastPathComponent).appendingPathComponent(type.lastComponent) }
+func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil)   { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
+func gSaveContext()                                                          { gCoreDataStack.saveContext() }
 
 class ZCoreDataStack: NSObject {
 
@@ -48,17 +48,17 @@ class ZCoreDataStack: NSObject {
 	var     fetchedRegistry = [ZDatabaseID : ZManagedObjectsDictionary]()
 	var     missingRegistry = [ZDatabaseID : StringsArray]()
 	var       deferralStack = [ZDeferral]()
-	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }    ()
-	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer?.persistentStoreCoordinator } ()
-	lazy var        context : NSManagedObjectContext?       = { return persistentContainer?.viewContext }                ()
+	var persistentContainer : NSPersistentCloudKitContainer?
+	var         currentOpID : ZCDOperationID?
+	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
 	var            isDoneOp : Bool                            { return currentOpID == nil }
 	var          statusText : String?                         { return statusOpID?.description }
-	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
-	var         currentOpID : ZCDOperationID?
-	var persistentContainer : NSPersistentCloudKitContainer?
+	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer?.persistentStoreCoordinator } ()
+	lazy var        context : NSManagedObjectContext?       = { return persistentContainer?.viewContext }                ()
+	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }    ()
 
-	func persistentStore(for type: ZCDStoreType) -> NSPersistentStore? {
-		return coordinator?.persistentStore(for: gUrlFor(type))
+	func persistentStore(for type: ZCDStoreScope, at pathComponent: String) -> NSPersistentStore? {
+		return coordinator?.persistentStore(for: gUrlFor(type, at: pathComponent))
 	}
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
@@ -387,16 +387,16 @@ class ZCoreDataStack: NSObject {
 	// MARK: - internals
 	// MARK: -
 
-	func persistentStore(for databaseID: ZDatabaseID) -> NSPersistentStore? {
+	func persistentStore(for databaseID: ZDatabaseID, at pathComponent: String) -> NSPersistentStore? {
 		switch databaseID {
-			case .everyoneID: return persistentStore(for:  .sPublic)
-			default:          return persistentStore(for: .sPrivate)
+			case .everyoneID: return persistentStore(for:  .sPublic, at: pathComponent)
+			default:          return persistentStore(for: .sPrivate, at: pathComponent)
 		}
 	}
 
-	func storeDescription(for type: ZCDStoreType, at pathComponent: String = "data") -> NSPersistentStoreDescription{
-		let desc = NSPersistentStoreDescription(url: gUrlFor(type))
-		desc.configuration = type.configuration
+	func storeDescription(cloudID: ZCDCloudID, at pathComponent: String, for type: ZCDStoreScope) -> NSPersistentStoreDescription{
+		let desc = NSPersistentStoreDescription(url: gUrlFor(type, at: pathComponent))
+		desc.configuration = type.rawValue
 
 		if  type != .sLocal {
 			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
@@ -415,21 +415,17 @@ class ZCoreDataStack: NSObject {
 		return desc
 	}
 
-	func setup() {
-		persistentContainer = getPersistentContainer()
-	}
-
-	func getPersistentContainer(at pathComponent: String = "data") -> NSPersistentCloudKitContainer {
-		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
+	func getPersistentContainer(cloudID: ZCDCloudID, at lastPathComponent: String) -> NSPersistentCloudKitContainer {
+		let     container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
 
 		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)
 		ValueTransformer.setValueTransformer( ZAssetArrayTransformer(), forName:  gAssetArrayTransformerName)
 		ValueTransformer.setValueTransformer(ZStringArrayTransformer(), forName: gStringArrayTransformerName)
 
 		container.persistentStoreDescriptions = [
-			storeDescription(for: .sPrivate),
-			storeDescription(for: .sPublic),
-			storeDescription(for: .sLocal)
+			storeDescription(cloudID: cloudID, at: lastPathComponent, for: .sPrivate),
+			storeDescription(cloudID: cloudID, at: lastPathComponent, for: .sPublic),
+			storeDescription(cloudID: cloudID, at: lastPathComponent, for: .sLocal)
 		]
 
 		container.loadPersistentStores() { (storeDescription, iError) in

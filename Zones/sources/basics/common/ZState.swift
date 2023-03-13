@@ -122,9 +122,38 @@ var gCoreDataMode : ZCoreDataMode {
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
-var gCDCloudID : ZCDCloudID {
-	get { return ZCDCloudID(         rawValue: getPreferencesInt(for: kCDCloudID, defaultInt: ZCDCloudID.testing.rawValue)) ?? .original }
-	set { setPreferencesInt(newValue.rawValue,                   for: kCDCloudID) }
+var gCDCloudID: ZCDCloudID {
+	get {
+		return gCDCloudIDs[gCDLocationIsNormal ? 0 : 1]
+	}
+	set {
+		var                          ids = gCDCloudIDs
+		ids[gCDLocationIsNormal ? 0 : 1] = newValue
+		gCDCloudIDs                      = ids
+	}
+}
+
+var gCDCloudIDs : [ZCDCloudID] {
+	get {
+		var ids = [ZCDCloudID]()
+		if  let strings = getPreferencesString(for: kCDCloudIDs, defaultString: ZCDCloudID.defaultIDs.map { $0.rawValue }.joined(separator: kColonSeparator) ) {
+			for string in strings.components(separatedBy: kColonSeparator) {
+				if  let id = ZCDCloudID(rawValue: string) {
+					ids.append(id)
+				}
+			}
+		}
+
+		return ids
+	}
+
+	set {
+		var strings = StringsArray()
+		for id in newValue {
+			strings.append(id.rawValue)
+		}
+		setPreferencesString(strings.joined(separator: kColonSeparator), for: kCDCloudIDs)
+	}
 }
 
 fileprivate var gCollapsed : StringsArray?

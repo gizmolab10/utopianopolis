@@ -157,9 +157,9 @@ extension ZoneWidget {
 			let showReveal = zone.showRevealDot
 			let    yExpand = c.dotHeight / -25.0 * mapReduction
 			let    fExpand = showReveal ? 0.56 : -1.06
-			let    xOffset = c.dotHalfWidth * fExpand + thick * 3.0
 			let    mExpand = showReveal ? 1.25 :  0.65
-			let    xExpand = c.dotHeight * mExpand + thick * 4.0
+			let    xOffset = c.dotHalfWidth * fExpand + thick * 3.0
+			let    xExpand = c.dotHeight    * mExpand + thick * 4.0
 			highlightRect  = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: xOffset, dy: .zero)
 		}
 	}
@@ -325,9 +325,9 @@ extension CGRect {
 		if  let      controller = dot.controller {
 			if !dot.isReveal {
 				return centerLeft.offsetBy(-controller.dotHalfWidth, .zero)
-			} else if let count = dot.widgetZone?.count {
-				let  isNarrower = [0, 1, 3].contains(count)
-				let       width = isNarrower ? controller.dotThirdWidth : controller.dotWidth
+			} else if let zone = dot.widgetZone {
+				let      width = zone.hasNarrowRevealDot ? controller.dotThirdWidth : controller.dotWidth
+
 				return centerRight.offsetBy(width + controller.coreThickness * 5.0, .zero)
 			}
 		}
