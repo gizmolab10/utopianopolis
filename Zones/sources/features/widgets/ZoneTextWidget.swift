@@ -211,7 +211,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
             extract      = original.substring(with: range)
 
             if  range.length < original.length {
-                if  !requiresAllOrTitleSelected {
+                if !requiresAllOrTitleSelected {
 					setText(original.stringBySmartReplacing(range, with: kEmpty))                    
                     gSelecting.ungrabAll()
                 } else if range.location != 0 && !original.isLineTitle(enclosing: range) {

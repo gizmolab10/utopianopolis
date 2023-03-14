@@ -23,11 +23,14 @@ extension ZFavorites {
 			if  let to        = !down ? prior : recents.children.nextBookmarkIndex(increasing: true,  from: prior) {
 				if  let from  = bookmark?.siblingIndex,
 					let guess =                 recents.children.nextBookmarkIndex(increasing: false, from: from) {
+
 					if ![from, prior, guess].contains(to) {
 						recents.moveChild(from: from, to: to)
 					}
+
+					bookmark  = recents[to]
 				} else {
-					bookmark = ZBookmarks.newBookmark(targeting: target)
+					bookmark  = ZBookmarks.newBookmark(targeting: target)
 
 					recents.addChildNoDuplicate(bookmark, at: to)
 				}

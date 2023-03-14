@@ -100,10 +100,6 @@ class ZMapEditor: ZBaseEditor {
 					if !ANY { return false } // ignore key events which have no modifier keys
 
 					switch key {
-						case "a":      gCurrentlyEditingWidget?.selectAllText()
-						case "d":      gCurrentlyEditingWidget?.widgetZone?.tearApartCombine(ALL, SPLAYED)
-						case "e":      gToggleShowExplanations()
-						case "f":      gSearching.showSearch(OPTION)
 						case "k":      toggleColorized()
 						case "n":      editNote(flags: flags)
 						case "p":      printCurrentFocus()
@@ -111,12 +107,8 @@ class ZMapEditor: ZBaseEditor {
 						case kSlash:   return handleSlash(flags)
 						case kComma,
 						     kPeriod:  commaAndPeriod(COMMAND, OPTION, with: key == kComma)
-						case kTab:     gSelecting.addSibling(OPTION)
-						case kSpace:   gSelecting.currentMoveable.addIdea()
 						case kReturn:  if COMMAND { editNote(flags: flags) }
 						case kEscape:               editNote(flags: flags, useGrabbed: false)
-						case kBackspace,
-						kDelete:  if CONTROL { gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() } }
 						default:       return false // false means key not handled
 					}
 				}

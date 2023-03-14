@@ -146,6 +146,7 @@ class ZTextPack: NSObject {
 			t.deselectAllText()
 			t.updateTextColor()
 			t.updateText()
+			w.linearGrandRelayout()
 		}
     }
 

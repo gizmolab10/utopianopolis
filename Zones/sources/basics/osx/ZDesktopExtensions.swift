@@ -839,6 +839,8 @@ extension ZTextEditor {
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  var        key = iKey {
 			let        ANY = flags.isAny
+			let     OPTION = flags.hasOption
+			let    CONTROL = flags.hasControl
 			let editedZone = currentTextWidget?.widgetZone
 			let      arrow = key.arrow
 
@@ -846,19 +848,24 @@ extension ZTextEditor {
 				key        = key.lowercased()
 			}
 
-
 			gHideExplanation()
 
 			if  let      a = arrow {
 				gTextEditor.handleArrow(a, flags: flags)
 			} else if ANY {
 				switch key {
-					case kReturn: stopCurrentEdit()
-					case kSpace:  editedZone?.addIdea()
+					case "a":     currentTextWidget?.selectAllText()
+					case "d":     editedZone?.tearApartCombine(flags)
 					case "e":     gToggleShowExplanations()
+					case "f":     gSearching.showSearch(OPTION)
 					case "i":     showSpecialCharactersPopup()
 					case "?":     gHelpController?.show(flags: flags)
+					case kTab:    gSelecting.addSibling(OPTION)
+					case kSpace:  editedZone?.addIdea()
+					case kReturn: stopCurrentEdit()
 					case kHyphen: return editedZone?.convertToFromLine() ?? false // false means key not handled
+					case kDelete,
+					kBackspace:   if CONTROL { gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() } }
 					default:      return false
 				}
 			} else if "|<>[]{}()\'\"".contains(key) {

@@ -77,13 +77,12 @@ func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
 }
 
 func gDeferRedraw(_ closure: Closure) {
+	let         save = gDeferringRedraw
 	gDeferringRedraw = true
 
 	closure()
 
-	FOREGROUND(after: 0.4) {
-		gDeferringRedraw = false   // in case closure doesn't set it
-	}
+	gDeferringRedraw = save   // in case closure doesn't reset it
 }
 
 func gDisablePush(_ closure: Closure) {

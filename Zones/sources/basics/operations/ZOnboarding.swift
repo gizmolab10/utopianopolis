@@ -106,12 +106,12 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserID(_ onCompletion: @escaping Closure) {
-        if  gCloudAccountStatus != .available {
+        if  gCloudAccountStatus != .available || !gIsUsingCloudKit {
             onCompletion()
         } else {
             gCloudContainer.fetchUserRecordID() { iRecordID, iError in
 				FOREGROUND {
-					gAlerts.alertError(iError, "failed to fetch user record id") { iHasError in
+					gAlerts.alertError(iError, "failed to fetch user record id from cloud") { iHasError in
 						if !iHasError {
 
 							// /////////////////////////////////////////////

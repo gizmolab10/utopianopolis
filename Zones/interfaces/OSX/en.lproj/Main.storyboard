@@ -226,7 +226,7 @@ CQ
                                                         </connections>
                                                     </menuItem>
                                                     <menuItem title="New Parent from Selected Text" tag="6" keyEquivalent="d" id="lqH-Fs-Hm3">
-                                                        <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                                                        <modifierMask key="keyEquivalentModifierMask" control="YES" option="YES" command="YES"/>
                                                         <connections>
                                                             <action selector="genericMenuHandler:" target="Ady-hI-5gd" id="TPm-VX-Kvm"/>
                                                         </connections>

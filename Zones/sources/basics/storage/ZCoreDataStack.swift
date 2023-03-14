@@ -434,14 +434,6 @@ class ZCoreDataStack: NSObject {
 			}
 		}
 
-		if  gIsUsingCloudKit, gCDMigrationState != .normal {
-			do {
-				try container.initializeCloudKitSchema()
-			} catch {
-				print(error)
-			}
-		}
-
 		container.viewContext.automaticallyMergesChangesFromParent = true
 		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .overwriteMergePolicyType)
 

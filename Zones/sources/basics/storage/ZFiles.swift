@@ -89,7 +89,7 @@ class ZFiles: NSObject {
 		gStartupLevel = .localOkay
 		gDatabaseID   = .everyoneID
 
-		gEveryoneCloud?.rootZone?.expandGrabAndFocusOn()
+		gEveryoneCloud?.rootZone?.expandAndGrab()
 	}
 
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
@@ -103,7 +103,7 @@ class ZFiles: NSObject {
 
 	func writeToFile(from databaseID: ZDatabaseID?) throws {
 		if  gWriteFiles,
-			gCDMigrationState == .normal,
+			gIsCDMigrationDone,
 			let     dbID = databaseID,
 			dbID        != .favoritesID,
 			let    index = dbID.index,

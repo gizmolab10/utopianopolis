@@ -78,25 +78,27 @@ class ZEvents: ZGeneric {
 		}
 
 		keyDownMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
-                if !isDuplicate(event: event) {
-					// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
-					let isWindow = (event.type == .keyDown) || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
+			if !isDuplicate(event: event) {
 
-					if  gIsEssayMode,
-						gMapIsResponder {
-						return gMapEditor.handleEvent(event, isWindow: isWindow, forced: true)   // if in essay mode and first responder is in a map
-					}
+				// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch
 
-					switch gWorkMode {
-						case .wResultsMode:             return gSearchBarController?.handleEvent(event)
-						case .wEssayMode:               return gEssayEditor         .handleEvent(event, isWindow: isWindow)
-						case .wMapMode, .wEditIdeaMode: return gMapEditor           .handleEvent(event, isWindow: isWindow)
-						default:                        return gHelpController?     .handleEvent(event) ?? event
-					}
+				let isWindow = (event.type == .keyDown) || (event.window?.contentView?.frame.contains(event.locationInWindow) ?? false)
+
+				if  gIsEssayMode,
+					gMapIsResponder {
+					return gMapEditor.handleEvent(event, isWindow: isWindow, forced: true)   // if in essay mode and first responder is in a map
 				}
 
-                return event
-            }
+				switch gWorkMode {
+					case .wResultsMode:             return gSearchBarController?.handleEvent(event)
+					case .wEssayMode:               return gEssayEditor         .handleEvent(event, isWindow: isWindow)
+					case .wMapMode, .wEditIdeaMode: return gMapEditor           .handleEvent(event, isWindow: isWindow)
+					default:                        return gHelpController?     .handleEvent(event) ?? event
+				}
+			}
+
+			return event
+		}
 
         #endif
     }

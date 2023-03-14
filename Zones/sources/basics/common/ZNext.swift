@@ -162,10 +162,14 @@ extension ZFavorites {
 							}
 
 							toIndex       = next
+
+							break
 						}
 					}
 
 					if  toIndex.isWithin(0 ... maxIndex) {
+						print("\(toIndex)")
+
 						let  newCurrent = zones[toIndex]
 						if  moveCurrent {
 							moveOtherCurrentTo(newCurrent)

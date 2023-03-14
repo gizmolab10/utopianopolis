@@ -10,7 +10,8 @@ import Foundation
 
 enum ZCDMigrationState: Int {
 	case firstTime
-	case migrateFileData
+	case migrateFromFilesystem
+	case migrateToCloud
 	case normal
 }
 
@@ -38,15 +39,23 @@ enum ZCDStoreLocation: String {
 
 extension ZCoreDataStack {
 
-	// //////////////////////////////////////////// //
-	// migrating data between persistent containers //
-	// //////////////////////////////////////////// //
+	// ///////////////////////////////////////////// //
+	// migrating (CD & CK) data between repositories //
+	// ///////////////////////////////////////////// //
 
-	func migrateToLatest() {
+	func assureMigrationToLatest() {
 		migrateDataDirectory()
 
 		persistentContainer = getPersistentContainer(cloudID: gCDCloudID, at: ZCDStoreLocation.current.lastPathComponent)
-		gCDMigrationState   = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFileData : .firstTime
+		gCDMigrationState   = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFromFilesystem : .firstTime
+
+		if  gIsUsingCloudKit, !gIsCDMigrationDone {
+			do {
+				try persistentContainer?.initializeCloudKitSchema()
+			} catch {
+				print(error)
+			}
+		}
 	}
 
 	func migrateDataDirectory() {
@@ -98,9 +107,9 @@ extension ZFiles {
 
 	func migrationFilesSize() -> Int {
 		switch gCDMigrationState {
-			case .firstTime:       return fileSizeFor(.everyoneID)
-			case .migrateFileData: return totalFilesSize
-			default:               return 0
+			case .firstTime:             return fileSizeFor(.everyoneID)
+			case .migrateFromFilesystem: return totalFilesSize
+			default:                     return 0
 		}
 	}
 

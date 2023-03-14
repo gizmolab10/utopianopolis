@@ -45,6 +45,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                            siblings :          ZoneArray? { return parentZone?.children }
 	var                                            manifest :          ZManifest? { return zRecords?.manifest }
 	var                                              widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
+	var                                          textWidget :     ZoneTextWidget? { return widget?.textWidget }
 	var                                        widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                                      linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
 	var                               maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
@@ -118,13 +119,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                      duplicateZones =          ZoneArray  ()
 	var                                            children =          ZoneArray  ()
 	var                                     bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
-	var                                           notemarks :          ZoneArray  { return zones(of: .wNotemarks) }
-	var                                           bookmarks :          ZoneArray  { return zones(of: .wBookmarks) }
-	var                                          allProgeny :          ZoneArray  { return zones(of: .wProgeny  ) }
-	var                                           allGroups :          ZoneArray  { return zones(of: .wGroups   ) }
-	var                                                 all :          ZoneArray  { return zones(of: .wAll      ) }
+	var                                           notemarks :          ZoneArray  { return zonesMatching(.wNotemarks) }
+	var                                           bookmarks :          ZoneArray  { return zonesMatching(.wBookmarks) }
+	var                                          allProgeny :          ZoneArray  { return zonesMatching(.wProgeny  ) }
+	var                                           allGroups :          ZoneArray  { return zonesMatching(.wGroups   ) }
+	var                                                 all :          ZoneArray  { return zonesMatching(.wAll      ) }
 	var                                     visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
-	func          zones(of type: ZWorkingListType)         ->          ZoneArray  { return type.matchingZones(within: self) }
 	func          identifier()                             ->             String? { return isARoot ? databaseID.rawValue : recordName }
 	func          toolName()                               ->             String? { return clippedName }
 	func          toolColor()                              ->             ZColor? { return color?.lighter(by: 3.0) }
@@ -1086,7 +1086,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				parent.expand()
 			}
 
-			var index   = siblingIndex
+			var index  = siblingIndex
 
 			if  index  != nil {
 				index! += gListsGrowDown ? 1 : 0
@@ -1276,18 +1276,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func tearApartCombine(_ intoParent: Bool, _ reversed: Bool) {
-		if  intoParent {
-			insertSelectedText()
+	func tearApartCombine(_ flags: ZEventFlags) {
+		if  flags.exactlyAll {
+			createChildWithTitleOrSelectedText()
 		} else {
-			createIdeaFromSelectedText(reversed)
+			createIdeaFromSelectedText()
 		}
 	}
 
-	func insertSelectedText() {
+	func createChildWithTitleOrSelectedText() {
 		if  let     index = siblingIndex,
 			let    parent = parentZone,
-			let childName = widget?.textWidget?.extractTitleOrSelectedText() {
+			let childName = textWidget?.extractTitleOrSelectedText() {
 
 			gTextEditor.stopCurrentEdit()
 
@@ -1621,7 +1621,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		FOREGROUND { [self] in
 			let newRange = range ?? NSRange(location: 0, length: zoneName?.length ?? 0)
 
-			widget?.textWidget?.selectCharacter(in: newRange)
+			textWidget?.selectCharacter(in: newRange)
 		}
 	}
 
@@ -1684,9 +1684,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func hasSameTarget(as other: Zone) -> Bool {
-		if  let    aTarget  =       bookmarkTarget?.recordName,
-			let    bTarget  = other.bookmarkTarget?.recordName {
-			return aTarget == bTarget
+		if  let     aTarget  =       bookmarkTarget,
+			let     bTarget  = other.bookmarkTarget {
+			return (aTarget == bTarget) && (aTarget === bTarget)
 		}
 
 		return false
@@ -2150,7 +2150,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func expandGrabAndFocusOn() {
+	func expandAndGrab() {
 		gHere = self
 
 		expand()
@@ -2158,10 +2158,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func focusOnBookmarkTarget(atArrival: @escaping SignalClosure) {
-		if  let           target = bookmarkTarget,
-			let targetRecordName = target.recordName {
-			let       targetDBID = target.databaseID
-			var            there : Zone?
+		if  let              target = bookmarkTarget,
+			let    targetRecordName = target.recordName {
+			let          targetDBID = target.databaseID
+			gShowFavoritesMapForIOS = targetDBID.isFavoritesDB
+			var               there : Zone?
 
 			let complete : SignalClosure = { [self] (iObject, kind) in
 				gFavorites.setCurrentFavoriteBoomkarks(to: self)
@@ -2177,12 +2178,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere = target
 				}
 
-				gShowFavoritesMapForIOS = targetDBID.isFavoritesDB
-
 				complete(target, .spRelayout)
 			} else {
-				gShowFavoritesMapForIOS = targetDBID.isFavoritesDB
-
 				if  gDatabaseID != targetDBID {
 					gDatabaseID  = targetDBID
 
@@ -2190,7 +2187,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// TRAVEL TO A DIFFERENT MAP //
 					// ///////////////////////// //
 
-					target.expandGrabAndFocusOn()
+					target.expandAndGrab()
 					gFocusing.focusOnGrab(.eSelected) {
 						complete(gHere, .spRelayout)
 					}
@@ -2216,10 +2213,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 
 					if  there != nil {
-						there?.expandGrabAndFocusOn()
+						there?.expandAndGrab()
 					} else if !gRecords.databaseID.isFavoritesDB, // favorites map has no lookup???
 							  let here = gRecords.maybeZoneForRecordName(targetRecordName) {
-						here.expandGrabAndFocusOn()
+						here.expandAndGrab()
 					} // else ignore: favorites id with an unresolvable bookmark target
 
 					complete(gHereMaybe, .spRelayout)
@@ -2250,7 +2247,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gControllers.swapMapAndEssay(force: .wMapMode)
 				}
 
-				focusOnBookmarkTarget() { object, kind in
+				focusOnBookmarkTarget() { (object, kind) in
 					#if os(iOS)
 					gActionsController.alignView()
 					#endif
@@ -3015,8 +3012,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func createIdeaFromSelectedText(_ asNewParent: Bool) {
-		if  let newName  = widget?.textWidget?.extractTitleOrSelectedText() {
+	func createIdeaFromSelectedText() {
+		if  let newName  = textWidget?.extractTitleOrSelectedText() {
 
 			gTextEditor.stopCurrentEdit()
 
@@ -3024,19 +3021,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				combineIntoParent()
 			} else {
 				gDeferRedraw {
-					if  asNewParent {
-						parentZone?.addNextAndRedraw(containing: true) { iChild in
-							iChild.zoneName = newName
-						}
-					} else {
-						addIdea(at: gListsGrowDown ? nil : 0, with: newName) { [self] iChild in
-							gDeferringRedraw = false
+					addIdea(at: gListsGrowDown ? nil : 0, with: newName) { [self] iChild in
+						gDeferringRedraw = false
 
-							if  let child = iChild {
-								expand()
-								gRelayoutMaps(for: self) {
-									child.editAndSelect()
-								}
+						if  let child = iChild {
+							expand()
+							gRelayoutMaps(for: self) {
+								child.editAndSelect()
 							}
 						}
 					}
@@ -3058,12 +3049,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			gDeferRedraw {
 				moveZone(to: gTrash)
+			}
 
-				gDeferringRedraw = false
-
-				gRelayoutMaps(for: parent) {
-					parent.editAndSelect(range: range)
-				}
+			gRelayoutMaps(for: parent) {
+				parent.editAndSelect(range: range)
 			}
 		}
 	}
@@ -3330,6 +3319,40 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gRemoteStorage.zRecords(for: databaseID)?.updateMaxLevel(with: level)
 	}
 
+	func zonesMatching(_ type: ZWorkingListType) -> ZoneArray {
+		let progeny = type.contains(.wProgeny)
+		let  groups = type.contains(.wGroups)
+		let     all = type.contains(.wAll)
+		var  result = ZoneArray()
+
+		traverseAllProgeny { zone in
+			let   notSelf = zone != self                 // ignore root of traversal
+			let markMatch = zone.bookmarksMatching(type)
+			let qualifies = all ||
+				(!groups && (!progeny ||  notSelf) && markMatch) ||
+			(notSelf && ( progeny || markMatch ||   (groups && (zone.count > 0))))
+
+			if  qualifies {
+				result.prependUnique(item: zone) { (a, b) in
+					if  let    aZone = a as? Zone,
+						let    bZone = b as? Zone {
+						return aZone.hasSameTarget(as:bZone)
+					}
+
+					return false
+				}
+			}
+		}
+
+		return result
+	}
+
+	func bookmarksMatching(_ type: ZWorkingListType) -> Bool {
+		guard let target = bookmarkTarget else { return false }
+
+		return type.contains(.wBookmarks) || (type.contains(.wNotemarks) && target.hasNote)
+	}
+
 	// MARK: - dots
 	// MARK: -
 
@@ -3538,7 +3561,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			zoneName  = t
 
 			gTextEditor.updateText(inZone: self, isEditing: true)
-			widget?.textWidget?.updateGUI()
+			textWidget?.updateGUI()
 			editAndSelect(range: r)
 
 			return true
@@ -3548,7 +3571,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func convertToFromLine() -> Bool {
-		if  var childName = widget?.textWidget?.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
+		if  var childName = textWidget?.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
 			var location = 12
 
 			if      childName == zoneName {
@@ -3578,7 +3601,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func convertFromLineWithTitle() {
-		if  let childName = widget?.textWidget?.extractedTitle {
+		if  let childName = textWidget?.extractedTitle {
 			zoneName  = childName
 			colorized = !colorized // WTF?
 		}
@@ -3840,38 +3863,5 @@ struct ZWorkingListType: OptionSet {
 	static let   wProgeny = ZWorkingListType(rawValue: 1 << 2)
 	static let    wGroups = ZWorkingListType(rawValue: 1 << 3)
 	static let       wAll = ZWorkingListType(rawValue: 1 << 4)
-
-	func matchingZones(within zone: Zone) -> ZoneArray {
-		let progeny = contains(.wProgeny)
-		let  groups = contains(.wGroups)
-		let     all = contains(.wAll)
-		var  result = ZoneArray()
-
-		zone.traverseAllProgeny { iZone in
-			let    notSelf = zone != iZone // ignore root of traversal
-			let isBookmark = matchesTypeOfBookmark(for: iZone)
-
-			if  all ||
-					!groups && (!progeny || notSelf) && isBookmark ||
-					notSelf && ( progeny || isBookmark || (groups  && (iZone.count > 0))) {
-				result.prependUnique(item: iZone) { (a, b) in
-					if  let aZone = a as? Zone,
-						let bZone = b as? Zone {
-						return aZone.hasSameTarget(as:bZone)
-					}
-
-					return false
-				}
-			}
-		}
-
-		return result
-	}
-
-	func matchesTypeOfBookmark(for zone: Zone) -> Bool {
-		guard let target = zone.bookmarkTarget else { return false }
-
-		return contains(.wBookmarks) || (contains(.wNotemarks) && target.hasNote)
-	}
 
 }

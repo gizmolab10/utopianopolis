@@ -42,6 +42,7 @@ var                gIsEditing :                Bool { return gIsEditIdeaMode || 
 var            gIsHelpVisible :                Bool { return gHelpWindow?.isVisible ?? false }
 var          gIsHelpFrontmost :                Bool { return gHelpWindow?.isKeyWindow ?? false }
 var         gGrabbedCanTravel :                Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
+var        gIsCDMigrationDone :                Bool { return gCDMigrationState == .normal }
 var       gBrowsingIsConfined :                Bool { return gConfinementMode == .list }
 var            gListsGrowDown :                Bool { return gListGrowthMode  == .down }
 var           gDuplicateEvent :                Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
@@ -311,26 +312,9 @@ var gShowToolTips : Bool {
 	set { setPreferencesBool(newValue, for: kShowToolTips) }
 }
 
-enum ZStartupLevel: Int {
-	case firstStartup
-	case localOkay
-	case pleaseWait
-	case pleaseEnableDrive
-}
-
-var gStartupLevel : ZStartupLevel {
-	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel))! }
-	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
-}
-
 var gStartupCount : Int {
 	get { return getPreferencesInt(for: kStartupCount, defaultInt: 0) }
 	set { setPreferencesInt(newValue, for: kStartupCount) }
-}
-
-var gEssayTitleMode : ZEssayTitleMode {
-	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sFull.rawValue))! }
-	set { setPreferencesInt(newValue.rawValue, for: kEssayTitleMode) }
 }
 
 var gHereRecordNames: String {
@@ -348,6 +332,11 @@ var gUserRecordName: String? {    // persist for file read on launch
     set { setPreferencesString(newValue, for: kUserRecordName) }
 }
 
+var gWindowRect: CGRect {
+	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
+	set { setPreferencesRect(newValue, for: kWindowRectKey) }
+}
+
 var gAccentColor: ZColor {
 	get { return !gColorfulMode ? gIsDark ? kDarkerGrayColor : kLighterGrayColor : getPreferencesColor( for: kAccentColorKey, defaultColor: ZColor(red: 241.0/256.0, green: 227.0/256.0, blue: 206.0/256.0, alpha: 1.0)) }
 	set { setPreferencesColor(newValue, for: kAccentColorKey) }
@@ -356,6 +345,23 @@ var gAccentColor: ZColor {
 var gActiveColor: ZColor {
 	get { return !gColorfulMode ? kGrayColor : getPreferencesColor( for: kActiveColorKey, defaultColor: ZColor.purple.darker(by: 1.5)) }
 	set { setPreferencesColor(newValue, for: kActiveColorKey) }
+}
+
+var gEssayTitleMode : ZEssayTitleMode {
+	get { return ZEssayTitleMode(rawValue: getPreferencesInt(for: kEssayTitleMode, defaultInt: ZEssayTitleMode.sFull.rawValue))! }
+	set { setPreferencesInt(newValue.rawValue, for: kEssayTitleMode) }
+}
+
+enum ZStartupLevel: Int {
+	case firstStartup
+	case localOkay
+	case pleaseWait
+	case pleaseEnableDrive
+}
+
+var gStartupLevel : ZStartupLevel {
+	get { return  ZStartupLevel(rawValue: getPreferencesInt(for: kStartupLevel, defaultInt: kFirstTimeStartupLevel))! }
+	set { setPreferencesInt(newValue.rawValue, for: kStartupLevel) }
 }
 
 struct ZFilterOption: OptionSet {
@@ -395,43 +401,6 @@ var gSearchScope: ZSearchScope {
 	set { setPreferencesInt(newValue.rawValue, for: kSearchScope) }
 }
 
-var gWindowRect: CGRect {
-	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
-	set { setPreferencesRect(newValue, for: kWindowRectKey) }
-}
-
-var gEmailTypesSent: String {
-    get {
-        let pref = getPreferenceString(for: kEmailTypesSent) ?? kEmpty
-        let sent = gUser?.sentEmailType ?? pref
-        
-        setPreferencesString(sent, for: kEmailTypesSent)
-        gUser?.sentEmailType = sent
-        
-        return sent
-    }
-    
-    set {
-        setPreferencesString(newValue, for: kEmailTypesSent)
-        gUser?.sentEmailType = newValue
-    }
-}
-
-var gMapRotationAngle : CGFloat {
-	get {
-		let  angle = CGFloat.zero
-		let string = getPreferenceString(for: kMapRotationAngle) { return angle.stringTo(precision: 2) }
-
-		return string?.floatValue ?? angle
-	}
-
-	set {
-		let string = newValue.description
-
-		setPreferencesString(string, for: kMapRotationAngle)
-	}
-}
-
 var gMapOffset: CGPoint {
 	get {
 		let  point = CGPoint.zero
@@ -444,39 +413,6 @@ var gMapOffset: CGPoint {
 		let string = NSStringFromPoint(newValue)
 		
 		setPreferencesString(string, for: kMapOffsetKey)
-	}
-}
-
-enum ZConfinementMode: String {
-	case list = "List"
-	case all  = "All"
-
-	var next: ZConfinementMode {
-		switch self {
-			case .list: return .all
-			default:    return .list
-		}
-	}
-}
-
-var gConfinementMode: ZConfinementMode {
-	get {
-		let value  = UserDefaults.standard.object(forKey: kConfinementMode) as? String
-		var mode   = ZConfinementMode.list
-
-		if  value != nil {
-			mode   = ZConfinementMode(rawValue: value!)!
-		} else {
-			UserDefaults.standard.set(mode.rawValue, forKey:kConfinementMode)
-			UserDefaults.standard.synchronize()
-		}
-
-		return mode
-	}
-
-	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kConfinementMode)
-		UserDefaults.standard.synchronize()
 	}
 }
 
@@ -497,56 +433,6 @@ var gCountsMode: ZCountsMode {
 	
 	set {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kCountsMode)
-		UserDefaults.standard.synchronize()
-	}
-}
-
-struct ZCirclesDisplayMode: OptionSet {
-	let rawValue : Int
-
-	init(rawValue: Int) { self.rawValue = rawValue }
-
-	static let cIdeas = ZCirclesDisplayMode(rawValue: 0x0001)
-	static let cRings = ZCirclesDisplayMode(rawValue: 0x0002)
-
-	static func createFrom(_ set: IndexSet) -> ZCirclesDisplayMode {
-		var mode = ZCirclesDisplayMode()
-
-		if  set.contains(0) {
-			mode.insert(.cIdeas)
-		}
-
-		if  set.contains(1) {
-			mode.insert(.cRings)
-		}
-
-		return mode
-	}
-
-	var indexSet: IndexSet {
-		var set = IndexSet()
-
-		if  contains(.cIdeas) {
-			set.insert(0)
-		}
-
-		if  contains(.cRings) {
-			set.insert(1)
-		}
-
-		return set
-	}
-
-}
-
-var gCirclesDisplayMode: ZCirclesDisplayMode {
-	get {
-		let value = UserDefaults.standard.object(    forKey: kCirclesDisplayMode) as? Int ?? 0
-
-		return ZCirclesDisplayMode(rawValue: value)
-	}
-	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey: kCirclesDisplayMode)
 		UserDefaults.standard.synchronize()
 	}
 }
@@ -652,42 +538,6 @@ var gBaseFontSize: CGFloat {
 	}
 }
 
-enum ZListGrowthMode: String {
-	case down = "Down"
-	case up   = "Up"
-
-	var next: ZListGrowthMode {
-		switch self {
-			case .down: return .up
-			default:    return .down
-		}
-	}
-}
-
-var gListGrowthMode: ZListGrowthMode {
-	get {
-		var mode: ZListGrowthMode?
-		
-		if let object = UserDefaults.standard.object(forKey:kListGrowthMode) {
-			mode      = ZListGrowthMode(rawValue: object as! String)
-		}
-		
-		if  mode == nil {
-			mode      = .down
-			
-			UserDefaults.standard.set(mode!.rawValue, forKey:kListGrowthMode)
-			UserDefaults.standard.synchronize()
-		}
-		
-		return mode!
-	}
-	
-	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kListGrowthMode)
-		UserDefaults.standard.synchronize()
-	}
-}
-
 var gDatabaseID: ZDatabaseID {
 	get {
 		var dbID: ZDatabaseID?
@@ -711,6 +561,91 @@ var gDatabaseID: ZDatabaseID {
 		UserDefaults.standard.synchronize()
 	}
 }
+
+// MARK: - growth (direction & confinement)
+// MARK: -
+
+enum ZConfinementMode: String {
+	case list = "List"
+	case all  = "All"
+
+	var next: ZConfinementMode {
+		switch self {
+			case .list: return .all
+			default:    return .list
+		}
+	}
+}
+
+var gConfinementMode: ZConfinementMode {
+	get {
+		let value  = UserDefaults.standard.object(forKey: kConfinementMode) as? String
+		var mode   = ZConfinementMode.list
+
+		if  value != nil {
+			mode   = ZConfinementMode(rawValue: value!)!
+		} else {
+			UserDefaults.standard.set(mode.rawValue, forKey:kConfinementMode)
+			UserDefaults.standard.synchronize()
+		}
+
+		return mode
+	}
+
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kConfinementMode)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+enum ZListGrowthMode: String {
+	case down = "Down"
+	case up   = "Up"
+
+	var next: ZListGrowthMode {
+		switch self {
+			case .down: return .up
+			default:    return .down
+		}
+	}
+}
+
+var gListGrowthMode: ZListGrowthMode {
+	get {
+		var mode: ZListGrowthMode?
+
+		if let object = UserDefaults.standard.object(forKey:kListGrowthMode) {
+			mode      = ZListGrowthMode(rawValue: object as! String)
+		}
+
+		if  mode == nil {
+			mode      = .down
+
+			UserDefaults.standard.set(mode!.rawValue, forKey:kListGrowthMode)
+			UserDefaults.standard.synchronize()
+		}
+
+		return mode!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kListGrowthMode)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+@discardableResult func toggleGrowthAndConfinementModes(changesDirection: Bool) -> Bool {
+	if  changesDirection {
+		gListGrowthMode  = gListsGrowDown      ? .up  : .down
+	} else {
+		gConfinementMode = gBrowsingIsConfined ? .all : .list
+	}
+
+	return true
+}
+
+// MARK: - details
+// MARK: -
 
 var gHiddenDetailViewIDs: ZDetailsViewID {
 	get {
@@ -736,56 +671,9 @@ var gHiddenDetailViewIDs: ZDetailsViewID {
 	}
 }
 
-#if os(iOS)
-var gCurrentFunction : ZFunction {
-	get {
-		var function: ZFunction?
-		
-		if  let object = UserDefaults.standard.object(forKey:kActionFunction) {
-			function   = ZFunction(rawValue: object as! String)
-		}
-		
-		if  function  == nil {
-			function   = .eTop
-			
-			UserDefaults.standard.set(function!.rawValue, forKey:kActionFunction)
-			UserDefaults.standard.synchronize()
-		}
-		
-		return function!
-	}
-	
-	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kActionFunction)
-		UserDefaults.standard.synchronize()
-	}
+func gDetailsViewIsVisible(for id: ZDetailsViewID) -> Bool {
+	return gShowDetailsView && (gDetailsController?.viewIsVisible(for: id) ?? false)
 }
-
-var gCurrentMapFunction : ZFunction {
-	get {
-		var function: ZFunction?
-		
-		if  let object = UserDefaults.standard.object(forKey:kCurrentMap) {
-			function   = ZFunction(rawValue: object as! String)
-		}
-		
-		if  function  == nil {
-			function   = .eMe
-			
-			UserDefaults.standard.set(function!.rawValue, forKey:kActionFunction)
-			UserDefaults.standard.synchronize()
-		}
-		
-		return function!
-	}
-
-	set {
-		UserDefaults.standard.set(newValue.rawValue, forKey:kCurrentMap)
-		UserDefaults.standard.synchronize()
-	}
-}
-
-#endif
 
 enum ZWorkMode: String {
 	case wEditIdeaMode = "e"
@@ -844,6 +732,74 @@ func gRefreshCurrentEssay() {
 	}
 }
 
+// MARK: - starburst
+// MARK: -
+
+var gMapRotationAngle : CGFloat {
+	get {
+		let  angle = CGFloat.zero
+		let string = getPreferenceString(for: kMapRotationAngle) { return angle.stringTo(precision: 2) }
+
+		return string?.floatValue ?? angle
+	}
+
+	set {
+		let string = newValue.description
+
+		setPreferencesString(string, for: kMapRotationAngle)
+	}
+}
+
+struct ZCirclesDisplayMode: OptionSet {
+	let rawValue : Int
+
+	init(rawValue: Int) { self.rawValue = rawValue }
+
+	static let cIdeas = ZCirclesDisplayMode(rawValue: 0x0001)
+	static let cRings = ZCirclesDisplayMode(rawValue: 0x0002)
+
+	static func createFrom(_ set: IndexSet) -> ZCirclesDisplayMode {
+		var mode = ZCirclesDisplayMode()
+
+		if  set.contains(0) {
+			mode.insert(.cIdeas)
+		}
+
+		if  set.contains(1) {
+			mode.insert(.cRings)
+		}
+
+		return mode
+	}
+
+	var indexSet: IndexSet {
+		var set = IndexSet()
+
+		if  contains(.cIdeas) {
+			set.insert(0)
+		}
+
+		if  contains(.cRings) {
+			set.insert(1)
+		}
+
+		return set
+	}
+
+}
+
+var gCirclesDisplayMode: ZCirclesDisplayMode {
+	get {
+		let value = UserDefaults.standard.object(    forKey: kCirclesDisplayMode) as? Int ?? 0
+
+		return ZCirclesDisplayMode(rawValue: value)
+	}
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey: kCirclesDisplayMode)
+		UserDefaults.standard.synchronize()
+	}
+}
+
 // MARK: - actions
 // MARK: -
 
@@ -888,21 +844,75 @@ func gThrowOnUserActivity() throws {
 	}
 }
 
-// MARK: - other
-// MARK: -
+#if os(iOS)
+var gCurrentFunction : ZFunction {
+	get {
+		var function: ZFunction?
 
-func gDetailsViewIsVisible(for id: ZDetailsViewID) -> Bool {
-	return gShowDetailsView && (gDetailsController?.viewIsVisible(for: id) ?? false)
-}
+		if  let object = UserDefaults.standard.object(forKey:kActionFunction) {
+			function   = ZFunction(rawValue: object as! String)
+		}
 
-@discardableResult func toggleGrowthAndConfinementModes(changesDirection: Bool) -> Bool {
-	if  changesDirection {
-		gListGrowthMode  = gListsGrowDown      ? .up  : .down
-	} else {
-		gConfinementMode = gBrowsingIsConfined ? .all : .list
+		if  function  == nil {
+			function   = .eTop
+
+			UserDefaults.standard.set(function!.rawValue, forKey:kActionFunction)
+			UserDefaults.standard.synchronize()
+		}
+
+		return function!
 	}
 
-	return true
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kActionFunction)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+var gCurrentMapFunction : ZFunction {
+	get {
+		var function: ZFunction?
+
+		if  let object = UserDefaults.standard.object(forKey:kCurrentMap) {
+			function   = ZFunction(rawValue: object as! String)
+		}
+
+		if  function  == nil {
+			function   = .eMe
+
+			UserDefaults.standard.set(function!.rawValue, forKey:kActionFunction)
+			UserDefaults.standard.synchronize()
+		}
+
+		return function!
+	}
+
+	set {
+		UserDefaults.standard.set(newValue.rawValue, forKey:kCurrentMap)
+		UserDefaults.standard.synchronize()
+	}
+}
+
+#endif
+
+// MARK: - email
+// MARK: -
+
+var gEmailTypesSent: String {
+	get {
+		let pref = getPreferenceString(for: kEmailTypesSent) ?? kEmpty
+		let sent = gUser?.sentEmailType ?? pref
+
+		setPreferencesString(sent, for: kEmailTypesSent)
+		gUser?.sentEmailType = sent
+
+		return sent
+	}
+
+	set {
+		setPreferencesString(newValue, for: kEmailTypesSent)
+		gUser?.sentEmailType = newValue
+	}
 }
 
 func emailSent(for type: ZSentEmailType) -> Bool {

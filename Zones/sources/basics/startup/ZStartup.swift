@@ -26,16 +26,17 @@ class ZStartup: NSObject {
 		gCoreDataMode = []
 //		gPrintModes  .insert(.dTime)
 //		gCoreDataMode.insert(.dTesting)
-//		gCoreDataMode.insert(.dNoCloudKit)
+		gCoreDataMode.insert(.dNoCloudKit)
 		gDebugModes  .insert(.dNoSubscriptions)
 		gDebugModes  .insert(.dHideNoteVisibility)
 
-		gCoreDataStack.migrateToLatest()
+		gCoreDataStack.assureMigrationToLatest()
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gWorkMode              = .wStartupMode
-		if  gCDMigrationState != .normal {
+
+		if !gIsCDMigrationDone {
 			gHereRecordNames   = kDefaultRecordNames
 		}
 
@@ -53,9 +54,9 @@ class ZStartup: NSObject {
 		gEvents.controllerSetup(with: nil)
 
 		gBatches.startUp { iSame in
-			FOREGROUND { [self] in
-				gRefusesFirstResponder = false
+			FOREGROUND {
 				gHasFinishedStartup    = true
+				gRefusesFirstResponder = false    // user input is now safe
 				gCurrentHelpMode       = .proMode // so prepare strings will work correctly for all help modes
 
 				if  gIsStartupMode {
@@ -74,7 +75,7 @@ class ZStartup: NSObject {
 				gHereMaybe?.grab()
 
 				FOREGROUND(after: 0.1) { [self] in
-					if  gCDMigrationState != .normal {
+					if !gIsCDMigrationDone {
 						gSaveContext()
 					}
 
