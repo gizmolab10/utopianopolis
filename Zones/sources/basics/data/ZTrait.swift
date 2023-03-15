@@ -166,12 +166,12 @@ class ZTrait: ZTraitAssets {
 	// MARK: - initialize
 	// MARK: -
 
-	static func uniqueTrait(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZTrait {
-		let result = uniqueTrait(recordName: dict.recordName, in: dbID)
+	static func uniqueTrait(from dict: ZStorageDictionary, in databaseID: ZDatabaseID) -> ZTrait {
+		let result = uniqueTrait(recordName: dict.recordName, in: databaseID)
 
 		result.temporarilyIgnoreNeeds {
 			do {
-				try result.extractFromStorageDictionary(dict, of: kTraitType, into: dbID)
+				try result.extractFromStorageDictionary(dict, of: kTraitType, into: databaseID)
 			} catch {
 				printDebug(.dError, "\(error)")    // de-serialization
 			}
@@ -180,7 +180,7 @@ class ZTrait: ZTraitAssets {
 		return result
 	}
 
-	func deepCopy(dbID: ZDatabaseID) -> ZTrait {
+	func deepCopy(into dbID: ZDatabaseID) -> ZTrait {
 		let theCopy = ZTrait.uniqueTrait(recordName: gUniqueRecordName, in: dbID)
 
 		copyInto(theCopy)
@@ -188,8 +188,8 @@ class ZTrait: ZTraitAssets {
 		return theCopy
 	}
 
-	static func uniqueTrait(recordName: String?, in dbID: ZDatabaseID) -> ZTrait {
-		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: dbID) as! ZTrait
+	static func uniqueTrait(recordName: String?, in databaseID: ZDatabaseID) -> ZTrait {
+		return uniqueZRecord(entityName: kTraitType, recordName: recordName, in: databaseID) as! ZTrait
 	}
 
 	// MARK: - owner

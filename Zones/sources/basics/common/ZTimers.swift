@@ -89,13 +89,25 @@ class ZTimers: NSObject {
 	}
 
 	func startTimer(for timerID: ZTimerID?) {
-		if  let     tid = timerID {
+		if  let             tid = timerID {
+			var         waitFor = 1.0                                                                                  // one second
+			var block : Closure = {}                                                                                   // do nothing by default
+			let   requiresFront = [.tStartup, .tLicense, .tRecount, .tCloudAvailable]                  .contains(tid)  // timers not triggered when app is hidden
+			let         repeats = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tPersist].contains(tid)  // timers that repeat forever
 
-			// //
-			// interval of time before firing, also between repeats
-			// //
+			// ////////////////////////////////// //
+			// abandon timers for unused features //
+			// ////////////////////////////////// //
 
-			var waitFor = 1.0                   // one second
+			switch tid {
+				case .tLicense:        if  gNoSubscriptions { return }
+				case .tCloudAvailable: if !gIsUsingCloudKit { return }
+				default: break
+			}
+
+			// //////////////////////////////////////////////////// //
+			// interval of time before firing, also between repeats //
+			// //////////////////////////////////////////////////// //
 
 			switch tid {
 				case .tKey,     .tPersist:   waitFor =  5.0              // five seconds
@@ -104,22 +116,9 @@ class ZTimers: NSObject {
 				default:                     break
 			}
 
-			// //
-			// some timers should not be triggered when app is hidden (the default)
-			// //
-
-			var requiresFront = false
-
-			switch tid {
-				case .tStartup, .tLicense, .tRecount, .tCloudAvailable: requiresFront = true
-				default: break
-			}
-
-			// //
-			// associate closure with timer id
-			// //
-
-			var block : Closure = {}          // do nothing by default
+			// ////////////////////////////////////// //
+			// associate each timer id with a closure //
+			// ////////////////////////////////////// //
 
 			switch tid {
 				case .tKey:                     block = { gCurrentKeyPressed        = nil }
@@ -127,24 +126,21 @@ class ZTimers: NSObject {
 				case .tMouseLocation:           block = { gCurrentMouseDownLocation = nil }
 				case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
 				case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
+				case .tCloudAvailable:          block = { gBatches.cloudFire() }
 				case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }
 				case .tStartup:                 block = { gStartupController?.startupUpdate() }
-				case .tCloudAvailable:          block = { gBatches.cloudFire() }
 				case .tRecount:                 block = { gRecountMaybe() }
 				case .tHover:                   block = { gUpdateHover() }
 				case .tPersist:                 block = { gSaveContext() }
 				default:                        break
 			}
 
-			// //
-			// create the timer. while it fires, set the current timer id
-			// //
-
-			let repeaters: [ZTimerID] = [.tCoreDataDeferral, .tCloudAvailable, .tRecount, .tHover, .tPersist]  // only these tasks repeat (forever)
-			let repeats               = repeaters.contains(tid)
+			// ////////////////////////////////////////////////////////// //
+			// create the timer. while it fires, set the current timer id //
+			// ////////////////////////////////////////////////////////// //
 
 			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, requiresFront: requiresFront) {
-				gCurrentTimerID       = timerID      // this is for cloudStatusLabel, in data details
+				gCurrentTimerID     = timerID      // this is for cloudStatusLabel, during closure
 
 				block()
 

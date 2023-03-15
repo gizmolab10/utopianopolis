@@ -44,8 +44,8 @@ class ZFiles: NSObject {
 	lazy var totalFilesSize : Int = {
 		var result = 0
 
-		for dbID in kAllDatabaseIDs {
-			result += fileSizeFor(dbID)
+		for databaseID in kAllDatabaseIDs {
+			result += fileSizeFor(databaseID)
 		}
 
 		return result
@@ -93,8 +93,8 @@ class ZFiles: NSObject {
 	}
 
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
-        if  let  dbID = iDatabaseID,
-            let index = dbID.index {
+        if  let  databaseID = iDatabaseID,
+            let index = databaseID.index {
             return isReading[index]
         }
 
@@ -104,9 +104,9 @@ class ZFiles: NSObject {
 	func writeToFile(from databaseID: ZDatabaseID?) throws {
 		if  gWriteFiles,
 			gIsCDMigrationDone,
-			let     dbID = databaseID,
-			dbID        != .favoritesID,
-			let    index = dbID.index,
+			let     databaseID = databaseID,
+			databaseID        != .favoritesID,
+			let    index = databaseID.index,
 			let  dbIndex = ZDatabaseIndex(rawValue: index) {
 			let path = filePath(for: dbIndex)
 			try writeFile(at: path, from: databaseID)
@@ -213,9 +213,9 @@ class ZFiles: NSObject {
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  gHasFinishedStartup, // guarantee that file read finishes before this code runs
-			let           dbID = databaseID,
-			dbID              != .favoritesID,
-			let          cloud = gRemoteStorage.zRecords(for: dbID) {
+			let           databaseID = databaseID,
+			databaseID              != .favoritesID,
+			let          cloud = gRemoteStorage.zRecords(for: databaseID) {
 			var           dict = ZStorageDictionary ()
 
 			do {
@@ -225,27 +225,27 @@ class ZFiles: NSObject {
 				// take snapshots just before exit from method //
 				// //////////////////////////////////////////////
 
-				if  let     map  = try cloud.rootZone?.createStorageDictionary(for: dbID)  {
+				if  let     map  = try cloud.rootZone?.createStorageDictionary(for: databaseID)  {
 					dict[.graph] = map as NSObject
 				}
 
-				if  let   trash  = try cloud.trashZone?.createStorageDictionary(for: dbID) {
+				if  let   trash  = try cloud.trashZone?.createStorageDictionary(for: databaseID) {
 					dict[.trash] = trash as NSObject
 				}
 
-				if  let   destroy  = try cloud.destroyZone?.createStorageDictionary(for: dbID) {
+				if  let   destroy  = try cloud.destroyZone?.createStorageDictionary(for: databaseID) {
 					dict[.destroy] = destroy as NSObject
 				}
 
-				if  let   manifest  = try cloud.manifest?.createStorageDictionary(for: dbID) {
+				if  let   manifest  = try cloud.manifest?.createStorageDictionary(for: databaseID) {
 					dict[.manifest] = manifest as NSObject
 				}
 
-				if  let   lost  = try cloud.lostAndFoundZone?.createStorageDictionary(for: dbID) {
+				if  let   lost  = try cloud.lostAndFoundZone?.createStorageDictionary(for: databaseID) {
 					dict[.lost] = lost as NSObject
 				}
 
-				if                 dbID == .mineID {
+				if                 databaseID == .mineID {
 					if  let   favorites  = try gFavoritesRoot?.createStorageDictionary(for: .mineID) {
 						dict[.favorites] = favorites as NSObject
 					}
@@ -446,10 +446,10 @@ class ZFiles: NSObject {
 	}
 
     func fileName(for index: ZDatabaseIndex, isGeneric: Bool = true) -> String? {
-        if  let dbID = index.databaseID {
-            var name = dbID.rawValue
+        if  let databaseID = index.databaseID {
+            var name = databaseID.rawValue
 
-            if  dbID      == .mineID, !isGeneric,
+            if  databaseID      == .mineID, !isGeneric,
                 let userID = gUserRecordName {
                 name       = userID
             }

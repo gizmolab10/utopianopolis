@@ -171,18 +171,18 @@ class ZCloud: ZRecords {
 		var   rootIDs: [ZRootID] = [.rootID, .trashID, .lostID, .destroyID]
 
 		if  databaseID == .mineID {
-			rootIDs.append(contentsOf: [.favoritesID]) // , .recentsID])
+			rootIDs.append(contentsOf: [.favoritesID])
 		}
 
-		createFor                = { [self] iIndex in
-            if  iIndex >= rootIDs.count {
+		createFor                = { [self] index in
+            if  index           >= rootIDs.count {
                 onCompletion?(op)
             } else {
-                let       rootID = rootIDs[iIndex]
+                let       rootID = rootIDs[index]
                 let   recordName = rootID.rawValue
 				let       isMine = databaseID == .mineID
                 var         name = databaseID.userReadableString + kSpace + recordName
-                let  recurseNext = { createFor?(iIndex + 1) }
+                let  recurseNext = { createFor?(index + 1) }
 
                 switch rootID {
 				case .favoritesID: if favoritesZone    != nil || !isMine { recurseNext(); return } else { name = kFavoritesRootName }
@@ -192,9 +192,8 @@ class ZCloud: ZRecords {
                 case .destroyID:   if destroyZone      != nil            { recurseNext(); return }
                 }
 
-				let root = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: databaseID)
-
-				if  rootID != .rootID {
+				let root              = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: databaseID)
+				if  rootID           != .rootID {
 					root.directAccess = .eProgenyWritable
 				}
 

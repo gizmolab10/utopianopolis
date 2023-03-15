@@ -91,7 +91,7 @@ class ZMapView: ZView {
 	}
 
 	override func draw(_ iDirtyRect: CGRect) {
-		if  iDirtyRect.hasZeroSize {
+		if  iDirtyRect.hasZeroSize || !gIsReadyToShowUI {
 			return
 		}
 

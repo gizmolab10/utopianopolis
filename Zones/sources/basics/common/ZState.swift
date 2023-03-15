@@ -540,20 +540,20 @@ var gBaseFontSize: CGFloat {
 
 var gDatabaseID: ZDatabaseID {
 	get {
-		var dbID: ZDatabaseID?
+		var databaseID: ZDatabaseID?
 		
-		if let object = UserDefaults.standard.object(forKey:kDatabaseID) {
-			dbID      = ZDatabaseID(rawValue: object as! String)
+		if let object   = UserDefaults.standard.object(forKey:kDatabaseID) {
+			databaseID  = ZDatabaseID(rawValue: object as! String)
 		}
-		
-		if  dbID     == nil {
-			dbID      = .everyoneID
+		  
+		if  databaseID   == nil {
+			databaseID  = .everyoneID
 			
-			UserDefaults.standard.set(dbID!.rawValue, forKey:kDatabaseID)
+			UserDefaults.standard.set(databaseID!.rawValue, forKey:kDatabaseID)
 			UserDefaults.standard.synchronize()
 		}
 		
-		return dbID!
+		return databaseID!
 	}
 	
 	set {

@@ -143,7 +143,7 @@ class ZDragging: NSObject {
 			let gesture = iGesture {
 
 			if  gesture.isOptionDown {
-				zone    = zone.deepCopy(dbID: .mineID) // option means drag a copy
+				zone    = zone.deepCopy(into: .mineID) // option means drag a copy
 			}
 
 			if  gesture.isShiftDown {

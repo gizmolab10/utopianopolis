@@ -73,8 +73,8 @@ class ZWidgets: NSObject {
     /// - Returns: ZoneWidget
 
 	func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
-        if  let zone = iZone {
-			let type = zone.widgetType
+        if  let     zone = iZone {
+			let     type = zone.widgetType
 			if  let dict = getZoneWidgetRegistry(for: type) {
 				return dict[zone.hash]
 			}

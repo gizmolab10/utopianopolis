@@ -134,7 +134,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	}
 
 	var doNotLayout: Bool {
-		return (kIsPhone && (isMainMap == gShowFavoritesMapForIOS)) || (isMainMap && gIsEditIdeaMode) || (isMainMap && gIsEssayMode)
+		return (kIsPhone && (isMainMap == gShowFavoritesMapForIOS)) || (isMainMap && (gIsEditIdeaMode || gIsEssayMode))
 	}
 
 	func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
@@ -154,35 +154,28 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 		printDebug(.dSpeed, "\(zClassName) createWidgets")
 
-		var specificIndex:    Int?
+		let type                   : ZRelayoutMapType = isMainMap ? .main : .favorites
+		var specificIndex          : Int?
 		let specificView           = mapPseudoView
 		var specificWidget         = hereWidget
-        var              recursing = true
-		let                   here = hereZone
-        specificWidget?.widgetZone = here
+        var atAllLevels            = true
+        specificWidget?.widgetZone = hereZone
 		gTextCapturing             = false
-        if  let               zone = iZone as? Zone,
-            let             widget = zone.widget,
+        if  let zone               = iZone as? Zone,
+            let widget             = zone.widget,
 			widget.widgetType     == zone.widgetType {
             specificWidget         = widget
             specificIndex          = zone.siblingIndex
-            recursing              = [.sData, .spRelayout].contains(kind)
+			atAllLevels            = [.sData, .spRelayout].contains(kind)
         }
 
-		let type : ZRelayoutMapType = isMainMap ? .main : .favorites
-
-		// //////////////////////////// //
-		// clear remnants of prior loop //
-		// //////////////////////////// //
-
-		mapView?.removeAllTextViews(ofType: type)
+		mapView?.removeAllTextViews(ofType: type)        // clear remnants of prior loop
 
 		// ////////////////////////// //
 		// create all new widget tree //
 		// ////////////////////////// //
 
-		let    total = specificWidget?.createChildPseudoViews(for: specificView, for: widgetType, atIndex: specificIndex, recursing: recursing, kind, visited: [])
-
+		let    total = specificWidget?.createPseudoViews(atAllLevels: atAllLevels, for: specificView, for: widgetType, atIndex: specificIndex, kind, visited: [])
 		if  let    r = hereWidget, (!isMainMap || gMapLayoutMode == .linearMode) {
 			let line = r.createLineFor(child: r)
 			rootLine = line

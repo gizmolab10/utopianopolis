@@ -15,8 +15,8 @@ var gFavoritesRoot : Zone? { return gFavorites.rootZone }
 var gFavoritesHere : Zone? { return gFavoritesHereMaybe ?? gFavoritesRoot }
 
 var gFavoritesHereMaybe: Zone? {
-	get { return gHereZoneForIDMaybe(       .favoritesID) }
-	set { gSetHereZoneForID(here: newValue, .favoritesID) }
+	get { let zone = gHereZoneForDatabaseIDMaybe(   .favoritesID); zone?.setRoot(gFavoritesRoot); return zone }
+	set { gSetHereZoneForDatabaseID(here: newValue, .favoritesID) }
 }
 
 class ZFavorites: ZRecords {
@@ -48,7 +48,7 @@ class ZFavorites: ZRecords {
 		return zone
 	}
 
-	func getRecentsGroup() -> Zone {
+	@discardableResult func getRecentsGroup() -> Zone {
 		guard let   zone = recentsMaybe else {
 			recentsMaybe = getOrSetupGroup(with: kRecentsName)
 
@@ -59,9 +59,11 @@ class ZFavorites: ZRecords {
 	}
 
 	func getOrSetupGroup(with name: String) -> Zone {
-		for zone in all {
-			if  zone.recordName == name {
-				return zone
+		if  let all = rootZone?.allProgeny {
+			for zone in all {
+				if  zone.recordName == name {
+					return zone
+				}
 			}
 		}
 
@@ -74,6 +76,8 @@ class ZFavorites: ZRecords {
 		group.directAccess = .eReadOnly
 
 		group.collapse()
+		group.register()
+		group.setRoot(gFavoritesRoot)
 		group.alterAttribute(.groupOwner, remove: false)
 		gFavoritesRoot?.addChildAndRespectOrder(group)
 
@@ -107,10 +111,10 @@ class ZFavorites: ZRecords {
 			updateAllFavorites() // setup roots group
 
 			if  gCDMigrationState == .firstTime {
-				hereZoneMaybe = getRootsGroup()
+				hereZoneMaybe = getRecentsGroup()
 			}
 
-			push(gHereZoneForIDMaybe(gDatabaseID))
+			push(gHereZoneForDatabaseIDMaybe(gDatabaseID))
 			rootZone?.concealAllProgeny()
 			hereZoneMaybe?.expand()
 			onCompletion?(0)
@@ -221,8 +225,7 @@ class ZFavorites: ZRecords {
 	}
 
 	func show(_ zone: Zone) {
-		let bookmarks = all.intersection(zone.bookmarksTargetingSelf)
-		if  bookmarks.count > 0,
+		if  let bookmarks = rootZone?.bookmarks.intersection(zone.bookmarksTargetingSelf), bookmarks.count > 0,
 			let parent = bookmarks[0].parentZone {
 			setHere(to: parent)
 		}
@@ -253,10 +256,12 @@ class ZFavorites: ZRecords {
 		// call every time favorites MIGHT be altered //
 		// /////////////////////////////////////////////
 
-		if  let      bookmarks = rootZone?.bookmarks {
+		if  let           root = rootZone {
+			let          zones = root.all
 			var hasDatabaseIDs = [ZDatabaseID] ()
 			var       discards = IndexPath()
 			var    testedSoFar = ZoneArray ()
+			var missingRecents = true
 			var missingDestroy = true
 			var   missingTrash = true
 			var    missingLost = true
@@ -266,60 +271,72 @@ class ZFavorites: ZRecords {
 			//   remove unfetched duplicates   //
 			// //////////////////////////////////
 
-			for bookmark in bookmarks {
-				var         hasDuplicate = false
-				if  let            link  = bookmark.zoneLink {     // always true: all bookmarks have a zone link
-					if             link == kTrashLink {
-						if  missingTrash {
-							missingTrash = false
-						} else {
-							hasDuplicate = true
-						}
-					} else if      link == kLostAndFoundLink {
-						if  missingLost {
-							missingLost  = false
-						} else {
-							hasDuplicate = true
-						}
-					} else if        link == kDestroyLink {
-						if  missingDestroy {
-							missingDestroy = false
-						} else {
-							hasDuplicate   = true
-						}
-					} else if let     dbID = bookmark.linkDatabaseID, bookmark.linkIsRoot,
-							  let        p = bookmark.parentZone, p == getRootsGroup() {
-						if !hasDatabaseIDs.contains(dbID) {
-							hasDatabaseIDs.append(dbID)
-						} else {
-							hasDuplicate   = true
-						}
-					} else {    // target is not a root -> don't bother adding to testedSoFar
-						continue
+			for zone in zones {
+				if  zone.databaseID != .favoritesID {
+					noop()
+				}
+
+				if !zone.isBookmark {
+					if  zone    .recordName == kRecentsName {
+						missingRecents       = false
 					}
+				} else {
+					let             bookmark = zone
+					var         hasDuplicate = false
 
-					// ///////////////////////////////////////
-					// mark to discard unfetched duplicates //
-					// ///////////////////////////////////////
+					if  let            link  = bookmark.zoneLink {     // always true: all bookmarks have a zone link
+						if             link == kTrashLink {
+							if  missingTrash {
+								missingTrash = false
+							} else {
+								hasDuplicate = true
+							}
+						} else if      link == kLostAndFoundLink {
+							if  missingLost {
+								missingLost  = false
+							} else {
+								hasDuplicate = true
+							}
+						} else if        link == kDestroyLink {
+							if  missingDestroy {
+								missingDestroy = false
+							} else {
+								hasDuplicate   = true
+							}
+						} else if let     databaseID = bookmark.linkDatabaseID, bookmark.linkIsRoot,
+								  let        p = bookmark.parentZone, p == getRootsGroup() {
+							if !hasDatabaseIDs.contains(databaseID) {
+								hasDatabaseIDs.append(databaseID)
+							} else {
+								hasDuplicate   = true
+							}
+						} else {    // target is not a root -> don't bother adding to testedSoFar
+							continue
+						}
 
-					if  hasDuplicate {
-						let isUnfetched: ZoneClosure = { [self] iZone in
-							if  let index = workingBookmarks.firstIndex(of: iZone) {
-								discards.append(index)
+						// ///////////////////////////////////////
+						// mark to discard unfetched duplicates //
+						// ///////////////////////////////////////
+
+						if  hasDuplicate {
+							let isUnfetched: ZoneClosure = { [self] iZone in
+								if  let index = workingBookmarks.firstIndex(of: iZone) {
+									discards.append(index)
+								}
+							}
+
+							for     duplicate in testedSoFar {
+								if  duplicate.bookmarkTarget == bookmark.bookmarkTarget {
+									isUnfetched(bookmark)
+									isUnfetched(duplicate)
+
+									break
+								}
 							}
 						}
 
-						for     duplicate in testedSoFar {
-							if  duplicate.bookmarkTarget == bookmark.bookmarkTarget {
-								isUnfetched(bookmark)
-								isUnfetched(duplicate)
-
-								break
-							}
-						}
+						testedSoFar.append(bookmark)
 					}
-
-					testedSoFar.append(bookmark)
 				}
 			}
 
@@ -336,9 +353,9 @@ class ZFavorites: ZRecords {
 				}
 			}
 
-			for dbID in kAllDatabaseIDs {
-				if !hasDatabaseIDs.contains(dbID) {
-					let          name = dbID.rawValue
+			for databaseID in kAllDatabaseIDs {
+				if !hasDatabaseIDs.contains(databaseID) {
+					let          name = databaseID.rawValue
 					let      bookmark = Zone.uniqueZone(recordName: name + kFavoritesSuffix, in: .mineID)
 					bookmark.zoneLink = name + kColonSeparator + kColonSeparator
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? name
@@ -356,9 +373,13 @@ class ZFavorites: ZRecords {
 				getRootsGroup().addChildAndUpdateOrder(bookmark)
 			}
 
-			// //////////////////////////////////////////////
-			// add missing trash + lost and found favorite //
-			// //////////////////////////////////////////////
+			// //////////////////// //
+			// add missing defaults //
+			// //////////////////// //
+
+			if  missingRecents {
+				getRecentsGroup()
+			}
 
 			if  missingTrash {
 				createRootsBookmark(named: kTrashName)

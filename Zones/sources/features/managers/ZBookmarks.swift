@@ -39,7 +39,7 @@ class ZBookmarks: NSObject {
 		var bookmark: Zone
 
 		if  target.isBookmark {
-			bookmark = target.deepCopy(dbID: .mineID)                               // zone  is a bookmark, pass a deep copy
+			bookmark = target.deepCopy(into: .mineID)                               // zone  is a bookmark, pass a deep copy
 		} else {
 			bookmark = Zone.uniqueZoneNamed(target.zoneName, databaseID: .mineID) // zone not a bookmark, bookmark it
 			bookmark.crossLink = target

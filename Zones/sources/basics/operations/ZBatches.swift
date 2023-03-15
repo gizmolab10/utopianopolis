@@ -299,15 +299,15 @@ class ZBatches: ZOnboarding {
         }
     }
 
-    override func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws {
+    override func invokeOperation(for operationID: ZOperationID, cloudCallback: AnyClosure?) throws {
         onCloudResponse = cloudCallback     // for retry cloud in tools controller
 
-		switch identifier {
-			case .oFavorites:                                                                      gFavorites.setup(cloudCallback)
-			case .oSavingLocalData:  gSaveContext();                                                                cloudCallback?(0)
-			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               cloudCallback?(0)
-			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                 onCompletion: cloudCallback)
-			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: identifier, cloudCallback: cloudCallback)
+		switch operationID {
+			case .oFavorites:                                                                       gFavorites.setup(cloudCallback)
+			case .oSavingLocalData:  gSaveContext();                                                                 cloudCallback?(0)
+			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                                cloudCallback?(0)
+			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                  onCompletion: cloudCallback)
+			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: operationID, cloudCallback: cloudCallback)
 		}
     }
 

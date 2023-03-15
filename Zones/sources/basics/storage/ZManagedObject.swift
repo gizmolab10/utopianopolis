@@ -39,20 +39,20 @@ extension ZManagedObject {
 		}
 	}
 
-	static func uniqueObject(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
+	static func uniqueObject(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZManagedObject {
 		if  let    name = recordName, gIsUsingCoreData, gIsCDMigrationDone {
-			let objects = gCoreDataStack.find(type: entityName, recordName: name, in: dbID, onlyOne: true)
+			let objects = gCoreDataStack.find(type: entityName, recordName: name, in: databaseID, onlyOne: true)
 
 			if  objects.count > 0 {
 				return objects[0]
 			}
 		}
 
-		return ZManagedObject(entityName: entityName, databaseID: dbID)
+		return ZManagedObject(entityName: entityName, databaseID: databaseID)
 	}
 
-	func isPublicRootDefault(recordName: String = kEmpty, into dbID: ZDatabaseID) -> Bool {
-		if  recordName == kRootName, dbID == .everyoneID,
+	func isPublicRootDefault(recordName: String = kEmpty, into databaseID: ZDatabaseID) -> Bool {
+		if  recordName == kRootName, databaseID == .everyoneID,
 			let zone = self as? Zone, zone.zoneName == kFirstIdeaTitle {
 			return true
 		}

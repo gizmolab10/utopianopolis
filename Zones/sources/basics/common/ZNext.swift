@@ -144,7 +144,7 @@ extension ZFavorites {
 			current   = push()
 		}
 		if  let  root = withinRecents ? getRecentsGroup() : amongNotes ? rootZone : hereZoneMaybe {
-			let zones = amongNotes    ? root.notemarks   : root.bookmarks
+			let zones = amongNotes    ? root.notemarks    : root.bookmarks
 			let count = zones.count
 			if  count > 1 {           // there is no next for count == 0 or 1
 				let    maxIndex = zones.count - (moveCurrent ? 2 : 1)

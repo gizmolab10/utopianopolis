@@ -19,12 +19,12 @@ var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
 
-func gSetHereZoneForID(here: Zone?, _ dbID: ZDatabaseID) {
-	gRemoteStorage.zRecords(for: dbID)?.hereZoneMaybe = here
+func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID) {
+	gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe = here
 }
 
-func gHereZoneForIDMaybe(_ dbID: ZDatabaseID) -> Zone? {
-	if  let    cloud = gRemoteStorage.zRecords(for: dbID) {
+func gHereZoneForDatabaseIDMaybe(_ databaseID: ZDatabaseID) -> Zone? {
+	if  let    cloud = gRemoteStorage.zRecords(for: databaseID) {
 		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
 	}
 
@@ -53,7 +53,7 @@ class ZRemoteStorage: NSObject {
     var        trashZone : Zone?       { return currentRecords.trashZone }
 	var         rootZone : Zone? { get { return currentRecords.rootZone } set { currentRecords.rootZone  = newValue } }
 
-	func cloud(for dbID: ZDatabaseID) -> ZCloud? { return zRecords(for: dbID) as? ZCloud }
+	func cloud(for databaseID: ZDatabaseID) -> ZCloud? { return zRecords(for: databaseID) as? ZCloud }
 	func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
 	func cancel()                                { currentCloud?.currentOperation?.cancel() }
 
@@ -61,7 +61,9 @@ class ZRemoteStorage: NSObject {
 		var total = ZoneArray()
 
 		for cloud in allClouds {
-			total.append(contentsOf: cloud.all)
+			if  let all = cloud.rootZone?.all {
+				total.append(contentsOf: all)
+			}
 		}
 
 		return total
@@ -69,8 +71,8 @@ class ZRemoteStorage: NSObject {
 
 	var count: Int {
 		var sum = 0
-		for dbID in kAllDatabaseIDs {
-			if let zRecords = zRecords(for: dbID) {
+		for databaseID in kAllDatabaseIDs {
+			if let zRecords = zRecords(for: databaseID) {
 				sum += zRecords.zRecordsLookup.count
 			}
 		}
@@ -116,8 +118,8 @@ class ZRemoteStorage: NSObject {
     var allClouds: [ZCloud] {
         var clouds = [ZCloud] ()
         
-        for dbID in kAllDatabaseIDs {
-            if  let cloud = zRecords(for: dbID) as? ZCloud {
+        for databaseID in kAllDatabaseIDs {
+            if  let cloud = zRecords(for: databaseID) as? ZCloud {
                 clouds.append(cloud)
             }
         }
@@ -128,8 +130,8 @@ class ZRemoteStorage: NSObject {
     var allRecordsArrays:  [ZRecords] {
         var recordsArray = [ZRecords] ()
         
-        for dbID in kAllDatabaseIDs {
-            if  let records = zRecords(for: dbID) {
+        for databaseID in kAllDatabaseIDs {
+            if  let records = zRecords(for: databaseID) {
                 recordsArray.append(records)
             }
         }
@@ -138,13 +140,13 @@ class ZRemoteStorage: NSObject {
     }
 
 	func updateAllManifestCounts() {
-		for dbID in kAllDatabaseIDs {
-			updateManifestCount(for: dbID)
+		for databaseID in kAllDatabaseIDs {
+			updateManifestCount(for: databaseID)
 		}
 	}
 
-	func updateManifestCount(for  dbID: ZDatabaseID) {
-		if  let r = zRecords(for: dbID) {
+	func updateManifestCount(for  databaseID: ZDatabaseID) {
+		if  let r = zRecords(for: databaseID) {
 		    let c = r.zRecordsCount
 			r.manifest?.count = NSNumber(value: c)
 		}
@@ -243,15 +245,15 @@ class ZRemoteStorage: NSObject {
 	}
 
     func zRecords(for iDatabaseID: ZDatabaseID?) -> ZRecords? {
-		let dbID          = iDatabaseID ?? gDatabaseID
-		var zRecords      = records[dbID]
-		if  zRecords     == nil {
-			switch dbID {
+		let databaseID = iDatabaseID ?? gDatabaseID
+		var zRecords   = records[databaseID]
+		if  zRecords  == nil {
+			switch databaseID {
 			case .favoritesID: zRecords = gFavorites
-			default:           zRecords = ZCloud(dbID)
+			default:           zRecords = ZCloud(databaseID)
 			}
 			
-			records[dbID] = zRecords
+			records[databaseID] = zRecords
 		}
 
         return zRecords
@@ -267,8 +269,8 @@ class ZRemoteStorage: NSObject {
     }
 
 
-    func pushDatabaseID(_ dbID: ZDatabaseID?) {
-		if  let d = dbID {
+    func pushDatabaseID(_ databaseID: ZDatabaseID?) {
+		if  let d = databaseID {
 			databaseIDStack.append(gDatabaseID)
 
 			gDatabaseID = d
@@ -278,8 +280,8 @@ class ZRemoteStorage: NSObject {
 
     func popDatabaseID() {
         if  databaseIDStack.count > 0,
-			let    dbID = databaseIDStack.popLast() {
-            gDatabaseID = dbID
+			let    databaseID = databaseIDStack.popLast() {
+            gDatabaseID = databaseID
         }
     }
 

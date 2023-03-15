@@ -1341,9 +1341,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	private func createNoteNamed(_ name: String?, in parent: Zone, atEnd: Bool = false) -> Zone? {
 		var      child : Zone?
 		if  let   text = name, text.length > 0 {
-			let   dbID = parent.databaseID
+			let   databaseID = parent.databaseID
 			let  index = atEnd ? parent.count : 0
-			child      = Zone.uniqueZoneNamed(text, databaseID: dbID)           // create new zone from text
+			child      = Zone.uniqueZoneNamed(text, databaseID: databaseID)           // create new zone from text
 
 			gCreateCombinedEssay = parent.zonesWithVisibleNotes.count > 0
 

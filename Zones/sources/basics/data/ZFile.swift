@@ -18,7 +18,7 @@ import UIKit
 struct ZFileDescriptor {
 	let name: String?
 	let type: String?
-	let dbID: ZDatabaseID?
+	let databaseID: ZDatabaseID?
 }
 
 @objc(ZFile)
@@ -41,11 +41,11 @@ class ZFile : ZRecord {
 	// MARK: - create
 	// MARK: -
 
-	static func uniqueFile(recordName: String?, in dbID: ZDatabaseID) -> ZFile {
-		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: dbID) as! ZFile
+	static func uniqueFile(recordName: String?, in databaseID: ZDatabaseID) -> ZFile {
+		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: databaseID) as! ZFile
 	}
 
-	static func assetExists(for descriptor: ZFileDescriptor, dbID: ZDatabaseID) -> ZFile? {
+	static func assetExists(for descriptor: ZFileDescriptor, databaseID: ZDatabaseID) -> ZFile? {
 		return gFilesRegistry.assetExists(for: descriptor) ?? gCoreDataStack.loadFile(for: descriptor)
 	}
 
@@ -55,8 +55,8 @@ class ZFile : ZRecord {
 			let data  = try Data(contentsOf: url)
 			let name  = url.deletingPathExtension().lastPathComponent
 			let type  = url.pathExtension
-			let desc  = ZFileDescriptor(name: name, type: type, dbID: databaseID)
-			var file  = assetExists(for: desc, dbID: databaseID)
+			let desc  = ZFileDescriptor(name: name, type: type, databaseID: databaseID)
+			var file  = assetExists(for: desc, databaseID: databaseID)
 			if  file == nil {
 				file  = ZFile.uniqueFile(recordName: nil, in: databaseID)
 				file! .name = name

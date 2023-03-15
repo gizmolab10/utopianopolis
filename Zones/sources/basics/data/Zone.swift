@@ -46,7 +46,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                            manifest :          ZManifest? { return zRecords?.manifest }
 	var                                              widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                                          textWidget :     ZoneTextWidget? { return widget?.textWidget }
-	var                                        widgetObject :      ZWidgetObject? { return widget?.widgetObject }
 	var                                      linkDatabaseID :        ZDatabaseID? { return zoneLink?.maybeDatabaseID }
 	var                               maybeNoteOrEssayTrait :             ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
 	var                                         widgetColor :             ZColor? { return (gColorfulMode && colorized) ? color : kBlackColor }
@@ -356,7 +355,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			super.optionalCloudProperties
 	}
 
-	func deepCopy(dbID: ZDatabaseID?) -> Zone {
+	func deepCopy(into dbID: ZDatabaseID?) -> Zone {
 		let      id = dbID ?? databaseID
 		let theCopy = Zone.uniqueZoneNamed("noname", databaseID: id)
 
@@ -368,11 +367,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let zones = gListsGrowDown ? children : children.reversed()
 
 		for child in zones {
-			theCopy.addChildNoDuplicate(child.deepCopy(dbID: id))
+			theCopy.addChildNoDuplicate(child.deepCopy(into: id))
 		}
 
 		for trait in traits.values {
-			let  traitCopy = trait.deepCopy(dbID: id)
+			let  traitCopy = trait.deepCopy(into: id)
 			traitCopy.dbid = id.identifier
 
 			theCopy.addTrait(traitCopy)
@@ -1020,12 +1019,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let t = bookmarkTarget {
 			t.rotateWritable()
 		} else if userCanWrite,
-				  databaseID      == .everyoneID {
-			let       direct = directAccess
+				  databaseID == .everyoneID {
+			let        direct = directAccess
 
-			if  let     next = nextAccess,
-				direct      != next {
-				directAccess = next
+			if  let      next = nextAccess,
+				direct       != next {
+				directAccess  = next
 
 				if  let identity = gAuthorID,
 					next        != .eInherit,
@@ -1387,7 +1386,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else {
 				movedZone.needDestroy()
 
-				movedZone = movedZone.deepCopy(dbID: targetDBID)
+				movedZone = movedZone.deepCopy(into: targetDBID)
 
 				gRelayoutMaps {
 					grabAndTravel()
@@ -1630,20 +1629,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		colorMaybe = nil
 	}
 
-	static func !== ( left: Zone, right: Zone) -> Bool {
-		return left != right
-	}
-
 	static func == ( left: Zone, right: Zone) -> Bool {
-		let unequal = left != right                        // avoid infinite recursion by using negated version of this infix operator
+		let equal = (left === right)                        // avoid infinite recursion by using address-of-object equals operator
 
-		if  unequal,
-			let lName =  left.recordName,
-			let rName = right.recordName {
+		if  !equal,
+			let    lName  =  left.recordName,
+			let    rName  = right.recordName {
 			return lName == rName
 		}
 
-		return !unequal
+		return equal
 	}
 
 	subscript(i: Int) -> Zone? {
@@ -2477,7 +2472,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							bookmark.orphan()
 						}
 
-						bookmark = bookmark.deepCopy(dbID: into.databaseID)
+						bookmark = bookmark.deepCopy(into: into.databaseID)
 					}
 
 					if !STAYHERE, !NOBOOKMARK {
@@ -2965,7 +2960,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if  databaseID  != child.databaseID {
 				let        c = child
-				child        = child.deepCopy(dbID: databaseID)
+				child        = child.deepCopy(into: databaseID)
 
 				c.deleteSelf(onCompletion: nil)
 			}
@@ -3747,16 +3742,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
-	static func uniqueZone(recordName: String?, in dbID: ZDatabaseID) -> Zone {
-		return uniqueZRecord(entityName: kZoneType, recordName: recordName, in: dbID) as! Zone
+	static func uniqueZone(recordName: String?, in databaseID: ZDatabaseID) -> Zone {
+		return uniqueZRecord(entityName: kZoneType, recordName: recordName, in: databaseID) as! Zone
 	}
 
-	static func uniqueZone(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> Zone {
-		let result = uniqueZone(recordName: dict.recordName, in: dbID)
+	static func uniqueZone(from dict: ZStorageDictionary, in databaseID: ZDatabaseID) -> Zone {
+		let result = uniqueZone(recordName: dict.recordName, in: databaseID)
 
 		result.temporarilyIgnoreNeeds {
 			do {
-				try result.extractFromStorageDictionary(dict, of: kZoneType, into: dbID)
+				try result.extractFromStorageDictionary(dict, of: kZoneType, into: databaseID)
 			} catch {
 				printDebug(.dError, "\(error)")    // de-serialization
 			}

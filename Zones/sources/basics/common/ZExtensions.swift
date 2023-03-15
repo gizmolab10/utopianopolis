@@ -202,8 +202,8 @@ extension NSObject {
         }
     }
 
-    @discardableResult func detectWithMode(_ dbID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
-        gRemoteStorage.pushDatabaseID(dbID)
+    @discardableResult func detectWithMode(_ databaseID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
+        gRemoteStorage.pushDatabaseID(databaseID)
 
         let result = block()
 
@@ -212,9 +212,9 @@ extension NSObject {
         return result
     }
 
-    func invokeUsingDatabaseID(_ dbID: ZDatabaseID?, block: Closure) {
-        if  dbID != nil && dbID != gDatabaseID {
-            detectWithMode(dbID!) { block(); return false }
+    func invokeUsingDatabaseID(_ databaseID: ZDatabaseID?, block: Closure) {
+        if  databaseID != nil && databaseID != gDatabaseID {
+            detectWithMode(databaseID!) { block(); return false }
         } else {
             block()
         }
@@ -565,8 +565,8 @@ extension CKRecord {
         self.init(recordType: kZoneType, recordID: CKRecordID(recordName: name))
     }
 
-    func isDeleted(dbID: ZDatabaseID) -> Bool {
-        return gRemoteStorage.zRecords(for: dbID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
+    func isDeleted(databaseID: ZDatabaseID) -> Bool {
+        return gRemoteStorage.zRecords(for: databaseID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
     }
 
     @discardableResult func copy(to iCopy: CKRecord?, properties: StringsArray) -> Bool {
@@ -1518,9 +1518,9 @@ extension CKReferencesArray {
 		}
 	}
 
-	func asZones(in dbID: ZDatabaseID) -> ZoneArray {
+	func asZones(in databaseID: ZDatabaseID) -> ZoneArray {
 		return map { ckReference -> Zone in
-			return Zone.uniqueZone(recordName: ckReference.recordID.recordName, in: dbID)
+			return Zone.uniqueZone(recordName: ckReference.recordID.recordName, in: databaseID)
 		}
 	}
 
@@ -1558,7 +1558,7 @@ extension ZRecordsArray {
 		return names
 	}
 
-	func createStorageArray(from dbID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
+	func createStorageArray(from databaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false, allowEach: ZRecordToBooleanClosure? = nil) throws -> [ZStorageDictionary]? {
 		if  count > 0 {
 			var result = [ZStorageDictionary] ()
 
@@ -1566,14 +1566,14 @@ extension ZRecordsArray {
 				if  zRecord.recordName == nil {
 					printDebug(.dFile, "no record name: \(zRecord)")
 				} else if (allowEach == nil || allowEach!(zRecord)),
-						  let dict = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+						  let dict = try zRecord.createStorageDictionary(for: databaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 
 					if  dict.count != 0 {
 						result.append(dict)
 					} else {
 						printDebug(.dFile, "empty storage dictionary: \(zRecord)")
 
-						if  let dict2 = try zRecord.createStorageDictionary(for: dbID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
+						if  let dict2 = try zRecord.createStorageDictionary(for: databaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) {
 							print("gotcha \(dict2.count)")
 						}
 					}
@@ -2222,8 +2222,8 @@ extension String {
 
 	var maybeDatabaseID: ZDatabaseID? {
 		if  let   parts  = components {
-			let    dbID  = parts[0]
-			return dbID == kEmpty ? nil : ZDatabaseID(rawValue: dbID)
+			let    databaseID  = parts[0]
+			return databaseID == kEmpty ? nil : ZDatabaseID(rawValue: databaseID)
 		}
 
 		return nil
@@ -2234,8 +2234,8 @@ extension String {
 			let     name = maybeRecordName,
 			let    parts = components {
 			let  rawDBID = parts[0]
-			let     dbID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
-			let zRecords = gRemoteStorage.zRecords(for: dbID)
+			let     databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
+			let zRecords = gRemoteStorage.zRecords(for: databaseID)
 			let     zone = zRecords?.maybeZoneForRecordName(name)
 
 			return zone

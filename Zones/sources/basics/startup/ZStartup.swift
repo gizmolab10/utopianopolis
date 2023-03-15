@@ -84,10 +84,10 @@ class ZStartup: NSObject {
 					gSignal([.sLaunchDone])
 
 					requestFeedback() {
-						gTimers.startTimers(for: [.tCloudAvailable, .tRecount, .tPersist, .tHover]) // .tLicense
-						gSignal([.sSwap, .spMain, .spCrumbs, .spRelayout, .spDataDetails, .spPreferences])
-
 						gMainController?.helpButton?.isHidden = false
+
+						gTimers.startTimers(for: [.tCloudAvailable, .tLicense, .tRecount, .tPersist, .tHover])
+						gSignal([.sSwap, .spMain, .spCrumbs, .spRelayout, .spDataDetails, .spPreferences])
 					}
 				}
 			}

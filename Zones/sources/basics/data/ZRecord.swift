@@ -96,29 +96,29 @@ class ZRecord: ZManagedObject {
 	var           writtenModifyDate : Date?
 	var                       color : ZColor?    // overridden by Zone and ZTrait (latter grabs from its ownerZone)
 	var             maybeDatabaseID : ZDatabaseID? { return ZDatabaseID.convert(from: dbid) }
-	var                  databaseID : ZDatabaseID { return maybeDatabaseID! }
-	var                    zRecords : ZRecords?   { return gRemoteStorage.zRecords(for: maybeDatabaseID) }
-	var         unwrappedRecordName : String      { return recordName ?? kEmpty }
-	var               decoratedName : String      { return recordName ?? kNoValue }
-	var               unwrappedName : String      { return recordName ?? emptyName }
-	var                  typePrefix : String      { return kEmpty }
-	var                   emptyName : String      { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var          isInPublicDatabase : Bool        { return databaseID == .everyoneID }
-	var                     isAZone : Bool        { return false }
-	var                  isBrandNew : Bool        { return true }
-	var                 isTrashRoot : Bool        { return recordName == kTrashName }
-	var               isMainMapRoot : Bool        { return recordName == kRootName }
-	var               isDestroyRoot : Bool        { return recordName == kDestroyName }
-	var          isLostAndFoundRoot : Bool        { return recordName == kLostAndFoundName }
-	var             isFavoritesRoot : Bool        { return recordName == kFavoritesRootName }
-	var             isFavoritesHere : Bool        { return recordName == gFavoritesHereMaybe?.recordName }
-	var                isAnyMapRoot : Bool        { return isFavoritesRoot  || isMainMapRoot }
-	var                  needsCount : Bool        { return  hasState(.needsCount) }
-	var                  needsColor : Bool        { return  hasState(.needsColor) }
-	var                needsDestroy : Bool        { return  hasState(.needsDestroy) }
-	var               needsAdoption : Bool        { return  hasState(.needsAdoption) }
-	var              needsBookmarks : Bool        { return  hasState(.needsBookmarks) }
-
+	var                  databaseID : ZDatabaseID  { return maybeDatabaseID! }
+	var                    zRecords : ZRecords?    { return gRemoteStorage.zRecords(for: maybeDatabaseID) }
+	var         unwrappedRecordName : String       { return recordName ?? kEmpty }
+	var               decoratedName : String       { return recordName ?? kNoValue }
+	var               unwrappedName : String       { return recordName ?? emptyName }
+	var                  typePrefix : String       { return kEmpty }
+	var                   emptyName : String       { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
+	var          isInPublicDatabase : Bool         { return databaseID == .everyoneID }
+	var                     isAZone : Bool         { return false }
+	var                  isBrandNew : Bool         { return true }
+	var                 isTrashRoot : Bool         { return recordName == kTrashName }
+	var               isMainMapRoot : Bool         { return recordName == kRootName }
+	var               isDestroyRoot : Bool         { return recordName == kDestroyName }
+	var          isLostAndFoundRoot : Bool         { return recordName == kLostAndFoundName }
+	var             isFavoritesRoot : Bool         { return recordName == kFavoritesRootName }
+	var             isFavoritesHere : Bool         { return recordName == gFavoritesHereMaybe?.recordName }
+	var                isAnyMapRoot : Bool         { return isFavoritesRoot  || isMainMapRoot }
+	var                  needsCount : Bool         { return  hasState(.needsCount) }
+	var                  needsColor : Bool         { return  hasState(.needsColor) }
+	var                needsDestroy : Bool         { return  hasState(.needsDestroy) }
+	var               needsAdoption : Bool         { return  hasState(.needsAdoption) }
+	var              needsBookmarks : Bool         { return  hasState(.needsBookmarks) }
+ 
 	var isARoot: Bool {
 		if  recordName == nil {
 			return false
@@ -133,6 +133,7 @@ class ZRecord: ZManagedObject {
 	var isAdoptable          : Bool { return false }
 	var passesFilter         : Bool { return true }
 	var isInScope            : Bool { return true }
+	var isRegistered         : Bool { return zRecords?.isRegistered(self) ?? false }
 	var matchesFilterOptions : Bool { return passesFilter && isInScope }
 	var               cloudProperties : StringsArray { return ZRecord.cloudProperties }
 	var       optionalCloudProperties : StringsArray { return ZRecord.optionalCloudProperties }
@@ -147,7 +148,7 @@ class ZRecord: ZManagedObject {
 	func ignoreKeyPathsForStorage() -> StringsArray { return [kpParent, kpOwner] }
 	func unregister() { zRecords?.unregisterZRecord(self) }
 	func register()   { zRecords?  .registerZRecord(self) }
-	func adopt(recursively: Bool = false) {}
+	func adopt(recursively : Bool = false) {}
 
 	// MARK: - core data
 	// MARK: -
@@ -176,21 +177,21 @@ class ZRecord: ZManagedObject {
 	// MARK: - initialize
 	// MARK: -
 
-	static func uniqueFactoryObject(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZManagedObject {
+	static func uniqueFactoryObject(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZManagedObject {
 		switch entityName {
-			case kZoneType:     return Zone     .uniqueZone    (recordName: recordName, in: dbID)
-			case kUserType:     return ZUser    .uniqueUser    (recordName: recordName, in: dbID)
-			case kTraitType:    return ZTrait   .uniqueTrait   (recordName: recordName, in: dbID)
-			case kManifestType: return ZManifest.uniqueManifest(recordName: recordName, in: dbID)
-			default:            return ZRecord  .uniqueZRecord (entityName: entityName, recordName: recordName, in: dbID)
+			case kZoneType:     return Zone     .uniqueZone    (recordName: recordName, in: databaseID)
+			case kUserType:     return ZUser    .uniqueUser    (recordName: recordName, in: databaseID)
+			case kTraitType:    return ZTrait   .uniqueTrait   (recordName: recordName, in: databaseID)
+			case kManifestType: return ZManifest.uniqueManifest(recordName: recordName, in: databaseID)
+			default:            return ZRecord  .uniqueZRecord (entityName: entityName, recordName: recordName, in: databaseID)
 		}
 	}
 
-	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in dbID: ZDatabaseID) -> ZRecord {
-		let         object = uniqueObject(entityName: entityName, recordName: recordName, in: dbID)
+	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZRecord {
+		let         object = uniqueObject(entityName: entityName, recordName: recordName, in: databaseID)
 		let        zRecord = object as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
-		zRecord      .dbid = dbID.identifier
+		zRecord      .dbid = databaseID.identifier
 		
 		zRecord.register()
 

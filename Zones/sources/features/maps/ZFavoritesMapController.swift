@@ -23,7 +23,7 @@ class ZFavoritesMapController: ZMapController {
 	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }
 
 	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-		if  gHasFinishedStartup, gFavoritesAreVisible, super.shouldHandle(kind) {
+		if  gHasFinishedStartup, gFavoritesAreVisible, shouldHandle(kind) {
 			FOREGROUND(after: kind == .sLaunchDone ? 0.01 : .zero) { // so favorites map is not too high when other details views are shown
 				super.createAndLayoutWidgets(for: iZone, kind)
 			}

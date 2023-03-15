@@ -104,16 +104,16 @@ class ZManifest : ZRecord {
         return false
 	}
 
-	static func uniqueManifest(recordName: String?, in dbID: ZDatabaseID) -> ZManifest {
-		return uniqueZRecord(entityName: kManifestType, recordName: recordName, in: dbID) as! ZManifest
+	static func uniqueManifest(recordName: String?, in databaseID: ZDatabaseID) -> ZManifest {
+		return uniqueZRecord(entityName: kManifestType, recordName: recordName, in: databaseID) as! ZManifest
 	}
 
-	static func uniqueManifest(from dict: ZStorageDictionary, in dbID: ZDatabaseID) -> ZManifest? {
-		let result = uniqueManifest(recordName: dict.recordName, in: dbID)
+	static func uniqueManifest(from dict: ZStorageDictionary, in databaseID: ZDatabaseID) -> ZManifest? {
+		let result = uniqueManifest(recordName: dict.recordName, in: databaseID)
 
 		result.temporarilyIgnoreNeeds {
 			do {
-				try result.extractFromStorageDictionary(dict, of: kManifestType, into: dbID)
+				try result.extractFromStorageDictionary(dict, of: kManifestType, into: databaseID)
 			} catch {
 				printDebug(.dError, "\(error)")    // de-serialization
 			}

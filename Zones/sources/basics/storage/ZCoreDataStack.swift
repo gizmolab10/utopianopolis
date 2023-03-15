@@ -34,13 +34,13 @@ enum ZCDStoreScope: String {
 
 }
 
-let  gCoreDataStack                                = ZCoreDataStack()
-var  gCDCurrentBackgroundContext                   : NSManagedObjectContext? { return gCoreDataStack.context }
-var  gCoreDataIsBusy                                                  : Bool { return gCoreDataStack.currentOpID != nil }
-func gDataURLAt(_ lastPathComponent: String)                          -> URL { return gFilesURL.appendingPathComponent(lastPathComponent) }
-func gUrlFor(_ type: ZCDStoreScope, at lastPathComponent: String)     -> URL { return gDataURLAt(lastPathComponent).appendingPathComponent(type.lastComponent) }
-func gLoadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure? = nil)   { gCoreDataStack.loadContext(into: dbID, onCompletion: onCompletion) }
-func gSaveContext()                                                          { gCoreDataStack.saveContext() }
+let  gCoreDataStack                                    = ZCoreDataStack()
+var  gCDCurrentBackgroundContext                       : NSManagedObjectContext? { return gCoreDataStack.context }
+var  gCoreDataIsBusy                                                      : Bool { return gCoreDataStack.currentOpID != nil }
+func gDataURLAt(_ lastPathComponent: String)                              -> URL { return gFilesURL.appendingPathComponent(lastPathComponent) }
+func gUrlFor(_ type: ZCDStoreScope, at lastPathComponent: String)         -> URL { return gDataURLAt(lastPathComponent).appendingPathComponent(type.lastComponent) }
+func gLoadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: databaseID, onCompletion: onCompletion) }
+func gSaveContext()                                                              { gCoreDataStack.saveContext() }
 
 class ZCoreDataStack: NSObject {
 
@@ -104,25 +104,23 @@ class ZCoreDataStack: NSObject {
 	// MARK: - load
 	// MARK: -
 
-	func loadContext(into dbID: ZDatabaseID, onCompletion: AnyClosure?) {
+	func loadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if !gCanLoad {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) {
 				FOREGROUND { [self] in
-					load(type: kManifestType, into: dbID, onlyOne: false)
+					load(type: kManifestType, into: databaseID, onlyOne: false)
 
-					var roots = [kRootName, kTrashName, kDestroyName, kLostAndFoundName]
-
-					if  dbID == .mineID {
-						roots = [kFavoritesRootName] + roots
+					if  databaseID == .mineID {
+						loadRootZone(recordName: kFavoritesRootName, into: databaseID)
 					}
 
-					for root in roots {
-						loadRootZone(recordName: root, into: dbID)
+					for root in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
+						loadRootZone(recordName: root, into: databaseID)
 					}
 
-					load(type: kFileType, into: dbID, onlyOne: false)
+					load(type: kFileType, into: databaseID, onlyOne: false)
 
 					FOREGROUND { [self] in
 						makeAvailable()
@@ -133,18 +131,22 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func loadRootZone(recordName: String, into dbID: ZDatabaseID) {
-		if  let zRecords = gRemoteStorage.zRecords(for: dbID) {
-			let  fetched = load(type: kZoneType, recordName: recordName, into: dbID)
+	func loadRootZone(recordName: String, into databaseID: ZDatabaseID) {
+		if  let zRecords = gRemoteStorage.zRecords(for: databaseID) {
+			let  fetched = load(type: kZoneType, recordName: recordName, into: databaseID)
 
 			for object in fetched {
 				if  let zone = object as? Zone {
 					let oid = object.objectID
 					zone.respectOrder()
 
-					FOREGROUND {
-						if  let root = self.context?.object(with: oid) as? Zone {
-							zRecords.setRoot(root, for: recordName.rootID)
+					FOREGROUND { [self] in
+						if  let root = context?.object(with: oid) as? Zone {
+							if  recordName == kFavoritesRootName {
+								gFavorites.setRoot(root, for: .favoritesID)
+							} else {
+								zRecords.setRoot(root, for: recordName.rootID)
+							}
 						}
 					}
 				}
@@ -155,10 +157,10 @@ class ZCoreDataStack: NSObject {
 	// called by load recordName and find type, recordName
 	// fetch, extract data, register
 
-	@discardableResult func load(type: String, recordName: String = kEmpty, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
-		let objects = fetch(type: type, recordName: recordName, into: dbID, onlyOne: onlyOne)
+	@discardableResult func load(type: String, recordName: String = kEmpty, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
+		let objects = fetch(type: type, recordName: recordName, into: databaseID, onlyOne: onlyOne)
 
-		invokeUsingDatabaseID(dbID) {
+		invokeUsingDatabaseID(databaseID) {
 			let ids = objects.map { $0.objectID }
 			for id in ids {
 				FOREGROUND() { [self] in
@@ -177,9 +179,9 @@ class ZCoreDataStack: NSObject {
 	func loadFile(for descriptor: ZFileDescriptor) -> ZFile? {
 		if  let            name = descriptor.name,
 			let            type = descriptor.type,
-			let            dbID = descriptor.dbID {
+			let            databaseID = descriptor.databaseID {
 			let         request = NSFetchRequest<NSFetchRequestResult>(entityName: kFileType)
-			request  .predicate = NSPredicate(format: "name = %@ AND type = %@", name, type, dbID.identifier).and(dbidPredicate(from: dbID))
+			request  .predicate = NSPredicate(format: "name = %@ AND type = %@", name, type, databaseID.identifier).and(dbidPredicate(from: databaseID))
 			let        zRecords = fetchUsing(request: request)
 
 			for zRecord in zRecords {
@@ -195,22 +197,22 @@ class ZCoreDataStack: NSObject {
 	// MARK: - registry
 	// MARK: -
 
-	func registerObject(_ objectID: NSManagedObjectID, recordName: String, dbID: ZDatabaseID) {
+	func registerObject(_ objectID: NSManagedObjectID, recordName: String, databaseID: ZDatabaseID) {
 		if  let object = context?.object(with: objectID) {
-			var dict   = fetchedRegistry[dbID]
+			var dict   = fetchedRegistry[databaseID]
 			if  dict  == nil {
 				dict   = ZManagedObjectsDictionary()
 			}
 
 			dict?[recordName]     = object
-			fetchedRegistry[dbID] = dict
+			fetchedRegistry[databaseID] = dict
 
 			(object as? ZRecord)?.register() // for records read from file
 		}
 	}
 
-	func missingFrom(_ dbID: ZDatabaseID) -> StringsArray {
-		var missing  = missingRegistry[dbID]
+	func missingFrom(_ databaseID: ZDatabaseID) -> StringsArray {
+		var missing  = missingRegistry[databaseID]
 		if  missing == nil {
 			missing  = StringsArray()
 		}
@@ -218,43 +220,43 @@ class ZCoreDataStack: NSObject {
 		return missing!
 	}
 
-	func registerAsMissing(recordName: String, dbID: ZDatabaseID) {
-		var missing = missingFrom(dbID)
+	func registerAsMissing(recordName: String, databaseID: ZDatabaseID) {
+		var missing = missingFrom(databaseID)
 
 		missing.appendUnique(item: recordName)
 
-		missingRegistry[dbID] = missing
+		missingRegistry[databaseID] = missing
 	}
 
-	func isMissing(recordName: String, from dbID: ZDatabaseID) -> Bool {
-		return !missingFrom(dbID).contains(recordName)
+	func isMissing(recordName: String, from databaseID: ZDatabaseID) -> Bool {
+		return !missingFrom(databaseID).contains(recordName)
 	}
 
-	func resolveMissing(from dbID: ZDatabaseID) {
-		var missing         = missingFrom(dbID)
+	func resolveMissing(from databaseID: ZDatabaseID) {
+		var missing         = missingFrom(databaseID)
 		for name in missing {
-			let found       = find(type: kZoneType, recordName: name, in: dbID, trackMissing: false)
+			let found       = find(type: kZoneType, recordName: name, in: databaseID, trackMissing: false)
 			if  found.count > 0,
 				let   index = missing.firstIndex(of: name) {
 				missing.remove(at: index)
 			}
 		}
 
-		missingRegistry[dbID] = missing
+		missingRegistry[databaseID] = missing
 	}
 
 	// MARK: - search
 	// MARK: -
 
-	func fetchChildrenOf(_ recordName: String, in dbID: ZDatabaseID) -> ZoneArray? {
+	func fetchChildrenOf(_ recordName: String, in databaseID: ZDatabaseID) -> ZoneArray? {
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-		request.predicate = fetchChildrenPredicate(recordName: recordName, into: dbID)
+		request.predicate = fetchChildrenPredicate(recordName: recordName, into: databaseID)
 
 		return fetchUsing(request: request, onlyOne: false) as? ZoneArray
 	}
 
-	func find(type: String, recordName: String, in dbID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> ZManagedObjectsArray {
-		let           dbid = dbID == .everyoneID ? dbID : .mineID
+	func find(type: String, recordName: String, in databaseID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> ZManagedObjectsArray {
+		let           dbid = databaseID == .everyoneID ? databaseID : .mineID
 		if  let     object = fetchedRegistry[dbid]?[recordName], !object.isPublicRootDefault(recordName: recordName, into: dbid) {
 			return [object]
 		}
@@ -297,12 +299,12 @@ class ZCoreDataStack: NSObject {
 	// must call this on foreground thread
 	// else throws mutate while enumerate error
 
-	func fetch(type: String, recordName: String = kEmpty, into dbID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
+	func fetch(type: String, recordName: String = kEmpty, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
 		var objects       = ZManagedObjectsArray()
-		let request       = fetchRequest(type: type, recordName: recordName, into: dbID)
+		let request       = fetchRequest(type: type, recordName: recordName, into: databaseID)
 		let items         = fetchUsing(request: request, onlyOne: onlyOne)
 		if  items.count  == 0 {
-			registerAsMissing(recordName: recordName, dbID: dbID)
+			registerAsMissing(recordName: recordName, databaseID: databaseID)
 		} else {
 			for item in items {
 				objects.append(item)
@@ -312,7 +314,7 @@ class ZCoreDataStack: NSObject {
 
 			FOREGROUND(forced: true) { [self] in
 				for id in ids {
-					registerObject(id, recordName: recordName, dbID: dbID)
+					registerObject(id, recordName: recordName, databaseID: databaseID)
 				}
 			}
 		}
@@ -320,21 +322,21 @@ class ZCoreDataStack: NSObject {
 		return objects
 	}
 
-	func searchZRecordsForNames(_ names: StringsArray, within dbID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
+	func searchZRecordsForNames(_ names: StringsArray, within databaseID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
 		var result = StringZRecordsDictionary()
 
 		if !gIsReadyToShowUI || !gCanLoad {
 			onCompletion?(result)
 		} else {
 			let searchables = names.map { $0.searchable }.filter { $0 != kSpace }
-			let dbPredicate = dbidPredicate(from: dbID)
+			let dbPredicate = dbidPredicate(from: databaseID)
 			let    entities = [kTraitType, kZoneType]
 			var       count = searchables.count * entities.count
 
 			for searchable in searchables {
 				for entity in entities {
 					if  let predicate = searchPredicate(entityName: entity, string: searchable) {
-						search(within: dbID, entityName: entity, using: predicate.and(dbPredicate)) { matches in
+						search(within: databaseID, entityName: entity, using: predicate.and(dbPredicate)) { matches in
 							if  matches.count > 0 {
 								result[searchable] = matches.appending(result[searchable])
 							}
@@ -350,12 +352,12 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func search(within dbID: ZDatabaseID, entityName: String, using predicate: NSPredicate, onCompletion: ZRecordsClosure? = nil) {
+	func search(within databaseID: ZDatabaseID, entityName: String, using predicate: NSPredicate, onCompletion: ZRecordsClosure? = nil) {
 		if !gCanLoad || !gIsReadyToShowUI {
 			onCompletion?(ZRecordsArray())
 		} else if let       c = persistentContainer {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
-			request.predicate = predicate.and(dbidPredicate(from: dbID))
+			request.predicate = predicate.and(dbidPredicate(from: databaseID))
 
 			deferUntilAvailable(for: .oSearch) { [self] in
 				c.performBackgroundTask { [self] context in
@@ -450,22 +452,22 @@ class ZCoreDataStack: NSObject {
 	func     parentPredicate(from recordName:      String) -> NSPredicate { return NSPredicate(format:           "parentRID = %@",            recordName) }
 	func       dbidPredicate(from databaseID: ZDatabaseID) -> NSPredicate { return NSPredicate(format:                "dbid = %@", databaseID.identifier) }
 
-	func fetchRequest(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> NSFetchRequest<NSFetchRequestResult> {
+	func fetchRequest(type: String, recordName: String, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> NSFetchRequest<NSFetchRequestResult> {
 		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-		request.predicate = fetchPredicate(type: type, recordName: recordName, into: dbID)
+		request.predicate = fetchPredicate(type: type, recordName: recordName, into: databaseID)
 
 		return request
 	}
 
-	func fetchPredicate(type: String, recordName: String, into dbID: ZDatabaseID, onlyOne: Bool = true) -> NSPredicate {
+	func fetchPredicate(type: String, recordName: String, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> NSPredicate {
 		let             r = recordNamePredicate(from: recordName)
-		let             d =       dbidPredicate(from: dbID)
+		let             d =       dbidPredicate(from: databaseID)
 		return !onlyOne ? d : type == kUserType ? r : r.and(d)
 	}
 
-	func fetchChildrenPredicate(recordName: String, into dbID: ZDatabaseID) -> NSPredicate {
+	func fetchChildrenPredicate(recordName: String, into databaseID: ZDatabaseID) -> NSPredicate {
 		let r = parentPredicate(from: recordName)
-		let d =   dbidPredicate(from: dbID)
+		let d =   dbidPredicate(from: databaseID)
 		return r.and(d)
 	}
 
@@ -498,20 +500,20 @@ class ZCoreDataStack: NSObject {
 	// MARK: - vaccuum
 	// MARK: -
 
-	func emptyZones(within dbID: ZDatabaseID, onCompletion: ZRecordsClosure? = nil) {
+	func emptyZones(within databaseID: ZDatabaseID, onCompletion: ZRecordsClosure? = nil) {
 		let predicate = zoneNamePredicate(from: "NULL")
-		search(within: dbID, entityName: kZoneType, using: predicate) { matches in
+		search(within: databaseID, entityName: kZoneType, using: predicate) { matches in
 			onCompletion?(matches)
 		}
 	}
 
 	func removeAllDuplicatesOf(_ zRecord: ZRecord) {
 		if  let      dbid = zRecord.dbid,
-			let      dbID = ZDatabaseID(rawValue: dbid),
+			let      databaseID = ZDatabaseID(rawValue: dbid),
 			let      name = zRecord.recordName {
 			let predicate = recordNamePredicate(from: name)
 
-			search(within: dbID, entityName: kZoneType, using: predicate) { zRecords in
+			search(within: databaseID, entityName: kZoneType, using: predicate) { zRecords in
 				let  count = zRecords.count
 				let extras = zRecords.filter() { $0 != zRecord }
 

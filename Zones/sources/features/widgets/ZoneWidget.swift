@@ -66,21 +66,10 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	}
 }
 
-class ZWidgetObject: NSObject {
-
-	var note: ZNote?
-	var zone: Zone?
-
-	var widgetType: ZWidgetType? {
-		return note == nil ? (zone == nil ? nil : .tIdea) : (zone == nil ? .tNote : [.tNote, .tIdea])
-	}
-}
-
 @objc (ZoneWidget)
 class ZoneWidget: ZPseudoView, ZToolTipper {
 
 	var        highlightRect =     CGRect.zero
-	let         widgetObject =   ZWidgetObject()
 	var      childrenWidgets = ZoneWidgetArray()
 	var        childrenLines =      [ZoneLine]()
 	var         childrenView :     ZPseudoView?
@@ -90,6 +79,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	var      sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var         parentWidget :      ZoneWidget?
+	var           widgetType :     ZWidgetType  { return widgetZone?.widgetType ?? .tMainMap }
 	var         mapReduction :         CGFloat  { return widgetType.isMainMap ? 1.0 : kFavoritesMapReduction }
 	override var description :          String  { return widgetZone?       .description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
@@ -104,15 +94,6 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		}
 	}
 
-	var widgetType : ZWidgetType {
-		var type  = widgetZone?.widgetType ?? .tMainMap
-		if  let t = widgetObject.widgetType {
-			type.insert(t)
-		}
-
-		return type
-	}
-
 	override var controller : ZMapController? {
 		if widgetType.isMainMap  { return              gMapController }
 		if widgetType.isFavorite { return     gFavoritesMapController }
@@ -122,9 +103,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
 	var widgetZone : Zone? {
-		get { return widgetObject.zone }
-		set {
-			widgetObject                  .zone = newValue
+		didSet {
 			if  let                        name = widgetZone?.zoneName {
 				identifier                      = NSUserInterfaceItemIdentifier("<z> \(name)")
 				childrenView?       .identifier = NSUserInterfaceItemIdentifier("<c> \(name)")
@@ -141,7 +120,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	// MARK: - view hierarchy
 	// MARK: -
 
-	@discardableResult func createChildPseudoViews(for parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, recursing: Bool, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func createPseudoViews(atAllLevels: Bool, for parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		let     mapView = absoluteView as? ZMapView
 		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.decorationsView) : nil
 		var       count = 1
@@ -164,11 +143,17 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 			addChildrenView()
 		}
 
+		removeChildrenPseudoViews()
 		addChildrenWidgets()
 		addLines()
 
-		if  recursing,
-			let  zone = widgetZone, !visited.contains(zone), zone.hasVisibleChildren, zone.isShowing {
+		if  controller == gFavoritesMapController,
+			let z = widgetZone, !z.hasVisibleChildren, z.level == 1 { // fails because z has no children because it is fake
+			noop()
+		}
+
+		if  atAllLevels,
+			let  zone = widgetZone, !visited.contains(zone), zone.isShowing, zone.hasVisibleChildren {
 			var index = childrenWidgets.count
 			let vplus = visited + [zone]
 
@@ -177,7 +162,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 				let child        = childrenWidgets[index]
 				child.widgetZone =            zone[index]
 				let   parentView = isLinearMode ? childrenView : parentPseudoView
-				count           += child.createChildPseudoViews(for: parentView, for: mapType, atIndex: index, recursing: true, kind, visited: vplus)
+				count           += child.createPseudoViews(atAllLevels: true, for: parentView, for: mapType, atIndex: index, kind, visited: vplus)
 			}
 		}
 
@@ -243,15 +228,17 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		}
 	}
 
+	func removeChildrenPseudoViews() {
+		for widget in childrenWidgets {
+			widget.removeFromSuperpseudoview()
+			if  let t = widget.textWidget {
+				t.removeFromSuperview()
+			}
+		}
+	}
+
 	func addChildrenWidgets() {
 		if  let zone = widgetZone {
-			for widget in childrenWidgets {
-				widget.removeFromSuperpseudoview()
-				if  let t = widget.textWidget {
-					t.removeFromSuperview()
-				}
-			}
-
 			childrenWidgets.removeAll()
 
 			var count = zone.count
@@ -263,7 +250,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 			while childrenWidgets.count < count {
 				let          child = ZoneWidget(view: absoluteView)
 				child.parentWidget = self
-				child.widgetZone   = zone.children[childrenWidgets.count]
+				child  .widgetZone = zone.children[childrenWidgets.count]
 
 				childrenWidgets.append(child)      // add missing
 			}

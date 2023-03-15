@@ -839,7 +839,7 @@ class ZMapEditor: ZBaseEditor {
 				gSelecting.ungrabAll()
 
 				for (pastable, (parent, index)) in pastables {
-					let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy(dbID: nil) // for zones not in trash, paste a deep copy
+					let  pasteMe = pastable.isInTrash ? pastable : pastable.deepCopy(into: nil) // for zones not in trash, paste a deep copy
 					let insertAt = index  != nil ? index : gListsGrowDown ? nil : 0
 					let     into = parent != nil ? honorFormerParents ? parent! : zone : zone
 

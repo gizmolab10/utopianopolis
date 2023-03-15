@@ -20,18 +20,18 @@ extension ZCoreDataStack {
 	// MARK: - existence closures
 	// MARK: -
 
-	func setClosures(_ closures: ZExistenceArray, for entityName: String, dbID: ZDatabaseID) {
-		var dict  = existenceClosures[dbID]
+	func setClosures(_ closures: ZExistenceArray, for entityName: String, databaseID: ZDatabaseID) {
+		var dict  = existenceClosures[databaseID]
 		if  dict == nil {
 			dict  = ZExistenceDictionary()
 		}
 
 		dict?      [entityName] = closures
-		existenceClosures[dbID] = dict!
+		existenceClosures[databaseID] = dict!
 	}
 
-	func closures(for entityName: String, dbID: ZDatabaseID) -> ZExistenceArray {
-		var d  = existenceClosures[dbID]
+	func closures(for entityName: String, databaseID: ZDatabaseID) -> ZExistenceArray {
+		var d  = existenceClosures[databaseID]
 		var c  = d?[entityName]
 		if  d == nil {
 			d  = ZExistenceDictionary()
@@ -42,13 +42,13 @@ extension ZCoreDataStack {
 			d?[entityName] = c!
 		}
 
-		existenceClosures[dbID] = d!
+		existenceClosures[databaseID] = d!
 
 		return c!
 	}
 
-	func processClosures(for  entityName: String, dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
-		var array = closures(for: entityName, dbID: dbID)
+	func processClosures(for  entityName: String, databaseID: ZDatabaseID, _ onCompletion: IntClosure?) {
+		var array = closures(for: entityName, databaseID: databaseID)
 
 		if  array.count == 0 {
 			onCompletion?(0)
@@ -57,7 +57,7 @@ extension ZCoreDataStack {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
 			request.predicate = array.predicate(entityName)
 
-			printDebug(.dExist, "\(dbID.identifier) = \(count)\(entityName)")
+			printDebug(.dExist, "\(databaseID.identifier) = \(count)\(entityName)")
 
 			deferUntilAvailable(for: .oExistence) {
 				FOREBACKGROUND { [self] in
@@ -73,7 +73,7 @@ extension ZCoreDataStack {
 							}
 
 							array.fireClosures()
-							setClosures([], for: entityName, dbID: dbID)
+							setClosures([], for: entityName, databaseID: databaseID)
 							makeAvailable()
 							onCompletion?(0)
 						}
@@ -85,8 +85,8 @@ extension ZCoreDataStack {
 		}
 	}
 
-	func finishCreating(for dbID: ZDatabaseID, _ onCompletion: IntClosure?) {
-		guard let dict = existenceClosures[dbID] else {
+	func finishCreating(for databaseID: ZDatabaseID, _ onCompletion: IntClosure?) {
+		guard let dict = existenceClosures[databaseID] else {
 			onCompletion?(0) // so next operation can begin
 
 			return
@@ -101,7 +101,7 @@ extension ZCoreDataStack {
 			} else {
 				let entityName = entityNames[index]
 
-				processClosures(for: entityName, dbID: dbID) { value in
+				processClosures(for: entityName, databaseID: databaseID) { value in
 					processForEntityName(at: index - 1)                // recursive while loop
 				}
 			}

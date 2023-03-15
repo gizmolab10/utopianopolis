@@ -67,8 +67,8 @@ class ZGenericController: ZController, ZGeneric {
 		switch id {
 			case .idHelpEssayIntroduction, .idHelpEssayGraphicals,
 				 .idHelpDots:      return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
-			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spFavoritesMap, .spMainMap]
-			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sLaunchDone, .sToolTips, .spFavoritesMap, .sDetails]
+			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spMainMap]
+			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spFavoritesMap, .sDetails]
 			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                                .sDetails]
 			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
 			case .idSearch:        return [.sSearch]
