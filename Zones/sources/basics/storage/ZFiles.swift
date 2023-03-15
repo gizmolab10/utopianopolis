@@ -34,8 +34,8 @@ enum ZInterruptionError : Error {
 
 class ZFiles: NSObject {
 
-	var             isReading = [false, false]
-    var  filePaths: [String?] = [nil, nil]
+	var             isReading = [false, false, false]
+    var  filePaths: [String?] = [nil, nil, nil]
 	lazy var        assetsURL : URL = { return createAssetsDirectory() }()
 	lazy var         filesURL : URL = { return createDataDirectory() }()
 	var               hasMine : Bool  { return fileExistsFor(.mineIndex) }

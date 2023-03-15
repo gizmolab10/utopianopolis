@@ -3667,20 +3667,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else {
 			switch key {
-				case "n":      showNote()
-				case "d":      duplicate()
-				case "b":      addBookmark()
-				case "e":      editTraitForType(.tEmail)
-				case "h":      editTraitForType(.tHyperlink)
-				case "s":      gFiles.export(self, toFileAs: .eSeriously)
+				case "n":     showNote()
+				case "d":     duplicate()
+				case "b":     addBookmark()
+				case "e":     editTraitForType(.tEmail)
+				case "h":     editTraitForType(.tHyperlink)
+				case "s":     gFiles.export(self, toFileAs: .eSeriously)
 				case "a", "l",
-					"r":	   children.sortAccordingToKey(key); gRelayoutMaps(for: self)
-				case "o":      importFromFile(.eSeriously)     { gRelayoutMaps(for: self) }
-				case "t":      swapWithParent                  { gRelayoutMaps(for: self) }
-				case kSlash:   gFocusing.grabAndFocusOn(self)  { gRelayoutMaps() }
-				case "\u{08}", kDelete: deleteSelf             { flag in if flag { gRelayoutMaps() } }
-				case kSpace:   addIdea()
-				default:       break
+					 "r":	  children.sortAccordingToKey(key); gRelayoutMaps(for: self)
+				case "o":     importFromFile(.eSeriously)     { gRelayoutMaps(for: self) }
+				case "t":     swapWithParent                  { gRelayoutMaps(for: self) }
+				case kSlash:  gFocusing.grabAndFocusOn(self)  { gRelayoutMaps() }
+				case kBackSpace,
+					 kDelete: deleteSelf    { flag in if flag { gRelayoutMaps() } }
+				case kSpace:  addIdea()
+				default:      break
 			}
 		}
 	}

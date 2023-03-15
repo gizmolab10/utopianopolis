@@ -129,13 +129,13 @@ class ZRecords: NSObject {
 	var         destroyZone : Zone?
     var           trashZone : Zone?
 	var            rootZone : Zone?
-	var               count : Int       { return 0 }
-	var       zRecordsCount : Int       { return zRecordsLookup.count }
-	var    cloudUnavailable : Bool      { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
-    var         hereIsValid : Bool      { return maybeZoneForRecordName(hereRecordName) != nil }
+	var               count : Int  { return 0 }
+	var       zRecordsCount : Int  { return zRecordsLookup.count }
+	var    cloudUnavailable : Bool { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
+    var         hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
-	func countBy                      (type: String)  -> Int?     { return recordNamesByType[type]?.count }
-	func recordNamesForState (_ state: ZRecordState)  -> StringsArray { return recordNamesByState[state] ?? [] }
+	func countBy                      (type: String) -> Int?     { return recordNamesByType[type]?.count }
+	func recordNamesForState (_ state: ZRecordState) -> StringsArray { return recordNamesByState[state] ?? [] }
 
 	func replaceRoot(at oldRoot: inout Zone?, with root: Zone) {
 		if  let old = oldRoot, old != root {

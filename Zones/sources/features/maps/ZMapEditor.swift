@@ -374,7 +374,7 @@ class ZMapEditor: ZBaseEditor {
 		let  OPTION = flags.hasOption
 		let     ANY = flags.isAny
 
-		if  CONTROL {
+		if  CONTROL && !COMMAND && !OPTION {
 			gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() }
 		} else if OPTION || isWindow || COMMAND {
 			delete(permanently: SPECIAL && isWindow, preserveChildren: ANY && isWindow, convertToTitledLine: SPECIAL)

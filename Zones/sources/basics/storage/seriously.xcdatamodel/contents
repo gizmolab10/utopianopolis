@@ -39,6 +39,11 @@
         <relationship name="parentRef" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="childArray" inverseEntity="Zone"/>
         <relationship name="traitArray" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZTrait" inverseName="ownerRef" inverseEntity="ZTrait"/>
     </entity>
+    <entity name="ZRelationship" representedClassName="ZRelationship" syncable="YES">
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="from" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone"/>
+        <relationship name="to" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone"/>
+    </entity>
     <entity name="ZTrait" representedClassName="ZTrait" parentEntity="ZTraitAssets" syncable="YES">
         <attribute name="format" optional="YES" attributeType="String"/>
         <attribute name="owner" optional="YES" attributeType="Transformable" valueTransformerName="ZReferenceTransformer" customClassName="CKReference"/>
