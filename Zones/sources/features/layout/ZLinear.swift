@@ -120,7 +120,7 @@ extension ZoneWidget {
 			if  absolute {
 				c.relayoutAbsoluteFrame(relativeTo: controller)
 			} else if let tFrame = pseudoTextWidget?.frame {
-				let    reduction = widgetType.isMainMap ? 0.8 : kFavoritesMapReduction / 1.5
+				let    reduction = mapType.isMainMap ? 0.8 : kFavoritesMapReduction / 1.5
 				let            x = tFrame.maxX + dotPlusGap * reduction
 				let       origin = CGPoint(x: x, y: .zero)
 				let       cFrame = CGRect(origin: origin, size: c.drawnSize)

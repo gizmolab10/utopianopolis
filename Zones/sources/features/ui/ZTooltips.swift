@@ -289,12 +289,12 @@ extension ZWidgets {
 	}
 
 	func removeToolTipsFromAllWidgets(for controller: ZMapController) {
-		if  let type = controller.hereZone?.widgetType {
+		if  let type = controller.hereZone?.mapType {
 			clearAllToolTips(for: type)
 		}
 	}
 
-	func clearAllToolTips(for type: ZWidgetType) {
+	func clearAllToolTips(for type: ZMapType) {
 		let registry = getZoneWidgetRegistry(for: type)
 
 		registry?.clearAllToolTips()

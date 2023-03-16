@@ -15,18 +15,16 @@ import SnapKit
     import UIKit
 #endif
 
-struct ZWidgetType: OptionSet, CustomStringConvertible {
+struct ZMapType: OptionSet, CustomStringConvertible {
 	let rawValue : Int
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let tExemplar = ZWidgetType(rawValue: 1 << 0)
-	static let tHelpDots = ZWidgetType(rawValue: 1 << 1)
-	static let tFavorite = ZWidgetType(rawValue: 1 << 2)
-	static let  tMainMap = ZWidgetType(rawValue: 1 << 3)
-	static let     tNote = ZWidgetType(rawValue: 1 << 4)
-	static let     tIdea = ZWidgetType(rawValue: 1 << 5)
-	static let     tNone = ZWidgetType(rawValue: 1 << 6)
+	static let tExemplar = ZMapType(rawValue: 1 << 0)
+	static let tHelpDots = ZMapType(rawValue: 1 << 1)
+	static let tFavorite = ZMapType(rawValue: 1 << 2)
+	static let  tMainMap = ZMapType(rawValue: 1 << 3)
+	static let     tIdea = ZMapType(rawValue: 1 << 4)
 
 	var isMainMap:  Bool { return contains(.tMainMap) }
 	var isFavorite: Bool { return contains(.tFavorite) }
@@ -34,15 +32,13 @@ struct ZWidgetType: OptionSet, CustomStringConvertible {
 	var isHelpDots: Bool { return contains(.tHelpDots) }
 
 	var description: String {
-		return [(.tNone,        "     none"),
-				(.tIdea,        "     idea"),
-				(.tNote,        "     note"),
+		return [(.tIdea,        "     idea"),
 				(.tMainMap,     " main map"),
 				(.tFavorite,    " favorite"),
 				(.tExemplar,    " exemplar"),
 				(.tHelpDots,    "help dots")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
-			.joined(separator: ", ")
+			.joined(separator:  ", ")
 	}
 
 	var identifier: String {
@@ -79,8 +75,8 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	var      sharedRevealDot :         ZoneDot?
 	var           parentLine :        ZoneLine?
 	var         parentWidget :      ZoneWidget?
-	var           widgetType :     ZWidgetType  { return widgetZone?.widgetType ?? .tMainMap }
-	var         mapReduction :         CGFloat  { return widgetType.isMainMap ? 1.0 : kFavoritesMapReduction }
+	var              mapType :        ZMapType  { return widgetZone?.mapType ?? .tMainMap }
+	var         mapReduction :         CGFloat  { return mapType.isMainMap ? 1.0 : kFavoritesMapReduction }
 	override var description :          String  { return widgetZone?       .description ?? kEmptyIdea }
 	var   hasVisibleChildren :            Bool  { return widgetZone?.hasVisibleChildren ?? false }
 	var          hideDragDot :            Bool  { return widgetZone?       .hideDragDot ?? false }
@@ -95,9 +91,9 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
 	override var controller : ZMapController? {
-		if widgetType.isMainMap  { return              gMapController }
-		if widgetType.isFavorite { return     gFavoritesMapController }
-		if widgetType.isExemplar { return gHelpDotsExemplarController }
+		if mapType.isMainMap  { return              gMapController }
+		if mapType.isFavorite { return     gFavoritesMapController }
+		if mapType.isExemplar { return gHelpDotsExemplarController }
 
 		return nil
 	}
@@ -120,7 +116,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	// MARK: - view hierarchy
 	// MARK: -
 
-	@discardableResult func createPseudoViews(atAllLevels: Bool, for parentPseudoView: ZPseudoView?, for mapType: ZWidgetType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func createPseudoViews(atAllLevels: Bool, for parentPseudoView: ZPseudoView?, for mapType: ZMapType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		let     mapView = absoluteView as? ZMapView
 		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.decorationsView) : nil
 		var       count = 1
@@ -372,7 +368,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	}
 
     override func draw(_ phase: ZDrawPhase) {
-		if (gCanDrawWidgets || !widgetType.isMainMap),
+		if (gCanDrawWidgets || !mapType.isMainMap),
 			let zone = widgetZone {
 
 			switch phase {

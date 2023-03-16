@@ -29,7 +29,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
 	var                    isMainMap : Bool           { return controllerID == .idMainMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
-	var                   widgetType : ZWidgetType    { return .tMainMap }
+	var                   widgetType : ZMapType    { return .tMainMap }
 	var                mapPseudoView : ZPseudoView?
 	var                   hereWidget : ZoneWidget?
 	var                     rootLine : ZoneLine?
@@ -154,19 +154,16 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 		printDebug(.dSpeed, "\(zClassName) createWidgets")
 
-		let type                   : ZRelayoutMapType = isMainMap ? .main : .favorites
-		var specificIndex          : Int?
-		let specificView           = mapPseudoView
-		var specificWidget         = hereWidget
-        var atAllLevels            = true
-        specificWidget?.widgetZone = hereZone
-		gTextCapturing             = false
-        if  let zone               = iZone as? Zone,
-            let widget             = zone.widget,
-			widget.widgetType     == zone.widgetType {
-            specificWidget         = widget
-            specificIndex          = zone.siblingIndex
-			atAllLevels            = [.sData, .spRelayout].contains(kind)
+		var index              : Int?
+		let type               : ZRelayoutMapType = isMainMap ? .main : .favorites
+		let widget             = hereWidget
+        var atAllLevels        = true
+		widget?.widgetZone     = hereZone
+		gTextCapturing         = false
+		if  let zone           = iZone as? Zone {
+			widget?.widgetZone = zone
+			index              = zone.siblingIndex
+			atAllLevels        = [.sData, .spRelayout].contains(kind)
         }
 
 		mapView?.removeAllTextViews(ofType: type)        // clear remnants of prior loop
@@ -175,7 +172,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		// create all new widget tree //
 		// ////////////////////////// //
 
-		let    total = specificWidget?.createPseudoViews(atAllLevels: atAllLevels, for: specificView, for: widgetType, atIndex: specificIndex, kind, visited: [])
+		let    total = widget?.createPseudoViews(atAllLevels: atAllLevels, for: mapPseudoView, for: widgetType, atIndex: index, kind, visited: [])
 		if  let    r = hereWidget, (!isMainMap || gMapLayoutMode == .linearMode) {
 			let line = r.createLineFor(child: r)
 			rootLine = line

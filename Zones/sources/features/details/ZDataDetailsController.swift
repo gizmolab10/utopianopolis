@@ -77,7 +77,7 @@ class ZDataDetailsController: ZGenericController {
 
 		if  let zone = currentZone,
 			let name = zone.recordName {
-			let type = zone.widgetType.identifier.uppercased()
+			let type = zone.mapType.identifier.uppercased()
 			text     = name
 
 			if  gDebugInfo, type.count > 0 {

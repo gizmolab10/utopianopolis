@@ -17,7 +17,7 @@ var gFavoritesMapController : ZFavoritesMapController { return gControllers.cont
 class ZFavoritesMapController: ZMapController {
 
 	override var       hereZone : Zone?          { return gFavoritesHereMaybe }
-	override var     widgetType : ZWidgetType    { return .tFavorite }
+	override var     widgetType : ZMapType    { return .tFavorite }
 	override var   controllerID : ZControllerID  { return .idFavoritesMap }
 	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }

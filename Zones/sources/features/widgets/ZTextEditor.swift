@@ -95,7 +95,7 @@ class ZTextPack: NSObject {
         return result
     }
 
-    // MARK: - internals: editing zones and traits
+    // MARK: - initialize
     // MARK: -
 
 	convenience init(_ iZRecord: ZRecord) {
@@ -110,7 +110,7 @@ class ZTextPack: NSObject {
 		    let         w = widget {
 			let  isLinear = w.isLinearMode
 			let threshold = isLinear ? 18 : 20
-			let      type = w.widgetType
+			let      type = w.mapType
 			if  threshold < text.length,
 				!type.contains(.tExemplar),
 				!type.contains(.tMainMap) || !isLinear {                       // is in favorites or is circular
@@ -138,32 +138,6 @@ class ZTextPack: NSObject {
         return packedZone == iZRecord || packedTrait == iZRecord
     }
 
-    func updateWidgetsForEndEdit() {
-		if  let z = packedZone,
-			let w = gWidgets.widgetForZone(z),
-			let t = w.textWidget {
-			t.abortEditing()      // NOTE: this does NOT remove selection highlight
-			t.deselectAllText()
-			t.updateTextColor()
-			t.updateText()
-
-			FOREGROUND(after: 0.001) { gRelayoutMaps() }
-		}
-    }
-
-    func capture(_ iText: String?) {
-		if  let text           = iText == emptyName ? nil : iText {
-			if  let     trait  = packedTrait {                             // traits take logical priority
-				trait.ownerZone?.setTraitText(text, for: trait.traitType)
-			} else if let zone = packedZone {                              // ignore zone if editing a trait, above
-				zone.setNameForSelfAndBookmarks(to: text.removeProblematics)
-				zone.zRecords?.removeFromLocalSearchIndex(nameOf: zone)
-				zone.addToLocalSearchIndex()
-			}
-		}
-	}
-
-
     func removeSuffix(from iText: String?) -> String? {
         var newText: String?
 
@@ -176,44 +150,6 @@ class ZTextPack: NSObject {
         }
 
         return newText
-    }
-
-    func captureTextAndUpdateWidgets(_ iText: String?) {
-        capture(iText)
-        updateWidgetsForEndEdit()
-    }
-
-	func captureText(_ iText: String?, redrawSync: Bool = false) {
-		if (iText == emptyName || iText == kEmpty) {
-			if  let             type  = packedTrait?.traitType {
-				packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
-			}
-		} else if              iText != originalText {
-            let              newText  = removeSuffix(from: iText)
-            gTextCapturing            = true
-
-            if  let                w  = textWidget {
-                let         original  = originalText
-                prepareUndoForTextChange(gUndoManager) { [self] in
-                    originalText = w.text
-
-					captureText(original, redrawSync: true)
-                    w.updateGUI()
-                }
-            }
-
-            captureTextAndUpdateWidgets(newText)
-
-			if  packedTrait == nil { // only if zone name is being edited
-				updateBookmarkAssociates()
-			}
-		}
-
-		gTextCapturing = false
-
-		if  redrawSync {
-			gRelayoutMaps()
-		}
     }
 
     func updateBookmarkAssociates() {
@@ -245,52 +181,88 @@ class ZTextPack: NSObject {
         }
     }
 
+	// MARK: - capture
+	// MARK: -
+
+	func capture(_ iText: String?) {
+		if  let text           = iText, text != kEmpty {
+			if  let     trait  = packedTrait {            // traits take logical priority (i.e., ignore zone if editing a trait)
+				trait.ownerZone?.setTraitText(text, for: trait.traitType)
+			} else if let zone = packedZone {
+				zone.zRecords?.removeFromLocalSearchIndex(nameOf: zone)
+				zone.setNameForSelfAndBookmarks(to: text.removeProblemCharacters)
+				zone.addToLocalSearchIndex()
+			}
+		}
+	}
+
+	func captureTextAndUpdateWidgets(_ iText: String?) {
+		capture(iText)
+		updateWidgetsForEndEdit()
+	}
+
+	func captureText(_ text: String?, redrawSync: Bool = false) {
+		if (text == kEmpty || text == emptyName) {
+			if  let           type  = packedTrait?.traitType {
+				packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
+			}
+		} else if             text != originalText {
+			let            newText  = removeSuffix(from: text)
+			gTextCapturing          = true
+			if  let              w  = textWidget {
+				let       original  = originalText
+				prepareUndoForTextChange(gUndoManager) { [self] in
+					originalText    = w.text
+
+					captureText(original, redrawSync: true)
+					w.updateGUI()
+				}
+			}
+
+			captureTextAndUpdateWidgets(newText)
+
+			if  packedTrait == nil { // only if zone name is being edited
+				updateBookmarkAssociates()
+			}
+		}
+
+		gTextCapturing = false
+
+		if  redrawSync {
+			gRelayoutMaps()
+		}
+	}
+
+	func updateWidgetsForEndEdit() {
+		if  let z = packedZone,
+			let w = gWidgets.widgetForZone(z),
+			let t = w.textWidget {
+			t.abortEditing()      // NOTE: this does NOT remove selection highlight
+			t.deselectAllText()
+			t.updateTextColor()
+			t.updateText()
+
+			FOREGROUND(after: 0.001) { gRelayoutMaps() }
+		}
+	}
+
 }
 
 class ZTextEditor: ZTextView {
 
-    var  cursorOffset  	    : CGFloat?
-    var currentOffset 	    : CGFloat?
-	var currentEdit 	    : ZTextPack?
-	var currentlyEditedZone : Zone?           { return currentEdit?.packedZone }
-	var currentTextWidget   : ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
-	var currentZoneName	    : String          { return currentlyEditedZone?.zoneName ?? kEmpty }
-	var currentFont 	    : ZFont           { return currentTextWidget?.font ?? gMainFont }
-	var atEnd 	            : Bool            { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
-	var atStart  	        : Bool            { return selectedRange.upperBound == 0 }
+    var  cursorOffset        : CGFloat?
+    var  currentOffset       : CGFloat?
+	var  currentEdit         : ZTextPack?
+	var  currentlyEditedZone : Zone?           { return currentEdit?.packedZone }
+	var  currentTextWidget   : ZoneTextWidget? { return currentlyEditedZone?.widget?.textWidget }
+	var  currentZoneName     : String          { return currentlyEditedZone?.zoneName ?? kEmpty }
+	var  currentFont         : ZFont           { return currentTextWidget?.font ?? gMainFont }
+	var  atEnd               : Bool            { return selectedRange.lowerBound == currentTextWidget?.text?.length ?? -1 }
+	var  atStart             : Bool            { return selectedRange.upperBound == 0 }
+	func clearOffset()                         { currentOffset = nil }
 
-    // MARK: - editing
-    // MARK: -
-
-    func clearOffset() { currentOffset = nil }
-
-	func clearEdit() {
-		currentEdit = nil
-
-		clearOffset()
-		fullResign()
-		gSetMapWorkMode()
-	}
-
-    func cancel() {
-        if  let    e = currentEdit,
-            let zone = currentlyEditedZone {
-            clearEdit()
-            zone.grab()
-            e.updateWidgetsForEndEdit()
-        }
-    }
-
-    @discardableResult func updateText(inZone: Zone?, isEditing: Bool = false) -> ZTextPack? {
-        var pack: ZTextPack?
-        
-        if  let zone = inZone {
-            pack = ZTextPack(zone)
-            pack?.updateText(isEditing: isEditing)
-        }
-        
-        return pack
-    }
+	// MARK: - edit
+	// MARK: -
 
     @discardableResult func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) -> ZTextEditor {
         if  (currentEdit == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
@@ -321,6 +293,17 @@ class ZTextEditor: ZTextView {
 		return self
     }
 
+	@discardableResult func updateText(inZone: Zone?, isEditing: Bool = false) -> ZTextPack? {
+		var pack: ZTextPack?
+
+		if  let zone = inZone {
+			pack = ZTextPack(zone)
+			pack?.updateText(isEditing: isEditing)
+		}
+
+		return pack
+	}
+
 	func placeCursorAtEnd() {
         selectedRange = NSMakeRange(-1, 0)
     }
@@ -343,44 +326,11 @@ class ZTextEditor: ZTextView {
         currentEdit = e
     }
 
-    func quickStopCurrentEdit() {
-        if  let e = currentEdit {
-            applyPreservingEdit {
-                capture()
-                e.packedZone?.grab()
-            }
-        }
-    }
-
-	func stopCurrentEdit(forceCapture: Bool = false, andRedraw: Bool = true) {
-        if  let    e = currentEdit, !gIsEditingStateChanging {
-			let zone = e.packedZone
-
-			capture(force: forceCapture)
-
-			clearEdit()
-			fullResign()
-			e.updateWidgetsForEndEdit()
-			zone?.grab()
-
-			if  andRedraw {
-				gRelayoutMaps(for: zone)
-			}
-        }
-    }
-
     func deferEditingStateChange() {
         gIsEditingStateChanging     = true
 
         FOREGROUND(after: 0.1) {
             gIsEditingStateChanging = false
-        }
-    }
-
-	func capture(force: Bool = false) {
-        if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
-			printDebug(.dEdit, " CAPTURE \(text)")
-            current.captureText(text, redrawSync: true)
         }
     }
 
@@ -393,7 +343,60 @@ class ZTextEditor: ZTextView {
     func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
         currentEdit?.prepareUndoForTextChange(manager, onUndo)
     }
-	
+
+	// MARK: - stop
+	// MARK: -
+
+	func clearEdit() {
+		currentEdit = nil
+
+		clearOffset()
+		fullResign()
+		gSetMapWorkMode()
+	}
+
+	func cancel() {
+		if  let    e = currentEdit,
+			let zone = currentlyEditedZone {
+			clearEdit()
+			zone.grab()
+			e.updateWidgetsForEndEdit()
+		}
+	}
+
+	func quickStopCurrentEdit() {
+		if  let e = currentEdit {
+			applyPreservingEdit {
+				capture()
+				e.packedZone?.grab()
+			}
+		}
+	}
+
+	func stopCurrentEdit(forceCapture: Bool = false, andRedraw: Bool = true) {
+		if  let    e = currentEdit, !gIsEditingStateChanging {
+			let zone = e.packedZone
+
+			capture(force: forceCapture)
+
+			clearEdit()
+			fullResign()
+			e.updateWidgetsForEndEdit()
+			zone?.grab()
+
+			if  andRedraw {
+				gRelayoutMaps(for: zone)
+			}
+		}
+	}
+
+	func capture(force: Bool = false) {
+		if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
+			printDebug(.dEdit, " CAPTURE \(text)")
+			current.captureText(text, redrawSync: true)
+		}
+	}
+
 	// MARK: - selecting
 	// MARK: -
 

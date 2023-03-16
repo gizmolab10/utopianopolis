@@ -2123,7 +2123,7 @@ extension String {
 		}
     }
 
-	var removeProblematics: String {
+	var removeProblemCharacters: String {
 		var     result    = "\(self)"
 		for character in "\\\n\r\t" {
 			let separator = "\(character)"

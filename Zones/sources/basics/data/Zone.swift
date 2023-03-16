@@ -52,7 +52,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           textColor :             ZColor? { return isDragged ? gActiveColor : widgetColor }
 	var                                        lighterColor :             ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
 	var                                      highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
-	var                                            dotColor :             ZColor  { return widgetType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
+	var                                            dotColor :             ZColor  { return mapType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
 	var                                       lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                                           halfCount :                Int  { return Int((Double(count) + 0.5) / 2.0) }
 	var                                               count :                Int  { return children.count }
@@ -76,7 +76,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                                          isBookmark :               Bool  { return bookmarkTarget != nil }
 	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
-	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.widgetType.isMainMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
+	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.mapType.isMainMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
 	var                                  hasNarrowRevealDot :               Bool  { return isExpanded || [0, 1, 3].contains(count) || (gCountsMode != .dots) }
 	var                                    hasBadRecordName :               Bool  { return recordName == nil }
@@ -103,7 +103,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                    isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
 	var                                   isInFavoritesHere :               Bool  { return isProgenyOfOrEqualTo(gFavorites.currentHere) }
 	var                                    isInRecentsGroup :               Bool  { return isProgenyOfOrEqualTo(gFavorites.getRecentsGroup()) }
-	var                                      isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || widgetType.isExemplar }
+	var                                      isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || mapType.isExemplar }
 	var                                    isProgenyOfAGrab :               Bool  { return isProgenyOfAny(of: gSelecting.currentMapGrabs) }
 	var                                          spawnCycle :               Bool  { return isProgenyOfAGrab || dropCycle }
 	var                                           dropCycle :               Bool  { return gDragging.draggedZones.contains(self) || isProgenyOfAny(of: gDragging.draggedZones) || (bookmarkTarget?.dropCycle ?? false) }
@@ -247,7 +247,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return type
 	}
 
-	var widgetType : ZWidgetType {
+	var mapType : ZMapType {
 		if  let    name = root?.recordName {
 			switch name {
 				case  kExemplarRootName: return .tExemplar

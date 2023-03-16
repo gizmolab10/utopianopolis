@@ -28,14 +28,14 @@ class ZWidgets: NSObject {
 		exemplarWidgets.clear()
 	}
 
-	func allWidgets(for type: ZWidgetType) -> ZoneWidgetArray? {
+	func allWidgets(for type: ZMapType) -> ZoneWidgetArray? {
 		switch type {
 			case .tExemplar: return exemplarWidgets.justWidgets
 			default:         return   mainMapWidgets.justWidgets + favoriteWidgets.justWidgets
 		}
 	}
 
-	func getZoneWidgetRegistry(for type: ZWidgetType?) -> WidgetHashDictionary? {
+	func getZoneWidgetRegistry(for type: ZMapType?) -> WidgetHashDictionary? {
 		if  let t = type {
 			if  t.isMainMap  { return  mainMapWidgets }
 			if  t.isFavorite { return favoriteWidgets }
@@ -45,7 +45,7 @@ class ZWidgets: NSObject {
 		return nil
 	}
 
-	func setZoneWidgetRegistry(_ dict: WidgetHashDictionary, for type: ZWidgetType) {
+	func setZoneWidgetRegistry(_ dict: WidgetHashDictionary, for type: ZMapType) {
 		if      type.isMainMap  {  mainMapWidgets = dict }
 		else if type.isFavorite { favoriteWidgets = dict }
 		else if type.isExemplar { exemplarWidgets = dict }
@@ -57,7 +57,7 @@ class ZWidgets: NSObject {
     /// - Parameter widget: UI element containing text, drag and reveal dots and children widgets
 	/// - Parameter type: indicates which dictionary to put the zone:widget pair in
 
-	func setWidgetForZone( _ widget: ZoneWidget, for type: ZWidgetType) {
+	func setWidgetForZone( _ widget: ZoneWidget, for type: ZMapType) {
         if  let   zone = widget.widgetZone,
 			var   dict = getZoneWidgetRegistry(for: type) {
 			let   hash = zone.hash
@@ -74,7 +74,7 @@ class ZWidgets: NSObject {
 
 	func widgetForZone(_ iZone: Zone?) -> ZoneWidget? {
         if  let     zone = iZone {
-			let     type = zone.widgetType
+			let     type = zone.mapType
 			if  let dict = getZoneWidgetRegistry(for: type) {
 				return dict[zone.hash]
 			}
