@@ -17,7 +17,7 @@ class ZGenericTableController: ZGenericController, ZTableViewDelegate, ZTableVie
     func tableView(_ tableView: ZTableView, numberOfRowsInSection section: Int) -> Int { return 1 }
 	func numberOfRows(in tableView: ZTableView) -> Int { return 0 } // tableView(tableView, numberOfRowsInSection: 0) }
 	private func tableView(_ tableView: ZTableView, cellForRowAt indexPath: IndexPath) -> ZTableCellView { return ZTableCellView() }
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) { genericTableUpdate() }
+    override func handleSignal(kind: ZSignalKind) { genericTableUpdate() }
 
     func genericTableUpdate() {
         genericTableView.reloadData()

@@ -24,7 +24,7 @@ class ZDataDetailsController: ZGenericController {
     var                     currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var          controllerID: ZControllerID { return .idDataDetails }
 
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vData) {
 			modificationDateLabel?.text  = modificationDateText
 			cloudStatusLabel?     .text  = statusText

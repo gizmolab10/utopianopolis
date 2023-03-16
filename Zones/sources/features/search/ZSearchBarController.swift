@@ -54,7 +54,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	// MARK: - events
 	// MARK: -
 
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		if  gIsSearching, !gWaitingForSearchEntry {
 			gSearching.setSearchStateTo(.sEntry)
 		}

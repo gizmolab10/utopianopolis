@@ -71,7 +71,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	let            dotsHelpData = ZHelpDotsData()
 	let             mapHelpData = ZHelpMapData()
 	var               isShowing = false
-	override func handleSignal(_ object: Any?, kind: ZSignalKind)            { genericTableUpdate() }
+	override func handleSignal(  kind: ZSignalKind)                          { genericTableUpdate() }
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool                  { return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false) }
 	func           showHelpFor(_ mode: ZHelpMode)                            { show(true, mode: mode) }   // side-effect: sets gCurrentHelpMode
 	func tableView(_ tableView: ZTableView, heightOfRow row: Int) -> CGFloat { return helpData.rowHeight }

@@ -362,7 +362,7 @@ class ZSearchResultsController: ZGenericTableController {
 		return true
 	}
 
-	override func handleSignal(_ iObject: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		if  let t = genericTableView {
 			t.tableColumns[0].width = t.frame.width
 		}

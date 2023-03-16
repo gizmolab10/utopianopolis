@@ -149,7 +149,7 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 		}
 	}
 
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vKickoffTools) { // ignore if hidden
 			toolsUpdate()
 		}

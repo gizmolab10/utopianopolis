@@ -39,21 +39,21 @@ class ZDisplayPreferencesController: ZGenericController {
 	@IBOutlet var          layoutButton : ZHoverableButton?
     override  var          controllerID : ZControllerID { return .idPreferences }
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+    override func handleSignal(kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vPreferences) {
-            let                            grabbed = gSelecting.firstSortedGrab
-            countsModeControl?    .selectedSegment = gCountsMode.rawValue
-            lineThickness?            .doubleValue = Double(gLineThickness)
-            baseFontSize?             .doubleValue = Double(gBaseFontSize)
-            horizontalSpacing?        .doubleValue = Double(gHorizontalGap)
-			circlesDisplayBox?           .isHidden = gMapLayoutMode == .linearMode
-			colorPreferencesBox?         .isHidden = !gColorfulMode
-            clearColorButton?            .isHidden = !(grabbed?.hasColor ?? true)
-			zoneColorBox?                   .color =   grabbed?.color ?? kDefaultIdeaColor
-			activeMineColorBox?             .color = gActiveColor
-			backgroundColorBox?             .color = gAccentColor
-			colorfulModeButton?             .title = "Switch to " + (gColorfulMode ? "monochrome" : "colorful")
-			layoutButton?                   .title = "Switch to " + gMapLayoutMode.next.title
+            let                        grabbed = gSelecting.firstSortedGrab
+			countsModeControl?.selectedSegment = gCountsMode.rawValue
+            lineThickness?        .doubleValue = Double(gLineThickness)
+            baseFontSize?         .doubleValue = Double(gBaseFontSize)
+            horizontalSpacing?    .doubleValue = Double(gHorizontalGap)
+			circlesDisplayBox?       .isHidden = gMapLayoutMode == .linearMode
+			colorPreferencesBox?     .isHidden = !gColorfulMode
+            clearColorButton?        .isHidden = !(grabbed?.hasColor ?? true)
+			zoneColorBox?               .color =   grabbed?.color ?? kDefaultIdeaColor
+			activeMineColorBox?         .color = gActiveColor
+			backgroundColorBox?         .color = gAccentColor
+			colorfulModeButton?         .title = "Switch to " + (gColorfulMode ? "monochrome" : "colorful")
+			layoutButton?               .title = "Switch to " + gMapLayoutMode.next.title
 
 			circlesDisplayControl?.selectSegments(from: gCirclesDisplayMode.indexSet)
             view.setAllSubviewsNeedDisplay()
@@ -117,12 +117,12 @@ class ZDisplayPreferencesController: ZGenericController {
                 UNDO(self) { iUndoSelf in
                     zone.color = color
 
-					gRelayoutMaps(for: zone)
+					gRelayoutMaps()
                 }
             }
             
             zone.clearColor()
-			gRelayoutMaps(for: zone)
+			gRelayoutMaps()
         }
     }
 

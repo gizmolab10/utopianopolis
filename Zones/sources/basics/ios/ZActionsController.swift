@@ -46,7 +46,7 @@ class ZActionsController : ZGenericController {
     // MARK: - events
     // MARK: -
 
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		actionUpdate()
 	}
 

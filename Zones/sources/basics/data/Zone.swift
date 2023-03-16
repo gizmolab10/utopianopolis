@@ -997,7 +997,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		    userCanMutateProgeny {
 			expand()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
-				gControllers.signalFor(self, multiple: [.spRelayout]) {
+				gControllers.signalFor(multiple: [.spRelayout]) {
 					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}
@@ -1039,7 +1039,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						child.acquireZones(zones)
 					}
 
-					gRelayoutMaps(for: parent) {
+					gRelayoutMaps() {
 						completion(child)
 					}
 				}
@@ -1209,7 +1209,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			addNext(containing: containing) { iChild in
 				gDeferringRedraw = false
 
-				gRelayoutMaps(for: self) {
+				gRelayoutMaps() {
 					onCompletion?(iChild)
 					iChild.edit()
 				}
@@ -2963,7 +2963,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 						if  let child = iChild {
 							expand()
-							gRelayoutMaps(for: self) {
+							gRelayoutMaps() {
 								child.editAndSelect()
 							}
 						}
@@ -2988,7 +2988,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				moveZone(to: gTrash)
 			}
 
-			gRelayoutMaps(for: parent) {
+			gRelayoutMaps() {
 				parent.editAndSelect(range: range)
 			}
 		}
@@ -3012,7 +3012,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let goal = generationalGoal(show, extreme: extreme)
 
 		generationalUpdate(show: show, to: goal) {
-			gRelayoutMaps(for: self)
+			gRelayoutMaps()
 		}
 	}
 
@@ -3249,7 +3249,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		gRelayoutMaps(for: self)
+		gRelayoutMaps()
 	}
 
 	func updateMaxLevel() {
@@ -3319,7 +3319,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			grab()
 		}
 
-		gRelayoutMaps(for: self)
+		gRelayoutMaps()
 	}
 
 	func revealDotClicked(_ flags: ZEventFlags, isCircularMode: Bool = false) {
@@ -3349,7 +3349,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else {
 				let goal = (COMMAND && show) ? Int.max : nil
 				generationalUpdate(show: show, to: goal) {
-					gRelayoutMaps(for: self)
+					gRelayoutMaps()
 				}
 			}
 		}
@@ -3616,9 +3616,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				case "h":     editTraitForType(.tHyperlink)
 				case "s":     gFiles.export(self, toFileAs: .eSeriously)
 				case "a", "l",
-					 "r":	  children.sortAccordingToKey(key); gRelayoutMaps(for: self)
-				case "o":     importFromFile(.eSeriously)     { gRelayoutMaps(for: self) }
-				case "t":     swapWithParent                  { gRelayoutMaps(for: self) }
+					 "r":	  children.sortAccordingToKey(key); gRelayoutMaps()
+				case "o":     importFromFile(.eSeriously)     { gRelayoutMaps() }
+				case "t":     swapWithParent                  { gRelayoutMaps() }
 				case kSlash:  gFocusing.grabAndFocusOn(self)  { gRelayoutMaps() }
 				case kBackSpace,
 					 kDelete: deleteSelf    { flag in if flag { gRelayoutMaps() } }

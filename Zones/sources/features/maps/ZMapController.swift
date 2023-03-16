@@ -137,12 +137,12 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		return (kIsPhone && (isMainMap == gShowFavoritesMapForIOS)) || (isMainMap && (gIsEditIdeaMode || gIsEssayMode))
 	}
 
-	func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
-		createWidgets(for: iZone, kind)
+	func createAndLayoutWidgets(_ kind: ZSignalKind) {
+		createWidgets(kind)
 		layoutForCurrentScrollOffset()
 	}
 
-    func createWidgets(for iZone: Any?, _ kind: ZSignalKind) {
+    func createWidgets(_ kind: ZSignalKind) {
 		if  doNotLayout || kind == .sResize {
 			if  kind != .sResize, isMainMap, gIsEssayMode {   // do not create widgets behind essay view
 				mapView?.removeAllTextViews(ofType: .main)
@@ -154,17 +154,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 		printDebug(.dSpeed, "\(zClassName) createWidgets")
 
-		var index              : Int?
-		let type               : ZRelayoutMapType = isMainMap ? .main : .favorites
-		let widget             = hereWidget
-        var atAllLevels        = true
-		widget?.widgetZone     = hereZone
-		gTextCapturing         = false
-		if  let zone           = iZone as? Zone {
-			widget?.widgetZone = zone
-			index              = zone.siblingIndex
-			atAllLevels        = [.sData, .spRelayout].contains(kind)
-        }
+		let type           : ZRelayoutMapType = isMainMap ? .main : .favorites
+		let widget         = hereWidget
+		widget?.widgetZone = hereZone
+		gTextCapturing     = false
 
 		mapView?.removeAllTextViews(ofType: type)        // clear remnants of prior loop
 
@@ -172,7 +165,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		// create all new widget tree //
 		// ////////////////////////// //
 
-		let    total = widget?.createPseudoViews(atAllLevels: atAllLevels, for: mapPseudoView, for: widgetType, atIndex: index, kind, visited: [])
+		let    total = widget?.createPseudoViews(atAllLevels: true, for: mapPseudoView, for: widgetType, atIndex: nil, kind, visited: [])
 		if  let    r = hereWidget, (!isMainMap || gMapLayoutMode == .linearMode) {
 			let line = r.createLineFor(child: r)
 			rootLine = line
@@ -258,7 +251,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	// MARK: - events
 	// MARK: -
 
-    override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
+    override func handleSignal(kind: ZSignalKind) {
 		if  !gDeferringRedraw, gIsReadyToShowUI {
 			switch kind {
 				case .sResize:
@@ -267,7 +260,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 				case .sToolTips:
 					replaceAllToolTips(gModifierFlags)
 				default:
-					createAndLayoutWidgets(for: iSignalObject, kind)
+					createAndLayoutWidgets(kind)
 			}
 		}
 	}

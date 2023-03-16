@@ -195,7 +195,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 			let saved = text {
 			let range = gTextEditor.selectedRange
 			zone.swapWithParent {
-				gRelayoutMaps(for: zone) {
+				gRelayoutMaps() {
 					zone.zoneName = saved
 					zone.editAndSelect(range: range)
 				}

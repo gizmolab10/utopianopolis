@@ -385,7 +385,7 @@ class ZTextEditor: ZTextView {
 			zone?.grab()
 
 			if  andRedraw {
-				gRelayoutMaps(for: zone)
+				gRelayoutMaps()
 			}
 		}
 	}
@@ -446,7 +446,7 @@ class ZTextEditor: ZTextView {
 				if  !reveal {
 					editAtOffset(.zero)
 				} else {
-					gRelayoutMaps(for: currentlyEditedZone) {
+					gRelayoutMaps() {
 						editAtOffset(.zero)
 					}
 				}
@@ -471,7 +471,7 @@ class ZTextEditor: ZTextView {
         
         if  var original = e?.packedZone {
             gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
-				gControllers.signalFor(nil, multiple: kinds) { [self] in
+				gControllers.signalFor(multiple: kinds) { [self] in
 					if  let widget = original.widget, widget.isHere {       // offset has changed
                         currentOffset = widget.textWidget?.offset(for: selectedRange, up)
                     }

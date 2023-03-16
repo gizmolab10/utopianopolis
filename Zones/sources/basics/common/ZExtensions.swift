@@ -66,14 +66,14 @@ func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, su
 
 func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
-func gSignal(for object: Any? = nil, _ multiple: ZSignalKindArray, _ onCompletion: Closure? = nil) {
-	gControllers.signalFor(object, multiple: multiple, onCompletion: onCompletion)
+func gSignal(_ multiple: ZSignalKindArray, _ onCompletion: Closure? = nil) {
+	gControllers.signalFor(multiple: multiple, onCompletion: onCompletion)
 }
 
 private var canUpdate = true
 
-func gRelayoutMaps(for object: Any? = nil, _ onCompletion: Closure? = nil) {
-	gSignal(for: object, [.spRelayout], onCompletion)
+func gRelayoutMaps(_ onCompletion: Closure? = nil) {
+	gSignal([.spRelayout], onCompletion)
 }
 
 func gDeferRedraw(_ closure: Closure) {

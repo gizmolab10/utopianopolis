@@ -22,10 +22,10 @@ class ZFavoritesMapController: ZMapController {
 	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }
 
-	override func createAndLayoutWidgets(for iZone: Any?, _ kind: ZSignalKind) {
+	override func createAndLayoutWidgets(_ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gFavoritesAreVisible, shouldHandle(kind) {
 			FOREGROUND(after: kind == .sLaunchDone ? 0.01 : .zero) { // so favorites map is not too high when other details views are shown
-				super.createAndLayoutWidgets(for: iZone, kind)
+				super.createAndLayoutWidgets(kind)
 			}
 		}
 	}
@@ -51,11 +51,11 @@ class ZFavoritesMapController: ZMapController {
 		super.layoutForCurrentScrollOffset()
 	}
 
-	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		if  gFavoritesAreVisible {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()
 			gFavorites.updateCurrentWithBookmarksTargetingHere()
-			super.handleSignal(iSignalObject, kind: kind)
+			super.handleSignal(kind: kind)
 		}
 	}
 

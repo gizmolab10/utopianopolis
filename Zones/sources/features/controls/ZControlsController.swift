@@ -15,7 +15,7 @@ class ZControlsController: ZGenericController {
 	override  var controllerID    : ZControllerID { return .idControls }
 	@IBOutlet var mapControlsView : ZMapControlsView?
 
-	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		mapControlsView?.setupAndRedraw()
 	}
 

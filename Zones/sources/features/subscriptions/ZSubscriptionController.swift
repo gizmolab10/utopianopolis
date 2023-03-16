@@ -34,7 +34,7 @@ class ZSubscriptionController: ZGenericController {
 		subscriptionUpdate()
 	}
 
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vSubscribe) { // ignore if hidden
 			subscriptionUpdate()
 		}

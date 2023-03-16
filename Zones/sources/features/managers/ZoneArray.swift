@@ -765,7 +765,7 @@ extension ZoneArray {
 			zone.generationalUpdate(show: show, to: goal)
 		}
 
-		gRelayoutMaps(for: self)
+		gRelayoutMaps()
 	}
 
 	func invokeTravel(_ COMMAND: Bool = false, onCompletion: BoolClosure? = nil) {

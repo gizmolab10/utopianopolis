@@ -21,7 +21,7 @@ class ZGenericController: ZController, ZGeneric {
 	var     controllerID : ZControllerID { return .idUndefined }
 	var     allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
 	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
-    func handleSignal(_ object: Any?, kind: ZSignalKind) {}
+    func handleSignal(kind: ZSignalKind) {}
 	func controllerSetup(with mapView: ZMapView?) {}
 	func controllerStartup() {}
 
@@ -70,12 +70,12 @@ class ZGenericController: ZController, ZGeneric {
         super.viewDidLoad()
 		controllerStartup()
 
-		gControllers.setSignalHandler(for: self, iID: controllerID) { [self] object, kind in
+		gControllers.setSignalHandler(for: self, iID: controllerID) { [self] kind in
 			view.zlayer.backgroundColor = gControllers.backgroundColorFor(controllerID).cgColor
 
 			if  shouldHandle(kind) {
 				markAsHandlingWhile {
-					handleSignal(object, kind: kind)
+					handleSignal(kind: kind)
 				}
             }
         }

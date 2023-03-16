@@ -31,7 +31,7 @@ class ZGenericTableController: ZGenericController, NSTableViewDelegate, NSTableV
 	}
 
     func numberOfRows(in tableView: ZTableView) -> Int { return 1 }
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) { genericTableUpdate() }
+	override func handleSignal(kind: ZSignalKind) { genericTableUpdate() }
 	var rowHeight: CGFloat { return genericTableView?.rowHeight ?? 17.0 }
 
     func genericTableUpdate() {

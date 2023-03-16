@@ -114,7 +114,7 @@ class ZControllers: NSObject {
 		return nil
 	}
 
-	func setSignalHandler(for iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalClosure) {
+	func setSignalHandler(for iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalKindClosure) {
         signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
         currentController                = iController
     }
@@ -141,16 +141,16 @@ class ZControllers: NSObject {
     // MARK: -
 
 	class ZSignalObject {
-		let    closure : SignalClosure!
+		let    closure : SignalKindClosure!
 		let controller : ZGenericController!
 
-		init(_ iClosure: @escaping SignalClosure, forController iController: ZGenericController) {
+		init(_ iClosure: @escaping SignalKindClosure, forController iController: ZGenericController) {
 			controller = iController
 			closure    = iClosure
 		}
 	}
 
-	func signalFor(_ object: Any? = nil, multiple regards: ZSignalKindArray, onCompletion: Closure? = nil) {
+	func signalFor(multiple regards: ZSignalKindArray, onCompletion: Closure? = nil) {
 		FOREGROUND { [self] in
 			if  regards.contains(.spRelayout) {
 				gWidgets.clearAll()
@@ -161,7 +161,7 @@ class ZControllers: NSObject {
 			for regarding in regards {
 				for (controllerID, signalObject) in signalObjectsByControllerID {
                     let closure = {
-                        signalObject.closure(object, regarding)
+                        signalObject.closure(regarding)
                     }
                     
 					switch (regarding, controllerID) {  // these non-default cases send a signal only to the one (or two) corresponding controller)s)

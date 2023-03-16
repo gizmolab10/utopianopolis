@@ -407,7 +407,7 @@ class ZMapEditor: ZBaseEditor {
 
 			gSelecting.grab(last)
 			gSelecting.firstGrab()?.asssureIsVisible()
-			gRelayoutMaps(for: here)
+			gRelayoutMaps()
 		}
 	}
 
@@ -640,7 +640,7 @@ class ZMapEditor: ZBaseEditor {
 	func reverseWordsInZoneName() {
 		let zone = gSelecting.currentMoveable
 		if  zone.reverseWordsInZoneName() {
-			gRelayoutMaps(for: zone)
+			gRelayoutMaps()
 		}
 	}
 
@@ -669,7 +669,7 @@ class ZMapEditor: ZBaseEditor {
 	func swapWithParent() {
 		if  gSelecting.currentMapGrabs.count == 1,
 			let zone = gSelecting.firstSortedGrab {
-			zone.swapWithParent { gRelayoutMaps(for: zone) }
+			zone.swapWithParent { gRelayoutMaps() }
 		}
     }
 

@@ -12,9 +12,9 @@ var gSearchOptionsController: ZSearchOptionsController? { return gControllers.co
 
 class ZSearchOptionsController: ZGenericController {
 
-	override  var controllerID        : ZControllerID { return .idSearchOptions }
-	@IBOutlet var searchScopeControl  : ZSegmentedControl?
-	@IBOutlet var searchTypeControl   : ZSegmentedControl?
+	override  var controllerID       : ZControllerID { return .idSearchOptions }
+	@IBOutlet var searchScopeControl : ZSegmentedControl?
+	@IBOutlet var searchTypeControl  : ZSegmentedControl?
 
 	override func controllerSetup(with mapView: ZMapView?) {
 		view.zlayer.backgroundColor = kClearColor.cgColor
@@ -22,7 +22,7 @@ class ZSearchOptionsController: ZGenericController {
 		searchStateDidChange()
 	}
 
-	override func handleSignal(_ iSignalObject: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		filterDidChange()
 		scopeDidChange()
 		searchStateDidChange()

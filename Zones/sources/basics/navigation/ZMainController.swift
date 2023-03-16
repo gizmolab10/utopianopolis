@@ -117,7 +117,7 @@ class ZMainController: ZGesturesController {
 		}
 	}
 
-    override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+    override func handleSignal(kind: ZSignalKind) {
 		switch kind {
 			case .sSearch:
 				assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBar)

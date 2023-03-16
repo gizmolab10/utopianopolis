@@ -38,7 +38,7 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 		}
 	}
 
-	override func handleSignal(_ object: Any?, kind: ZSignalKind) {
+	override func handleSignal(kind: ZSignalKind) {
 		switch kind {
 			case .spStartupStatus: updateStartupStatus()
 			default: break
