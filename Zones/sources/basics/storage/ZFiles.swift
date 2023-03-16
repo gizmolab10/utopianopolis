@@ -138,42 +138,44 @@ class ZFiles: NSObject {
 			if  result == .OK,
 				let fileURL = panel.url {
 
-				switch type {
-					case .eOutline:
-						let string = zone.outlineString()
+				BACKGROUND {
+					switch type {
+						case .eOutline:
+							let string = zone.outlineString()
 
-						do {
-							try string.write(to: fileURL, atomically: true, encoding: .utf8)
-						} catch {
-							printDebug(.dError, "\(error)")
-						}
-					case .eSeriously:
-						do {
-							let     dict = try zone.storageDictionary()
-							let jsonDict = dict.jsonDict
-							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-
-							try data.write(to: fileURL)
-						} catch {
-							printDebug(.dError, "\(error)")
-						}
-					case .eEssay:
-						if  let text = zone.note?.essayText {
 							do {
-								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
-								let  wrapper = FileWrapper(regularFileWithContents: fileData)
-
-								try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)
-
+								try string.write(to: fileURL, atomically: true, encoding: .utf8)
 							} catch {
 								printDebug(.dError, "\(error)")
 							}
-						}
-					default: break
+						case .eSeriously:
+							do {
+								let     dict = try zone.storageDictionary()
+								let jsonDict = dict.jsonDict
+								let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+
+								try data.write(to: fileURL)
+							} catch {
+								printDebug(.dError, "\(error)")
+							}
+						case .eEssay:
+							if  let text = zone.note?.essayText {
+								do {
+									let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
+									let  wrapper = FileWrapper(regularFileWithContents: fileData)
+
+									try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)
+
+								} catch {
+									printDebug(.dError, "\(error)")
+								}
+							}
+						default: break
+					}
+
+					gIsExportingToAFile = false
 				}
 			}
-
-			gIsExportingToAFile = false
 		}
 	}
 

@@ -147,7 +147,7 @@ class ZTextPack: NSObject {
 			t.updateTextColor()
 			t.updateText()
 
-			FOREGROUND(after: 0.1) { gRelayoutMaps() }
+			FOREGROUND(after: 0.001) { gRelayoutMaps() }
 		}
     }
 
