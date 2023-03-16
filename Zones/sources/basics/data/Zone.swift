@@ -137,6 +137,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func          toggleShowing()                                                 { isShowing ? hide() : show() }
 	func          recount()                                                       { updateAllProgenyCounts() }
 
+	var parentZone : Zone? {
+		get { return oldParentZone }
+		set { oldParentZone = newValue }
+	}
+
 	override var isInScope: Bool {
 		if  root == nil {
 			updateRootFromParent()
@@ -693,69 +698,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return highest
-	}
-
-	func unlinkParentAndMaybeNeedSave() {
-		if  parentZoneMaybe != nil ||
-				(parentLink != nil &&
-				 parentLink != kNullLink) {   // what about parentRID?
-			parentZoneMaybe  = nil
-			parentLink       = kNullLink
-		}
-	}
-
-	var resolveParent: Zone? {
-		let     old = parentZoneMaybe
-		parentZoneMaybe = nil
-		let     new = parentZone // recalculate _parentZone
-
-		old?.removeChild(self)
-		new?.addChildAndRespectOrder(self)
-
-		return new
-	}
-
-	var parentZone: Zone? {
-		get {
-			if  root == self {
-				unlinkParentAndMaybeNeedSave()
-			} else if parentZoneMaybe == nil {
-				if let         zone = parentLink?.maybeZone {
-					parentZoneMaybe = zone
-				} else if let parentRecordName = parentRID,
-						  recordName != parentRecordName { // noop (remain nil) when parentRID equals record name
-					parentZoneMaybe = zRecords?.maybeZoneForRecordName(parentRecordName)
-				}
-			}
-
-			return parentZoneMaybe
-		}
-
-		set {
-			if  root == self {
-				unlinkParentAndMaybeNeedSave()
-			} else if parentZoneMaybe    != newValue {
-				parentZoneMaybe           = newValue
-				if  parentZoneMaybe      == nil {
-					unlinkParentAndMaybeNeedSave()
-				} else if let parentName  = parentZoneMaybe?.recordName,
-						  let parentDBID  = parentZoneMaybe?.databaseID {
-					if        parentDBID == databaseID {
-						if  parentRID    != parentName {
-							parentRID     = parentName
-							parentLink    = kNullLink
-						}
-					} else {                                                                                // new parent is in different db
-						let newParentLink = parentDBID.rawValue + kColonSeparator + kColonSeparator + parentName
-
-						if  parentLink   != newParentLink {
-							parentLink    = newParentLink  // references don't work across dbs
-							parentRID     = kNullParent
-						}
-					}
-				}
-			}
-		}
 	}
 
 	var nextSiblingIndex : Int? {

@@ -125,7 +125,7 @@ class ZMapEditor: ZBaseEditor {
 					switch key {
 						case "a":        if COMMAND { moveable.selectAll(progeny: OPTION) }
 						case "b":        gSelecting.firstSortedGrab?.addBookmark()
-						case "c":        if  OPTION { divideChildren() } else if COMMAND { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
+						case "c":        if flags.exactlyOption { divideChildren() } else if flags.exactlyCommand { gSelecting.simplifiedGrabs.copyToPaste() } else { gMapController?.recenter(SPECIAL) }
 						case "d":        if     ALL { gRemoteStorage.removeAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e":        gToggleShowExplanations()
 						case "f":        gSearching.showSearch(OPTION)

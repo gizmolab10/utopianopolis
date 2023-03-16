@@ -2123,9 +2123,9 @@ extension String {
 		}
     }
 
-	var unescaped: String {
+	var removeProblematics: String {
 		var     result    = "\(self)"
-		for character in "\\\n\r\t\"\'" {
+		for character in "\\\n\r\t" {
 			let separator = "\(character)"
 			if  result.contains(separator) {
 				result    = result.replacingOccurrences(of: separator, with: kEmpty)
@@ -2229,16 +2229,18 @@ extension String {
 		return nil
 	}
 
-	var maybeZone: Zone? {
+	var maybeZone: Zone? { return maybeZRecord as? Zone }
+
+	var maybeZRecord: ZRecord? {
 		if  self        != kEmpty,
 			let     name = maybeRecordName,
 			let    parts = components {
 			let  rawDBID = parts[0]
 			let     databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
 			let zRecords = gRemoteStorage.zRecords(for: databaseID)
-			let     zone = zRecords?.maybeZoneForRecordName(name)
+			let  zRecord = zRecords?.maybeZRecordForRecordName(name)
 
-			return zone
+			return zRecord
 		}
 
 		return nil

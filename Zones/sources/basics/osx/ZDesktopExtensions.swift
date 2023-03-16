@@ -231,12 +231,15 @@ extension NSURL {
 
 extension ZEventFlags {
 
-	var isAnyMultiple:       Bool       { return  exactlySplayed || exactlySpecial || exactlyOtherSpecial || exactlyAll }
-	var isAny:               Bool       { return  hasCommand ||  hasOption ||  hasControl }
-	var exactlyAll:          Bool       { return  hasCommand &&  hasOption &&  hasControl }
-	var exactlySpecial:      Bool       { return  hasCommand &&  hasOption && !hasControl }
-	var exactlySplayed:      Bool       { return  hasCommand && !hasOption &&  hasControl }
-	var exactlyOtherSpecial: Bool       { return !hasCommand &&  hasOption &&  hasControl }
+	var exactlyOption:       Bool       { return !isAnyMultiple  &&  hasOption }
+	var exactlyCommand:      Bool       { return !isAnyMultiple  &&  hasCommand }
+	var exactlyControl:      Bool       { return !isAnyMultiple  &&  hasControl }
+	var isAnyMultiple:       Bool       { return  exactlySplayed ||  exactlySpecial || exactlyOtherSpecial || exactlyAll }
+	var isAny:               Bool       { return  hasCommand     ||  hasOption      ||  hasControl }
+	var exactlyAll:          Bool       { return  hasCommand     &&  hasOption      &&  hasControl }
+	var exactlySpecial:      Bool       { return  hasCommand     &&  hasOption      && !hasControl }
+	var exactlySplayed:      Bool       { return  hasCommand     && !hasOption      &&  hasControl }
+	var exactlyOtherSpecial: Bool       { return !hasCommand     &&  hasOption      &&  hasControl }
     var hasNumericPad:       Bool { get { return  contains(.numericPad) } set { if newValue { insert(.numericPad) } else { remove(.numericPad) } } }
 	var hasControl:          Bool { get { return  contains(.control)    } set { if newValue { insert(.control)    } else { remove(.control) } } }
 	var hasCommand:          Bool { get { return  contains(.command)    } set { if newValue { insert(.command)    } else { remove(.command) } } }
@@ -868,7 +871,7 @@ extension ZTextEditor {
 					kBackspace:   if CONTROL { gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() } }
 					default:      return false
 				}
-			} else if "|<>[]{}()\'\"".contains(key) {
+			} else if kSurroundKeys.contains(key) {
 				return            editedZone?.surround(by: key) ?? false
 			} else {
 				switch key {

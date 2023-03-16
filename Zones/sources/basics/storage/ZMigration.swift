@@ -10,8 +10,9 @@ import Foundation
 
 enum ZCDMigrationState: Int {
 	case firstTime
-	case migrateFromFilesystem
-	case migrateToCloud
+	case fromFilesystem
+	case toRelationships
+	case toCloud
 	case normal
 }
 
@@ -47,7 +48,7 @@ extension ZCoreDataStack {
 		migrateDataDirectory()
 
 		persistentContainer = getPersistentContainer(cloudID: gCDCloudID, at: ZCDStoreLocation.current.lastPathComponent)
-		gCDMigrationState   = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .migrateFromFilesystem : .firstTime
+		gCDMigrationState   = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .fromFilesystem : .firstTime
 
 		if  gIsUsingCloudKit, !gIsCDMigrationDone {
 			do {
@@ -107,9 +108,80 @@ extension ZFiles {
 
 	func migrationFilesSize() -> Int {
 		switch gCDMigrationState {
-			case .firstTime:             return fileSizeFor(.everyoneID)
-			case .migrateFromFilesystem: return totalFilesSize
-			default:                     return 0
+			case .firstTime:      return fileSizeFor(.everyoneID)
+			case .fromFilesystem: return totalFilesSize
+			default:              return 0
+		}
+	}
+
+}
+
+extension Zone {
+
+	func migrateIntoRelationships() {
+
+	}
+
+	func unlinkParentAndMaybeNeedSave() {
+		if  parentZoneMaybe != nil ||
+				(parentLink != nil &&
+				 parentLink != kNullLink) {   // what about parentRID?
+			parentZoneMaybe  = nil
+			parentLink       = kNullLink
+		}
+	}
+
+	var resolveParent: Zone? {
+		let     old = parentZoneMaybe
+		parentZoneMaybe = nil
+		let     new = parentZone // recalculate _parentZone
+
+		old?.removeChild(self)
+		new?.addChildAndRespectOrder(self)
+
+		return new
+	}
+
+	var oldParentZone: Zone? {
+		get {
+			if  root == self {
+				unlinkParentAndMaybeNeedSave()
+			} else if parentZoneMaybe == nil {
+				if let         zone = parentLink?.maybeZone {
+					parentZoneMaybe = zone
+				} else if let parentRecordName = parentRID,
+						  recordName != parentRecordName { // noop (remain nil) when parentRID equals record name
+					parentZoneMaybe = zRecords?.maybeZoneForRecordName(parentRecordName)
+				}
+			}
+
+			return parentZoneMaybe
+		}
+
+		set {
+			if  root == self {
+				unlinkParentAndMaybeNeedSave()
+			} else if parentZoneMaybe    != newValue {
+				parentZoneMaybe           = newValue
+				if  parentZoneMaybe      == nil {
+					unlinkParentAndMaybeNeedSave()
+				} else if let parentName  = parentZoneMaybe?.recordName,
+						  let parentDBID  = parentZoneMaybe?.databaseID {
+					if        parentDBID == databaseID {
+						if  parentRID    != parentName {
+							parentRID     = parentName
+							parentLink    = kNullLink
+						}
+					} else {                                                                                // new parent is in different db
+						let newParentLink = parentDBID.rawValue + kColonSeparator + kColonSeparator + parentName
+
+						if  parentLink   != newParentLink {
+							parentLink    = newParentLink  // references don't work across dbs
+							parentRID     = kNullParent
+						}
+					}
+				}
+			}
 		}
 	}
 
