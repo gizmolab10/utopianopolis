@@ -116,7 +116,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	// MARK: - view hierarchy
 	// MARK: -
 
-	@discardableResult func createPseudoViews(atAllLevels: Bool, for parentPseudoView: ZPseudoView?, for mapType: ZMapType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func createPseudoViews(for parentPseudoView: ZPseudoView?, for mapType: ZMapType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		let     mapView = absoluteView as? ZMapView
 		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.decorationsView) : nil
 		var       count = 1
@@ -148,8 +148,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 			noop()
 		}
 
-		if  atAllLevels,
-			let  zone = widgetZone, !visited.contains(zone), zone.isShowing, zone.hasVisibleChildren {
+		if  let  zone = widgetZone, !visited.contains(zone), zone.isShowing, zone.hasVisibleChildren {
 			var index = childrenWidgets.count
 			let vplus = visited + [zone]
 
@@ -158,7 +157,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 				let child        = childrenWidgets[index]
 				child.widgetZone =            zone[index]
 				let   parentView = isLinearMode ? childrenView : parentPseudoView
-				count           += child.createPseudoViews(atAllLevels: true, for: parentView, for: mapType, atIndex: index, kind, visited: vplus)
+				count           += child.createPseudoViews(for: parentView, for: mapType, atIndex: index, kind, visited: vplus)
 			}
 		}
 

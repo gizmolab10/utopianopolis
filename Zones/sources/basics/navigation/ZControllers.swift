@@ -68,7 +68,7 @@ let gControllers = ZControllers()
 class ZControllers: NSObject {
 
 	var currentController: ZGenericController?
-    var signalObjectsByControllerID = [ZControllerID : ZSignalObject] ()
+    var signalRespondersByControllerID = [ZControllerID : ZSignalResponder] ()
 
 	// MARK: - hide / reveal
 	// MARK: -
@@ -107,7 +107,7 @@ class ZControllers: NSObject {
 
 	func controllerForID(_ iID: ZControllerID?) -> ZGenericController? {
 		if  let identifier = iID,
-			let     object = signalObjectsByControllerID[identifier] {
+			let     object = signalRespondersByControllerID[identifier] {
 			return  object.controller
 		}
 
@@ -115,12 +115,12 @@ class ZControllers: NSObject {
 	}
 
 	func setSignalHandler(for iController: ZGenericController, iID: ZControllerID, closure: @escaping SignalKindClosure) {
-        signalObjectsByControllerID[iID] = ZSignalObject(closure, forController: iController)
-        currentController                = iController
+		signalRespondersByControllerID[iID] = ZSignalResponder(closure, forController: iController)
+        currentController                   = iController
     }
 
 	func clearSignalHandler(_ iID: ZControllerID) {
-        signalObjectsByControllerID[iID] = nil
+		signalRespondersByControllerID[iID] = nil
     }
 
 	func backgroundColorFor(_ iID: ZControllerID?) -> ZColor {
@@ -140,7 +140,7 @@ class ZControllers: NSObject {
 	// MARK: - signals
     // MARK: -
 
-	class ZSignalObject {
+	class ZSignalResponder {
 		let    closure : SignalKindClosure!
 		let controller : ZGenericController!
 
@@ -152,16 +152,10 @@ class ZControllers: NSObject {
 
 	func signalFor(multiple regards: ZSignalKindArray, onCompletion: Closure? = nil) {
 		FOREGROUND { [self] in
-			if  regards.contains(.spRelayout) {
-				gWidgets.clearAll()
-				gMapView?.updateTracking()
-				gMapView?.removeAllTextViews(ofType: .both)
-			}
-
 			for regarding in regards {
-				for (controllerID, signalObject) in signalObjectsByControllerID {
+				for (controllerID, signalResponder) in signalRespondersByControllerID {
                     let closure = {
-                        signalObject.closure(regarding)
+						signalResponder.closure(regarding)
                     }
                     
 					switch (regarding, controllerID) {  // these non-default cases send a signal only to the one (or two) corresponding controller)s)

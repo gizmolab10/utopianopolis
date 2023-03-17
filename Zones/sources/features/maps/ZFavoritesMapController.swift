@@ -16,11 +16,11 @@ var gFavoritesMapController : ZFavoritesMapController { return gControllers.cont
 
 class ZFavoritesMapController: ZMapController {
 
-	override var       hereZone : Zone?          { return gFavoritesHereMaybe }
-	override var     widgetType : ZMapType    { return .tFavorite }
+	override var        mapType : ZMapType       { return .tFavorite }
 	override var   controllerID : ZControllerID  { return .idFavoritesMap }
 	override var  mapLayoutMode : ZMapLayoutMode { return .linearMode }
 	override var canDrawWidgets : Bool           { return gFavoritesAreVisible }
+	override var       hereZone : Zone?          { return gFavoritesHereMaybe }
 
 	override func createAndLayoutWidgets(_ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gFavoritesAreVisible, shouldHandle(kind) {

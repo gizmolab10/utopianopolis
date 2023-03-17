@@ -43,15 +43,16 @@ class ZGenericController: ZController, ZGeneric {
 
 	func allowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
-			case .idHelpEssayIntroduction, .idHelpEssayGraphicals,
+			case .idHelpEssayIntroduction,
+				 .idHelpEssayGraphicals,
 				 .idHelpDots:      return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
 			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spMainMap]
 			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spFavoritesMap, .sDetails]
-			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                                .sDetails]
+			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                     .sDetails]
 			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
-			case .idSearch:        return [.sSearch]
 			case .idStartup:       return [.spStartupStatus]
 			case .idSubscription:  return [.spSubscription]
+			case .idSearch:        return [.sSearch]
 			case .idSearchResults: return [.sFound]
 			default:               break
 		}

@@ -29,7 +29,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	var                   isExemplar : Bool           { return controllerID == .idHelpDots }
 	var                    isMainMap : Bool           { return controllerID == .idMainMap }
 	var                     hereZone : Zone?          { return gHereMaybe ?? gCloud?.rootZone }
-	var                   widgetType : ZMapType    { return .tMainMap }
+	var                      mapType : ZMapType       { return .tMainMap }
 	var                mapPseudoView : ZPseudoView?
 	var                   hereWidget : ZoneWidget?
 	var                     rootLine : ZoneLine?
@@ -143,8 +143,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 	}
 
     func createWidgets(_ kind: ZSignalKind) {
-		if  doNotLayout || kind == .sResize {
-			if  kind != .sResize, isMainMap, gIsEssayMode {   // do not create widgets behind essay view
+		if  kind == .sResize { return }
+
+		if  doNotLayout {
+			if  isMainMap, gIsEssayMode {   // do not create widgets behind essay view
 				mapView?.removeAllTextViews(ofType: .main)
 				clearAllToolTips(for: isMainMap ? .main : .favorites)
 			}
@@ -154,27 +156,28 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 		printDebug(.dSpeed, "\(zClassName) createWidgets")
 
-		let type           : ZRelayoutMapType = isMainMap ? .main : .favorites
-		let widget         = hereWidget
-		widget?.widgetZone = hereZone
-		gTextCapturing     = false
+		hereWidget?.widgetZone = hereZone
+		gTextCapturing         = false
 
-		mapView?.removeAllTextViews(ofType: type)        // clear remnants of prior loop
+		mapView?.removeAllTextViews(ofType: isMainMap ? .main : .favorites)           // clear remnants of prior loop
 
-		// ////////////////////////// //
-		// create all new widget tree //
-		// ////////////////////////// //
+		// ////////////////// //
+		// create widget tree //
+		// ////////////////// //
 
-		let    total = widget?.createPseudoViews(atAllLevels: true, for: mapPseudoView, for: widgetType, atIndex: nil, kind, visited: [])
-		if  let    r = hereWidget, (!isMainMap || gMapLayoutMode == .linearMode) {
-			let line = r.createLineFor(child: r)
-			rootLine = line
-
-			line.addDots(reveal: ZoneDot(view: r.absoluteView))
+		if  isMainMap {
+			noop()
 		}
 
-		if  let t = total {
-			printDebug(.dWidget, "layout \(widgetType.description): \(t)")
+		if  let total = hereWidget?.createPseudoViews(for: mapPseudoView, for: mapType, atIndex: nil, kind, visited: []) {
+			printDebug(.dWidget, "layout \(mapType.description): \(total)")
+		}
+
+		if  let    w = hereWidget, (!isMainMap || gMapLayoutMode == .linearMode) {    // create drag dot for here
+			let line = w.createLineFor(child: w)
+			rootLine = line
+
+			line.addDots(reveal: ZoneDot(view: w.absoluteView))
 		}
     }
 
