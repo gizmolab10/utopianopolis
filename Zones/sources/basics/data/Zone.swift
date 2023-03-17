@@ -138,8 +138,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func          recount()                                                       { updateAllProgenyCounts() }
 
 	var parentZone : Zone? {
-		get { return oldParentZone }
-		set { oldParentZone = newValue }
+		get { return getParentZone() }
+		set { setParentZone(newValue) }
 	}
 
 	override var isInScope: Bool {
@@ -305,12 +305,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		set {
 			crossLinkMaybe = nil
-			zoneLink       = kNullLink
-			if  let  value = newValue,
-				let   name = value.recordName {
-				let   dbid = value.databaseID.rawValue
-				zoneLink   = "\(dbid)::\(name)"
-			}
+			zoneLink       = newValue?.asString
 		}
 	}
 

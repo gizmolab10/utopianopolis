@@ -8,36 +8,6 @@
 
 import Foundation
 
-enum ZCDMigrationState: Int {
-	case firstTime
-	case fromFilesystem
-	case toRelationships
-	case toCloud
-	case normal
-}
-
-enum ZCDCloudID: String {
-	case original = "Zones"
-	case testing  = "test2"
-	case latest   = "coredata"
-
-	static var defaultIDs : [ZCDCloudID] { return [.testing, .latest] }
-	static var        all : [ZCDCloudID] { return [.original, .testing, .latest] }
-	var           cloudID : String       { return kBaseCloudID + kPeriod + rawValue }
-	var lastPathComponent : String       { return ZCDStoreLocation.current.rawValue + kDataDirectoryName + kSlash + rawValue }
-	var        fileExists : Bool         { return gFilesURL.appendingPathComponent(lastPathComponent).fileExists }
-
-}
-
-enum ZCDStoreLocation: String {
-	case normal  = ""
-	case migrate = "migration.testing."
-
-	static var    current : ZCDStoreLocation { return gCDLocationIsNormal ? .normal : .migrate }
-	var basePathComponent :           String { return rawValue + kDataDirectoryName }
-	var lastPathComponent :           String { return "\(basePathComponent)/\(gCDCloudID.rawValue)" }
-}
-
 extension ZCoreDataStack {
 
 	// ///////////////////////////////////////////// //
@@ -45,7 +15,7 @@ extension ZCoreDataStack {
 	// ///////////////////////////////////////////// //
 
 	func assureMigrationToLatest() {
-		migrateDataDirectory()
+		migrateLocalCDRepository()
 
 		persistentContainer = getPersistentContainer(cloudID: gCDCloudID, at: ZCDStoreLocation.current.lastPathComponent)
 		gCDMigrationState   = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .fromFilesystem : .firstTime
@@ -59,7 +29,7 @@ extension ZCoreDataStack {
 		}
 	}
 
-	func migrateDataDirectory() {
+	func migrateLocalCDRepository() {
 		for id in ZCDCloudID.all.reversed() {
 			if  id.fileExists {
 				gCDCloudID = id
@@ -118,7 +88,29 @@ extension ZFiles {
 
 extension Zone {
 
-	func migrateIntoRelationships() {
+	func getParentZone() -> Zone? {
+		if  let relationships = gRelationships.relationshipsFor(self),
+			let relationship  = relationships.first {
+
+			if  relationship.from == "mine::61A84294-527D-4F58-8055-1281F728A70D" {
+				noop()
+			}
+
+			return relationship.parent
+		} else if let parent = oldParentZone {
+			setParentZone(parent)
+
+			return parent
+		}
+
+		return nil
+	}
+
+	func setParentZone(_ parent: Zone?) {
+		ZRelationship.addUniqueRelationship(self, parent: parent, in: databaseID)
+	}
+
+	func migrateIntoRelationshipsEntity() {
 
 	}
 
@@ -132,9 +124,9 @@ extension Zone {
 	}
 
 	var resolveParent: Zone? {
-		let     old = parentZoneMaybe
+		let         old = parentZoneMaybe
 		parentZoneMaybe = nil
-		let     new = parentZone // recalculate _parentZone
+		let         new = parentZone // recalculate _parentZone
 
 		old?.removeChild(self)
 		new?.addChildAndRespectOrder(self)
@@ -185,4 +177,34 @@ extension Zone {
 		}
 	}
 
+}
+
+enum ZCDMigrationState: Int {
+	case firstTime
+	case fromFilesystem
+	case toRelationships
+	case toCloud
+	case normal
+}
+
+enum ZCDCloudID: String {
+	case original = "Zones"
+	case testing  = "test2"
+	case latest   = "coredata"
+
+	static var defaultIDs : [ZCDCloudID] { return [.testing, .latest] }
+	static var        all : [ZCDCloudID] { return [.original, .testing, .latest] }
+	var           cloudID : String       { return kBaseCloudID + kPeriod + rawValue }
+	var lastPathComponent : String       { return ZCDStoreLocation.current.rawValue + kDataDirectoryName + kSlash + rawValue }
+	var        fileExists : Bool         { return gFilesURL.appendingPathComponent(lastPathComponent).fileExists }
+
+}
+
+enum ZCDStoreLocation: String {
+	case normal  = ""
+	case migrate = "migration.testing."
+
+	static var    current : ZCDStoreLocation { return gCDLocationIsNormal ? .normal : .migrate }
+	var basePathComponent :           String { return rawValue + kDataDirectoryName }
+	var lastPathComponent :           String { return "\(basePathComponent)/\(gCDCloudID.rawValue)" }
 }

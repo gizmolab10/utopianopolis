@@ -39,7 +39,7 @@ extension ZManagedObject {
 		}
 	}
 
-	static func uniqueObject(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZManagedObject {
+	static func uniqueManagedObject(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZManagedObject {
 		if  let    name = recordName, gIsUsingCoreData, gIsCDMigrationDone {
 			let objects = gCoreDataStack.find(type: entityName, recordName: name, in: databaseID, onlyOne: true)
 

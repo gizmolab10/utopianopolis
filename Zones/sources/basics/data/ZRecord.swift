@@ -127,6 +127,16 @@ class ZRecord: ZManagedObject {
 		return kRootNames.contains(recordName!)
 	}
 
+	var asString: String? {
+		if  let name = recordName {
+			let dbid = databaseID.rawValue
+
+			return "\(dbid)::\(name)"
+		}
+
+		return nil
+	}
+
 	// MARK: - overrides
 	// MARK: -
 
@@ -188,7 +198,7 @@ class ZRecord: ZManagedObject {
 	}
 
 	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZRecord {
-		let         object = uniqueObject(entityName: entityName, recordName: recordName, in: databaseID)
+		let         object = uniqueManagedObject(entityName: entityName, recordName: recordName, in: databaseID)
 		let        zRecord = object as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 		zRecord      .dbid = databaseID.identifier

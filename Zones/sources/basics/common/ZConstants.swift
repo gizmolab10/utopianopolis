@@ -241,6 +241,7 @@ let          kFavoritesMapMode = "favorites map mode"
 let          kShowFavoritesMap = "show favorites map" // for iphone
 let          kShowExplanations = "show explanations"
 let          kLostAndFoundName = "lost and found"
+let          kRelationshipType = "ZRelationship"
 let          kManifestRootName = "manifest"
 let          kExemplarRootName = "exemplar"
 let          kNoteIndentSpacer = "  "

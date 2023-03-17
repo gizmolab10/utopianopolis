@@ -40,7 +40,10 @@
         <relationship name="traitArray" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZTrait" inverseName="ownerRef" inverseEntity="ZTrait"/>
     </entity>
     <entity name="ZRelationship" representedClassName="ZRelationship" syncable="YES">
+        <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="from" optional="YES" attributeType="String"/>
+        <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="recordName" optional="YES" attributeType="String"/>
         <attribute name="to" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
