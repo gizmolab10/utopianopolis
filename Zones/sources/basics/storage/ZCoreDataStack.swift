@@ -389,22 +389,23 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	// MARK: - internals
+	// MARK: - stores
 	// MARK: -
 
 	func persistentStore(for type: ZCDStoreScope, at pathComponent: String) -> NSPersistentStore? {
 		return coordinator?.persistentStore(for: gUrlFor(type, at: pathComponent))
 	}
 
-	func storeDescription(cloudID: ZCDCloudID, at pathComponent: String, for type: ZCDStoreScope) -> NSPersistentStoreDescription{
-		let desc = NSPersistentStoreDescription(url: gUrlFor(type, at: pathComponent))
+	func storeDescription(cloudID: ZCloudRepositoryID, at pathComponent: String, for type: ZCDStoreScope) -> NSPersistentStoreDescription{
+		let           desc = NSPersistentStoreDescription(url: gUrlFor(type, at: pathComponent))
 		desc.configuration = type.rawValue
 
 		if  type != .sLocal {
 			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+			desc.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
 			if  gIsUsingCloudKit {
-				let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCDCloudID.cloudID)
+				let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCloudRepositoryID.cloudID)
 
 				if  type == .sPublic {
 					options.databaseScope     = CKDatabase.Scope.public // default is private. needs osx v11.0
@@ -417,7 +418,7 @@ class ZCoreDataStack: NSObject {
 		return desc
 	}
 
-	func getPersistentContainer(cloudID: ZCDCloudID, at lastPathComponent: String) -> NSPersistentCloudKitContainer {
+	func getPersistentContainer(cloudID: ZCloudRepositoryID, at lastPathComponent: String) -> NSPersistentCloudKitContainer {
 		let     container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
 
 		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)

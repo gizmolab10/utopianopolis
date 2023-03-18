@@ -135,23 +135,12 @@ var gCoreDataMode : ZCoreDataMode {
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
-var gCDCloudID: ZCDCloudID {
+var gCloudRepositoryIDs : [ZCloudRepositoryID] {
 	get {
-		return gCDCloudIDs[gCDLocationIsNormal ? 0 : 1]
-	}
-	set {
-		var                          ids = gCDCloudIDs
-		ids[gCDLocationIsNormal ? 0 : 1] = newValue
-		gCDCloudIDs                      = ids
-	}
-}
-
-var gCDCloudIDs : [ZCDCloudID] {
-	get {
-		var ids = [ZCDCloudID]()
-		if  let strings = getPreferencesString(for: kCDCloudIDs, defaultString: ZCDCloudID.defaultIDs.map { $0.rawValue }.joined(separator: kColonSeparator) ) {
+		var ids = [ZCloudRepositoryID]()
+		if  let strings = getPreferencesString(for: kCloudRepositoryIDs, defaultString: ZCloudRepositoryID.defaultIDs.map { $0.rawValue }.joined(separator: kColonSeparator) ) {
 			for string in strings.components(separatedBy: kColonSeparator) {
-				if  let id = ZCDCloudID(rawValue: string) {
+				if  let id = ZCloudRepositoryID(rawValue: string) {
 					ids.append(id)
 				}
 			}
@@ -165,7 +154,7 @@ var gCDCloudIDs : [ZCDCloudID] {
 		for id in newValue {
 			strings.append(id.rawValue)
 		}
-		setPreferencesString(strings.joined(separator: kColonSeparator), for: kCDCloudIDs)
+		setPreferencesString(strings.joined(separator: kColonSeparator), for: kCloudRepositoryIDs)
 	}
 }
 

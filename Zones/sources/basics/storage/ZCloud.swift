@@ -9,7 +9,7 @@
 import Foundation
 import CloudKit
 
-var gCloudContainer : CKContainer { return CKContainer(identifier: gCDCloudID.cloudID) }
+var gCloudContainer : CKContainer { return CKContainer(identifier: gCloudRepositoryID.cloudID) }
 
 class ZCloud: ZRecords {
 

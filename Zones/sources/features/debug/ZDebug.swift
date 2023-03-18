@@ -14,11 +14,26 @@ import Cocoa
 import UIKit
 #endif
 
+func gSetupFeatures() {
+	gDebugModes   = []
+	gDebugModes  .insert(.dHideNoteVisibility)
+	gDebugModes  .insert(.dNoSubscriptions)
+
+	gCoreDataMode = []
+	gCoreDataMode.insert(.dNoRelatives)
+	gCoreDataMode.insert(.dNoCloudKit)
+//	gCoreDataMode.insert(.dCloudMigrate)
+
+	gPrintModes   = []
+//	gPrintModes  .insert(.dTime)
+}
+
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)    && gIsUsingCoreData }
-var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)    && gIsUsingCoreData }
-var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit) && gIsUsingCoreData }
-var  gCDLocationIsNormal : Bool { return !gCoreDataMode.contains(.dTesting)    && gIsUsingCoreData }
+var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)      && gIsUsingCoreData }
+var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)      && gIsUsingCoreData }
+var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)   && gIsUsingCoreData }
+var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelatives)  && gIsUsingCoreData }
+var  gCDLocationIsNormal : Bool { return !gCoreDataMode.contains(.dGoingToCloud) && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
@@ -46,11 +61,13 @@ struct ZCoreDataMode: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dDisabled   = ZCoreDataMode(rawValue: 1 << 0) // cannot use core data
-	static let dNoCloudKit = ZCoreDataMode(rawValue: 1 << 1) // store in cloud kit
-	static let dNotSave    = ZCoreDataMode(rawValue: 1 << 2) // save is not operational
-	static let dNotLoad    = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
-	static let dTesting    = ZCoreDataMode(rawValue: 1 << 4) // testing mygration
+	static let dDisabled     = ZCoreDataMode(rawValue: 1 << 0) // cannot use core data
+	static let dNoCloudKit   = ZCoreDataMode(rawValue: 1 << 1) // store in cloud kit
+	static let dNotSave      = ZCoreDataMode(rawValue: 1 << 2) // save is not operational
+	static let dNotLoad      = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
+	static let dGoingToCloud = ZCoreDataMode(rawValue: 1 << 4) // testing mygration
+	static let dNoRelatives  = ZCoreDataMode(rawValue: 1 << 5) // not use ZRelationship
+
 }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {

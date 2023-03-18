@@ -57,13 +57,6 @@ enum ZDatabaseID: String {
 		}
 	}
 
-	var scope: ZCDStoreScope {
-		switch self {
-			case .everyoneID: return .sPublic
-			default:          return .sPrivate
-		}
-	}
-
 	var mapControlString: String {
 		switch self {
 		case .everyoneID: return "Mine"
@@ -85,6 +78,13 @@ enum ZDatabaseID: String {
 		case .favoritesID: return .favoritesIndex
 		case  .everyoneID: return .everyoneIndex
 		case      .mineID: return .mineIndex
+		}
+	}
+
+	var scope: ZCDStoreScope {
+		switch self {
+			case .everyoneID: return .sPublic
+			default:          return .sPrivate
 		}
 	}
 

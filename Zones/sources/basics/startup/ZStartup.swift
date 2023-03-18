@@ -20,16 +20,7 @@ let gStartup = ZStartup()
 class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
-
-		gPrintModes   = []
-		gDebugModes   = []
-		gCoreDataMode = []
-//		gPrintModes  .insert(.dTime)
-//		gCoreDataMode.insert(.dTesting)
-		gCoreDataMode.insert(.dNoCloudKit)
-		gDebugModes  .insert(.dNoSubscriptions)
-		gDebugModes  .insert(.dHideNoteVisibility)
-
+		gSetupFeatures()
 		gCoreDataStack.assureMigrationToLatest()
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
