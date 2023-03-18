@@ -67,8 +67,8 @@ class ZGenericController: ZController, ZGeneric {
 			|| (!gHasFinishedStartup &&  [.spStartupStatus, .spMain, .sData].contains(kind)))
 	}
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear() {
+        super.viewWillAppear()
 		controllerStartup()
 
 		gControllers.setSignalHandler(for: self, iID: controllerID) { [self] kind in

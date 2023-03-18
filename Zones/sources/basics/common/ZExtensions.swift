@@ -32,6 +32,7 @@ typealias          CKRecordIDsArray = [CKRecordID]
 typealias          ZSignalKindArray = [ZSignalKind]
 typealias         CKReferencesArray = [CKReference]
 typealias         ZTinyDotTypeArray = [[ZTinyDotType]]
+typealias        ZRelationshipArray = [ZRelationship]
 typealias      ZManagedObjectsArray = [NSManagedObject]
 
 typealias          ZTraitDictionary = [ZTraitType   : ZTrait]
@@ -42,10 +43,10 @@ typealias      ZStringAnyDictionary = [String       : Any]
 typealias   StringZRecordDictionary = [String       : ZRecord]
 typealias   ZStringObjectDictionary = [String       : NSObject]
 typealias ZManagedObjectsDictionary = [String       : ZManagedObject]
+typealias  ZRelationshipsDictionary = [String       : ZRelationshipArray]
 typealias  StringZRecordsDictionary = [String       : ZRecordsArray]
 typealias    ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
 typealias     ZAttributesDictionary = [NSAttributedString.Key : Any]
-
 protocol ZGeneric {
 	func controllerSetup(with mapView: ZMapView?)
 }
@@ -202,24 +203,6 @@ extension NSObject {
         }
     }
 
-    @discardableResult func detectWithMode(_ databaseID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
-        gRemoteStorage.pushDatabaseID(databaseID)
-
-        let result = block()
-
-        gRemoteStorage.popDatabaseID()
-        
-        return result
-    }
-
-    func invokeUsingDatabaseID(_ databaseID: ZDatabaseID?, block: Closure) {
-        if  databaseID != nil && databaseID != gDatabaseID {
-            detectWithMode(databaseID!) { block(); return false }
-        } else {
-            block()
-        }
-    }
-
     func UNDO<TargetType : AnyObject>(_ target: TargetType, handler: @escaping (TargetType) -> Swift.Void) {
         gUndoManager.registerUndo(withTarget:target, handler: { iTarget in
             handler(iTarget)
@@ -228,7 +211,7 @@ extension NSObject {
 
 	func showThesaurus(for iString: String? = kEmpty) {
 		if  let string = iString {
-			let    url = NSURL(string: "https://www.thesaurus.com/browse/\(string)")
+			let    url = URL(string: "https://www.thesaurus.com/browse/\(string)")
 			url?.open()
 		}
 	}
@@ -2232,13 +2215,13 @@ extension String {
 	var maybeZone: Zone? { return maybeZRecord as? Zone }
 
 	var maybeZRecord: ZRecord? {
-		if  self        != kEmpty,
-			let     name = maybeRecordName,
-			let    parts = components {
-			let  rawDBID = parts[0]
-			let     databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
-			let zRecords = gRemoteStorage.zRecords(for: databaseID)
-			let  zRecord = zRecords?.maybeZRecordForRecordName(name)
+		if  self          != kEmpty,
+			let       name = maybeRecordName,
+			let      parts = components {
+			let    rawDBID = parts[0]
+			let databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
+			let   zRecords = gRemoteStorage.zRecords(for: databaseID)
+			let    zRecord = zRecords?.maybeZRecordForRecordName(name)
 
 			return zRecord
 		}

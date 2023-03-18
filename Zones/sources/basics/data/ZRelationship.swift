@@ -22,11 +22,11 @@ class ZRelationship: ZRecord, ZIdentifiable {
 	var                      parent : Zone?    { return related as? Zone }
 
 	@discardableResult static func addUniqueRelationship(_ zone: Zone, parent: Zone?, in databaseID: ZDatabaseID) -> ZRelationship? {
-		if  let          from = zone   .asString,
-			let            to = parent?.asString {
-			let  relationship = ZRelationship.uniqueRelationship(in: databaseID) // this crashes
-			relationship.from = from
-			relationship  .to = to
+		if  let           from = zone   .asString,
+			let             to = parent?.asString {
+			let   relationship = ZRelationship.uniqueRelationship(in: databaseID) // this crashes
+			relationship?.from = from
+			relationship?  .to = to
 
 			gRelationships.addRelationship(relationship)
 
@@ -36,8 +36,12 @@ class ZRelationship: ZRecord, ZIdentifiable {
 		return nil
 	}
 
-	static func uniqueRelationship(in databaseID: ZDatabaseID) -> ZRelationship {
-		let  relationship = uniqueZRecord(entityName: kRelationshipType, recordName: nil, in: databaseID) as! ZRelationship   // this crashes
+	static func uniqueRelationship(in databaseID: ZDatabaseID) -> ZRelationship? {
+		var relationship: ZRelationship?
+
+		gInvokeUsingDatabaseID(databaseID) {
+			relationship = uniqueZRecord(entityName: kRelationshipType, recordName: nil, in: databaseID) as? ZRelationship
+		}
 
 		return relationship
 	}

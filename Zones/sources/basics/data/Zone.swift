@@ -41,7 +41,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                      bookmarkTarget :               Zone? { return crossLink as? Zone }
 	var                                         destroyZone :               Zone? { return zRecords?.destroyZone }
 	var                                           trashZone :               Zone? { return zRecords?.trashZone }
-	var                                             getRoot :               Zone  { return parentZone?.getRoot ?? self }
+	var                                             getRoot :               Zone  { return isARoot ? self : parentZone?.getRoot ?? self }
 	var                                            siblings :          ZoneArray? { return parentZone?.children }
 	var                                            manifest :          ZManifest? { return zRecords?.manifest }
 	var                                              widget :         ZoneWidget? { return gWidgets.widgetForZone(self) }
@@ -70,7 +70,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                                 isBrandNew :               Bool  { return zoneName == nil || zoneName == kEmpty }
 	override var                                isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                                    isAZone :               Bool  { return true }
-	override var                                    isARoot :               Bool  { return !gHasFinishedStartup ? super.isARoot : parentZoneMaybe == nil }
 	override var                               passesFilter :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
 	var                                           isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
@@ -310,16 +309,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func addBookmark() {
-		if  !isARoot {
-			if  gHere == self {
-				gHere  = parentZone ?? gHere
-				
-				revealParentAndSiblings()
-			}
+		if  gHere == self {
+			gHere  = parentZone ?? gHere
 
-			ZBookmarks.newOrExistingBookmark(targeting: self, addTo: parentZone).grab()
-			gRelayoutMaps()
+			revealParentAndSiblings()
 		}
+
+		ZBookmarks.newOrExistingBookmark(targeting: self, addTo: parentZone).grab()
+		gRelayoutMaps()
 	}
 
 	// MARK: - setup
@@ -1387,81 +1384,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		onCompletion?(true)
-	}
-
-	// MARK: - import
-	// MARK: -
-
-	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
-		ZFiles.presentOpenPanel() { [self] (iAny) in
-			if  let url = iAny as? URL {
-				importFile(from: url.path, type: type, onCompletion: onCompletion)
-			} else if let panel = iAny as? NSOpenPanel {
-				let  suffix = type.rawValue
-				panel.title = "Import as \(suffix)"
-				panel.allowedFileTypes = [suffix]
-			}
-		}
-	}
-
-	func importSeriously(from data: Data) -> Zone? {
-		var zone: Zone?
-		if  let json = data.extractJSONDict() {
-			let dict = dictFromJSON(json)
-			temporarilyOverrideIgnore { // allow needs save
-				zone = Zone.uniqueZone(from: dict, in: databaseID)
-			}
-		}
-
-		return zone
-	}
-
-	func importCSV(from data: Data, kumuFlavor: Bool = false) {
-		let   rows = data.extractCSV()
-		var titles = [String : Int]()
-		let  first = rows[0]
-		for (index, title) in first.enumerated() {
-			titles[title] = index
-		}
-
-		for (index, row) in rows.enumerated() {
-			if  index     != 0,
-				let nIndex = titles["Name"],
-				let tIndex = titles["Type"],
-				row.count  > tIndex {
-				let   name = row[nIndex]
-				let   type = row[tIndex]
-				let  child =       childWithName(type)
-				let gChild = child.childWithName(name)
-
-				if  let      dIndex = titles["Description"] {
-					let       trait = ZTrait.uniqueTrait(recordName: nil, in: databaseID)
-					let        text = row[dIndex]
-					trait     .text = text
-					trait.traitType = .tNote
-
-					gChild.addTrait(trait)
-				}
-			}
-		}
-	}
-
-	func importFile(from path: String, type: ZExportType = .eSeriously, onCompletion: Closure?) {
-			if  let data = FileManager.default.contents(atPath: path),
-				data.count > 0 {
-				var zone: Zone?
-
-				switch type {
-					case .eSeriously: zone = importSeriously(from: data)
-					default:                 importCSV      (from: data, kumuFlavor: true)
-				}
-
-				if  let z = zone {
-					addChildNoDuplicate(z, at: 0)
-				}
-
-				onCompletion?()
-			}
 	}
 
 	// MARK: - convenience
@@ -3248,7 +3170,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func updateMaxLevel() {
-		gRemoteStorage.zRecords(for: databaseID)?.updateMaxLevel(with: level)
+		if  gIsReadyToShowUI {
+			gRemoteStorage.zRecords(for: databaseID)?.updateMaxLevel(with: level)
+		}
 	}
 
 	func zonesMatching(_ type: ZWorkingListType) -> ZoneArray {

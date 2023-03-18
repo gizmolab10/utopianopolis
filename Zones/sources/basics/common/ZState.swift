@@ -81,6 +81,18 @@ func        gToggleDatabaseID()                     { gDatabaseID  =  gOtherData
 func         gSetEditIdeaMode()                     { gWorkMode    = .wEditIdeaMode }
 func          gSetMapWorkMode()                     { gWorkMode    = .wMapMode }
 
+func gInvokeUsingDatabaseID(_ databaseID: ZDatabaseID?, block: Closure) {
+	if  databaseID != nil && databaseID != gDatabaseID {
+		gRemoteStorage.detectWithMode(databaseID!) {
+			block()
+
+			return false
+		}
+	} else {
+		block()
+	}
+}
+
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next
 

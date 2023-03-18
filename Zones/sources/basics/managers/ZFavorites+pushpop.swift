@@ -28,10 +28,9 @@ extension ZFavorites {
 						recents.moveChild(from: from, to: to)
 					}
 
-					bookmark       = recents[to]
+					bookmark  = recents[to]
 				} else {
-					bookmark       = ZBookmarks.newBookmark(targeting: target)
-					bookmark?.dbid = "f"
+					bookmark  = ZBookmarks.newBookmark(targeting: target)
 
 					recents.addChildNoDuplicate(bookmark, at: to)
 				}

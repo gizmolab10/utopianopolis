@@ -178,30 +178,10 @@ extension String {
         
         return nil
     }
-
-    func openAsURL() {
-        let fileScheme = "file"
-        let filePrefix = fileScheme + "://"
-        let  urlString = (replacingOccurrences(of: kBackSlash, with: kEmpty).replacingOccurrences(of: kSpace, with: "%20") as NSString).expandingTildeInPath
-        
-        if  var url = NSURL(string: urlString) {
-            if  urlString.character(at: 0) == kSlash {
-                url = NSURL(string: filePrefix + urlString)!
-            }
-
-            if  url.scheme != fileScheme {
-                url.open()
-            } else if let path = url.path {
-                url = NSURL(fileURLWithPath: path)
-
-                url.openAsFile()
-            }
-        }
-    }
-    
+ 
 }
 
-extension NSURL {
+extension URL {
     
     var directoryURL: URL? {
         return nil
@@ -214,7 +194,7 @@ extension NSURL {
     func openAsFile() {
 //        if !openSecurely() {
 //            ZFiles.presentOpenPanel() { (iAny) in
-//                if  let url = iAny as? NSURL {
+//                if  let url = iAny as? URL {
 //                    url.open()
 //                } else if let panel = iAny as? NSPanel {
 //                    if    let  name = lastPathComponent {
@@ -658,9 +638,7 @@ extension ZAlert {
 extension ZAlerts {
     
     func openSystemPreferences() {
-        if  let url = NSURL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing") {
-            url.open()
-        }
+        URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing")?.open()
     }
 
 	func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, alertWidth width: CGFloat? = nil, _ closure: AlertStatusClosure? = nil) {
@@ -1179,36 +1157,6 @@ extension ZBitmapImageRep {
 
 extension Data {
 	var bitmap: ZBitmapImageRep? { ZBitmapImageRep(data: self) }
-}
-
-extension ZFiles {
-
-    func showInFinder() {
-        (filesURL as NSURL).open()
-    }
-    
-    class func presentOpenPanel(_ callback: AnyClosure? = nil) {
-		if  let  window = gApplication?.mainWindow {
-            let   panel = NSOpenPanel()
-
-            callback?(panel)
-
-            panel.resolvesAliases               = true
-            panel.canChooseDirectories          = false
-            panel.canResolveUbiquitousConflicts = false
-            panel.canDownloadUbiquitousContents = false
-            
-            panel.beginSheetModal(for: window) { (result) in
-                if  result == NSApplication.ModalResponse.OK,
-                    panel.urls.count > 0 {
-                    let url = panel.urls[0]
-                    
-                    callback?(url)
-                }
-            }
-        }
-    }
-
 }
 
 extension Zone {

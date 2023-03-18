@@ -89,25 +89,28 @@ extension ZFiles {
 extension Zone {
 
 	func getParentZone() -> Zone? {
-		if  let relationships = gRelationships.relationshipsFor(self),
-			let relationship  = relationships.first {
+		if !isARoot,
+			parentZoneMaybe      == nil {
+			if  let relationships = gRelationships.relationshipsFor(self),
+				let relationship  = relationships.first {
 
-			if  relationship.from == "mine::61A84294-527D-4F58-8055-1281F728A70D" {
-				noop()
+				parentZoneMaybe   = relationship.parent
+			} else if let parent  = oldParentZone {
+				setParentZone(parent)
+
+				parentZoneMaybe   = parent
 			}
-
-			return relationship.parent
-		} else if let parent = oldParentZone {
-			setParentZone(parent)
-
-			return parent
 		}
 
-		return nil
+		return parentZoneMaybe
 	}
 
 	func setParentZone(_ parent: Zone?) {
-		ZRelationship.addUniqueRelationship(self, parent: parent, in: databaseID)
+		if  parentZoneMaybe != parent {
+			oldParentZone    = parent
+
+			ZRelationship.addUniqueRelationship(self, parent: parent, in: databaseID)
+		}
 	}
 
 	func migrateIntoRelationshipsEntity() {
@@ -138,13 +141,11 @@ extension Zone {
 		get {
 			if  root == self {
 				unlinkParentAndMaybeNeedSave()
-			} else if parentZoneMaybe == nil {
-				if let         zone = parentLink?.maybeZone {
-					parentZoneMaybe = zone
-				} else if let parentRecordName = parentRID,
-						  recordName != parentRecordName { // noop (remain nil) when parentRID equals record name
-					parentZoneMaybe = zRecords?.maybeZoneForRecordName(parentRecordName)
-				}
+			} else if let  zone = parentLink?.maybeZone {
+				parentZoneMaybe = zone
+			} else if let parentRecordName = parentRID,
+					  recordName != parentRecordName { // noop (remain nil) when parentRID equals record name
+				parentZoneMaybe   = zRecords?.maybeZoneForRecordName(parentRecordName)
 			}
 
 			return parentZoneMaybe

@@ -57,6 +57,13 @@ enum ZDatabaseID: String {
 		}
 	}
 
+	var scope: ZCDStoreScope {
+		switch self {
+			case .everyoneID: return .sPublic
+			default:          return .sPrivate
+		}
+	}
+
 	var mapControlString: String {
 		switch self {
 		case .everyoneID: return "Mine"
@@ -377,14 +384,6 @@ class ZRecords: NSObject {
         return lost
     }
 
-	func updateRootsOfAllProjeny() {
-		applyToAllRoots { root in
-			root?.traverseAllProgeny { zone in
-				zone.updateRootFromParent()
-			}
-		}
-	}
-
     func recount() {  // all progenyCounts for all progeny in all roots
 		applyToAllRoots { root in
 			root?.recount()
@@ -473,11 +472,12 @@ class ZRecords: NSObject {
 	}
 
     @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool { // false means did not register
-		var                created  = false
-		if  let            zRecord  = iRecord,
-            let               name  = zRecord.recordName {
-			if  let existingRecord  = zRecordsLookup[name], name != kRootName, !existingRecord.isBrandNew {
-				if  existingRecord != zRecord,
+		var         created          = false
+		if  let     zRecord          = iRecord,
+            let     name             = zRecord.recordName {
+			if      name            != kRootName,
+				let existingRecord   = zRecordsLookup[name], !existingRecord.isBrandNew {
+				if  existingRecord  != zRecord,
 					existingRecord.entity.name == zRecord.entity.name {
 
                     // /////////////////////////////////////
@@ -495,9 +495,9 @@ class ZRecords: NSObject {
 				registerByType(zRecord)
             }
 			
-			if  let bookmark = zRecord as? Zone, bookmark.isBookmark {
+			if  let bookmark         = zRecord as? Zone, bookmark.isBookmark {
 				gBookmarks.addToReverseLookup(bookmark)
-			} else if let file = zRecord as? ZFile {
+			} else if let file       = zRecord as? ZFile {
 				gFilesRegistry.register(file, in: databaseID)
 			}
         }

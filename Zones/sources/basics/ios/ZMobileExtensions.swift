@@ -135,12 +135,6 @@ extension String {
         return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font], context: nil)
     }
 
-    func openAsURL() {
-        if let url = URL(string: self) {
-//            gApplication?.open(url)
-        }
-    }
-
 }
 
 extension UIBezierPath {
@@ -535,14 +529,6 @@ extension ZAlerts {
             closure?(a, .sShow)
         }
     }
-
-}
-
-extension ZFiles {
-
-    func saveAs() {}
-    func showInFinder() {}
-    func importFromFile(_ type: ZExportType, insertInto: Zone, onCompletion: Closure?) {}
 
 }
 

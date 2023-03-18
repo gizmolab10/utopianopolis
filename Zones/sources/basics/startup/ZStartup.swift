@@ -69,8 +69,8 @@ class ZStartup: NSObject {
 					gProducts.fetchProductData()
 				}
 
+				gRemoteStorage.setupRootsLevelsAndCounts()
 				gRefreshPersistentWorkMode()
-				gRemoteStorage.setup()
 				gRefreshCurrentEssay()
 				gHereMaybe?.grab()
 

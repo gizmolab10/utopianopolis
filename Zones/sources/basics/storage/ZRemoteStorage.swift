@@ -139,29 +139,35 @@ class ZRemoteStorage: NSObject {
         return recordsArray
     }
 
-	func updateAllManifestCounts() {
-		for databaseID in kAllDatabaseIDs {
-			updateManifestCount(for: databaseID)
-		}
-	}
-
-	func updateManifestCount(for  databaseID: ZDatabaseID) {
-		if  let r = zRecords(for: databaseID) {
-		    let c = r.zRecordsCount
-			r.manifest?.count = NSNumber(value: c)
-		}
-	}
-
 	func removeAllDuplicates() {
 		for records in allRecordsArrays {
 			records.removeAllDuplicates()
 		}
 	}
 
-	func setup() {
-		updateRootsOfAllProjeny()
-		updateAllManifestCounts()
-		recount()
+	func setupRootsLevelsAndCounts() {
+		for cloud in allClouds {
+			var level = 1
+
+			cloud.applyToAllRoots { root in
+				let isExactRoot = root?.recordName == kRootName
+
+				root?.traverseAllProgeny { zone in
+					zone.updateRootFromParent()
+
+					if  isExactRoot {
+						let zLevel = zone.level
+						if  level  < zLevel {
+							level  = zLevel
+						}
+					}
+				}
+
+				root?.recount()
+			}
+
+			cloud.updateMaxLevel(with: level)
+		}
 	}
 
     func recount() {  // all progenyCounts for all progeny in all databases in all roots
@@ -169,12 +175,6 @@ class ZRemoteStorage: NSObject {
 			cloud.recount()
         }
     }
-
-	func updateRootsOfAllProjeny() {
-		for cloud in allClouds {
-			cloud.updateRootsOfAllProjeny()
-		}
-	}
 
     func updateNeededCounts() {
         for cloud in allClouds {
@@ -268,6 +268,15 @@ class ZRemoteStorage: NSObject {
         }
     }
 
+	@discardableResult func detectWithMode(_ databaseID: ZDatabaseID, block: ToBooleanClosure) -> Bool {
+		pushDatabaseID(databaseID)
+
+		let result = block()
+
+		popDatabaseID()
+
+		return result
+	}
 
     func pushDatabaseID(_ databaseID: ZDatabaseID?) {
 		if  let d = databaseID {
@@ -284,22 +293,5 @@ class ZRemoteStorage: NSObject {
             gDatabaseID = databaseID
         }
     }
-
-
-//    func resetBadgeCounter() {
-//        if  gCloudAccountStatus == .active {
-//            let badgeResetOperation = CKModifyBadgeOperation(badgeValue: 0)
-//
-//            badgeResetOperation.modifyBadgeCompletionBlock = { (error) -> Void in
-//                if error == nil {
-//                    FOREGROUND {
-//                        gApplication?.clearBadge()
-//                    }
-//                }
-//            }
-//
-//            gCloudContainer.add(badgeResetOperation)
-//        }
-//    }
 
 }
