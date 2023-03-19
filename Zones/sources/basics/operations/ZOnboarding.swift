@@ -93,7 +93,7 @@ class ZOnboarding : ZOperations {
 	}
 
 	func ubiquity(_ onCompletion: @escaping Closure) {
-        if  FileManager.default.ubiquityIdentityToken == nil {
+        if  gFileManager.ubiquityIdentityToken == nil {
 
             // ///////////////////////
             // ONBOARDING CONTINUES //

@@ -44,6 +44,7 @@ typealias   StringZRecordDictionary = [String       : ZRecord]
 typealias   ZStringObjectDictionary = [String       : NSObject]
 typealias ZManagedObjectsDictionary = [String       : ZManagedObject]
 typealias  ZRelationshipsDictionary = [String       : ZRelationshipArray]
+typealias  ZDBIDRelationsDictionary = [String       : ZRelationshipsDictionary]
 typealias  StringZRecordsDictionary = [String       : ZRecordsArray]
 typealias    ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
 typealias     ZAttributesDictionary = [NSAttributedString.Key : Any]
@@ -443,7 +444,7 @@ extension CGImageSource {
 
 extension CKAsset {
 
-	var data       :   Data? { return FileManager.default.contents(atPath: fileURL!.path) }
+	var data       :   Data? { return gFileManager.contents(atPath: fileURL!.path) }
 	var imageSize  : CGSize? { return fileURL!.imageSize }
 	var uuidString : String? { return value(forKeyPath: "_UUID") as? String }
 	var length     :    Int? { return value(forKeyPath: "_size") as? Int }
@@ -2131,7 +2132,7 @@ extension String {
     }
 
 	var escapeCommasWithinQuotes: String {
-		let parts = components(separatedBy: "\"")
+		let parts = components(separatedBy: kDoubleQuote)
 
 		if  parts.count > 2 {
 			let  bad = parts[1]

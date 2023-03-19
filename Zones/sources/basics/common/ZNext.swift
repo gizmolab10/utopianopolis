@@ -37,14 +37,16 @@ extension Array {
 extension ZoneArray {
 
 	func nextBookmarkIndex(increasing: Bool, from: Int) -> Int? {
-		var next = from
+		var remaining = count
+		var      next = from
 		repeat {
-			if  let n = next.next(increasing: increasing, max: count - 1) {
-				next  = n
+			if  let      n = next.next(increasing: increasing, max: count - 1) {
+				remaining -= 1
+				next       = n
 			} else {
 				break
 			}
-		} while !self[next].isBookmark
+		} while  remaining > 0 && !self[next].isBookmark
 
 		return next
 	}

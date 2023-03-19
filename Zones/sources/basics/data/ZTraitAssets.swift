@@ -86,7 +86,7 @@ class ZTraitAssets : ZRecord {
 				wrapper = nil
 
 				do {
-					try FileManager.default.moveItem(at: url, to: original)	   // rename asset url to original
+					try gFileManager.moveItem(at: url, to: original)	   // rename asset url to original
 
 					url = original
 

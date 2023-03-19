@@ -38,7 +38,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                     parentZoneMaybe :               Zone?
 	var                                                root :               Zone?
 	var                                          groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
-	var                                      bookmarkTarget :               Zone? { return crossLink as? Zone }
 	var                                         destroyZone :               Zone? { return zRecords?.destroyZone }
 	var                                           trashZone :               Zone? { return zRecords?.trashZone }
 	var                                             getRoot :               Zone  { return isARoot ? self : parentZone?.getRoot ?? self }
@@ -262,14 +261,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	var bookmarksTargetingSelf: ZoneArray {
-		if  let  name = recordName,
-			let  dict = gBookmarks.reverseLookup[databaseID],
-			let array = dict[name] {
-
-			return array
-		}
-
-		return []
+		return gRelationships.relationshipsFor(self)?.bookmarks ?? []
 	}
 
 	func setNameForSelfAndBookmarks(to name: String) {
@@ -286,17 +278,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return bookmarks.count == 0 ? nil : bookmarks[0]
 	}
 
+	var bookmarkTarget : Zone? {
+		return crossLink as? Zone  // gRelationships.reverseRelationshipsFor(self)?.bookmarks?[0]
+	}
+
 	var crossLink: ZRecord? {
 		get {
+			if !gIsReadyToShowUI { return nil }
+
 			if  crossLinkMaybe == nil,
 				var l           = zoneLink {
-				if  l.contains("Optional(") {    // repair consequences of an old, but now fixed, bookmark bug
-					l           = l.replacingOccurrences(of: "Optional(\"", with: kEmpty).replacingOccurrences(of: "\")", with: kEmpty)
+				if  l.contains(kOptional) {    // repair consequences of an old, but now fixed, bookmark bug
+					l           = l.replacingOccurrences(of: kOptional + kDoubleQuote, with: kEmpty).replacingOccurrences(of: kDoubleQuote + ")", with: kEmpty)
 					zoneLink    = l
 				}
 
 				crossLinkMaybe = l.maybeZone
-
 			}
 
 			return crossLinkMaybe
@@ -467,7 +464,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  bookmarkTarget?.hasNote ?? false {
 				d.append("N")
 			}
-		} else if hasNote {
+		}
+
+		if  hasNote {
 			d.append("N")
 		}
 

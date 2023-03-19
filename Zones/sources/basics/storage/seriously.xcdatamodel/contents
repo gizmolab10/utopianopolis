@@ -41,11 +41,11 @@
     </entity>
     <entity name="ZRelationship" representedClassName="ZRelationship" syncable="YES">
         <attribute name="dbid" optional="YES" attributeType="String"/>
-        <attribute name="direction" optional="YES" attributeType="String"/>
         <attribute name="from" optional="YES" attributeType="String"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
         <attribute name="to" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
     <entity name="ZTrait" representedClassName="ZTrait" parentEntity="ZTraitAssets" syncable="YES">
         <attribute name="format" optional="YES" attributeType="String"/>

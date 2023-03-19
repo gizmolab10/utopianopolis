@@ -230,7 +230,7 @@ class ZFiles: NSObject {
 			typealias  types = [ZStorageType]
 			let  keys: types = [.date, .manifest, .graph, .favorites, .bookmarks, .trash, .lost, .destroy ]
 
-			if  let     data = FileManager.default.contents(atPath: path),
+			if  let     data = gFileManager.contents(atPath: path),
 				data  .count > 0,
 				let     json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
 				let     dict = dictFromJSON(json)

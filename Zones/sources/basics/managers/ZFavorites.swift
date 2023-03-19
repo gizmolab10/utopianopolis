@@ -284,20 +284,20 @@ class ZFavorites: ZRecords {
 					let             bookmark = zone
 					var         hasDuplicate = false
 
-					if  let            link  = bookmark.zoneLink {     // always true: all bookmarks have a zone link
-						if             link == kTrashLink {
+					if  let            link  = bookmark.zoneLink?.maybeRecordName {     // always true: all bookmarks have a zone link
+						if             link == kTrashName {
 							if  missingTrash {
 								missingTrash = false
 							} else {
 								hasDuplicate = true
 							}
-						} else if      link == kLostAndFoundLink {
+						} else if      link == kLostAndFoundName {
 							if  missingLost {
 								missingLost  = false
 							} else {
 								hasDuplicate = true
 							}
-						} else if        link == kDestroyLink {
+						} else if        link == kDestroyName {
 							if  missingDestroy {
 								missingDestroy = false
 							} else {

@@ -191,7 +191,7 @@ extension Zone {
 	}
 
 	func importFile(from path: String, type: ZExportType = .eSeriously, onCompletion: Closure?) {
-		if  let data = FileManager.default.contents(atPath: path),
+		if  let data = gFileManager.contents(atPath: path),
 			data.count > 0 {
 			var zone: Zone?
 

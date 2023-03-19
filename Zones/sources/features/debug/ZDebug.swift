@@ -15,17 +15,21 @@ import UIKit
 #endif
 
 func gSetupFeatures() {
+
 	gDebugModes   = []
 	gDebugModes  .insert(.dHideNoteVisibility)
 	gDebugModes  .insert(.dNoSubscriptions)
 
 	gCoreDataMode = []
-	gCoreDataMode.insert(.dNoRelatives)
-	gCoreDataMode.insert(.dNoCloudKit)
-//	gCoreDataMode.insert(.dCloudMigrate)
+	gCoreDataMode.insert(.dNoCloudKit)   // don't store data in cloud (public not yet working)
+	gCoreDataMode.insert(.dNoRelatives)  // don't use the relationships table yet
+	gCoreDataMode.insert(.dRefreshRepo)  // discard CD repo and start from stratch
+	gCoreDataMode.insert(.dUseCrossLink) // don't store bookmkars in relationships table
+//	gCoreDataMode.insert(.dCloudMigrate) // not referenced yet
 
 	gPrintModes   = []
 //	gPrintModes  .insert(.dTime)
+
 }
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
@@ -33,7 +37,9 @@ var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)     
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)      && gIsUsingCoreData }
 var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)   && gIsUsingCoreData }
 var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelatives)  && gIsUsingCoreData }
-var  gCDLocationIsNormal : Bool { return !gCoreDataMode.contains(.dGoingToCloud) && gIsUsingCoreData }
+var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dRefreshRepo)  && gIsUsingCoreData }
+var   gCDLocationIsLocal : Bool { return !gCoreDataMode.contains(.dGoingToCloud) && gIsUsingCoreData }
+var gBookmarkAsRelations : Bool { return !gCoreDataMode.contains(.dUseCrossLink) && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
@@ -67,6 +73,8 @@ struct ZCoreDataMode: OptionSet {
 	static let dNotLoad      = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
 	static let dGoingToCloud = ZCoreDataMode(rawValue: 1 << 4) // testing mygration
 	static let dNoRelatives  = ZCoreDataMode(rawValue: 1 << 5) // not use ZRelationship
+	static let dRefreshRepo  = ZCoreDataMode(rawValue: 1 << 6) // start the CD repo fresh
+	static let dUseCrossLink = ZCoreDataMode(rawValue: 1 << 7) // use the original bookmark mechanism
 
 }
 

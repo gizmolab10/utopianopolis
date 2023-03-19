@@ -32,9 +32,13 @@ extension ZCoreDataStack {
 	func migrateLocalCDRepository() {
 		for id in ZCloudRepositoryID.all.reversed() {
 			if  id.fileExists {
-				gCloudRepositoryID = id
+				if  gUseExistingStores {
+					gCloudRepositoryID = id
 
-				return
+					return
+				}
+
+				id.removeFile()
 			}
 		}
 
@@ -92,9 +96,9 @@ extension Zone {
 		if !isARoot,
 			parentZoneMaybe      == nil {
 			if  let relationships = gRelationships.relationshipsFor(self),
-				let relationship  = relationships.first {
+				let parent        = relationships.parent {
 
-				parentZoneMaybe   = relationship.parent
+				parentZoneMaybe   = parent
 			} else if let parent  = oldParentZone {
 				setParentZone(parent)
 
@@ -110,7 +114,7 @@ extension Zone {
 			let priorParent  = parentZoneMaybe
 			oldParentZone    = parent
 
-			gRelationships.addOrSwapRelationship(self, parent: parent, priorParent: priorParent, in: databaseID)
+			gRelationships.addOrSwapParentRelationship(self, parent: parent, priorParent: priorParent, in: databaseID)
 		}
 	}
 
@@ -183,12 +187,12 @@ extension Zone {
 
 var gCloudRepositoryID: ZCloudRepositoryID {
 	get {
-		return gCloudRepositoryIDs[gCDLocationIsNormal ? 0 : 1]
+		return gCloudRepositoryIDs[gCDLocationIsLocal ? 0 : 1]
 	}
 	set {
-		var                          ids = gCloudRepositoryIDs
-		ids[gCDLocationIsNormal ? 0 : 1] = newValue
-		gCloudRepositoryIDs              = ids
+		var                         ids = gCloudRepositoryIDs
+		ids[gCDLocationIsLocal ? 0 : 1] = newValue
+		gCloudRepositoryIDs             = ids
 	}
 }
 
@@ -201,15 +205,17 @@ enum ZCDMigrationState: Int {
 }
 
 enum ZCloudRepositoryID: String {
-	case original = "Zones"
-	case testing  = "test2"
-	case latest   = "coredata"
+	case original   = "Zones"
+	case inAppStore = "test2"
+	case latest     = "coredata"
 
-	static var defaultIDs : [ZCloudRepositoryID] { return [.testing, .latest] }
-	static var        all : [ZCloudRepositoryID] { return [.original, .testing, .latest] }
+	static var defaultIDs : [ZCloudRepositoryID] { return [.inAppStore, .latest] }
+	static var        all : [ZCloudRepositoryID] { return [.original, .inAppStore, .latest] }
+	var               url : URL          { return gFilesURL.appendingPathComponent(lastPathComponent) }
 	var           cloudID : String       { return kBaseCloudID + kPeriod + rawValue }
 	var lastPathComponent : String       { return ZCDStoreLocation.current.rawValue + kDataDirectoryName + kSlash + rawValue }
-	var        fileExists : Bool         { return gFilesURL.appendingPathComponent(lastPathComponent).fileExists }
+	var        fileExists : Bool         { return url.fileExists }
+	func     removeFile()                { try? gFileManager.removeItem(at: url) }
 
 }
 
@@ -217,7 +223,7 @@ enum ZCDStoreLocation: String {
 	case normal  = ""
 	case migrate = "migration.testing."
 
-	static var    current : ZCDStoreLocation { return gCDLocationIsNormal ? .normal : .migrate }
+	static var    current : ZCDStoreLocation { return gCDLocationIsLocal ? .normal : .migrate }
 	var basePathComponent :           String { return rawValue + kDataDirectoryName }
 	var lastPathComponent :           String { return "\(basePathComponent)/\(gCloudRepositoryID.rawValue)" }
 }

@@ -112,6 +112,7 @@ class ZCoreDataStack: NSObject {
 
 					for item in array {
 						if  let relationship = item as? ZRelationship {
+							relationship.relationType = .parent
 							gRelationships.addRelationship(relationship)
 						}
 					}
