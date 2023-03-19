@@ -17,18 +17,18 @@ import UIKit
 func gSetupFeatures() {
 
 	gDebugModes   = []
-	gDebugModes  .insert(.dHideNoteVisibility)
-	gDebugModes  .insert(.dNoSubscriptions)
+	gToggleDebugMode   (.dHideNoteVisibility)
+	gToggleDebugMode   (.dNoSubscriptions)
 
 	gCoreDataMode = []
-	gCoreDataMode.insert(.dNoCloudKit)   // don't store data in cloud (public not yet working)
-	gCoreDataMode.insert(.dNoRelatives)  // don't use the relationships table yet
-	gCoreDataMode.insert(.dRefreshRepo)  // discard CD repo and start from stratch
-	gCoreDataMode.insert(.dUseCrossLink) // don't store bookmkars in relationships table
-//	gCoreDataMode.insert(.dCloudMigrate) // not referenced yet
+	gToggleCoreDataMode(.dNoCloudKit)    // don't store data in cloud (public not yet working)
+	gToggleCoreDataMode(.dNoRelatives)   // don't use the relationships table yet
+//	gToggleCoreDataMode(.dEraseStores)   // discard CD stores and start from stratch
+	gToggleCoreDataMode(.dUseCrossLink)  // don't store bookmkars in relationships table
+//	gToggleCoreDataMode(.dCloudMigrate)  // not referenced yet
 
 	gPrintModes   = []
-//	gPrintModes  .insert(.dTime)
+//	gTogglePrintMode   (.dTime)
 
 }
 
@@ -37,7 +37,7 @@ var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)     
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)      && gIsUsingCoreData }
 var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)   && gIsUsingCoreData }
 var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelatives)  && gIsUsingCoreData }
-var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dRefreshRepo)  && gIsUsingCoreData }
+var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)  && gIsUsingCoreData }
 var   gCDLocationIsLocal : Bool { return !gCoreDataMode.contains(.dGoingToCloud) && gIsUsingCoreData }
 var gBookmarkAsRelations : Bool { return !gCoreDataMode.contains(.dUseCrossLink) && gIsUsingCoreData }
 
@@ -54,11 +54,11 @@ var           gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
 var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
 var             gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
 
-func gToggleDebugMode(_ mode: ZDebugMode) {
-	if  gDebugModes.contains(mode) {
-		gDebugModes  .remove(mode)
+func gToggleCoreDataMode(_ mode: ZCoreDataMode) {
+	if  gCoreDataMode.contains(mode) {
+		gCoreDataMode  .remove(mode)
 	} else {
-		gDebugModes  .insert(mode)
+		gCoreDataMode  .insert(mode)
 	}
 }
 
@@ -73,9 +73,17 @@ struct ZCoreDataMode: OptionSet {
 	static let dNotLoad      = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
 	static let dGoingToCloud = ZCoreDataMode(rawValue: 1 << 4) // testing mygration
 	static let dNoRelatives  = ZCoreDataMode(rawValue: 1 << 5) // not use ZRelationship
-	static let dRefreshRepo  = ZCoreDataMode(rawValue: 1 << 6) // start the CD repo fresh
+	static let dEraseStores  = ZCoreDataMode(rawValue: 1 << 6) // start the CD repo fresh
 	static let dUseCrossLink = ZCoreDataMode(rawValue: 1 << 7) // use the original bookmark mechanism
 
+}
+
+func gToggleDebugMode(_ mode: ZDebugMode) {
+	if  gDebugModes.contains(mode) {
+		gDebugModes  .remove(mode)
+	} else {
+		gDebugModes  .insert(mode)
+	}
 }
 
 struct ZDebugMode: OptionSet, CustomStringConvertible {
@@ -114,6 +122,14 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 			.compactMap { (option, name) in contains(option) ? name : nil }
 	}
 
+}
+
+func gTogglePrintMode(_ mode: ZPrintMode) {
+	if  gPrintModes.contains(mode) {
+		gPrintModes  .remove(mode)
+	} else {
+		gPrintModes  .insert(mode)
+	}
 }
 
 struct ZPrintMode: OptionSet, CustomStringConvertible {
