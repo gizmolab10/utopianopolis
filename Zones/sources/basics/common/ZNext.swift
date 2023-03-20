@@ -143,13 +143,13 @@ extension ZFavorites {
 	func nextBookmark(down: Bool, amongNotes: Bool = false, withinRecents: Bool = true, moveCurrent: Bool = false) {
 		var current   = current(mustBeRecents: withinRecents)
 		if  current  == nil {
-			current   = push()
+			current   = push() // so when user comes back, we return to this focus
 		}
 		if  let  root = withinRecents ? getRecentsGroup() : amongNotes ? rootZone : hereZoneMaybe {
 			let zones = amongNotes    ? root.notemarks    : root.bookmarks
 			let count = zones.count
 			if  count > 1 {           // there is no next for count == 0 or 1
-				let    maxIndex = zones.count - (moveCurrent ? 2 : 1)
+				let    maxIndex = count - (moveCurrent ? 2 : 1)
 				var     toIndex = down ? maxIndex : 0
 				if  let  target = current?.zoneLink {
 					for (index, bookmark) in zones.enumerated() {
@@ -170,13 +170,11 @@ extension ZFavorites {
 					}
 
 					if  toIndex.isWithin(0 ... maxIndex) {
-						print("\(toIndex)")
-
 						let  newCurrent = zones[toIndex]
 						if  moveCurrent {
 							moveOtherCurrentTo(newCurrent)
 						} else {
-							push(newCurrent.bookmarkTarget, down: down)
+							push(newCurrent.bookmarkTarget, down: down) // reposition new current so reversing direction works
 							setAsCurrent(newCurrent, alterMainMapFocus: !amongNotes)
 						}
 					}

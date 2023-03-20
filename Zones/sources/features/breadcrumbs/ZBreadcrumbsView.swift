@@ -153,7 +153,7 @@ class ZBreadcrumbsView : ZButtonsView {
 			}
 
 			gFocusing.grabAndFocusOn(zone) {
-				switch (gWorkMode) {
+				switch gWorkMode {
 					case .wResultsMode:
 						gExitSearchMode()
 					case .wEditIdeaMode:

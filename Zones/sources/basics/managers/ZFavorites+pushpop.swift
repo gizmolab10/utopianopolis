@@ -13,13 +13,13 @@ extension ZFavorites {
 	// MARK: - pop and push
 	// MARK: -
 
-	func resetRecents() { recentsMaybe = nil } // gotta re-construct recents group
+	func resetRecents() { recentsMaybe = nil } // force reconstruction of recents group
 
 	@discardableResult func push(_ zone: Zone? = gHere, down: Bool = true) -> Zone? {
 		if  let target        = zone {
 			let prior         = recentCurrent?.siblingIndex ?? 0
 			let recents       = getRecentsGroup()
-			var bookmark      = recentsTargeting(target)?.firstUndeleted           // bookmark pointing to target already is in recents
+			var bookmark      = recentsTargeting(target)?.firstUndeleted           // bookmark pointing to target is already present
 			if  let to        = !down ? prior : recents.children.nextBookmarkIndex(increasing: true,  from: prior) {
 				if  let from  = bookmark?.siblingIndex,
 					let guess =                 recents.children.nextBookmarkIndex(increasing: false, from: from) {
@@ -29,7 +29,7 @@ extension ZFavorites {
 					}
 
 					bookmark  = recents[to]
-				} else {
+				} else { // let targets = recents.children.map { $0.bookmarkTarget } // TODO: check if target is already present
 					bookmark  = ZBookmarks.newBookmark(targeting: target)
 
 					recents.addChildNoDuplicate(bookmark, at: to)
@@ -48,7 +48,12 @@ extension ZFavorites {
 	}
 
 	@discardableResult func pop(_ iZone: Zone? = gHereMaybe) -> Bool {
-		if  let zone = iZone {
+		var flag             = false
+		if  let zone         = iZone,
+			zone            != currentlyPopping {  // eliminate recursion
+			let priorPopping = currentlyPopping
+			currentlyPopping = zone
+
 			if  zone.isInFavorites {
 				zone.deleteSelf(permanently: true) { [self] flag in
 					if  flag {
@@ -56,7 +61,7 @@ extension ZFavorites {
 					}
 				}
 
-				return true
+				flag = true
 			} else if let bookmarks = favoritesTargeting(zone) {
 				for bookmark in bookmarks {
 					bookmark.deleteSelf(permanently: true) { flag in }
@@ -64,11 +69,13 @@ extension ZFavorites {
 
 				resetRecents()
 
-				return true
+				flag = true
 			}
+
+			currentlyPopping = priorPopping
 		}
 
-		return false
+		return flag
 	}
 
 	func popAndUpdateCurrent() {
@@ -86,8 +93,7 @@ extension ZFavorites {
 			}
 		}
 
-		gSignal([.sDetails])
-		gRelayoutMaps()
+		gSignal([.sDetails, .spCrumbs, .spRelayout])
 	}
 
 	func popNoteAndUpdate() -> Bool {
@@ -149,6 +155,7 @@ extension ZFavorites {
 			if  alterMainMapFocus {
 				gDatabaseID          = target.databaseID
 				gRecords.currentHere = target // avoid push
+				recentCurrent        = zone
 
 				target.grab()
 			}
@@ -159,7 +166,7 @@ extension ZFavorites {
 				}
 			} else if gCurrentEssayZone != target {
 				gEssayView?.resetCurrentEssay(target.note)
-				gSignal([.spCrumbs, .sDetails])
+				gSignal([.spCrumbs, .sDetails, .spFavoritesMap])
 			}
 		}
 	}

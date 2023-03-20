@@ -24,7 +24,8 @@ class ZFavorites: ZRecords {
 	var rootsMaybe       : Zone?
 	var otherCurrent     : Zone?
 	var recentsMaybe     : Zone?
-	var recentCurrent   : Zone?
+	var recentCurrent    : Zone?
+	var currentlyPopping : Zone?
 	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.bookmarks) ?? [] }
 
 	var hasMultipleNotes : Bool {

@@ -1161,17 +1161,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				addToPaste()
+				concealAllProgeny()            // shrink gExpandedZones list
 
-				if  isInTrash {
-					moveZone(to: destroyZone) {
-						finishDeletion(true)
-					}
-				} else if !permanently, !isInDestroy {
+				if !permanently, !isInDestroy, !isInTrash {
 					moveZone(to: trashZone) {
 						finishDeletion(true)
 					}
 				} else {
-					concealAllProgeny()            // shrink gExpandedZones list
 					traverseAllProgeny { iZone in
 						if !iZone.isInTrash {
 							iZone.needDestroy()    // gets written in file
@@ -1183,13 +1179,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						}
 					}
 
-					if  zRecords?.cloudUnavailable ?? true, !gIsUsingCoreData {
-						moveZone(to: destroyZone) {
-							finishDeletion(true)
-						}
-					} else {
-						finishDeletion(false)
-					}
+					finishDeletion(false)
 				}
 			}
 		}
@@ -1980,7 +1970,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let targetParent = bookmarkTarget?.parentZone
 
 				targetParent?.expand()
-				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKind) in
+				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKindArray) in
 					gFavorites.updateCurrentWithBookmarksTargetingHere()
 					atArrival()
 				}
@@ -2024,14 +2014,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if      target.isProgenyOfOrEqualTo(gHereMaybe) {
-				if !target.isGrabbed {
-					target.asssureIsVisible()
+				if !target.isGrabbed,
+				    target.isVisible {
 					target.grab()
 				} else {
 					gHere = target
 				}
 
-				complete(target, .spRelayout)
+				complete(target, [.spRelayout, .spCrumbs])
 			} else {
 				if  gDatabaseID != targetDBID {
 					gDatabaseID  = targetDBID
@@ -2042,7 +2032,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 					target.expandAndGrab()
 					gFocusing.focusOnGrab(.eSelected) {
-						complete(gHere, .spRelayout)
+						complete(gHere, [.spRelayout])
 					}
 				} else {
 
@@ -2062,7 +2052,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						gHere = here
 
 						grabbed?.grab()
-						complete(here, .spRelayout)
+						complete(here, [.spRelayout])
 					}
 
 					if  there != nil {
@@ -2072,7 +2062,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						here.expandAndGrab()
 					} // else ignore: favorites id with an unresolvable bookmark target
 
-					complete(gHereMaybe, .spRelayout)
+					complete(gHereMaybe, [.spRelayout])
 				}
 			}
 		}

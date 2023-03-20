@@ -21,8 +21,8 @@ class ZDataDetailsController: ZGenericController {
     @IBOutlet var       totalCountLabel: ZTextField?
 	@IBOutlet var       recordNameLabel: ZTextField?
 	@IBOutlet var         synopsisLabel: ZTextField?
-    var                     currentZone: Zone?         { return gSelecting.rootMostMoveable }
     override  var          controllerID: ZControllerID { return .idDataDetails }
+	var                     currentZone: Zone?         { return gSelecting.rootMostMoveable }
 
 	override func handleSignal(kind: ZSignalKind) {
 		if  gDetailsViewIsVisible(for: .vData) {
