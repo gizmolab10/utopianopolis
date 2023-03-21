@@ -100,6 +100,52 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
     return false
 }
 
+func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
+#if os(OSX)
+	if  let  window = gApplication?.mainWindow {
+		let   panel = NSOpenPanel()
+
+		callback?(panel)
+
+		panel.resolvesAliases               = true
+		panel.canChooseDirectories          = false
+		panel.canResolveUbiquitousConflicts = false
+		panel.canDownloadUbiquitousContents = false
+
+		panel.beginSheetModal(for: window) { (result) in
+			if  result == NSApplication.ModalResponse.OK,
+				panel.urls.count > 0 {
+				let url = panel.urls[0]
+
+				callback?(url)
+			}
+		}
+	}
+#endif
+}
+
+func gPresentSavePanel(name iName: String?, suffix: String, _ callback: AnyClosure? = nil) {
+	let           panel = NSSavePanel()
+	panel      .message = "Export as a \(suffix) file"
+	gIsExportingToAFile = true
+
+	if  let name = iName {
+		panel.nameFieldStringValue = name + kPeriod + suffix
+	}
+
+	panel.begin { result in
+		if  result == .OK,
+			let fileURL = panel.url {
+
+			BACKGROUND {
+				callback?(fileURL)
+
+				gIsExportingToAFile = false
+			}
+		}
+	}
+}
+
 // Helper function inserted by Swift 4.2 migrator.
 func gConvertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
     guard let input = input else { return nil }
@@ -193,7 +239,7 @@ extension URL {
 
     func openAsFile() {
 //        if !openSecurely() {
-//            ZFiles.presentOpenPanel() { (iAny) in
+//            gPresentOpenPanel() { (iAny) in
 //                if  let url = iAny as? URL {
 //                    url.open()
 //                } else if let panel = iAny as? NSPanel {

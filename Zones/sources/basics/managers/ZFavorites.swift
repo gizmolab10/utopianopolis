@@ -186,7 +186,7 @@ class ZFavorites: ZRecords {
 	}
 
 	func recentsTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
-		return targeting(target, in: getRecentsGroup().bookmarks, orSpawnsIt: orSpawnsIt)
+		return targeting(target, in: getRecentsGroup().children, orSpawnsIt: orSpawnsIt)
 	}
 
 	func favoritesTargeting(_ target: Zone, orSpawnsIt: Bool = false) -> ZoneArray? {
@@ -356,10 +356,10 @@ class ZFavorites: ZRecords {
 
 			for databaseID in kAllDatabaseIDs {
 				if !hasDatabaseIDs.contains(databaseID) {
-					let          name = databaseID.rawValue
-					let      bookmark = Zone.uniqueZone(recordName: name + kFavoritesSuffix, in: .mineID)
-					bookmark.zoneLink = name + kColonSeparator + kColonSeparator
-					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? name
+					let        dbName = databaseID.rawValue
+					let      bookmark = Zone.uniqueZone(recordName: dbName + kFavoritesSuffix, in: .mineID)
+					bookmark.zoneLink = dbName + kColonSeparator + kColonSeparator
+					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? dbName
 
 					getRootsGroup().addChildAndUpdateOrder(bookmark)
 				}

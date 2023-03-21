@@ -72,7 +72,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                               passesFilter :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
 	var                                           isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
-	var                                          isBookmark :               Bool  { return bookmarkTarget != nil }
+	var                                          isBookmark :               Bool  { return zoneLink != nil }
 	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.mapType.isMainMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
@@ -115,7 +115,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                              traits =   ZTraitDictionary  ()
 	var                                      duplicateZones =          ZoneArray  ()
 	var                                            children =          ZoneArray  ()
-	var                                     bookmarkTargets :          ZoneArray  { return bookmarks.map { return $0.bookmarkTarget! } }
+	var                                     bookmarkTargets :          ZoneArray  { return bookmarks.filter { $0.bookmarkTarget != nil }.map { $0.bookmarkTarget! } }
 	var                                           notemarks :          ZoneArray  { return zonesMatching(.wNotemarks) }
 	var                                           bookmarks :          ZoneArray  { return zonesMatching(.wBookmarks) }
 	var                                          allProgeny :          ZoneArray  { return zonesMatching(.wProgeny  ) }
@@ -261,7 +261,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	var bookmarksTargetingSelf: ZoneArray {
-		return gRelationships.relationshipsFor(self)?.bookmarks ?? []
+		if  gHasRelationships {
+			return gRelationships.relationshipsFor(self)?.bookmarks ?? []
+		} else if  let  name = recordName,
+				   let  dict = gBookmarks.reverseLookup[databaseID],
+				   let array = dict[name] {
+
+			return array
+		}
+
+		return []
 	}
 
 	func setNameForSelfAndBookmarks(to name: String) {
@@ -280,6 +289,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var bookmarkTarget : Zone? {
 		return crossLink as? Zone  // gRelationships.reverseRelationshipsFor(self)?.bookmarks?[0]
+	}
+
+	var asZoneLink: String? {
+		guard let name = recordName else { return nil }
+
+		return databaseID.rawValue + kColonSeparator + kColonSeparator + name
 	}
 
 	var crossLink: ZRecord? {
@@ -1526,10 +1541,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func hasSameTarget(as other: Zone) -> Bool {
-		if  let     aTarget  =       bookmarkTarget,
-			let     bTarget  = other.bookmarkTarget {
-			return (aTarget == bTarget) && (aTarget === bTarget)
+	func hasSameZoneLink(as other: Zone) -> Bool {
+		if  let     aLink  =       zoneLink,
+			let     bLink  = other.zoneLink {
+			return (aLink == bLink)
 		}
 
 		return false
@@ -3181,7 +3196,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				result.prependUnique(item: zone) { (a, b) in
 					if  let    aZone = a as? Zone,
 						let    bZone = b as? Zone {
-						return aZone.hasSameTarget(as:bZone)
+						return aZone.hasSameZoneLink(as:bZone)
 					}
 
 					return false
@@ -3193,9 +3208,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func bookmarksMatching(_ type: ZWorkingListType) -> Bool {
-		guard let target = bookmarkTarget else { return false }
+		guard zoneLink != nil else { return false }
 
-		return type.contains(.wBookmarks) || (type.contains(.wNotemarks) && target.hasNote)
+		return type.contains(.wBookmarks) || (type.contains(.wNotemarks) && bookmarkTarget?.hasNote ?? false)
 	}
 
 	// MARK: - dots

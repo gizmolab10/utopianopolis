@@ -223,13 +223,12 @@ class ZFiles: NSObject {
 		}
 	}
 
-	private func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
+	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		if  let    zRecords  = gRemoteStorage.zRecords(for: databaseID),
 			let       index  = databaseID.index {
 			isReading[index] = true
 			typealias  types = [ZStorageType]
-			let  keys: types = [.date, .manifest, .graph, .favorites, .bookmarks, .trash, .lost, .destroy ]
-
+			let  keys: types = [.date, .manifest, .graph, .favorites, .bookmarks, .trash, .lost, .destroy]
 			if  let     data = gFileManager.contents(atPath: path),
 				data  .count > 0,
 				let     json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {

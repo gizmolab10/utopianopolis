@@ -1084,7 +1084,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			}
 
 			func displayUploadDialog() {
-				ZFiles.presentOpenPanel() { (iAny) in
+				gPresentOpenPanel() { (iAny) in
 					if  let      url = iAny as? URL {
 						let    asset = CKAsset(fileURL: url)
 						if  let file = ZFile.uniqueFile(asset, databaseID: gDatabaseID),

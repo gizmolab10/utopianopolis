@@ -489,10 +489,6 @@ class ZRecords: NSObject {
 					return false
 				}
 			} else {
-				if  name == kTrashName {
-					noop()
-				}
-
 				zRecordsLookup[name] = zRecord
 				created              = true
 

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreFoundation
 
 #if os(OSX)
 import Cocoa
@@ -51,85 +52,92 @@ extension ZFiles {
 	// MARK: - export
 	// MARK: -
 
-	func export(_ zone: Zone, toFileAs type: ZExportType) {
-		let           panel = NSSavePanel()
-		let          suffix = type.rawValue
-		panel      .message = "Export as \(suffix)"
-		gIsExportingToAFile = true
-		if  let        name = zone.zoneName {
-			panel.nameFieldStringValue = "\(name).\(suffix)"
-		}
+	func export(_ iZone: Zone?, toFileAs type: ZExportType) {
+		guard let zone = iZone else { return }
+		let     suffix = type.rawValue
+		let       name = zone.zoneName ?? "no name"
 
-		panel.begin { result in
-			if  result == .OK,
-				let fileURL = panel.url {
+		gPresentSavePanel(name: name, suffix: suffix) { fileURL in
+			if  let url = fileURL as? URL {
+				switch type {
+					case .eOutline:
+						let string = zone.outlineString()
+						do {
+							try string.write(to: url, atomically: true, encoding: .utf8)
+						} catch {
+							printDebug(.dError, "\(error)")
+						}
 
-				BACKGROUND {
-					switch type {
-						case .eOutline:
-							let string = zone.outlineString()
+					case .eSeriously:
+						do {
+							let     dict = try zone.storageDictionary()
+							let jsonDict = dict.jsonDict
+							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
 
+							try data.write(to: url)
+						} catch {
+							printDebug(.dError, "\(error)")
+						}
+					case .eEssay:
+						if  let text = zone.note?.essayText {
 							do {
-								try string.write(to: fileURL, atomically: true, encoding: .utf8)
+								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
+								let  wrapper = FileWrapper(regularFileWithContents: fileData)
+
+								try  wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
+
 							} catch {
 								printDebug(.dError, "\(error)")
 							}
-						case .eSeriously:
-							do {
-								let     dict = try zone.storageDictionary()
-								let jsonDict = dict.jsonDict
-								let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
-
-								try data.write(to: fileURL)
-							} catch {
-								printDebug(.dError, "\(error)")
-							}
-						case .eEssay:
-							if  let text = zone.note?.essayText {
-								do {
-									let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
-									let  wrapper = FileWrapper(regularFileWithContents: fileData)
-
-									try  wrapper.write(to: fileURL, options: .atomic, originalContentsURL: nil)
-
-								} catch {
-									printDebug(.dError, "\(error)")
-								}
-							}
-						default: break
-					}
-
-					gIsExportingToAFile = false
+						}
+					default: break
 				}
 			}
+		}
+	}
+
+	func exportDatabase(_ databaseID: ZDatabaseID) {
+		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iAny in
+			if  let url = iAny as? URL {
+				try? writeFile(at: url.relativePath, from: databaseID)
+			}
+		}
+	}
+
+	func exportFromZone(_ zone: Zone, with flags: ZEventFlags) {
+		if  flags.exactlyAll {
+			exportDatabase(zone.databaseID)
+		} else {
+			let          exporting = flags.hasCommand ? gRecords.rootZone : zone
+			let type : ZExportType = flags.hasOption  ? .eOutline : .eSeriously
+
+			export(exporting, toFileAs: type)
 		}
 	}
 
 	// MARK: - import
 	// MARK: -
 
-	static func presentOpenPanel(_ callback: AnyClosure? = nil) {
-#if os(OSX)
-		if  let  window = gApplication?.mainWindow {
-			let   panel = NSOpenPanel()
+	func importToZone(_ zone: Zone, with flags: ZEventFlags) {
+		if  flags.exactlyAll {
+			gFiles.replaceDatabase(zone.databaseID) { gRelayoutMaps() }
+		} else {
+			let type : ZExportType = flags.hasOption ? .eOutline : flags.exactlySplayed ? .eCSV : .eSeriously
+			
+			zone.importFromFile(type) { gRelayoutMaps() }
+		}
+	}
 
-			callback?(panel)
-
-			panel.resolvesAliases               = true
-			panel.canChooseDirectories          = false
-			panel.canResolveUbiquitousConflicts = false
-			panel.canDownloadUbiquitousContents = false
-
-			panel.beginSheetModal(for: window) { (result) in
-				if  result == NSApplication.ModalResponse.OK,
-					panel.urls.count > 0 {
-					let url = panel.urls[0]
-
-					callback?(url)
-				}
+	func replaceDatabase(_ databaseID: ZDatabaseID, onCompletion: Closure?) {
+		gPresentOpenPanel() { [self] iAny in
+			if  let url = iAny as? URL {
+				try? readFile(from: url.relativePath, into: databaseID, onCompletion: { _ in onCompletion?() } )
+			} else if let panel = iAny as? NSOpenPanel {
+				let  suffix = ZExportType.eSeriously.rawValue
+				panel.title = "Import as \(suffix)"
+				panel.allowedFileTypes = [suffix]
 			}
 		}
-#endif
 	}
 
 }
@@ -137,7 +145,7 @@ extension ZFiles {
 extension Zone {
 
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
-		ZFiles.presentOpenPanel() { [self] (iAny) in
+		gPresentOpenPanel() { [self] iAny in
 			if  let url = iAny as? URL {
 				importFile(from: url.path, type: type, onCompletion: onCompletion)
 			} else if let panel = iAny as? NSOpenPanel {

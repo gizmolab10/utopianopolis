@@ -19,7 +19,7 @@ extension ZFavorites {
 		if  let target        = zone {
 			let prior         = recentCurrent?.siblingIndex ?? 0
 			let recents       = getRecentsGroup()
-			var bookmark      = recentsTargeting(target)?.firstUndeleted           // bookmark pointing to target is already present
+			var bookmark      = recents.children.whoseTargetIntersects(with: [target]).firstUndeleted           // bookmark pointing to target is already present
 			if  let to        = !down ? prior : recents.children.nextBookmarkIndex(increasing: true,  from: prior) {
 				if  let from  = bookmark?.siblingIndex,
 					let guess =                 recents.children.nextBookmarkIndex(increasing: false, from: from) {
@@ -29,7 +29,7 @@ extension ZFavorites {
 					}
 
 					bookmark  = recents[to]
-				} else { // let targets = recents.children.map { $0.bookmarkTarget } // TODO: check if target is already present
+				} else {
 					bookmark  = ZBookmarks.newBookmark(targeting: target)
 
 					recents.addChildNoDuplicate(bookmark, at: to)

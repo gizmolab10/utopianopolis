@@ -135,10 +135,10 @@ class ZMapEditor: ZBaseEditor {
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "n":        editNote(flags: flags)
-						case "o":        moveable.importFromFile(OPTION ? .eOutline : SPLAYED ? .eCSV : .eSeriously) { gRelayoutMaps() }
+						case "o":        gFiles.importToZone(moveable, with: flags)
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
-						case "s":        gFiles.export(moveable, toFileAs: OPTION ? .eOutline : .eSeriously)
+						case "s":        gFiles.exportFromZone(moveable, with: flags)
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }

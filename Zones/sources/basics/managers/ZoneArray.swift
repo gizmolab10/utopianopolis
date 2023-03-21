@@ -650,15 +650,16 @@ extension ZoneArray {
 		return nil
 	}
 
-	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool) -> ZoneArray {
+	func whoseTargetIntersects(with iTargets: ZoneArray, orSpawnsIt: Bool = false) -> ZoneArray {
 		var intersection = ZoneArray()
 		for target in iTargets {
-			if  let                dbid = target.dbid {
+			if  let       dbid = target.dbid,
+				let targetLink = target.asZoneLink {
 				for zone in self {
-					if  let  zoneTarget = zone.bookmarkTarget, !zone.isDeleted,
-						dbid           == zoneTarget.dbid {
+					if  let zoneLink = zone.zoneLink, !zone.isDeleted,
+						dbid        == zoneLink.maybeDatabaseID?.identifier {
 
-						if  zoneTarget == target || (orSpawnsIt && target.isProgenyOf(zoneTarget)) {
+						if  targetLink == zoneLink || (orSpawnsIt && target.isProgenyOf(zone.bookmarkTarget)) {
 							intersection.append(zone)
 						}
 					}
