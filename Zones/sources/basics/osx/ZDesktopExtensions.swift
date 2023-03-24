@@ -85,19 +85,19 @@ var gFavoritesAreVisible : Bool { return gDetailsViewIsVisible(for: .vFavorites)
 protocol ZScrollDelegate : NSObjectProtocol {}
 
 func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
-    if  let e  = event {
-        if  e == gCurrentEvent {
-            return true
-        } else {
-            gCurrentEvent = e
-        }
-    }
-    
-    if  item != nil {
-        return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4)
-    }
-    
-    return false
+	if  let e  = event {
+		if  e == gCurrentEvent {
+			return true
+		} else {
+			gCurrentEvent = e
+		}
+	}
+
+	if  item != nil {
+		return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4)
+	}
+
+	return false
 }
 
 func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
@@ -112,10 +112,10 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 		panel.canResolveUbiquitousConflicts = false
 		panel.canDownloadUbiquitousContents = false
 
-		panel.beginSheetModal(for: window) { (result) in
-			if  result == NSApplication.ModalResponse.OK,
+		panel.beginSheetModal(for: window) { result in
+			if  result          == .OK,
 				panel.urls.count > 0 {
-				let url = panel.urls[0]
+				let          url = panel.urls[0]
 
 				callback?(url)
 			}
@@ -124,28 +124,42 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 #endif
 }
 
-func gPresentSavePanel(name iName: String?, suffix: String, _ callback: AnyClosure? = nil) {
-	let           panel = NSSavePanel()
-	panel      .message = "Export as a \(suffix) file"
-	gIsExportingToAFile = true
-
-	if  let name = iName {
-		panel.nameFieldStringValue = name + kPeriod + suffix
+func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
+	gPresentOpenPanel() { iAny in
+#if os(OSX)
+		if let panel = iAny as? NSOpenPanel {
+			let  suffix = ZExportType.eSeriously.rawValue
+			panel.title = "Import as \(suffix)"
+			panel.allowedFileTypes = [suffix]
+		} else {
+			callback?(iAny)
+		}
+#endif
 	}
+}
 
-	panel.begin { result in
-		if  result == .OK,
-			let fileURL = panel.url {
+func gPresentSavePanel(name iName: String?, suffix: String, _ callback: AnyClosure? = nil) {
+	if  let                     window = gApplication?.mainWindow {
+		let                      panel = NSSavePanel()
+		panel                 .message = "Export a \(suffix) file"
+		gIsExportingToAFile            = true
+		if  let                   name = iName {
+			panel.nameFieldStringValue = name + kPeriod + suffix
+		}
 
-			BACKGROUND {
-				callback?(fileURL)
+		panel.beginSheetModal(for: window) { result in
+			if  result     == .OK,
+				let fileURL = panel.url {
 
-				gIsExportingToAFile = false
+				BACKGROUND {
+					callback?(fileURL)
+
+					gIsExportingToAFile = false
+				}
 			}
 		}
 	}
 }
-
 // Helper function inserted by Swift 4.2 migrator.
 func gConvertFromOptionalUserInterfaceItemIdentifier(_ input: NSUserInterfaceItemIdentifier?) -> String? {
     guard let input = input else { return nil }

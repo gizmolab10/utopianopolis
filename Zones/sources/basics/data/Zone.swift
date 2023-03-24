@@ -273,10 +273,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return []
 	}
 
+	func applyToAllBookmarksTargetingSelf(_ closure: ZoneClosure) {
+		for bookmark in bookmarksTargetingSelf {
+			closure(bookmark)
+		}
+	}
+
 	func setNameForSelfAndBookmarks(to name: String) {
 		zoneName = name
 
-		for b in bookmarksTargetingSelf {
+		applyToAllBookmarksTargetingSelf { b in
 			b.zoneName = name
 		}
 	}

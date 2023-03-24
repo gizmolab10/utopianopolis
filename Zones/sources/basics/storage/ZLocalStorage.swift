@@ -129,13 +129,15 @@ extension ZFiles {
 	}
 
 	func replaceDatabase(_ databaseID: ZDatabaseID, onCompletion: Closure?) {
-		gPresentOpenPanel() { [self] iAny in
+		gPresentOpenPanel(type: .eSeriously) { [self] iAny in
 			if  let url = iAny as? URL {
-				try? readFile(from: url.relativePath, into: databaseID, onCompletion: { _ in onCompletion?() } )
-			} else if let panel = iAny as? NSOpenPanel {
-				let  suffix = ZExportType.eSeriously.rawValue
-				panel.title = "Import as \(suffix)"
-				panel.allowedFileTypes = [suffix]
+				try? readFile(from: url.relativePath, into: databaseID) { _ in
+					onCompletion?()
+					FOREGROUND(after: 0.1) {
+						gFavorites.setupAfterDBReplacement()
+						gSignal([.spFavoritesMap])
+					}
+				}
 			}
 		}
 	}
@@ -145,13 +147,9 @@ extension ZFiles {
 extension Zone {
 
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
-		gPresentOpenPanel() { [self] iAny in
+		gPresentOpenPanel(type: type) { [self] iAny in
 			if  let url = iAny as? URL {
 				importFile(from: url.path, type: type, onCompletion: onCompletion)
-			} else if let panel = iAny as? NSOpenPanel {
-				let  suffix = type.rawValue
-				panel.title = "Import as \(suffix)"
-				panel.allowedFileTypes = [suffix]
 			}
 		}
 	}

@@ -100,17 +100,17 @@ extension ZoneWidget {
 	}
 
 	func linearRelayoutTextViewFrame(_ absolute: Bool = false) {
-		if  let                 t = pseudoTextWidget {
+		if  let              t = pseudoTextWidget,
+			let              c = controller {
 			if  absolute {
-				t.relayoutAbsoluteFrame(relativeTo: controller)
+				t.relayoutAbsoluteFrame(relativeTo: c)
 
 				textWidget?.frame = t.absoluteFrame
-			} else if let       c = controller,
-					  let    size = textWidget?.drawnSize.insetBy(.zero, c.dotWidth * 0.1) {
-				let             x = hideDragDot ? 20.0 : c.horizontalGap + c.fontSize + c.coreThickness * 5.0 - 20.0
-				let             y = (drawnSize.height - size.height) / 2.0
-				let        origin = CGPoint(x: x, y: y)
-				t          .frame = CGRect(origin: origin, size: size)
+			} else if let size = textWidget?.drawnSize.insetBy(.zero, c.dotWidth * 0.1) {
+				let          x = hideDragDot ? 20.0 : c.horizontalGap + c.fontSize + c.coreThickness * 5.0 - 20.0
+				let          y = (drawnSize.height - size.height) / 2.0
+				let     origin = CGPoint(x: x, y: y)
+				t       .frame = CGRect(origin: origin, size: size)
 			}
 		}
 	}

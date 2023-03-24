@@ -165,10 +165,6 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		// create widget tree //
 		// ////////////////// //
 
-		if  isMainMap {
-			noop()
-		}
-
 		if  let total = hereWidget?.createPseudoViews(for: mapPseudoView, for: mapType, atIndex: nil, kind, visited: []) {
 			printDebug(.dWidget, "layout \(mapType.description): \(total)")
 		}
@@ -234,7 +230,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		clearAllToolTips(for: isMainMap ? .main : .favorites)
 		gRemoveAllTracking()
 
-		if  isMainMap, gIsEssayMode {
+		if  gIsEssayMode, isMainMap {
 			return               // when in essay mode, do not process main map's widgets
 		}
 

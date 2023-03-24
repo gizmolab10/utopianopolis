@@ -14,16 +14,16 @@ let gWidgets = ZWidgets()
 
 class ZWidgets: NSObject {
 
-	var   mainMapWidgets: WidgetHashDictionary = [:]
-	var favoriteWidgets: WidgetHashDictionary = [:]
-	var exemplarWidgets: WidgetHashDictionary = [:]
+	var        mainMapWidgets : WidgetHashDictionary = [:]
+	var       favoriteWidgets : WidgetHashDictionary = [:]
+	var       exemplarWidgets : WidgetHashDictionary = [:]
     var currentlyEditedWidget : ZoneWidget?     { return widgetForZone(gTextEditor.currentlyEditedZone) }
     var  currentMovableWidget : ZoneWidget?     { return widgetForZone(gSelecting.currentMoveable) }
     var  firstGrabbableWidget : ZoneWidget?     { return widgetForZone(gSelecting.firstSortedGrab) }
     var        visibleWidgets : ZoneWidgetArray { return gHere.visibleWidgets + (gFavoritesHere?.visibleWidgets ?? []) }
 
 	func clearAll() {
-		mainMapWidgets  .clear()
+		mainMapWidgets .clear()
 		favoriteWidgets.clear()
 		exemplarWidgets.clear()
 	}
@@ -58,9 +58,9 @@ class ZWidgets: NSObject {
 	/// - Parameter type: indicates which dictionary to put the zone:widget pair in
 
 	func setWidgetForZone( _ widget: ZoneWidget, for type: ZMapType) {
-        if  let   zone = widget.widgetZone,
-			var   dict = getZoneWidgetRegistry(for: type) {
-			let   hash = zone.hash
+        if  let  zone  = widget.widgetZone,
+			var  dict  = getZoneWidgetRegistry(for: type) {
+			let  hash  = zone.hash
 			dict[hash] = widget
 
 			setZoneWidgetRegistry(dict, for: type)

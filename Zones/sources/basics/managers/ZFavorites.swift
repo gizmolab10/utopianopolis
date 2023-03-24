@@ -135,6 +135,15 @@ class ZFavorites: ZRecords {
 		return ZBookmarks.newOrExistingBookmark(targeting: zone, addTo: addToRecents ? getRecentsGroup() : nil)
 	}
 
+	func setupAfterDBReplacement() {
+		if  let root = rootZone {
+			root.traverseAllProgeny { zone in
+				zone.setRoot(root)
+//				print(zone)
+			}
+		}
+	}
+
     // MARK: - mutate
     // MARK: -
 

@@ -54,8 +54,8 @@ class ZRemoteStorage: NSObject {
 	var         rootZone : Zone? { get { return currentRecords.rootZone } set { currentRecords.rootZone  = newValue } }
 
 	func cloud(for databaseID: ZDatabaseID) -> ZCloud? { return zRecords(for: databaseID) as? ZCloud }
-	func clear()                                 { records =       [ZDatabaseID : ZCloud] () }
-	func cancel()                                { currentCloud?.currentOperation?.cancel() }
+	func clear()                                       { records =       [ZDatabaseID : ZCloud] () }
+	func cancel()                                      { currentCloud?.currentOperation?.cancel() }
 
 	var all : ZoneArray {
 		var total = ZoneArray()
@@ -258,7 +258,6 @@ class ZRemoteStorage: NSObject {
 
         return zRecords
     }
-
 
     func databaseForID(_ iID: ZDatabaseID) -> CKDatabase? {
         switch iID {
