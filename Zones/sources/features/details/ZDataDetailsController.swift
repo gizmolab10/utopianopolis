@@ -73,17 +73,11 @@ class ZDataDetailsController: ZGenericController {
     }
 
 	var zoneRecordNameText: String {
-		var text = kEmpty
+		var     text = kEmpty
 
 		if  let zone = currentZone,
 			let name = zone.recordName {
-			let type = zone.mapType.identifier.uppercased()
 			text     = name
-
-			if  gDebugInfo, type.count > 0 {
-				text     = "\(type) \(text)"
-			}
-
 		}
 
 		return text

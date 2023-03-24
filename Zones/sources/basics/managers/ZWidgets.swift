@@ -58,10 +58,11 @@ class ZWidgets: NSObject {
 	/// - Parameter type: indicates which dictionary to put the zone:widget pair in
 
 	func setWidgetForZone( _ widget: ZoneWidget, for type: ZMapType) {
-        if  let  zone  = widget.widgetZone,
-			var  dict  = getZoneWidgetRegistry(for: type) {
-			let  hash  = zone.hash
-			dict[hash] = widget
+        if  let    zone  = widget.widgetZone,
+			var    dict  = getZoneWidgetRegistry(for: type) {
+			let    hash  = zone.hash
+			dict  [hash] = widget
+			zone.mapType = type
 
 			setZoneWidgetRegistry(dict, for: type)
 		}

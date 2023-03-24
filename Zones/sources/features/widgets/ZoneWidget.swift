@@ -31,6 +31,14 @@ struct ZMapType: OptionSet, CustomStringConvertible {
 	var isExemplar: Bool { return contains(.tExemplar) }
 	var isHelpDots: Bool { return contains(.tHelpDots) }
 
+	var root: Zone? {
+		switch self {
+			case .tExemplar: return gHelpDotsExemplarController?.rootZone
+			case .tFavorite: return gFavoritesRoot
+			default:         return nil
+		}
+	}
+
 	var description: String {
 		return [(.tIdea,        "     idea"),
 				(.tMainMap,     " main map"),

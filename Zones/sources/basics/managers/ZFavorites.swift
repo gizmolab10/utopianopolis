@@ -15,7 +15,7 @@ var gFavoritesRoot : Zone? { return gFavorites.rootZone }
 var gFavoritesHere : Zone? { return gFavoritesHereMaybe ?? gFavoritesRoot }
 
 var gFavoritesHereMaybe: Zone? {
-	get { let zone = gHereZoneForDatabaseIDMaybe(   .favoritesID); zone?.setRoot(gFavoritesRoot); return zone }
+	get { return gHereZoneForDatabaseIDMaybe(       .favoritesID) }
 	set { gSetHereZoneForDatabaseID(here: newValue, .favoritesID) }
 }
 
@@ -73,12 +73,12 @@ class ZFavorites: ZRecords {
 		// ///////////////// //
 
 		let          group = Zone.uniqueZone(recordName: name, in: .mineID)
+		group     .mapType = .tFavorite
 		group    .zoneName = name
 		group.directAccess = .eReadOnly
 
 		group.collapse()
 		group.register()
-		group.setRoot(gFavoritesRoot)
 		group.alterAttribute(.groupOwner, remove: false)
 		gFavoritesRoot?.addChildAndRespectOrder(group)
 
@@ -138,8 +138,7 @@ class ZFavorites: ZRecords {
 	func setupAfterDBReplacement() {
 		if  let root = rootZone {
 			root.traverseAllProgeny { zone in
-				zone.setRoot(root)
-//				print(zone)
+				zone.mapType = .tFavorite
 			}
 		}
 	}

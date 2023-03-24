@@ -68,14 +68,8 @@ class ZSearching: NSObject, ZSearcher {
 		for cloud in gRemoteStorage.allClouds {
 			cloud.foundInSearch = []
 			cloud.searchLocal(for: searchString) { [self] in
-				let   databaseID  = cloud.databaseID
-				var results = combined[databaseID] ?? ZRecordsArray()
-
-				for record in cloud.foundInSearch {
-					if  let zone = record as? Zone {
-						zone.assureRoot()
-					}
-				}
+				let  databaseID = cloud.databaseID
+				var     results = combined[databaseID] ?? ZRecordsArray()
 
 				results.append(contentsOf: cloud.foundInSearch)
 

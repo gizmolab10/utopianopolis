@@ -153,8 +153,6 @@ class ZRemoteStorage: NSObject {
 				let isExactRoot = root?.recordName == kRootName
 
 				root?.traverseAllProgeny { zone in
-					zone.updateRootFromParent()
-
 					if  isExactRoot {
 						let zLevel = zone.level
 						if  level  < zLevel {

@@ -36,7 +36,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           noteMaybe :              ZNote?
 	var                                      crossLinkMaybe :            ZRecord?
 	var                                     parentZoneMaybe :               Zone?
-	var                                                root :               Zone?
+	var                                                root :               Zone? { return mapType.root ?? gRemoteStorage.zRecords(for: databaseID)?.rootZone }
 	var                                          groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
 	var                                         destroyZone :               Zone? { return zRecords?.destroyZone }
 	var                                           trashZone :               Zone? { return zRecords?.trashZone }
@@ -111,6 +111,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                        userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
 	var                                userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
 	var                                         hideDragDot :               Bool  { return isExpanded && (isFavoritesHere || (kIsPhone && (self == gHereMaybe))) }
+	var                                             mapType :           ZMapType  = .tMainMap
 	var                                     inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
 	var                                              traits =   ZTraitDictionary  ()
 	var                                      duplicateZones =          ZoneArray  ()
@@ -130,8 +131,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	static   func randomZone(in dbID: ZDatabaseID)         ->               Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	override func hasMissingChildren()                     ->               Bool  { return count < fetchableCount }
 	override func orphan()                                                        { parentZone?.removeChild(self) }
-	func          updateRootFromParent()                                          { setRoot(getRoot) }
-	func          setRoot(_ iRoot: Zone?)                                         { if let r = iRoot { root = r } }
 	func          toggleShowing()                                                 { isShowing ? hide() : show() }
 	func          recount()                                                       { updateAllProgenyCounts() }
 
@@ -141,10 +140,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	override var isInScope: Bool {
-		if  root == nil {
-			updateRootFromParent()
-		}
-
 		if  parentZone == nil {
 			return gSearchScope.contains(.fOrphan)
 		} else if let name  = root?.recordName {
@@ -243,18 +238,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return type
-	}
-
-	var mapType : ZMapType {
-		if  let    name = root?.recordName {
-			switch name {
-				case  kExemplarRootName: return .tExemplar
-				case kFavoritesRootName: return .tFavorite
-				default:                 break
-			}
-		}
-
-		return .tMainMap
 	}
 
 	// MARK: - bookmarks
@@ -2690,20 +2673,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// adopt recursively
 
-	func assureRoot() {
-		if  root == nil {
-			var foundRoot = self
-
-			while let p = foundRoot.parentZone {
-				foundRoot = p
-			}
-
-			if  foundRoot != self {
-				root = foundRoot
-			}
-		}
-	}
-
 	override func adopt(recursively: Bool = false) {
 		if  !needsDestroy {
 			if  let p = parentZone, p != self {        // first compute parentZone
@@ -2834,7 +2803,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				c.deleteSelf(onCompletion: nil)
 			}
 
-			child.root       = root
 			child.parentZone = self
 
 			if  toIndex < count {

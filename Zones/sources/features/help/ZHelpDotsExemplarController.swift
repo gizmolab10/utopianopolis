@@ -47,13 +47,13 @@ class ZHelpDotsExemplarController : ZMapController {
 		rootZone?  .zoneName = "this idea holds a list of three ideas"
 		rootZone?     .color = gHelpHyperlinkColor
 		rootZone?.parentLink = kNullLink
-		rootZone?      .root = rootZone
+		rootZone?   .mapType = .tExemplar
 		rootZone? .colorized = true
 
 		for index in [3, 2, 1] {
 			let        child = Zone.create(within: name, for: index, databaseID: .everyoneID)
 			child  .zoneName = "\(index.ordinal) idea"
-			child      .root = rootZone
+			child   .mapType = .tExemplar
 
 			rootZone?.addChildNoDuplicate(child)
 		}
