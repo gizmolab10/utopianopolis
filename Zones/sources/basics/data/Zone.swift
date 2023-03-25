@@ -286,25 +286,35 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return databaseID.rawValue + kColonSeparator + kColonSeparator + name
 	}
 
+	func updateCrossLinkMaybe(force: Bool = false) {
+		if (force || (crossLinkMaybe == nil) || (crossLinkMaybe!.recordName == nil)),
+		    var l                = zoneLink {
+			if  l.contains(kOptional) {    // repair consequences of an old, but now fixed, bookmark bug
+				l                = l.replacingOccurrences(of: kOptional + kDoubleQuote, with: kEmpty).replacingOccurrences(of: kDoubleQuote + ")", with: kEmpty)
+				zoneLink         = l
+			}
+
+			crossLinkMaybe       = l.maybeZone
+			if  let       target = crossLinkMaybe as? Zone {
+				target.colorized = colorized
+				target .zoneName = zoneName
+				target    .color = color
+			}
+
+		}
+	}
+
 	var crossLink: ZRecord? {
 		get {
-			if !gIsReadyToShowUI { return nil }
-
-			if (crossLinkMaybe == nil || crossLinkMaybe!.recordName == nil),
-				var l           = zoneLink {
-				if  l.contains(kOptional) {    // repair consequences of an old, but now fixed, bookmark bug
-					l           = l.replacingOccurrences(of: kOptional + kDoubleQuote, with: kEmpty).replacingOccurrences(of: kDoubleQuote + ")", with: kEmpty)
-					zoneLink    = l
-				}
-
-				crossLinkMaybe = l.maybeZone
+			if  gIsReadyToShowUI {       // zrecords registry not ready until ui can be shown
+				updateCrossLinkMaybe()
 			}
 
 			return crossLinkMaybe
 		}
 
 		set {
-			crossLinkMaybe = nil
+			crossLinkMaybe = nil   // force update (get)
 			zoneLink       = newValue?.asString
 		}
 	}

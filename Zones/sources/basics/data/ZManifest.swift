@@ -48,7 +48,7 @@ class ZManifest : ZRecord {
         let dCount = deletedRecordNames?.count ?? 0
 
         if  zCount > 0, zCount != dCount {    // SECOND: update deleted if count does not match zDeleted
-			deletedRecordNames = []
+			deletedRecordNames = StringsArray()
             
             // create deleted from zDeleted
             for zd in zDeleted {

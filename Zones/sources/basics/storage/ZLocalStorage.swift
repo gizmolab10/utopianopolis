@@ -120,7 +120,7 @@ extension ZFiles {
 
 	func importToZone(_ zone: Zone, with flags: ZEventFlags) {
 		if  flags.exactlyAll {
-			gFiles.replaceDatabase(zone.databaseID) { gRelayoutMaps() }
+			gFiles.replaceDatabase(zone.databaseID)
 		} else {
 			let type : ZExportType = flags.hasOption ? .eOutline : flags.exactlySplayed ? .eCSV : .eSeriously
 			
@@ -128,17 +128,20 @@ extension ZFiles {
 		}
 	}
 
-	func replaceDatabase(_ databaseID: ZDatabaseID, onCompletion: Closure?) {
+	func replaceDatabase(_ databaseID: ZDatabaseID) {
 		gPresentOpenPanel(type: .eSeriously) { [self] iAny in
 			if  let url = iAny as? URL {
 				try? readFile(from: url.relativePath, into: databaseID) { _ in
-					onCompletion?()
 					gFavoritesRoot?.traverseAllProgeny { zone in
-						zone.mapType = .tFavorite
+						zone       .mapType = .tFavorite
 						zone.crossLinkMaybe = nil
+
+//						zone.updateCrossLinkMaybe()
 					}
 
-					gSignal([.spFavoritesMap])
+//					FOREGROUND(after: 1.0) {
+						gSignal([.spRelayout, .spCrumbs])
+//					}
 				}
 			}
 		}

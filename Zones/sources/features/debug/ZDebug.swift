@@ -23,7 +23,7 @@ func gSetupFeatures() {
 	gCoreDataMode = []
 	gToggleCoreDataMode(.dNoCloudKit)    // don't store data in cloud (public not yet working)
 	gToggleCoreDataMode(.dNoRelatives)   // don't use the relationships table yet
-	gToggleCoreDataMode(.dEraseStores)   // discard CD stores and start from stratch
+//	gToggleCoreDataMode(.dEraseStores)   // discard CD stores and start from stratch
 	gToggleCoreDataMode(.dUseCrossLink)  // don't store bookmkars in relationships table
 //	gToggleCoreDataMode(.dCloudMigrate)  // not referenced yet
 
