@@ -133,10 +133,12 @@ extension ZFiles {
 			if  let url = iAny as? URL {
 				try? readFile(from: url.relativePath, into: databaseID) { _ in
 					onCompletion?()
-					FOREGROUND(after: 0.1) {
-						gFavorites.setupAfterDBReplacement()
-						gSignal([.spFavoritesMap])
+					gFavoritesRoot?.traverseAllProgeny { zone in
+						zone.mapType = .tFavorite
+						zone.crossLinkMaybe = nil
 					}
+
+					gSignal([.spFavoritesMap])
 				}
 			}
 		}

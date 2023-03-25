@@ -273,7 +273,7 @@ extension WidgetHashDictionary {
 extension ZWidgets {
 
 	func updateAllToolTips(_ flags: ZEventFlags) {
-		if  let widgets = allWidgets(for: .tIdea) {
+		if  let widgets = allWidgets(forExemplar: false) {
 			for widget in widgets {
 				widget.updateToolTips(flags)
 			}
@@ -281,7 +281,7 @@ extension ZWidgets {
 	}
 
 	func clearAllToolTips(for type: ZRelayoutMapType = .both) {
-		if  let widgets = allWidgets(for: .tIdea) {
+		if  let widgets = allWidgets(forExemplar: false) {
 			for widget in widgets {
 				widget.clearToolTips()
 			}

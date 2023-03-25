@@ -21,21 +21,19 @@ struct ZMapType: OptionSet, CustomStringConvertible {
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let tExemplar = ZMapType(rawValue: 1 << 0)
-	static let tHelpDots = ZMapType(rawValue: 1 << 1)
-	static let tFavorite = ZMapType(rawValue: 1 << 2)
-	static let  tMainMap = ZMapType(rawValue: 1 << 3)
-	static let     tIdea = ZMapType(rawValue: 1 << 4)
+	static let tFavorite = ZMapType(rawValue: 1 << 1)
+	static let  tMainMap = ZMapType(rawValue: 1 << 2)
+	static let     tIdea = ZMapType(rawValue: 1 << 3)
 
 	var isMainMap:  Bool { return contains(.tMainMap) }
 	var isFavorite: Bool { return contains(.tFavorite) }
 	var isExemplar: Bool { return contains(.tExemplar) }
-	var isHelpDots: Bool { return contains(.tHelpDots) }
 
 	var root: Zone? {
 		switch self {
-			case .tExemplar: return gHelpDotsExemplarController?.rootZone
 			case .tFavorite: return gFavoritesRoot
-			default:         return nil
+			case .tExemplar: return gHelpDotsExemplarController?.rootZone
+			default:         return nil // needs databaseID to determine which root !!!
 		}
 	}
 
@@ -43,8 +41,7 @@ struct ZMapType: OptionSet, CustomStringConvertible {
 		return [(.tIdea,        "     idea"),
 				(.tMainMap,     " main map"),
 				(.tFavorite,    " favorite"),
-				(.tExemplar,    " exemplar"),
-				(.tHelpDots,    "help dots")]
+				(.tExemplar,    " exemplar")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 			.joined(separator:  ", ")
 	}

@@ -28,11 +28,12 @@ class ZWidgets: NSObject {
 		exemplarWidgets.clear()
 	}
 
-	func allWidgets(for type: ZMapType) -> ZoneWidgetArray? {
-		switch type {
-			case .tExemplar: return exemplarWidgets.justWidgets
-			default:         return   mainMapWidgets.justWidgets + favoriteWidgets.justWidgets
+	func allWidgets(forExemplar: Bool) -> ZoneWidgetArray? {
+		if  forExemplar {
+			return exemplarWidgets.justWidgets
 		}
+
+		return mainMapWidgets.justWidgets + favoriteWidgets.justWidgets
 	}
 
 	func getZoneWidgetRegistry(for type: ZMapType?) -> WidgetHashDictionary? {

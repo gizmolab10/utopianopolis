@@ -290,7 +290,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		get {
 			if !gIsReadyToShowUI { return nil }
 
-			if  crossLinkMaybe == nil,
+			if (crossLinkMaybe == nil || crossLinkMaybe!.recordName == nil),
 				var l           = zoneLink {
 				if  l.contains(kOptional) {    // repair consequences of an old, but now fixed, bookmark bug
 					l           = l.replacingOccurrences(of: kOptional + kDoubleQuote, with: kEmpty).replacingOccurrences(of: kDoubleQuote + ")", with: kEmpty)

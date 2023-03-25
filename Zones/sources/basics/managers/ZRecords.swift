@@ -883,16 +883,14 @@ class ZRecords: NSObject {
 		if  let name       = recordName {
 			if  let record = zRecordsLookup[name] {
 				if  record.recordName   != name {
-					zRecordsLookup[name] = nil
+					zRecordsLookup[name] = nil // force record to be re-registered, and search core data store (below)
 				} else {
 					return record
 				}
 			}
 
-			let found         = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing)
-			if  found.count   > 0 {
-				return found[0] as? ZRecord
-			}
+			let    found = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing)
+			return found.first as? ZRecord
 		}
 
 		return nil
