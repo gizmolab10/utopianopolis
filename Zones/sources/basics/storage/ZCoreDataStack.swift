@@ -108,12 +108,14 @@ class ZCoreDataStack: NSObject {
 				FOREGROUND { [self] in
 					load(type: kManifestType, into: databaseID, onlyOne: false)
 
-					let array = load(type: kRelationshipType, into: databaseID, onlyOne: false)
+					if  gHasRelationships {
+						let array = load(type: kRelationshipType, into: databaseID, onlyOne: false)
 
-					for item in array {
-						if  let relationship = item as? ZRelationship {
-							relationship.relationType = .parent
-							gRelationships.addRelationship(relationship)
+						for item in array {
+							if  let          relationship = item as? ZRelationship {
+//								relationship.relationType = .parent
+								gRelationships.addRelationship(relationship)
+							}
 						}
 					}
 

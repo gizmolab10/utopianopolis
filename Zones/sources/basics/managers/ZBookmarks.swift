@@ -46,7 +46,6 @@ class ZBookmarks: NSObject {
 		}
 
 		gBookmarks.addToReverseLookup(bookmark)
-		
 		gRelationships.addBookmarkRelationship(bookmark, target: target, in: .mineID)
 
 		return bookmark
@@ -88,7 +87,7 @@ class ZBookmarks: NSObject {
 	// MARK: - persist
 	// MARK: -
 
-	func addToReverseLookup(_  iBookmark : Zone?) {
+	@discardableResult func addToReverseLookup(_  iBookmark : Zone?) -> Bool {
 		if  let       bookmark = iBookmark,
 			let linkRecordName =  bookmark.linkRecordName,
 			let linkDatabaseID =  bookmark.linkDatabaseID {
@@ -96,14 +95,11 @@ class ZBookmarks: NSObject {
 			var     registered = byRecordName?[linkRecordName]
 
 			if  byRecordName  == nil {
-				byRecordName   = [:]
+				byRecordName   = [String : ZoneArray]()
 				registered     = [bookmark]
 			} else {
 				if  registered == nil {
-					registered  = []
-				} else if bookmark.parentZone == nil,
-						  !gFiles.isReading(for: bookmark.databaseID) {
-					return
+					registered  = ZoneArray()
 				}
 
 				registered?.append(bookmark)
@@ -111,7 +107,11 @@ class ZBookmarks: NSObject {
 
 			byRecordName?[linkRecordName] = registered
 			reverseLookup[linkDatabaseID] = byRecordName
+
+			return true
 		}
+
+		return false
 	}
 
     func storageArray(for iDatabaseID: ZDatabaseID, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> [ZStorageDictionary]? {

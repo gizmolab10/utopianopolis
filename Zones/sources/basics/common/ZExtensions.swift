@@ -39,12 +39,11 @@ typealias          ZTraitDictionary = [ZTraitType   : ZTrait]
 typealias         ZAssetsDictionary = [UUID         : CKAsset]
 typealias        ZStorageDictionary = [ZStorageType : NSObject]
 typealias      WidgetHashDictionary = [Int          : ZoneWidget]
+typealias  ZRelationshipsDictionary = [Int          : ZRelationshipArray]
 typealias      ZStringAnyDictionary = [String       : Any]
 typealias   StringZRecordDictionary = [String       : ZRecord]
 typealias   ZStringObjectDictionary = [String       : NSObject]
 typealias ZManagedObjectsDictionary = [String       : ZManagedObject]
-typealias  ZRelationshipsDictionary = [String       : ZRelationshipArray]
-typealias  ZDBIDRelationsDictionary = [String       : ZRelationshipsDictionary]
 typealias  StringZRecordsDictionary = [String       : ZRecordsArray]
 typealias    ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
 typealias     ZAttributesDictionary = [NSAttributedString.Key : Any]
@@ -1446,7 +1445,7 @@ extension Array {
 
 	@discardableResult mutating func appendUnique(item: Any?, compare: CompareClosure? = nil) -> Bool {
 		if  let e = item as? Element,
-			!containsCompare(with: item, using: compare) {
+			(count == 0 || !containsCompare(with: item, using: compare)) {
 			append(e)
 			return true
 		}
@@ -2204,10 +2203,19 @@ extension String {
 		return nil
 	}
 
-	var maybeDatabaseID: ZDatabaseID? {
-		if  let   parts  = components {
+	var isDatabaseWild: Bool {
+		if  let         parts  = components {
 			let    databaseID  = parts[0]
-			return databaseID == kEmpty ? nil : ZDatabaseID(rawValue: databaseID)
+			return databaseID == kEmpty
+		}
+
+		return false
+	}
+
+	var maybeDatabaseID: ZDatabaseID? {
+		if  let         parts  = components {
+			let    databaseID  = parts[0]
+			return databaseID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: databaseID)
 		}
 
 		return nil

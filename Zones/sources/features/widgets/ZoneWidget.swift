@@ -55,7 +55,7 @@ struct ZMapType: OptionSet, CustomStringConvertible {
 			var short = strip[0]
 
 			switch strip {
-				case "none":     short = "?"
+				case "none":     short = kQuestion
 				case "exemplar": short = "x"
 				default:         break
 			}

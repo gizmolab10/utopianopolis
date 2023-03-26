@@ -895,31 +895,31 @@ extension ZTextEditor {
 				gTextEditor.handleArrow(a, flags: flags)
 			} else if ANY {
 				switch key {
-					case "a":     currentTextWidget?.selectAllText()
-					case "d":     editedZone?.tearApartCombine(flags)
-					case "e":     gToggleShowExplanations()
-					case "f":     gSearching.showSearch(OPTION)
-					case "i":     showSpecialCharactersPopup()
-					case "?":     gHelpController?.show(flags: flags)
-					case kTab:    gSelecting.addSibling(OPTION)
-					case kSpace:  editedZone?.addIdea()
-					case kReturn: stopCurrentEdit()
-					case kHyphen: return editedZone?.convertToFromLine() ?? false // false means key not handled
+					case "a":       currentTextWidget?.selectAllText()
+					case "d":       editedZone?.tearApartCombine(flags)
+					case "e":       gToggleShowExplanations()
+					case "f":       gSearching.showSearch(OPTION)
+					case "i":       showSpecialCharactersPopup()
+					case kQuestion: gHelpController?.show(flags: flags)
+					case kTab:      gSelecting.addSibling(OPTION)
+					case kSpace:    editedZone?.addIdea()
+					case kReturn:   stopCurrentEdit()
+					case kHyphen:   return editedZone?.convertToFromLine() ?? false // false means key not handled
 					case kDelete,
-					kBackspace:   if CONTROL { gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() } }
-					default:      return false
+  					kBackspace:     if CONTROL { gFocusing.grabAndFocusOn(gTrash) { gRelayoutMaps() } }
+					default:        return false
 				}
-			} else if kSurroundKeys.contains(key) {
-				return            editedZone?.surround(by: key) ?? false
+	  		} else if kSurroundKeys.contains(key) {
+				return              editedZone?.surround(by: key) ?? false
 			} else {
-				switch key {
-					case kEscape: cancel()
-					case kReturn: stopCurrentEdit()
-					case kTab:    gSelecting.addSibling()
-					case kHyphen: return editedZone?.convertToFromLine() ?? false
-					default:      return false // false means key not handled
+	  			switch key {
+	  				case kEscape:   cancel()
+					case kReturn:   stopCurrentEdit()
+					case kTab:      gSelecting.addSibling()
+					case kHyphen:   return editedZone?.convertToFromLine() ?? false
+					default:        return false // false means key not handled
 				}
-			}
+	  		}
 		}
 
 		return true

@@ -188,13 +188,13 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 		let  SPECIAL = flags.exactlySpecial
 
 		switch key {
-			case "?", kSlash:      show(       flags: flags)
-			case "w":              show(false, flags: flags)
-			case "p":              view.printView()
-			case "q":              gApplication?.terminate(self)
-			case "a": if SPECIAL { gApplication?.showHideAbout() }
-			case "r": if COMMAND { sendEmailBugReport() }
-			default:  if  let arrow = key.arrow {
+			case kQuestion, kSlash: show(       flags: flags)
+			case "w":               show(false, flags: flags)
+			case "p":               view.printView()
+			case "q":               gApplication?.terminate(self)
+			case "a": if SPECIAL  { gApplication?.showHideAbout() }
+			case "r": if COMMAND  { sendEmailBugReport() }
+			default:  if let arrow = key.arrow {
 				switch arrow {
 					case .left, .right: titleBarButtons.showNextHelp(forward: arrow == .right)
 					default: return false

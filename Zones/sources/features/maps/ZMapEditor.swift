@@ -148,18 +148,18 @@ class ZMapEditor: ZBaseEditor {
 						case "8":        if  OPTION { prefix(with: kSoftArrow, withParentheses: false) } // option-8 is a dot
 						case "#":        if gSelecting.hasMultipleGrabs { prefix(with: key) } else { debugAnalyze() }
 						case "+":        gSelecting.currentMapGrabs.toggleGroupOwnership()
-						case "?":        if CONTROL { openBrowserForSeriouslyWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case "[", "]":   nextBookmark(down: key == "]", flags: flags)
 						case kTab:       gSelecting.addSibling(OPTION)
 						case kSlash:     return handleSlash(flags)
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
+						case kQuestion:  if CONTROL { openBrowserForSeriouslyWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case kReturn:    if COMMAND { editNote(flags: flags) } else { editIdea(OPTION) }
+						case kEquals:    if COMMAND { gUpdateBaseFontSize(up: true) } else { gSelecting.sortedGrabs.invokeTravel() { reveal in gRelayoutMaps() } }
 						case kEscape:    editNote(flags: flags, useGrabbed: false)
 						case kBackSlash: mapControl(OPTION)
 						case kHyphen:    return handleHyphen(COMMAND, OPTION)
 						case kComma,
 							 kPeriod:    commaAndPeriod(COMMAND, OPTION, with: key == kComma)
-						case kEquals:    if COMMAND { gUpdateBaseFontSize(up: true) } else { gSelecting.sortedGrabs.invokeTravel() { reveal in gRelayoutMaps() } }
 						case kBackspace,
 							 kDelete:    handleDelete(flags, isWindow)
 						default:         return false // indicate key was not handled
@@ -218,18 +218,18 @@ class ZMapEditor: ZBaseEditor {
         if  !ANY && ALTERER {    return .eAlter
         } else {
 			switch key {
-				case "f":            return .eFind
-				case "z":            return .eUndo
-				case "k":            return .eColor
-				case "g":            return .eCloud
-				case "o", "s":       return .eFiles
-				case "?", kSlash:    return .eHelp
-				case "x", kSpace:    return .eChild
-				case "b", "t", kTab: return .eParent
-				case "d":            return  COMMAND ? .eAlter  : .eParent
-				case kDelete:        return  CONTROL ? .eAlways : .eParent
-				case kEquals:        return  COMMAND ? .eAlways : .eTravel
-				default:             return .eAlways
+				case "f":               return .eFind
+				case "z":               return .eUndo
+				case "k":               return .eColor
+				case "g":               return .eCloud
+				case "o", "s":          return .eFiles
+				case kQuestion, kSlash: return .eHelp
+				case "x", kSpace:       return .eChild
+				case "b", "t", kTab:    return .eParent
+				case "d":               return  COMMAND ? .eAlter  : .eParent
+				case kDelete:           return  CONTROL ? .eAlways : .eParent
+				case kEquals:           return  COMMAND ? .eAlways : .eTravel
+				default:                return .eAlways
 			}
         }
     }

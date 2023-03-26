@@ -15,7 +15,14 @@ import Cocoa
 import UIKit
 #endif
 
-var gEssayView: ZEssayView? { return gEssayController?.essayView }
+var gEssayView: ZEssayView? {
+	if  let e = gEssayController, e.essayView == nil {
+		e.awakeFromNib()
+		e.controllerSetup(with: nil)
+	}
+
+	return gEssayController?.essayView
+}
 
 @objc (ZEssayView)
 class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {

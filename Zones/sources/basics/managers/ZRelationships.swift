@@ -12,23 +12,28 @@ let gRelationships = ZRelationships()
 
 class ZRelationships: NSObject {
 
-	var        lookup = ZDBIDRelationsDictionary()
-	var reverseLookup = ZDBIDRelationsDictionary()
-	func        relationshipsFor(_ zone: Zone) -> ZRelationshipArray? { return !gHasRelationships ? nil : relationshipsFor(zone, within:        lookup) }
-	func reverseRelationshipsFor(_ zone: Zone) -> ZRelationshipArray? { return !gHasRelationships ? nil : relationshipsFor(zone, within: reverseLookup) }
-
-	@discardableResult func addBookmarkRelationship(_ bookmark: Zone?, target: Zone?, in databaseID: ZDatabaseID) -> ZRelationship? {
-		return !gBookmarkAsRelations ? nil : addUniqueRelationship(type: .bookmark, from: target, relative: bookmark, in: databaseID)
-	}
+	var lookup = ZRelationshipsDictionary()
 
 	@discardableResult func addParentRelationship(_ zone: Zone?, parent: Zone?, in databaseID: ZDatabaseID) -> ZRelationship? {
 		return addUniqueRelationship(type: .parent, from: zone, relative: parent, in: databaseID)
 	}
 
+	@discardableResult func addBookmarkRelationship(_ bookmark: Zone?, target: Zone?, in databaseID: ZDatabaseID) -> ZRelationship? {
+		return addUniqueRelationship(type: .target, from: bookmark, relative: target, in: databaseID)
+	}
+
+	@discardableResult func addBookmarkRelationship(for bookmark: Zone, targetNamed: String, in databaseID: ZDatabaseID) -> ZRelationship? {
+		return addUniqueRelationship(type: .target, fromString: bookmark.asString, relativeString: targetNamed, in: databaseID)
+	}
+
 	@discardableResult func addUniqueRelationship(type: ZRelationType, from zone: Zone?, relative: Zone?, in databaseID: ZDatabaseID) -> ZRelationship? {
+		return addUniqueRelationship(type: type, fromString: zone?.asString, relativeString: relative?.asString, in: databaseID)
+	}
+
+	@discardableResult func addUniqueRelationship(type: ZRelationType, fromString: String?, relativeString: String?, in databaseID: ZDatabaseID) -> ZRelationship? {
 		if  gHasRelationships,
-			let                     to = relative?.asString,
-			let                   from = zone?    .asString {
+			let                     to = relativeString,
+			let                   from = fromString, to != from {
 			let           relationship = ZRelationship.uniqueRelationship(in: databaseID)
 			relationship?.relationType = type
 			relationship?        .from = from
@@ -44,31 +49,24 @@ class ZRelationships: NSObject {
 
 	func addRelationship(_ relationship: ZRelationship?) {
 		if  let           to = relationship?.to,
-			let         from = relationship?.from,
-			let         dbid = from.maybeDatabaseID?.identifier,
-			let          key = from.maybeRecordName,
-			let  reverseDbid = to  .maybeDatabaseID?.identifier,
-			let   reverseKey = to  .maybeRecordName {
-			var         dict = lookup           [dbid] ?? ZRelationshipsDictionary()
-			var  reverseDict = lookup    [reverseDbid] ?? ZRelationshipsDictionary()
-			var        array = dict              [key] ?? ZRelationshipArray()
-			var reverseArray = reverseDict[reverseKey] ?? ZRelationshipArray()
+			let         from = relationship!.from {
+			let       toHash = to  .hash
+			let     fromHash = from.hash
+			var      toZones = lookup  [toHash] ?? ZRelationshipArray()
+			var    fromZones = lookup[fromHash] ?? ZRelationshipArray()
 
-			array       .appendUniqueRelationship(relationship)
-			reverseArray.appendUniqueRelationship(relationship)
+			fromZones.appendUniqueRelationship(relationship)
+			toZones  .appendUniqueRelationship(relationship?.opposite)
 
-			dict                 [key] = array
-			reverseDict   [reverseKey] = reverseArray
-			lookup              [dbid] = dict
-			reverseLookup[reverseDbid] = reverseDict
+			lookup  [toHash] =   toZones
+			lookup[fromHash] = fromZones
 		}
 	}
 
-	func relationshipsFor(_ zone: Zone, within dbidLookup: ZDBIDRelationsDictionary) -> ZRelationshipArray? {
-		if  let dbid = zone.dbid,
-			let  key = zone.recordName,
-			let dict = dbidLookup[dbid] {
-			return dict[key]
+	func relationshipsFor(_ zone: Zone) -> ZRelationshipArray? {
+		if  gHasRelationships,
+			let key = zone.asString?.hash {
+			return lookup[key]
 		}
 
 		return nil
@@ -76,14 +74,13 @@ class ZRelationships: NSObject {
 
 	func addOrSwapParentRelationship(_ zone: Zone, parent: Zone?, priorParent: Zone?, in databaseID: ZDatabaseID) {
 		if  gHasRelationships,
-			!swapParentRelationship(zone, parent: parent, priorParent: priorParent, in: databaseID) {
-			addParentRelationship  (zone, parent: parent,                           in: databaseID)
+			!swapParentRelationship(zone, parent: parent, priorParent: priorParent) {
+			addParentRelationship  (zone, parent: parent, in: databaseID)
 		}
 	}
 
-	func swapParentRelationship(_ zone: Zone, parent: Zone?, priorParent: Zone?, in databaseID: ZDatabaseID) -> Bool {
-		if  gHasRelationships,
-			let prior         = priorParent,
+	func swapParentRelationship(_ zone: Zone, parent: Zone?, priorParent: Zone?) -> Bool {
+		if  let prior         = priorParent,
 			var relationships = relationshipsFor(zone) {
 			let replacement   = parent?.asString
 			var removeMe      : Int?
@@ -103,14 +100,13 @@ class ZRelationships: NSObject {
 			}
 
 			if  let index = removeMe,
-				let  dbid = zone.dbid,
-				let   key = zone.recordName {
+				let   key = zone.asString?.hash {
 				let     r = relationships[index]
 
 				relationships.remove(at: index)    // mutate
 				gCDCurrentBackgroundContext?.delete(r)
 
-				lookup[dbid]?[key] = relationships
+				lookup[key] = relationships
 
 				return true
 			}
@@ -123,26 +119,20 @@ class ZRelationships: NSObject {
 
 extension ZRelationshipArray {
 
-	var parent: Zone? {
-		for relationship in self {
-			if  relationship.isParent {
-				return relationship.parent
-			}
-		}
+	var children  : ZoneArray? { return apply { relationship in return (relationship.relationType != .child)    ? nil : relationship.toZone } }
+	var parents   : ZoneArray? { return apply { relationship in return (relationship.relationType != .parent)   ? nil : relationship.toZone } }
+	var targets   : ZoneArray? { return apply { relationship in return (relationship.relationType != .target)   ? nil : relationship.toZone } }
+	var bookmarks : ZoneArray? { return apply { relationship in return (relationship.relationType != .bookmark) ? nil : relationship.toZone } }
 
-		return nil
-	}
-
-	var bookmarks: ZoneArray? {
+	func apply(_ closure: ZRelationshipToZoneClosure) -> ZoneArray? {
 		var results: ZoneArray?
 		for relationship in self {
-			if  relationship.isBookmark,
-				let bookmark = relationship.bookmark {
+			if  let item     = closure(relationship) {
 				if  results == nil {
 					results  = ZoneArray()
 				}
 
-				results?.append(bookmark)
+				results?.append(item)
 			}
 		}
 
@@ -154,10 +144,10 @@ extension ZRelationshipArray {
 			return appendUnique(item: r) { (a, b) -> (Bool) in
 				if  let    ar  = (a as? ZRelationship),
 					let    br  = (b as? ZRelationship) {
-					return ar.from == br.from && ar.to == br.to
+					return ar.from == br.from && ar.to == br.to    // is not unique, continue enumerating
 				}
 
-				return false
+				return false        // is unique, add it and break out of enumerating
 			}
 		}
 

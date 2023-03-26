@@ -16,30 +16,28 @@ import UIKit
 
 func gSetupFeatures() {
 
-	gDebugModes   = []
+	gDebugModes      = []
 	gToggleDebugMode   (.dHideNoteVisibility)
 	gToggleDebugMode   (.dNoSubscriptions)
 
-	gCoreDataMode = []
-	gToggleCoreDataMode(.dNoCloudKit)    // don't store data in cloud (public not yet working)
-	gToggleCoreDataMode(.dNoRelatives)   // don't use the relationships table yet
-//	gToggleCoreDataMode(.dEraseStores)   // discard CD stores and start from stratch
-	gToggleCoreDataMode(.dUseCrossLink)  // don't store bookmkars in relationships table
-//	gToggleCoreDataMode(.dCloudMigrate)  // not referenced yet
+	gCoreDataMode    = []
+	gToggleCoreDataMode(.dNoCloudKit)      // don't store data in cloud (public not yet working)
+	gToggleCoreDataMode(.dEraseStores)     // discard CD stores and start from stratch
+//	gToggleCoreDataMode(.dCloudMigrate)    // not referenced yet
+//	gToggleCoreDataMode(.dNoRelationships) // don't use the relationships table yet
 
-	gPrintModes   = []
+	gPrintModes      = []
 //	gTogglePrintMode   (.dTime)
 
 }
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)      && gIsUsingCoreData }
-var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)      && gIsUsingCoreData }
-var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)   && gIsUsingCoreData }
-var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelatives)  && gIsUsingCoreData }
-var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)  && gIsUsingCoreData }
-var   gCDLocationIsLocal : Bool { return !gCoreDataMode.contains(.dGoingToCloud) && gIsUsingCoreData }
-var gBookmarkAsRelations : Bool { return !gCoreDataMode.contains(.dUseCrossLink) && gIsUsingCoreData }
+var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)         && gIsUsingCoreData }
+var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)         && gIsUsingCoreData }
+var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)      && gIsUsingCoreData }
+var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships) && gIsUsingCoreData }
+var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)     && gIsUsingCoreData }
+var   gCDLocationIsLocal : Bool { return !gCoreDataMode.contains(.dGoingToCloud)    && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
@@ -67,14 +65,13 @@ struct ZCoreDataMode: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dDisabled     = ZCoreDataMode(rawValue: 1 << 0) // cannot use core data
-	static let dNoCloudKit   = ZCoreDataMode(rawValue: 1 << 1) // store in cloud kit
-	static let dNotSave      = ZCoreDataMode(rawValue: 1 << 2) // save is not operational
-	static let dNotLoad      = ZCoreDataMode(rawValue: 1 << 3) // load is not operational
-	static let dGoingToCloud = ZCoreDataMode(rawValue: 1 << 4) // testing mygration
-	static let dNoRelatives  = ZCoreDataMode(rawValue: 1 << 5) // not use ZRelationship
-	static let dEraseStores  = ZCoreDataMode(rawValue: 1 << 6) // start the CD repo fresh
-	static let dUseCrossLink = ZCoreDataMode(rawValue: 1 << 7) // use the original bookmark mechanism
+	static let dNotSave         = ZCoreDataMode(rawValue: 1 << 0) // save is not operational
+	static let dNotLoad         = ZCoreDataMode(rawValue: 1 << 1) // load is not operational
+	static let dDisabled        = ZCoreDataMode(rawValue: 1 << 2) // cannot use core data
+	static let dNoCloudKit      = ZCoreDataMode(rawValue: 1 << 3) // store in cloud kit
+	static let dEraseStores     = ZCoreDataMode(rawValue: 1 << 5) // start the CD repo fresh
+	static let dGoingToCloud    = ZCoreDataMode(rawValue: 1 << 6) // testing mygration
+	static let dNoRelationships = ZCoreDataMode(rawValue: 1 << 4) // not use ZRelationship
 
 }
 

@@ -273,10 +273,6 @@ class ZFavorites: ZRecords {
 			// //////////////////////////////////
 
 			for zone in zones {
-				if  zone.databaseID != .favoritesID {
-					noop()
-				}
-
 				if !zone.isBookmark {
 					if  zone    .recordName == kRecentsName {
 						missingRecents       = false
@@ -346,8 +342,9 @@ class ZFavorites: ZRecords {
 			// ////////////////////////////
 
 			while   let   index = discards.popLast() {
-				if  index < workingBookmarks.count {
+				if  index       < workingBookmarks.count {
 					let discard = workingBookmarks[index]
+
 					discard.needDestroy()
 					discard.orphan()
 					gCDCurrentBackgroundContext?.delete(discard)
@@ -358,19 +355,23 @@ class ZFavorites: ZRecords {
 				if !hasDatabaseIDs.contains(databaseID) {
 					let        dbName = databaseID.rawValue
 					let      bookmark = Zone.uniqueZone(recordName: dbName + kFavoritesSuffix, in: .mineID)
-					bookmark.zoneLink = dbName + kColonSeparator + kColonSeparator
+					bookmark.zoneLink = dbName + kDoubleColonSeparator
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? dbName
 
 					getRootsGroup().addChildAndUpdateOrder(bookmark)
+					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: dbName + kDoubleColonSeparator + kRootName, in: databaseID)
 				}
 			}
 
 			func createRootsBookmark(named: String) {
 				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID)
-				bookmark.zoneLink = kColonSeparator + kColonSeparator + named                           // convert into a bookmark
+				bookmark.zoneLink = kDoubleColonSeparator + named                           // convert into a bookmark
 				bookmark.zoneName = named
 
-				gBookmarks.addToReverseLookup(bookmark)
+				if  gBookmarks.addToReverseLookup(bookmark) {
+					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: kDoubleColonSeparator + named, in: .mineID)
+				}
+
 				getRootsGroup().addChildAndUpdateOrder(bookmark)
 			}
 

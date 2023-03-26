@@ -36,7 +36,10 @@ extension ZFavorites {
 				}
 			}
 
-			gBookmarks.addToReverseLookup(bookmark)
+			if  gBookmarks.addToReverseLookup(bookmark) {
+				gRelationships.addBookmarkRelationship(bookmark, target: target, in: bookmark!.databaseID)
+			}
+
 			setCurrentFavoriteBoomkarks(to: bookmark)
 			resetRecents()
 			gSignal([.spFavoritesMap])

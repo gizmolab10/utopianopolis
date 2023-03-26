@@ -74,23 +74,16 @@ class ZGenericController: ZController, ZGeneric {
 		gControllers.setSignalHandler(for: self, iID: controllerID) { [self] kind in
 			view.zlayer.backgroundColor = gControllers.backgroundColorFor(controllerID).cgColor
 
-			if  shouldHandle(kind) {
-				markAsHandlingWhile {
-					handleSignal(kind: kind)
-				}
-            }
+			if  shouldHandle(kind),
+			   !isHandlingSignal {        // prevent re-entrance via signal generated during handleSignal below
+				isHandlingSignal = true
+
+				handleSignal(kind: kind)
+
+				isHandlingSignal = false
+			}
         }
     }
-
-	func markAsHandlingWhile(execute: Closure) {
-		if !isHandlingSignal {
-			isHandlingSignal = true
-
-			execute()
-
-			isHandlingSignal = false
-		}
-	}
 
 #if os(OSX)
 

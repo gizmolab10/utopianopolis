@@ -252,8 +252,10 @@ class ZFiles: NSObject {
 								if let array = value as? [ZStorageDictionary] {
 									for subDict in array {
 										if  !databaseID.isDeleted(dict: subDict) {
-											let zone = Zone.uniqueZone(from: subDict, in: databaseID)
-											gBookmarks.addToReverseLookup(zone)
+											let bookmark = Zone.uniqueZone(from: subDict, in: databaseID)
+											if  gBookmarks.addToReverseLookup(bookmark) {
+												gRelationships.addBookmarkRelationship(bookmark, target: bookmark.zoneLink?.maybeZone, in: databaseID)
+											}
 										}
 									}
 								}

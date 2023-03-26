@@ -496,7 +496,9 @@ class ZRecords: NSObject {
             }
 			
 			if  let bookmark         = zRecord as? Zone, bookmark.isBookmark {
-				gBookmarks.addToReverseLookup(bookmark)
+				if  gBookmarks.addToReverseLookup(bookmark) {
+					gRelationships.addBookmarkRelationship(bookmark, target: bookmark.zoneLink?.maybeZone, in: bookmark.databaseID)
+				}
 			} else if let file       = zRecord as? ZFile {
 				gFilesRegistry.register(file, in: databaseID)
 			}

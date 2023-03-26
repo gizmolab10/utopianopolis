@@ -96,7 +96,7 @@ extension Zone {
 		if !isARoot,
 			parentZoneMaybe      == nil {
 			if  let relationships = gRelationships.relationshipsFor(self),
-				let parent        = relationships.parent {
+				let parent        = relationships.parents?.first {
 
 				parentZoneMaybe   = parent
 			} else if let parent  = oldParentZone {
@@ -171,7 +171,7 @@ extension Zone {
 							parentLink    = kNullLink
 						}
 					} else {                                                                                // new parent is in different db
-						let newParentLink = parentDBID.rawValue + kColonSeparator + kColonSeparator + parentName
+						let newParentLink = parentDBID.rawValue + kDoubleColonSeparator + parentName
 
 						if  parentLink   != newParentLink {
 							parentLink    = newParentLink  // references don't work across dbs

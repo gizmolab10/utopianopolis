@@ -277,13 +277,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var bookmarkTarget : Zone? {
-		return crossLink as? Zone  // gRelationships.reverseRelationshipsFor(self)?.bookmarks?[0]
+		if  !gHasRelationships {
+			return crossLink as? Zone
+		}
+
+		if  let relationships = gRelationships.relationshipsFor(self),
+			let       targets = relationships.targets {
+			for target in targets {
+				if  self != target {
+					return  target
+				}
+			}
+		}
+
+		return nil
 	}
 
 	var asZoneLink: String? {
 		guard let name = recordName else { return nil }
 
-		return databaseID.rawValue + kColonSeparator + kColonSeparator + name
+		return databaseID.rawValue + kDoubleColonSeparator + name
 	}
 
 	func updateCrossLinkMaybe(force: Bool = false) {
@@ -368,7 +381,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let theCopy = Zone.uniqueZoneNamed("noname", databaseID: id)
 
 		copyInto(theCopy)
-		gBookmarks.addToReverseLookup(theCopy)   // only works for bookmarks
+		if  gBookmarks.addToReverseLookup(theCopy) {  // only works for bookmarks
+			gRelationships.addBookmarkRelationship(theCopy, target: self, in: id)
+		}
 
 		theCopy.parentZone = nil
 
@@ -861,7 +876,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	var userHasDirectOwnership: Bool {
-		if  let    t = bookmarkTarget {
+		if  let    t = bookmarkTarget, t != self {
 			return t.userHasDirectOwnership
 		}
 
@@ -2323,8 +2338,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				gSelecting.ungrabAll()
 
-				for grab in zones {
-					var bookmark = grab
+				for zone in zones {
+					var bookmark = zone
 
 					if  toFavorites && !bookmark.isInFavorites && !bookmark.isBookmark && !bookmark.isInTrash && !STAYHERE {
 						bookmark = gFavorites.matchOrCreateBookmark(for: bookmark, addToRecents: false)
@@ -2348,7 +2363,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					bookmark.orphan()
 					into.addChildAndUpdateOrder(bookmark, at: iIndex)
 					bookmark.recursivelyApplyDatabaseID(into.databaseID)
-					gBookmarks.addToReverseLookup(bookmark)
+					if  gBookmarks.addToReverseLookup(bookmark) {
+						gRelationships.addBookmarkRelationship(bookmark, target: zone, in: zone.databaseID)
+					}
 				}
 
 				if  toBookmark && undoManager.groupingLevel > 0 {
