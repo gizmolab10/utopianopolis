@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  SimpleViewController.swift
 //  simple
 //
 //  Created by Jonathan Sand on 9/28/21.
@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-class ViewController: NSViewController {
+class SimpleViewController: NSViewController {
 
 	@IBOutlet var input: NSTextField?
 

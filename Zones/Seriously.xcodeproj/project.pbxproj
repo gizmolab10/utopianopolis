@@ -272,11 +272,11 @@
 		A764067D23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
 		A764067E23F8EE0400D9EA3A /* ZBreadcrumbs.swift in Sources */ = {isa = PBXBuildFile; fileRef = A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */; };
 		A765258D2981B81B0080111C /* ZHelpSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A765258C2981B81B0080111C /* ZHelpSearchDelegate.swift */; };
-		A76D193B2703FEBB00E04044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76D193A2703FEBB00E04044 /* AppDelegate.swift */; };
-		A76D193D2703FEBB00E04044 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76D193C2703FEBB00E04044 /* ViewController.swift */; };
+		A76D193B2703FEBB00E04044 /* SimpleAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76D193A2703FEBB00E04044 /* SimpleAppDelegate.swift */; };
+		A76D193D2703FEBB00E04044 /* SimpleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76D193C2703FEBB00E04044 /* SimpleViewController.swift */; };
 		A76D19402703FEBB00E04044 /* simple.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A76D193E2703FEBB00E04044 /* simple.xcdatamodeld */; };
 		A76D19422703FEBD00E04044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A76D19412703FEBD00E04044 /* Assets.xcassets */; };
-		A76D19452703FEBD00E04044 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A76D19432703FEBD00E04044 /* Main.storyboard */; };
+		A76D19452703FEBD00E04044 /* Simple.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A76D19432703FEBD00E04044 /* Simple.storyboard */; };
 		A76D196A2706400100E04044 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7F7C42D226D343400D52637 /* CloudKit.framework */; };
 		A76F9B91275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */; };
 		A76F9B92275959DC00FAF55A /* ZDebugAnglesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */; };
@@ -648,11 +648,11 @@
 		A764067B23F8EE0400D9EA3A /* ZBreadcrumbs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbs.swift; sourceTree = "<group>"; };
 		A765258C2981B81B0080111C /* ZHelpSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHelpSearchDelegate.swift; sourceTree = "<group>"; };
 		A76D19382703FEBB00E04044 /* simple.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = simple.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A76D193A2703FEBB00E04044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A76D193C2703FEBB00E04044 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A76D193A2703FEBB00E04044 /* SimpleAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleAppDelegate.swift; sourceTree = "<group>"; };
+		A76D193C2703FEBB00E04044 /* SimpleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleViewController.swift; sourceTree = "<group>"; };
 		A76D193F2703FEBB00E04044 /* simple.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = simple.xcdatamodel; sourceTree = "<group>"; };
 		A76D19412703FEBD00E04044 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A76D19442703FEBD00E04044 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		A76D19442703FEBD00E04044 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Simple.storyboard; sourceTree = "<group>"; };
 		A76D19462703FEBD00E04044 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A76D19472703FEBD00E04044 /* simple.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = simple.entitlements; sourceTree = "<group>"; };
 		A76F9B90275959DC00FAF55A /* ZDebugAnglesController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDebugAnglesController.swift; sourceTree = "<group>"; };
@@ -1148,10 +1148,10 @@
 		A76D19392703FEBB00E04044 /* simple */ = {
 			isa = PBXGroup;
 			children = (
-				A76D193A2703FEBB00E04044 /* AppDelegate.swift */,
-				A76D193C2703FEBB00E04044 /* ViewController.swift */,
+				A76D193A2703FEBB00E04044 /* SimpleAppDelegate.swift */,
+				A76D193C2703FEBB00E04044 /* SimpleViewController.swift */,
 				A76D19412703FEBD00E04044 /* Assets.xcassets */,
-				A76D19432703FEBD00E04044 /* Main.storyboard */,
+				A76D19432703FEBD00E04044 /* Simple.storyboard */,
 				A76D19462703FEBD00E04044 /* Info.plist */,
 				A76D19472703FEBD00E04044 /* simple.entitlements */,
 				A76D193E2703FEBB00E04044 /* simple.xcdatamodeld */,
@@ -1563,7 +1563,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A76D19422703FEBD00E04044 /* Assets.xcassets in Resources */,
-				A76D19452703FEBD00E04044 /* Main.storyboard in Resources */,
+				A76D19452703FEBD00E04044 /* Simple.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2029,9 +2029,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A76D193D2703FEBB00E04044 /* ViewController.swift in Sources */,
+				A76D193D2703FEBB00E04044 /* SimpleViewController.swift in Sources */,
 				A76D19402703FEBB00E04044 /* simple.xcdatamodeld in Sources */,
-				A76D193B2703FEBB00E04044 /* AppDelegate.swift in Sources */,
+				A76D193B2703FEBB00E04044 /* SimpleAppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2083,12 +2083,12 @@
 			name = Help.storyboard;
 			sourceTree = "<group>";
 		};
-		A76D19432703FEBD00E04044 /* Main.storyboard */ = {
+		A76D19432703FEBD00E04044 /* Simple.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				A76D19442703FEBD00E04044 /* Base */,
 			);
-			name = Main.storyboard;
+			name = Simple.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

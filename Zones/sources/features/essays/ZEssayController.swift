@@ -14,16 +14,8 @@ import Cocoa
 import UIKit
 #endif
 
-var gEssayController   : ZEssayController?   { return gControllers.controllerForID(.idNote) as? ZEssayController ?? gGetEssayController() }
+var gEssayController   : ZEssayController?   { return gControllers.controllerForID(.idNote) as? ZEssayController }
 var gEssayControlsView : ZEssayControlsView? { return gEssayController?.essayControlsView }
-
-func gGetEssayController() -> ZEssayController? {
-	let controller = NSStoryboard.main?.instantiateController(withIdentifier: "Essay") as? ZEssayController
-
-	controller?.awakeFromNib()
-
-	return controller
-}
 
 class ZEssayController : ZGesturesController, ZScrollDelegate {
 	override  var      controllerID : ZControllerID { return .idNote }
@@ -31,6 +23,11 @@ class ZEssayController : ZGesturesController, ZScrollDelegate {
 	var                  parameters : ZEssayLinkParameters?
 	@IBOutlet var essayControlsView : ZEssayControlsView?
 	@IBOutlet var         essayView : ZEssayView?
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		viewWillAppear()
+	}
 
 	override func controllerSetup(with mapView: ZMapView?) {
 		gestureView = essayView    // do this before calling super setup

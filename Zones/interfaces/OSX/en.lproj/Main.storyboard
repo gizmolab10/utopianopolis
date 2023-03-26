@@ -962,13 +962,13 @@ CA
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="bdu-fM-xV9" userLabel="search and crumbs">
                                         <rect key="frame" x="27" y="0.0" width="198" height="33"/>
                                         <subviews>
-                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs View" customClass="ZBreadcrumbsView" customModule="Seriously" customModuleProvider="target">
+                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs Container View" customClass="ZBreadcrumbsView" customModule="Seriously" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="198" height="33"/>
                                                 <connections>
                                                     <segue destination="auf-AV-5qA" kind="embed" id="8CD-jp-sY9"/>
                                                 </connections>
                                             </containerView>
-                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Bar View">
+                                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Bar Container View">
                                                 <rect key="frame" x="0.0" y="0.0" width="198" height="33"/>
                                                 <connections>
                                                     <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
@@ -1106,13 +1106,13 @@ CA
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="5jB-w2-4Dg" userLabel="Right Side View">
                                 <rect key="frame" x="226" y="0.0" width="225" height="266"/>
                                 <subviews>
-                                    <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay View">
+                                    <containerView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xfO-CE-WwN" userLabel="Essay Container View">
                                         <rect key="frame" x="0.0" y="0.0" width="225" height="266"/>
                                         <connections>
                                             <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
                                         </connections>
                                     </containerView>
-                                    <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F4I-P3-P2H" userLabel="Search Options">
+                                    <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F4I-P3-P2H" userLabel="Search Options Container View">
                                         <rect key="frame" x="0.0" y="246" width="225" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="IVl-xE-4W7"/>

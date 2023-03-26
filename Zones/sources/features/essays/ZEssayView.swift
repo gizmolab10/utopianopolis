@@ -17,8 +17,7 @@ import UIKit
 
 var gEssayView: ZEssayView? {
 	if  let e = gEssayController, e.essayView == nil {
-		e.awakeFromNib()
-		e.controllerSetup(with: nil)
+		e.essayControlsView?.updateTitlesControlAndMode()
 	}
 
 	return gEssayController?.essayView
@@ -430,7 +429,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "a":      selectAll(nil)
 				case "j":      revealEmptyNotes(OPTION)
 				case "n":      swapBetweenNoteAndEssay()
-				case "t":      if let string = selectionString { showThesaurus(for: string) } else if OPTION { gControllers.showEssay(forGuide: false) } else { return false }
+				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else if let string = selectionString { showThesaurus(for: string) } else { return false }
 				case "u":      if OPTION { gControllers.showEssay(forGuide: true) } else { return false }
 				case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 				case kSlash:   gHelpController?.show(flags: flags)

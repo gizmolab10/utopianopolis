@@ -1,5 +1,5 @@
 //
-//  AppDelegate.swift
+//  SimpleAppDelegate.swift
 //  simple
 //
 //  Created by Jonathan Sand on 9/28/21.

@@ -25,7 +25,7 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2021 Zones. All rights reserved.</string>
 	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
+	<string>Simple</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
