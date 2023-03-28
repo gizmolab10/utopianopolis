@@ -1112,8 +1112,8 @@ CA
                                             <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
                                         </connections>
                                     </containerView>
-                                    <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F4I-P3-P2H" userLabel="Search Options Container View">
-                                        <rect key="frame" x="0.0" y="246" width="225" height="20"/>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="F4I-P3-P2H" userLabel="Search Options Container View">
+                                        <rect key="frame" x="4" y="246" width="221" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="IVl-xE-4W7"/>
                                         </constraints>
@@ -1131,6 +1131,7 @@ CA
                                 <constraints>
                                     <constraint firstItem="F4I-P3-P2H" firstAttribute="top" secondItem="5jB-w2-4Dg" secondAttribute="top" id="0EX-Pi-XI2"/>
                                     <constraint firstAttribute="trailing" secondItem="xfO-CE-WwN" secondAttribute="trailing" id="RoH-8Y-VTR"/>
+                                    <constraint firstAttribute="trailing" secondItem="F4I-P3-P2H" secondAttribute="trailing" id="T5x-0j-TqR"/>
                                     <constraint firstAttribute="bottom" secondItem="cYx-gW-vNV" secondAttribute="bottom" id="TdN-hi-z6x"/>
                                     <constraint firstItem="cYx-gW-vNV" firstAttribute="top" secondItem="F4I-P3-P2H" secondAttribute="bottom" id="XmN-L5-789"/>
                                     <constraint firstAttribute="bottom" secondItem="xfO-CE-WwN" secondAttribute="bottom" id="YOS-85-fBT"/>
@@ -2482,7 +2483,7 @@ CA
             <objects>
                 <viewController id="HFF-P1-gxp" userLabel="Search Options Controller" customClass="ZSearchOptionsController" customModule="Seriously" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="15u-xb-tt9">
-                        <rect key="frame" x="0.0" y="0.0" width="421" height="20"/>
+                        <rect key="frame" x="0.0" y="0.0" width="533" height="20"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="zJL-q5-otI">
@@ -2500,47 +2501,69 @@ CA
                                     </segments>
                                 </segmentedCell>
                                 <connections>
-                                    <action selector="searchTypeActionWithSender:" target="HFF-P1-gxp" id="ciK-DL-0aq"/>
+                                    <action selector="searchFilterActionWithSender:" target="HFF-P1-gxp" id="ciK-DL-0aq"/>
                                 </connections>
                             </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
-                                <rect key="frame" x="166" y="-3" width="257" height="25"/>
+                                <rect key="frame" x="166" y="-3" width="251" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="cnb-Bz-45J"/>
                                 </constraints>
                                 <segmentedCell key="cell" controlSize="small" borderStyle="border" alignment="left" segmentDistribution="fillProportionally" style="rounded" trackingMode="selectAny" id="sFU-91-wZE">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment label="public"/>
-                                        <segment label="mine" selected="YES" tag="1"/>
-                                        <segment label="trash"/>
+                                        <segment label="mine"/>
+                                        <segment label="public" selected="YES" tag="1"/>
                                         <segment label="favorites"/>
-                                        <segment label="orphan"/>
+                                        <segment label="orphans"/>
+                                        <segment label="trash"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
                                     <action selector="searchScopeActionWithSender:" target="HFF-P1-gxp" id="04Y-3F-gP5"/>
                                 </connections>
                             </segmentedControl>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="MGW-dw-IA6">
+                                <rect key="frame" x="418" y="0.0" width="111" height="20"/>
+                                <subviews>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3Iz-PM-oYI">
+                                        <rect key="frame" x="9" y="0.0" width="93" height="20"/>
+                                        <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" placeholderString="Results Count" id="rBM-sY-8re">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" red="0.34903714270000002" green="0.70305704329999996" blue="0.116099143" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="3Iz-PM-oYI" firstAttribute="top" secondItem="MGW-dw-IA6" secondAttribute="top" id="LTd-w9-ljH"/>
+                                    <constraint firstItem="3Iz-PM-oYI" firstAttribute="centerX" secondItem="MGW-dw-IA6" secondAttribute="centerX" id="XNU-CW-1yj"/>
+                                    <constraint firstAttribute="bottom" secondItem="3Iz-PM-oYI" secondAttribute="bottom" id="c8s-Tj-l6g"/>
+                                </constraints>
+                            </customView>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="zJL-q5-otI" secondAttribute="bottom" id="0dw-Iz-Djs"/>
+                            <constraint firstItem="MGW-dw-IA6" firstAttribute="leading" secondItem="e16-JP-Abj" secondAttribute="trailing" constant="4" id="4wN-Az-gCu"/>
                             <constraint firstItem="e16-JP-Abj" firstAttribute="top" secondItem="15u-xb-tt9" secondAttribute="top" id="5fG-Aa-4hn"/>
                             <constraint firstItem="zJL-q5-otI" firstAttribute="top" secondItem="15u-xb-tt9" secondAttribute="top" id="Mi8-Sk-FWp"/>
                             <constraint firstItem="zJL-q5-otI" firstAttribute="leading" secondItem="15u-xb-tt9" secondAttribute="leading" constant="1" id="QAX-Uf-yaO"/>
-                            <constraint firstAttribute="trailing" secondItem="e16-JP-Abj" secondAttribute="trailing" constant="1" id="VHL-if-7DP"/>
+                            <constraint firstAttribute="bottom" secondItem="MGW-dw-IA6" secondAttribute="bottom" id="R6r-Op-nzf"/>
                             <constraint firstAttribute="bottom" secondItem="e16-JP-Abj" secondAttribute="bottom" id="Wt6-ag-qkh"/>
+                            <constraint firstItem="MGW-dw-IA6" firstAttribute="top" secondItem="15u-xb-tt9" secondAttribute="top" id="X6d-Fm-gIZ"/>
+                            <constraint firstAttribute="trailing" secondItem="MGW-dw-IA6" secondAttribute="trailing" constant="4" id="l2F-O8-sOT"/>
                             <constraint firstItem="e16-JP-Abj" firstAttribute="leading" secondItem="zJL-q5-otI" secondAttribute="trailing" constant="8" id="m9t-QU-VIV"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="searchScopeControl" destination="e16-JP-Abj" id="4QH-du-pyg"/>
-                        <outlet property="searchTypeControl" destination="zJL-q5-otI" id="7Xf-HM-S3d"/>
+                        <outlet property="filterControl" destination="zJL-q5-otI" id="7Xf-HM-S3d"/>
+                        <outlet property="scopeControl" destination="e16-JP-Abj" id="4QH-du-pyg"/>
+                        <outlet property="status" destination="3Iz-PM-oYI" id="fUL-s2-69o"/>
                     </connections>
                 </viewController>
                 <customObject id="b2l-mp-Wt0" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1100" y="633"/>
+            <point key="canvasLocation" x="1155.5" y="633"/>
         </scene>
     </scenes>
     <resources>

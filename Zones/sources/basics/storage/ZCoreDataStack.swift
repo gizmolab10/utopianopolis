@@ -369,15 +369,18 @@ class ZCoreDataStack: NSObject {
 			deferUntilAvailable(for: .oSearch) { [self] in
 				c.performBackgroundTask { [self] context in
 					var objectIDs = ZObjectIDsArray()
+					gCancelSearch = false
 					do {
 						let items = try context.fetch(request)
 						for item in items {
+							if  gCancelSearch {
+								break
+							}
+
 							if  let object = item as? ZManagedObject {
 								objectIDs.append(object.objectID)
 							}
 						}
-
-						//						try context.save()
 					} catch {
 						print("search fetch failed")
 					}
@@ -480,7 +483,11 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func searchPredicate(entityName: String, string: String?) -> NSPredicate? {
-		if  let s = string {
+		if  let s  = string {
+			if  s == "*" {
+				return NSPredicate(value: true)
+			}
+
 			switch entityName {
 				case kZoneType:  return zoneNamePredicate(from: s)
 				case kTraitType: return traitPredicate   (from: s)

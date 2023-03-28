@@ -12,9 +12,10 @@ var gSearchOptionsController: ZSearchOptionsController? { return gControllers.co
 
 class ZSearchOptionsController: ZGenericController {
 
-	override  var controllerID       : ZControllerID { return .idSearchOptions }
-	@IBOutlet var searchScopeControl : ZSegmentedControl?
-	@IBOutlet var searchTypeControl  : ZSegmentedControl?
+	override  var controllerID  : ZControllerID { return .idSearchOptions }
+	@IBOutlet var filterControl : ZSegmentedControl?
+	@IBOutlet var scopeControl  : ZSegmentedControl?
+	@IBOutlet var status        : ZTextField?
 
 	override func controllerSetup(with mapView: ZMapView?) {
 		view.zlayer.backgroundColor = kClearColor.cgColor
@@ -26,6 +27,17 @@ class ZSearchOptionsController: ZGenericController {
 		filterDidChange()
 		scopeDidChange()
 		searchStateDidChange()
+		updateStatus()
+	}
+
+	func updateStatus() {
+		let       isList = gSearching.searchState == .sList
+		status?.isHidden = !isList
+
+		if  isList,
+			let    count = gSearchResultsController?.filteredResultsCount {
+			status?.text = "found \(count)"
+		}
 	}
 
 	func searchStateDidChange() {
@@ -36,33 +48,34 @@ class ZSearchOptionsController: ZGenericController {
 	func scopeDidChange() {
 		let o = gSearchScope
 
-		searchScopeControl?.setSelected(o.contains(.fPublic),    forSegment: 0)
-		searchScopeControl?.setSelected(o.contains(.fMine),      forSegment: 1)
-		searchScopeControl?.setSelected(o.contains(.fTrash),     forSegment: 2)
-		searchScopeControl?.setSelected(o.contains(.fFavorites), forSegment: 3)
-		searchScopeControl?.setSelected(o.contains(.fOrphan),    forSegment: 4)
+		scopeControl? .setSelected(o.contains(.sMine),      forSegment: 0)
+		scopeControl? .setSelected(o.contains(.sPublic),    forSegment: 1)
+		scopeControl? .setSelected(o.contains(.sFavorites), forSegment: 2)
+		scopeControl? .setSelected(o.contains(.sOrphan),    forSegment: 3)
+		scopeControl? .setSelected(o.contains(.sTrash),     forSegment: 4)
 	}
 
 	func filterDidChange() {
-		let o = gFilterOption  // flags for not / highlighting segments
+		let o = gSearchFilter    // flags for not / highlighting segments
 
-		searchTypeControl?.setSelected(o.contains(.fBookmarks), forSegment: 0)
-		searchTypeControl?.setSelected(o.contains(.fNotes),     forSegment: 1)
-		searchTypeControl?.setSelected(o.contains(.fIdeas),     forSegment: 2)
+		filterControl?.setSelected(o.contains(.fBookmarks), forSegment: 0)
+		filterControl?.setSelected(o.contains(.fNotes),     forSegment: 1)
+		filterControl?.setSelected(o.contains(.fIdeas),     forSegment: 2)
 	}
 
 	@IBAction func searchScopeAction(sender: ZSegmentedControl) {
-		var options = ZSearchScope.fNone
+		var options = ZSearchScope.sNone
 
 		for index in 0..<sender.segmentCount {
 			if  sender.isSelected(forSegment: index) {
-				let option = ZSearchScope(rawValue: Int(1 << index))
+				let option = ZSearchScope(rawValue: 1 << index)
+
 				options.insert(option)
 			}
 		}
 
-		if  options == .fNone {
-			options  = .fMine
+		if  options == .sNone {
+			options  = .sMine
 		}
 
 		gSearchScope = options
@@ -71,12 +84,13 @@ class ZSearchOptionsController: ZGenericController {
 		searchOptionsDidChange()
 	}
 
-	@IBAction func searchTypeAction(sender: ZSegmentedControl) {
-		var options = ZFilterOption.fNone
+	@IBAction func searchFilterAction(sender: ZSegmentedControl) {
+		var options = ZSearchFilter.fNone
 
 		for index in 0..<sender.segmentCount {
 			if  sender.isSelected(forSegment: index) {
-				let option = ZFilterOption(rawValue: Int(2.0 ** Double(index)))
+				let option = ZSearchFilter(rawValue: 1 << index)
+
 				options.insert(option)
 			}
 		}
@@ -85,7 +99,7 @@ class ZSearchOptionsController: ZGenericController {
 			options  = .fIdeas
 		}
 
-		gFilterOption = options
+		gSearchFilter = options
 
 		filterDidChange()
 		searchOptionsDidChange()
@@ -94,7 +108,7 @@ class ZSearchOptionsController: ZGenericController {
 	func searchOptionsDidChange() {
 		if  gSearching.searchState == .sList {
 			gSearchBarController?.updateSearchBar(allowSearchToEnd: false)
-			gSearchResultsController?.applyFilter()
+			gSearchResultsController?.applySearchOptions()
 			gSearchResultsController?.genericTableUpdate()
 		}
 	}

@@ -20,20 +20,20 @@ class ZSearchResultsController: ZGenericTableController {
 
 	var      foundRecordsDict = ZDBIDRecordsDictionary()
 	var   filteredResultsDict = ZDBIDRecordsDictionary()
-	var   matchHighlightColor : ZColor        { return ZColor(cgColor: ZColor.controlAccentColor.cgColor)?.lighter(by: 8.0) ?? ZColor.controlAccentColor }
-	var            searchText : String?       { return gSearchBarController?.activeSearchBarText }
 	override var controllerID : ZControllerID { return .idSearchResults }
-	func         zoneAt(_ row : Int) -> Zone? { return zoneFor(zRecordAt(row)) }
-	func              clear()                 { gExitSearchMode(force: false) }
+	var   matchHighlightColor : ZColor        { return ZColor(cgColor: ZColor.controlAccentColor.cgColor)?.lighter(by: 8.0) ?? ZColor.controlAccentColor }
+	var            searchText : String?       { return gSearchBarController?.searchText }
+	func zoneAt(_ row : Int) -> Zone?         { return zoneFor(zRecordAt(row)) }
+	func             clear()                  { gExitSearchMode(force: gIsSearching) }
 
-	func applyFilter() {
+	func applySearchOptions() {
 		filteredResultsDict = ZDBIDRecordsDictionary()
 
 		for (databaseID, records) in foundRecordsDict {
 			var matches = ZRecordsArray()
 
 			for record in records {
-				if  record.matchesFilterOptions,
+				if  record.stisfiesSearchOptions, !gCancelSearch,
 					record.isActualChild {
 					matches.appendUnique(item: record)
 				}

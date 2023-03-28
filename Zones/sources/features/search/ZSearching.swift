@@ -14,8 +14,8 @@ import Foundation
     import UIKit
 #endif
 
-func gExitSearchMode(force: Bool = true) { if force || gIsSearching { gSearching.exitSearchMode() } }
-var  gShowsSearchResults  : Bool { return gSearching.searchState == .sList }
+func gExitSearchMode(force : Bool = true) { gSearching.exitSearchMode(force: force) }
+var  gShowsSearchResults   : Bool  { return gSearching.searchState == .sList }
 
 enum ZSearchState: Int {
     case sEntry
@@ -37,13 +37,16 @@ class ZSearching: NSObject, ZSearcher {
 		set { gSearchBarController?.searchBar?.text = newValue }
 	}
 
-	func exitSearchMode() {
-		searchState = .sNot // don't call setSearchStateTo (below), it has unwanted side-effects
+	func exitSearchMode(force : Bool = true) {
+		if  force {
+			searchState = .sNot       // don't call setSearchStateTo (below), it has unwanted side-effects
 
-		gSignal([.sFound, .sSearch, .spRelayout])
+			gSearchBarController?.spinner?.stopAnimating()
+			gSignal([.sFound, .sSearch, .spRelayout])
 
-		if  gIsEssayMode {
-			assignAsFirstResponder(gEssayView)
+			if  gIsEssayMode {
+				assignAsFirstResponder(gEssayView)
+			}
 		}
 	}
 
@@ -77,7 +80,7 @@ class ZSearching: NSObject, ZSearcher {
 				gSearchResultsController?.foundRecordsDict = combined
 
 				if  let c = gSearchResultsController {
-					c.applyFilter()
+					c.applySearchOptions()
 					setSearchStateTo(.sList)
 				}
 

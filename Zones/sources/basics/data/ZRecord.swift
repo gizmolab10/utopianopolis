@@ -140,11 +140,11 @@ class ZRecord: ZManagedObject {
 	// MARK: - overrides
 	// MARK: -
 
-	var isAdoptable          : Bool { return false }
-	var passesFilter         : Bool { return true }
-	var isInScope            : Bool { return true }
-	var isRegistered         : Bool { return zRecords?.isRegistered(self) ?? false }
-	var matchesFilterOptions : Bool { return passesFilter && isInScope }
+	var                  passesFilter : Bool { return true }
+	var                     isInScope : Bool { return true }
+	var                   isAdoptable : Bool { return false }
+	var                  isRegistered : Bool { return zRecords?.isRegistered(self) ?? false }
+	var         stisfiesSearchOptions : Bool { return passesFilter && isInScope }
 	var               cloudProperties : StringsArray { return ZRecord.cloudProperties }
 	var       optionalCloudProperties : StringsArray { return ZRecord.optionalCloudProperties }
 	class var         cloudProperties : StringsArray { return [] }

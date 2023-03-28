@@ -409,34 +409,42 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else if COMMAND {
 			if  enabled {
 				switch key {
-					case "b":  applyToSelection(BOLD: true)
-					case "d":  convertSelectedTextToChild(); return true
-					case "e":  grabSelectedTextForSearch()
-					case "f":  gSearching.showSearch(OPTION)
-					case "g":  searchAgain(OPTION)
-					case "i":  showSpecialCharactersPopup()
-					case "l":  alterCase(up: false)
-					case "p":  printCurrentEssay()
-					case "s":  save()
-					case "u":  if !OPTION { alterCase(up: true) }
-					case "v":  if  SHIFT  { return pasteTextAndMatchStyle() }
-					case "z":  if  SHIFT  { undoManager?.redo() } else { undoManager?.undo() }
-					default:   break
+					case "b":      applyToSelection(BOLD: true)
+					case "d":      convertSelectedTextToChild(); return true
+					case "e":      grabSelectedTextForSearch()
+					case "f":      gSearching.showSearch(OPTION)
+					case "g":      searchAgain(OPTION)
+					case "i":      showSpecialCharactersPopup()
+					case "l":      alterCase(up: false)
+					case "p":      printCurrentEssay()
+					case "s":      save()
+					case "u":      if !OPTION { alterCase(up: true) }
+					case "v":      if  SHIFT  { return pasteTextAndMatchStyle() }
+					case "z":      if  SHIFT  { undoManager?.redo() } else { undoManager?.undo() }
+					default:       break
 				}
 			}
 
-			switch key {
-				case "a":      selectAll(nil)
-				case "j":      revealEmptyNotes(OPTION)
-				case "n":      swapBetweenNoteAndEssay()
-				case "t":      if OPTION { gControllers.showEssay(forGuide: false) } else if let string = selectionString { showThesaurus(for: string) } else { return false }
-				case "u":      if OPTION { gControllers.showEssay(forGuide: true) } else { return false }
-				case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
-				case kSlash:   gHelpController?.show(flags: flags)
-				case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
-				case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
-				case kDelete:  deleteGrabbedOrSelected()
-				default:       return false
+			if  key == "j" { revealEmptyNotes(OPTION) }
+
+			if  OPTION {
+				switch key {
+					case "t":      gControllers.showEssay(forGuide: false)
+					case "u":      gControllers.showEssay(forGuide: true)
+					default:       return false
+				}
+			} else {
+				switch key {
+					case "a":      selectAll(nil)
+					case "n":      swapBetweenNoteAndEssay()
+					case "t":      if let string = selectionString { showThesaurus(for: string) } else { return false }
+					case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
+					case kSlash:   gHelpController?.show(flags: flags)
+					case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
+					case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
+					case kDelete:  deleteGrabbedOrSelected()
+					default:       return false
+				}
 			}
 
 			return true

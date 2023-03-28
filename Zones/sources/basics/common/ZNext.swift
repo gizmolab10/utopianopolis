@@ -155,7 +155,7 @@ extension ZFavorites {
 					for (index, bookmark) in zones.enumerated() {
 						if  target       == bookmark.zoneLink,
 							var next      = index.next(increasing: !down, max: maxIndex) {
-							while !zones[next].isBookmark {
+							while zones[next].bookmarkTarget == nil {
 								if  let m = next .next(increasing: !down, max: maxIndex) {
 									next  = m
 								} else {

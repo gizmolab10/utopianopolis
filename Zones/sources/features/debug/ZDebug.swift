@@ -22,9 +22,9 @@ func gSetupFeatures() {
 
 	gCoreDataMode    = []
 	gToggleCoreDataMode(.dNoCloudKit)      // don't store data in cloud (public not yet working)
-	gToggleCoreDataMode(.dEraseStores)     // discard CD stores and start from stratch
+//	gToggleCoreDataMode(.dEraseStores)     // discard CD stores and start from stratch
 //	gToggleCoreDataMode(.dCloudMigrate)    // not referenced yet
-//	gToggleCoreDataMode(.dNoRelationships) // don't use the relationships table yet
+	gToggleCoreDataMode(.dNoRelationships) // don't use the relationships table yet
 
 	gPrintModes      = []
 //	gTogglePrintMode   (.dTime)

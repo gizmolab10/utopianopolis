@@ -307,7 +307,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 			return true
 		}
 
-		gExitSearchMode(force: false)
+		gExitSearchMode(force: gIsSearching)
 		gHideExplanation()
 
 		if  gIsDraggableMode,
@@ -333,7 +333,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 			return
 		}
 
-		gExitSearchMode(force: false)
+		gExitSearchMode(force: gIsSearching)
 		gHideExplanation()
 
 		if (gIsMapOrEditIdeaMode || gIsEssayMode),

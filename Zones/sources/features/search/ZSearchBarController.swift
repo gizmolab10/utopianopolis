@@ -22,10 +22,10 @@ var gSearchBarController: ZSearchBarController? { return gControllers.controller
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
-	@IBOutlet var                    spinner : ZProgressIndicator?
-	@IBOutlet var                  searchBar : ZSearchField?
-	override  var               controllerID : ZControllerID { return .idSearch }
-	var                  activeSearchBarText : String?       { return searchBar?.text?.searchable }
+	@IBOutlet var      spinner : ZProgressIndicator?
+	@IBOutlet var    searchBar : ZSearchField?
+	override  var controllerID : ZControllerID { return .idSearch }
+	var             searchText : String?       { return searchBar?.text?.searchable }
 
 	override func awakeFromNib() {
 		super.awakeFromNib()
@@ -45,8 +45,9 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 
 	func searchStateDidChange() {
 		switch gSearching.searchState {
-			case .sEntry, .sFind:
-				assignAsFirstResponder(searchBar)
+			case .sEntry,
+				 .sFind:
+				  assignAsFirstResponder(searchBar)
 			default: break
 		}
 	}
@@ -107,21 +108,26 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 				gSearching.searchState = .sFind    // don't call setSearchStateTo, it has unwanted side-effects
 			}
             
-            return event
+            return event // pass key event to system to add to search bar ???
         }
 
         return nil
     }
 
     func endSearch() {
-        searchBar?.resignFirstResponder()
+		gCancelSearch = true
+
+		searchBar?.resignFirstResponder()
 		gExitSearchMode()
     }
 
 	func updateSearchBar(allowSearchToEnd: Bool = true) {
-		if  let text = activeSearchBarText,
-			text.length > 0,
-			![kEmpty, kSpace, "  "].contains(text) {
+		if  var text = searchText,
+			![kSpace, "  "].contains(text) {
+
+			if  text == kEmpty {
+				text  = "*"
+			}
 
 			if  let searcher: ZSearcher = gIsEssayMode ? gEssayView : gSearching {
 				spinner?.startAnimating()

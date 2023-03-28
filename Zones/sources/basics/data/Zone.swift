@@ -69,7 +69,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                                 isBrandNew :               Bool  { return zoneName == nil || zoneName == kEmpty }
 	override var                                isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                                    isAZone :               Bool  { return true }
-	override var                               passesFilter :               Bool  { return isBookmark && gFilterOption.contains(.fBookmarks) || !isBookmark && gFilterOption.contains(.fIdeas) }
+	override var                               passesFilter :               Bool  { return isBookmark && gSearchFilter.contains(.fBookmarks) || !isBookmark && gSearchFilter.contains(.fIdeas) }
 	var                                           isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                                          isBookmark :               Bool  { return zoneLink != nil }
@@ -140,23 +140,25 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	override var isInScope: Bool {
-		if  parentZone == nil {
-			return gSearchScope.contains(.fOrphan)
-		} else if let name  = root?.recordName {
-			if  name == kRootName {
+		if  parentZone        == nil {
+			return gSearchScope.contains(.sOrphan)
+		} else if let rootName = root?.recordName {
+			if  rootName      == kRootName {
 				switch databaseID {
-					case .everyoneID: if gSearchScope.contains(.fPublic) { return true }
-					case .mineID:     if gSearchScope.contains(.fMine)   { return true }
+					case .everyoneID: if gSearchScope.contains(.sPublic) { return true }
+					case .mineID:     if gSearchScope.contains(.sMine)   { return true }
 					default: break
 				}
 			}
 
-			if  gSearchScope.contains(.fFavorites), isInFavorites {
+			if  gSearchScope.contains(.sFavorites),
+				isInFavorites {
 				return true
 			}
 
-			if  gSearchScope.contains(.fTrash) {
-				return name == kTrashName || name == kDestroyName
+			if  gSearchScope.contains(.sTrash),
+				[kTrashName, kDestroyName].contains(rootName) {
+				return true
 			}
 		}
 
@@ -1443,10 +1445,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func resolveAsHere() {
-		gHere = self
+		let here = bookmarkTarget ?? self
+		gHere    = here
 
-		grab()
-		expand()
+		here.grab()
+		here.expand()
 		gControllers.swapMapAndEssay(force: .wMapMode)
 	}
 

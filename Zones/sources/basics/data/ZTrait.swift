@@ -81,7 +81,7 @@ class ZTrait: ZTraitAssets {
     override var  unwrappedName : String { return text ?? emptyName }
 	override var  decoratedName : String { return text ?? kNoValue }
 	override var     typePrefix : String { return traitType?.description ?? kEmpty }
-	override var   passesFilter : Bool   { return gFilterOption.contains(.fNotes) && (traitType?.isEssayOrNote ?? false) }
+	override var   passesFilter : Bool   { return gSearchFilter.contains(.fNotes) && (traitType?.isEssayOrNote ?? false) }
 	override var      isInScope : Bool   { return ownerZone?.isInScope ?? false }
 	var               needsSave = false
 	var              _ownerZone : Zone?
