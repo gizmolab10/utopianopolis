@@ -31,10 +31,10 @@ class ZSearchOptionsController: ZGenericController {
 	}
 
 	func updateStatus() {
-		let       isList = gSearching.searchState == .sList
-		status?.isHidden = !isList
+		let         show = gSearchResultsController?.hasResults ?? false
+		status?.isHidden = !show
 
-		if  isList,
+		if  show,
 			let    count = gSearchResultsController?.filteredResultsCount {
 			status?.text = "found \(count)"
 		}

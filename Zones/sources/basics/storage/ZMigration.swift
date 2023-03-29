@@ -17,7 +17,7 @@ extension ZCoreDataStack {
 	func assureMigrationToLatest() {
 		migrateLocalCDRepository()
 
-		persistentContainer = getPersistentContainer(cloudID: gCloudRepositoryID, at: ZCDStoreLocation.current.lastPathComponent)
+		persistentContainer = getPersistentContainer()
 		gCDMigrationState   = gCoreDataStack.hasStore() ? .normal : gFiles.hasMine ? .fromFilesystem : .firstTime
 
 		if  gIsUsingCloudKit, !gIsCDMigrationDone {
@@ -30,10 +30,10 @@ extension ZCoreDataStack {
 	}
 
 	func migrateLocalCDRepository() {
-		for id in ZCloudRepositoryID.all.reversed() {
-			if  id.fileExists {
+		for id in ZCKRepositoryID.all.reversed() {
+			if  id.baseExists {
 				if  gUseExistingStores {
-					gCloudRepositoryID = id
+					gCKRepositoryID = id
 
 					return
 				}
@@ -45,9 +45,9 @@ extension ZCoreDataStack {
 		do {
 			let location = ZCDStoreLocation.current.basePathComponent
 
-			try gFileManager.moveSubpath(from: location, to: gCloudRepositoryID.rawValue, relativeTo: gFilesURL.path)
+			try gFileManager.moveSubpath(from: location, to: gCKRepositoryID.rawValue, relativeTo: gFilesURL.path)
 			try gFileManager.createDirectory(atPath: gFilesURL.appendingPathComponent(location).path, withIntermediateDirectories: true)
-			try gFileManager.moveSubpath(from: gCloudRepositoryID.rawValue, to: location + kSlash + gCloudRepositoryID.rawValue, relativeTo: gFilesURL.path)
+			try gFileManager.moveSubpath(from: gCKRepositoryID.rawValue, to: location + kSlash + gCKRepositoryID.rawValue, relativeTo: gFilesURL.path)
 		} catch {
 			print("\(error)")
 		}
@@ -185,14 +185,14 @@ extension Zone {
 
 }
 
-var gCloudRepositoryID: ZCloudRepositoryID {
+var gCKRepositoryID: ZCKRepositoryID {
 	get {
-		return gCloudRepositoryIDs[gCDLocationIsLocal ? 0 : 1]
+		return gCKRepositoryIDs[gCDLocationIsLocal ? 0 : 1]
 	}
 	set {
-		var                         ids = gCloudRepositoryIDs
+		var                         ids = gCKRepositoryIDs
 		ids[gCDLocationIsLocal ? 0 : 1] = newValue
-		gCloudRepositoryIDs             = ids
+		gCKRepositoryIDs             = ids
 	}
 }
 
@@ -204,26 +204,38 @@ enum ZCDMigrationState: Int {
 	case normal
 }
 
-enum ZCloudRepositoryID: String {
+enum ZCKRepositoryID: String {
 	case original   = "Zones"
 	case inAppStore = "test2"
 	case latest     = "coredata"
 
-	static var defaultIDs : [ZCloudRepositoryID] { return [.inAppStore, .latest] }
-	static var        all : [ZCloudRepositoryID] { return [.original, .inAppStore, .latest] }
-	var               url : URL          { return gFilesURL.appendingPathComponent(lastPathComponent) }
-	var           cloudID : String       { return kBaseCloudID + kPeriod + rawValue }
-	var lastPathComponent : String       { return ZCDStoreLocation.current.rawValue + kDataDirectoryName + kSlash + rawValue }
-	var        fileExists : Bool         { return url.fileExists }
-	func     removeFile()                { try? gFileManager.removeItem(at: url) }
+	static var defaultIDs : [ZCKRepositoryID] { return [.inAppStore, .latest] }
+	static var        all : [ZCKRepositoryID] { return [.original, .inAppStore, .latest] }
+	var              base : URL               { return gFilesURL.appendingPathComponent(subPath) }
+	var           subPath : String            { return ZCDStoreLocation.current.rawValue + kDataDirectoryName + kSlash + rawValue }
+	var        cloudKitID : String            { return kBaseCloudID + kPeriod + rawValue }
+	var        baseExists : Bool              { return base.fileExists }
+	func      removeFile()                    { try? gFileManager.removeItem(at: base) }
+
+	func storeURL(for type: ZCDStoreType) -> URL {
+		let   first = type.rawValue.lowercased()
+		let  second = type.lastComponent
+		let   third = gCKRepositoryID.rawValue
+		let     url = base
+			.appendingPathComponent(first)
+			.appendingPathComponent(second)
+			.appendingPathComponent(third)
+
+		return url
+	}
 
 }
 
 enum ZCDStoreLocation: String {
-	case normal  = ""
-	case migrate = "migration.testing."
+	case local    = ""
+	case cloudkit = "cloudkit."
 
-	static var    current : ZCDStoreLocation { return gCDLocationIsLocal ? .normal : .migrate }
-	var basePathComponent :           String { return rawValue + kDataDirectoryName }
-	var lastPathComponent :           String { return "\(basePathComponent)/\(gCloudRepositoryID.rawValue)" }
+	static var     current : ZCDStoreLocation { return gCDLocationIsLocal ? .local : .cloudkit }
+	var  basePathComponent :           String { return rawValue + kDataDirectoryName }
+	var finalPathComponent :           String { return "\(basePathComponent)/\(gCKRepositoryID.rawValue)" }
 }

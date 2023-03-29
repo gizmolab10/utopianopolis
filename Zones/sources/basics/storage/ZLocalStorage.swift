@@ -97,6 +97,7 @@ extension ZFiles {
 	}
 
 	func exportDatabase(_ databaseID: ZDatabaseID) {
+		gRemoteStorage.updateManifests()
 		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iAny in
 			if  let url = iAny as? URL {
 				try? writeFile(at: url.relativePath, from: databaseID)

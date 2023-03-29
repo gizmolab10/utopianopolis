@@ -43,6 +43,14 @@ class ZSearchResultsController: ZGenericTableController {
 		}
 	}
 
+	var selectedResult: Zone? {
+		if  let row = genericTableView?.selectedRow {
+			return zoneAt(row)
+		}
+
+		return nil
+	}
+
     var hasResults: Bool {
         for     results in filteredResultsDict.values {
             if  results.count > 0 {
@@ -52,14 +60,6 @@ class ZSearchResultsController: ZGenericTableController {
         
         return false
     }
-
-	var selectedResult: Zone? {
-		if  let row = genericTableView?.selectedRow {
-			return zoneAt(row)
-		}
-
-		return nil
-	}
 
     var filteredResultsCount: Int {
         var count = 0
@@ -122,10 +122,10 @@ class ZSearchResultsController: ZGenericTableController {
 
     #if os(OSX)
 
-	override func numberOfRows(in tableView: ZTableView) -> Int { max(gSearchResultsVisible ? 1 : 0, filteredResultsCount) }
+	override func numberOfRows(in tableView: ZTableView) -> Int { max(gSearchStateIsList ? 1 : 0, filteredResultsCount) }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		return !hasResults ? gSearchResultsVisible ? noResultsString : nil : attributedString(for: row, isSelected: row == tableView.selectedRow)
+		return !hasResults ? gSearchStateIsList ? noResultsString : nil : attributedString(for: row, isSelected: row == tableView.selectedRow)
 	}
 
 	func attributedString(for row: Int, isSelected: Bool) -> NSAttributedString {
@@ -278,14 +278,14 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
 	func searchStateDidChange() {
-		if  gSearchResultsVisible {
+		if  gSearchStateIsList {
 			genericTableView?.reloadData()
 			assignAsFirstResponder(genericTableView)
 		}
 	}
 
     func reset() {
-        if  gSearchResultsVisible || filteredResultsDict.count == 0 {
+        if  gSearchStateIsList || filteredResultsDict.count == 0 {
             clear()
         } else {
             gSignal([.sSearch])

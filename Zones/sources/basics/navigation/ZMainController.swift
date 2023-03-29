@@ -130,9 +130,10 @@ class ZMainController: ZGesturesController {
 			default: break
         }
 
+		let        hasSearchResults = gSearchResultsController?.hasResults ?? false
 		permissionView?   .isHidden = !gIsStartupMode
-		searchBarView?    .isHidden =  gIsNotSearching || (gSearchResultsVisible && gSearchResultsController?.hasResults ?? false)
-		searchResultsView?.isHidden =  gIsNotSearching || gWaitingForSearchEntry || gIsEssayMode
+		searchBarView?    .isHidden =  gIsNotSearching || (hasSearchResults && gSearchStateIsList)
+		searchResultsView?.isHidden =  gIsNotSearching || !hasSearchResults || gIsEssayMode
 
 		mainUpdate()
     }

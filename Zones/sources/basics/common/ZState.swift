@@ -54,9 +54,9 @@ var              gIsEssayMode :                Bool { return gWorkMode == .wEssa
 var                gIsMapMode :                Bool { return gWorkMode == .wMapMode }
 var              gIsSearching :                Bool { return gSearching.searchState != .sNot }
 var           gIsNotSearching :                Bool { return gSearching.searchState == .sNot }
-var     gSearchResultsVisible :                Bool { return gSearching.searchState == .sList }
-var    gWaitingForSearchEntry :                Bool { return gSearching.searchState == .sEntry }
-var           gCanDrawWidgets :                Bool { return gIsMapOrEditIdeaMode || !gSearchResultsVisible }
+var        gSearchStateIsList :                Bool { return gSearching.searchState == .sList }
+var       gSearchStateIsEntry :                Bool { return gSearching.searchState == .sEntry }
+var           gCanDrawWidgets :                Bool { return gIsMapOrEditIdeaMode || !gSearchStateIsList }
 var      gIsMapOrEditIdeaMode :                Bool { return gIsMapMode || gIsEditIdeaMode }
 var          gCanSaveWorkMode :                Bool { return gIsMapMode || gIsEssayMode }
 var          gIsDraggableMode :                Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
@@ -136,12 +136,12 @@ var gCoreDataMode : ZCoreDataMode {
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
-var gCloudRepositoryIDs : [ZCloudRepositoryID] {
+var gCKRepositoryIDs : [ZCKRepositoryID] {
 	get {
-		var ids = [ZCloudRepositoryID]()
-		if  let strings = getPreferencesString(for: kCloudRepositoryIDs, defaultString: ZCloudRepositoryID.defaultIDs.map { $0.rawValue }.joined(separator: kColonSeparator) ) {
+		var ids = [ZCKRepositoryID]()
+		if  let strings = getPreferencesString(for: kCKRepositoryIDs, defaultString: ZCKRepositoryID.defaultIDs.map { $0.rawValue }.joined(separator: kColonSeparator) ) {
 			for string in strings.components(separatedBy: kColonSeparator) {
-				if  let id = ZCloudRepositoryID(rawValue: string) {
+				if  let id = ZCKRepositoryID(rawValue: string) {
 					ids.append(id)
 				}
 			}
@@ -155,7 +155,7 @@ var gCloudRepositoryIDs : [ZCloudRepositoryID] {
 		for id in newValue {
 			strings.append(id.rawValue)
 		}
-		setPreferencesString(strings.joined(separator: kColonSeparator), for: kCloudRepositoryIDs)
+		setPreferencesString(strings.joined(separator: kColonSeparator), for: kCKRepositoryIDs)
 	}
 }
 

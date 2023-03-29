@@ -31,7 +31,7 @@ extension ZManagedObject {
 			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {
 			self.init(entity: entity, insertInto: context)
 
-			if  let store = gCoreDataStack.persistentStore(for: databaseID.scope, at: kDataDirectoryName) {
+			if  let store = gCoreDataStack.persistentStore(for: databaseID.scope) {
 				context.assign(self, to: store)
 			}
 		} else {

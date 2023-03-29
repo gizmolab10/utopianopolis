@@ -627,7 +627,7 @@ class ZMapEditor: ZBaseEditor {
 	func debugAnalyze() {
 		var count = 0
 
-		for cloud in gRemoteStorage.allClouds {
+		for cloud in gAllClouds {
 			cloud.applyToAllOrphans { zone in
 				print("orphan: \(zone)")
 				count += 1

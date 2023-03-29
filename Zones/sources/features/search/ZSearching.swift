@@ -20,7 +20,7 @@ var  gShowsSearchResults   : Bool  { return gSearching.searchState == .sList }
 enum ZSearchState: Int {
     case sEntry
     case sFind
-    case sList
+	case sList
     case sNot
 }
 
@@ -57,26 +57,23 @@ class ZSearching: NSObject, ZSearcher {
 		gSearchBarController?    .searchStateDidChange()
 		gSearchResultsController?.searchStateDidChange()
 
-		switch searchState {
-			case .sList:          gSignal([.sFound])
-			case .sFind, .sEntry: assignAsFirstResponder(gIsNotSearching ? nil : gSearchBarController?.searchBar)
-
-			default: break
-		}
+		gSignal([gSearchStateIsList ? .sFound : .sSearch])
 	}
 
 	func performSearch(for searchString: String, closure: Closure?) {
 		var combined = ZDBIDRecordsDictionary()
+		var    count = gAllClouds.count - 1
 
-		for cloud in gRemoteStorage.allClouds {
+		for cloud in gAllClouds {
 			cloud.foundInSearch = []
+			let      databaseID = cloud.databaseID
 			cloud.searchLocal(for: searchString) { [self] in
-				let  databaseID = cloud.databaseID
 				var     results = combined[databaseID] ?? ZRecordsArray()
+				count          -= 1
 
 				results.append(contentsOf: cloud.foundInSearch)
 
-				combined[databaseID]                             = results
+				combined[databaseID]                       = results
 				gSearchResultsController?.foundRecordsDict = combined
 
 				if  let c = gSearchResultsController {
@@ -84,7 +81,9 @@ class ZSearching: NSObject, ZSearcher {
 					setSearchStateTo(.sList)
 				}
 
-				closure?() // hide spinner
+				if  count == 0 {
+					closure?() // hide spinner
+				}
 			}
 		}
 	}

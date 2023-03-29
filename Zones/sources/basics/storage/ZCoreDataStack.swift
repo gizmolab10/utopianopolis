@@ -15,13 +15,13 @@ import Cocoa
 import UIKit
 #endif
 
-enum ZCDStoreScope: String {
+enum ZCDStoreType: String {
 
 	case sLocal   = "Local"
 	case sPublic  = "Public"
 	case sPrivate = "Private"
 
-	static var all: [ZCDStoreScope] { return [.sLocal, .sPublic, .sPrivate] }
+	static var all: [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
 
 	var lastComponent: String {
 		var last  = rawValue.lowercased()
@@ -32,13 +32,21 @@ enum ZCDStoreScope: String {
 		return last + ".store"
 	}
 
+	var url : URL {
+		let first = ZCDStoreLocation.current.finalPathComponent
+		let  base = gFilesURL.appendingPathComponent(first)
+		let  next = rawValue.lowercased()
+		let  last = lastComponent
+		let   url = base.appendingPathComponent(next).appendingPathComponent(last)
+
+		return url
+	}
+
 }
 
 let  gCoreDataStack                                    = ZCoreDataStack()
 var  gCDCurrentBackgroundContext                       : NSManagedObjectContext? { return gCoreDataStack.context }
 var  gCoreDataIsBusy                                                      : Bool { return gCoreDataStack.currentOpID != nil }
-func gDataURLAt(_ lastPathComponent: String)                              -> URL { return gFilesURL.appendingPathComponent(lastPathComponent) }
-func gUrlFor(_ type: ZCDStoreScope, at lastPathComponent: String)         -> URL { return gDataURLAt(lastPathComponent).appendingPathComponent(type.lastComponent) }
 func gLoadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: databaseID, onCompletion: onCompletion) }
 func gSaveContext()                                                              { gCoreDataStack.saveContext() }
 
@@ -398,43 +406,43 @@ class ZCoreDataStack: NSObject {
 	// MARK: - stores
 	// MARK: -
 
-	func persistentStore(for type: ZCDStoreScope, at pathComponent: String) -> NSPersistentStore? {
-		return coordinator?.persistentStore(for: gUrlFor(type, at: pathComponent))
+	func persistentStore(for type: ZCDStoreType) -> NSPersistentStore? {
+		return coordinator?.persistentStore(for: type.url)
 	}
 
-	func storeDescription(cloudID: ZCloudRepositoryID, at pathComponent: String, for type: ZCDStoreScope) -> NSPersistentStoreDescription{
-		let           desc = NSPersistentStoreDescription(url: gUrlFor(type, at: pathComponent))
-		desc.configuration = type.rawValue
+	func storeDescription(for type: ZCDStoreType) -> NSPersistentStoreDescription{
+		let           description = NSPersistentStoreDescription(url: type.url)
+		description.configuration = type.rawValue
 
 		if  type != .sLocal {
-			desc.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-			desc.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+			description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+			description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
 			if  gIsUsingCloudKit {
-				let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCloudRepositoryID.cloudID)
+				let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCKRepositoryID.cloudKitID)
 
 				if  type == .sPublic {
-					options.databaseScope     = CKDatabase.Scope.public // default is private. needs osx v11.0
+					options.databaseScope            = CKDatabase.Scope.public    // default is private. public needs osx v11.0
 				}
 
-				desc.cloudKitContainerOptions = options
+				description.cloudKitContainerOptions = options
 			}
 		}
 
-		return desc
+		return description
 	}
 
-	func getPersistentContainer(cloudID: ZCloudRepositoryID, at lastPathComponent: String) -> NSPersistentCloudKitContainer {
-		let     container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
+	func getPersistentContainer() -> NSPersistentCloudKitContainer {
+		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
 
 		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)
 		ValueTransformer.setValueTransformer( ZAssetArrayTransformer(), forName:  gAssetArrayTransformerName)
 		ValueTransformer.setValueTransformer(ZStringArrayTransformer(), forName: gStringArrayTransformerName)
 
 		container.persistentStoreDescriptions = [
-			storeDescription(cloudID: cloudID, at: lastPathComponent, for: .sPrivate),
-			storeDescription(cloudID: cloudID, at: lastPathComponent, for: .sPublic),
-			storeDescription(cloudID: cloudID, at: lastPathComponent, for: .sLocal)
+			storeDescription(for: .sPrivate),
+			storeDescription(for: .sPublic),
+			storeDescription(for: .sLocal)
 		]
 
 		container.loadPersistentStores() { (storeDescription, iError) in

@@ -56,7 +56,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 	// MARK: -
 
 	override func handleSignal(kind: ZSignalKind) {
-		if  gIsSearching, !gWaitingForSearchEntry {
+		if  gIsSearching, !gSearchStateIsEntry {
 			gSearching.setSearchStateTo(.sEntry)
 		}
 	}
@@ -81,11 +81,11 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		let     isTab = key == kTab
 		let  isReturn = key == kReturn
 		let  isEscape = key == kEscape
-		let    isList = gSearchResultsVisible
-		let isWaiting = gWaitingForSearchEntry
+		let    isList = gSearchStateIsList
+		let isWaiting = gSearchStateIsEntry
 		let   isInBar = searchBarIsFirstResponder
 
-		if (gIsEssayMode && !isInBar) || (key == "g" && COMMAND) {
+		if (gIsEssayMode && !isInBar) || (COMMAND && key == "g") {
 			gEssayView?.handleKey(key, flags: flags)
 		} else if isList, !isInBar {
 			if !isF {

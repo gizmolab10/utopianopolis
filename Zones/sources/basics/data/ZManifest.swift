@@ -48,18 +48,21 @@ class ZManifest : ZRecord {
         let dCount = deletedRecordNames?.count ?? 0
 
         if  zCount > 0, zCount != dCount {    // SECOND: update deleted if count does not match zDeleted
-			deletedRecordNames = StringsArray()
-            
-            // create deleted from zDeleted
-            for zd in zDeleted {
-                if  let s = zd.name {
-					deletedRecordNames?.append(s)
-                }
-            }
+			updateDeletedList()
         }
 
         return deletedRecordNames
     }
+
+	func updateDeletedList() {
+		deletedRecordNames = StringsArray()
+
+		for zd in zDeleted {       // create deleted from zDeleted
+			if  let s = zd.name {
+				deletedRecordNames?.append(s)
+			}
+		}
+	}
 
     func applyDeleted() {
         for deleteMe in zDeleted {
@@ -137,7 +140,7 @@ class ZManifest : ZRecord {
     override func createStorageDictionary(for iDatabaseID: ZDatabaseID, includeRecordName: Bool = true, includeInvisibles: Bool = true, includeAncestors: Bool = false) throws -> ZStorageDictionary? {
 		var dict           = try super.createStorageDictionary(for: iDatabaseID, includeRecordName: includeRecordName, includeInvisibles: includeInvisibles, includeAncestors: includeAncestors) ?? ZStorageDictionary ()
         
-        if  let          d = updatedRefs as NSObject? {
+        if  let          d = deletedRecordNames as NSObject? {
             dict[.deleted] = d
         }
 

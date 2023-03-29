@@ -174,6 +174,12 @@ class ZRemoteStorage: NSObject {
         }
     }
 
+	func updateManifests() {
+		for cloud in allClouds {
+			cloud.manifest?.updateDeletedList()
+		}
+	}
+
     func updateNeededCounts() {
         for cloud in allClouds {
             var alsoProgenyCounts = false

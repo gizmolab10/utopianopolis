@@ -38,6 +38,19 @@ enum ZDatabaseIndex: Int { // N.B. do not change the order, these integer values
 	}
 }
 
+extension String {
+
+	var databaseID: ZDatabaseID {
+		switch self {
+			case "f": return .favoritesID
+			case "e": return .everyoneID
+			case "m": return .mineID
+			default:  return  gDatabaseID
+		}
+	}
+
+}
+
 let kAllDatabaseIDs: [ZDatabaseID] = [.mineID, .everyoneID]
 
 enum ZDatabaseID: String {
@@ -81,31 +94,10 @@ enum ZDatabaseID: String {
 		}
 	}
 
-	var scope: ZCDStoreScope {
+	var scope: ZCDStoreType {
 		switch self {
 			case .everyoneID: return .sPublic
 			default:          return .sPrivate
-		}
-	}
-
-	static func convert(from scope: CKDatabase.Scope) -> ZDatabaseID? {
-		switch scope {
-		case .public:  return .everyoneID
-		case .private: return .mineID
-		default:       return nil
-		}
-	}
-
-	static func convert(from id: String?) -> ZDatabaseID? {
-		guard id != nil else {
-			return gDatabaseID
-		}
-
-		switch id {
-		case "f": return .favoritesID
-		case "e": return .everyoneID
-		case "m": return .mineID
-		default:  return nil
 		}
 	}
 
