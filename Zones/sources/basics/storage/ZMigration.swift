@@ -8,6 +8,28 @@
 
 import Foundation
 
+enum ZCDMigrationState: Int {
+	case firstTime
+	case fromFilesystem
+	case toRelationships
+	case toCloud
+	case normal
+}
+
+enum ZCKRepositoryID: String {
+	case original  = "Zones"
+	case submitted = "test2"
+	case latest    = "coredata"
+
+	static var defaultIDs : [ZCKRepositoryID] { return [.submitted, .latest] }
+	static var        all : [ZCKRepositoryID] { return [.original, .submitted, .latest] } // used for erasing CD stores
+	var              base : URL               { return gFilesURL.appendingPathComponent(kDataDirectoryName).appendingPathComponent(rawValue) }
+	var        cloudKitID : String            { return kBaseCloudID + kPeriod + rawValue }
+	var        baseExists : Bool              { return base.fileExists }
+	func      removeFile()                    { try? gFileManager.removeItem(at: base) }
+
+}
+
 extension ZCoreDataStack {
 
 	// ///////////////////////////////////////////// //
@@ -43,7 +65,7 @@ extension ZCoreDataStack {
 		}
 
 		do {
-			let location = ZCDStoreLocation.current.basePathComponent
+			let location = kDataDirectoryName
 
 			try gFileManager.moveSubpath(from: location, to: gCKRepositoryID.rawValue, relativeTo: gFilesURL.path)
 			try gFileManager.createDirectory(atPath: gFilesURL.appendingPathComponent(location).path, withIntermediateDirectories: true)
@@ -183,63 +205,4 @@ extension Zone {
 		}
 	}
 
-}
-
-var gCKRepositoryID: ZCKRepositoryID {
-	get {
-		return gCKRepositoryIDs[gCDLocationIsLocal ? 0 : 1]
-	}
-	set {
-		var                         ids = gCKRepositoryIDs
-		ids[gCDLocationIsLocal ? 0 : 1] = newValue
-		gCKRepositoryIDs             = ids
-	}
-}
-
-enum ZCDMigrationState: Int {
-	case firstTime
-	case fromFilesystem
-	case toRelationships
-	case toCloud
-	case normal
-}
-
-enum ZCKRepositoryID: String {
-	case original   = "Zones"
-	case inAppStore = "test2"
-	case latest     = "coredata"
-
-	static var defaultIDs : [ZCKRepositoryID] { return [.inAppStore, .latest] }
-	static var        all : [ZCKRepositoryID] { return [.original, .inAppStore, .latest] }
-	var              base : URL               { return gFilesURL.appendingPathComponent(subPath) }
-	var           subPath : String            { return ZCDStoreLocation.current.rawValue + kDataDirectoryName + kSlash + rawValue }
-	var        cloudKitID : String            { return kBaseCloudID + kPeriod + rawValue }
-	var        baseExists : Bool              { return base.fileExists }
-	func      removeFile()                    { try? gFileManager.removeItem(at: base) }
-
-	func storeURL(for type: ZCDStoreType) -> URL {
-		let   first = type.rawValue.lowercased()
-		let  second = type.lastComponent
-		let   third = gCKRepositoryID.rawValue
-		let     url = base
-			.appendingPathComponent(first)
-			.appendingPathComponent(second)
-			.appendingPathComponent(third)
-
-		return url
-	}
-
-}
-
-var gCDStoreSubpath : String {
-	return ZCDStoreLocation.current.finalPathComponent
-}
-
-enum ZCDStoreLocation: String {
-	case local    = ""
-	case cloudkit = "cloudkit."
-
-	static var     current : ZCDStoreLocation { return gCDLocationIsLocal ? .local : .cloudkit }
-	var  basePathComponent :           String { return rawValue + kDataDirectoryName }
-	var finalPathComponent :           String { return "\(basePathComponent)/\(gCKRepositoryID.rawValue)" }
 }

@@ -136,29 +136,6 @@ var gCoreDataMode : ZCoreDataMode {
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
 }
 
-var gCKRepositoryIDs : [ZCKRepositoryID] {
-	get {
-		var ids = [ZCKRepositoryID]()
-		if  let strings = getPreferencesString(for: kCKRepositoryIDs, defaultString: ZCKRepositoryID.defaultIDs.map { $0.rawValue }.joined(separator: kColonSeparator) ) {
-			for string in strings.components(separatedBy: kColonSeparator) {
-				if  let id = ZCKRepositoryID(rawValue: string) {
-					ids.append(id)
-				}
-			}
-		}
-
-		return ids
-	}
-
-	set {
-		var strings = StringsArray()
-		for id in newValue {
-			strings.append(id.rawValue)
-		}
-		setPreferencesString(strings.joined(separator: kColonSeparator), for: kCKRepositoryIDs)
-	}
-}
-
 fileprivate var gCollapsed : StringsArray?
 fileprivate var gExpanded  : StringsArray?
 
@@ -401,6 +378,23 @@ struct ZSearchScope: OptionSet {
 var gSearchScope: ZSearchScope {
 	get { return ZSearchScope(rawValue: getPreferencesInt(for: kSearchScope, defaultInt: ZSearchScope.sMine.rawValue)) }
 	set { setPreferencesInt(newValue.rawValue, for: kSearchScope) }
+}
+
+var gCKRepositoryID: ZCKRepositoryID {
+	get {
+		let  defaultID = ZCKRepositoryID.submitted
+		if  let string = getPreferencesString(for: kCKRepositoryID, defaultString: defaultID.rawValue ),
+			let     id = ZCKRepositoryID(rawValue: string) {
+			return  id
+		}
+
+		return defaultID
+	}
+
+	set {
+		setPreferencesString(newValue.rawValue, for: kCKRepositoryID)
+
+	}
 }
 
 var gMapOffset: CGPoint {

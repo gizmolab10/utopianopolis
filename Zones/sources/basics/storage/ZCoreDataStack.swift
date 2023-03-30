@@ -33,12 +33,14 @@ enum ZCDStoreType: String {
 	}
 
 	var url : URL {
-		let first = gCDStoreSubpath
-		let  next = rawValue.lowercased()
+		let first = kDataDirectoryName
+		let  next = gCKRepositoryID.rawValue
+		let third = rawValue.lowercased()
 		let  last = lastComponent
 		let   url = gFilesURL
 			.appendingPathComponent(first)
 			.appendingPathComponent(next)
+			.appendingPathComponent(third)
 			.appendingPathComponent(last)
 
 		return url
