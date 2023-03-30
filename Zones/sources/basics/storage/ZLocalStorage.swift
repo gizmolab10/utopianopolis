@@ -97,7 +97,7 @@ extension ZFiles {
 	}
 
 	func exportDatabase(_ databaseID: ZDatabaseID) {
-		gRemoteStorage.updateManifests()
+//		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
 		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iAny in
 			if  let url = iAny as? URL {
 				try? writeFile(at: url.relativePath, from: databaseID)
@@ -136,13 +136,7 @@ extension ZFiles {
 					gFavoritesRoot?.traverseAllProgeny { zone in
 						zone       .mapType = .tFavorite
 						zone.crossLinkMaybe = nil
-
-//						zone.updateCrossLinkMaybe()
 					}
-
-//					FOREGROUND(after: 1.0) {
-						gSignal([.spRelayout, .spCrumbs])
-//					}
 				}
 			}
 		}

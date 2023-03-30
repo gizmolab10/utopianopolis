@@ -55,7 +55,7 @@ class ZManifest : ZRecord {
     }
 
 	func updateDeletedList() {
-		deletedRecordNames = StringsArray()
+		deletedRecordNames = StringsArray()             // INSANE! this aborts the current runloop!!!
 
 		for zd in zDeleted {       // create deleted from zDeleted
 			if  let s = zd.name {

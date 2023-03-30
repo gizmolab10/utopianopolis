@@ -231,6 +231,10 @@ enum ZCKRepositoryID: String {
 
 }
 
+var gCDStoreSubpath : String {
+	return ZCDStoreLocation.current.finalPathComponent
+}
+
 enum ZCDStoreLocation: String {
 	case local    = ""
 	case cloudkit = "cloudkit."

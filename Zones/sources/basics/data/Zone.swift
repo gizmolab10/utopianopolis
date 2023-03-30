@@ -36,7 +36,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           noteMaybe :              ZNote?
 	var                                      crossLinkMaybe :            ZRecord?
 	var                                     parentZoneMaybe :               Zone?
-	var                                                root :               Zone? { return mapType.root ?? gRemoteStorage.zRecords(for: databaseID)?.rootZone }
+	var                                                root :               Zone? { return mapType.root ?? gRemoteStorage.zRecords(for: maybeDatabaseID)?.rootZone }
 	var                                          groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
 	var                                         destroyZone :               Zone? { return zRecords?.destroyZone }
 	var                                           trashZone :               Zone? { return zRecords?.trashZone }
@@ -88,7 +88,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                          linkIsRoot :               Bool  { return linkRecordName == kRootName }
 	var                                          isSelected :               Bool  { return gSelecting.isSelected(self) }
 	var                                           isGrabbed :               Bool  { return gSelecting .isGrabbed(self) }
-	var                                            hasColor :               Bool  { return zoneColor != nil && !zoneColor!.isEmpty }
+	var                                            hasColor :               Bool  { return isBookmark ? (bookmarkTarget?.hasColor ?? false) : (zoneColor != nil && !zoneColor!.isEmpty) }
 	var                                            hasEmail :               Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
 	var                                            hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                                             hasNote :               Bool  { return hasTrait(for: .tNote) }
@@ -310,12 +310,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			crossLinkMaybe       = l.maybeZone
-			if  let       target = crossLinkMaybe as? Zone {
-				target.colorized = colorized
-				target .zoneName = zoneName
-				target    .color = color
-			}
-
 		}
 	}
 
@@ -518,6 +512,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var color: ZColor? {
 		get {
 			var computed        = kDefaultIdeaColor
+
+			if  zoneName == "features", !isBookmark {
+				noop()
+			}
 
 			if  gColorfulMode {
 				if  let       t = bookmarkTarget {

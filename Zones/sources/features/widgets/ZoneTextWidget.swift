@@ -52,10 +52,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 		} else if gIsEssayMode, widgetZone?.isInMainMap ?? true {
 			textColor = kClearColor
 		} else if let tColor = widgetZone?.textColor,
-				  let wColor = widgetZone?.lighterColor?.invertedBlackAndWhite,
+				  let cColor = widgetZone?.lighterColor?.invertedBlackAndWhite,
 				  let isLinear = widget?.isLinearMode {
 			let plain = !gDrawCirclesAroundIdeas
-			textColor = (isLinear || plain) ? tColor : wColor
+			textColor = (isLinear || plain) ? tColor : cColor
         }
     }
 
