@@ -672,6 +672,20 @@ extension ZWindow {
 		return last != gLastLocation
 	}
 
+	func showAppIsBusy(_ start: Bool) {
+		if let spinner = gMainController?.spinner {
+			if  start {
+				gRefusesFirstResponder = true
+
+				firstResponder?.resignFirstResponder()
+				spinner.startAnimating()
+			} else {
+				spinner.stopAnimating()
+				gRefusesFirstResponder = false
+			}
+		}
+	}
+
 }
 
 extension ZButtonCell {
@@ -721,8 +735,6 @@ extension ZAlerts {
         URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing")?.open()
     }
 	
-	func showInformation(_ message: String = "Warning", _ information: String? = nil) { inform(message, information).runModal() }
-
 	func inform(_ message: String = "Warning", _ information: String? = nil) -> ZAlert {
 		let             a = ZAlert()
 		a    .messageText = message

@@ -74,13 +74,12 @@ extension ZFiles {
 //		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
 		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iAny in
 			if  let url = iAny as? URL {
-				// TODO: display a dialaog, then tear it down
 				FOREGROUND {
-					let warning = gAlerts.showInformation()
+					gMainWindow?.showAppIsBusy(true)
 					BACKGROUND {
 						try? self.writeFile(at: url.relativePath, from: databaseID)
 						FOREGROUND {
-							gApplication?.stopModal()
+							gMainWindow?.showAppIsBusy(false)
 						}
 					}
 				}

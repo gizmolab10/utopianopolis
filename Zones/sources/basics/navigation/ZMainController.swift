@@ -32,6 +32,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var dismissButton              : ZButton?
 	@IBOutlet var hamburgerButton            : ZButton?
 	@IBOutlet var helpButton                 : ZHelpButton?
+	@IBOutlet var spinner                    : ZProgressIndicator?
 
 	var hamburgerImage: ZImage? {
 		var image = kHamburgerImage

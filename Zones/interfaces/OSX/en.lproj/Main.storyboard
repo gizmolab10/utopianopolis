@@ -896,27 +896,51 @@ CA
                                     <segue destination="SUz-Nq-f3E" kind="embed" id="Cx4-n4-INZ"/>
                                 </connections>
                             </containerView>
-                            <button translatesAutoresizingMaskIntoConstraints="NO" id="yl6-st-bhl" userLabel="Settings Button">
-                                <rect key="frame" x="6" y="273" width="22" height="22"/>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="A3N-dA-Iov" userLabel="Top Left Bar">
+                                <rect key="frame" x="0.0" y="267" width="226" height="33"/>
+                                <subviews>
+                                    <button translatesAutoresizingMaskIntoConstraints="NO" id="yl6-st-bhl" userLabel="Settings Button">
+                                        <rect key="frame" x="6" y="6" width="22" height="22"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="22" id="7Ef-bc-vy9"/>
+                                            <constraint firstAttribute="width" constant="22" id="SHM-7Z-xvH"/>
+                                        </constraints>
+                                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="settings" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="HO4-mt-WHB">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <color key="contentTintColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <connections>
+                                            <action selector="hamburgerButtonAction:" target="MXk-17-6Dz" id="Jmy-Uu-Ilu"/>
+                                        </connections>
+                                    </button>
+                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="whm-tf-fPZ" userLabel="Map Controls Container View">
+                                        <rect key="frame" x="34" y="0.0" width="172" height="33"/>
+                                        <connections>
+                                            <segue destination="c3F-r9-TYw" kind="embed" id="bZN-yX-DFc"/>
+                                        </connections>
+                                    </containerView>
+                                    <progressIndicator hidden="YES" maxValue="100" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="RFd-PF-BOD">
+                                        <rect key="frame" x="206" y="7" width="20" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="20" id="oXd-rU-gCa"/>
+                                            <constraint firstAttribute="width" secondItem="RFd-PF-BOD" secondAttribute="height" multiplier="1:1" id="ufs-JV-nf5"/>
+                                        </constraints>
+                                    </progressIndicator>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="22" id="7Ef-bc-vy9"/>
-                                    <constraint firstAttribute="width" constant="22" id="SHM-7Z-xvH"/>
+                                    <constraint firstItem="whm-tf-fPZ" firstAttribute="leading" secondItem="yl6-st-bhl" secondAttribute="trailing" constant="6" id="Lhv-rp-byk"/>
+                                    <constraint firstItem="whm-tf-fPZ" firstAttribute="top" secondItem="A3N-dA-Iov" secondAttribute="top" id="PGR-cv-Hhh"/>
+                                    <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="A3N-dA-Iov" secondAttribute="leading" constant="6" id="XDb-3g-Xgs"/>
+                                    <constraint firstAttribute="bottom" secondItem="whm-tf-fPZ" secondAttribute="bottom" id="YBK-sl-tpe"/>
+                                    <constraint firstAttribute="trailing" secondItem="RFd-PF-BOD" secondAttribute="trailing" id="ZX3-Me-ra1"/>
+                                    <constraint firstItem="RFd-PF-BOD" firstAttribute="leading" secondItem="whm-tf-fPZ" secondAttribute="trailing" id="gwl-pZ-i72"/>
+                                    <constraint firstItem="yl6-st-bhl" firstAttribute="centerY" secondItem="A3N-dA-Iov" secondAttribute="centerY" id="q2x-mQ-xd4"/>
+                                    <constraint firstItem="RFd-PF-BOD" firstAttribute="centerY" secondItem="A3N-dA-Iov" secondAttribute="centerY" id="s2w-v4-kTK"/>
+                                    <constraint firstItem="yl6-st-bhl" firstAttribute="centerY" secondItem="whm-tf-fPZ" secondAttribute="centerY" id="xwe-jj-AGU"/>
+                                    <constraint firstItem="whm-tf-fPZ" firstAttribute="top" secondItem="A3N-dA-Iov" secondAttribute="top" id="zLm-Ff-VbM"/>
                                 </constraints>
-                                <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="settings" imagePosition="only" alignment="center" imageScaling="proportionallyUpOrDown" inset="2" id="HO4-mt-WHB">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <color key="contentTintColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <action selector="hamburgerButtonAction:" target="MXk-17-6Dz" id="Jmy-Uu-Ilu"/>
-                                </connections>
-                            </button>
-                            <containerView translatesAutoresizingMaskIntoConstraints="NO" id="whm-tf-fPZ" userLabel="Map Controls Container View">
-                                <rect key="frame" x="34" y="267" width="192" height="33"/>
-                                <connections>
-                                    <segue destination="c3F-r9-TYw" kind="embed" id="bZN-yX-DFc"/>
-                                </connections>
-                            </containerView>
+                            </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="LQL-Kb-jgm" userLabel="Top Right Bar View">
                                 <rect key="frame" x="226" y="267" width="225" height="33"/>
                                 <subviews>
@@ -1112,7 +1136,7 @@ CA
                                             <segue destination="8gW-F6-R6g" kind="embed" id="X02-Jc-hfC"/>
                                         </connections>
                                     </containerView>
-                                    <containerView translatesAutoresizingMaskIntoConstraints="NO" id="F4I-P3-P2H" userLabel="Search Options Container View">
+                                    <containerView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F4I-P3-P2H" userLabel="Search Options Container View">
                                         <rect key="frame" x="4" y="246" width="221" height="20"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="20" id="IVl-xE-4W7"/>
@@ -1158,40 +1182,37 @@ CA
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="1LB-o3-akz"/>
-                            <constraint firstItem="F4I-P3-P2H" firstAttribute="leading" secondItem="whm-tf-fPZ" secondAttribute="trailing" constant="4" id="3Jk-3i-H9c"/>
+                            <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="13C-5j-Mtw" secondAttribute="leading" id="27u-e6-JFC"/>
                             <constraint firstAttribute="bottom" secondItem="bXe-bA-sJU" secondAttribute="bottom" id="6AW-Ew-5FL"/>
                             <constraint firstAttribute="bottom" secondItem="uYG-mD-FXW" secondAttribute="bottom" constant="20" symbolic="YES" id="75s-sV-IVf"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="9Q8-HC-P7X"/>
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="top" secondItem="LQL-Kb-jgm" secondAttribute="bottom" id="BYA-PD-Q3R"/>
+                            <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="A3N-dA-Iov" secondAttribute="trailing" id="ChH-Zu-4X2"/>
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GgL-zJ-zYQ"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
-                            <constraint firstItem="yl6-st-bhl" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="6" id="Lys-IS-2eI"/>
-                            <constraint firstItem="whm-tf-fPZ" firstAttribute="trailing" secondItem="E8R-Lg-1Ha" secondAttribute="trailing" id="OLC-5r-vQf"/>
-                            <constraint firstItem="yl6-st-bhl" firstAttribute="centerY" secondItem="whm-tf-fPZ" secondAttribute="centerY" id="Otg-EZ-HQs"/>
-                            <constraint firstItem="LQL-Kb-jgm" firstAttribute="leading" secondItem="whm-tf-fPZ" secondAttribute="trailing" id="Pjc-Nx-5dx"/>
+                            <constraint firstItem="A3N-dA-Iov" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="MA5-xR-Mhi"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="RZc-HF-3xb"/>
                             <constraint firstItem="bXe-bA-sJU" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="TjA-Dm-nI1"/>
                             <constraint firstItem="Ung-au-KM8" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="UdS-bg-TOR"/>
                             <constraint firstAttribute="bottom" secondItem="Ung-au-KM8" secondAttribute="bottom" id="Vpj-cj-lu6"/>
                             <constraint firstAttribute="trailing" secondItem="uYG-mD-FXW" secondAttribute="trailing" constant="20" symbolic="YES" id="ZLr-De-wDX"/>
+                            <constraint firstItem="3wl-F6-Mu5" firstAttribute="top" secondItem="A3N-dA-Iov" secondAttribute="bottom" id="ZWM-mv-H4U"/>
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
                             <constraint firstItem="Ung-au-KM8" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="cQJ-9S-wpP"/>
                             <constraint firstItem="9jn-kU-BvC" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="dC5-A8-EDJ"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="ewO-M2-RZg"/>
+                            <constraint firstItem="A3N-dA-Iov" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="fSg-PI-2F4"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="226" identifier="alternate side view leading" id="fVF-7D-R74"/>
                             <constraint firstAttribute="trailing" secondItem="LQL-Kb-jgm" secondAttribute="trailing" id="fgm-OB-ttw"/>
                             <constraint firstAttribute="trailing" secondItem="5oi-yK-PC4" secondAttribute="trailing" id="haB-GJ-03K"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="9jn-kU-BvC" secondAttribute="leading" id="hz8-n2-ks8"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="imc-ha-Ope"/>
-                            <constraint firstItem="whm-tf-fPZ" firstAttribute="leading" secondItem="yl6-st-bhl" secondAttribute="trailing" constant="6" id="iwS-Vd-HOP"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="13C-5j-Mtw" secondAttribute="leading" id="jVX-sm-H1A"/>
                             <constraint firstAttribute="trailing" secondItem="Ung-au-KM8" secondAttribute="trailing" id="kQM-GN-liC"/>
                             <constraint firstItem="LQL-Kb-jgm" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="qfT-hA-eas"/>
                             <constraint firstItem="13C-5j-Mtw" firstAttribute="top" secondItem="3wl-F6-Mu5" secondAttribute="bottom" id="r7B-pw-fl4"/>
                             <constraint firstAttribute="trailing" secondItem="5jB-w2-4Dg" secondAttribute="trailing" id="rXH-it-XjL"/>
-                            <constraint firstItem="3wl-F6-Mu5" firstAttribute="top" secondItem="whm-tf-fPZ" secondAttribute="bottom" id="whz-yP-Sg6"/>
-                            <constraint firstItem="whm-tf-fPZ" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="ySC-me-doN"/>
                         </constraints>
                     </view>
                     <connections>
@@ -1210,6 +1231,7 @@ CA
                         <outlet property="searchButton" destination="RjV-tY-a8J" id="c5P-Qf-wOO"/>
                         <outlet property="searchOptionsContainerView" destination="F4I-P3-P2H" id="LSS-OW-NHN"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
+                        <outlet property="spinner" destination="RFd-PF-BOD" id="vCH-ep-VXW"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
