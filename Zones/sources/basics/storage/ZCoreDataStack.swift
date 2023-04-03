@@ -21,7 +21,8 @@ enum ZCDStoreType: String {
 	case sPublic  = "Public"
 	case sPrivate = "Private"
 
-	static var all: [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
+	static var  all : [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
+	var originalURL :       URL      { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(lastComponent) }
 
 	var lastComponent: String {
 		var last  = rawValue.lowercased()
@@ -32,15 +33,13 @@ enum ZCDStoreType: String {
 		return last + ".store"
 	}
 
-	var url : URL {
-		let first = kDataDirectoryName
+	var ckStoreURL : URL {
+		let first = gDataDirectoryName
 		let  next = gCKRepositoryID.rawValue
-		let third = rawValue.lowercased()
 		let  last = lastComponent
 		let   url = gFilesURL
 			.appendingPathComponent(first)
 			.appendingPathComponent(next)
-			.appendingPathComponent(third)
 			.appendingPathComponent(last)
 
 		return url
@@ -50,7 +49,8 @@ enum ZCDStoreType: String {
 
 let  gCoreDataStack                                    = ZCoreDataStack()
 var  gCDCurrentBackgroundContext                       : NSManagedObjectContext? { return gCoreDataStack.context }
-var  gCoreDataIsBusy                                                      : Bool { return gCoreDataStack.currentOpID != nil }
+var  gCoreDataIsSetup                                                     : Bool { return gCoreDataStack.persistentContainer != nil }
+var  gCoreDataIsBusy                                                      : Bool { return gCoreDataStack.currentOpID         != nil }
 func gLoadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: databaseID, onCompletion: onCompletion) }
 func gSaveContext()                                                              { gCoreDataStack.saveContext() }
 
@@ -76,9 +76,9 @@ class ZCoreDataStack: NSObject {
 			request.predicate = dbidPredicate(from: databaseID)
 
 			do {
-				let flag = try c.count(for: request) > 10
+				let flag = try c.count(for: request) > 10    // TODO: this is called each time an entity is created !!!!
 
-				return flag
+				return flag                                  // TODO: then if flag is true, fetch is called !!!!
 			} catch {
 			}
 		}
@@ -112,13 +112,22 @@ class ZCoreDataStack: NSObject {
 	// MARK: - load
 	// MARK: -
 
+	func loadManifest(into databaseID: ZDatabaseID) {
+		let manifests       = load(type: kManifestType, into: databaseID)
+		if  manifests.count > 0,
+			let manifest    = manifests[0] as? ZManifest,
+			let cloud       = gRemoteStorage.cloud(for: databaseID) {
+			cloud.manifest  = manifest
+		}
+	}
+
 	func loadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if !gCanLoad {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) {
 				FOREGROUND { [self] in
-					load(type: kManifestType, into: databaseID, onlyOne: false)
+					loadManifest(into: databaseID)
 
 					if  gHasRelationships {
 						let array = load(type: kRelationshipType, into: databaseID, onlyOne: false)
@@ -411,11 +420,11 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func persistentStore(for type: ZCDStoreType) -> NSPersistentStore? {
-		return coordinator?.persistentStore(for: type.url)
+		return coordinator?.persistentStore(for: type.ckStoreURL)
 	}
 
 	func storeDescription(for type: ZCDStoreType) -> NSPersistentStoreDescription{
-		let           description = NSPersistentStoreDescription(url: type.url)
+		let           description = NSPersistentStoreDescription(url: type.ckStoreURL)
 		description.configuration = type.rawValue
 
 		if  type != .sLocal {

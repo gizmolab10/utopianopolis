@@ -259,9 +259,9 @@ class ZFavorites: ZRecords {
 
 		if  let           root = rootZone {
 			let          zones = root.all
-			var hasDatabaseIDs = [ZDatabaseID] ()
+			var hasDatabaseIDs = ZDatabaseIDArray()
 			var       discards = IndexPath()
-			var    testedSoFar = ZoneArray ()
+			var    testedSoFar = ZoneArray()
 			var missingRecents = true
 			var missingDestroy = true
 			var   missingTrash = true

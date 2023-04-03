@@ -29,7 +29,6 @@ var              gAnglesDelta                       = 15.0
 var               gDebugCount                       = 0
 var        gInterruptionCount                       = 0
 var    gTimeUntilCurrentEvent :        TimeInterval = 0  // by definition, first event is startup
-var         gCDMigrationState :   ZCDMigrationState = .firstTime
 var             gCurrentTrait :             ZTrait?
 var     gCurrentMouseDownZone :               Zone?
 var gCurrentMouseDownLocation :            CGFloat?
@@ -43,7 +42,6 @@ var                gIsEditing :                Bool { return gIsEditIdeaMode || 
 var            gIsHelpVisible :                Bool { return gHelpWindow?.isVisible ?? false }
 var          gIsHelpFrontmost :                Bool { return gHelpWindow?.isKeyWindow ?? false }
 var         gGrabbedCanTravel :                Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
-var        gIsCDMigrationDone :                Bool { return gCDMigrationState == .normal }
 var       gBrowsingIsConfined :                Bool { return gConfinementMode == .list }
 var            gListsGrowDown :                Bool { return gListGrowthMode  == .down }
 var           gDuplicateEvent :                Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
@@ -297,7 +295,7 @@ var gStartupCount : Int {
 }
 
 var gHereRecordNames: String {
-    get { return getPreferenceString(    for: kHereRecordNames) { return kDefaultRecordNames }! }
+	get { return getPreferenceString(    for: kHereRecordNames) { return kDefaultRecordNames }! }
     set { setPreferencesString(newValue, for: kHereRecordNames) }
 }
 

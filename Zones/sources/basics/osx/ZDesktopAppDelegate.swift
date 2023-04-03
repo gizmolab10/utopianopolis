@@ -110,7 +110,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 			let editor = workingEditor {
 			if  editor.validateMenuItem(item) {
 				editor.handleMenuItem(item)
-			} else if !gIsCDMigrationDone,
+			} else if !gCDMigrationIsDone,
 					  let alert = editor.invalidMenuItemAlert(item) {
 				alert.runModal()
 			}

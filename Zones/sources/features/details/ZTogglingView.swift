@@ -164,6 +164,8 @@ class ZTogglingView: ZView {
 
 		titleButton?.updateToolTips(gModifierFlags)
 
+		// layout banner and hideable
+
 		if  hide == visible { // need for update
 			hideableView?.isHidden = hide
 

@@ -15,32 +15,6 @@ import Cocoa
 import UIKit
 #endif
 
-extension String {
-
-	func openAsURL() {
-#if os(OSX)
-		let fileScheme = "file"
-		let filePrefix = fileScheme + "://"
-		let  urlString = (replacingOccurrences(of: kBackSlash, with: kEmpty).replacingOccurrences(of: kSpace, with: "%20") as NSString).expandingTildeInPath
-
-		if  var url = URL(string: urlString) {
-			if  urlString.character(at: 0) == kSlash {
-				url = URL(string: filePrefix + urlString)!
-			}
-
-			if  url.scheme != fileScheme {
-				url.open()
-			} else {
-				url = URL(fileURLWithPath: url.path)
-
-				url.openAsFile()
-			}
-		}
-#endif
-	}
-
-}
-
 extension ZFiles {
 
 	func showInFinder() {
@@ -100,7 +74,16 @@ extension ZFiles {
 //		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
 		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iAny in
 			if  let url = iAny as? URL {
-				try? writeFile(at: url.relativePath, from: databaseID)
+				// TODO: display a dialaog, then tear it down
+				FOREGROUND {
+					let warning = gAlerts.showInformation()
+					BACKGROUND {
+						try? self.writeFile(at: url.relativePath, from: databaseID)
+						FOREGROUND {
+							gApplication?.stopModal()
+						}
+					}
+				}
 			}
 		}
 	}

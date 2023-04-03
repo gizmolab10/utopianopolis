@@ -30,6 +30,7 @@ typealias           ZoneWidgetArray = [ZoneWidget]
 typealias           ZObjectIDsArray = [NSManagedObjectID]
 typealias          CKRecordIDsArray = [CKRecordID]
 typealias          ZSignalKindArray = [ZSignalKind]
+typealias          ZDatabaseIDArray = [ZDatabaseID]
 typealias         CKReferencesArray = [CKReference]
 typealias         ZTinyDotTypeArray = [[ZTinyDotType]]
 typealias        ZRelationshipArray = [ZRelationship]
@@ -377,7 +378,11 @@ extension FileManager {
 extension URL {
 
 	var originalImageName : String? { return CGImageSource.readFrom(self)?.originalImageName }
+	var walURL            :    URL? { return URL(string: path + "-wal") }
 	var fileExists        :    Bool { return gFileManager.fileExists(atPath: path) }
+	var containsData      :    Bool { return fileExists && dataRepresentation.count > 0 }
+	var walContainsData   :    Bool { return walURL?.containsData ?? false }
+	func remove()            throws { try gFileManager.removeItem(at: self) }
 
 	func destination(imageType: CFString = kUTTypeImage) -> CGImageDestination? {
 		return CGImageDestinationCreateWithURL(self as CFURL, imageType, 1, nil)

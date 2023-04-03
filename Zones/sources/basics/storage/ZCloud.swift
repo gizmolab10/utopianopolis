@@ -147,10 +147,12 @@ class ZCloud: ZRecords {
 	}
 
 	func establishManifest(_ op: ZOperationID, _ onCompletion: AnyClosure?) {
-		FOREGROUND { [self] in
-			manifest = ZManifest.uniqueManifest(recordName: kManifestRootName, in: databaseID)
-			manifest?.applyDeleted()
-			onCompletion?(op)
+		if  manifest == nil {
+			FOREGROUND { [self] in
+				manifest = ZManifest.uniqueManifest(recordName: kManifestRootName, in: databaseID)
+				manifest?.applyDeleted()
+				onCompletion?(op)
+			}
 		}
 	}
 
@@ -192,13 +194,19 @@ class ZCloud: ZRecords {
                 case .destroyID:   if destroyZone      != nil            { recurseNext(); return }
                 }
 
-				let root              = Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: databaseID)
-				if  rootID           != .rootID {
-					root.directAccess = .eProgenyWritable
-				}
+				if  !isRootSet(for: rootID) {
 
-				FOREGROUND { [self] in
-					setRoot(root, for: rootID)
+					// root has not been assigned to its internal variable (setRoot below will do this)
+					// so try to find it in the freshly loaded ideas
+
+					let root              = lookupRoot(for: rootID) ?? Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: databaseID)
+					if  rootID           != .rootID {
+						root.directAccess = .eProgenyWritable
+					}
+					
+					FOREGROUND { [self] in
+						setRoot(root, for: rootID)
+					}
 				}
 
 				recurseNext()

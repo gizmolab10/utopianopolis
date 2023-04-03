@@ -84,14 +84,6 @@ class ZFiles: NSObject {
 		return false
 	}
 
-	func setupFirstTime() {
-		gColorfulMode = true
-		gStartupLevel = .localOkay
-		gDatabaseID   = .everyoneID
-
-		gEveryoneCloud?.rootZone?.expandAndGrab()
-	}
-
     func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
         if  let  databaseID = iDatabaseID,
             let index = databaseID.index {
@@ -101,14 +93,13 @@ class ZFiles: NSObject {
         return false
 	}
 
-	func writeToFile(from databaseID: ZDatabaseID?) throws {
+	func writeToFile(from iDatabaseID: ZDatabaseID?) throws {
 		if  gWriteFiles,
-			gIsCDMigrationDone,
-			let     databaseID = databaseID,
-			databaseID        != .favoritesID,
-			let    index = databaseID.index,
-			let  dbIndex = ZDatabaseIndex(rawValue: index) {
-			let path = filePath(for: dbIndex)
+			let databaseID = iDatabaseID,
+			databaseID    != .favoritesID,
+			let      index = databaseID.index,
+			let    dbIndex = ZDatabaseIndex(rawValue: index) {
+			let       path = filePath(for: dbIndex)
 			try writeFile(at: path, from: databaseID)
 		}
 	}

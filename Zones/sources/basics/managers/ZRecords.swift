@@ -51,7 +51,7 @@ extension String {
 
 }
 
-let kAllDatabaseIDs: [ZDatabaseID] = [.mineID, .everyoneID]
+let kAllDatabaseIDs: ZDatabaseIDArray = [.mineID, .everyoneID]
 
 enum ZDatabaseID: String {
 	case favoritesID = "favorites"
@@ -59,6 +59,7 @@ enum ZDatabaseID: String {
 	case      mineID = "mine"
 
 	var isFavoritesDB: Bool { return self == .favoritesID }
+	var hasStore:      Bool { return gCoreDataStack.hasStore(for: self) }
 	var identifier:  String { return rawValue.substring(toExclusive: 1) }
 	var index:         Int? { return databaseIndex?.rawValue }
 
@@ -133,8 +134,41 @@ class ZRecords: NSObject {
 	var    cloudUnavailable : Bool { return !gHasInternet || (databaseID == .mineID && !gCloudStatusIsActive) }
     var         hereIsValid : Bool { return maybeZoneForRecordName(hereRecordName) != nil }
 
-	func countBy                      (type: String) -> Int?     { return recordNamesByType[type]?.count }
+	func countBy                      (type: String) -> Int?         { return recordNamesByType[type]?.count }
 	func recordNamesForState (_ state: ZRecordState) -> StringsArray { return recordNamesByState[state] ?? [] }
+	init                (_ idatabaseID: ZDatabaseID)                 { databaseID = idatabaseID }
+
+	// MARK: - debug
+	// MARK: -
+
+	var debugTotal: ZRecordsArray { return debugApplyTo([.dValid, .dTraits]) }
+	var debugValid: ZRecordsArray { return debugApplyTo([.dFavorites, .dRecents, .dProgeny, .dDestroy, .dTrash, .dLost]) }
+
+	func debugZRecords(for debugID: ZDebugID) -> ZRecordsArray? {
+		switch debugID {
+			case .dTraits:     return zRecords(of: kTraitType)
+			case .dZones:      return zRecords(of:  kZoneType)
+			case .dLost:       return lostAndFoundZone?  .all
+			case .dFavorites:  return favoritesZone?     .all
+			case .dDestroy:    return destroyZone?       .all
+			case .dTrash:      return trashZone?         .all
+			case .dProgeny:    return rootZone?          .all
+			case .dValid:      return debugValid
+			case .dTotal:      return debugTotal
+			default:           return nil
+		}
+	}
+
+	func debugValue(for debugID: ZDebugID) -> Int? {
+		switch debugID {
+			case .dDuplicates: return duplicates                  .count
+			case .dRegistry:   return zRecordsLookup              .count
+			default:           return debugZRecords(for: debugID)?.count
+		}
+	}
+
+	// MARK: - roots
+	// MARK: -
 
 	func replaceRoot(at oldRoot: inout Zone?, with root: Zone) {
 		if  let old = oldRoot, old != root {
@@ -153,6 +187,23 @@ class ZRecords: NSObject {
 		oldRoot = root
 	}
 
+	func lookupRoot(for rootID: ZRootID?) -> Zone? { return (rootID == nil) ? nil : zRecordsLookup["\(rootID!)"] as? Zone }
+	func isRootSet (for rootID: ZRootID?) -> Bool  { return getRoot(for: rootID) != nil }
+
+	func getRoot(for rootID: ZRootID?) -> Zone? {
+		if  let id = rootID {
+			switch id {
+				case .favoritesID: return favoritesZone
+				case .destroyID:   return destroyZone
+				case .trashID:     return trashZone
+				case .rootID:      return rootZone
+				case .lostID:      return lostAndFoundZone
+			}
+		}
+
+		return nil
+	}
+
 	func setRoot(_ root: Zone, for rootID: ZRootID?) {
 		if  let id = rootID {
 			switch id {
@@ -164,6 +215,9 @@ class ZRecords: NSObject {
 			}
 		}
 	}
+
+	// MARK: - general
+	// MARK: -
 
 	var allZones : ZoneArray {
 		var array = ZoneArray()
@@ -305,9 +359,6 @@ class ZRecords: NSObject {
 		return records
 	}
 
-	var debugTotal: ZRecordsArray { return debugApplyTo([.dValid, .dTraits]) }
-	var debugValid: ZRecordsArray { return debugApplyTo([.dFavorites, .dRecents, .dProgeny, .dDestroy, .dTrash, .dLost]) }
-
 	func updateMaxLevel(with level: Int) {
 		maxLevel = max(level, maxLevel)
 	}
@@ -324,34 +375,6 @@ class ZRecords: NSObject {
 		}
 
 		return result
-	}
-
-	func debugZRecords(for debugID: ZDebugID) -> ZRecordsArray? {
-		switch debugID {
-			case .dTraits:     return zRecords(of: kTraitType)
-			case .dZones:      return zRecords(of:  kZoneType)
-			case .dLost:       return lostAndFoundZone?  .all
-			case .dFavorites:  return favoritesZone?     .all
-			case .dDestroy:    return destroyZone?       .all
-			case .dTrash:      return trashZone?         .all
-			case .dProgeny:    return rootZone?          .all
-			case .dValid:      return debugValid
-			case .dTotal:      return debugTotal
-			default:           return nil
-		}
-	}
-
-	func debugValue(for debugID: ZDebugID) -> Int? {
-		switch debugID {
-			case .dDuplicates: return duplicates                  .count
-			case .dRegistry:   return zRecordsLookup              .count
-			default:           return debugZRecords(for: debugID)?.count
-		}
-	}
-
-
-	init(_ idatabaseID: ZDatabaseID) {
-        databaseID = idatabaseID
 	}
 
 	func removeAllDuplicates() {

@@ -54,7 +54,7 @@ class ZOnboarding : ZOperations {
 			case .oMacAddress:        getMAC();                 onCompletion(true)    // true means op is handled
 			case .oObserveUbiquity:   observeUbiquity();        onCompletion(true)
 			case .oUserPermissions:   getPermissionFromUser() { onCompletion(true) }
-			case .oCheckAvailability: checkAvailability       { onCompletion(true) }
+			case .oGetCloudStatus:    getCloudStatus          { onCompletion(true) }
 			case .oUbiquity:          ubiquity                { onCompletion(true) }
 			case .oFetchUserID:       fetchUserID             { onCompletion(true) }
 			case .oFetchUserRecord:   fetchUserRecord         { onCompletion(true) }
@@ -74,7 +74,7 @@ class ZOnboarding : ZOperations {
 		gNotificationCenter.addObserver(self, selector: #selector(ZOnboarding.completeOnboarding), name: .NSUbiquityIdentityDidChange, object: nil)
 	}
 
-	func checkAvailability(_ onCompletion: @escaping Closure) {
+	func getCloudStatus(_ onCompletion: @escaping Closure) {
 		if !gHasInternet {
 			onCompletion()
 		} else {

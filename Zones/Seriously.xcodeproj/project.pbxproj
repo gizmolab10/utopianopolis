@@ -176,9 +176,9 @@
 		A713E28129C3F37A001FAB2F /* ZRelationships.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28029C3F37A001FAB2F /* ZRelationships.swift */; };
 		A713E28229C3F37A001FAB2F /* ZRelationships.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28029C3F37A001FAB2F /* ZRelationships.swift */; };
 		A713E28329C3F37A001FAB2F /* ZRelationships.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28029C3F37A001FAB2F /* ZRelationships.swift */; };
-		A713E28529C540AA001FAB2F /* ZLocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28429C540AA001FAB2F /* ZLocalStorage.swift */; };
-		A713E28629C540AA001FAB2F /* ZLocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28429C540AA001FAB2F /* ZLocalStorage.swift */; };
-		A713E28729C540AA001FAB2F /* ZLocalStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28429C540AA001FAB2F /* ZLocalStorage.swift */; };
+		A713E28529C540AA001FAB2F /* ZImport+Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28429C540AA001FAB2F /* ZImport+Export.swift */; };
+		A713E28629C540AA001FAB2F /* ZImport+Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28429C540AA001FAB2F /* ZImport+Export.swift */; };
+		A713E28729C540AA001FAB2F /* ZImport+Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = A713E28429C540AA001FAB2F /* ZImport+Export.swift */; };
 		A714854E22552CA300F54C0C /* ZMapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB619951FB3C4660087B066 /* ZMapController.swift */; };
 		A71485B62256D1A200F54C0C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; };
 		A71485B72256D1A200F54C0C /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A71485962256D13A00F54C0C /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -604,7 +604,7 @@
 		A712280D29B11F8700533107 /* ZEnableSubscriptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEnableSubscriptions.swift; sourceTree = "<group>"; };
 		A713DC4827B064D500058F51 /* ZEssayControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssayControlsView.swift; sourceTree = "<group>"; };
 		A713E28029C3F37A001FAB2F /* ZRelationships.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZRelationships.swift; sourceTree = "<group>"; };
-		A713E28429C540AA001FAB2F /* ZLocalStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZLocalStorage.swift; sourceTree = "<group>"; };
+		A713E28429C540AA001FAB2F /* ZImport+Export.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZImport+Export.swift"; sourceTree = "<group>"; };
 		A714856D2256AAAF00F54C0C /* SnapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SnapKit.xcodeproj; path = ../Carthage/Checkouts/SnapKit/SnapKit.xcodeproj; sourceTree = "<group>"; };
 		A71485962256D13A00F54C0C /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SnapKit.framework; sourceTree = "<group>"; };
 		A71485A02256D15200F54C0C /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SnapKit.framework; sourceTree = "<group>"; };
@@ -974,7 +974,7 @@
 				A700F94824AFBE8F009C87AA /* ZCoreDataStack.swift */,
 				A76FC95D29BBBA8F005B6F18 /* ZCoreData+Deferral.swift */,
 				0C43EFBD21010F17000976CE /* ZFiles.swift */,
-				A713E28429C540AA001FAB2F /* ZLocalStorage.swift */,
+				A713E28429C540AA001FAB2F /* ZImport+Export.swift */,
 				A7E44A2A2558CD6A00DA4B13 /* ZManagedObject.swift */,
 				A76FC96129BC1176005B6F18 /* ZMigration.swift */,
 				0C39B2331F182EBB0091F4D1 /* ZReachability.swift */,
@@ -1622,7 +1622,7 @@
 				A752FC2C24512D7700603A54 /* ZoneArray.swift in Sources */,
 				A7D947E121EC142000B7DBFC /* ZHelpController.swift in Sources */,
 				A7D2D65D2492E12900F652B0 /* ZHelpGridView.swift in Sources */,
-				A713E28529C540AA001FAB2F /* ZLocalStorage.swift in Sources */,
+				A713E28529C540AA001FAB2F /* ZImport+Export.swift in Sources */,
 				A72A470F299436D70087E2B7 /* ZImageAttachmentCell.swift in Sources */,
 				A7C7AF5923B6D0A000AAD593 /* ZEssay.swift in Sources */,
 				A7064437246F6D2700F90B86 /* ZButtonsView.swift in Sources */,
@@ -1769,7 +1769,7 @@
 				A7229FB123B84B4300FA2841 /* ZNote.swift in Sources */,
 				A712280C29B025C600533107 /* ZSearchOptionsController.swift in Sources */,
 				0C39B28E1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,
-				A713E28729C540AA001FAB2F /* ZLocalStorage.swift in Sources */,
+				A713E28729C540AA001FAB2F /* ZImport+Export.swift in Sources */,
 				A70E648527B6F4FB003C457E /* ZApplication.swift in Sources */,
 				A7395BB421B877B600F5759F /* ZMapEditor.swift in Sources */,
 				A7948CAB2486CBD700CDA302 /* ZStartupController.swift in Sources */,
@@ -1909,7 +1909,7 @@
 				A7B48A9A23E0E80C00654DBD /* ZoneWindow.swift in Sources */,
 				0C3ECC241FA3023500F085EA /* ZUser.swift in Sources */,
 				A7948CAA2486CBD700CDA302 /* ZStartupController.swift in Sources */,
-				A713E28629C540AA001FAB2F /* ZLocalStorage.swift in Sources */,
+				A713E28629C540AA001FAB2F /* ZImport+Export.swift in Sources */,
 				A72A4710299436D70087E2B7 /* ZImageAttachmentCell.swift in Sources */,
 				A78460F227289E7D006A4075 /* ZoneLine.swift in Sources */,
 				0C39B28D1F182EBB0091F4D1 /* ZGenericController.swift in Sources */,

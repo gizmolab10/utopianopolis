@@ -13,24 +13,24 @@ enum ZOperationID: Int, CaseIterable {
 
 	case oNone               // default operation : does nothing
 
+
+	
     // start up / onboard --> order of operations
 
     case oStartingUp
+	case oMigration          // data file locations
 	case oUserPermissions
     case oMacAddress
     case oObserveUbiquity
-    case oCheckAvailability  // vs no account
+    case oGetCloudStatus     // is icloud account available? (exists and accessible)
     case oUbiquity
-    case oFetchUserID
+    case oFetchUserID        // needs cloud access
     case oFetchUserRecord
-
-    // finish up          --> order of operations
-
-	case oManifest           // all these are LOCAL
+	case oLoadingIdeas       // all these are LOCAL with files or core data
+	case oManifest
 	case oRoots
-	case oHere
-	case oLoadingIdeas
 	case oFavorites			 // MINE ONLY
+	case oHere
 	case oWrite
 	case oDone
 
@@ -55,9 +55,9 @@ enum ZOperationID: Int, CaseIterable {
 
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oFinishing] }
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
-	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites] }
+	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites, .oMigration] }
 	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oCheckAvailability] + bothDBOps }
+	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oMigration, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oGetCloudStatus] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
 	var alwaysBoth  : Bool   { return   bothDBOps.contains(self) }

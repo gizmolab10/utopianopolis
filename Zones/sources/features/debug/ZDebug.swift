@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-func gSetupFeatures() {
+func gSetupDebugFeatures() {
 
 	gDebugModes         = []
 	gToggleDebugMode    (.dNoSubscriptions)
@@ -25,6 +25,7 @@ func gSetupFeatures() {
 //	gToggleCoreDataMode (.dEraseStores)         // discard CD stores and start from stratch
 	gToggleCoreDataMode (.dCKUseSubmitted)      // use app store's id (test2)
 	gToggleCoreDataMode (.dNoRelationships)     // don't use the relationships table yet
+//	gToggleCoreDataMode (.dTestingMigration)    // don't use the relationships table yet
 
 	gPrintModes         = []
 //	gTogglePrintMode    (.dTime)
@@ -32,12 +33,13 @@ func gSetupFeatures() {
 }
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)         && gIsUsingCoreData }
-var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)         && gIsUsingCoreData }
-var         gCKUseLatest : Bool { return !gCoreDataMode.contains(.dCKUseSubmitted)  && gIsUsingCoreData }
-var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)      && gIsUsingCoreData }
-var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships) && gIsUsingCoreData }
-var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)     && gIsUsingCoreData }
+var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)          && gIsUsingCoreData }
+var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)          && gIsUsingCoreData }
+var         gCKUseLatest : Bool { return !gCoreDataMode.contains(.dCKUseSubmitted)   && gIsUsingCoreData }
+var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)       && gIsUsingCoreData }
+var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCoreData }
+var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCoreData }
+var  gNormalDataLocation : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
 var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
@@ -65,13 +67,14 @@ struct ZCoreDataMode: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dNotSave         = ZCoreDataMode(rawValue: 1 << 0) // save is not operational
-	static let dNotLoad         = ZCoreDataMode(rawValue: 1 << 1) // load is not operational
-	static let dDisabled        = ZCoreDataMode(rawValue: 1 << 2) // cannot use core data
-	static let dNoCloudKit      = ZCoreDataMode(rawValue: 1 << 3) // store in cloud kit
-	static let dEraseStores     = ZCoreDataMode(rawValue: 1 << 4) // start the CD repo fresh
-	static let dCKUseSubmitted  = ZCoreDataMode(rawValue: 1 << 5) // use app store's id (test2)
-	static let dNoRelationships = ZCoreDataMode(rawValue: 1 << 6) // not use ZRelationship
+	static let dNotSave          = ZCoreDataMode(rawValue: 1 << 0) // save is not operational
+	static let dNotLoad          = ZCoreDataMode(rawValue: 1 << 1) // load is not operational
+	static let dDisabled         = ZCoreDataMode(rawValue: 1 << 2) // cannot use core data
+	static let dNoCloudKit       = ZCoreDataMode(rawValue: 1 << 3) // store in cloud kit
+	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 4) // start the CD repo fresh
+	static let dCKUseSubmitted   = ZCoreDataMode(rawValue: 1 << 5) // use app store's id (test2)
+	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 6) // not use ZRelationship
+	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 7) // use migration.testing (not data)
 
 }
 

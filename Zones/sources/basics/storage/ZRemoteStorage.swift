@@ -42,7 +42,7 @@ func gRecountMaybe() {
 
 class ZRemoteStorage: NSObject {
 
-    var  databaseIDStack = [ZDatabaseID] ()
+    var  databaseIDStack = ZDatabaseIDArray()
     var          records = [ZDatabaseID : ZRecords]()
     var   currentRecords : ZRecords    { return zRecords(for: gDatabaseID)! }
     var     currentCloud : ZCloud?     { return currentRecords as? ZCloud }
@@ -97,13 +97,6 @@ class ZRemoteStorage: NSObject {
 		}
 
 		return count
-	}
-
-	var totalLoadableRecordsCount: Int {
-		switch gCDMigrationState {
-			case .normal: return totalManifestCount
-			default:      return gFiles.migrationFilesSize() / kFileRecordSize
-		}
 	}
 
 	var countStatus : String {

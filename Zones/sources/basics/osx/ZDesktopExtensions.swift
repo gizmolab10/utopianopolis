@@ -237,7 +237,27 @@ extension String {
         }
         
         return nil
-    }
+	}
+
+	func openAsURL() {
+		let fileScheme = "file"
+		let filePrefix = fileScheme + "://"
+		let  urlString = (replacingOccurrences(of: kBackSlash, with: kEmpty).replacingOccurrences(of: kSpace, with: "%20") as NSString).expandingTildeInPath
+
+		if  var url = URL(string: urlString) {
+			if  urlString.character(at: 0) == kSlash {
+				url = URL(string: filePrefix + urlString)!
+			}
+
+			if  url.scheme != fileScheme {
+				url.open()
+			} else {
+				url = URL(fileURLWithPath: url.path)
+
+				url.openAsFile()
+			}
+		}
+	}
  
 }
 
@@ -700,9 +720,20 @@ extension ZAlerts {
     func openSystemPreferences() {
         URL(string: "x-apple.systempreferences:com.apple.ids.service.com.apple.private.alloy.icloudpairing")?.open()
     }
+	
+	func showInformation(_ message: String = "Warning", _ information: String? = nil) { inform(message, information).runModal() }
 
-	func showAlert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, alertWidth width: CGFloat? = nil, _ closure: AlertStatusClosure? = nil) {
-		alertWithClosure(iMessage, iExplain, iOkayTitle, iCancelTitle, iImage, width) { iAlert, status in
+	func inform(_ message: String = "Warning", _ information: String? = nil) -> ZAlert {
+		let             a = ZAlert()
+		a    .messageText = message
+		a.informativeText = information ?? kEmpty
+		a     .alertStyle = .informational
+
+		return a
+	}
+
+	func showAlert(_ message: String = "Warning", _ information: String? = nil, _ iOkayTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, alertWidth width: CGFloat? = nil, _ closure: AlertStatusClosure? = nil) {
+		alertWithClosure(message, information, iOkayTitle, iCancelTitle, iImage, width) { iAlert, status in
             switch status {
             case .sShow:
 					iAlert?.showModal { status in
@@ -718,18 +749,17 @@ extension ZAlerts {
         }
     }
 
-	func alertWithClosure(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
+	func alertWithClosure(_ message: String = "Warning", _ information: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
 		FOREGROUND { [self] in
-			let a = alert(iMessage, iExplain, iOKTitle, iCancelTitle, iImage, width)
+			let a = alert(message, information, iOKTitle, iCancelTitle, iImage, width)
 
 			closure?(a, .sShow)
 		}
 	}
 
-	func alert(_ iMessage: String = "Warning", _ iExplain: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil) -> ZAlert {
-		let             a = ZAlert()
-		a    .messageText = iMessage
-		a.informativeText = iExplain ?? kEmpty
+	func alert(_ message: String = "Warning", _ information: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil) -> ZAlert {
+		let        a = inform(message, information)
+		a.alertStyle = .critical
 
 		a.addButton(withTitle: iOKTitle)
 

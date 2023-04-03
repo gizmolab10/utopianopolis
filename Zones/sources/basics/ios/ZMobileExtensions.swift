@@ -127,13 +127,14 @@ extension String {
         return nil
     }
 
+	func openAsURL() {}
     func heightForFont(_ font: ZFont, options: NSStringDrawingOptions = .usesDeviceMetrics) -> CGFloat { return sizeWithFont(font, options: options).height }
-    func sizeWithFont (_ font: ZFont, options: NSStringDrawingOptions = .usesFontLeading) -> CGSize { return rectWithFont(font, options: options).size }
+    func sizeWithFont (_ font: ZFont, options: NSStringDrawingOptions = .usesFontLeading)   -> CGSize  { return rectWithFont(font, options: options).size }
     
     
     func rectWithFont (_ font: ZFont, options: NSStringDrawingOptions = .usesFontLeading) -> CGRect {
         return self.boundingRect(with: CGSize.big, options: options, attributes: [.font : font], context: nil)
-    }
+	}
 
 }
 

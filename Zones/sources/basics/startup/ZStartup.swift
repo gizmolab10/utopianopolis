@@ -20,16 +20,11 @@ let gStartup = ZStartup()
 class ZStartup: NSObject {
 
 	func startupCloudAndUI() {
-		gSetupFeatures()
-		gCoreDataStack.assureMigrationToLatest()
+		gSetupDebugFeatures()
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
 		gWorkMode              = .wStartupMode
-
-		if !gIsCDMigrationDone {
-			gHereRecordNames   = kDefaultRecordNames
-		}
 
 		gNotificationCenter.addObserver(forName: .NSUbiquityIdentityDidChange, object: nil, queue: nil) { note in
 			print("remove local data and fetch user data")
@@ -47,7 +42,7 @@ class ZStartup: NSObject {
 		gBatches.startUp { iSame in
 			FOREGROUND {
 				gHasFinishedStartup    = true
-				gRefusesFirstResponder = false    // user input is now safe
+				gRefusesFirstResponder = false    // so user input can't crash the app
 				gCurrentHelpMode       = .proMode // so prepare strings will work correctly for all help modes
 
 				if  gIsStartupMode {
@@ -66,7 +61,7 @@ class ZStartup: NSObject {
 				gHereMaybe?.grab()
 
 				FOREGROUND(after: 0.1) { [self] in
-					if !gIsCDMigrationDone {
+					if !gCDMigrationState.isActive {
 						gSaveContext()
 					}
 

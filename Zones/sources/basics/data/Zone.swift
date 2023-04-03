@@ -2023,8 +2023,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func expandAndGrab() {
-		gHere = self
+	func expandAndGrab(focus: Bool = true) {
+		if  focus {
+			gHere = self
+		}
 
 		expand()
 		grab()
