@@ -59,6 +59,18 @@ extension ZoneArray {
 		return nil
 	}
 
+	func firstIndexWithRecordNameMatching(_ other: Zone) -> Int? {
+		if  let name = other.recordName {
+			for (index, zone) in enumerated() {
+				if  zone.recordName == name {
+					return index
+				}
+			}
+		}
+
+		return nil
+	}
+
 }
 
 extension ZMapEditor {
@@ -112,11 +124,10 @@ extension ZFavorites {
 
 	func nextList(down: Bool) -> Zone? {
 		if  let  here = hereZoneMaybe,
-			let zones = allGroups {
-			let index = zones.firstIndex(of: here) ?? 0
-			if  let n = index.next(increasing: !down, max: zones.count - 1) {
-				return zones[n]
-			}
+			let zones = allGroups,
+			let index = zones.firstIndexWithRecordNameMatching(here),
+			let  next = index.next(increasing: !down, max: zones.count - 1) {
+			return zones[next]
 		}
 
 		return rootZone

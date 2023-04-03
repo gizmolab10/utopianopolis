@@ -1,238 +1,12 @@
 //
-//  ZState.swift
+//  ZState+Persistent.swift
 //  Seriously
 //
-//  Created by Jonathan Sand on 10/14/16.
-//  Copyright © 2016 Jonathan Sand. All rights reserved.
+//  Created by Jonathan Sand on 4/3/23.
+//  Copyright © 2023 Zones. All rights reserved.
 //
 
 import Foundation
-import CloudKit
-
-var  gTextEditorHandlesArrows                       = false
-var   gIsEditingStateChanging                       = false
-var    gRefusesFirstResponder                       = false
-var      gAllowSavingWorkMode                       = false
-var       gHasFinishedStartup                       = false
-var       gIsExportingToAFile                       = false
-var        gKeyboardIsVisible                       = false
-var          gIsReadyToShowUI                       = false
-var          gDeferringRedraw                       = false
-var           gPushIsDisabled                       = false
-var            gTextCapturing                       = false
-var             gIgnoreEvents                       = false
-var             gNeedsRecount                       = false
-var             gCancelSearch                       = false
-var               gLaunchedAt                       = Date()
-var           gAnglesFraction                       = 42.0
-var              gAnglesDelta                       = 15.0
-var               gDebugCount                       = 0
-var        gInterruptionCount                       = 0
-var    gTimeUntilCurrentEvent :        TimeInterval = 0  // by definition, first event is startup
-var             gCurrentTrait :             ZTrait?
-var     gCurrentMouseDownZone :               Zone?
-var gCurrentMouseDownLocation :            CGFloat?
-var       gCurrentBrowseLevel :                Int?
-var        gCurrentKeyPressed :             String?
-
-var                   gIsLate :                Bool { return gBatches.isLate }
-var                   gIsDark :                Bool { return gDarkMode == .Dark }
-var                   gIsMine :                Bool { return gDatabaseID == .mineID }
-var                gIsEditing :                Bool { return gIsEditIdeaMode || gIsEssayMode }
-var            gIsHelpVisible :                Bool { return gHelpWindow?.isVisible ?? false }
-var          gIsHelpFrontmost :                Bool { return gHelpWindow?.isKeyWindow ?? false }
-var         gGrabbedCanTravel :                Bool { return gSelecting.currentMoveableMaybe?.isBookmark ?? false }
-var       gBrowsingIsConfined :                Bool { return gConfinementMode == .list }
-var            gListsGrowDown :                Bool { return gListGrowthMode  == .down }
-var           gDuplicateEvent :                Bool { return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4) }
-var           gIsEditIdeaMode :                Bool { return gWorkMode == .wEditIdeaMode }
-var            gIsStartupMode :                Bool { return gWorkMode == .wStartupMode }
-var            gIsResultsMode :                Bool { return gWorkMode == .wResultsMode }
-var              gIsEssayMode :                Bool { return gWorkMode == .wEssayMode }
-var                gIsMapMode :                Bool { return gWorkMode == .wMapMode }
-var              gIsSearching :                Bool { return gSearching.searchState != .sNot }
-var           gIsNotSearching :                Bool { return gSearching.searchState == .sNot }
-var        gSearchStateIsList :                Bool { return gSearching.searchState == .sList }
-var       gSearchStateIsEntry :                Bool { return gSearching.searchState == .sEntry }
-var           gCanDrawWidgets :                Bool { return gIsMapOrEditIdeaMode || !gSearchStateIsList }
-var      gIsMapOrEditIdeaMode :                Bool { return gIsMapMode || gIsEditIdeaMode }
-var          gCanSaveWorkMode :                Bool { return gIsMapMode || gIsEssayMode }
-var          gIsDraggableMode :                Bool { return gIsMapMode || gIsEditIdeaMode || gIsEssayMode }
-var   gDrawCirclesAroundIdeas :                Bool { return gCirclesDisplayMode.contains(.cIdeas) }
-var      gDetailsViewIsHidden :                Bool { return gMainController?.detailView?.isHidden ?? true }
-var           gMapIsResponder :                Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
-var             gUserIsExempt :                Bool { return gIgnoreExemption ? false  : gUser?.isExempt ?? false } // discard this?
-var               gUserIsIdle :                Bool { return gUserActiveInWindow == nil }
-var         gCurrentEssayZone :               Zone? { return gCurrentEssay?.zone }
-var         gUniqueRecordName :              String { return CKRecordID().recordName }
-var                  gRecords :            ZRecords { return (kIsPhone && gShowFavoritesMapForIOS) ? gFavorites : gRemoteStorage.currentRecords }
-var                 gDarkMode :      InterfaceStyle { return InterfaceStyle() }
-var            gModifierFlags :         ZEventFlags { return ZEvent.modifierFlags } // use when don't have an event handy
-var    gTimeSinceCurrentEvent :        TimeInterval { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
-var          gOtherDatabaseID :         ZDatabaseID { return gDatabaseID == .mineID ? .everyoneID : .mineID }
-var  gLightishBackgroundColor :              ZColor { return gAccentColor.lightish(by: 1.02)  }
-var          gDarkAccentColor :              ZColor { return gAccentColor.darker  (by: 1.3) }
-var       gLighterActiveColor :              ZColor { return gActiveColor.lighter (by: 4.0)   }
-var          gBackgroundColor :              ZColor { return gIsDark ? kDarkestGrayColor : kWhiteColor }
-
-func       gConcealmentString(hide: Bool) -> String { return (hide ? "hide" : "reveal") }
-func        gToggleDatabaseID()                     { gDatabaseID  =  gOtherDatabaseID }
-func         gSetEditIdeaMode()                     { gWorkMode    = .wEditIdeaMode }
-func          gSetMapWorkMode()                     { gWorkMode    = .wMapMode }
-
-func gInvokeUsingDatabaseID(_ databaseID: ZDatabaseID?, block: Closure) {
-	if  databaseID != nil && databaseID != gDatabaseID {
-		gRemoteStorage.detectWithMode(databaseID!) {
-			block()
-
-			return false
-		}
-	} else {
-		block()
-	}
-}
-
-func gToggleLayoutMode() {
-	gMapLayoutMode = gMapLayoutMode.next
-
-	gSignal([.sAll, .spRelayout, .spPreferences])
-}
-
-func gToggleShowToolTips() {
-	gShowToolTips = !gShowToolTips
-
-	gSignal([.sDetails])
-	gRelayoutMaps()
-}
-
-func gToggleShowExplanations() {
-	gShowExplanations = !gShowExplanations
-	gShowMainControls = true
-
-	gHideExplanation()
-	gSignal([.sDetails])
-}
-
-var gCurrentEvent: ZEvent? {
-	didSet {
-		gTimeUntilCurrentEvent = Date.timeIntervalSinceReferenceDate
-	}
-}
-
-var gDebugModes : ZDebugMode {
-	get { return ZDebugMode(         rawValue: getPreferencesInt(for: kDebugModes, defaultInt: 0)) }
-	set { setPreferencesInt(newValue.rawValue,                   for: kDebugModes) }
-}
-
-var gPrintModes : ZPrintMode {
-	get { return ZPrintMode(         rawValue: getPreferencesInt(for: kPrintModes, defaultInt: 0)) }
-	set { setPreferencesInt(newValue.rawValue,                   for: kPrintModes) }
-}
-
-var gCoreDataMode : ZCoreDataMode {
-	get { return ZCoreDataMode(      rawValue: getPreferencesInt(for: kCoreDataMode, defaultInt: 0)) }
-	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
-}
-
-fileprivate var gCollapsed : StringsArray?
-fileprivate var gExpanded  : StringsArray?
-
-enum ZIdeaVisibilityMode : Int {
-	case mExpanded
-	case mCollapsed
-
-	var array : StringsArray {
-		switch self {
-			case .mExpanded:  return gExpandedIdeas
-			case .mCollapsed: return gCollapsedIdeas
-		}
-	}
-
-	func setArray(_ array: StringsArray) {
-		switch self {
-			case .mExpanded:  gExpandedIdeas  = array
-			case .mCollapsed: gCollapsedIdeas = array
-		}
-	}
-}
-
-var gCollapsedIdeas : StringsArray {
-	get {
-		if  gCollapsed == nil {
-			let  value  = getPreferencesString(for: kCollapsedIdeas, defaultString: kEmpty)
-			gCollapsed  = value?.components(separatedBy: kColonSeparator)
-		}
-		
-		return gCollapsed!
-	}
-	
-	set {
-		gCollapsed = newValue
-		
-		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kCollapsedIdeas)
-	}
-}
-
-var gExpandedIdeas : StringsArray {
-    get {
-        if  gExpanded == nil {
-            let value  = getPreferencesString(for: kExpandedIdeas, defaultString: kEmpty)
-            gExpanded  = value?.components(separatedBy: kColonSeparator)
-        }
-
-        return gExpanded!
-    }
-
-    set {
-        gExpanded = newValue
-
-        setPreferencesString(newValue.joined(separator: kColonSeparator), for: kExpandedIdeas)
-    }
-}
-
-var gHere: Zone {
-	get {
-		return gRecords.currentHere
-	}
-
-	set {
-		gDatabaseID          = newValue.databaseID
-		gRecords.currentHere = newValue
-
-		newValue.assureAdoption()
-		gFavorites.push(newValue)
-	}
-}
-
-var gHereMaybe: Zone? {
-	get { return !gHasFinishedStartup ? nil : gRecords.hereZoneMaybe }
-    set { gRecords.hereZoneMaybe = newValue }
-}
-
-var gCurrentHelpMode: ZHelpMode {
-	get {
-		if  let v = getPreferenceString(for: kLastChosenCheatSheet) {
-			return ZHelpMode(rawValue: v) ?? .noMode
-		}
-
-		return .noMode
-	}
-
-	set {
-		setPreferencesString(newValue.rawValue, for: kLastChosenCheatSheet)
-	}
-}
-
-var gUserActivityDetected: Bool {
-	if  let w = gUserActiveInWindow {
-		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")
-		gInterruptionCount += 1
-
-		return true
-	}
-
-	return false
-}
 
 var gTemporaryFullTitleMode : Bool {
 	get { return getPreferencesBool(   for: kTemporaryFullTitleMode, defaultBool: false) }
@@ -296,17 +70,17 @@ var gStartupCount : Int {
 
 var gHereRecordNames: String {
 	get { return getPreferenceString(    for: kHereRecordNames) { return kDefaultRecordNames }! }
-    set { setPreferencesString(newValue, for: kHereRecordNames) }
+	set { setPreferencesString(newValue, for: kHereRecordNames) }
 }
 
 var gAuthorID: String? {    // persist for file read on launch
-    get { return getPreferenceString(    for: kAuthorID) { return nil } }
-    set { setPreferencesString(newValue, for: kAuthorID) }
+	get { return getPreferenceString(    for: kAuthorID) { return nil } }
+	set { setPreferencesString(newValue, for: kAuthorID) }
 }
 
 var gUserRecordName: String? {    // persist for file read on launch
 	get { return getPreferenceString(    for: kUserRecordName) }
-    set { setPreferencesString(newValue, for: kUserRecordName) }
+	set { setPreferencesString(newValue, for: kUserRecordName) }
 }
 
 var gWindowRect: CGRect {
@@ -399,13 +173,13 @@ var gMapOffset: CGPoint {
 	get {
 		let  point = CGPoint.zero
 		let string = getPreferenceString(for: kMapOffsetKey) { return NSStringFromPoint(point) }
-		
+
 		return string?.cgPoint ?? point
 	}
-	
+
 	set {
 		let string = NSStringFromPoint(newValue)
-		
+
 		setPreferencesString(string, for: kMapOffsetKey)
 	}
 }
@@ -414,17 +188,17 @@ var gCountsMode: ZCountsMode {
 	get {
 		let value  = UserDefaults.standard.object(forKey: kCountsMode) as? Int
 		var mode   = ZCountsMode.dots
-		
+
 		if  value != nil {
 			mode   = ZCountsMode(rawValue: value!)!
 		} else {
 			UserDefaults.standard.set(mode.rawValue, forKey:kCountsMode)
 			UserDefaults.standard.synchronize()
 		}
-		
+
 		return mode
 	}
-	
+
 	set {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kCountsMode)
 		UserDefaults.standard.synchronize()
@@ -455,17 +229,17 @@ var gMapLayoutMode: ZMapLayoutMode {
 var gScaling: Double {
 	get {
 		var value: Double? = UserDefaults.standard.object(forKey: kScaling) as? Double
-		
+
 		if  value == nil {
 			value  = 1.00
-			
+
 			UserDefaults.standard.set(value, forKey:kScaling)
 			UserDefaults.standard.synchronize()
 		}
-		
+
 		return value!
 	}
-	
+
 	set {
 		UserDefaults.standard.set(newValue, forKey:kScaling)
 		UserDefaults.standard.synchronize()
@@ -475,17 +249,17 @@ var gScaling: Double {
 var gLineThickness: CGFloat {
 	get {
 		var value: CGFloat? = UserDefaults.standard.object(forKey: kThickness) as? CGFloat
-		
+
 		if  value == nil {
 			value  = kDefaultLineThickness
-			
+
 			UserDefaults.standard.set(value, forKey:kThickness)
 			UserDefaults.standard.synchronize()
 		}
-		
+
 		return value!
 	}
-	
+
 	set {
 		UserDefaults.standard.set(newValue, forKey:kThickness)
 		UserDefaults.standard.synchronize()
@@ -535,21 +309,21 @@ var gBaseFontSize: CGFloat {
 var gDatabaseID: ZDatabaseID {
 	get {
 		var databaseID: ZDatabaseID?
-		
+
 		if let object   = UserDefaults.standard.object(forKey:kDatabaseID) {
 			databaseID  = ZDatabaseID(rawValue: object as! String)
 		}
-		  
+
 		if  databaseID   == nil {
 			databaseID  = .everyoneID
-			
+
 			UserDefaults.standard.set(databaseID!.rawValue, forKey:kDatabaseID)
 			UserDefaults.standard.synchronize()
 		}
-		
+
 		return databaseID!
 	}
-	
+
 	set {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kDatabaseID)
 		UserDefaults.standard.synchronize()
@@ -638,27 +412,86 @@ var gListGrowthMode: ZListGrowthMode {
 	return true
 }
 
+// MARK: - show and hide
+// MARK: -
+
+fileprivate var gCollapsed : StringsArray?
+fileprivate var gExpanded  : StringsArray?
+
+enum ZIdeaVisibilityMode : Int {
+	case mExpanded
+	case mCollapsed
+
+	var array : StringsArray {
+		switch self {
+			case .mExpanded:  return gExpandedIdeas
+			case .mCollapsed: return gCollapsedIdeas
+		}
+	}
+
+	func setArray(_ array: StringsArray) {
+		switch self {
+			case .mExpanded:  gExpandedIdeas  = array
+			case .mCollapsed: gCollapsedIdeas = array
+		}
+	}
+}
+
+var gCollapsedIdeas : StringsArray {
+	get {
+		if  gCollapsed == nil {
+			let  value  = getPreferencesString(for: kCollapsedIdeas, defaultString: kEmpty)
+			gCollapsed  = value?.components(separatedBy: kColonSeparator)
+		}
+
+		return gCollapsed!
+	}
+
+	set {
+		gCollapsed = newValue
+
+		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kCollapsedIdeas)
+	}
+}
+
+var gExpandedIdeas : StringsArray {
+	get {
+		if  gExpanded == nil {
+			let value  = getPreferencesString(for: kExpandedIdeas, defaultString: kEmpty)
+			gExpanded  = value?.components(separatedBy: kColonSeparator)
+		}
+
+		return gExpanded!
+	}
+
+	set {
+		gExpanded = newValue
+
+		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kExpandedIdeas)
+	}
+}
+
 // MARK: - details
 // MARK: -
 
 var gHiddenDetailViewIDs: ZDetailsViewID {
 	get {
 		var viewID: ZDetailsViewID?
-		
+
 		if  let object = UserDefaults.standard.object(forKey:kDetailsState) {
 			viewID     = ZDetailsViewID(rawValue: object as! Int)
 		}
-		
+
 		if  viewID    == nil {
 			viewID     = .vFirstHidden
-			
+
 			UserDefaults.standard.set(viewID!.rawValue, forKey:kDetailsState)
 			UserDefaults.standard.synchronize()
 		}
-		
+
 		return viewID!
 	}
-	
+
 	set {
 		UserDefaults.standard.set(newValue.rawValue, forKey:kDetailsState)
 		UserDefaults.standard.synchronize()
@@ -911,13 +744,13 @@ var gEmailTypesSent: String {
 
 func emailSent(for type: ZSentEmailType) -> Bool {
 	let types = gEmailTypesSent
-    return types.contains(type.rawValue)
+	return types.contains(type.rawValue)
 }
 
 func recordEmailSent(for type: ZSentEmailType) {
-    if  !emailSent  (for: type) {
-        gEmailTypesSent.append(type.rawValue)
-    }
+	if  !emailSent  (for: type) {
+		gEmailTypesSent.append(type.rawValue)
+	}
 }
 
 // MARK: - internals
@@ -932,23 +765,23 @@ func setPreferencesFloat(_ iFloat: CGFloat = .zero, for key: String) {
 }
 
 func getPreferencesSize(for key: String, defaultSize: CGSize = .zero) -> CGSize {
-    return getPreferenceString(for: key) { return NSStringFromSize(defaultSize) }?.cgSize ?? defaultSize
+	return getPreferenceString(for: key) { return NSStringFromSize(defaultSize) }?.cgSize ?? defaultSize
 }
 
 func setPreferencesSize(_ iSize: CGSize = .zero, for key: String) {
-    setPreferencesString(NSStringFromSize(iSize), for: key)
+	setPreferencesString(NSStringFromSize(iSize), for: key)
 }
 
 func getPreferencesRect(for key: String, defaultRect: CGRect = .zero) -> CGRect {
-    return getPreferenceString(for: key) { return NSStringFromRect(defaultRect) }?.cgRect ?? defaultRect
+	return getPreferenceString(for: key) { return NSStringFromRect(defaultRect) }?.cgRect ?? defaultRect
 }
 
 func setPreferencesRect(_ iRect: CGRect = .zero, for key: String) {
-    setPreferencesString(NSStringFromRect(iRect), for: key)
+	setPreferencesString(NSStringFromRect(iRect), for: key)
 }
 
 func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
-    var color = defaultColor
+	var color = defaultColor
 
 	do {
 		if  let data = UserDefaults.standard.object(forKey: key) as? Data,
@@ -961,7 +794,7 @@ func getPreferencesColor(for key: String, defaultColor: ZColor) -> ZColor {
 		setPreferencesColor(color, for: key)
 	}
 
-    return color.accountingForDarkMode
+	return color.accountingForDarkMode
 }
 
 func setPreferencesColor(_ color: ZColor, for key: String) {
@@ -976,27 +809,27 @@ func setPreferencesColor(_ color: ZColor, for key: String) {
 }
 
 func getPreferenceString(for key: String, needDefault: ToStringClosure? = nil) -> String? {
-    if  let    string = UserDefaults.standard.object(forKey: key) as? String {
-        return string
-    }
+	if  let    string = UserDefaults.standard.object(forKey: key) as? String {
+		return string
+	}
 
-    let defaultString = needDefault?()
-    if  let    string = defaultString {
-        setPreferencesString(string, for: key)
-    }
+	let defaultString = needDefault?()
+	if  let    string = defaultString {
+		setPreferencesString(string, for: key)
+	}
 
-    return defaultString
+	return defaultString
 }
 
 func getPreferencesString(for key: String, defaultString: String?) -> String? {
-    return getPreferenceString(for: key) { return defaultString }
+	return getPreferenceString(for: key) { return defaultString }
 }
 
 func setPreferencesString(_ iString: String?, for key: String) {
-    if let string = iString {
-        UserDefaults.standard.set(string, forKey: key)
-        UserDefaults.standard.synchronize()
-    }
+	if let string = iString {
+		UserDefaults.standard.set(string, forKey: key)
+		UserDefaults.standard.synchronize()
+	}
 }
 
 func getPreferencesInt(for key: String, defaultInt: Int = 0) -> Int {
@@ -1011,16 +844,16 @@ func setPreferencesInt(_ iInt: Int?, for key: String) {
 }
 
 func getPreferencesBool(for key: String, defaultBool: Bool) -> Bool {
-    if  let value: NSNumber = UserDefaults.standard.object(forKey: key) as? NSNumber {
-        return value.boolValue
-    }
+	if  let value: NSNumber = UserDefaults.standard.object(forKey: key) as? NSNumber {
+		return value.boolValue
+	}
 
-    setPreferencesBool(defaultBool, for: key)
+	setPreferencesBool(defaultBool, for: key)
 
-    return defaultBool
+	return defaultBool
 }
 
 func setPreferencesBool(_ iBool: Bool, for key: String) {
-    UserDefaults.standard.set(iBool, forKey: key)
-    UserDefaults.standard.synchronize()
+	UserDefaults.standard.set(iBool, forKey: key)
+	UserDefaults.standard.synchronize()
 }

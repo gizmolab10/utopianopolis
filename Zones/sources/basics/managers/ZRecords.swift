@@ -252,7 +252,7 @@ class ZRecords: NSObject {
 
     var hereRecordName: String? {
 		set {
-			var        references  = completeHereRecordNames
+			var        references  = gCompleteHereRecordNames
 			if  let         index  = databaseID.index, index < references.count,
 				let         value  = newValue,
 				references[index] != value {
@@ -262,7 +262,7 @@ class ZRecords: NSObject {
 		}
 
 		get {
-			let references = completeHereRecordNames
+			let references = gCompleteHereRecordNames
 			if  let  index = databaseID.index, index < references.count {
 				return  references[index]
 			}
@@ -271,51 +271,6 @@ class ZRecords: NSObject {
 		}
     }
 
-	var completeHereRecordNames: StringsArray {
-		var       references = gHereRecordNames.components(separatedBy: kColonSeparator)
-		var          changed = false
-
-		func rootFor(_ index: Int) -> Zone? {
-			if  let     dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
-				let zRecords = gRemoteStorage.zRecords(for: dbid),
-				let     root = zRecords.rootZone {
-
-				return  root
-			}
-
-			return nil
-		}
-
-		while   references.count < 3 {
-			let    index = references.count
-			if  let root = rootFor(index),
-				let name = root.recordName {
-				changed  = true
-				references.append(name)
-			}
-		}
-
-		// detect and fix bad values
-		// bad idea to do this before progeny are added
-
-		if  gIsReadyToShowUI, references.count  > 2 {
-			let          name = references[2]
-			if  let      root = rootFor(2) {
-				let rootNames = root.all.map { return $0.recordName ?? kEmpty }
-				if !rootNames.contains(name) {
-					references[2] = kFavoritesRootName    // reset to default
-					changed       = true
-				}
-			}
-		}
-
-		if  changed {
-			gHereRecordNames = references.joined(separator: kColonSeparator)
-		}
-
-		return references
-	}
-    
     var hereZoneMaybe: Zone? {
 		get {
 			return maybeZoneForRecordName(hereRecordName)

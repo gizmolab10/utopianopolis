@@ -215,3 +215,18 @@ extension ZMainController {
 	}
 
 }
+
+var gDebugModes : ZDebugMode {
+	get { return ZDebugMode(         rawValue: getPreferencesInt(for: kDebugModes, defaultInt: 0)) }
+	set { setPreferencesInt(newValue.rawValue,                   for: kDebugModes) }
+}
+
+var gPrintModes : ZPrintMode {
+	get { return ZPrintMode(         rawValue: getPreferencesInt(for: kPrintModes, defaultInt: 0)) }
+	set { setPreferencesInt(newValue.rawValue,                   for: kPrintModes) }
+}
+
+var gCoreDataMode : ZCoreDataMode {
+	get { return ZCoreDataMode(      rawValue: getPreferencesInt(for: kCoreDataMode, defaultInt: 0)) }
+	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
+}

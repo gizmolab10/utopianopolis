@@ -297,9 +297,6 @@
                                                             <outlet property="togglingView" destination="M2W-8y-R0e" id="XRu-AH-2H9"/>
                                                         </connections>
                                                     </button>
-                                                    <progressIndicator ambiguous="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Zkz-eb-lqR">
-                                                        <rect key="frame" x="214" y="1" width="16" height="16"/>
-                                                    </progressIndicator>
                                                     <button verticalHuggingPriority="750" springLoaded="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NEF-16-Rho" userLabel="Data Switch">
                                                         <rect key="frame" x="165" y="-1" width="60" height="19"/>
                                                         <constraints>
@@ -319,7 +316,6 @@
                                                     <constraint firstItem="NEF-16-Rho" firstAttribute="leading" secondItem="fsz-8k-F3y" secondAttribute="trailing" constant="1" id="5LM-i3-VJ7"/>
                                                     <constraint firstItem="NEF-16-Rho" firstAttribute="top" secondItem="xwW-xc-XIh" secondAttribute="top" id="9iH-KA-2nf"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="leading" secondItem="xwW-xc-XIh" secondAttribute="leading" constant="1" id="Bra-IF-5I9"/>
-                                                    <constraint firstItem="Zkz-eb-lqR" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="Fjh-dH-wlz"/>
                                                     <constraint firstItem="fsz-8k-F3y" firstAttribute="centerY" secondItem="xwW-xc-XIh" secondAttribute="centerY" id="JkT-Tw-HTb"/>
                                                     <constraint firstAttribute="height" constant="18" id="OPH-Ni-UYm"/>
                                                     <constraint firstAttribute="trailing" secondItem="NEF-16-Rho" secondAttribute="trailing" constant="1" id="a8z-1s-UTc"/>
@@ -346,7 +342,6 @@
                                         <connections>
                                             <outlet property="bannerView" destination="xwW-xc-XIh" id="To1-48-Suc"/>
                                             <outlet property="hideableView" destination="Chx-83-qGo" id="Qre-NM-FhC"/>
-                                            <outlet property="spinner" destination="Zkz-eb-lqR" id="dxW-NG-J09"/>
                                             <outlet property="switchingButton" destination="NEF-16-Rho" id="YNj-3R-umV"/>
                                             <outlet property="titleButton" destination="fsz-8k-F3y" id="p3H-LW-5wA"/>
                                         </connections>

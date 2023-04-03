@@ -104,6 +104,10 @@ class ZCoreDataStack: NSObject {
 					}
 
 					makeAvailable()
+
+					FOREGROUND {
+						gMainWindow?.updateSpinner()
+					}
 				}
 			}
 		}

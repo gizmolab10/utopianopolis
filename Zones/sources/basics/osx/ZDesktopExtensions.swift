@@ -686,6 +686,12 @@ extension ZWindow {
 		}
 	}
 
+	func updateSpinner() {
+		let hide = gCurrentOp.isDoneOp && gCoreDataStack.isDoneOp
+
+		showAppIsBusy(!hide)
+	}
+
 }
 
 extension ZButtonCell {

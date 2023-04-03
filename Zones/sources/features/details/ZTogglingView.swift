@@ -21,7 +21,6 @@ class ZBannerButton : ZButton {
 class ZTogglingView: ZView {
 
 	@IBOutlet var switchConstraint : NSLayoutConstraint?
-	@IBOutlet var          spinner : ZProgressIndicator?
 	@IBOutlet var      titleButton : ZBannerButton?
 	@IBOutlet var  switchingButton : ZButton?
 	@IBOutlet var       bannerView : ZView?
@@ -133,7 +132,6 @@ class ZTogglingView: ZView {
 	func updateView() { // gSignal for .sDetails goes here
 		updateColors()
 		updateTitleBarButtons()
-		updateSpinner()
 		updateTitleButton()
 		updateHideableView()
 	}
@@ -145,19 +143,6 @@ class ZTogglingView: ZView {
 		switchingButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 	}
 
-	func updateSpinner() {
-		if  let      s = spinner {
-			let   hide = gCurrentOp.isDoneOp && gCoreDataStack.isDoneOp
-			s.isHidden = hide
-
-			if  hide {
-				s.stopAnimation (spinner)
-			} else {
-				s.startAnimation(spinner)
-			}
-		}
-	}
-	
     func updateHideableView() {
         let    hide = hideHideable
         let visible = subviews.contains(hideableView!)

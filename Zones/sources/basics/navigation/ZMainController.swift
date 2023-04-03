@@ -136,6 +136,7 @@ class ZMainController: ZGesturesController {
 		searchBarView?    .isHidden =  gIsNotSearching || (hasSearchResults && gSearchStateIsList)
 		searchResultsView?.isHidden =  gIsNotSearching || !hasSearchResults || gIsEssayMode
 
+		gMainWindow?.updateSpinner()
 		mainUpdate()
     }
 
