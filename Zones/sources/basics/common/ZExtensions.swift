@@ -446,6 +446,23 @@ extension CGImageSource {
 
 }
 
+extension ZSignalKindArray {
+
+	var debugDescription: String {
+		get {
+			var result = kEmpty
+			forEach { kind in
+				result.append("\(kind), ")
+
+				if  kind == .spRelayout {
+					result.noop()
+				}
+			}
+			return result
+		}
+	}
+}
+
 extension CKAsset {
 
 	var data       :   Data? { return gFileManager.contents(atPath: fileURL!.path) }

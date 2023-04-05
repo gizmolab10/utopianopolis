@@ -85,10 +85,6 @@ class ZFavoritesTogglingView : ZTogglingView {
 				}
 			}
 		}
-
-		if  gIsEditIdeaMode {
-			gSignal([.spFavoritesMap])
-		}
 	}
 
 }

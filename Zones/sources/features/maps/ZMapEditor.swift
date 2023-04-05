@@ -75,7 +75,6 @@ class ZMapEditor: ZBaseEditor {
 			let   arrow = key.arrow
 			let CONTROL = flags.hasControl
 			let SPECIAL = flags.exactlySpecial
-			let SPLAYED = flags.exactlySplayed
 			let COMMAND = flags.hasCommand
 			let  OPTION = flags.hasOption
 			var   SHIFT = flags.hasShift
@@ -476,7 +475,7 @@ class ZMapEditor: ZBaseEditor {
 			}
 		}
 
-		gSelecting.rootMostMoveable?.addNext(with: kLineOfDashes) { iChild in
+		gSelecting.rootMostMoveable?.addNextAndRelayout(with: kLineOfDashes) { iChild in
 			iChild.grab()
 			onCompletion?()
 		}

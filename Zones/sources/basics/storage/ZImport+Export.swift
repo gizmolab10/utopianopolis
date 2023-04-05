@@ -74,14 +74,8 @@ extension ZFiles {
 //		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
 		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iAny in
 			if  let url = iAny as? URL {
-				FOREGROUND {
-					gMainWindow?.showAppIsBusy(true)
-					BACKGROUND {
-						try? self.writeFile(at: url.relativePath, from: databaseID)
-						FOREGROUND {
-							gMainWindow?.showAppIsBusy(false)
-						}
-					}
+				gMainWindow?.performInBackgroundWhileShowingAppIsBusy {
+					try? self.writeFile(at: url.relativePath, from: databaseID)
 				}
 			}
 		}
@@ -131,7 +125,9 @@ extension Zone {
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
 		gPresentOpenPanel(type: type) { [self] iAny in
 			if  let url = iAny as? URL {
-				importFile(from: url.path, type: type, onCompletion: onCompletion)
+				gMainWindow?.performInBackgroundWhileShowingAppIsBusy {
+					self.importFile(from: url.path, type: type, onCompletion: onCompletion)
+				}
 			}
 		}
 	}

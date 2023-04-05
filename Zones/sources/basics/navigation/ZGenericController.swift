@@ -27,15 +27,15 @@ class ZGenericController: ZController, ZGeneric {
 
 	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
-		case .idSubscription,
-			 .idDataDetails,
-			 .idMain:    return [.sResize, .spStartupStatus]
-		case .idActions: return [.sResize, .sSearch, .sFound]
+			case .idSubscription,
+					.idDataDetails,
+					.idMain:    return [.sResize, .spStartupStatus]
+			case .idActions:    return [.sResize, .sSearch, .sFound]
 			case .idFavoritesMap,
-			 .idPreferences,
-			 .idMainMap,
-			 .idCrumbs:  return [.sData]             // ignore the signal from the end of process next batch
-		default: break
+					.idPreferences,
+					.idMainMap: return [.sData, .spCrumbs]
+			case .idCrumbs:     return [.sData]             // ignore the signal from the end of process next batch
+			default: break
 		}
 
 		return [.sResize]

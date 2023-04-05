@@ -176,6 +176,9 @@ func gConvertToUserInterfaceItemIdentifier(_ string: String) -> NSUserInterfaceI
 extension NSObject {
 
 	func assignAsFirstResponder(_ responder: NSResponder?) {
+		let r = (responder == nil) ? "nil" : "\(responder!)"
+		printDebug(.dEdit, " WINDOW  " + r)
+
 		gMainWindow?.makeFirstResponder(responder)
 	}
 	
@@ -672,15 +675,29 @@ extension ZWindow {
 		return last != gLastLocation
 	}
 
+	func performInBackgroundWhileShowingAppIsBusy(_ closure: @escaping Closure) {
+		FOREGROUND {
+			self.showAppIsBusy(true)
+
+			BACKGROUND {
+				closure()
+
+				FOREGROUND {
+					self.showAppIsBusy(false)
+				}
+			}
+		}
+	}
+
 	func showAppIsBusy(_ start: Bool) {
-		if let spinner = gMainController?.spinner {
+		if  let spinner = gMainController?.spinner {
 			if  start {
 				gRefusesFirstResponder = true
 
-				firstResponder?.resignFirstResponder()
 				spinner.startAnimating()
 			} else {
 				spinner.stopAnimating()
+
 				gRefusesFirstResponder = false
 			}
 		}
@@ -919,7 +936,7 @@ extension ZTextEditor {
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()
-        case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? true { gSelecting.rootMostMoveable?.addNext() } // stupid OSX issues tab twice (to create the new idea, then once MORE
+        case #selector(insertTab):           if currentEdit?.adequatelyPaused ?? true { gSelecting.rootMostMoveable?.addNextAndRelayout() } // stupid OSX issues tab twice (to create the new idea, then once MORE
 		case #selector(cancelOperation(_:)): if gSearchStateIsEntry || gSearchStateIsList { gExitSearchMode() }
         default:                             super.doCommand(by: selector)
         }

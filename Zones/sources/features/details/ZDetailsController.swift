@@ -20,13 +20,13 @@ struct ZDetailsViewID: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let  vPreferences = ZDetailsViewID(rawValue: 0x0001)
-	static let         vData = ZDetailsViewID(rawValue: 0x0002)
-	static let vKickoffTools = ZDetailsViewID(rawValue: 0x0004)
-	static let    vFavorites = ZDetailsViewID(rawValue: 0x0008)
-	static let    vSubscribe = ZDetailsViewID(rawValue: 0x0010)
-	static let          vAll = ZDetailsViewID(rawValue: 0x001F)
-	static let  vFirstHidden = ZDetailsViewID(rawValue: 0x001B)
+	static let  vPreferences = ZDetailsViewID(rawValue: 1 << 0)
+	static let         vData = ZDetailsViewID(rawValue: 1 << 1)
+	static let vKickoffTools = ZDetailsViewID(rawValue: 1 << 2)
+	static let    vFavorites = ZDetailsViewID(rawValue: 1 << 3)
+	static let    vSubscribe = ZDetailsViewID(rawValue: 1 << 4)
+	static let          vAll = ZDetailsViewID(rawValue: 1 << 5)
+	static let  vFirstHidden = ZDetailsViewID(rawValue: 1 << 6)
 	static let         vLast = vFavorites
 }
 

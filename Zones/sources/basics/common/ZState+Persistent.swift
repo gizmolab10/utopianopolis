@@ -582,8 +582,8 @@ struct ZCirclesDisplayMode: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let cIdeas = ZCirclesDisplayMode(rawValue: 0x0001)
-	static let cRings = ZCirclesDisplayMode(rawValue: 0x0002)
+	static let cIdeas = ZCirclesDisplayMode(rawValue: 1 << 0)
+	static let cRings = ZCirclesDisplayMode(rawValue: 1 << 1)
 
 	static func createFrom(_ set: IndexSet) -> ZCirclesDisplayMode {
 		var mode = ZCirclesDisplayMode()

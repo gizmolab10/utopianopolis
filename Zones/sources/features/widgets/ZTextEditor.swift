@@ -166,6 +166,8 @@ class ZTextPack: NSObject {
                 ZTextPack(bookmark).captureTextAndUpdateWidgets(newText)
             }
         }
+
+		FOREGROUND(after: 0.001) { gRelayoutMaps() }
     }
 
 	func prepareUndoForTextChange(_ manager: UndoManager?,_ onUndo: @escaping Closure) {
@@ -201,7 +203,7 @@ class ZTextPack: NSObject {
 		updateWidgetsForEndEdit()
 	}
 
-	func captureText(_ text: String?, redrawSync: Bool = false) {
+	func captureText(_ text: String?) {
 		if (text == kEmpty || text == emptyName) {
 			if  let           type  = packedTrait?.traitType {
 				packedZone?.removeTrait(for: type)                     // trait text was deleted (email, hyperlink)
@@ -214,7 +216,7 @@ class ZTextPack: NSObject {
 				prepareUndoForTextChange(gUndoManager) { [self] in
 					originalText    = w.text
 
-					captureText(original, redrawSync: true)
+					captureText(original)
 					w.updateGUI()
 				}
 			}
@@ -227,10 +229,6 @@ class ZTextPack: NSObject {
 		}
 
 		gTextCapturing = false
-
-		if  redrawSync {
-			gRelayoutMaps()
-		}
 	}
 
 	func updateWidgetsForEndEdit() {
@@ -241,8 +239,6 @@ class ZTextPack: NSObject {
 			t.deselectAllText()
 			t.updateTextColor()
 			t.updateText()
-
-			FOREGROUND(after: 0.001) { gRelayoutMaps() }
 		}
 	}
 
@@ -271,7 +267,7 @@ class ZTextEditor: ZTextView {
 				zone.userCanWrite {
 				currentEdit = pack
 
-				printDebug(.dEdit, " MAYBE   " + zone.unwrappedName)
+				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
 				deferEditingStateChange()
 				pack.updateText(isEditing: true)            // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
@@ -348,6 +344,7 @@ class ZTextEditor: ZTextView {
 	// MARK: -
 
 	func clearEdit() {
+		printDebug(.dEdit, " CLEAR   \(currentEdit?.packedZone?.zoneName ?? "no zone")")
 		currentEdit = nil
 
 		clearOffset()
@@ -361,6 +358,8 @@ class ZTextEditor: ZTextView {
 			clearEdit()
 			zone.grab()
 			e.updateWidgetsForEndEdit()
+
+			FOREGROUND(after: 0.001) { gRelayoutMaps() }
 		}
 	}
 
@@ -385,7 +384,7 @@ class ZTextEditor: ZTextView {
 			zone?.grab()
 
 			if  andRedraw {
-				gRelayoutMaps()
+				FOREGROUND(after: 0.001) { gRelayoutMaps() }
 			}
 		}
 	}
@@ -393,7 +392,7 @@ class ZTextEditor: ZTextView {
 	func capture(force: Bool = false) {
 		if  let current = currentEdit, let text = current.textWidget?.text, (!gTextCapturing || force) {
 			printDebug(.dEdit, " CAPTURE \(text)")
-			current.captureText(text, redrawSync: true)
+			current.captureText(text)
 		}
 	}
 
@@ -442,7 +441,7 @@ class ZTextEditor: ZTextView {
 			}
 		} else if currentlyEditedZone?.children.count ?? 0 > 0 {
 			quickStopCurrentEdit()
-			gMapEditor.moveInto { [self] reveal in
+			gMapEditor.moveInto { reveal in
 				if  !reveal {
 					editAtOffset(.zero)
 				} else {
@@ -500,14 +499,14 @@ class ZTextEditor: ZTextView {
 
 	func setCursor(at iOffset: CGFloat?) {
         gTextEditorHandlesArrows = false
-        if  var     offset = iOffset,
-            let       zone = currentlyEditedZone,
-            let         to = currentTextWidget {
-			var      point = CGPoint.zero
-            point          = to.convert(point, from: nil)
-			offset        += point.x - 3.0   // subtract half the average character width -> closer to user expectation
-            let       name = zone.unwrappedName
-            let   location = name.location(of: offset, using: currentFont)
+        if  var           offset = iOffset,
+            let             zone = currentlyEditedZone,
+            let               to = currentTextWidget {
+			var            point = CGPoint.zero
+            point                = to.convert(point, from: nil)
+			offset              += point.x - 3.0   // subtract half the average character width -> closer to user expectation
+            let             name = zone.unwrappedName
+            let         location = name.location(of: offset, using: currentFont)
 
 			printDebug(.dEdit, " AT \(location)    \(name)")
             selectedRange = NSMakeRange(location, 0)

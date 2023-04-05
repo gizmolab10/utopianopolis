@@ -209,11 +209,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		init(rawValue: Int) { self.rawValue = rawValue }
 
-		static let zChildless = ZoneType(rawValue: 0x0001)
-		static let zTrait     = ZoneType(rawValue: 0x0002)
-		static let zNote      = ZoneType(rawValue: 0x0004)
-		static let zDuplicate = ZoneType(rawValue: 0x0008)
-		static let zBookmark  = ZoneType(rawValue: 0x0010)
+		static let zChildless = ZoneType(rawValue: 1 << 0)
+		static let zTrait     = ZoneType(rawValue: 1 << 1)
+		static let zNote      = ZoneType(rawValue: 1 << 2)
+		static let zDuplicate = ZoneType(rawValue: 1 << 3)
+		static let zBookmark  = ZoneType(rawValue: 1 << 4)
 	}
 
 	var zoneType : ZoneType {
@@ -1025,32 +1025,22 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addNext(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
-		if  let parent = parentZone, parent.userCanMutateProgeny {
-			var  zones = gSelecting.currentMapGrabs
-
-			let completion: ZoneClosure = { iZone in
-				onCompletion?(iZone)
-
-				if  onCompletion == nil {
-					iZone.edit()
-				}
+	func addNextAndRelayout(containing: Bool = false, with name: String? = nil, _ onCompletion: ZoneClosure? = nil) {
+		if  let parent  = parentZone, parent.userCanMutateProgeny {
+			var zones   = gSelecting.currentMapGrabs
+			var index   = siblingIndex
+			if  index  != nil && gListsGrowDown {
+				index! += 1
 			}
 
-			if  containing {
-				zones.respectOrder()
-			}
-
-			if  self  == gHere {
-				gHere  = parent
+			if  self   == gHere {
+				gHere   = parent
 
 				parent.expand()
 			}
 
-			var index  = siblingIndex
-
-			if  index  != nil {
-				index! += gListsGrowDown ? 1 : 0
+			if  containing {
+				zones.respectOrder()
 			}
 
 			parent.addIdea(at: index, with: name) { iChild in
@@ -1059,8 +1049,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						child.acquireZones(zones)
 					}
 
-					gRelayoutMaps() {
-						completion(child)
+					if  let closure = onCompletion {
+						closure(child)
+					} else {
+						gRelayoutMaps() {
+							child.edit()
+						}
 					}
 				}
 			}
@@ -1216,7 +1210,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func addNextAndRedraw(containing: Bool = false, onCompletion: ZoneClosure? = nil) {
 		gDeferRedraw {
-			addNext(containing: containing) { iChild in
+			addNextAndRelayout(containing: containing) { iChild in
 				gDeferringRedraw = false
 
 				gRelayoutMaps() {

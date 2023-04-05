@@ -28,6 +28,7 @@ func gSetupDebugFeatures() {
 //	gToggleCoreDataMode (.dTestingMigration)    // don't use the relationships table yet
 
 	gPrintModes         = []
+//	gTogglePrintMode    (.dEdit)
 //	gTogglePrintMode    (.dTime)
 
 }
@@ -41,18 +42,18 @@ var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationshi
 var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCoreData }
 var  gNormalDataLocation : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCoreData }
 
-var gIsShowingDuplicates : Bool { return  gDebugModes.contains(.dShowDuplicates) }
-var gSubscriptionTimeout : Bool { return  gDebugModes.contains(.dSubscriptionTimeout) }
-var  gHideNoteVisibility : Bool { return  gDebugModes.contains(.dHideNoteVisibility) }
-var     gNoSubscriptions : Bool { return  gDebugModes.contains(.dNoSubscriptions) }
-var     gIgnoreExemption : Bool { return  gDebugModes.contains(.dIgnoreExemption) }
-var         gDebugAngles : Bool { return  gDebugModes.contains(.dDebugAngles) }
-var         gDebugAccess : Bool { return  gDebugModes.contains(.dDebugAccess) }
-var          gAddDestroy : Bool { return  gDebugModes.contains(.dShowDestroy) }
-var          gWriteFiles : Bool { return  gDebugModes.contains(.dWriteFiles) }
-var           gDebugInfo : Bool { return  gDebugModes.contains(.dDebugInfo) }
-var           gDebugDraw : Bool { return  gDebugModes.contains(.dDebugDraw) }
-var             gNewUser : Bool { return  gDebugModes.contains(.dNewUser) }
+var gIsShowingDuplicates : Bool { return  gDebugModes  .contains(.dShowDuplicates) }
+var gSubscriptionTimeout : Bool { return  gDebugModes  .contains(.dSubscriptionTimeout) }
+var  gHideNoteVisibility : Bool { return  gDebugModes  .contains(.dHideNoteVisibility) }
+var     gNoSubscriptions : Bool { return  gDebugModes  .contains(.dNoSubscriptions) }
+var     gIgnoreExemption : Bool { return  gDebugModes  .contains(.dIgnoreExemption) }
+var         gDebugAngles : Bool { return  gDebugModes  .contains(.dDebugAngles) }
+var         gDebugAccess : Bool { return  gDebugModes  .contains(.dDebugAccess) }
+var          gAddDestroy : Bool { return  gDebugModes  .contains(.dShowDestroy) }
+var          gWriteFiles : Bool { return  gDebugModes  .contains(.dWriteFiles) }
+var           gDebugInfo : Bool { return  gDebugModes  .contains(.dDebugInfo) }
+var           gDebugDraw : Bool { return  gDebugModes  .contains(.dDebugDraw) }
+var             gNewUser : Bool { return  gDebugModes  .contains(.dNewUser) }
 
 func gToggleCoreDataMode(_ mode: ZCoreDataMode) {
 	if  gCoreDataMode.contains(mode) {
