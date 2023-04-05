@@ -788,7 +788,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			// which kinda works, but has a problem
 			// fetches extra ideas, deleted long ago or something ???
 
-			if  needed > 0, databaseID == .mineID,
+			if  needed > 0, maybeDatabaseID == .mineID,
 				let       name = recordName,
 			    let      zones = gCoreDataStack.fetchChildrenOf(name, in: .mineID) {
 				fetchableCount = zones.count
@@ -880,7 +880,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return t.userHasDirectOwnership
 		}
 
-		return !isTrashRoot && !isFavoritesRoot && !isLostAndFoundRoot && (databaseID == .mineID || zoneAuthor == gAuthorID || gHasFullAccess)
+		return !isTrashRoot && !isFavoritesRoot && !isLostAndFoundRoot && (maybeDatabaseID == .mineID || zoneAuthor == gAuthorID || gHasFullAccess)
 	}
 
 	var directAccess: ZoneAccess {
@@ -981,17 +981,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		if  let t = bookmarkTarget {
 			t.rotateWritable()
 		} else if userCanWrite,
-				  databaseID == .everyoneID {
-			let        direct = directAccess
+				  maybeDatabaseID == .everyoneID {
+			let             direct = directAccess
+			if  let           next = nextAccess,
+				direct            != next {
+				directAccess       = next
 
-			if  let      next = nextAccess,
-				direct       != next {
-				directAccess  = next
-
-				if  let identity = gAuthorID,
-					next        != .eInherit,
-					zoneAuthor  != nil {
-					zoneAuthor   = identity
+				if  let identity   = gAuthorID,
+					next          != .eInherit,
+					zoneAuthor    != nil {
+					zoneAuthor     = identity
 				}
 			}
 		}

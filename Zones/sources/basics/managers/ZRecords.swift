@@ -63,6 +63,10 @@ enum ZDatabaseID: String {
 	var identifier:  String { return rawValue.substring(toExclusive: 1) }
 	var index:         Int? { return databaseIndex?.rawValue }
 
+	var shouldFindInCD: Bool {
+		return gIsUsingCoreData && gCDMigrationState.isActive && (!gFiles.isReading(for: self) || gFiles.migratingInto == self)
+	}
+
 	var zRecords: ZRecords? {
 		switch self {
 		case .favoritesID: return gFavorites
@@ -146,16 +150,16 @@ class ZRecords: NSObject {
 
 	func debugZRecords(for debugID: ZDebugID) -> ZRecordsArray? {
 		switch debugID {
-			case .dTraits:     return zRecords(of: kTraitType)
-			case .dZones:      return zRecords(of:  kZoneType)
-			case .dLost:       return lostAndFoundZone?  .all
-			case .dFavorites:  return favoritesZone?     .all
-			case .dDestroy:    return destroyZone?       .all
-			case .dTrash:      return trashZone?         .all
-			case .dProgeny:    return rootZone?          .all
-			case .dValid:      return debugValid
-			case .dTotal:      return debugTotal
-			default:           return nil
+			case .dTraits:    return zRecords(of: kTraitType)
+			case .dZones:     return zRecords(of:  kZoneType)
+			case .dLost:      return lostAndFoundZone?  .all
+			case .dFavorites: return favoritesZone?     .all
+			case .dDestroy:   return destroyZone?       .all
+			case .dTrash:     return trashZone?         .all
+			case .dProgeny:   return rootZone?          .all
+			case .dValid:     return debugValid
+			case .dTotal:     return debugTotal
+			default:          return nil
 		}
 	}
 

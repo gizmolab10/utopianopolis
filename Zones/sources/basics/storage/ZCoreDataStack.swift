@@ -288,7 +288,7 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func find(type: String, recordName: String, in databaseID: ZDatabaseID, onlyOne: Bool = true, trackMissing: Bool = true) -> ZManagedObjectsArray {
-		let           dbid = databaseID == .everyoneID ? databaseID : .mineID
+		let           dbid = databaseID == .everyoneID ? databaseID : .mineID // for favorites use mine
 		if  let     object = fetchedRegistry[dbid]?[recordName], !object.isPublicRootDefault(recordName: recordName, into: dbid) {
 			return [object]
 		}

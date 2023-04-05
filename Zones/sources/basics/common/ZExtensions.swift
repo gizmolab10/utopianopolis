@@ -122,9 +122,10 @@ func ^^(lhs: Bool, rhs: Bool) -> Bool {
 	return lhs != rhs
 }
 
+func noop() {}
+
 extension NSObject {
 
-	func              noop()                 {}
     func       performance(_ iMessage: Any?) { log(iMessage) }
 	func               bam(_ iMessage: Any?) { log("\(kHyphen.repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
 	func printSelf()                         { print(self) }
@@ -455,7 +456,7 @@ extension ZSignalKindArray {
 				result.append("\(kind), ")
 
 				if  kind == .spRelayout {
-					result.noop()
+					noop()
 				}
 			}
 			return result

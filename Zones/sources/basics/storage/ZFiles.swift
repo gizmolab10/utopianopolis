@@ -34,12 +34,13 @@ enum ZInterruptionError : Error {
 
 class ZFiles: NSObject {
 
-	var             isReading = [false, false, false]
-    var  filePaths: [String?] = [nil, nil, nil]
-	lazy var        assetsURL : URL = { return createAssetsDirectory() }()
-	lazy var         filesURL : URL = { return createDataDirectory() }()
-	var               hasMine : Bool  { return fileExistsFor(.mineIndex) }
-	func assetURL(for fileName: String) -> URL { return assetsURL.appendingPathComponent(fileName) }
+	var                   migratingInto  : ZDatabaseID?
+	var                       isReading  = [false, false, false]
+    var  filePaths:           [String?]  = [nil, nil, nil]
+	var                         hasMine  : Bool  { return fileExistsFor(.mineIndex) }
+	lazy var                  assetsURL  : URL = { return createAssetsDirectory() }()
+	lazy var                   filesURL  : URL = { return createDataDirectory() }()
+	func assetURL(for fileName: String) -> URL   { return assetsURL.appendingPathComponent(fileName) }
 	
 	lazy var totalFilesSize : Int = {
 		var result = 0
@@ -151,8 +152,8 @@ class ZFiles: NSObject {
 
 	func writeFile(at path: String, from databaseID: ZDatabaseID?) throws {
 		if  gHasFinishedStartup, // guarantee that file read finishes before this code runs
-			let           databaseID = databaseID,
-			databaseID              != .favoritesID,
+			let     databaseID = databaseID,
+			databaseID        != .favoritesID,
 			let          cloud = gRemoteStorage.zRecords(for: databaseID) {
 			var           dict = ZStorageDictionary ()
 

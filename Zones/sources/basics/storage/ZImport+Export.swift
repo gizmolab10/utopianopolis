@@ -97,7 +97,7 @@ extension ZFiles {
 
 	func importToZone(_ zone: Zone, with flags: ZEventFlags) {
 		if  flags.exactlyAll {
-			gFiles.replaceDatabase(zone.databaseID)
+			replaceDatabase(zone.maybeDatabaseID)
 		} else {
 			let type : ZExportType = flags.hasOption ? .eOutline : flags.exactlySplayed ? .eCSV : .eSeriously
 			
@@ -105,13 +105,17 @@ extension ZFiles {
 		}
 	}
 
-	func replaceDatabase(_ databaseID: ZDatabaseID) {
-		gPresentOpenPanel(type: .eSeriously) { [self] iAny in
-			if  let url = iAny as? URL {
-				try? readFile(from: url.relativePath, into: databaseID) { _ in
-					gFavoritesRoot?.traverseAllProgeny { zone in
-						zone       .mapType = .tFavorite
-						zone.crossLinkMaybe = nil
+	func replaceDatabase(_ databaseID: ZDatabaseID?) {
+		if  let                              id = databaseID {
+			gPresentOpenPanel(type: .eSeriously) { [self] iAny in
+				if  let                     url = iAny as? URL {
+					migratingInto               = id
+					try? readFile(from: url.relativePath, into: id) { [self] _ in
+						migratingInto           = nil
+						gFavoritesRoot?.traverseAllProgeny { zone in
+							zone       .mapType = .tFavorite
+							zone.crossLinkMaybe = nil
+						}
 					}
 				}
 			}

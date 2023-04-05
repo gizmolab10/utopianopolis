@@ -103,7 +103,7 @@ class ZRecord: ZManagedObject {
 	var               unwrappedName : String       { return recordName ?? emptyName }
 	var                  typePrefix : String       { return kEmpty }
 	var                   emptyName : String       { return "currently has no name" } // overwritten by subclasses: Zone and ZTrait
-	var          isInPublicDatabase : Bool         { return databaseID == .everyoneID }
+	var          isInPublicDatabase : Bool         { return maybeDatabaseID == .everyoneID }
 	var                     isAZone : Bool         { return false }
 	var                  isBrandNew : Bool         { return true }
 	var                 isTrashRoot : Bool         { return recordName == kTrashName }
