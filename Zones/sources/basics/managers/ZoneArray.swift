@@ -488,7 +488,7 @@ extension ZoneArray {
 		return grabs
 	}
 
-	func setZoneNameToAll(_ name: String) {
+	func setZoneNameForAll(_ name: String) {
 		for zone in self {
 			zone.zoneName = name
 		}

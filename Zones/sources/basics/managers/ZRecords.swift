@@ -59,7 +59,6 @@ enum ZDatabaseID: String {
 	case       mineID = "mine"
 
 	var isFavoritesDB :   Bool { return self == .favoritesID }
-	var checkCDStore  :   Bool { return gIsUsingCoreData && gCDMigrationState.isActive && !gFiles.isReading(for: self) }
 	var hasStore      :   Bool { return gCoreDataStack.hasStore(for: self) }
 	var identifier    : String { return rawValue.substring(toExclusive: 1) }
 	var index         :   Int? { return databaseIndex?.rawValue }

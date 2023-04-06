@@ -252,7 +252,8 @@ class ZFiles: NSObject {
 								}
 							default:
 								if  subDict != nil, !databaseID.isDeleted(dict: subDict!) {
-									let    zone = Zone.uniqueZone(from: subDict!, in: databaseID, checkCDStore: key == .favorites)
+									let check: types = [.favorites, .bookmarks, .destroy, .trash, .lost] // these zones may already be in the CD store
+									let         zone = Zone.uniqueZone(from: subDict!, in: databaseID, checkCDStore: check.contains(key))
 
 									zone.updateRecordName(for: key)
 									zRecords.registerZRecord(zone)

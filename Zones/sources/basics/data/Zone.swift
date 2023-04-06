@@ -3615,12 +3615,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	static func uniqueZone(from dict: ZStorageDictionary, in  databaseID: ZDatabaseID, checkCDStore: Bool = false) -> Zone {
 		let check = checkCDStore || dict[.link] != nil          // assume all bookmarks may already be in CD store (this has a negligible performance impact)
-
-		if !check,
-			let name = dict[.name] {
-			print("\(name)")
-		}
-
 		let  zone = uniqueZone(recordName: dict.recordName, in: databaseID, checkCDStore: check)
 
 		zone.temporarilyIgnoreNeeds {
@@ -3632,6 +3626,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return zone
+	}
+
+	func updateZoneNamesForBookmkarksTargetingSelf() {
+		if  let name = zoneName {
+			bookmarksTargetingSelf.setZoneNameForAll(name)
+		}
 	}
 
 	func updateRecordName(for type: ZStorageType) {

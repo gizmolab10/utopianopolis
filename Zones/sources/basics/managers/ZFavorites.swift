@@ -356,7 +356,7 @@ class ZFavorites: ZRecords {
 			for databaseID in kAllDatabaseIDs {
 				if !hasDatabaseIDs.contains(databaseID) {
 					let        dbName = databaseID.rawValue
-					let      bookmark = Zone.uniqueZone(recordName: dbName + kFavoritesSuffix, in: .mineID)
+					let      bookmark = Zone.uniqueZone(recordName: dbName + kFavoritesSuffix, in: .mineID, checkCDStore: true)
 					bookmark.zoneLink = dbName + kDoubleColonSeparator
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? dbName
 

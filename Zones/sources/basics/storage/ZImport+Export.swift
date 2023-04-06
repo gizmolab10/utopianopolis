@@ -97,35 +97,42 @@ extension ZFiles {
 
 	func importToZone(_ zone: Zone, with flags: ZEventFlags) {
 		if  flags.exactlyAll {
-			replaceDatabase(zone.maybeDatabaseID)
+			replaceDatabase(zone.maybeDatabaseID) { gRelayoutMaps() }
 		} else {
 			let type : ZExportType = flags.hasOption ? .eOutline : flags.exactlySplayed ? .eCSV : .eSeriously
 			
-			zone.importFromFile(type) { gRelayoutMaps() }
+			zone.importFromFile(type)             { gRelayoutMaps() }
 		}
 	}
 
-	func replaceDatabase(_ databaseID: ZDatabaseID?) {
+	func replaceDatabase(_ databaseID: ZDatabaseID?, onCompletion: Closure?) {
 		if  let            id = databaseID {
 			gPresentOpenPanel(type: .eSeriously) { [self] iAny in
-				if  let   url = iAny as? URL {
-					let cloud = gRemoteStorage.cloud(for: id)
-					cloud?.rootZone?.deleteSelf(permanently: true, force: true) { [self] flag in
-						try? readFile(from: url.relativePath, into: id) { _ in
-							if  let                root = gFavoritesRoot {
-								root.traverseAllProgeny { zone in
-									zone       .mapType = .tFavorite
-									zone.crossLinkMaybe = nil
-								}
-								if  let       cloudRoot = cloud?.rootZone {
-									gHere               = cloudRoot
-									if  let        name = cloudRoot.zoneName {
-										cloudRoot.bookmarksTargetingSelf.setZoneNameToAll(name)
+				if  let   url = iAny as? URL,
+					let cloud = gRemoteStorage.cloud(for: id) {
+
+					// first delete potentially duplicated zones (root and children of recents)
+
+					cloud.rootZone?.deleteSelf(permanently: true, force: true) { [self] _ in
+						gFavorites.recentsMaybe?.children.deleteZones(permanently: true) { [self] in
+							try? readFile(from: url.relativePath, into: id) { _ in
+
+								// minor corrections needed for favorites font size and updating bookmark names
+
+								if  let                root = gFavoritesRoot {
+									root.traverseAllProgeny { zone in
+										zone       .mapType = .tFavorite
+										zone.crossLinkMaybe = nil
 									}
 								}
-
-
-								gRelayoutMaps()
+								
+								if  let           cloudRoot = cloud.rootZone {
+									gHere                   = cloudRoot
+									
+									cloudRoot.updateZoneNamesForBookmkarksTargetingSelf()
+								}
+								
+								onCompletion?()
 							}
 						}
 					}
