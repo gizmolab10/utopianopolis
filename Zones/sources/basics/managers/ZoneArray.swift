@@ -488,6 +488,12 @@ extension ZoneArray {
 		return grabs
 	}
 
+	func setZoneNameToAll(_ name: String) {
+		for zone in self {
+			zone.zoneName = name
+		}
+	}
+
 	func grabDuplicates() -> Bool {
 		var originals = StringsArray()
 		var found = false

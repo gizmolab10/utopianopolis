@@ -1125,8 +1125,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func deleteSelf(permanently: Bool = false, onCompletion: BooleanClosure?) {
-		if  isARoot {
+	func deleteSelf(permanently: Bool = false, force: Bool = false, onCompletion: BooleanClosure?) {
+		if  isARoot, !force {
 			onCompletion?(false) // deleting root would be a disaster
 		} else {
 			maybeRestoreParent()
@@ -1139,7 +1139,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// RECURSE //
 					// //////////
 
-					deleteSelf(permanently: permanently, onCompletion: onCompletion)
+					deleteSelf(permanently: permanently, force: force, onCompletion: onCompletion)
 				}
 
 				if  let p = parent, p != self {
@@ -1153,9 +1153,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
 					// ////////////////////////////////////////////////////////////////////////////////////////////
 
-					gFavorites.refocus {                 // travel through current favorite, then ...
+					gFavorites.refocus { [self] in               // travel through current favorite, then ...
 						if  gHere != self {
 							recurse()
+						} else {
+							bookmarksTargetingSelf.deleteZones(permanently: permanently) {
+								onCompletion?(true)
+							}
 						}
 					}
 				}
@@ -2823,7 +2827,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let        c = child
 				child        = child.deepCopy(into: databaseID)
 
-				c.deleteSelf(onCompletion: nil)
+				c.deleteSelf(permanently: true, force: true, onCompletion: nil)
 			}
 
 			child.parentZone = self
@@ -3612,7 +3616,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	static func uniqueZone(from dict: ZStorageDictionary, in  databaseID: ZDatabaseID, checkCDStore: Bool = false) -> Zone {
 		let check = checkCDStore || dict[.link] != nil          // assume all bookmarks may already be in CD store (this has a negligible performance impact)
 
-		if  check,
+		if !check,
 			let name = dict[.name] {
 			print("\(name)")
 		}

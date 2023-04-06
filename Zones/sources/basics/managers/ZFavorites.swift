@@ -208,9 +208,11 @@ class ZFavorites: ZRecords {
 	}
 
 	@discardableResult func refocus(_ atArrival: @escaping Closure) -> Bool {
-		if  let    current = otherCurrent {
+		if  let    current = otherCurrent ?? recentCurrent {
 			return current.focusThrough(atArrival)
 		}
+
+		atArrival()
 
 		return false
 	}

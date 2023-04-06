@@ -106,18 +106,27 @@ extension ZFiles {
 	}
 
 	func replaceDatabase(_ databaseID: ZDatabaseID?) {
-		if  let                                  id = databaseID {
+		if  let            id = databaseID {
 			gPresentOpenPanel(type: .eSeriously) { [self] iAny in
-				if  let                         url = iAny as? URL {
-					try? readFile(from: url.relativePath, into: id) { _ in
-						if  let                root = gFavoritesRoot {
-							gHere                   = root
-							root.traverseAllProgeny { zone in
-								zone       .mapType = .tFavorite
-								zone.crossLinkMaybe = nil
-							}
+				if  let   url = iAny as? URL {
+					let cloud = gRemoteStorage.cloud(for: id)
+					cloud?.rootZone?.deleteSelf(permanently: true, force: true) { [self] flag in
+						try? readFile(from: url.relativePath, into: id) { _ in
+							if  let                root = gFavoritesRoot {
+								root.traverseAllProgeny { zone in
+									zone       .mapType = .tFavorite
+									zone.crossLinkMaybe = nil
+								}
+								if  let       cloudRoot = cloud?.rootZone {
+									gHere               = cloudRoot
+									if  let        name = cloudRoot.zoneName {
+										cloudRoot.bookmarksTargetingSelf.setZoneNameToAll(name)
+									}
+								}
 
-							gRelayoutMaps()
+
+								gRelayoutMaps()
+							}
 						}
 					}
 				}
