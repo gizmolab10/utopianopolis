@@ -3582,13 +3582,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	// never use closure
 	static func create(within rootName: String, for index: Int = 0, databaseID: ZDatabaseID) -> Zone {
-		let               name = recordNameFor(rootName, at: index)
-		var            created : Zone
-		if  let          cloud = gRemoteStorage.cloud(for: .everyoneID),
-			let          found = cloud.maybeZoneForRecordName(name) {
-			created            = found
+		let      name = recordNameFor(rootName, at: index)
+		var   created : Zone
+		if  let cloud = gRemoteStorage.cloud(for: .everyoneID),
+			let found = cloud.maybeZoneForRecordName(name) {
+			created   = found
 		} else {
-			created            = Zone.uniqueZone(recordName: name, in: databaseID)
+			created   = Zone.uniqueZone(recordName: name, in: databaseID)
 		}
 
 		created.parentLink = kNullLink
@@ -3596,8 +3596,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
-	static func uniqueZoneNamed(_ named: String?, recordName: String? = nil, databaseID: ZDatabaseID) -> Zone {
-		let created           = uniqueZone(recordName: recordName, in: databaseID)
+	static func uniqueZoneNamed(_ named: String?, recordName: String? = nil,  databaseID: ZDatabaseID, checkCDStore: Bool = false) -> Zone {
+		let created           = uniqueZone(       recordName: recordName, in: databaseID,              checkCDStore: checkCDStore)
 		if  created.zoneName == nil || created.zoneName!.isEmpty {
 			created.zoneName  = named
 		}
@@ -3605,22 +3605,29 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return created
 	}
 
-	static func uniqueZone(recordName: String?, in databaseID: ZDatabaseID) -> Zone {
-		return uniqueZRecord(entityName: kZoneType, recordName: recordName, in: databaseID) as! Zone
+	static func uniqueZone(                         recordName: String?,    in  databaseID: ZDatabaseID, checkCDStore: Bool = false) ->  Zone {
+		return uniqueZRecord(entityName: kZoneType, recordName: recordName, in: databaseID,              checkCDStore: checkCDStore) as! Zone
 	}
 
-	static func uniqueZone(from dict: ZStorageDictionary, in databaseID: ZDatabaseID) -> Zone {
-		let result = uniqueZone(recordName: dict.recordName, in: databaseID)
+	static func uniqueZone(from dict: ZStorageDictionary, in  databaseID: ZDatabaseID, checkCDStore: Bool = false) -> Zone {
+		let check = checkCDStore || dict[.link] != nil          // assume all bookmarks may already be in CD store (this has a negligible performance impact)
 
-		result.temporarilyIgnoreNeeds {
+		if  check,
+			let name = dict[.name] {
+			print("\(name)")
+		}
+
+		let  zone = uniqueZone(recordName: dict.recordName, in: databaseID, checkCDStore: check)
+
+		zone.temporarilyIgnoreNeeds {
 			do {
-				try result.extractFromStorageDictionary(dict, of: kZoneType, into: databaseID)
+				try zone.extractFromStorageDictionary(dict, of: kZoneType, into: databaseID, checkCDStore: check)
 			} catch {
 				printDebug(.dError, "\(error)")    // de-serialization
 			}
 		}
 
-		return result
+		return zone
 	}
 
 	func updateRecordName(for type: ZStorageType) {
@@ -3633,17 +3640,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
+	override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID, checkCDStore: Bool = false) throws {
 		if  let name = dict[.name] as? String,
 			responds(to: #selector(setter: zoneName)) {
 			zoneName = name
 		}
 
-		try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID) // do this step last so the assignment above is NOT pushed to cloud
+		try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID, checkCDStore: checkCDStore) // do this step last so the assignment above is NOT pushed to cloud
 
 		if  let childrenDicts: [ZStorageDictionary] = dict[.children] as! [ZStorageDictionary]? {
 			for childDict: ZStorageDictionary in childrenDicts {
-				let child = Zone.uniqueZone(from: childDict, in: iDatabaseID)
+				let child = Zone.uniqueZone(from: childDict, in: iDatabaseID, checkCDStore: checkCDStore)
 				zRecords?.temporarilyIgnoreAllNeeds() {        // prevent needsSave caused by child's parent intentionally not being in childDict
 					addChildNoDuplicate(child, at: nil)
 				}

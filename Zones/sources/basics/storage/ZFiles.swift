@@ -34,7 +34,6 @@ enum ZInterruptionError : Error {
 
 class ZFiles: NSObject {
 
-	var                   migratingInto  : ZDatabaseID?
 	var                       isReading  = [false, false, false]
     var  filePaths:           [String?]  = [nil, nil, nil]
 	var                         hasMine  : Bool  { return fileExistsFor(.mineIndex) }
@@ -227,7 +226,8 @@ class ZFiles: NSObject {
 				let     dict = dictFromJSON(json)
 
 				for key in keys {
-					if  let value = dict[key] {
+					if  let   value = dict[key] {
+						let subDict = value as? ZStorageDictionary
 
 						switch key {
 							case .date:
@@ -235,16 +235,15 @@ class ZFiles: NSObject {
 									zRecords.lastSyncDate = date
 								}
 							case .manifest:
-								if  zRecords.manifest == nil,
-									let    subDict  = value as? ZStorageDictionary {
-									let   manifest  = ZManifest.uniqueManifest(from: subDict, in: databaseID)
+								if  zRecords.manifest == nil, subDict != nil {
+									let   manifest  = ZManifest.uniqueManifest(from: subDict!, in: databaseID)
 									zRecords.manifest  = manifest
 								}
 							case .bookmarks:
-								if let array = value as? [ZStorageDictionary] {
-									for subDict in array {
-										if  !databaseID.isDeleted(dict: subDict) {
-											let bookmark = Zone.uniqueZone(from: subDict, in: databaseID)
+								if  let array = value as? [ZStorageDictionary] {
+									for item in array {
+										if  !databaseID.isDeleted(dict: item) {
+											let bookmark = Zone.uniqueZone(from: item, in: databaseID)
 											if  gBookmarks.addToReverseLookup(bookmark) {
 												gRelationships.addBookmarkRelationship(bookmark, target: bookmark.zoneLink?.maybeZone, in: databaseID)
 											}
@@ -252,8 +251,8 @@ class ZFiles: NSObject {
 									}
 								}
 							default:
-								if  let subDict = value as? ZStorageDictionary, !databaseID.isDeleted(dict: subDict) {
-									let    zone = Zone.uniqueZone(from: subDict, in: databaseID)
+								if  subDict != nil, !databaseID.isDeleted(dict: subDict!) {
+									let    zone = Zone.uniqueZone(from: subDict!, in: databaseID, checkCDStore: key == .favorites)
 
 									zone.updateRecordName(for: key)
 									zRecords.registerZRecord(zone)

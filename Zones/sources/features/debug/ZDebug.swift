@@ -22,10 +22,10 @@ func gSetupDebugFeatures() {
 
 	gCoreDataMode       = []
 	gToggleCoreDataMode (.dNoCloudKit)          // don't store data in cloud (public not yet working)
-//	gToggleCoreDataMode (.dEraseStores)         // discard CD stores and start from stratch
+	gToggleCoreDataMode (.dEraseStores)         // discard CD stores and start from stratch
 	gToggleCoreDataMode (.dCKUseSubmitted)      // use app store's id (test2)
 	gToggleCoreDataMode (.dNoRelationships)     // don't use the relationships table yet
-//	gToggleCoreDataMode (.dTestingMigration)    // don't use the relationships table yet
+	gToggleCoreDataMode (.dTestingMigration)    // don't use the relationships table yet
 
 	gPrintModes         = []
 //	gTogglePrintMode    (.dEdit)

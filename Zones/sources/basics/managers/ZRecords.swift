@@ -54,18 +54,15 @@ extension String {
 let kAllDatabaseIDs: ZDatabaseIDArray = [.mineID, .everyoneID]
 
 enum ZDatabaseID: String {
-	case favoritesID = "favorites"
-	case  everyoneID = "everyone"
-	case      mineID = "mine"
+	case  favoritesID = "favorites"
+	case   everyoneID = "everyone"
+	case       mineID = "mine"
 
-	var isFavoritesDB: Bool { return self == .favoritesID }
-	var hasStore:      Bool { return gCoreDataStack.hasStore(for: self) }
-	var identifier:  String { return rawValue.substring(toExclusive: 1) }
-	var index:         Int? { return databaseIndex?.rawValue }
-
-	var shouldFindInCD: Bool {
-		return gIsUsingCoreData && gCDMigrationState.isActive && (!gFiles.isReading(for: self) || gFiles.migratingInto == self)
-	}
+	var isFavoritesDB :   Bool { return self == .favoritesID }
+	var checkCDStore  :   Bool { return gIsUsingCoreData && gCDMigrationState.isActive && !gFiles.isReading(for: self) }
+	var hasStore      :   Bool { return gCoreDataStack.hasStore(for: self) }
+	var identifier    : String { return rawValue.substring(toExclusive: 1) }
+	var index         :   Int? { return databaseIndex?.rawValue }
 
 	var zRecords: ZRecords? {
 		switch self {

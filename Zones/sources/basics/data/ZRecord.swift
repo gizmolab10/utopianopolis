@@ -197,8 +197,8 @@ class ZRecord: ZManagedObject {
 		}
 	}
 
-	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZRecord {
-		let        zRecord = uniqueManagedObject(entityName: entityName, recordName: recordName, in: databaseID) as! ZRecord
+	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in databaseID: ZDatabaseID, checkCDStore: Bool = false) -> ZRecord {
+		let        zRecord = uniqueManagedObject(entityName: entityName, recordName: recordName, in: databaseID, checkCDStore: checkCDStore) as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 		zRecord      .dbid = databaseID.identifier
 		
@@ -407,7 +407,7 @@ class ZRecord: ZManagedObject {
 		return [:]
 	}
 
-	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID) throws {
+	func extractFromStorageDictionary(_ dict: ZStorageDictionary, of entityName: String, into iDatabaseID: ZDatabaseID, checkCDStore: Bool = false) throws {
 
 		gStartupController?.pingRunloop()
 

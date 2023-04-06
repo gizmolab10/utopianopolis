@@ -1516,28 +1516,6 @@ extension Array {
 
 }
 
-extension CKReferencesArray {
-
-	func containsReference(_ reference: CKReference) -> Bool {
-		return containsCompare(with: reference) { (item, another) in
-			return item.recordID.recordName == another.recordID.recordName
-		}
-	}
-
-	func asZones(in databaseID: ZDatabaseID) -> ZoneArray {
-		return map { ckReference -> Zone in
-			return Zone.uniqueZone(recordName: ckReference.recordID.recordName, in: databaseID)
-		}
-	}
-
-	var asRecordNames: StringsArray {
-		return map { ckReference -> String in
-			return ckReference.recordID.recordName
-		}
-	}
-
-}
-
 extension ZRecordsArray {
 
 	static func createFromObjectIDs(_ ids: ZObjectIDsArray, in context: NSManagedObjectContext) -> ZRecordsArray {

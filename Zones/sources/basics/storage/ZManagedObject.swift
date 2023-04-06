@@ -39,8 +39,8 @@ extension ZManagedObject {
 		}
 	}
 
-	static func uniqueManagedObject(entityName: String, recordName: String?, in databaseID: ZDatabaseID) -> ZManagedObject {
-		if  let    name = recordName, databaseID.shouldFindInCD {
+	static func uniqueManagedObject(entityName: String, recordName: String?, in databaseID: ZDatabaseID, checkCDStore: Bool = false) -> ZManagedObject {
+		if  let    name = recordName, (checkCDStore || databaseID.checkCDStore) {
 			let objects = gCoreDataStack.find(type: entityName, recordName: name, in: databaseID, onlyOne: true, trackMissing: false)
 
 			if  objects.count > 0 {

@@ -107,7 +107,7 @@ class ZFavorites: ZRecords {
 
 	func setup(_ onCompletion: IntClosure?) {
 		FOREGROUND { [self] in               // avoid error? mutating core data while enumerating
-			rootZone = rootZone ?? Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID)
+			rootZone = rootZone ?? Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID, checkCDStore: true)
 
 			updateAllFavorites() // setup roots group
 
@@ -364,7 +364,7 @@ class ZFavorites: ZRecords {
 			}
 
 			func createRootsBookmark(named: String) {
-				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID)
+				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID, checkCDStore: true)
 				bookmark.zoneLink = kDoubleColonSeparator + named                           // convert into a bookmark
 				bookmark.zoneName = named
 

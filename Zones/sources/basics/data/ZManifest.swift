@@ -125,7 +125,7 @@ class ZManifest : ZRecord {
 		return result
 	}
 
-    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID) throws {
+    override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID, checkCDStore: Bool = false) throws {
         try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID)
         
         if  let deletedsArray = dict[.deleted] as? [ZStorageDictionary] {

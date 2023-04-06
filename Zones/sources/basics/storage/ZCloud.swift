@@ -199,7 +199,7 @@ class ZCloud: ZRecords {
 					// root has not been assigned to its internal variable (setRoot below will do this)
 					// so try to find it in the freshly loaded ideas
 
-					let root              = lookupRoot(for: rootID) ?? Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: databaseID)
+					let root              = lookupRoot(for: rootID) ?? Zone.uniqueZoneNamed(name, recordName: recordName, databaseID: databaseID, checkCDStore: true)
 					if  rootID           != .rootID {
 						root.directAccess = .eProgenyWritable
 					}
