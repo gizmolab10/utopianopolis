@@ -31,7 +31,7 @@ class ZMobileAppDelegate: UIResponder, ZApplicationDelegate {
 			gAppDelegate                               = self
 			application.applicationSupportsShakeToEdit = true
 
-			gStartup.startupCloudAndUI()
+			gStartup.grandStartup()
 		}
 
         return true

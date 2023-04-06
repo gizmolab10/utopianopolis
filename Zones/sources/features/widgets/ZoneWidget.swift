@@ -15,19 +15,15 @@ import SnapKit
     import UIKit
 #endif
 
-struct ZMapType: OptionSet, CustomStringConvertible {
-	let rawValue : Int
+enum ZMapType: Int {
 
-	init(rawValue: Int) { self.rawValue = rawValue }
+	case tExemplar
+	case tFavorite
+	case tMainMap
 
-	static let tExemplar = ZMapType(rawValue: 1 << 0)
-	static let tFavorite = ZMapType(rawValue: 1 << 1)
-	static let  tMainMap = ZMapType(rawValue: 1 << 2)
-	static let     tIdea = ZMapType(rawValue: 1 << 3)
-
-	var isMainMap:  Bool { return contains(.tMainMap) }
-	var isFavorite: Bool { return contains(.tFavorite) }
-	var isExemplar: Bool { return contains(.tExemplar) }
+	var isMainMap:  Bool { return self == .tMainMap  }
+	var isFavorite: Bool { return self == .tFavorite }
+	var isExemplar: Bool { return self == .tExemplar }
 
 	var root: Zone? {
 		switch self {
@@ -37,34 +33,6 @@ struct ZMapType: OptionSet, CustomStringConvertible {
 		}
 	}
 
-	var description: String {
-		return [(.tIdea,        "     idea"),
-				(.tMainMap,     " main map"),
-				(.tFavorite,    " favorite"),
-				(.tExemplar,    " exemplar")]
-			.compactMap { (option, name) in contains(option) ? name : nil }
-			.joined(separator:  ", ")
-	}
-
-	var identifier: String {
-		let parts = description.components(separatedBy: ", ")
-		var result = kEmpty
-
-		for part in parts {
-			let strip = part.spacesStripped
-			var short = strip[0]
-
-			switch strip {
-				case "none":     short = kQuestion
-				case "exemplar": short = "x"
-				default:         break
-			}
-
-			result.append(short)
-		}
-
-		return result
-	}
 }
 
 @objc (ZoneWidget)
@@ -147,11 +115,6 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		removeChildrenPseudoViews()
 		addChildrenWidgets()
 		addLines()
-
-		if  controller == gFavoritesMapController,
-			let z = widgetZone, !z.hasVisibleChildren, z.level == 1 { // fails because z has no children because it is fake
-			noop()
-		}
 
 		if  let  zone = widgetZone, !visited.contains(zone), zone.isShowing, zone.hasVisibleChildren {
 			var index = childrenWidgets.count

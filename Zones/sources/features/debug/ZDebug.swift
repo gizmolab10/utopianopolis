@@ -17,19 +17,19 @@ import UIKit
 func gSetupDebugFeatures() {
 
 	gDebugModes         = []
-	gToggleDebugMode    (.dNoSubscriptions)
-	gToggleDebugMode    (.dHideNoteVisibility)
+	gDebugModes  .insert(.dNoSubscriptions)
+	gDebugModes  .insert(.dHideNoteVisibility)
 
 	gCoreDataMode       = []
-	gToggleCoreDataMode (.dNoCloudKit)          // don't store data in cloud (public not yet working)
-//	gToggleCoreDataMode (.dEraseStores)         // discard CD stores and start from stratch
-	gToggleCoreDataMode (.dCKUseSubmitted)      // use app store's id (test2)
-	gToggleCoreDataMode (.dNoRelationships)     // don't use the relationships table yet
-//	gToggleCoreDataMode (.dTestingMigration)    // don't use the relationships table yet
+	gCoreDataMode.insert(.dNoCloudKit)          // don't store data in cloud (public not yet working)
+//	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
+	gCoreDataMode.insert(.dCKUseSubmitted)      // use app store's id (test2)
+	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
+//	gCoreDataMode.insert(.dTestingMigration)    // don't use the relationships table yet
 
 	gPrintModes         = []
-//	gTogglePrintMode    (.dEdit)
-//	gTogglePrintMode    (.dTime)
+//	gPrintModes  .insert(.dEdit)
+//	gPrintModes  .insert(.dTime)
 
 }
 
@@ -55,14 +55,6 @@ var           gDebugInfo : Bool { return  gDebugModes  .contains(.dDebugInfo) }
 var           gDebugDraw : Bool { return  gDebugModes  .contains(.dDebugDraw) }
 var             gNewUser : Bool { return  gDebugModes  .contains(.dNewUser) }
 
-func gToggleCoreDataMode(_ mode: ZCoreDataMode) {
-	if  gCoreDataMode.contains(mode) {
-		gCoreDataMode  .remove(mode)
-	} else {
-		gCoreDataMode  .insert(mode)
-	}
-}
-
 struct ZCoreDataMode: OptionSet {
 	let rawValue : Int
 
@@ -76,7 +68,6 @@ struct ZCoreDataMode: OptionSet {
 	static let dCKUseSubmitted   = ZCoreDataMode(rawValue: 1 << 5) // use app store's id (test2)
 	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 6) // not use ZRelationship
 	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 7) // use migration.testing (not data)
-
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {
@@ -123,14 +114,6 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 			.compactMap { (option, name) in contains(option) ? name : nil }
 	}
 
-}
-
-func gTogglePrintMode(_ mode: ZPrintMode) {
-	if  gPrintModes.contains(mode) {
-		gPrintModes  .remove(mode)
-	} else {
-		gPrintModes  .insert(mode)
-	}
 }
 
 struct ZPrintMode: OptionSet, CustomStringConvertible {
@@ -196,14 +179,6 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dTimers, " timers"),
 				(.dLevels, " levels")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
-	}
-
-	static func toggle(_ mode: ZPrintMode) {
-		if  gPrintModes.contains(mode) {
-			gPrintModes  .remove(mode)
-		} else {
-			gPrintModes  .insert(mode)
-		}
 	}
 
 }

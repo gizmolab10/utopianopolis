@@ -19,7 +19,7 @@ let gStartup = ZStartup()
 
 class ZStartup: NSObject {
 
-	func startupCloudAndUI() {
+	func grandStartup() {
 		gSetupDebugFeatures()
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
@@ -57,6 +57,7 @@ class ZStartup: NSObject {
 
 				gRemoteStorage.setupRootsLevelsAndCounts()
 				gRefreshPersistentWorkMode()
+				gFavoritesHere?.expand()
 				gRefreshCurrentEssay()
 				gHereMaybe?.grab()
 

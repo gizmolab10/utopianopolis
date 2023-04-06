@@ -35,7 +35,7 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 //			UserDefaults.standard.synchronize()
 			gApplication?.registerUserInterfaceItemSearchHandler(gHelpSearchDelegate) // so help search box functions as expected
 			gMainWindow?.acceptsMouseMovedEvents = true                               // so hover detection functions as expected
-            gStartup.startupCloudAndUI()
+            gStartup.grandStartup()
         }
     }
 

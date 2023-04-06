@@ -166,7 +166,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		// ////////////////// //
 
 		if  let total = hereWidget?.createPseudoViews(for: mapPseudoView, for: mapType, atIndex: nil, kind, visited: []) {
-			printDebug(.dWidget, "layout \(mapType.description): \(total)")
+			printDebug(.dWidget, "layout \(mapType): \(total)")
 		}
 
 		if  let    w = hereWidget, (!isMainMap || gMapLayoutMode == .linearMode) {    // create drag dot for here

@@ -112,8 +112,8 @@ class ZTextPack: NSObject {
 			let threshold = isLinear ? 18 : 20
 			let      type = w.mapType
 			if  threshold < text.length,
-				!type.contains(.tExemplar),
-				!type.contains(.tMainMap) || !isLinear {                       // is in favorites or is circular
+				!type.isExemplar,
+				!type.isMainMap || !isLinear {                       // is in favorites or is circular
 				let  isLine = text[0] == kHyphen
 				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 10) // shorten to fit (in favorites map area or in circles)
 

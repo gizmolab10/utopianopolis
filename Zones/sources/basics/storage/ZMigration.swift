@@ -206,7 +206,8 @@ extension ZRemoteStorage {
 
 	var totalLoadableRecordsCount: Int {
 		switch gCDMigrationState {
-			case .inFiles: return gFiles.migrationFilesSize() / kFileRecordSize
+			case .firstTime,
+				 .inFiles: return gFiles.migrationFilesSize() / kFileRecordSize
 			default:       return totalManifestCount
 		}
 	}

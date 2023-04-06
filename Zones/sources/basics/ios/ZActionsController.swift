@@ -158,7 +158,7 @@ class ZActionsController : ZGenericController {
 	func refetch(for iAll: Bool) {
 		gBatches.unHang()
 		gWidgets.clearAll()
-		gStartup.startupCloudAndUI()
+		gStartup.grandStartup()
 	}
 	
 }

@@ -15,7 +15,7 @@ import SnapKit
     import UIKit
 #endif
 
-var gHelpWindowController : NSWindowController?         // instantiated once, in startupCloudAndUI
+var gHelpWindowController : NSWindowController?         // instantiated once, in grandStartup
 var gHelpController       : ZHelpController? { return gHelpWindowController?.contentViewController as? ZHelpController }
 var gHelpWindow           : ZWindow?         { return gHelpWindowController?.window }
 
