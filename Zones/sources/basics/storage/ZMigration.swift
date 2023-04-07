@@ -8,11 +8,12 @@
 
 import Foundation
 
-var  gCDMigrationState  =                  ZCDMigrationState.firstTime
-var  gCDMigrationIsDone :   Bool { return  gCDMigrationState.isCompleted }
-var  gCDBaseDataURL     :    URL { return  gFilesURL.appendingPathComponent(gDataDirectoryName) }
-var  gDataDirectoryName : String { return (gNormalDataLocation ? kDataDirectoryName : "migration.testing") }
-func gUpdateCDMigrationState()   {         gCDMigrationState = ZCDMigrationState.currentState }
+var  gCDMigrationState    =                  ZCDMigrationState.firstTime
+var  gCDMigrationIsDone   :   Bool { return  gCDMigrationState.isCompleted }
+var  gCDBaseDataURL       :    URL { return  gFilesURL.appendingPathComponent(gDataDirectoryName) }
+var  gDataDirectoryName   : String { return (gNormalDataLocation ? gNormalDirectoryName : "migration.testing") }
+var  gNormalDirectoryName : String { return  kDataDirectoryName } // gUserRecordName ?? 
+func gUpdateCDMigrationState()     {         gCDMigrationState = ZCDMigrationState.currentState }
 
 enum ZCDMigrationState: Int {
 
@@ -26,6 +27,7 @@ enum ZCDMigrationState: Int {
 	case firstTime = 0
 	case inFiles
 	case inCDOriginal    // where currently submitted app stores it
+	case inUserStore     // moved from data to user's record id
 	case inCDCloudKit    // where app currently stores it (eg data/test2/public)
 	case inCloud
 
@@ -133,7 +135,7 @@ extension ZCoreDataStack {
 			do {
 				try persistentContainer?.initializeCloudKitSchema()
 			} catch {
-				print(error)
+				printDebug(.dError, "\(error)")
 			}
 		}
 	}
@@ -167,7 +169,7 @@ extension ZCoreDataStack {
 			try m.createDirectory(atPath: urlTo, withIntermediateDirectories: true)
 			try m.moveSubpath(from: moveTemporary, to: moveTo,        relativeTo: path)
 		} catch {
-			print("\(error)")
+			printDebug(.dError, "\(error)")
 		}
 	}
 
@@ -177,7 +179,7 @@ extension ZFiles {
 
 	func migrate(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		if  !hasMine, databaseID == .mineID {
-			onCompletion?(0)                   // mine file does not exist, do nothing
+			onCompletion?(0)                   // mine file does not exist, do nothing (everyone file always exists)
 		} else {
 			try readFile(into: databaseID) { result in
 				gColorfulMode = true

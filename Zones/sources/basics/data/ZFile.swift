@@ -69,7 +69,7 @@ class ZFile : ZRecord {
 
 			return file!
 		} catch {
-			print(error)
+			printDebug(.dError, "\(error)")
 		}
 
 		return nil

@@ -13,8 +13,6 @@ enum ZOperationID: Int, CaseIterable {
 
 	case oNone               // default operation : does nothing
 
-
-	
     // start up / onboard --> order of operations
 
     case oStartingUp

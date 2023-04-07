@@ -49,7 +49,7 @@ class ZUser : ZRecord {
 	}
 
 	static func uniqueUser(recordName: String?, in databaseID: ZDatabaseID) -> ZUser {
-		return uniqueZRecord(entityName: kUserType, recordName: recordName, in: databaseID) as! ZUser
+		return uniqueZRecord(entityName: kUserType, recordName: recordName, in: databaseID, checkCDStore: true) as! ZUser
 	}
 
     override class var cloudProperties: StringsArray {

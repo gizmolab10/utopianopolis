@@ -31,52 +31,41 @@ extension ZFiles {
 		let     suffix = type.rawValue
 		let       name = zone.zoneName ?? "no name"
 
-		gPresentSavePanel(name: name, suffix: suffix) { fileURL in
-			if  let url = fileURL as? URL {
+		gPresentSavePanel(name: name, suffix: suffix) { url in
+			do {
 				switch type {
 					case .eOutline:
 						let string = zone.outlineString()
-						do {
-							try string.write(to: url, atomically: true, encoding: .utf8)
-						} catch {
-							printDebug(.dError, "\(error)")
-						}
 
+						try string.write(to: url, atomically: true, encoding: .utf8)
 					case .eSeriously:
-						do {
-							let     dict = try zone.storageDictionary()
-							let jsonDict = dict.jsonDict
-							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+						let     dict = try zone.storageDictionary()
+						let jsonDict = dict.jsonDict
+						let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
 
-							try data.write(to: url)
-						} catch {
-							printDebug(.dError, "\(error)")
-						}
+						try data.write(to: url)
 					case .eEssay:
-						if  let text = zone.note?.essayText {
-							do {
-								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
-								let  wrapper = FileWrapper(regularFileWithContents: fileData)
+						if  let     text = zone.note?.essayText {
+							let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
+							let  wrapper = FileWrapper(regularFileWithContents: fileData)
 
-								try  wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
-
-							} catch {
-								printDebug(.dError, "\(error)")
-							}
+							try  wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
 						}
 					default: break
 				}
+			} catch {
+				printDebug(.dError, "\(error)")
 			}
 		}
 	}
 
 	func exportDatabase(_ databaseID: ZDatabaseID) {
+
 //		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
-		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iAny in
-			if  let url = iAny as? URL {
-				gMainWindow?.performInBackgroundWhileShowingAppIsBusy {
-					try? self.writeFile(at: url.relativePath, from: databaseID)
-				}
+
+		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] url in
+			gMainWindow?.performInBackgroundWhileShowingAppIsBusy {
+				try? self.writeFile(at: url.relativePath, from: databaseID)
 			}
 		}
 	}
@@ -109,31 +98,38 @@ extension ZFiles {
 		if  let            id = databaseID {
 			gPresentOpenPanel(type: .eSeriously) { [self] iAny in
 				if  let   url = iAny as? URL,
-					let cloud = gRemoteStorage.cloud(for: id) {
+					let cloud = gRemoteStorage.cloud(for: id),
+					let  root = cloud.rootZone {
+
+					let closure: Closure = { [self] in
+						try? readFile(from: url.relativePath, into: id) { _ in
+
+							// minor corrections needed for favorites font size and updating bookmark names
+
+							if  let                root = gFavoritesRoot {
+								root.traverseAllProgeny { zone in
+									zone       .mapType = .tFavorite
+									zone.crossLinkMaybe = nil
+								}
+							}
+
+							if  let           cloudRoot = cloud.rootZone {
+								gHere                   = cloudRoot
+
+								cloudRoot.updateZoneNamesForBookmkarksTargetingSelf()
+							}
+
+							onCompletion?()
+						}
+					}
 
 					// first delete potentially duplicated zones (root and children of recents)
 
-					cloud.rootZone?.deleteSelf(permanently: true, force: true) { [self] _ in
-						gFavorites.recentsMaybe?.children.deleteZones(permanently: true) { [self] in
-							try? readFile(from: url.relativePath, into: id) { _ in
-
-								// minor corrections needed for favorites font size and updating bookmark names
-
-								if  let                root = gFavoritesRoot {
-									root.traverseAllProgeny { zone in
-										zone       .mapType = .tFavorite
-										zone.crossLinkMaybe = nil
-									}
-								}
-								
-								if  let           cloudRoot = cloud.rootZone {
-									gHere                   = cloudRoot
-									
-									cloudRoot.updateZoneNamesForBookmkarksTargetingSelf()
-								}
-								
-								onCompletion?()
-							}
+					root.deleteSelf(permanently: true, force: true) { _ in
+						if  let zones = gFavorites.recentsMaybe?.children {
+							zones.deleteZones(permanently: true, onCompletion: closure)
+						} else {
+							closure()
 						}
 					}
 				}

@@ -2858,7 +2858,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				children.remove(at: index)
 			}
 
-			child.parentZone = nil
+			child.setParentZone(nil)
 
 			child.setValue(nil, forKeyPath: kParentRef)
 			updateCoreDataRelationships()

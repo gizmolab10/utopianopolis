@@ -78,7 +78,7 @@ extension ZCoreDataStack {
 							onCompletion?(0)
 						}
 					} catch {
-
+						printDebug(.dError, "\(error)")
 					}
 				}
 			}

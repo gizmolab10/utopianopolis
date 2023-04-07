@@ -70,7 +70,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-		if !gIsEditingStateChanging, !gIsPrinting,
+		if !gIsEditingStateChanging, !gIsExportingToAFile, !gIsPrinting,
 		    var     key = iKey {
 			let   arrow = key.arrow
 			let CONTROL = flags.hasControl
@@ -173,14 +173,12 @@ class ZMapEditor: ZBaseEditor {
     }
 
     func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags, onCompletion: Closure? = nil) {
-		if !gIsExportingToAFile {
-			if  gTextEditorHandlesArrows || gIsEditIdeaMode {
-				gTextEditor.handleArrow(arrow, flags: flags)
-			} else if !((flags.hasOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
-				switch arrow {
-					case .down,    .up: moveUp  (arrow == .up,   flags: flags);                             forceRedraw()
-					case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion); forceRedraw(); return
-				}
+		if  gTextEditorHandlesArrows || gIsEditIdeaMode {
+			gTextEditor.handleArrow(arrow, flags: flags)
+		} else if !((flags.hasOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
+			switch arrow {
+				case .down,    .up: moveUp  (arrow == .up,   flags: flags);                             forceRedraw()
+				case .left, .right: moveLeft(arrow == .left, flags: flags, onCompletion: onCompletion); forceRedraw(); return
 			}
 		}
 
@@ -336,7 +334,7 @@ class ZMapEditor: ZBaseEditor {
 		} else if COMMAND {
 			gUpdateBaseFontSize(up: false)
 		} else {
-			addDashedLine()
+			addDashedLine { gRelayoutMaps() }
 		}
 
 		return true

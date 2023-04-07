@@ -348,7 +348,9 @@ extension Dictionary {
 			let data = try JSONSerialization.data(withJSONObject:self, options: [])
 
 			return data
-		} catch {}
+		} catch {
+			printDebug(.dError, "\(error)")
+		}
 
 		return nil
 	}
@@ -419,6 +421,7 @@ extension URL {
 
 				success = true
 			} catch {
+				printDebug(.dError, "\(error)")
 			}
 		}
 
@@ -2720,7 +2723,9 @@ extension Data {
 			if  let s = try JSONSerialization.jsonObject(with: self, options: .mutableLeaves) as? String {
 				return s
 			}
-		} catch {}
+		} catch {
+			printDebug(.dError, "\(error)")
+		}
 
 		return nil
 	}

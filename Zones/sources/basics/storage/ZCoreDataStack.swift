@@ -80,6 +80,7 @@ class ZCoreDataStack: NSObject {
 
 				return flag                                  // TODO: then if flag is true, fetch is called !!!!
 			} catch {
+				printDebug(.dError, "\(error)")
 			}
 		}
 
@@ -99,7 +100,7 @@ class ZCoreDataStack: NSObject {
 						do {
 							try c.save()
 						} catch {
-							print(error)
+							printDebug(.dError, "\(error)")
 						}
 					}
 
@@ -148,8 +149,8 @@ class ZCoreDataStack: NSObject {
 						loadRootZone(recordName: kFavoritesRootName, into: databaseID)
 					}
 
-					for root in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
-						loadRootZone(recordName: root, into: databaseID)
+					for rootName in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
+						loadRootZone(recordName: rootName, into: databaseID)
 					}
 
 					load(type: kFileType, into: databaseID, onlyOne: false)
@@ -322,7 +323,7 @@ class ZCoreDataStack: NSObject {
 				}
 			}
 		} catch {
-			print(error)
+			printDebug(.dError, "\(error)")
 		}
 
 		return objects

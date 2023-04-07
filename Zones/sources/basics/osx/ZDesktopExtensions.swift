@@ -126,7 +126,6 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 
 func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
 	gPresentOpenPanel() { iAny in
-#if os(OSX)
 		if let panel = iAny as? NSOpenPanel {
 			let  suffix = ZExportType.eSeriously.rawValue
 			panel.title = "Import as \(suffix)"
@@ -134,11 +133,10 @@ func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
 		} else {
 			callback?(iAny)
 		}
-#endif
 	}
 }
 
-func gPresentSavePanel(name iName: String?, suffix: String, _ callback: AnyClosure? = nil) {
+func gPresentSavePanel(name iName: String?, suffix: String, _ callback: URLClosure? = nil) {
 	if  let                     window = gApplication?.mainWindow {
 		let                      panel = NSSavePanel()
 		panel                 .message = "Export a \(suffix) file"
@@ -747,7 +745,7 @@ extension ZButton {
 extension ZAlert {
 
     func showModal(closure: AlertStatusClosure? = nil) {
-        closure?((runModal() == .alertFirstButtonReturn) ? ZAlertStatus.sYes : ZAlertStatus.sNo)
+        closure?((runModal() == .alertFirstButtonReturn) ? .sYes : .sNo)
     }
 
 }

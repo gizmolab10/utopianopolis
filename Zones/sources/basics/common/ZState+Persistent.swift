@@ -804,7 +804,7 @@ func setPreferencesColor(_ color: ZColor, for key: String) {
 		UserDefaults.standard.set(data, forKey: key)
 		UserDefaults.standard.synchronize()
 	} catch {
-
+		printDebug(.dError, "\(error)")
 	}
 }
 

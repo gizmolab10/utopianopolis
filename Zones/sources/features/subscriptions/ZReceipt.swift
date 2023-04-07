@@ -64,7 +64,7 @@ class ZReceipt: NSObject {
 			do {
 				request.httpBody = try JSONSerialization.data(withJSONObject: dict, options: .prettyPrinted)
 			} catch {
-				print("ERROR: " + error.localizedDescription)
+				printDebug(.dError, "\(error)")
 			}
 
 			let task : URLSessionDataTask = session.dataTask(with: request) { data, response, error in
@@ -75,7 +75,7 @@ class ZReceipt: NSObject {
 						onCompletion?(jsonDict)
 
 					} catch {
-						print("ERROR: " + error.localizedDescription)
+						printDebug(.dError, "\(error)")
 					}
 				} else {
 					onCompletion?([:])
