@@ -134,6 +134,16 @@ class ZCoreDataStack: NSObject {
 				FOREGROUND { [self] in
 					loadManifest(into: databaseID)
 
+					for rootName in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
+						loadRootZone(recordName: rootName, into: databaseID)
+					}
+
+					if  databaseID == .mineID {
+						loadRootZone(recordName: kFavoritesRootName, into: databaseID)
+					}
+
+					load(type: kFileType, into: databaseID, onlyOne: false)
+
 					if  gHasRelationships {
 						let array = load(type: kRelationshipType, into: databaseID, onlyOne: false)
 
@@ -144,16 +154,6 @@ class ZCoreDataStack: NSObject {
 							}
 						}
 					}
-
-					if  databaseID == .mineID {
-						loadRootZone(recordName: kFavoritesRootName, into: databaseID)
-					}
-
-					for rootName in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
-						loadRootZone(recordName: rootName, into: databaseID)
-					}
-
-					load(type: kFileType, into: databaseID, onlyOne: false)
 
 					FOREGROUND { [self] in
 						makeAvailable()

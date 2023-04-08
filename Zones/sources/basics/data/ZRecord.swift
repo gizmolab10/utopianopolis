@@ -121,9 +121,9 @@ class ZRecord: ZManagedObject {
 
 	func debugRegistration(_ prefix: String? = nil) {
 		if  let zone = self as? Zone,
-			let name = zone.zoneName, name.contains("urgent") {
+			let name = zone.zoneName, name == "urgent" {
 			let mark = prefix == nil ? kEmpty : "\(prefix!) "
-			printDebug(.dRecords, mark + zone.ancestralString)
+			printDebug(.dRecords, mark + zone.decoration + zone.ancestralString)
 
 			if  prefix == ">" {
 				noop()
