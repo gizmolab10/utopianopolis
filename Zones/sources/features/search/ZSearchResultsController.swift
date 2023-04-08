@@ -120,7 +120,12 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK: - delegate
     // MARK: -
 
-    #if os(OSX)
+#if os(iOS)
+
+	func tableView(_ tableView: ZTableView, numberOfRowsInSection section: Int) -> Int            { return filteredResultsCount }
+	func tableView(_ tableView: ZTableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
+
+#else // OSX
 
 	override func numberOfRows(in tableView: ZTableView) -> Int { max(gSearchStateIsList ? 1 : 0, filteredResultsCount) }
 
@@ -139,7 +144,7 @@ class ZSearchResultsController: ZGenericTableController {
 			attributed = NSMutableAttributedString(string: string)
 			var      p = z.typePrefix
 			size       = p.length
-			if    size > 0 {
+			if  size   > 0 {
 				let  r = NSRange(location: 0, length: size)
 				p.append(kSpace)
 				prefix = NSMutableAttributedString(string: p)
@@ -179,12 +184,7 @@ class ZSearchResultsController: ZGenericTableController {
 		return result
 	}
 
-    #else // ios
-
-    func tableView(_ tableView: ZTableView, numberOfRowsInSection section: Int) -> Int            { return filteredResultsCount }
-    func tableView(_ tableView: ZTableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { return UITableViewCell() }
-
-    #endif
+#endif
 
     // MARK: - user feel
     // MARK: -

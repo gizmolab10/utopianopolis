@@ -170,11 +170,14 @@ var gHere: Zone {
 	}
 
 	set {
-		gDatabaseID          = newValue.databaseID
 		gRecords.currentHere = newValue
+		if  let           id = newValue.maybeDatabaseID {
+			gDatabaseID      = id
+		}
 
 		newValue.assureAdoption()
 		gFavorites.push(newValue)
+
 	}
 }
 

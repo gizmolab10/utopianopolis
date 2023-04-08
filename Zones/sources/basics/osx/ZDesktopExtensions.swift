@@ -82,6 +82,9 @@ public typealias ZEdgeSwipeGestureRecognizer = NSNull
 let kVerticalWeight      = CGFloat(1)
 var gIsPrinting          = false
 var gFavoritesAreVisible : Bool { return gDetailsViewIsVisible(for: .vFavorites) }
+func gPerformInBackgroundWhileShowingAppIsBusy(_ closure: @escaping Closure) { gMainWindow?.performInBackground(closure) }
+func gShowAppIsBusyWhile(_ closure: @escaping Closure) { gMainWindow?.showAppIsBusyWhile(closure) }
+
 protocol ZScrollDelegate : NSObjectProtocol {}
 
 func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
@@ -101,7 +104,6 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 }
 
 func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
-#if os(OSX)
 	if  let  window = gApplication?.mainWindow {
 		let   panel = NSOpenPanel()
 
@@ -117,11 +119,12 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 				panel.urls.count > 0 {
 				let          url = panel.urls[0]
 
-				callback?(url)
+				gShowAppIsBusyWhile {
+					callback?(url)
+				}
 			}
 		}
 	}
-#endif
 }
 
 func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
@@ -149,7 +152,7 @@ func gPresentSavePanel(name iName: String?, suffix: String, _ callback: URLClosu
 			if  result     == .OK,
 				let fileURL = panel.url {
 
-				BACKGROUND {
+				gPerformInBackgroundWhileShowingAppIsBusy {
 					callback?(fileURL)
 
 					gIsExportingToAFile = false
@@ -673,20 +676,6 @@ extension ZWindow {
 		return last != gLastLocation
 	}
 
-	func performInBackgroundWhileShowingAppIsBusy(_ closure: @escaping Closure) {
-		FOREGROUND {
-			self.showAppIsBusy(true)
-
-			BACKGROUND {
-				closure()
-
-				FOREGROUND {
-					self.showAppIsBusy(false)
-				}
-			}
-		}
-	}
-
 	func showAppIsBusy(_ start: Bool) {
 		if  let spinner = gMainController?.spinner {
 			if  start {
@@ -697,6 +686,28 @@ extension ZWindow {
 				spinner.stopAnimating()
 
 				gRefusesFirstResponder = false
+			}
+		}
+	}
+
+	func showAppIsBusyWhile(_ closure: @escaping Closure) {
+		FOREGROUND {
+			self.showAppIsBusy(true)
+			closure()
+			self.showAppIsBusy(false)
+		}
+	}
+
+	func performInBackground(_ closure: @escaping Closure) {
+		FOREGROUND {
+			self.showAppIsBusy(true)
+
+			BACKGROUND {
+				closure()
+
+				FOREGROUND {
+					self.showAppIsBusy(false)
+				}
 			}
 		}
 	}
@@ -920,7 +931,6 @@ extension ZTextEditor {
 	}
 
 	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
-		#if os(OSX)
 		if  let  type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
 			let range = selectedRanges[0] as? NSRange,
 			type     != .eCancel {
@@ -928,7 +938,6 @@ extension ZTextEditor {
 
 			insertText(text, replacementRange: range)
 		}
-		#endif
 	}
 
     override func doCommand(by selector: Selector) {

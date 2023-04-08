@@ -78,7 +78,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 		gSignal([.sResize])
 	}
 
-    #if os(OSX)
+#if os(OSX)
 
 	func windowWillClose(_ notification: Notification) {
 		gApplication?.terminate(self)
@@ -99,5 +99,5 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
         return gTextEditor
     }
 
-    #endif
+#endif
 }

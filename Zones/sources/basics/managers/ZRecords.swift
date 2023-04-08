@@ -386,8 +386,31 @@ class ZRecords: NSObject {
         return name == nil ? nil : "Seriously." + name!
     }
 
-    // MARK: - registries
-    // MARK: -
+    // MARK: - registries & lookups
+	// MARK: -
+
+	func maybeZoneForRecordName    (_ iRecordName:   String?, trackMissing: Bool = true) ->     Zone? { return maybeZRecordForRecordName (iRecordName, trackMissing: trackMissing) as? Zone }
+	func maybeZRecordForRecordID   (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }
+
+	func maybeZRecordForRecordName (_ recordName: String?, trackMissing: Bool = true) -> ZRecord? {
+		if  let name       = recordName {
+			if  let record = zRecordsLookup[name] {
+				if  record.recordName   != name {
+					zRecordsLookup[name] = nil         // force record to be re-registered, or force search of core data store (below)
+				} else {
+					return record
+				}
+			}
+
+			let found = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing).first as? ZRecord
+
+			found?.debugRegistration(">")
+
+			return found
+		}
+
+		return nil
+	}
 
 	func appendZRecordsLookup(with iName: String, onEachHandful: @escaping ZRecordsToZRecordsClosure) {
 		let names = iName.components(separatedBy: kSpace).filter { $0 != kEmpty }
@@ -441,35 +464,36 @@ class ZRecords: NSObject {
 		return false
 	}
 
-    @discardableResult func registerZRecord(_  iRecord: ZRecord?) -> Bool { // false means did not register
-		var         created          = false
-		if  let     zRecord          = iRecord,
-            let     name             = zRecord.recordName {
-			if      name            != kRootName,
-				let existingRecord   = zRecordsLookup[name], !existingRecord.isBrandNew {
-				if  existingRecord  != zRecord,
+    @discardableResult func registerZRecord(_ record: ZRecord?) -> Bool { // false means did not register
+		var         created                     = false
+		if  let     zRecord                     = record,
+            let     recordName                  = zRecord.recordName {
+			if      recordName                 != kRootName,
+				let existingRecord              = zRecordsLookup[recordName], !existingRecord.isBrandNew {
+				if  existingRecord             != zRecord,
 					existingRecord.entity.name == zRecord.entity.name {
 
                     // /////////////////////////////////////
                     // if already registered, must ignore //
                     // /////////////////////////////////////
 
-					duplicates[name] = zRecord
+					duplicates[recordName]      = zRecord
 
 					return false
 				}
 			} else {
-				zRecordsLookup[name] = zRecord
-				created              = true
+				zRecordsLookup[recordName]      = zRecord
+				created                         = true
 
+				zRecord.debugRegistration(" ")
 				registerByType(zRecord)
             }
 			
-			if  let bookmark         = zRecord as? Zone, bookmark.isBookmark {
-				if  gBookmarks.addToReverseLookup(bookmark) {
+			if  let bookmark                    = zRecord as? Zone, bookmark.isBookmark {
+				if  gBookmarks.addToReverseLookup(bookmark), gHasRelationships {
 					gRelationships.addBookmarkRelationship(bookmark, target: bookmark.zoneLink?.maybeZone, in: bookmark.databaseID)
 				}
-			} else if let file       = zRecord as? ZFile {
+			} else if let file                  = zRecord as? ZFile {
 				gFilesRegistry.register(file, in: databaseID)
 			}
         }
@@ -844,28 +868,5 @@ class ZRecords: NSObject {
             }
         }
     }
-
-	// MARK: - lookups
-    // MARK: -
-
-	func     maybeZoneForRecordName (_ iRecordName:   String?, trackMissing: Bool = true) ->     Zone? { return maybeZRecordForRecordName (iRecordName, trackMissing: trackMissing) as? Zone }
-	func    maybeZRecordForRecordID (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }
-
-	func maybeZRecordForRecordName (_ recordName: String?, trackMissing: Bool = true) -> ZRecord? {
-		if  let name       = recordName {
-			if  let record = zRecordsLookup[name] {
-				if  record.recordName   != name {
-					zRecordsLookup[name] = nil // force record to be re-registered, and search core data store (below)
-				} else {
-					return record
-				}
-			}
-
-			let    found = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing)
-			return found.first as? ZRecord
-		}
-
-		return nil
-	}
 
 }

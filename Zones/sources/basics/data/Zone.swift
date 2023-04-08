@@ -495,7 +495,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			d.append("N")
 		}
 
-		if  count != 0 {
+		if  (isBookmark ? bookmarkTarget?.count ?? 0 : count) != 0 {
 			let s  = d == kEmpty ? kEmpty : kSpace
 			let c  = s + "\(count)"
 
@@ -2823,9 +2823,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			// prevent cross-db family relation
 
-			if  databaseID  != child.databaseID {
-				let        c = child
-				child        = child.deepCopy(into: databaseID)
+			if  let maybe = maybeDatabaseID,
+				maybe    != child.maybeDatabaseID {
+				let c     = child
+				child     = child.deepCopy(into: databaseID)
 
 				c.deleteSelf(permanently: true, force: true, onCompletion: nil)
 			}
@@ -3176,7 +3177,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func updateMaxLevel() {
 		if  gIsReadyToShowUI {
-			gRemoteStorage.zRecords(for: databaseID)?.updateMaxLevel(with: level)
+			gRemoteStorage.zRecords(for: maybeDatabaseID)?.updateMaxLevel(with: level)
 		}
 	}
 
@@ -3262,7 +3263,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gRelayoutMaps()
 		} else if isBookmark || (isTraveller && (COMMAND || count == 0)) {
 			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
-				gRelayoutMaps()
+				gSignal([.spRelayout, .spCrumbs])
 			}
 		} else if count > 0, !OPTION {
 			let show = !isExpanded

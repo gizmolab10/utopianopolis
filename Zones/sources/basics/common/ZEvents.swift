@@ -54,7 +54,7 @@ class ZEvents: ZGeneric {
 	}
 
 	func removeAllMonitorsAsync(_ closure: Closure? = nil) {
-#if os(OSX)
+		#if os(OSX)
 		let  key = removeMonitor(&keyDownMonitor,                  closure)
 		let flag = removeMonitor(&flagsChangedMonitor, !key ? nil: closure)
 

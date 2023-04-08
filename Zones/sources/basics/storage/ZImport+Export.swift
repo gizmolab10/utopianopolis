@@ -18,9 +18,9 @@ import UIKit
 extension ZFiles {
 
 	func showInFinder() {
-#if os(OSX)
+		#if os(OSX)
 		(filesURL as URL).open()
-#endif
+		#endif
 	}
 
 	// MARK: - export
@@ -64,9 +64,7 @@ extension ZFiles {
 //		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
 
 		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] url in
-			gMainWindow?.performInBackgroundWhileShowingAppIsBusy {
-				try? self.writeFile(at: url.relativePath, from: databaseID)
-			}
+			try? self.writeFile(at: url.relativePath, from: databaseID)
 		}
 	}
 
@@ -144,9 +142,7 @@ extension Zone {
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
 		gPresentOpenPanel(type: type) { [self] iAny in
 			if  let url = iAny as? URL {
-				gMainWindow?.performInBackgroundWhileShowingAppIsBusy {
-					self.importFile(from: url.path, type: type, onCompletion: onCompletion)
-				}
+				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
 			}
 		}
 	}

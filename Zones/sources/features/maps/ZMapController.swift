@@ -74,11 +74,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		}
 	}
 
-    #if os(OSX)
+#if os(OSX)
     
 	func platformSetup() {}
     
-    #elseif os(iOS)
+#elseif os(iOS)
     
     @IBOutlet weak var mobileKeyInput: ZMobileKeyInput?
     
@@ -103,7 +103,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 	#endif
 
-	#endif
+#endif
 
 	// MARK: - operations
 	// MARK: -

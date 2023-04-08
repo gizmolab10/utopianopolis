@@ -53,7 +53,7 @@ class ZDebugController: ZGenericTableController {
 		return super.shouldHandle(kind) && gDebugInfo
 	}
 
-	#if os(OSX)
+#if os(OSX)
 
 	override func numberOfRows(in tableView: ZTableView) -> Int {
 		return gDebugInfo ? rows : 0
@@ -132,5 +132,6 @@ class ZDebugController: ZGenericTableController {
 		}
 	}
 
-	#endif
+#endif
+
 }

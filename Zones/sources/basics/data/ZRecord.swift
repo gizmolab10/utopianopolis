@@ -118,7 +118,19 @@ class ZRecord: ZManagedObject {
 	var                needsDestroy : Bool         { return  hasState(.needsDestroy) }
 	var               needsAdoption : Bool         { return  hasState(.needsAdoption) }
 	var              needsBookmarks : Bool         { return  hasState(.needsBookmarks) }
- 
+
+	func debugRegistration(_ prefix: String? = nil) {
+		if  let zone = self as? Zone,
+			let name = zone.zoneName, name.contains("urgent") {
+			let mark = prefix == nil ? kEmpty : "\(prefix!) "
+			printDebug(.dRecords, mark + zone.ancestralString)
+
+			if  prefix == ">" {
+				noop()
+			}
+		}
+	}
+
 	var isARoot: Bool {
 		if  recordName == nil {
 			return false

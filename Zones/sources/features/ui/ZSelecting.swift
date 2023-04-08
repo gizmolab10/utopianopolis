@@ -14,12 +14,6 @@ import Cocoa
 import UIKit
 #endif
 
-#if os(OSX)
-    import Cocoa
-#elseif os(iOS)
-    import UIKit
-#endif
-
 enum ZRelation: Int {
     case above = 0 // do not change these values
 	case below = 1
