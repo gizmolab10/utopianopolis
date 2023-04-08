@@ -12,7 +12,7 @@ var  gCDMigrationState    =                  ZCDMigrationState.firstTime
 var  gCDMigrationIsDone   :   Bool { return  gCDMigrationState.isCompleted }
 var  gCDBaseDataURL       :    URL { return  gFilesURL.appendingPathComponent(gDataDirectoryName) }
 var  gDataDirectoryName   : String { return (gNormalDataLocation ? gNormalDirectoryName : "migration.testing") }
-var  gNormalDirectoryName : String { return  kDataDirectoryName } // gUserRecordName ?? 
+var  gNormalDirectoryName : String { return  kDataDirectoryName } // gUserRecordName ??
 func gUpdateCDMigrationState()     {         gCDMigrationState = ZCDMigrationState.currentState }
 
 enum ZCDMigrationState: Int {
@@ -225,7 +225,7 @@ extension Zone {
 				let parent        = relationships.parents?.first {
 
 				parentZoneMaybe   = parent
-			} else if let parent  = oldParentZone {
+			} else if let parent  = unrelationalParentZone {
 				setParentZone(parent)
 
 				parentZoneMaybe   = parent
@@ -236,9 +236,9 @@ extension Zone {
 	}
 
 	func setParentZone(_ parent: Zone?) {
-		if  parentZoneMaybe != parent {
-			let priorParent  = parentZoneMaybe
-			oldParentZone    = parent
+		if  parentZoneMaybe       != parent {
+			let priorParent        = parentZoneMaybe
+			unrelationalParentZone = parent
 
 			gRelationships.addOrSwapParentRelationship(self, parent: parent, priorParent: priorParent, in: databaseID)
 		}
@@ -268,15 +268,16 @@ extension Zone {
 		return new
 	}
 
-	var oldParentZone: Zone? {
+	var unrelationalParentZone: Zone? {
 		get {
-			if  root             == self {
-				unlinkParentAndMaybeNeedSave()
-			} else if let  zone   = parentLink?.maybeZone {
-				parentZoneMaybe   = zone
-			} else if let parentRecordName = parentRID,
-					  recordName != parentRecordName { // noop (remain nil) when parentRID equals record name
-				parentZoneMaybe   = zRecords?.maybeZoneForRecordName(parentRecordName)
+			if  parentZoneMaybe    == nil {
+				if  root           == self {
+					unlinkParentAndMaybeNeedSave()
+				} else if let  zone = parentLink?.maybeZone {
+					parentZoneMaybe = zone
+				} else if let parentRecordName = parentRID, parentRecordName != recordName { // noop (remain nil) when parentRID is nil or equals record name
+					parentZoneMaybe = parentRecordName.maybeZone(in: databaseID)
+				}
 			}
 
 			return parentZoneMaybe

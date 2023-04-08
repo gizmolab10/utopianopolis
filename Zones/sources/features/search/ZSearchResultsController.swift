@@ -21,10 +21,10 @@ class ZSearchResultsController: ZGenericTableController {
 	var      foundRecordsDict = ZDBIDRecordsDictionary()
 	var   filteredResultsDict = ZDBIDRecordsDictionary()
 	override var controllerID : ZControllerID { return .idSearchResults }
-	var   matchHighlightColor : ZColor        { return ZColor(cgColor: ZColor.controlAccentColor.cgColor)?.lighter(by: 8.0) ?? ZColor.controlAccentColor }
-	var            searchText : String?       { return gSearchBarController?.searchText }
-	func zoneAt(_ row : Int) -> Zone?         { return zoneFor(zRecordAt(row)) }
-	func             clear()                  { gExitSearchMode(force: gIsSearching) }
+	var   matchHighlightColor : ZColor        { return  ZColor(cgColor: ZColor.controlAccentColor.cgColor)?.lighter(by: 8.0) ?? ZColor.controlAccentColor }
+	var            searchText : String?       { return  gSearchBarController?.searchText }
+	var        selectedResult : Zone?         { return  zRecordAt(genericTableView?.selectedRow)?.zone }
+	func              clear()                 { gExitSearchMode(force: gIsSearching) }
 
 	func applySearchOptions() {
 		filteredResultsDict = ZDBIDRecordsDictionary()
@@ -41,14 +41,6 @@ class ZSearchResultsController: ZGenericTableController {
 
 			filteredResultsDict[databaseID] = matches
 		}
-	}
-
-	var selectedResult: Zone? {
-		if  let row = genericTableView?.selectedRow {
-			return zoneAt(row)
-		}
-
-		return nil
 	}
 
     var hasResults: Bool {
@@ -100,21 +92,32 @@ class ZSearchResultsController: ZGenericTableController {
         }
     }
 
-	func zRecordAt(_ row: Int) -> ZRecord? {
-		if  let (_, zRecord) = identifierAndRecord(at: row) {
+	func zRecordAt(_ row: Int?) -> ZRecord? {
+		if  let (_, zRecord) = databaseIDAndRecord(at: row) {
 			return zRecord
 		}
 
 		return nil
 	}
 
-	func zoneFor(_ zRecord: ZRecord?) -> Zone? {
-		var      zone = zRecord as? Zone
-		if  let trait = zRecord as? ZTrait {
-			zone      = trait.ownerZone
+	func removeRecord(at row: Int) -> Bool {
+		if  let            (databaseID, record) = databaseIDAndRecord(at: row) {
+			var                         records = filteredResultsDict[databaseID]
+			if  let                       index = records?.firstIndex(of: record) {
+				records?.remove(at: index)
+				filteredResultsDict[databaseID] = records
+
+				if  let                    zone = record.zone {
+					zone.deleteSelf { flag in }
+				} else {
+					record.deleteSelf()
+				}
+
+				return true
+			}
 		}
 
-		return zone
+		return false
 	}
 
     // MARK: - delegate
@@ -189,19 +192,21 @@ class ZSearchResultsController: ZGenericTableController {
     // MARK: - user feel
     // MARK: -
 
-    func identifierAndRecord(at iRow: Int) -> (ZDatabaseID, ZRecord)? {
-        var   row = iRow
-        var count = 0
+    func databaseIDAndRecord(at iRow: Int?) -> (ZDatabaseID, ZRecord)? {
+		if  var row            = iRow {
+			var count          = 0
 
-        for (databaseID, records) in filteredResultsDict {
-            row   -= count
-            count  = records.count
+			for (databaseID, records) in filteredResultsDict {
+				row           -= count
+				count          = records.count
 
-            if  row >= 0, row < count,
-				let record = records[row].selfInCurrentBackgroundCDContext {
-                return (databaseID, record)
-            }
-        }
+				if  row       >= 0,
+					row        < count,
+					let record = records[row].selfInContext {
+					return (databaseID, record)
+				}
+			}
+		}
 
         return nil
     }
@@ -217,7 +222,7 @@ class ZSearchResultsController: ZGenericTableController {
             if  gIsSearching,
                 let            row = genericTableView?.selectedRow,
                 row               != -1,
-                let (databaseID, record) = identifierAndRecord(at: row) {
+                let (databaseID, record) = databaseIDAndRecord(at: row) {
                 resolveRecord(databaseID, record)
 				return true
             }
@@ -236,7 +241,7 @@ class ZSearchResultsController: ZGenericTableController {
 	}
 
 	func resolveAsZone(_ databaseID: ZDatabaseID, _ zRecord: ZRecord) -> Bool {
-		if  let zone = zRecord as? Zone {
+		if  let zone = zRecord.maybeZone {
 			if !zone.isInFavorites {
 				zone.resolveAsHere()
 			} else {
@@ -291,24 +296,6 @@ class ZSearchResultsController: ZGenericTableController {
             gSignal([.sSearch])
         }
     }
-
-	func removeRecord(at row: Int) -> Bool {
-		if  let            (databaseID, record) = identifierAndRecord(at: row) {
-			var                   records = filteredResultsDict[databaseID]
-			if  let                 index = records?.firstIndex(of: record) {
-				records?.remove(at: index)
-				filteredResultsDict[databaseID] = records
-
-				if  let              zone = zoneFor(record) {
-					zone.deleteSelf { flag in }
-				}
-
-				return true
-			}
-		}
-
-		return false
-	}
 
 	func removeSelection() {
 		if  let   t = genericTableView {

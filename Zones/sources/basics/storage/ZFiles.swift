@@ -197,17 +197,16 @@ class ZFiles: NSObject {
 					}
 				}
 
-				FOREBACKGROUND {
-					let jsonDict = dict.jsonDict
+				let jsonDict = dict.jsonDict
 
-					if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
-						let  url = URL(fileURLWithPath: path)
+				if  let data = try? JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted) {
+					let  url = URL(fileURLWithPath: path)
 
-						try? data.write(to: url)
-					} else {
-						printDebug(.dFile, "json error on local storage")
-					}
+					try? data.write(to: url)
+				} else {
+					printDebug(.dFile, "json error on local storage")
 				}
+
 			} catch {
 				throw(ZInterruptionError.userInterrupted)
 			}

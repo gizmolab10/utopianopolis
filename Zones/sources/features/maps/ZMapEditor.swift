@@ -1040,14 +1040,15 @@ class ZMapEditor: ZBaseEditor {
 				if !growSelection {
 					let    aboveTop = toIndex < 0
 					let belowBottom = toIndex >= targetCount
+					let someGrabbed = !allGrabbed && !soloGrabbed
 
 					// ///////////////////////
 					// vertical wrap around //
 					// ///////////////////////
 
-					if        (!up && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && belowBottom))) || ( up && soloGrabbed && aboveTop) {
+					if        (!up && (allGrabbed || extreme || (someGrabbed && belowBottom))) || ( up && soloGrabbed && aboveTop) {
 						toIndex = targetMax // bottom
-					} else if ( up && (allGrabbed || extreme || (!allGrabbed && !soloGrabbed && aboveTop)))    || (!up && soloGrabbed && belowBottom) {
+					} else if ( up && (allGrabbed || extreme || (someGrabbed && aboveTop)))    || (!up && soloGrabbed && belowBottom) {
 						toIndex = 0         // top
 					}
 				}
@@ -1140,21 +1141,18 @@ class ZMapEditor: ZBaseEditor {
 		//           level equals gCurrentBrowsingLevel             //
 		// ///////////////////////////////////////////////////////////
 
-		while grabThis.hasVisibleChildren,
-			  let length = grabThis.zoneName?.length {
-			let range = NSRange(location: length, length: 0)
-			let index = up ? grabThis.count - 1 : 0
-			let child = grabThis.children[index]
-
-			if  let   offset = iOffset,
-				let anOffset = grabThis.widget?.textWidget?.offset(for: range, up),
-				offset       > anOffset + 25.0 { // half the distance from end of parent's text field to beginning of child's text field
-				grabThis     = child
-			} else if let level = gCurrentBrowseLevel,
-					  child.level == level {
-				grabThis     = child
+		while let        length = grabThis.zoneName?.length, grabThis.hasVisibleChildren {
+			let           range = NSRange(location: length, length: 0)
+			let           index = up ? grabThis.count - 1 : 0
+			let           child = grabThis.children[index]
+			if  let    anOffset = grabThis.widget?.textWidget?.offset(for: range, up),
+				let      offset = iOffset,
+				offset          > anOffset + 25.0 {                     // half the distance from end of parent's text field to beginning of child's text field
+				grabThis        = child
+			} else if let level = gCurrentBrowseLevel, child.level == level {
+				grabThis        = child
 			} else {
-				break // done
+				break // exit while loop
 			}
 		}
 	}

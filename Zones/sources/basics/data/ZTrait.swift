@@ -199,7 +199,7 @@ class ZTrait: ZTraitAssets {
 
 	var ownerZone: Zone? {
 		if  _ownerZone == nil {
-			_ownerZone  = gRemoteStorage.maybeZoneForRecordName(ownerRID)
+			_ownerZone  = gMaybeZoneForRecordName(ownerRID)
 		}
 
 		return _ownerZone

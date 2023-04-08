@@ -19,9 +19,8 @@ var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
 
-func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID) {
-	gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe = here
-}
+func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID)  { gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe = here }
+func gMaybeZoneForRecordName (_ name: String?) -> Zone?          { return gRemoteStorage.maybeZoneForRecordName(name) }
 
 func gHereZoneForDatabaseIDMaybe(_ databaseID: ZDatabaseID) -> Zone? {
 	if  let    cloud = gRemoteStorage.zRecords(for: databaseID) {
@@ -176,8 +175,8 @@ class ZRemoteStorage: NSObject {
     func updateNeededCounts() {
         for cloud in allClouds {
             var alsoProgenyCounts = false
-            cloud.fullUpdate(for: [.needsCount]) { state, iZRecord in
-                if  let zone                 = iZRecord as? Zone {
+            cloud.fullUpdate(for: [.needsCount]) { state, zRecord in
+                if  let zone                 = zRecord.maybeZone {
                     if  zone.fetchableCount != zone.count {
                         zone.fetchableCount  = zone.count
                         alsoProgenyCounts    = true

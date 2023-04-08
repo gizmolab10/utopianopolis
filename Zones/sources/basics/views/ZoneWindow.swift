@@ -18,8 +18,8 @@ var gMainWindow : ZoneWindow? { return ZoneWindow.mainWindow }
 
 class ZoneWindow: ZWindow, ZWindowDelegate {
 
-    static var                    mainWindow : ZoneWindow?
-    var                             observer : NSKeyValueObservation?
+	static var                    mainWindow : ZoneWindow?
+	var                             observer : NSKeyValueObservation?
 	var                         inspectorBar : ZView? { return titlebarAccessoryViewControllers.first(where: { $0.view.className == "__NSInspectorBarView" } )?.view }
 
 	func draw() {
@@ -84,20 +84,21 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 		gApplication?.terminate(self)
 	}
 
-    override open var acceptsFirstResponder: Bool { return true }
+	override open var acceptsFirstResponder: Bool { return true }
 
-    // cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
+	// cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
 
-    override func keyDown(with event: ZEvent) {
-        if  !isDuplicate(event: event),
-            gMapEditor.handleEvent(event, isWindow: true) != nil {
-            super.keyDown(with: event)
-        }
-    }
-    
-    func windowWillReturnFieldEditor(_ sender: NSWindow, to client: Any?) -> Any? {
-        return gTextEditor
-    }
+	override func keyDown(with event: ZEvent) {
+		if  !isDuplicate(event: event),
+			gMapEditor.handleEvent(event, isWindow: true) != nil {
+			super.keyDown(with: event)
+		}
+	}
+
+	func windowWillReturnFieldEditor(_ sender: NSWindow, to client: Any?) -> Any? {
+		return gTextEditor
+	}
 
 #endif
+
 }

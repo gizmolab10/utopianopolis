@@ -12,7 +12,9 @@
     import UIKit
 #endif
 
-var gMainController : ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
+func gInBackgroundWhileShowingBusy(_ closure: @escaping Closure) { gMainController?.inBackgroundWhileShowingBusy(closure) }
+func           gShowAppIsBusyWhile(_ closure: @escaping Closure) { gMainController?.showAppIsBusyWhile          (closure) }
+var            gMainController : ZMainController?                { return gControllers.controllerForID(.idMain) as? ZMainController }
 
 class ZMainController: ZGesturesController {
 
@@ -33,6 +35,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var hamburgerButton            : ZButton?
 	@IBOutlet var helpButton                 : ZHelpButton?
 	@IBOutlet var spinner                    : ZProgressIndicator?
+	var           shownBusyDepth             = 0
 
 	var hamburgerImage: ZImage? {
 		var image = kHamburgerImage
@@ -136,8 +139,54 @@ class ZMainController: ZGesturesController {
 		searchBarView?    .isHidden =  gIsNotSearching || (hasSearchResults && gSearchStateIsList)
 		searchResultsView?.isHidden =  gIsNotSearching || !hasSearchResults || gIsEssayMode
 
-		gMainWindow?.updateSpinner()
 		mainUpdate()
     }
+
+	// MARK: - spinner
+	// MARK: -
+
+	func showAppIsBusy(_ start: Bool) {
+		if  let spinner = gMainController?.spinner {
+			if  start {
+				if  shownBusyDepth == 0 {
+					gRefusesFirstResponder = true
+
+					spinner.startAnimating()
+				}
+
+				shownBusyDepth += 1
+			} else {
+				shownBusyDepth -= 1
+
+				if  shownBusyDepth == 0 {
+					spinner.stopAnimating()
+
+					gRefusesFirstResponder = false
+				}
+			}
+		}
+	}
+
+	func showAppIsBusyWhile(_ closure: @escaping Closure) {
+		FOREGROUND {
+			self.showAppIsBusy(true)
+			closure()
+			self.showAppIsBusy(false)
+		}
+	}
+
+	func inBackgroundWhileShowingBusy(_ closure: @escaping Closure) {
+		FOREGROUND {
+			self.showAppIsBusy(true)
+
+			BACKGROUND {
+				closure()
+
+				FOREGROUND {
+					self.showAppIsBusy(false)
+				}
+			}
+		}
+	}
 
 }

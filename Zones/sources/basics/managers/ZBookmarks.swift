@@ -118,7 +118,7 @@ class ZBookmarks: NSObject {
         return try (allBookmarks as ZRecordsArray).createStorageArray(from: iDatabaseID, includeInvisibles: includeInvisibles) { zRecord -> Bool in
 			var  okayToStore = false
 
-			if  let bookmark = zRecord as? Zone,
+			if  let bookmark = zRecord?.maybeZone,
 				let     root = bookmark.root, root.isMainMapRoot,
 				iDatabaseID != root.databaseID {       // only store inter-db, main map bookmarks
                 okayToStore  = true

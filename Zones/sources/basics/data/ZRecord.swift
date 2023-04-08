@@ -95,6 +95,9 @@ class ZRecord: ZManagedObject {
 	var              _toolTipRecord : Any?
 	var           writtenModifyDate : Date?
 	var                       color : ZColor?    // overridden by Zone and ZTrait (latter grabs from its ownerZone)
+	var                  maybeTrait : ZTrait?      { return self as? ZTrait }
+	var                   maybeZone : Zone?        { return self as? Zone }
+	var                        zone : Zone?        { return maybeZone ?? maybeTrait?.ownerZone }
 	var             maybeDatabaseID : ZDatabaseID? { return dbid?.databaseID }
 	var                  databaseID : ZDatabaseID  { return maybeDatabaseID! }
 	var                    zRecords : ZRecords?    { return gRemoteStorage.zRecords(for: maybeDatabaseID) }
@@ -171,11 +174,12 @@ class ZRecord: ZManagedObject {
 	func unregister() { zRecords?.unregisterZRecord(self) }
 	func register()   { zRecords?  .registerZRecord(self) }
 	func adopt(recursively : Bool = false) {}
+	func deleteSelf() { gCDCurrentBackgroundContext?.delete(self) }
 
 	// MARK: - core data
 	// MARK: -
 
-	var selfInCurrentBackgroundCDContext: ZRecord? { return gCDCurrentBackgroundContext?.object(with: objectID) as? ZRecord }
+	var selfInContext: ZRecord? { return Thread.isMainThread ? self : gCDCurrentBackgroundContext?.object(with: objectID) as? ZRecord }
 
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 

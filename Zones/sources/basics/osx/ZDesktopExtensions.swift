@@ -82,8 +82,6 @@ public typealias ZEdgeSwipeGestureRecognizer = NSNull
 let kVerticalWeight      = CGFloat(1)
 var gIsPrinting          = false
 var gFavoritesAreVisible : Bool { return gDetailsViewIsVisible(for: .vFavorites) }
-func gPerformInBackgroundWhileShowingAppIsBusy(_ closure: @escaping Closure) { gMainWindow?.performInBackground(closure) }
-func gShowAppIsBusyWhile(_ closure: @escaping Closure) { gMainWindow?.showAppIsBusyWhile(closure) }
 
 protocol ZScrollDelegate : NSObjectProtocol {}
 
@@ -140,19 +138,19 @@ func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
 }
 
 func gPresentSavePanel(name iName: String?, suffix: String, _ callback: URLClosure? = nil) {
-	if  let                     window = gApplication?.mainWindow {
-		let                      panel = NSSavePanel()
-		panel                 .message = "Export a \(suffix) file"
-		gIsExportingToAFile            = true
-		if  let                   name = iName {
-			panel.nameFieldStringValue = name + kPeriod + suffix
+	if  let                      window = gApplication?.mainWindow {
+		let                       panel = NSSavePanel()
+		panel                  .message = "Export a \(suffix) file"
+		if  let                    name = iName {
+			panel .nameFieldStringValue = name + kPeriod + suffix
 		}
 
 		panel.beginSheetModal(for: window) { result in
-			if  result     == .OK,
+			if  result                 == .OK,
 				let fileURL = panel.url {
+				gIsExportingToAFile     = true
 
-				gPerformInBackgroundWhileShowingAppIsBusy {
+				gInBackgroundWhileShowingBusy {
 					callback?(fileURL)
 
 					gIsExportingToAFile = false
@@ -662,8 +660,8 @@ extension ZWindow {
 	@IBAction func undo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.undo() }
 	@IBAction func redo              (_ iItem: ZMenuItem?) { gMapEditor.undoManager.redo() }
 
-	var userIsActive: Bool { return isKeyWindow && currentEvent != nil }
-	var keyPressed: Bool { return nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false) != nil }
+	var userIsActive : Bool { return isKeyWindow && currentEvent != nil }
+	var   keyPressed : Bool { return nextEvent(matching: .keyDown, until: Date(), inMode: .default, dequeue: false) != nil }
 
 	var mouseMoved: Bool {
 		let last = gLastLocation
@@ -674,48 +672,6 @@ extension ZWindow {
 		}
 
 		return last != gLastLocation
-	}
-
-	func showAppIsBusy(_ start: Bool) {
-		if  let spinner = gMainController?.spinner {
-			if  start {
-				gRefusesFirstResponder = true
-
-				spinner.startAnimating()
-			} else {
-				spinner.stopAnimating()
-
-				gRefusesFirstResponder = false
-			}
-		}
-	}
-
-	func showAppIsBusyWhile(_ closure: @escaping Closure) {
-		FOREGROUND {
-			self.showAppIsBusy(true)
-			closure()
-			self.showAppIsBusy(false)
-		}
-	}
-
-	func performInBackground(_ closure: @escaping Closure) {
-		FOREGROUND {
-			self.showAppIsBusy(true)
-
-			BACKGROUND {
-				closure()
-
-				FOREGROUND {
-					self.showAppIsBusy(false)
-				}
-			}
-		}
-	}
-
-	func updateSpinner() {
-		let hide = gCurrentOp.isDoneOp && gCoreDataStack.isDoneOp
-
-		showAppIsBusy(!hide)
 	}
 
 }

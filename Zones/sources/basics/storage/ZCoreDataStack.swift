@@ -93,7 +93,7 @@ class ZCoreDataStack: NSObject {
 	func saveContext() {
 		if  gCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) {
-				FOREBACKGROUND { [self] in
+				gInBackgroundWhileShowingBusy { [self] in
 					if  let c = context, c.hasChanges {
 						checkCrossStore()
 
@@ -105,10 +105,6 @@ class ZCoreDataStack: NSObject {
 					}
 
 					makeAvailable()
-
-					FOREGROUND {
-						gMainWindow?.updateSpinner()
-					}
 				}
 			}
 		}
@@ -355,21 +351,20 @@ class ZCoreDataStack: NSObject {
 		return objects
 	}
 
-	func searchZRecordsForNames(_ names: StringsArray, within databaseID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
+	func searchZRecordsForStrings(_ strings: StringsArray, within databaseID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
 		var result = StringZRecordsDictionary()
 
 		if !gIsReadyToShowUI || !gCanLoad {
 			onCompletion?(result)
 		} else {
-			let searchables = names.map { $0.searchable }.filter { $0 != kSpace }
-			let dbPredicate = dbidPredicate(from: databaseID)
+			let searchables = strings.map { $0.searchable }.filter { $0 != kSpace }
 			let    entities = [kTraitType, kZoneType]
 			var       count = searchables.count * entities.count
 
 			for searchable in searchables {
 				for entity in entities {
 					if  let predicate = searchPredicate(entityName: entity, string: searchable) {
-						search(within: databaseID, entityName: entity, using: predicate.and(dbPredicate)) { matches in
+						search(within: databaseID, entityName: entity, using: predicate) { matches in
 							if  matches.count > 0 {
 								result[searchable] = matches.appending(result[searchable])
 							}

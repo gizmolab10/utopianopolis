@@ -29,8 +29,8 @@ class ZoneLink : NSObject {
 		super.init()
 		link = iLink
 
-		if  link?.isDatabaseWild ?? false {
-			redo = true // redo means one of the three components is empty (means a wild card, which must be recomputed each time)
+		if  link?.hasEmptyDatabase ?? false {
+			redo = true // redo means a wild card (one of the three components is empty), and must be recomputed each time
 		}
 	}
 
@@ -41,4 +41,17 @@ class ZoneLink : NSObject {
 
 		return _zone
 	}
+}
+
+extension String {
+
+	var hasEmptyDatabase: Bool {
+		if  let         parts  = components {
+			let    databaseID  = parts[0]
+			return databaseID == kEmpty
+		}
+
+		return false
+	}
+
 }

@@ -68,7 +68,7 @@ class ZManifest : ZRecord {
         for deleteMe in zDeleted {
             if  let      name = deleteMe.name {
                 let   records = gRemoteStorage.zRecords(for: databaseID)
-                if  let  zone = records?.maybeZRecordForRecordName(name) as? Zone,
+                if  let  zone = records?.maybeZoneForRecordName(name),
                     let trash = records?.trashZone {
                     zone.orphan()
                     trash.addChildNoDuplicate(zone)

@@ -187,7 +187,7 @@ class ZRecords: NSObject {
 		oldRoot = root
 	}
 
-	func lookupRoot(for rootID: ZRootID?) -> Zone? { return (rootID == nil) ? nil : zRecordsLookup["\(rootID!)"] as? Zone }
+	func lookupRoot(for rootID: ZRootID?) -> Zone? { return (rootID == nil) ? nil : zRecordsLookup["\(rootID!)"]?.maybeZone }
 	func isRootSet (for rootID: ZRootID?) -> Bool  { return getRoot(for: rootID) != nil }
 
 	func getRoot(for rootID: ZRootID?) -> Zone? {
@@ -389,12 +389,12 @@ class ZRecords: NSObject {
     // MARK: - registries & lookups
 	// MARK: -
 
-	func maybeZoneForRecordName    (_ iRecordName:   String?, trackMissing: Bool = true) ->     Zone? { return maybeZRecordForRecordName (iRecordName, trackMissing: trackMissing) as? Zone }
+	func maybeZoneForRecordName    (_ iRecordName:   String?, trackMissing: Bool = true) ->     Zone? { return maybeZRecordForRecordName (iRecordName, trackMissing: trackMissing)?.maybeZone }
 	func maybeZRecordForRecordID   (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }
 
 	func maybeZRecordForRecordName (_ recordName: String?, trackMissing: Bool = true) -> ZRecord? {
-		if  let name       = recordName {
-			if  let record = zRecordsLookup[name] {
+		if  let name                     = recordName {
+			if  let record               = zRecordsLookup[name] {
 				if  record.recordName   != name {
 					zRecordsLookup[name] = nil         // force record to be re-registered, or force search of core data store (below)
 				} else {
@@ -412,10 +412,10 @@ class ZRecords: NSObject {
 		return nil
 	}
 
-	func appendZRecordsLookup(with iName: String, onEachHandful: @escaping ZRecordsToZRecordsClosure) {
-		let names = iName.components(separatedBy: kSpace).filter { $0 != kEmpty }
+	func appendZRecords(containing string: String, onEachHandful: @escaping ZRecordsToZRecordsClosure) {
+		let strings = string.components(separatedBy: kSpace).filter { $0 != kEmpty }
 
-		gCoreDataStack.searchZRecordsForNames(names, within: databaseID) { [self] (dict: StringZRecordsDictionary) in
+		gCoreDataStack.searchZRecordsForStrings(strings, within: databaseID) { [self] (dict: StringZRecordsDictionary) in
 			for (name, zRecords) in dict {
 				let               records = onEachHandful(zRecords)
 				zRecordsArrayLookup[name] = records
@@ -429,8 +429,8 @@ class ZRecords: NSObject {
 
     func removeFromLocalSearchIndex(nameOf zone: Zone?) {
 		if  let record = zone,
-            let   name = record.zoneName {
-			appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
+            let string = record.zoneName {
+			appendZRecords(containing: string) { iRecords -> ZRecordsArray in
 				if  var records   = iRecords {
 					if  let index = records.firstIndex(of: record) {
 						records.remove(at: index)
@@ -445,7 +445,7 @@ class ZRecords: NSObject {
     }
 
 	func searchLocal(for string: String, onCompletion: @escaping Closure) {
-		appendZRecordsLookup(with: string) { iRecords -> ZRecordsArray in
+		appendZRecords(containing: string) { iRecords -> ZRecordsArray in
 			guard let records = iRecords else {
 				onCompletion()
 
@@ -489,7 +489,7 @@ class ZRecords: NSObject {
 				registerByType(zRecord)
             }
 			
-			if  let bookmark                    = zRecord as? Zone, bookmark.isBookmark {
+			if  let bookmark                    = zRecord.maybeZone, bookmark.isBookmark {
 				if  gBookmarks.addToReverseLookup(bookmark), gHasRelationships {
 					gRelationships.addBookmarkRelationship(bookmark, target: bookmark.zoneLink?.maybeZone, in: bookmark.databaseID)
 				}
@@ -526,7 +526,7 @@ class ZRecords: NSObject {
     func unregisterZRecord(_ zRecord: ZRecord?) {
 		unregisterRecordName(zRecord?.recordName)
 
-		if  let zone = zRecord as? Zone {
+		if  let zone = zRecord?.maybeZone {
 			removeFromLocalSearchIndex(nameOf: zone)
 			gBookmarks.forget(zone)
 		}
@@ -536,7 +536,7 @@ class ZRecords: NSObject {
         for (_, duplicate) in duplicates {
             duplicate.orphan()
 
-            if  let zone = duplicate as? Zone {
+            if  let zone = duplicate.maybeZone {
                 zone.children.removeAll()
             }
         }
@@ -579,7 +579,7 @@ class ZRecords: NSObject {
 
 	func applyToAllZones(closure: ZoneClosure) {
 		applyToAllZRecords { zRecord in
-			if  let zone = zRecord as? Zone {
+			if  let zone = zRecord?.maybeZone {
 				closure(zone)
 			}
 		}
@@ -609,7 +609,7 @@ class ZRecords: NSObject {
 		var  lost = 0
 
 		applyToAllZRecords { zRecord in
-			if  let zone = zRecord as? Zone {
+			if  let zone = zRecord?.maybeZone {
 				let root = zone.ancestralPath.first
 
 				if  zone.zoneName == nil {

@@ -1146,7 +1146,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 						return true
 					case .hIdea:
-						if  let  grab = zRecord as? Zone {
+						if  let  grab = zRecord?.maybeZone {
 							let eZone = gCurrentEssayZone
 
 							FOREGROUND {
@@ -1163,7 +1163,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 							return true
 						}
 					case .hEssay, .hNote:
-						if  let target = zRecord as? Zone {
+						if  let target = zRecord?.maybeZone {
 
 							save()
 

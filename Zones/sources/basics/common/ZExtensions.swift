@@ -503,7 +503,7 @@ extension CKRecord {
 		}
 
 		if  parentRecordName != nil {
-			return gRemoteStorage.maybeZoneForRecordName(parentRecordName) == nil
+			return gMaybeZoneForRecordName(parentRecordName) == nil
 		}
 
 		return true
@@ -2080,21 +2080,23 @@ extension NSTextAttachment {
 }
 
 extension String {
-    var        asciiArray: [UInt32] { return unicodeScalars.filter{$0.isASCII}.map{$0.value} }
-    var        asciiValue:  UInt32  { return asciiArray[0] }
-	var       smartStripped: String { return substring(fromInclusive: 4).spacesStripped }
-	var   components: StringsArray? { return components(separatedBy: kColonSeparator) }
-    var                length:  Int { return unicodeScalars.count }
-	var              isHyphen: Bool { return self == kHyphen }
-    var               isDigit: Bool { return "0123456789.+-=*/".contains(self[startIndex]) }
-    var        isAlphabetical: Bool { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
-    var               isAscii: Bool { return unicodeScalars.filter{ $0.isASCII}.count > 0 }
-	var       containsNoAscii: Bool { return unicodeScalars.filter{!$0.isASCII}.count > 0 }
-	var        containsNoTabs: Bool { return filter{ $0 != kTab.first}.count != 0 }
-    var            isOpposite: Bool { return "]}>)".contains(self) }
-	var          isDashedLine: Bool { return contains(kHalfLineOfDashes) }
-	var           isValidLink: Bool { return components != nil }
-	var  containsLineEndOrTab: Bool { return hasMatchIn(kLineEndingsAndTabArray) }
+    var               length :              Int  { return unicodeScalars.count }
+	var             isHyphen :             Bool  { return self == kHyphen }
+    var              isDigit :             Bool  { return "0123456789.+-=*/".contains(self[startIndex]) }
+    var       isAlphabetical :             Bool  { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
+    var              isAscii :             Bool  { return unicodeScalars.filter{  $0.isASCII }.count > 0 }
+	var      containsNoAscii :             Bool  { return unicodeScalars.filter{ !$0.isASCII }.count > 0 }
+	var       containsNoTabs :             Bool  { return filter{ $0 != kTab.first}.count != 0 }
+    var           isOpposite :             Bool  { return "]}>)".contains(self) }
+	var         isDashedLine :             Bool  { return contains(kHalfLineOfDashes) }
+	var          isValidLink :             Bool  { return components != nil }
+	var containsLineEndOrTab :             Bool  { return hasMatchIn(kLineEndingsAndTabArray) }
+	var        smartStripped :           String  { return substring(fromInclusive: 4).spacesStripped }
+	var           asciiValue :           UInt32  { return asciiArray[0] }
+	var           asciiArray :          [UInt32] { return unicodeScalars.filter { $0.isASCII }.map{ $0.value } }
+	var           components :     StringsArray? { return components(separatedBy: kColonSeparator) }
+	var            maybeZone :             Zone? { return maybeZRecord as? Zone }
+	func maybeZone(in id: ZDatabaseID?) -> Zone? { return maybeZRecord(in: id)?.maybeZone }
 
     var opposite: String {
 		switch self {
@@ -2207,15 +2209,6 @@ extension String {
 		return nil
 	}
 
-	var isDatabaseWild: Bool {
-		if  let         parts  = components {
-			let    databaseID  = parts[0]
-			return databaseID == kEmpty
-		}
-
-		return false
-	}
-
 	var maybeDatabaseID: ZDatabaseID? {
 		if  let         parts  = components {
 			let    databaseID  = parts[0]
@@ -2225,18 +2218,21 @@ extension String {
 		return nil
 	}
 
-	var maybeZone: Zone? { return maybeZRecord as? Zone }
+	func maybeZRecord(in databaseID: ZDatabaseID?) -> ZRecord? {
+		let zRecords = gRemoteStorage.zRecords(for: databaseID)
+		let  zRecord = zRecords?.maybeZRecordForRecordName(self)
+
+		return zRecord
+	}
 
 	var maybeZRecord: ZRecord? {
 		if  self          != kEmpty,
 			let       name = maybeRecordName,
-			let      parts = components {
+			let      parts = components, parts.count > 0 {
 			let    rawDBID = parts[0]
 			let databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
-			let   zRecords = gRemoteStorage.zRecords(for: databaseID)
-			let    zRecord = zRecords?.maybeZRecordForRecordName(name)
 
-			return zRecord
+			return name.maybeZRecord(in: databaseID)
 		}
 
 		return nil

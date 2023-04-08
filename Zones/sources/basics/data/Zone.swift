@@ -127,7 +127,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func          toolName()                               ->             String? { return clippedName }
 	func          toolColor()                              ->             ZColor? { return color?.lighter(by: 3.0) }
 	func          maybeTraitFor(_ iType: ZTraitType)       ->             ZTrait? { return traits[iType] }
-	static   func object(for id: String, isExpanded: Bool) ->           NSObject? { return gRemoteStorage.maybeZoneForRecordName(id) }
+	static   func object(for id: String, isExpanded: Bool) ->           NSObject? { return gMaybeZoneForRecordName(id) }
 	static   func randomZone(in dbID: ZDatabaseID)         ->               Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	override func hasMissingChildren()                     ->               Bool  { return count < fetchableCount }
 	override func orphan()                                                        { parentZone?.removeChild(self) }
@@ -280,7 +280,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var bookmarkTarget : Zone? {
 		if  !gHasRelationships {
-			return crossLink as? Zone
+			return crossLink?.maybeZone
 		}
 
 		if  let relationships = gRelationships.relationshipsFor(self),
@@ -845,7 +845,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for child in children {
 				if  let cID = child.dbid,
 					zID    == cID,
-					let   c = child.selfInCurrentBackgroundCDContext as? Zone {                  // avoid cross-store relationships
+					let   c = child.selfInContext?.maybeZone {                  // avoid cross-store relationships
 					childSet.insert(c)
 				}
 			}
@@ -853,7 +853,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			for trait in traits.values {
 				if  let tID = trait.dbid,
 					zID    == tID,
-					let   t = trait.selfInCurrentBackgroundCDContext as? ZTrait {                // avoid cross-store relationships
+					let   t = trait.selfInContext?.maybeTrait {                 // avoid cross-store relationships
 					traitSet.insert(t)
 				}
 			}
@@ -1201,7 +1201,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							iZone.orphan()
 							gManifest?.smartAppend(iZone)
 							gFavorites.pop(iZone)  // avoid getting stuck on a zombie
-							gCDCurrentBackgroundContext?.delete(iZone)
+							iZone.deleteSelf()
 						}
 					}
 
@@ -1429,7 +1429,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addToLocalSearchIndex() {
 		if  let    name = zoneName,
 			let records = zRecords {
-			records.appendZRecordsLookup(with: name) { iRecords -> ZRecordsArray in
+			records.appendZRecords(containing: name) { iRecords -> ZRecordsArray in
 				guard var r = iRecords else { return [] }
 
 				r.appendUnique(item: self)
