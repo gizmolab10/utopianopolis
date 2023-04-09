@@ -72,7 +72,7 @@ class ZRemoteStorage: NSObject {
 		var sum = 0
 		for databaseID in kAllDatabaseIDs {
 			if let zRecords = zRecords(for: databaseID) {
-				sum += zRecords.zRecordsLookup.count
+				sum += zRecords.recordNamesLookup.count
 			}
 		}
 
@@ -199,21 +199,6 @@ class ZRemoteStorage: NSObject {
 		}
 
 		print("fixed: \(fixed) lost: \(lost)")
-	}
-
-	func assureAdoption() {
-		for cloud in allClouds {
-			cloud.assureAdoption()
-		}
-	}
-
-	func adoptAllNeedingAdoption() {
-		for cloud in allClouds {
-			let remaining = cloud.adoptAllNeedingAdoption()
-			if  remaining > 0 {
-				printDebug(.dAdopt, "unadopted: \(remaining)")
-			}
-		}
 	}
 
 	func maybeZRecordForRecordName (_ iRecordName: String?) -> ZRecord? {

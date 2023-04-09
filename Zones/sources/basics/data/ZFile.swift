@@ -78,8 +78,8 @@ class ZFile : ZRecord {
 	// MARK: - properties
 	// MARK: -
 
-	override var        cloudProperties : StringsArray { return Zone.cloudProperties }
-	override var optionalCloudProperties: StringsArray { return Zone.optionalCloudProperties }
+	override var        cloudProperties : StringsArray { return ZFile.cloudProperties }
+	override var optionalCloudProperties: StringsArray { return ZFile.optionalCloudProperties }
 
 	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties +

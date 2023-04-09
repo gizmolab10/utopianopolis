@@ -114,7 +114,7 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func loadManifest(into databaseID: ZDatabaseID) {
-		let manifests       = load(type: kManifestType, into: databaseID)
+		let manifests       = load(type: kManifestType, into: databaseID, onlyOne: true)
 		if  manifests.count > 0,
 			let manifest    = manifests[0] as? ZManifest,
 			let cloud       = gRemoteStorage.cloud(for: databaseID) {
@@ -130,18 +130,25 @@ class ZCoreDataStack: NSObject {
 				FOREGROUND { [self] in
 					loadManifest(into: databaseID)
 
-					for rootName in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
-						loadRootZone(recordName: rootName, into: databaseID)
-					}
+					if  gLoadEachRoot {
+						for rootName in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
+							loadRootZone(recordName: rootName, into: databaseID)
+						}
 
-					if  databaseID == .mineID {
-						loadRootZone(recordName: kFavoritesRootName, into: databaseID)
+						if  databaseID == .mineID {
+							loadRootZone(recordName: kFavoritesRootName, into: databaseID)
+						}
+					} else if let records = gRemoteStorage.zRecords(for: databaseID) {
+						load(type: kZoneType,  into: databaseID)
+						load(type: kTraitType, into: databaseID)
+						load(type: kFileType,  into: databaseID)
+						FOREGROUND {
+							records.resolveAllSubordinates()
+						}
 					}
-
-					load(type: kFileType, into: databaseID, onlyOne: false)
 
 					if  gHasRelationships {
-						let array = load(type: kRelationshipType, into: databaseID, onlyOne: false)
+						let array = load(type: kRelationshipType, into: databaseID)
 
 						for item in array {
 							if  let          relationship = item as? ZRelationship {
@@ -162,7 +169,7 @@ class ZCoreDataStack: NSObject {
 
 	func loadRootZone(recordName: String, into databaseID: ZDatabaseID) {
 		if  let zRecords = gRemoteStorage.zRecords(for: databaseID) {
-			let  fetched = load(type: kZoneType, recordName: recordName, into: databaseID)
+			let  fetched = load(type: kZoneType, recordName: recordName, into: databaseID, onlyOne: true)
 
 			for object in fetched {
 				if  let zone = object as? Zone {
@@ -186,16 +193,19 @@ class ZCoreDataStack: NSObject {
 	// called by load recordName and find type, recordName
 	// fetch, extract data, register
 
-	@discardableResult func load(type: String, recordName: String? = nil, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
+	@discardableResult func load(type: String, recordName: String? = nil, into databaseID: ZDatabaseID, onlyOne: Bool = false) -> ZManagedObjectsArray {
 		let objects = fetch(type: type, recordName: recordName, into: databaseID, onlyOne: onlyOne)
 
 		let ids = objects.map { $0.objectID }
-		for id in ids {
-			FOREGROUND() { [self] in
-				gInvokeUsingDatabaseID(databaseID) {
+		FOREGROUND() { [self] in
+			gInvokeUsingDatabaseID(databaseID) {
+				for id in ids {
 					let      object = context?.object(with: id)
 					if  let zRecord = object as? ZRecord {
-						zRecord.convertFromCoreData(visited: [])
+						if  gLoadEachRoot {
+							zRecord.convertFromCoreData(visited: [])
+						}
+
 						zRecord.register()
 					}
 				}

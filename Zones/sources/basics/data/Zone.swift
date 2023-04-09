@@ -1642,7 +1642,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var noteText : NSMutableAttributedString? { return maybeTraitFor(.tNote)?.noteText }
 
-	var assets: [CKAsset]? {
+	var assets: CKAssetsArray? {
 		get {
 			return traits[.tAssets]?.assets
 		}
@@ -2430,7 +2430,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func assureAdoption() {
+	func assureZoneAdoption() {
 		traverseAllAncestors { ancestor in
 			ancestor.adopt()
 		}
@@ -2859,8 +2859,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				children.remove(at: index)
 			}
 
-			child.setParentZone(nil)
+			child.parentRID = nil
 
+			child.setParentZone(nil)
 			child.setValue(nil, forKeyPath: kParentRef)
 			updateCoreDataRelationships()
 			updateMaxLevel()

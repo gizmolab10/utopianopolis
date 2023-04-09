@@ -225,7 +225,7 @@ extension Zone {
 				let parent        = relationships.parents?.first {
 
 				parentZoneMaybe   = parent
-			} else if let parent  = unrelationalParentZone {
+			} else if let parent  = parentZoneWrapper {
 				setParentZone(parent)
 
 				parentZoneMaybe   = parent
@@ -236,9 +236,9 @@ extension Zone {
 	}
 
 	func setParentZone(_ parent: Zone?) {
-		if  parentZoneMaybe       != parent {
-			let priorParent        = parentZoneMaybe
-			unrelationalParentZone = parent
+		if  parentZoneMaybe  != parent {
+			let priorParent   = parentZoneMaybe
+			parentZoneWrapper = parent
 
 			gRelationships.addOrSwapParentRelationship(self, parent: parent, priorParent: priorParent, in: databaseID)
 		}
@@ -268,7 +268,7 @@ extension Zone {
 		return new
 	}
 
-	var unrelationalParentZone: Zone? {
+	var parentZoneWrapper: Zone? {
 		get {
 			if  parentZoneMaybe    == nil {
 				if  root           == self {

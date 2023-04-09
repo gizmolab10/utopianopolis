@@ -358,7 +358,7 @@ class ZRecord: ZManagedObject {
 					return string as NSObject
 				}
 			case .assets:
-				if  let  assets = object as? [CKAsset] {
+				if  let  assets = object as? CKAssetsArray {
 					var strings = StringsArray()
 
 					for asset in assets {
@@ -453,7 +453,7 @@ class ZRecord: ZManagedObject {
 					case .assets:
 						if  let      assetStrings = (object as? String)?.componentsSeparatedAt(level: 2), assetStrings.count > 0,
 							let             trait = self as? ZTrait {
-							var            assets = [CKAsset]()
+							var            assets = CKAssetsArray()
 							for assetString in assetStrings {
 								let         parts = assetString.componentsSeparatedAt(level: 1)
 								if  parts.count   > 1 {

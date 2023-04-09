@@ -23,6 +23,7 @@ func gSetupDebugFeatures() {
 	gCoreDataMode       = []
 	gCoreDataMode.insert(.dNoCloudKit)          // don't store data in cloud (public not yet working)
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
+//	gCoreDataMode.insert(.dLoadEachRoot)        // load each root individually
 	gCoreDataMode.insert(.dCKUseSubmitted)      // use app store's id (test2)
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
 //	gCoreDataMode.insert(.dTestingMigration)    // don't use the relationships table yet
@@ -38,6 +39,7 @@ var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)          && gIsUsingCoreData }
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)          && gIsUsingCoreData }
 var         gCKUseLatest : Bool { return !gCoreDataMode.contains(.dCKUseSubmitted)   && gIsUsingCoreData }
+var        gLoadEachRoot : Bool { return  gCoreDataMode.contains(.dLoadEachRoot)     && gIsUsingCoreData }
 var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)       && gIsUsingCoreData }
 var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCoreData }
 var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCoreData }
@@ -66,9 +68,10 @@ struct ZCoreDataMode: OptionSet {
 	static let dDisabled         = ZCoreDataMode(rawValue: 1 << 2) // cannot use core data
 	static let dNoCloudKit       = ZCoreDataMode(rawValue: 1 << 3) // store in cloud kit
 	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 4) // start the CD repo fresh
-	static let dCKUseSubmitted   = ZCoreDataMode(rawValue: 1 << 5) // use app store's id (test2)
-	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 6) // not use ZRelationship
-	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 7) // use migration.testing (not data)
+	static let dLoadEachRoot     = ZCoreDataMode(rawValue: 1 << 5) // load each root separately and then fetch its children
+	static let dCKUseSubmitted   = ZCoreDataMode(rawValue: 1 << 6) // use app store's id (test2)
+	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 7) // not use ZRelationship
+	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 8) // use migration.testing (not data)
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {

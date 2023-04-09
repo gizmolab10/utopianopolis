@@ -50,7 +50,7 @@ class ZCloud: ZRecords {
 			case .oManifest:         establishManifest  (identifier, cloudCallback)
 			case .oResolveMissing:   resolveMissing                 (cloudCallback)
 			case .oResolve:          resolve                        (cloudCallback)
-			case .oAdopt:            assureAdoption                 (cloudCallback)
+			case .oAdopt:            assureZoneAdoption             (cloudCallback)
 			default:                                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
 	}

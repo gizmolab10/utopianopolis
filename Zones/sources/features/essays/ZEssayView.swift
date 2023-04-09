@@ -1133,7 +1133,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let parts = link.components(separatedBy: kColonSeparator)
 
 			if  parts.count > 1,
-				let     one = parts.first?.first,                          // first character of first part
+				let     one = parts.first?.first,                             // first character of first part
 				let    name = parts.last,
 				let    type = ZEssayLinkType(rawValue: String(one)) {
 				let zRecord = gRemoteStorage.maybeZRecordForRecordName(name)  // find zone whose record name == name

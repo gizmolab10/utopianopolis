@@ -403,7 +403,7 @@ extension ZoneArray {
 		return grabbed
 	}
 
-	func assureAdoption() {
+	func assureZoneAdoption() {
 		traverseAllAncestors { ancestor in
 			ancestor.adopt()
 		}

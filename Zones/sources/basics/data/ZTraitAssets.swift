@@ -18,10 +18,10 @@ import UIKit
 @objc(ZTraitAssets)
 class ZTraitAssets : ZRecord {
 
-	@NSManaged    var     assets : [CKAsset]?
-	@NSManaged    var assetNames :  String?
-	override var cloudProperties : StringsArray { return ZTraitAssets.cloudProperties }
-	override var optionalCloudProperties: StringsArray { return ZTraitAssets.optionalCloudProperties }
+	@NSManaged var                assets : CKAssetsArray?
+	@NSManaged var            assetNames : String?
+	override var         cloudProperties : StringsArray { return ZTraitAssets.cloudProperties }
+	override var optionalCloudProperties : StringsArray { return ZTraitAssets.optionalCloudProperties }
 
 	override class var cloudProperties: StringsArray {
 		return optionalCloudProperties + super.cloudProperties

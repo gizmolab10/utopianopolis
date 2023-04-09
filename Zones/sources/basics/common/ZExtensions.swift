@@ -24,6 +24,7 @@ typealias               ZOpIDsArray = [ZOperationID]
 typealias               ZFilesArray = [ZFile]
 typealias               ZTraitArray = [ZTrait]
 typealias              StringsArray = [String]
+typealias             CKAssetsArray = [CKAsset]
 typealias             ZRecordsArray = [ZRecord]
 typealias             ZObjectsArray = [NSObject]
 typealias           ZoneWidgetArray = [ZoneWidget]
@@ -1987,8 +1988,8 @@ extension NSMutableAttributedString {
 	// side-effect for a freshly dropped image:
 	// it creates and returns an additional asset
 
-	func assets(for trait: ZTraitAssets) -> [CKAsset]? {
-		var array = [CKAsset]()
+	func assets(for trait: ZTraitAssets) -> CKAssetsArray? {
+		var array = CKAssetsArray()
 		let     i = attachedImages // grab from text attachment cells
 
 		for (index, name) in imageFileNames.enumerated() {
@@ -2095,7 +2096,7 @@ extension String {
 	var           asciiValue :           UInt32  { return asciiArray[0] }
 	var           asciiArray :          [UInt32] { return unicodeScalars.filter { $0.isASCII }.map{ $0.value } }
 	var           components :     StringsArray? { return components(separatedBy: kColonSeparator) }
-	var            maybeZone :             Zone? { return maybeZRecord as? Zone }
+	var            maybeZone :             Zone? { return maybeZRecord?.maybeZone }
 	func maybeZone(in id: ZDatabaseID?) -> Zone? { return maybeZRecord(in: id)?.maybeZone }
 
     var opposite: String {

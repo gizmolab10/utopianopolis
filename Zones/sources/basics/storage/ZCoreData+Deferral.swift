@@ -161,7 +161,7 @@ struct ZEntityDescriptor {
 }
 
 struct ZExistence {
-	var zRecord : ZRecord? = nil
+	var zRecord : ZRecord?
 	var closure : ZRecordClosure?
 	let  entity : ZEntityDescriptor?
 	let    file : ZFileDescriptor?
@@ -198,19 +198,19 @@ extension ZExistenceArray {
 	func fireClosures() {
 		var counter = [ZDatabaseID : Int]()
 
-		func count(_ r: ZRecord?) {
-			if  let i = r?.databaseID {
-				if  let x = counter[i] {
-					counter[i] = x + 1
+		func count(_    r : ZRecord) {
+			if  let    id = r.maybeDatabaseID{
+				if  let x = counter[id] {
+					counter[id] = x + 1
 				} else {
-					counter[i] = 1
+					counter[id] = 1
 				}
 			}
 		}
 
 		for e in self {
-			if  let close = e.closure {
-				let     r = e.zRecord
+			if  let close = e.closure,
+				let     r = e.zRecord {
 
 				count(r)
 				close(r)   // invoke closure

@@ -175,7 +175,7 @@ var gHere: Zone {
 			gDatabaseID      = id
 		}
 
-		newValue.assureAdoption()
+		newValue.assureZoneAdoption()
 		gFavorites.push(newValue)
 
 	}
