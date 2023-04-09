@@ -323,7 +323,7 @@ class ZRecords: NSObject {
 
 		if  let names = recordNamesByType[type] {
 			for name in names {
-				if  let zRecord = maybeZRecordForRecordName(name) {
+				if  let zRecord = maybeZoneForRecordName(name) {
 					result.append(zRecord)
 				}
 			}
@@ -387,25 +387,22 @@ class ZRecords: NSObject {
     // MARK: - registries & lookups
 	// MARK: -
 
-	func maybeZoneForRecordName    (_ iRecordName:   String?, trackMissing: Bool = true) ->     Zone? { return maybeZRecordForRecordName (iRecordName, trackMissing: trackMissing)?.maybeZone }
-	func maybeZRecordForRecordID   (_ iRecordID: CKRecordID?, trackMissing: Bool = true) ->  ZRecord? { return maybeZRecordForRecordName (iRecordID?.recordName, trackMissing: trackMissing) }
-
-	func maybeZRecordForRecordName (_ recordName: String?, type: String = kZoneType, trackMissing: Bool = true) -> ZRecord? {
-		if  let name                     = recordName {
-			if  let record               = recordNamesLookup[name] {
-				if  record.recordName   != name {
-					record.unregister()               // force record to be re-registered next time, and force search of core data store (below)
+	func maybeZoneForRecordName (_ recordName: String?, trackMissing: Bool = true) -> Zone? {
+		if  let name                 = recordName {
+			if  let zone             = recordNamesLookup[name] as? Zone {
+				if  zone.recordName != name {
+					zone.unregister()               // force zone to be re-registered next time, and force search of core data store (below)
 				} else {
-					return record
+					return zone
 				}
 			}
 
-			let found = gCoreDataStack.find(type: type, recordName: name, in: databaseID, trackMissing: trackMissing).first as? ZRecord
+			let zone = gCoreDataStack.find(type: kZoneType, recordName: name, in: databaseID, trackMissing: trackMissing).first as? Zone
 
-			found?.register()
-			found?.debugRegistration(">")
+			zone?.register()
+			zone?.debugRegistration(">")
 
-			return found
+			return zone
 		}
 
 		return nil
@@ -543,9 +540,9 @@ class ZRecords: NSObject {
         duplicates.removeAll()
     }
 
-	func resolveAllSubordinates() {
-		applyToAllZRecords { zRecord in
-			zRecord.adopt(recursively: true)
+	func resolveAllParents() {
+		applyToAllZones { zone in
+			zone.adopt(recursively: true)
 		}
 	}
 
@@ -664,7 +661,7 @@ class ZRecords: NSObject {
 		var count = 0
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iRecordName in
-            if  let zRecord = maybeZRecordForRecordName(iRecordName) {
+            if  let zRecord = maybeZoneForRecordName(iRecordName) {
 				zRecord.adopt(recursively: true)
 			} else {
 				count += 1
@@ -807,7 +804,7 @@ class ZRecords: NSObject {
         var names = StringsArray ()
 
         applyToAllRecordNamesWithAnyMatchingStates(states) { iState, iName in
-            if  let record = maybeZRecordForRecordName(iName) {
+            if  let record = maybeZoneForRecordName(iName) {
                 onEach(iState, record)
             }
 
@@ -825,7 +822,7 @@ class ZRecords: NSObject {
                 let names = recordNamesForState(state)
 
                 if  names.contains(name),
-					let zRecord = maybeZRecordForRecordName(name) {
+					let zRecord = maybeZoneForRecordName(name) {
                     onEach!(state, zRecord)
                 }
             }
@@ -834,7 +831,7 @@ class ZRecords: NSObject {
 
 	func applyToAllZRecordsWithAnyMatchingStates(_ iStates: [ZRecordState], onEach: StateRecordClosure) {
 		applyToAllRecordNamesWithAnyMatchingStates(iStates) { iState, iName in
-			if  let zRecord = maybeZRecordForRecordName(iName) {
+			if  let zRecord = maybeZoneForRecordName(iName) {
 				onEach(iState, zRecord)
 			}
 

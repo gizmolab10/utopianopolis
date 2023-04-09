@@ -2221,7 +2221,7 @@ extension String {
 
 	func maybeZRecord(in databaseID: ZDatabaseID?) -> ZRecord? {
 		let zRecords = gRemoteStorage.zRecords(for: databaseID)
-		let  zRecord = zRecords?.maybeZRecordForRecordName(self)
+		let  zRecord = zRecords?.maybeZoneForRecordName(self)
 
 		return zRecord
 	}

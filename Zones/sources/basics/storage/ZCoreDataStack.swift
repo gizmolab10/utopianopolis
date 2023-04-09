@@ -141,11 +141,12 @@ class ZCoreDataStack: NSObject {
 					} else if let records = gRemoteStorage.zRecords(for: databaseID) {
 						load(type: kZoneType,  into: databaseID)
 						load(type: kTraitType, into: databaseID)
-						load(type: kFileType,  into: databaseID)
 						FOREGROUND {
-							records.resolveAllSubordinates()
+							records.resolveAllParents()
 						}
 					}
+
+					load(type: kFileType, into: databaseID)
 
 					if  gHasRelationships {
 						let array = load(type: kRelationshipType, into: databaseID)

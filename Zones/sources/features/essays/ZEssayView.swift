@@ -1133,10 +1133,10 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let parts = link.components(separatedBy: kColonSeparator)
 
 			if  parts.count > 1,
-				let     one = parts.first?.first,                             // first character of first part
-				let    name = parts.last,
-				let    type = ZEssayLinkType(rawValue: String(one)) {
-				let zRecord = gRemoteStorage.maybeZRecordForRecordName(name)  // find zone whose record name == name
+				let  one = parts.first?.first,                             // first character of first part
+				let name = parts.last,
+				let type = ZEssayLinkType(rawValue: String(one)) {
+				let zonw = gRemoteStorage.maybeZoneForRecordName(name)  // find zone whose record name == name
 				switch type {
 					case .hEmail:
 						link.openAsURL()
@@ -1146,7 +1146,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 						return true
 					case .hIdea:
-						if  let  grab = zRecord?.maybeZone {
+						if  let  grab = zonw {
 							let eZone = gCurrentEssayZone
 
 							FOREGROUND {
@@ -1163,7 +1163,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 							return true
 						}
 					case .hEssay, .hNote:
-						if  let target = zRecord?.maybeZone {
+						if  let target = zonw {
 
 							save()
 
