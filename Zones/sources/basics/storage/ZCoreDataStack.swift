@@ -48,7 +48,7 @@ enum ZCDStoreType: String {
 }
 
 let  gCoreDataStack                                    = ZCoreDataStack()
-var  gCDCurrentBackgroundContext                       : NSManagedObjectContext? { return gCoreDataStack.context }
+var  gCDCurrentBackgroundContext                       : NSManagedObjectContext? { return gCoreDataStack.persistentContainer?.viewContext }
 var  gCoreDataIsSetup                                                     : Bool { return gCoreDataStack.persistentContainer != nil }
 var  gCoreDataIsBusy                                                      : Bool { return gCoreDataStack.currentOpID         != nil }
 func gLoadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: databaseID, onCompletion: onCompletion) }
@@ -65,13 +65,11 @@ class ZCoreDataStack: NSObject {
 	var          statusOpID : ZCDOperationID?                 { return currentOpID ?? deferralStack.first?.opID }
 	var            isDoneOp : Bool                            { return currentOpID == nil }
 	var          statusText : String?                         { return statusOpID?.description }
-	lazy var    coordinator : NSPersistentStoreCoordinator? = { return persistentContainer?.persistentStoreCoordinator } ()
-	lazy var        context : NSManagedObjectContext?       = { return persistentContainer?.viewContext }                ()
 	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }    ()
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
 		if  gIsUsingCoreData,
-			let             c = context {
+			let             c = persistentContainer?.viewContext {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 			request.predicate = dbidPredicate(from: databaseID)
 
@@ -94,7 +92,7 @@ class ZCoreDataStack: NSObject {
 		if  gCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) {
 				gInBackgroundWhileShowingBusy { [self] in
-					if  let c = context, c.hasChanges {
+					if  let c = persistentContainer?.viewContext, c.hasChanges {
 						checkCrossStore()
 
 						do {
@@ -178,7 +176,7 @@ class ZCoreDataStack: NSObject {
 					zone.respectOrder()
 
 					FOREGROUND { [self] in
-						if  let root = context?.object(with: oid) as? Zone {
+						if  let root = persistentContainer?.viewContext.object(with: oid) as? Zone {
 							if  recordName == kFavoritesRootName {
 								gFavorites.setRoot(root, for: .favoritesID)
 							} else {
@@ -201,7 +199,7 @@ class ZCoreDataStack: NSObject {
 		FOREGROUND() { [self] in
 			gInvokeUsingDatabaseID(databaseID) {
 				for id in ids {
-					let      object = context?.object(with: id)
+					let      object = persistentContainer?.viewContext.object(with: id)
 					if  let zRecord = object as? ZRecord {
 						if  gLoadEachRoot {
 							zRecord.convertFromCoreData(visited: [])
@@ -239,7 +237,7 @@ class ZCoreDataStack: NSObject {
 
 	func registerObject(_ objectID: NSManagedObjectID, recordName: String?, databaseID: ZDatabaseID) {
 		if  let name   = recordName,
-			let object = context?.object(with: objectID) {
+			let object = persistentContainer?.viewContext.object(with: objectID) {
 			var dict   = fetchedRegistry[databaseID] ?? ZManagedObjectsDictionary()
 
 			dict[name]                  = object
@@ -312,7 +310,7 @@ class ZCoreDataStack: NSObject {
 		var   objects = ZManagedObjectsArray()
 
 		do {
-			if  let items = try context?.fetch(request) {
+			if  let items = try persistentContainer?.viewContext.fetch(request) {
 				for item in items {
 					if  let object = item as? ZManagedObject {
 
@@ -431,7 +429,7 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func persistentStore(for type: ZCDStoreType) -> NSPersistentStore? {
-		return coordinator?.persistentStore(for: type.ckStoreURL)
+		return persistentContainer?.persistentStoreCoordinator.persistentStore(for: type.ckStoreURL)
 	}
 
 	func storeDescription(for type: ZCDStoreType) -> NSPersistentStoreDescription{
@@ -531,7 +529,7 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func checkCrossStore() {
-		if  let c = context, gPrintModes.contains(.dCross) {
+		if  let c = persistentContainer?.viewContext, gPrintModes.contains(.dCross) {
 			for updated in c.updatedObjects {
 				if  let  zone  = updated as? Zone,
 					let zdbid  = zone.dbid,

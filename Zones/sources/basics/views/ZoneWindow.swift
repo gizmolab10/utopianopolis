@@ -53,7 +53,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 	}
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
-		if  let            key = iKey {
+		if  let key = iKey, !gRefusesFirstResponder {
 			gTemporarilySetKey(key)      // enable become first responder
 
 			// //////////////////////////////////////// //

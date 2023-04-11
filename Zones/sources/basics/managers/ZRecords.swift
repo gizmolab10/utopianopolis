@@ -469,9 +469,9 @@ class ZRecords: NSObject {
 				if  existingRecord             != zRecord,
 					existingRecord.entity.name == zRecord.entity.name {
 
-                    // /////////////////////////////////////
+                    // ////////////////////////////////// //
                     // if already registered, must ignore //
-                    // /////////////////////////////////////
+                    // ////////////////////////////////// //
 
 					duplicates[recordName]      = zRecord
 

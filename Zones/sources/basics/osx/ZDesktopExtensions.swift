@@ -102,6 +102,8 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 }
 
 func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
+	gMainController?.showAppIsBusy(true)
+
 	if  let  window = gApplication?.mainWindow {
 		let   panel = NSOpenPanel()
 
@@ -117,9 +119,8 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 				panel.urls.count > 0 {
 				let          url = panel.urls[0]
 
-				gShowAppIsBusyWhile {
-					callback?(url)
-				}
+				callback?(url)
+				gMainController?.showAppIsBusy(false)
 			}
 		}
 	}
@@ -127,9 +128,10 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 
 func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
 	gPresentOpenPanel() { iAny in
-		if let panel = iAny as? NSOpenPanel {
+		if  let   panel = iAny as? NSOpenPanel {
 			let  suffix = ZExportType.eSeriously.rawValue
 			panel.title = "Import as \(suffix)"
+
 			panel.allowedFileTypes = [suffix]
 		} else {
 			callback?(iAny)
@@ -906,7 +908,7 @@ extension ZTextEditor {
     }
 	
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
-		if  var        key = iKey {
+		if  var        key = iKey, !gRefusesFirstResponder {
 			let        ANY = flags.isAny
 			let     OPTION = flags.hasOption
 			let    CONTROL = flags.hasControl

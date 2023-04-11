@@ -169,7 +169,7 @@ extension ZoneArray {
 		return candidate
 	}
 
-	mutating func respectOrderAndLevel() {
+	mutating func respectOrderAndLevelValues() {
 		sort { (a, b) -> Bool in
 			if  a.level == b.level {
 				return a.order < b.order
@@ -179,7 +179,7 @@ extension ZoneArray {
 		}
 	}
 
-	mutating func respectOrder() {
+	mutating func reorderAccordingToValue() { // was respectOrder
 		sort { (a, b) -> Bool in
 			return a.order < b.order
 		}
@@ -189,7 +189,7 @@ extension ZoneArray {
 		var duplicated = ZoneArray ()
 		var    indices = [Int] ()
 
-		respectOrder()
+		reorderAccordingToValue()
 
 		forEach { zone in
 			if  let     index = zone.siblingIndex {
@@ -620,9 +620,9 @@ extension ZoneArray {
 
 						if  bookmarks.count != 0 {
 
-							// ///////////////////////////////////////////////////////////
+							// //////////////////////////////////////////////////////// //
 							// remove any bookmarks the target of which is one of zones //
-							// ///////////////////////////////////////////////////////////
+							// //////////////////////////////////////////////////////// //
 
 							bookmarks.deleteZones(permanently: permanently, iShouldGrab: false) { // recurse
 								finish()

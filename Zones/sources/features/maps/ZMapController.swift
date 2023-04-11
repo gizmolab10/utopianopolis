@@ -345,9 +345,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 
 			if  let editWidget = gCurrentlyEditingWidget {
 
-				// ////////////////////////////////////////
+				// ///////////////////////////////////// //
 				// detect click inside text being edited //
-				// ////////////////////////////////////////
+				// ///////////////////////////////////// //
 
                 let   textRect = editWidget.convert(editWidget.bounds, to: mapView)
                 notEditingIdea = !textRect.contains(location)
@@ -371,9 +371,9 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 					}
 				} else if gIsMapMode {
 
-					// //////////////////////
+					// /////////////////// //
 					// click in background //
-					// //////////////////////
+					// /////////////////// //
 
 					if !kIsPhone {	// default reaction to click on background: select here
 						gHereMaybe?.grab()  // safe version of here prevent crash early in launch

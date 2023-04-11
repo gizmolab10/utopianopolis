@@ -159,9 +159,9 @@ class ZFiles: NSObject {
 			do {
 				gRemoteStorage.recount()
 
-				// //////////////////////////////////////////////
+				// /////////////////////////////////////////// //
 				// take snapshots just before exit from method //
-				// //////////////////////////////////////////////
+				// /////////////////////////////////////////// //
 
 				if  let     map  = try cloud.rootZone?.createStorageDictionary(for: databaseID)  {
 					dict[.graph] = map as NSObject

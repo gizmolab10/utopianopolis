@@ -22,7 +22,7 @@ class ZBaseEditor : NSObject {
 	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) { gAppDelegate?.genericMenuHandler(iItem) }
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
-		if  var key  = iKey {
+		if  var key  = iKey, !gRefusesFirstResponder {
 			if  key != key.lowercased() {
 				key  = key.lowercased()
 			}
@@ -74,7 +74,7 @@ class ZBaseEditor : NSObject {
 
 	@discardableResult func handleEvent(_ event: ZEvent, isWindow: Bool, forced: Bool = false) -> ZEvent? {
 		if  (canHandleKey || forced),
-			!gIgnoreEvents,
+			!gIgnoreEvents, !gRefusesFirstResponder,
 			!matchesPrevious(event) {
 			previousEvent  = event
 			

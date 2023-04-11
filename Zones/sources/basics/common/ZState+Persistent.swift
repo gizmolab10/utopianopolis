@@ -154,7 +154,7 @@ var gSearchScope: ZSearchScope {
 
 var gCKRepositoryID: ZCKRepositoryID {
 	get {
-		let  defaultID = ZCKRepositoryID.submitted
+		let  defaultID = ZCKRepositoryID.rSubmitted
 		if  let string = getPreferencesString(for: kCKRepositoryID, defaultString: defaultID.rawValue ),
 			let     id = ZCKRepositoryID(rawValue: string) {
 			return  id

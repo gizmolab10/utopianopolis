@@ -15,15 +15,14 @@ enum ZOperationID: Int, CaseIterable {
 
     // start up / onboard --> order of operations
 
-    case oStartingUp
+	case oStartingUp
 	case oMigration          // data file locations
 	case oUserPermissions
-    case oMacAddress
-    case oObserveUbiquity
-    case oGetCloudStatus     // is icloud account available? (exists and accessible)
-    case oUbiquity
-    case oFetchUserID        // needs cloud access
-    case oFetchUserRecord
+	case oMacAddress
+	case oObserveUbiquity
+	case oGetCloudStatus     // is icloud account available? (exists and accessible)
+	case oUbiquity
+	case oFetchUserID        // needs cloud access
 	case oLoadingIdeas       // all these are LOCAL with files or core data
 	case oManifest
 	case oRoots
@@ -55,7 +54,7 @@ enum ZOperationID: Int, CaseIterable {
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites, .oMigration] }
 	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
-	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oMigration, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oFetchUserRecord, .oGetCloudStatus] + bothDBOps }
+	var    localOps : ZOpIDsArray { return [.oWrite, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oMigration, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oGetCloudStatus] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
 	var alwaysBoth  : Bool   { return   bothDBOps.contains(self) }
@@ -114,9 +113,9 @@ class ZOperations: NSObject {
 		if  cloudStatusChanged() {
 			gSignal([.spDataDetails]) // show change in cloud status
 
-			// //////////////////////////////////////////////
+			// /////////////////////////////////////////// //
 			// assure that we can perform cloud operations //
-			// //////////////////////////////////////////////
+			// /////////////////////////////////////////// //
 
 			if  gHasInternet && gIsReadyToShowUI {
 				let identifier: ZBatchID = gCloudStatusIsActive ? .bResumeCloud : .bNewAppleID
@@ -148,27 +147,27 @@ class ZOperations: NSObject {
 			let blockOperation = BlockOperation { [self] in
 				FOREGROUND { [self] in
 
-					// /////////////////////////////////////////////////////////////
+					// ////////////////////////////////////////////////////////// //
 					// ignore operations that are not local when have no internet //
-					// /////////////////////////////////////////////////////////////
+					// ////////////////////////////////////////////////////////// //
 
 					if  !operationID.isLocal && !gCloudStatusIsActive {
 						onCompletion()
 					} else {
 						currentOp         = operationID            // if hung, it happened inside this op
 
-						// ////////////////////////////////////////////////////
+						// ///////////////////////////////////////////////// //
 						// susend queue until operation calls its closure... //
-						// ////////////////////////////////////////////////////
+						// ///////////////////////////////////////////////// //
 
 						queue.isSuspended = true
 						lastOpStart       = Date()
 
 						invokeMultiple(for: operationID, restoreToID: saved) { [self] iResult in
 
-							// /////////////////////
+							// ////////////////// //
 							// ...unsuspend queue //
-							// /////////////////////
+							// ////////////////// //
 
 							queue.isSuspended = false
 

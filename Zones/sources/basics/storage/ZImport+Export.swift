@@ -142,7 +142,7 @@ extension Zone {
 	func importFromFile(_ type: ZExportType, onCompletion: Closure?) {
 		gPresentOpenPanel(type: type) { [self] iAny in
 			if  let url = iAny as? URL {
-				self.importFile(from: url.path, type: type, onCompletion: onCompletion)
+				importFile(from: url.path, type: type, onCompletion: onCompletion)
 			}
 		}
 	}
@@ -201,6 +201,7 @@ extension Zone {
 
 			if  let z = zone {
 				addChildNoDuplicate(z, at: 0)
+				respectOrder()
 			}
 
 			onCompletion?()

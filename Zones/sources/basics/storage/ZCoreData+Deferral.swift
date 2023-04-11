@@ -52,7 +52,7 @@ extension ZCoreDataStack {
 
 		if  array.count == 0 {
 			onCompletion?(0)
-		} else if let       c = context {
+		} else if let       c = persistentContainer?.viewContext {
 			let         count = "\(array.count)".appendingSpacesToLength(6)
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
 			request.predicate = array.predicate(entityName)

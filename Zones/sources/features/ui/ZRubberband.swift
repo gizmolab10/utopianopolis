@@ -51,9 +51,9 @@ class ZRubberband: NSObject {
 
 	func rubberbandStartEvent(_ gesture: ZGestureRecognizer) {
 
-		// ///////////////////
+		// //////////////// //
 		// detect SHIFT key //
-		// ///////////////////
+		// //////////////// //
 
 		if  gesture.isShiftDown {
 			rubberbandPreGrabs.append(contentsOf: gSelecting.currentMapGrabs)

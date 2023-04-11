@@ -237,9 +237,9 @@ extension ZoneLine {
 			let    c = controller {
 			if !zone.hasVisibleChildren {
 
-				// //////////////////////
+				// /////////////////// //
 				// DOT IS STRAIGHT OUT //
-				// //////////////////////
+				// /////////////////// //
 
 				if  let            dot = revealDot {
 					let         insetX = CGFloat((c.dotHeight - c.dotWidth) / 2.0)
@@ -254,9 +254,9 @@ extension ZoneLine {
 
 					if  indices.count == 1 || lastIndex >= zone.count {
 
-						// ////////////////////////
+						// ///////////////////// //
 						// DOT IS ABOVE OR BELOW //
-						// ////////////////////////
+						// ///////////////////// //
 
 						let   relation = gDragging.dropRelation
 						let    isAbove = relation == .above || (!gListsGrowDown && (lastIndex == 0 || relation == .upon))

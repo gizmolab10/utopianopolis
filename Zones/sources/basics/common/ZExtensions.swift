@@ -53,20 +53,6 @@ protocol ZGeneric {
 	func controllerSetup(with mapView: ZMapView?)
 }
 
-func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
-	if  let t = test, !t() { return }
-	let fancy = (surround == nil) ? message : message.surround(with: surround!)
-	FOREGROUND {
-		print(fancy)
-	}
-}
-
-func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
-	if  gPrintModes.contains(mode) {
-		printFancy("\(mode): " + prefix + message, surround: surround, test)
-	}
-}
-
 func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
 func gSignal(_ multiple: ZSignalKindArray, _ onCompletion: Closure? = nil) {

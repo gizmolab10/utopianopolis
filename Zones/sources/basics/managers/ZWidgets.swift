@@ -54,7 +54,7 @@ class ZWidgets: NSObject {
 
     /// capture a ZoneWidget for later lookup by it's zone
     /// (see widgetForZone)
-    ///
+     //
     /// - Parameter widget: UI element containing text, drag and reveal dots and children widgets
 	/// - Parameter type: indicates which dictionary to put the zone:widget pair in
 
@@ -70,7 +70,7 @@ class ZWidgets: NSObject {
     }
 
     /// Lookup previously registered ZoneWidget by its zone
-    ///
+     //
     /// - Parameter iZone: Zone associated with previously registered ZoneWidget
     /// - Returns: ZoneWidget
 

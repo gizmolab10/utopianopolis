@@ -133,7 +133,7 @@ class ZSelecting: NSObject {
             }
         }
 
-		grabs.respectOrder()
+		grabs.reorderAccordingToValue()
 
         return grabs
     }
@@ -334,7 +334,7 @@ class ZSelecting: NSObject {
             !currentMapGrabs.contains(zone) {
 			currentMapGrabs.append(zone)
 //			zone.updateToolTips()
-			currentMapGrabs.respectOrderAndLevel()
+			currentMapGrabs.respectOrderAndLevelValues()
         }
     }
 

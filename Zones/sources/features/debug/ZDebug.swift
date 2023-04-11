@@ -25,12 +25,13 @@ func gSetupDebugFeatures() {
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
 	gCoreDataMode.insert(.dCKUseSubmitted)      // use app store's id (test2)
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
-//	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
+	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)
 //	gPrintModes  .insert(.dTime)
-	gPrintModes  .insert(.dRecords)
+//	gPrintModes  .insert(.dMoving)
+//	gPrintModes  .insert(.dRecords)
 
 }
 
@@ -151,7 +152,8 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let  dWidget = ZPrintMode(rawValue: 1 << 24) // lookup, hit tests
 	static let  dTimers = ZPrintMode(rawValue: 1 << 25) // assure completion
 	static let  dLevels = ZPrintMode(rawValue: 1 << 26) // fetching depth
-	static let dRecords = ZPrintMode(rawValue: 1 << 27) // creating and registering ZRecords
+	static let  dMoving = ZPrintMode(rawValue: 1 << 27) // creating and registering ZRecords
+	static let dRecords = ZPrintMode(rawValue: 1 << 28) // moving and dragging ideas
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 
@@ -182,6 +184,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dImages,  " images"),
 				(.dTimers,  " timers"),
 				(.dLevels,  " levels"),
+				(.dMoving,  " moving"),
 				(.dRecords, "records")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 	}
@@ -210,4 +213,18 @@ var gPrintModes : ZPrintMode {
 var gCoreDataMode : ZCoreDataMode {
 	get { return ZCoreDataMode(      rawValue: getPreferencesInt(for: kCoreDataMode, defaultInt: 0)) }
 	set { setPreferencesInt(newValue.rawValue,                   for: kCoreDataMode) }
+}
+
+func printFancy(_ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
+	if  let t = test, !t() { return }
+	let fancy = (surround == nil) ? message : message.surround(with: surround!)
+	FOREGROUND {
+		print(fancy)
+	}
+}
+
+func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, surround: String? = nil, _ test: ToBooleanClosure? = nil) {
+	if  gPrintModes.contains(mode) {
+		printFancy("\(mode): " + prefix + message, surround: surround, test)
+	}
 }

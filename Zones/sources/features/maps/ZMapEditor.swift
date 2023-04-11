@@ -70,7 +70,7 @@ class ZMapEditor: ZBaseEditor {
     }
 
     @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-		if !gIsEditingStateChanging, !gIsExportingToAFile, !gIsPrinting,
+		if !gIsEditingStateChanging, !gIsExportingToAFile, !gRefusesFirstResponder, !gIsPrinting,
 		    var     key = iKey {
 			let   arrow = key.arrow
 			let CONTROL = flags.hasControl
@@ -437,9 +437,9 @@ class ZMapEditor: ZBaseEditor {
 
 			if  name.contains(kLineOfDashes) {
 
-				// //////////
+				// /////// //
 				// state 1 //
-				// //////////
+				// /////// //
 
 				original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
 
@@ -455,16 +455,16 @@ class ZMapEditor: ZBaseEditor {
 			} else if name.isLineWithTitle {
 				if !isMultiple {
 
-					// //////////
+					// /////// //
 					// state 2 //
-					// //////////
+					// /////// //
 
 					original.assignAndColorize(kLineOfDashes)
 				} else {
 
-					// //////////
+					// /////// //
 					// state 3 //
-					// //////////
+					// /////// //
 
 					promoteToParent {}
 				}
@@ -673,9 +673,9 @@ class ZMapEditor: ZBaseEditor {
     func swapAndResumeEdit() {
         let t = gTextEditor
         
-        // //////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////// //
         // swap currently editing zone with sibling, resuming edit //
-        // //////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////// //
         
         if  let   zone = t.currentlyEditedZone, zone.hasSiblings {
             let upward = gListGrowthMode == .up
@@ -940,9 +940,9 @@ class ZMapEditor: ZBaseEditor {
 				onCompletion?([.sData])
 			} else {
 
-				// ////////////////////////
+				// ///////////////////// //
 				// parent is not visible //
-				// ////////////////////////
+				// ///////////////////// //
 
 				let    snapshot = gSelecting.snapshot
 				let hasSiblings = rootMost.hasSiblings
@@ -972,15 +972,17 @@ class ZMapEditor: ZBaseEditor {
 			let     targetCount = targetZones.count
 			let       targetMax = targetCount - 1
 
-			// ////////////////////
+			// ///////////////// //
 			// parent is visible //
-			// ////////////////////
+			// ///////////////// //
 
 			if  let       index = targetZones.firstIndex(of: rootMost) {
 				var     toIndex = index + (up ? -1 : 1)   // TODO: need to account for essay mode when not all children are visible
 				var  allGrabbed = true
 				var soloGrabbed = false
 				var     hasGrab = false
+
+				printDebug(.dMoving, "index \(targetZones[index] == rootMost ? "matches" : "doesn't match") for \(rootMost)")
 
 				let moveClosure: ZonesClosure = { iZones in
 					if  extreme {
@@ -991,9 +993,9 @@ class ZMapEditor: ZBaseEditor {
 
 					if  !extreme {
 
-						// ///////////////////////
+						// //////////////////// //
 						// vertical wrap around //
-						// ///////////////////////
+						// //////////////////// //
 
 						if  toIndex > targetMax {
 							toIndex = 0
@@ -1018,9 +1020,9 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
 
-				// //////////////////////////////////
+				// /////////////////////////////// //
 				// detect grab for extend behavior //
-				// //////////////////////////////////
+				// /////////////////////////////// //
 
 				for child in targetZones {
 					if !child.isGrabbed {
@@ -1033,18 +1035,18 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
 
-				// ///////////////////////
+				// //////////////////// //
 				// vertical wrap around //
-				// ///////////////////////
+				// //////////////////// //
 
 				if !growSelection {
 					let    aboveTop = toIndex < 0
 					let belowBottom = toIndex >= targetCount
 					let someGrabbed = !allGrabbed && !soloGrabbed
 
-					// ///////////////////////
+					// //////////////////// //
 					// vertical wrap around //
-					// ///////////////////////
+					// //////////////////// //
 
 					if        (!up && (allGrabbed || extreme || (someGrabbed && belowBottom))) || ( up && soloGrabbed && aboveTop) {
 						toIndex = targetMax // bottom
@@ -1056,9 +1058,11 @@ class ZMapEditor: ZBaseEditor {
 				if  toIndex >= 0 && toIndex < targetCount {
 					var grabThis = targetZones[toIndex]
 
-					// //////////////////////////
+					printDebug(.dMoving, "begin with \(grabThis)")
+					
+					// /////////////////////// //
 					// no vertical wrap around //
-					// //////////////////////////
+					// /////////////////////// //
 
 					UNDO(self) { iUndoSelf in
 						iUndoSelf.moveUp(!up, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection)
@@ -1070,6 +1074,8 @@ class ZMapEditor: ZBaseEditor {
 						findChildMatching(&grabThis, up, iOffset)    // TODO: should look at siblings, not children
 						grabThis.grab(updateBrowsingLevel: false)
 
+						printDebug(.dMoving, "decided on \(grabThis)")
+
 						if !hereIsGrabbed && forcedResponse == nil {
 							response = minimalResponse
 						}
@@ -1078,9 +1084,9 @@ class ZMapEditor: ZBaseEditor {
 
 						if extreme {
 
-							// ////////////////
+							// ///////////// //
 							// expand to end //
-							// ////////////////
+							// ///////////// //
 
 							if  up {
 								for i in 0 ..< toIndex {
@@ -1102,9 +1108,9 @@ class ZMapEditor: ZBaseEditor {
 				} else if doCousinJump,
 						  var index  = targetZones.firstIndex(of: rootMost) {
 
-					// //////////////
+					// /////////// //
 					// cousin jump //
-					// //////////////
+					// /////////// //
 
 					index     += (up ? -1 : 1)
 
@@ -1134,12 +1140,12 @@ class ZMapEditor: ZBaseEditor {
 
 	fileprivate func findChildMatching(_ grabThis: inout Zone, _ up: Bool, _ iOffset: CGFloat?) {
 
-		// ///////////////////////////////////////////////////////////
+		// //////////////////////////////////////////////////////// //
 		// IF text is being edited by user, grab another zone whose //
 		//                  text contains offset                    //
 		//                       else whose                         //
 		//           level equals gCurrentBrowsingLevel             //
-		// ///////////////////////////////////////////////////////////
+		// //////////////////////////////////////////////////////// //
 
 		while let        length = grabThis.zoneName?.length, grabThis.hasVisibleChildren {
 			let           range = NSRange(location: length, length: 0)
@@ -1177,9 +1183,9 @@ class ZMapEditor: ZBaseEditor {
 				}
 			} else {
 
-				// ///////////////
+				// //////////// //
 				// GENERATIONAL //
-				// ///////////////
+				// //////////// //
 
 				if  OPTION {
 					browseBreadcrumbs(out)
@@ -1194,18 +1200,18 @@ class ZMapEditor: ZBaseEditor {
 		if  let zone: Zone = moveables?.first, !zone.isARoot {
 			if  selectionOnly {
 
-				// /////////////////
+				// ////////////// //
 				// MOVE SELECTION //
-				// /////////////////
+				// ////////////// //
 
 				zone.moveSelectionOut(extreme: extreme, onCompletion: onCompletion)
 
 				return
 			} else if let p = zone.parentZone, !p.isARoot {
 
-				// ////////////
+				// ///////// //
 				// MOVE ZONE //
-				// ////////////
+				// ///////// //
 
 				let grandParentZone = p.parentZone
 
@@ -1213,9 +1219,9 @@ class ZMapEditor: ZBaseEditor {
 					let grandParentName = grandParentZone?.zoneName
 					let   parenthetical = grandParentName == nil ? kEmpty : " (\(grandParentName!))"
 
-					// /////////////////////////////////////////////////////////////////////
+					// ////////////////////////////////////////////////////////////////// //
 					// present an alert asking if user really wants to move here leftward //
-					// /////////////////////////////////////////////////////////////////////
+					// ////////////////////////////////////////////////////////////////// //
 
 					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? kEmpty)\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { [self] iStatus in
 						if  iStatus == .sYes {

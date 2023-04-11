@@ -71,7 +71,7 @@ class ZBatches: ZOnboarding {
 				case .bBookmarks:   return [.oBookmarks                                      ]
 				case .bStartUp:     return operationIDs(from: .oStartingUp,        to: .oDone)
 				case .bNewAppleID:  return operationIDs(from: .oGetCloudStatus,    to: .oDone)
-				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserRecord)
+				case .bUserTest:    return operationIDs(from: .oObserveUbiquity,   to: .oFetchUserID)
 			}
         }
 
@@ -231,9 +231,9 @@ class ZBatches: ZOnboarding {
 
     func transferDeferred() {
 
-        // /////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////// //
         // if current list is empty, transfer deferred to current //
-        // /////////////////////////////////////////////////////////
+        // ////////////////////////////////////////////////////// //
 
         if  currentBatches.count == 0 && deferredBatches.count > 0 {
             currentBatches  = deferredBatches
@@ -243,11 +243,11 @@ class ZBatches: ZOnboarding {
 
     override func invokeMultiple(for operationID: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {
 
-		// ///////////////////////////////////////////////////////////////
+		// //////////////////////////////////////////////////////////// //
 		//     first, allow onboarding superclass to perform block      //
 		// iCompleted will be false if it does not handle the operation //
 		//     thus app is no longer doing onboarding operationss       //
-		// ///////////////////////////////////////////////////////////////
+		// //////////////////////////////////////////////////////////// //
 
 		super.invokeMultiple(for: operationID, restoreToID: restoreToID) { iCompleted in
             if  iCompleted {
@@ -260,9 +260,9 @@ class ZBatches: ZOnboarding {
 				let                         isNoop = !gCloudStatusIsActive && onlyCurrentID && isMine && !operationID.forMineOnly
 				invokeForIndex                     = { [self] index in
 
-                    // //////////////////////////////
+                    // /////////////////////////// //
                     // always called in foreground //
-                    // //////////////////////////////
+                    // /////////////////////////// //
 
                     if  operationID == .oFinishing || isNoop || index >= databaseIDs.count {
                         onCompletion(true)

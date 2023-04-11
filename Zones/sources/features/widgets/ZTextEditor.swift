@@ -69,9 +69,9 @@ class ZTextPack: NSObject {
 
             var suffix: String?
 
-            // //////////////////////////////////
+            // /////////////////////////////// //
             // add suffix for "show counts as" //
-            // //////////////////////////////////
+            // /////////////////////////////// //
 
 			if  gPrintModes.contains(.dNames), let name = zone.recordName {
                 suffix = name

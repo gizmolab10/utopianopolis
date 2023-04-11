@@ -358,7 +358,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// MARK: -
 
 	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
-		guard var key = iKey else {
+		guard var key = iKey, !gRefusesFirstResponder else {
 			return false
 		}
 

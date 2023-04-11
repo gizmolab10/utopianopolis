@@ -281,9 +281,9 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			!parameters.hasTarget,
 			!parameters.showList {
 
-			// //////////////////
+			// /////////////// //
 			// TINY COUNT DOTS //
-			// //////////////////
+			// /////////////// //
 
 			drawTinyCountDots(iDirtyRect, parameters: parameters)
 		}

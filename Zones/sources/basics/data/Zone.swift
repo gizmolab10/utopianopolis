@@ -1039,7 +1039,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  containing {
-				zones.respectOrder()
+				zones.reorderAccordingToValue()
 			}
 
 			parent.addIdea(at: index, with: name) { iChild in
@@ -1135,9 +1135,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  self  == gHere {                         // this can only happen ONCE during recursion (multiple places, below)
 				let recurse: Closure = { [self] in
 
-					// //////////
+					// /////// //
 					// RECURSE //
-					// //////////
+					// /////// //
 
 					deleteSelf(permanently: permanently, force: force, onCompletion: onCompletion)
 				}
@@ -1149,9 +1149,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					recurse()
 				} else {
 
-					// ////////////////////////////////////////////////////////////////////////////////////////////
+					// ///////////////////////////////////////////////////////////////////////////////////////// //
 					// SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
-					// ////////////////////////////////////////////////////////////////////////////////////////////
+					// ///////////////////////////////////////////////////////////////////////////////////////// //
 
 					gFavorites.refocus { [self] in               // travel through current favorite, then ...
 						if  gHere != self {
@@ -1177,9 +1177,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						}
 					}
 
-					// //////////
+					// /////// //
 					// RECURSE //
-					// //////////
+					// /////// //
 
 					bookmarksTargetingSelf.deleteZones(permanently: permanently) {
 						onCompletion?(flag)
@@ -1309,9 +1309,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else if let bookmark = there.bookmarkTarget {
 
-			// ///////////////////////////////
+			// //////////////////////////// //
 			// MOVE ZONE THROUGH A BOOKMARK //
-			// ///////////////////////////////
+			// //////////////////////////// //
 
 			var     movedZone = self
 			let    targetDBID = bookmark.databaseID
@@ -2292,11 +2292,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		// case 4
 
-		zones.respectOrder()
+		zones.reorderAccordingToValue()
 
-		// ///////////////////
+		// //////////////// //
 		// prepare for UNDO //
-		// ///////////////////
+		// //////////////// //
 
 		if  toBookmark {
 			undoManager.beginUndoGrouping()
@@ -2317,9 +2317,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			onCompletion?()
 		}
 
-		// /////////////
+		// ////////// //
 		// move logic //
-		// /////////////
+		// ////////// //
 
 		let finish = {
 			var onlyTime = true
@@ -2376,9 +2376,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		// ////////////////////////////////////
+		// ///////////////////////////////// //
 		// deal with target being a bookmark //
-		// ////////////////////////////////////
+		// ///////////////////////////////// //
 
 		if !toBookmark || STAYHERE || NOBOOKMARK || COPY {
 			finish()
@@ -2811,7 +2811,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 
-			return addChild(iChild, at: iIndex, updateCoreData: updateCoreData, onCompletion)
+			return addChild(child, at: toIndex, updateCoreData: updateCoreData, onCompletion)
 		}
 
 		return nil
@@ -2943,9 +2943,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func generationalUpdate(show: Bool, to iLevel: Int? = nil, onCompletion: Closure? = nil) {
 		recursiveUpdate(show, to: iLevel) {
 
-			// ////////////////////////////////////////////////////////
+			// ///////////////////////////////////////////////////// //
 			// delay executing this until the last time it is called //
-			// ////////////////////////////////////////////////////////
+			// ///////////////////////////////////////////////////// //
 
 			onCompletion?()
 		}
@@ -2977,9 +2977,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		} else {
 
-			// /////////////////
+			// ////////////// //
 			// ALTER CHILDREN //
-			// /////////////////
+			// ////////////// //
 
 			let  goal = iLevel ?? level + (show ? 1 : -1)
 			let grabs = gSelecting.currentMapGrabs
@@ -3031,10 +3031,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					let newParentZone = iZone.parentZone        // (1) grab new parent zone asssigned during a previous traverse (2, below)
 					iZone       .dbid = appliedID               // must happen BEFORE record assignment
 
-					// /////////////////////////////////////////////////////////////////
+					// ////////////////////////////////////////////////////////////// //
 					// (2) compute parent and parentLink using iZone's new databaseID //
 					//     a subsequent traverse will eventually use it (1, above)    //
-					// /////////////////////////////////////////////////////////////////
+					// ////////////////////////////////////////////////////////////// //
 
 					iZone.parentZone  = newParentZone
 				}
@@ -3085,7 +3085,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func respectOrder() {
-		children.respectOrder()
+		children.reorderAccordingToValue()
 	}
 
 	func isChild(of iParent: Zone?) -> Bool {
@@ -3571,10 +3571,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return zone
 	}
 
-	// /////////////////////////////
+	// ////////////////////////// //
 	// exemplar and scratch ideas //
 	//  N.B. not to be persisted  //
-	// /////////////////////////////
+	// ////////////////////////// //
 
 	static func recordNameFor(_ rootName: String, at index: Int) -> String {
 		var name = rootName

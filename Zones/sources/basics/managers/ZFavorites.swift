@@ -111,7 +111,7 @@ class ZFavorites: ZRecords {
 
 			updateAllFavorites() // setup roots group
 
-			if  gCDMigrationState == .firstTime {
+			if  gCDMigrationState == .mFirstTime {
 				hereZoneMaybe = getRecentsGroup()
 			}
 
@@ -254,10 +254,10 @@ class ZFavorites: ZRecords {
     @discardableResult func updateAllFavorites() -> Bool {
 		var result = false
 
-		// /////////////////////////////////////////////
+		// ////////////////////////////////////////// //
 		// assure at least one root favorite per db   //
 		// call every time favorites MIGHT be altered //
-		// /////////////////////////////////////////////
+		// ////////////////////////////////////////// //
 
 		if  let           root = rootZone {
 			let          zones = root.all
@@ -269,10 +269,10 @@ class ZFavorites: ZRecords {
 			var   missingTrash = true
 			var    missingLost = true
 
-			// //////////////////////////////////
+			// /////////////////////////////// //
 			// detect ids which have bookmarks //
 			//   remove unfetched duplicates   //
-			// //////////////////////////////////
+			// /////////////////////////////// //
 
 			for zone in zones {
 				if !zone.isBookmark {
@@ -313,9 +313,9 @@ class ZFavorites: ZRecords {
 							continue
 						}
 
-						// ///////////////////////////////////////
+						// //////////////////////////////////// //
 						// mark to discard unfetched duplicates //
-						// ///////////////////////////////////////
+						// //////////////////////////////////// //
 
 						if  hasDuplicate {
 							let isUnfetched: ZoneClosure = { [self] iZone in
@@ -339,9 +339,9 @@ class ZFavorites: ZRecords {
 				}
 			}
 
-			// ////////////////////////////
+			// ///////////////////////// //
 			// discard marked duplicates //
-			// ////////////////////////////
+			// ///////////////////////// //
 
 			while   let   index = discards.popLast() {
 				if  index       < workingBookmarks.count {

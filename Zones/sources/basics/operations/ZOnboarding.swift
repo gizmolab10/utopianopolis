@@ -57,7 +57,6 @@ class ZOnboarding : ZOperations {
 			case .oGetCloudStatus:    getCloudStatus          { onCompletion(true) }
 			case .oUbiquity:          ubiquity                { onCompletion(true) }
 			case .oFetchUserID:       fetchUserID             { onCompletion(true) }
-			case .oFetchUserRecord:   fetchUserRecord         { onCompletion(true) }
 			default:                                            onCompletion(false)
 		}
     }
@@ -82,9 +81,9 @@ class ZOnboarding : ZOperations {
 				if  iStatus            == .available {
 					gCloudAccountStatus = .available
 
-					// ///////////////////////
+					// //////////////////// //
 					// ONBOARDING CONTINUES //
-					// ///////////////////////
+					// //////////////////// //
 				}
 
 				onCompletion()
@@ -95,9 +94,9 @@ class ZOnboarding : ZOperations {
 	func ubiquity(_ onCompletion: @escaping Closure) {
         if  gFileManager.ubiquityIdentityToken == nil {
 
-            // ///////////////////////
+            // //////////////////// //
             // ONBOARDING CONTINUES //
-            // ///////////////////////
+            // //////////////////// //
 
             cloudStatusChanged()
         }
@@ -114,16 +113,20 @@ class ZOnboarding : ZOperations {
 					gAlerts.alertError(iError, "failed to fetch user record id from cloud") { iHasError in
 						if !iHasError {
 
-							// /////////////////////////////////////////////
+							// ////////////////////////////////////////// //
 							// persist for file read on subsequent launch //
 							//   also: for determining write permission   //
-							// /////////////////////////////////////////////
+							// ////////////////////////////////////////// //
 
-							gUserRecordName = iRecordID?.recordName
+							if  let      recordName = iRecordID?.recordName {
+								self.user           = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
+								gUserRecordName     = recordName
+								gCloudAccountStatus = .active
 
-							// ///////////////////////
-							// ONBOARDING CONTINUES //
-							// ///////////////////////
+								// ////////////////////// //
+								// ONBOARDING IS COMPLETE //
+								// ////////////////////// //
+							}
 						}
 
 						onCompletion()
@@ -131,17 +134,6 @@ class ZOnboarding : ZOperations {
 				}
             }
         }
-    }
-
-	func fetchUserRecord(_ onCompletion: @escaping Closure) {
-		FOREGROUND { [self] in
-			if  let      recordName = gUserRecordName {
-				user                = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
-				gCloudAccountStatus = .active
-			}
-
-			onCompletion()
-		}
     }
 
 }
