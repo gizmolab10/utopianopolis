@@ -154,7 +154,7 @@ var gSearchScope: ZSearchScope {
 
 var gCKRepositoryID: ZCKRepositoryID {
 	get {
-		let  defaultID = ZCKRepositoryID.rSubmitted
+		let  defaultID = ZCKRepositoryID.rSubmitted      // repository of Seriously in the app store
 		if  let string = getPreferencesString(for: kCKRepositoryID, defaultString: defaultID.rawValue ),
 			let     id = ZCKRepositoryID(rawValue: string) {
 			return  id

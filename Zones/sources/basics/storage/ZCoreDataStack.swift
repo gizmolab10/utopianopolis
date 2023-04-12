@@ -74,9 +74,10 @@ class ZCoreDataStack: NSObject {
 			request.predicate = dbidPredicate(from: databaseID)
 
 			do {
-				let flag = try c.count(for: request) > 10    // TODO: this is called each time an entity is created !!!!
-
-				return flag                                  // TODO: then if flag is true, fetch is called !!!!
+				let     count = try c.count(for: request)    // TODO: this is called each time an entity is created !!!!
+				let      flag = count > 0
+				printDebug(.dMigrate, databaseID.rawValue + kSpace + (flag ? "has" : "is missing") + " store")
+				return   flag                                // TODO: then if flag is true, fetch is called !!!!
 			} catch {
 				printDebug(.dError, "\(error)")
 			}
@@ -440,7 +441,7 @@ class ZCoreDataStack: NSObject {
 			description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 			description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
-			if  gIsUsingCloudKit {
+			if  gCloudKit {
 				let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCKRepositoryID.cloudKitID)
 
 				if  type == .sPublic {

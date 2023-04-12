@@ -23,7 +23,7 @@ func gSetupDebugFeatures() {
 	gCoreDataMode       = []
 	gCoreDataMode.insert(.dNoCloudKit)          // don't store data in cloud (public not yet working)
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
-	gCoreDataMode.insert(.dCKUseSubmitted)      // use app store's id (test2)
+//	gCoreDataMode.insert(.dCKUseSubmitted)      // use app store's id (test2)
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
 	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
@@ -32,17 +32,18 @@ func gSetupDebugFeatures() {
 //	gPrintModes  .insert(.dTime)
 //	gPrintModes  .insert(.dMoving)
 //	gPrintModes  .insert(.dRecords)
+	gPrintModes  .insert(.dMigrate)
 
 }
 
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)          && gIsUsingCoreData }
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)          && gIsUsingCoreData }
-var         gCKUseLatest : Bool { return !gCoreDataMode.contains(.dCKUseSubmitted)   && gIsUsingCoreData }
+var            gCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)       && gIsUsingCoreData }
 var        gLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCoreData }
-var     gIsUsingCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)       && gIsUsingCoreData }
 var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCoreData }
 var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCoreData }
+var   gUseLastSubmission : Bool { return !gCoreDataMode.contains(.dAfterSubmission)  && gIsUsingCoreData }
 var  gNormalDataLocation : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes  .contains(.dShowDuplicates) }
@@ -69,7 +70,7 @@ struct ZCoreDataMode: OptionSet {
 	static let dNoCloudKit       = ZCoreDataMode(rawValue: 1 << 3) // store in cloud kit
 	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 4) // start the CD repo fresh
 	static let dLoadAllAtOnce    = ZCoreDataMode(rawValue: 1 << 5) // load all zones and traits at once (only marginally faster, percentages don't show)
-	static let dCKUseSubmitted   = ZCoreDataMode(rawValue: 1 << 6) // use app store's id (test2)
+	static let dAfterSubmission  = ZCoreDataMode(rawValue: 1 << 6) // use app store's id (test2)
 	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 7) // not use ZRelationship
 	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 8) // use migration.testing (not data)
 }
@@ -125,67 +126,69 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let    dNone = ZPrintMode(rawValue: 1 <<  0)
-	static let     dOps = ZPrintMode(rawValue: 1 <<  1) // operations
-	static let     dFix = ZPrintMode(rawValue: 1 <<  2) // disappearing ideas
-	static let     dLog = ZPrintMode(rawValue: 1 <<  3) // miscellaneous
-	static let    dEdit = ZPrintMode(rawValue: 1 <<  4) // become first responder funny business
-	static let    dFile = ZPrintMode(rawValue: 1 <<  5) // parsing, error handling
-	static let    dUser = ZPrintMode(rawValue: 1 <<  6) // user interruption of busy loops
-	static let    dTime = ZPrintMode(rawValue: 1 <<  7) // stopwatch
-	static let    dData = ZPrintMode(rawValue: 1 <<  8) // core data
-	static let   dClick = ZPrintMode(rawValue: 1 <<  9) // mouse click
-	static let   dSpeed = ZPrintMode(rawValue: 1 << 10) // "
-	static let   dNames = ZPrintMode(rawValue: 1 << 11) // decorate idea text with record names
-	static let   dFocus = ZPrintMode(rawValue: 1 << 12) // push, /, bookmarks
-	static let   dError = ZPrintMode(rawValue: 1 << 13) // error handling
-	static let   dAdopt = ZPrintMode(rawValue: 1 << 14) // orphans
-	static let   dCloud = ZPrintMode(rawValue: 1 << 15) // cloud read
-	static let   dFetch = ZPrintMode(rawValue: 1 << 16) // children
-	static let   dCross = ZPrintMode(rawValue: 1 << 17) // core data cross store relationships
-	static let   dNotes = ZPrintMode(rawValue: 1 << 18) // essays
-	static let   dExist = ZPrintMode(rawValue: 1 << 19) // core data existence check
-	static let   dTrack = ZPrintMode(rawValue: 1 << 20) // tool tip tracking
-	static let  dImages = ZPrintMode(rawValue: 1 << 21) // "
-	static let  dAccess = ZPrintMode(rawValue: 1 << 22) // write lock
-	static let  dRemote = ZPrintMode(rawValue: 1 << 23) // arrival from cloud
-	static let  dWidget = ZPrintMode(rawValue: 1 << 24) // lookup, hit tests
-	static let  dTimers = ZPrintMode(rawValue: 1 << 25) // assure completion
-	static let  dLevels = ZPrintMode(rawValue: 1 << 26) // fetching depth
-	static let  dMoving = ZPrintMode(rawValue: 1 << 27) // creating and registering ZRecords
-	static let dRecords = ZPrintMode(rawValue: 1 << 28) // moving and dragging ideas
+	static let     dNone = ZPrintMode(rawValue: 1 <<  0)
+	static let      dOps = ZPrintMode(rawValue: 1 <<  1) // operations
+	static let      dFix = ZPrintMode(rawValue: 1 <<  2) // disappearing ideas
+	static let      dLog = ZPrintMode(rawValue: 1 <<  3) // miscellaneous
+	static let     dEdit = ZPrintMode(rawValue: 1 <<  4) // become first responder funny business
+	static let     dFile = ZPrintMode(rawValue: 1 <<  5) // parsing, error handling
+	static let     dUser = ZPrintMode(rawValue: 1 <<  6) // user interruption of busy loops
+	static let     dTime = ZPrintMode(rawValue: 1 <<  7) // stopwatch
+	static let     dData = ZPrintMode(rawValue: 1 <<  8) // core data
+	static let    dClick = ZPrintMode(rawValue: 1 <<  9) // mouse click
+	static let    dSpeed = ZPrintMode(rawValue: 1 << 10) // "
+	static let    dNames = ZPrintMode(rawValue: 1 << 11) // decorate idea text with record names
+	static let    dFocus = ZPrintMode(rawValue: 1 << 12) // push, /, bookmarks
+	static let    dError = ZPrintMode(rawValue: 1 << 13) // error handling
+	static let    dAdopt = ZPrintMode(rawValue: 1 << 14) // orphans
+	static let    dCloud = ZPrintMode(rawValue: 1 << 15) // cloud read
+	static let    dFetch = ZPrintMode(rawValue: 1 << 16) // children
+	static let    dCross = ZPrintMode(rawValue: 1 << 17) // core data cross store relationships
+	static let    dNotes = ZPrintMode(rawValue: 1 << 18) // essays
+	static let    dExist = ZPrintMode(rawValue: 1 << 19) // core data existence check
+	static let    dTrack = ZPrintMode(rawValue: 1 << 20) // tool tip tracking
+	static let   dImages = ZPrintMode(rawValue: 1 << 21) // "
+	static let   dAccess = ZPrintMode(rawValue: 1 << 22) // write lock
+	static let   dRemote = ZPrintMode(rawValue: 1 << 23) // arrival from cloud
+	static let   dWidget = ZPrintMode(rawValue: 1 << 24) // lookup, hit tests
+	static let   dTimers = ZPrintMode(rawValue: 1 << 25) // assure completion
+	static let   dLevels = ZPrintMode(rawValue: 1 << 26) // fetching depth
+	static let   dMoving = ZPrintMode(rawValue: 1 << 27) // creating and registering ZRecords
+	static let  dMigrate = ZPrintMode(rawValue: 1 << 28) // migrating to core data and cloud
+	static let dRegister = ZPrintMode(rawValue: 1 << 29) // moving and dragging ideas
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 
 	var descriptions: [String] {
-		return [(.dOps,     "     op"),
-				(.dFix,     "    fix"),
-				(.dLog,     "    log"),
-				(.dFile,    "   file"),
-				(.dTime,    "   time"),
-				(.dEdit,    "   edit"),
-				(.dUser,    "   user"),
-				(.dData,    "   data"),
-				(.dNames,   "   name"),
-				(.dNotes,   "   note"),
-				(.dFocus,   "  focus"),
-				(.dSpeed,   "  speed"),
-				(.dError,   "  error"),
-				(.dAdopt,   "  adopt"),
-				(.dCloud,   "  cloud"),
-				(.dCross,   "  cross"),
-				(.dClick,   "  click"),
-				(.dExist,   "  exist"),
-				(.dTrack,   "  track"),
-				(.dFetch,   "fetched"),
-				(.dAccess,  " access"),
-				(.dWidget,  " widget"),
-				(.dRemote,  " remote"),
-				(.dImages,  " images"),
-				(.dTimers,  " timers"),
-				(.dLevels,  " levels"),
-				(.dMoving,  " moving"),
-				(.dRecords, "records")]
+		return [(.dOps,      "      op"),
+				(.dFix,      "     fix"),
+				(.dLog,      "     log"),
+				(.dFile,     "    file"),
+				(.dTime,     "    time"),
+				(.dEdit,     "    edit"),
+				(.dUser,     "    user"),
+				(.dData,     "    data"),
+				(.dNames,    "    name"),
+				(.dNotes,    "    note"),
+				(.dFocus,    "   focus"),
+				(.dSpeed,    "   speed"),
+				(.dError,    "   error"),
+				(.dAdopt,    "   adopt"),
+				(.dCloud,    "   cloud"),
+				(.dCross,    "   cross"),
+				(.dClick,    "   click"),
+				(.dExist,    "   exist"),
+				(.dTrack,    "   track"),
+				(.dFetch,    " fetched"),
+				(.dAccess,   "  access"),
+				(.dWidget,   "  widget"),
+				(.dRemote,   "  remote"),
+				(.dImages,   "  images"),
+				(.dTimers,   "  timers"),
+				(.dLevels,   "  levels"),
+				(.dMoving,   "  moving"),
+				(.dMigrate,  " migrate"),
+				(.dRegister, "register")]
 			.compactMap { (option, name) in contains(option) ? name : nil }
 	}
 

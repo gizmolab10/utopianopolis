@@ -46,9 +46,9 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 	}
 
 	func getPermissionFromUser(onCompletion: Closure? = nil) {
-		if  gStartupLevel == .pleaseWait || !gHasInternet || !gIsUsingCloudKit {
+		if  gStartupLevel == .pleaseWait || !gHasInternet || !gCloudKit {
 			onCompletion?()
-		} else if gIsUsingCloudKit {
+		} else if gCloudKit {
 			startupCompletion = onCompletion
 		}
 	}

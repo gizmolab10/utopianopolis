@@ -27,8 +27,8 @@ enum ZCDMigrationState: Int {
 	case mFirstTime = 0
 	case mFiles
 	case mCDOriginal    // where currently submitted app stores it
-	case mUserStore     // moved from data to user's record id
-	case mCDPlusCloudKit    // where app currently stores it (eg data/test2/public)
+	case mCDRelocated   // where app currently stores it (eg data/test2/cloud.public.store)
+	case mUserID        // moved from "test2" to user's record id
 	case mCloud
 
 	var isActive : Bool {
@@ -39,9 +39,9 @@ enum ZCDMigrationState: Int {
 	}
 
 	var isCompleted : Bool {
-		if  gCKUseLatest {
-			return self == .mCDPlusCloudKit
-		} else if gIsUsingCloudKit {
+		if  gUseLastSubmission {
+			return self == .mCDRelocated
+		} else if gCloudKit {
 			return self == .mCloud
 		} else {
 			return self == .mCDOriginal
@@ -53,20 +53,20 @@ enum ZCDMigrationState: Int {
 		let  everyoneID = ZDatabaseID.everyoneID
 		let publicScope = everyoneID.scope
 
-		// ///////////////////////////////////////////////////////////// //
-		//                                                               //
-		//  mFirstTime      : mine file, store data, user ID don't exist //
-		//  mFiles          : mine file exists but store data does not   //
-		//  mCDOriginal     : data/cloud.public.store exists             //
-		//  mCDPlusCloudKit : data/test2/cloud.public.store exists       //
-		//  mCloud          : cloud data can be retrieved                //
-		//                                                               //
-		// ///////////////////////////////////////////////////////////// //
+		// ////////////////////////////////////////////////////////// //
+		//                                                            //
+		//  mFirstTime   : mine file, store data, user ID don't exist //
+		//  mFiles       : mine file exists but store data does not   //
+		//  mCDOriginal  : data/cloud.public.store exists             //
+		//  mCDRelocated : data/test2/cloud.public.store exists       //
+		//  mCloud       : cloud data can be retrieved                //
+		//                                                            //
+		// ////////////////////////////////////////////////////////// //
 
 		if  gCDBaseDataURL.fileExists {                 // data folder exists
 			if  publicScope .ckStoreURL.containsData,   // data/test2/cloud.public.store.wal exists and is not empty
 				everyoneID.hasStore {
-				return                 .mCDPlusCloudKit
+				return                 .mCDRelocated
 			}
 
 			if  publicScope.originalURL.containsData,   // data/cloud.public.store exists
@@ -85,17 +85,17 @@ enum ZCDMigrationState: Int {
 }
 
 enum ZCKRepositoryID: String {
-	case rOriginal  = "Zones"
-	case rSubmitted = "test2"
-	case rUserID    = "dynamically uses user record name. if you can read this something is wrong"
+	case rOriginal  = "Zones"    // Thoughtful and early Seriously
+	case rSubmitted = "test2"    // latest submitted to the app store
+	case rUserID    = "dynamically uses user record name. if you can read this something is wrong"  // not yet submitted
 
 	static var defaultIDs : [ZCKRepositoryID] { return [.rSubmitted, .rUserID] }
 	static var        all : [ZCKRepositoryID] { return [.rOriginal, .rSubmitted, .rUserID] } // used for erasing CD stores
-	var           baseURL : URL               { return gCDBaseDataURL.appendingPathComponent(description ?? kDefaultCDStore) }
-	var        baseExists : Bool              { return baseURL.fileExists }
 	var        cloudKitID : String            { return kBaseCloudID + kPeriod + rawValue }
-	var       description : String?           { return (self == .rUserID) ? gUserRecordName : rawValue }
-	func    removeFolder()                    {  try?  baseURL.remove() }
+	var    repositoryName : String?           { return (self == .rUserID) ? gUserRecordName : rawValue }
+	var     repositoryURL : URL               { return gCDBaseDataURL.appendingPathComponent(repositoryName ?? kDefaultCDStore) }
+	var  repositoryExists : Bool              { return repositoryURL.fileExists }
+	func    removeFolder()                    {  try?  repositoryURL.remove() }
 
 }
 
@@ -112,7 +112,7 @@ extension ZBatches {
 		switch gCDMigrationState {
 			case .mFirstTime,
 				 .mFiles: try gFiles.migrate(into: databaseID, onCompletion: finish)
-			default:       gLoadContext      (into: databaseID, onCompletion: finish)
+			default:            gLoadContext(into: databaseID, onCompletion: finish)
 		}
 	}
 
@@ -132,7 +132,7 @@ extension ZCoreDataStack {
 
 		persistentContainer = getPersistentContainer()
 
-		if  gIsUsingCloudKit, !gCDMigrationState.isActive {
+		if  gCloudKit, !gCDMigrationState.isActive {
 			do {
 				try persistentContainer?.initializeCloudKitSchema()
 			} catch {
@@ -143,8 +143,18 @@ extension ZCoreDataStack {
 
 	func getRepositoryID() -> Bool {
 		for id in ZCKRepositoryID.all.reversed() {
-			if  id.baseExists {
-				if  gUseExistingStores, (!gCKUseLatest || id == .rUserID) {
+			if  id.repositoryExists {
+
+				// ////////////////////////////////////////////////////////// //
+				//                                                            //
+				//  id.repositoryExists : repository file exists for this id  //
+				//  gUseExistingStores  : don't erase the repository          //
+				//  gUseLastSubmission  : use data/test2/cloud.public.store   //
+				//  rUserID             : not yet submitted                   //
+				//                                                            //
+				// ////////////////////////////////////////////////////////// //
+
+				if  gUseExistingStores, (gUseLastSubmission == (id != .rUserID)) {
 					gCKRepositoryID = id
 
 					return true

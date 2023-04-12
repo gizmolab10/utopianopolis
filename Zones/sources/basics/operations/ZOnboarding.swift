@@ -105,7 +105,7 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserID(_ onCompletion: @escaping Closure) {
-        if  gCloudAccountStatus != .available || !gIsUsingCloudKit {
+        if  gCloudAccountStatus != .available || !gCloudKit {
             onCompletion()
         } else {
             gCloudContainer.fetchUserRecordID() { iRecordID, iError in

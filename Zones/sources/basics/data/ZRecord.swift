@@ -126,7 +126,7 @@ class ZRecord: ZManagedObject {
 		if  let zone = self as? Zone,
 			let name = zone.zoneName, name == "urgent" {
 			let mark = prefix == nil ? kEmpty : "\(prefix!) "
-			printDebug(.dRecords, mark + zone.decoration + zone.ancestralString)
+			printDebug(.dRegister, mark + zone.decoration + zone.ancestralString)
 
 			if  prefix == ">" {
 				noop()

@@ -101,7 +101,7 @@ class ZTimers: NSObject {
 
 			switch tid {
 				case .tLicense:        if  gNoSubscriptions { return }
-				case .tCloudAvailable: if !gIsUsingCloudKit { return }
+				case .tCloudAvailable: if !gCloudKit { return }
 				default: break
 			}
 
