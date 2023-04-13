@@ -23,7 +23,7 @@ enum ZCDStoreType: String {
 
 	static var     all : [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
 	var    originalURL :           URL  { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(storeName) }
-	var    ckUserIDURL :           URL? { return url(for: gUserRecordName) }    // TODO: may not be known
+	var    ckUserIDURL :           URL? { return url(for: gUserRecordName) }    // TODO: needs mechanism for detecting when new user logs in
 	var ckSubmittedURL :           URL? { return url(for: ZCKRepositoryID.rSubmitted.rawValue) }
 	var          cdURL :           URL? { return url(for: gCKRepositoryID.repositoryName) }
 
@@ -453,8 +453,9 @@ class ZCoreDataStack: NSObject {
 				description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 				description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
-				if  gCDUseCloud {
-					let                          options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCKRepositoryID.cloudKitID)
+				if  gCDUseCloud,
+					let                               id = gCKRepositoryID.cloudKitID {
+					let                          options = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
 
 					if  type == .sPublic {
 						options.databaseScope            = CKDatabase.Scope.public    // default is private. public needs osx v11.0

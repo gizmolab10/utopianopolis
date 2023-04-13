@@ -9,7 +9,7 @@
 import Foundation
 import CloudKit
 
-var gCloudContainer : CKContainer { return CKContainer(identifier: gCKRepositoryID.cloudKitID) }
+var gCloudContainer : CKContainer? { return gCKRepositoryID.cloudKitID == nil ? nil : CKContainer(identifier: gCKRepositoryID.cloudKitID!) }
 
 class ZCloud: ZRecords {
 
@@ -21,18 +21,18 @@ class ZCloud: ZRecords {
 	var    isRemembering :        Bool  = false
 
     func configure(_ operation: CKDatabaseOperation) -> CKDatabaseOperation? {
-        if  database != nil, gHasInternet {
-			let                        configuration = operation.configuration ?? CKOperation.Configuration()
-			configuration.timeoutIntervalForResource = kRemoteTimeout
-            configuration.timeoutIntervalForRequest  = kRemoteTimeout
-            configuration                 .container = gCloudContainer
-			operation                 .configuration = configuration
-			operation              .qualityOfService = .background
+		guard let c = gCloudContainer, database != nil, gHasInternet else {
+			return nil
+		}
 
-            return operation
-        }
+		let                        configuration = operation.configuration ?? CKOperation.Configuration()
+		configuration.timeoutIntervalForResource = kRemoteTimeout
+		configuration.timeoutIntervalForRequest  = kRemoteTimeout
+		configuration                 .container = c
+		operation                 .configuration = configuration
+		operation              .qualityOfService = .background
 
-        return nil
+		return operation
 	}
 
     func start(_ operation: CKDatabaseOperation) {

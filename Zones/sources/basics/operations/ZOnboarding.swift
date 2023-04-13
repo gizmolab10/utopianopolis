@@ -74,20 +74,21 @@ class ZOnboarding : ZOperations {
 	}
 
 	func getCloudStatus(_ onCompletion: @escaping Closure) {
-		if !gHasInternet {
+		guard let c = gCloudContainer, gHasInternet else {
 			onCompletion()
-		} else {
-			gCloudContainer.accountStatus { (iStatus, iError) in
-				if  iStatus            == .available {
-					gCloudAccountStatus = .available
+			return
+		}
 
-					// //////////////////// //
-					// ONBOARDING CONTINUES //
-					// //////////////////// //
-				}
+		c.accountStatus { (iStatus, iError) in
+			if  iStatus            == .available {
+				gCloudAccountStatus = .available
 
-				onCompletion()
+				// //////////////////// //
+				// ONBOARDING CONTINUES //
+				// //////////////////// //
 			}
+
+			onCompletion()
 		}
 	}
 
@@ -105,35 +106,39 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserID(_ onCompletion: @escaping Closure) {
-        if  gCloudAccountStatus != .available || !gCDUseCloud {
-            onCompletion()
-        } else {
-            gCloudContainer.fetchUserRecordID() { iRecordID, iError in
-				FOREGROUND {
-					gAlerts.alertError(iError, "failed to fetch user record id from cloud") { iHasError in
-						if !iHasError {
+		guard let c = gCloudContainer, gHasInternet, gUserRecordName == nil, gCloudAccountStatus == .available else {
+			onCompletion()
+			return
+		}
 
-							// ////////////////////////////////////////// //
-							// persist for file read on subsequent launch //
-							//   also: for determining write permission   //
-							// ////////////////////////////////////////// //
+		c.fetchUserRecordID() { iRecordID, iError in
+			FOREGROUND {
+				gAlerts.alertError(iError, "failed to fetch user record id from cloud") { iHasError in
+					if !iHasError {
 
-							if  let      recordName = iRecordID?.recordName {
-								self.user           = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
-								gUserRecordName     = recordName
-								gCloudAccountStatus = .active
+						// //////////////////////////////////////////// //
+						// persist for file read on subsequent launch   //
+						//   also: for determining write permission     //
+						//   also: for core data latest store location  //
+						// //////////////////////////////////////////// //
 
-								// ////////////////////// //
-								// ONBOARDING IS COMPLETE //
-								// ////////////////////// //
-							}
+						if  let      recordName = iRecordID?.recordName {
+							let            user = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
+							self.user           = user
+							gCloudAccountStatus = .active
+
+							user.persistRecordName()
+
+							// ////////////////////// //
+							// ONBOARDING IS COMPLETE //
+							// ////////////////////// //
 						}
-
-						onCompletion()
 					}
+
+					onCompletion()
 				}
-            }
-        }
+			}
+		}
     }
 
 }

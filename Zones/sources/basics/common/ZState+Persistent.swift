@@ -577,44 +577,6 @@ var gMapRotationAngle : CGFloat {
 	}
 }
 
-struct ZCirclesDisplayMode: OptionSet {
-	let rawValue : Int
-
-	init(rawValue: Int) { self.rawValue = rawValue }
-
-	static let cIdeas = ZCirclesDisplayMode(rawValue: 1 << 0)
-	static let cRings = ZCirclesDisplayMode(rawValue: 1 << 1)
-
-	static func createFrom(_ set: IndexSet) -> ZCirclesDisplayMode {
-		var mode = ZCirclesDisplayMode()
-
-		if  set.contains(0) {
-			mode.insert(.cIdeas)
-		}
-
-		if  set.contains(1) {
-			mode.insert(.cRings)
-		}
-
-		return mode
-	}
-
-	var indexSet: IndexSet {
-		var set = IndexSet()
-
-		if  contains(.cIdeas) {
-			set.insert(0)
-		}
-
-		if  contains(.cRings) {
-			set.insert(1)
-		}
-
-		return set
-	}
-
-}
-
 var gCirclesDisplayMode: ZCirclesDisplayMode {
 	get {
 		let value = UserDefaults.standard.object(    forKey: kCirclesDisplayMode) as? Int ?? 0

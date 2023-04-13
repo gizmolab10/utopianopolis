@@ -102,6 +102,7 @@ enum ZCDMigrationState: Int {
 
 }
 
+
 enum ZCKRepositoryID: String {
 	case rOriginal  = "Zones"    // Thoughtful and early Seriously
 	case rSubmitted = "test2"    // latest submitted to the app store
@@ -109,10 +110,13 @@ enum ZCKRepositoryID: String {
 
 	static var defaultIDs : [ZCKRepositoryID] { return [.rSubmitted, .rUserID] }
 	static var        all : [ZCKRepositoryID] { return [.rOriginal, .rSubmitted, .rUserID] } // used for erasing CD stores
-	var        cloudKitID : String            { return kBaseCloudID + kPeriod + rawValue }
-	var    repositoryName : String?           { return (self != .rUserID) ? rawValue : gUserRecordName }
-	var     repositoryURL : URL?              { return repositoryName == nil ? nil : gCDBaseDataURL.appendingPathComponent(repositoryName!) }
+	var        cloudKitID : String?           { return kBaseCloudID + kPeriod  + cloudKitName }
+	var      cloudKitName : String            { return notUseUserID ? rawValue : kDefaultCDStore }
+	var    repositoryName : String            { return notUseUserID ? rawValue : (gUserRecordName ?? submittedName) }
+	var     submittedName : String            { return ZCKRepositoryID.rSubmitted.rawValue }
+	var     repositoryURL : URL?              { return gCDBaseDataURL.appendingPathComponent(repositoryName) }
 	var  repositoryExists : Bool              { return repositoryURL?.fileExists ?? false }
+	var      notUseUserID : Bool              { return self != .rUserID }
 	func    removeFolder()                    {  try?  repositoryURL?.remove() }
 
 	static func updateRepositoryID() {
@@ -138,7 +142,7 @@ enum ZCKRepositoryID: String {
 			}
 		}
 
-		gCKRepositoryID = gCDUseUserID ? .rUserID : .rSubmitted
+		gCKRepositoryID = (gCDUseUserID && gUserRecordName != nil) ? .rUserID : .rSubmitted
 	}
 
 }
@@ -175,7 +179,7 @@ extension ZCoreDataStack {
 
 		if  gCDUseHierarchy {
 			if  gCDMigrationState == .mCDOriginal,
-				let            to  = gCKRepositoryID.repositoryName?.dataExtensionPath {           //   to ends in either  test2  or  <user id>
+				let            to  = gCKRepositoryID.repositoryName.dataExtensionPath {            //   to ends in either  test2  or  <user id>
 				gDataDirectoryName.migrateTo(to)                                                   // move from old flat data folder
 				updateForMigration()
 			}

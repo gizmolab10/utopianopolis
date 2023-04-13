@@ -28,7 +28,7 @@ func gSetupDebugFeatures() {
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
-	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
+//	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)
