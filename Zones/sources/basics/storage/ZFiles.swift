@@ -235,7 +235,7 @@ class ZFiles: NSObject {
 								}
 							case .manifest:
 								if  zRecords.manifest == nil, subDict != nil {
-									let   manifest  = ZManifest.uniqueManifest(from: subDict!, in: databaseID)
+									let      manifest  = ZManifest.uniqueManifest(from: subDict!, in: databaseID)
 									zRecords.manifest  = manifest
 								}
 							case .bookmarks:

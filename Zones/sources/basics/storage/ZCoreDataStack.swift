@@ -22,9 +22,9 @@ enum ZCDStoreType: String {
 	case sPrivate = "Private"
 
 	static var  all : [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
-	var originalURL :       URL      { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(lastComponent) }
+	var originalURL :       URL      { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(storeName) }
 
-	var lastComponent: String {
+	var storeName: String {
 		var last  = rawValue.lowercased()
 		if  self != .sLocal {
 			last  = "cloud." + last
@@ -36,7 +36,7 @@ enum ZCDStoreType: String {
 	var ckStoreURL : URL {
 		let first = gDataDirectoryName
 		let  next = gCKRepositoryID.rawValue
-		let  last = lastComponent
+		let  last = storeName
 		let   url = gFilesURL
 			.appendingPathComponent(first)
 			.appendingPathComponent(next)
@@ -125,7 +125,8 @@ class ZCoreDataStack: NSObject {
 		if !gCanLoad {
 			onCompletion?(0)
 		} else {
-			deferUntilAvailable(for: .oLoad) {
+			deferUntilAvailable(for: .oLoad) { [self] in
+				assureContainerIsSetup()
 				FOREGROUND { [self] in
 					loadManifest(into: databaseID)
 
@@ -441,8 +442,8 @@ class ZCoreDataStack: NSObject {
 			description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
 			description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
-			if  gCloudKit {
-				let                   options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCKRepositoryID.cloudKitID)
+			if  gUseCloud {
+				let                          options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCKRepositoryID.cloudKitID)
 
 				if  type == .sPublic {
 					options.databaseScope            = CKDatabase.Scope.public    // default is private. public needs osx v11.0

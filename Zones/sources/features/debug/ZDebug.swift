@@ -16,14 +16,17 @@ import UIKit
 
 func gSetupDebugFeatures() {
 
+	// all these flags will eventually be commented out
+
 	gDebugModes         = []
 	gDebugModes  .insert(.dNoSubscriptions)
 	gDebugModes  .insert(.dHideNoteVisibility)
 
 	gCoreDataMode       = []
-	gCoreDataMode.insert(.dNoCloudKit)          // don't store data in cloud (public not yet working)
+//	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
+	gCoreDataMode.insert(.dNotUseCloud)         // TODO: need to implement. for now, don't store data in cloud
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
-//	gCoreDataMode.insert(.dCKUseSubmitted)      // use app store's id (test2)
+	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
 	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
@@ -36,14 +39,17 @@ func gSetupDebugFeatures() {
 
 }
 
+// all these are eventually going to be true
+
 var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
 var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)          && gIsUsingCoreData }
 var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)          && gIsUsingCoreData }
-var            gCloudKit : Bool { return !gCoreDataMode.contains(.dNoCloudKit)       && gIsUsingCoreData }
+var            gUseCloud : Bool { return !gCoreDataMode.contains(.dNotUseCloud)      && gIsUsingCoreData }
+var           gUseUserID : Bool { return !gCoreDataMode.contains(.dNotUseUserID)     && gIsUsingCoreData }
+var        gUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)          && gIsUsingCoreData }
 var        gLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCoreData }
 var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCoreData }
 var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCoreData }
-var   gUseLastSubmission : Bool { return !gCoreDataMode.contains(.dAfterSubmission)  && gIsUsingCoreData }
 var  gNormalDataLocation : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCoreData }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes  .contains(.dShowDuplicates) }
@@ -66,13 +72,14 @@ struct ZCoreDataMode: OptionSet {
 
 	static let dNotSave          = ZCoreDataMode(rawValue: 1 << 0) // save is not operational
 	static let dNotLoad          = ZCoreDataMode(rawValue: 1 << 1) // load is not operational
-	static let dDisabled         = ZCoreDataMode(rawValue: 1 << 2) // cannot use core data
-	static let dNoCloudKit       = ZCoreDataMode(rawValue: 1 << 3) // store in cloud kit
-	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 4) // start the CD repo fresh
-	static let dLoadAllAtOnce    = ZCoreDataMode(rawValue: 1 << 5) // load all zones and traits at once (only marginally faster, percentages don't show)
-	static let dAfterSubmission  = ZCoreDataMode(rawValue: 1 << 6) // use app store's id (test2)
-	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 7) // not use ZRelationship
-	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 8) // use migration.testing (not data)
+	static let dUseFlat          = ZCoreDataMode(rawValue: 1 << 2) // use flat data folder and not use <user id> in store file path
+	static let dDisabled         = ZCoreDataMode(rawValue: 1 << 3) // cannot use core data
+	static let dNotUseCloud      = ZCoreDataMode(rawValue: 1 << 4) // store in cloud kit
+	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 5) // start the CD repo fresh
+	static let dNotUseUserID     = ZCoreDataMode(rawValue: 1 << 6) // use flat data folder and not use <user id> in store file path
+	static let dLoadAllAtOnce    = ZCoreDataMode(rawValue: 1 << 7) // load all zones and traits at once (only marginally faster, percentages don't show)
+	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 8) // not use ZRelationship
+	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 9) // use migration.testing (not data)
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {
