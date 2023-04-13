@@ -31,7 +31,7 @@ class ZRelationships: NSObject {
 	}
 
 	@discardableResult func addUniqueRelationship(type: ZRelationType, fromString: String?, relativeString: String?, in databaseID: ZDatabaseID) -> ZRelationship? {
-		if  gHasRelationships,
+		if  gCDUseRelationships,
 			let                     to = relativeString,
 			let                   from = fromString, to != from {
 			let           relationship = ZRelationship.uniqueRelationship(in: databaseID)
@@ -64,7 +64,7 @@ class ZRelationships: NSObject {
 	}
 
 	func relationshipsFor(_ zone: Zone) -> ZRelationshipArray? {
-		if  gHasRelationships,
+		if  gCDUseRelationships,
 			let key = zone.asString?.hash {
 			return lookup[key]
 		}
@@ -73,7 +73,7 @@ class ZRelationships: NSObject {
 	}
 
 	func addOrSwapParentRelationship(_ zone: Zone, parent: Zone?, priorParent: Zone?, in databaseID: ZDatabaseID) {
-		if  gHasRelationships,
+		if  gCDUseRelationships,
 			!swapParentRelationship(zone, parent: parent, priorParent: priorParent) {
 			addParentRelationship  (zone, parent: parent, in: databaseID)
 		}

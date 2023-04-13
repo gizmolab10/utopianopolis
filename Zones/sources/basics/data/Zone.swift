@@ -246,7 +246,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	var bookmarksTargetingSelf: ZoneArray {
-		if  gHasRelationships {
+		if  gCDUseRelationships {
 			return gRelationships.relationshipsFor(self)?.bookmarks ?? []
 		} else if  let  name = recordName,
 				   let  dict = gBookmarks.reverseLookup[databaseID],
@@ -279,7 +279,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var bookmarkTarget : Zone? {
-		if  !gHasRelationships {
+		if  !gCDUseRelationships {
 			return crossLink?.maybeZone
 		}
 
@@ -343,7 +343,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: -
 
 	func updateInstanceProperties() {
-		if  gIsUsingCoreData {
+		if  gIsUsingCD {
 			if  let    id = parentZoneMaybe?.recordName {
 				parentRID = id
 			}
@@ -837,7 +837,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func updateCoreDataRelationships() {
-		if  gIsUsingCoreData,
+		if  gIsUsingCD,
 			let      zID = dbid {
 			var childSet = Set<Zone>()
 			var traitSet = Set<ZTrait>()

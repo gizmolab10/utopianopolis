@@ -26,7 +26,7 @@ func gSetupDebugFeatures() {
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
 	gCoreDataMode.insert(.dNotUseCloud)         // TODO: need to implement. for now, don't store data in cloud
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
-	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
+//	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
 	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
@@ -41,16 +41,16 @@ func gSetupDebugFeatures() {
 
 // all these are eventually going to be true
 
-var     gIsUsingCoreData : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var             gCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)          && gIsUsingCoreData }
-var             gCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)          && gIsUsingCoreData }
-var            gUseCloud : Bool { return !gCoreDataMode.contains(.dNotUseCloud)      && gIsUsingCoreData }
-var           gUseUserID : Bool { return !gCoreDataMode.contains(.dNotUseUserID)     && gIsUsingCoreData }
-var        gUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)          && gIsUsingCoreData }
-var        gLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCoreData }
-var    gHasRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCoreData }
-var   gUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCoreData }
-var  gNormalDataLocation : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCoreData }
+var           gIsUsingCD : Bool { return !gCoreDataMode.contains(.dDisabled) }
+var           gCDCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)          && gIsUsingCD }
+var           gCDCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)          && gIsUsingCD }
+var          gCDUseCloud : Bool { return !gCoreDataMode.contains(.dNotUseCloud)      && gIsUsingCD }
+var         gCDUseUserID : Bool { return !gCoreDataMode.contains(.dNotUseUserID)     && gIsUsingCD }
+var       gCDNormalStore : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCD }
+var      gCDUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)          && gIsUsingCD }
+var      gCDLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCD }
+var  gCDUseRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCD }
+var gCDUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCD }
 
 var gIsShowingDuplicates : Bool { return  gDebugModes  .contains(.dShowDuplicates) }
 var gSubscriptionTimeout : Bool { return  gDebugModes  .contains(.dSubscriptionTimeout) }

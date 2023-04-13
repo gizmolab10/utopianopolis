@@ -354,17 +354,6 @@ extension Dictionary {
 
 }
 
-extension FileManager {
-
-	func moveSubpath(from: String, to: String, relativeTo: String) throws {
-		let fromPath = relativeTo + kSlash + from
-		let   toPath = relativeTo + kSlash + to
-
-		try moveItem(atPath: fromPath, toPath: toPath)
-	}
-
-}
-
 extension URL {
 
 	var originalImageName : String? { return CGImageSource.readFrom(self)?.originalImageName }

@@ -21,8 +21,11 @@ enum ZCDStoreType: String {
 	case sPublic  = "Public"
 	case sPrivate = "Private"
 
-	static var  all : [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
-	var originalURL :       URL      { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(storeName) }
+	static var     all : [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
+	var    originalURL :           URL  { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(storeName) }
+	var    ckUserIDURL :           URL? { return url(for: gUserRecordName) }    // TODO: may not be known
+	var ckSubmittedURL :           URL? { return url(for: ZCKRepositoryID.rSubmitted.rawValue) }
+	var          cdURL :           URL? { return url(for: gCKRepositoryID.repositoryName) }
 
 	var storeName: String {
 		var last  = rawValue.lowercased()
@@ -33,16 +36,19 @@ enum ZCDStoreType: String {
 		return last + ".store"
 	}
 
-	var ckStoreURL : URL {
-		let first = gDataDirectoryName
-		let  next = gCKRepositoryID.rawValue
-		let  last = storeName
-		let   url = gFilesURL
-			.appendingPathComponent(first)
-			.appendingPathComponent(next)
-			.appendingPathComponent(last)
+	func url(for name: String?) -> URL? {
+		if  let  next = name {
+			let first = gDataDirectoryName
+			let  last = storeName
+			let   url = gFilesURL
+				.appendingPathComponent(first)
+				.appendingPathComponent(next)
+				.appendingPathComponent(last)
 
-		return url
+			return url
+		}
+
+		return nil
 	}
 
 }
@@ -68,7 +74,7 @@ class ZCoreDataStack: NSObject {
 	lazy var          model : NSManagedObjectModel          = { return NSManagedObjectModel.mergedModel(from: nil)! }    ()
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
-		if  gIsUsingCoreData,
+		if  gIsUsingCD,
 			let             c = persistentContainer?.viewContext {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 			request.predicate = dbidPredicate(from: databaseID)
@@ -90,7 +96,7 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func saveContext() {
-		if  gCanSave, gIsReadyToShowUI {
+		if  gCDCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) {
 				gInBackgroundWhileShowingBusy { [self] in
 					if  let c = persistentContainer?.viewContext, c.hasChanges {
@@ -122,7 +128,7 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func loadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
-		if !gCanLoad {
+		if !gCDCanLoad {
 			onCompletion?(0)
 		} else {
 			deferUntilAvailable(for: .oLoad) { [self] in
@@ -130,7 +136,7 @@ class ZCoreDataStack: NSObject {
 				FOREGROUND { [self] in
 					loadManifest(into: databaseID)
 
-					if  gLoadEachRoot {
+					if  gCDLoadEachRoot {
 						for rootName in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
 							loadRootZone(recordName: rootName, into: databaseID)
 						}
@@ -148,7 +154,7 @@ class ZCoreDataStack: NSObject {
 
 					load(type: kFileType, into: databaseID)
 
-					if  gHasRelationships {
+					if  gCDUseRelationships {
 						let array = load(type: kRelationshipType, into: databaseID)
 
 						for item in array {
@@ -203,7 +209,7 @@ class ZCoreDataStack: NSObject {
 				for id in ids {
 					let      object = persistentContainer?.viewContext.object(with: id)
 					if  let zRecord = object as? ZRecord {
-						if  gLoadEachRoot {
+						if  gCDLoadEachRoot {
 							zRecord.convertFromCoreData(visited: [])
 						}
 
@@ -365,7 +371,7 @@ class ZCoreDataStack: NSObject {
 	func searchZRecordsForStrings(_ strings: StringsArray, within databaseID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
 		var result = StringZRecordsDictionary()
 
-		if !gIsReadyToShowUI || !gCanLoad {
+		if !gIsReadyToShowUI || !gCDCanLoad {
 			onCompletion?(result)
 		} else {
 			let searchables = strings.map { $0.searchable }.filter { $0 != kSpace }
@@ -392,7 +398,7 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func search(within databaseID: ZDatabaseID, entityName: String, using predicate: NSPredicate, onCompletion: ZRecordsClosure? = nil) {
-		if !gCanLoad || !gIsReadyToShowUI {
+		if !gCDCanLoad || !gIsReadyToShowUI {
 			onCompletion?(ZRecordsArray())
 		} else if let       c = persistentContainer {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
@@ -431,43 +437,54 @@ class ZCoreDataStack: NSObject {
 	// MARK: -
 
 	func persistentStore(for type: ZCDStoreType) -> NSPersistentStore? {
-		return persistentContainer?.persistentStoreCoordinator.persistentStore(for: type.ckStoreURL)
-	}
-
-	func storeDescription(for type: ZCDStoreType) -> NSPersistentStoreDescription{
-		let           description = NSPersistentStoreDescription(url: type.ckStoreURL)
-		description.configuration = type.rawValue
-
-		if  type != .sLocal {
-			description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-			description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
-
-			if  gUseCloud {
-				let                          options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCKRepositoryID.cloudKitID)
-
-				if  type == .sPublic {
-					options.databaseScope            = CKDatabase.Scope.public    // default is private. public needs osx v11.0
-				}
-
-				description.cloudKitContainerOptions = options
-			}
+		if  let url = type.cdURL {
+			return persistentContainer?.persistentStoreCoordinator.persistentStore(for: url)
 		}
 
-		return description
+		return nil
+	}
+
+	func storeDescription(for type: ZCDStoreType) -> NSPersistentStoreDescription? {
+		if  let                   url = type.cdURL {
+			let           description = NSPersistentStoreDescription(url: url)
+			description.configuration = type.rawValue
+
+			if  type != .sLocal {
+				description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+				description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+
+				if  gCDUseCloud {
+					let                          options = NSPersistentCloudKitContainerOptions(containerIdentifier: gCKRepositoryID.cloudKitID)
+
+					if  type == .sPublic {
+						options.databaseScope            = CKDatabase.Scope.public    // default is private. public needs osx v11.0
+					}
+
+					description.cloudKitContainerOptions = options
+				}
+			}
+
+			return description
+		}
+
+		return nil
 	}
 
 	func getPersistentContainer() -> NSPersistentCloudKitContainer {
-		let container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
+		let    container = NSPersistentCloudKitContainer(name: "seriously", managedObjectModel: model)
+		var descriptions = [NSPersistentStoreDescription]()
+
+		for type in ZCDStoreType.all {
+			if  let description = storeDescription(for: type) { // nil if gUseUserID and user id not known
+				descriptions.append(description)
+			}
+		}
+
+		container.persistentStoreDescriptions = descriptions
 
 		ValueTransformer.setValueTransformer(  ZReferenceTransformer(), forName:   gReferenceTransformerName)
 		ValueTransformer.setValueTransformer( ZAssetArrayTransformer(), forName:  gAssetArrayTransformerName)
 		ValueTransformer.setValueTransformer(ZStringArrayTransformer(), forName: gStringArrayTransformerName)
-
-		container.persistentStoreDescriptions = [
-			storeDescription(for: .sPrivate),
-			storeDescription(for: .sPublic),
-			storeDescription(for: .sLocal)
-		]
 
 		container.loadPersistentStores() { (storeDescription, iError) in
 			if  let error = iError as NSError? {

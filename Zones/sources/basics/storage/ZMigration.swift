@@ -11,7 +11,7 @@ import Foundation
 var  gCDMigrationState    =                  ZCDMigrationState.mFirstTime
 var  gCDMigrationIsDone   :   Bool { return  gCDMigrationState.isCompleted }
 var  gCDBaseDataURL       :    URL { return  gFilesURL.appendingPathComponent(gDataDirectoryName) }
-var  gDataDirectoryName   : String { return (gNormalDataLocation ? kDataDirectoryName : "migration.testing") }
+var  gDataDirectoryName   : String { return (gCDNormalStore ? kDataDirectoryName : "migration.testing") }
 func gUpdateCDMigrationState()     {         gCDMigrationState = ZCDMigrationState.currentState }
 
 enum ZCDMigrationState: Int {
@@ -41,22 +41,23 @@ enum ZCDMigrationState: Int {
 		//    to appropriate final state    (first letter m)        //
 		//    determined below by currentState                      //
 		//                                                          //
+		//  gUseCloud     : actually store data in the cloud        //
 		//  gUseUserID    : use data/<userID>/cloud.public.store    //
-		//  mUserID       : data exists at data/<user's record id>  //
 		//  gUseHierarchy : data/test2 instead of just data         //
-		//  mCDHierarchal : data/test2/cloud.public.store exists    //
-		//  gCloudKit     : actually store data in the cloud        //
+		//                                                          //
 		//  mCloud        : data can be retrieved from the cloud    //
-		//  mCDOriginal   : data/cloud.public.store exists          //
+		//  mUserID       : data exists at data/<user's record id>  //
+		//  mCDHierarchal : data exists at data/test2               //
+		//  mCDOriginal   : data exists at data                     //
 		//                                                          //
 		// //////////////////////////////////////////////////////// //
 
-		if                    gUseUserID {
-			return   self == .mUserID
-		} else if             gUseHierarchy {
-			return   self == .mCDHierarchal
-		} else if             gUseCloud {
+		if                    gCDUseCloud {
 			return   self == .mCloud                // TODO: NEVER true
+		} else if             gCDUseUserID {
+			return   self == .mUserID
+		} else if             gCDUseHierarchy {
+			return   self == .mCDHierarchal
 		} else {
 			return   self == .mCDOriginal
 		}
@@ -74,23 +75,29 @@ enum ZCDMigrationState: Int {
 		//                                                             //
 		// /////////////////////////////////////////////////////////// //
 
+		// if user id is not known -> FUBAR (wrong migration location, data will be lost once user id becomes known)
+
 		let publicScope = ZDatabaseID.everyoneID.scope
 
-		if  gCDBaseDataURL.fileExists {                 // data folder exists
-			if  publicScope .ckStoreURL.containsData {  // data/test2/cloud.public.store exists and is not empty
-				return                 .mCDHierarchal
+		if  gCDBaseDataURL.fileExists {                                   // data           <- folder exists
+			if  let url = publicScope.ckUserIDURL,    url.containsData {  // data/<user id> <- store exists and is not empty
+				return               .mUserID
 			}
 
-			if  publicScope.originalURL.containsData {  //       data/cloud.public.store exists and is not empty
-				return                 .mCDOriginal
+			if  let url = publicScope.ckSubmittedURL, url.containsData {  // data/test2     <- store exists and is not empty
+				return               .mCDHierarchal
+			}
+
+			if  publicScope          .originalURL        .containsData {  // data           <- store exists and is not empty
+				return               .mCDOriginal
 			}
 		}
 
 		if  gFiles.hasMine {
-			return                     .mFiles
+			return                   .mFiles
 		}
 
-		return                         .mFirstTime
+		return                       .mFirstTime
 	}
 
 }
@@ -103,10 +110,36 @@ enum ZCKRepositoryID: String {
 	static var defaultIDs : [ZCKRepositoryID] { return [.rSubmitted, .rUserID] }
 	static var        all : [ZCKRepositoryID] { return [.rOriginal, .rSubmitted, .rUserID] } // used for erasing CD stores
 	var        cloudKitID : String            { return kBaseCloudID + kPeriod + rawValue }
-	var    repositoryName : String?           { return (self == .rUserID) ? gUserRecordName : rawValue }
-	var     repositoryURL : URL               { return gCDBaseDataURL.appendingPathComponent(repositoryName ?? kDefaultCDStore) }
-	var  repositoryExists : Bool              { return repositoryURL.fileExists }
-	func    removeFolder()                    {  try?  repositoryURL.remove() }
+	var    repositoryName : String?           { return (self != .rUserID) ? rawValue : gUserRecordName }
+	var     repositoryURL : URL?              { return repositoryName == nil ? nil : gCDBaseDataURL.appendingPathComponent(repositoryName!) }
+	var  repositoryExists : Bool              { return repositoryURL?.fileExists ?? false }
+	func    removeFolder()                    {  try?  repositoryURL?.remove() }
+
+	static func updateRepositoryID() {
+		for id in all.reversed() {
+			if  id.repositoryExists {
+
+				// //////////////////////////////////////////////////////////// //
+				//                                                              //
+				//  id.repositoryExists : repository file exists for this id    //
+				//  gUseExistingStores  : don't erase the repository            //
+				//  gUseUserID          : use data/<userID>/cloud.public.store  //
+				//  rUserID             : is using userID                       //
+				//                                                              //
+				// //////////////////////////////////////////////////////////// //
+
+				if !gCDUseExistingStores {
+					id.removeFolder()
+				} else if gCDUseUserID == (id == .rUserID) {
+					gCKRepositoryID = id
+
+					return
+				}
+			}
+		}
+
+		gCKRepositoryID = gCDUseUserID ? .rUserID : .rSubmitted
+	}
 
 }
 
@@ -132,23 +165,27 @@ extension ZBatches {
 
 extension ZCoreDataStack {
 
-	func assureMigrationToLatest() {
-		if !getRepositoryID() {
-			gUpdateCDMigrationState()
+	func updateForMigration() {
+		ZCKRepositoryID.updateRepositoryID()
+		gUpdateCDMigrationState()
+	}
 
+	func assureMigrationToLatest() {
+		updateForMigration()
+
+		if  gCDUseHierarchy {
 			if  gCDMigrationState == .mCDOriginal,
-				let        toName  = gCKRepositoryID.repositoryName {                 // toName path ends in either  test2  or  <user id>
-				migrateFrom(gDataDirectoryName, gDataDirectoryName + kSlash + toName) // move from o;d flat data folder
-				gUpdateCDMigrationState()
+				let            to  = gCKRepositoryID.repositoryName?.dataExtensionPath {           //   to ends in either  test2  or  <user id>
+				gDataDirectoryName.migrateTo(to)                                                   // move from old flat data folder
+				updateForMigration()
 			}
 
-			if	gCDMigrationState == .mCDHierarchal, !getRepositoryID(), gUseUserID,
-				let      fromName  =  ZCKRepositoryID.rSubmitted.repositoryName,      // fromName ends in  test2
-				let        toName  =  ZCKRepositoryID.rUserID   .repositoryName {     //   toName ends in  <user id>
-				gCKRepositoryID    = .rUserID
+			if	gCDMigrationState == .mCDHierarchal, gCDUseUserID,
+				let            to  =  gUserRecordName?.dataExtensionPath,                          //   to ends in  <user id>
+				let          from  =  ZCKRepositoryID.rSubmitted.rawValue.dataExtensionPath {      // from ends in  test2
 
-				migrateFrom(gDataDirectoryName + kSlash + fromName, gDataDirectoryName + kSlash + toName)
-				gUpdateCDMigrationState()
+				from.migrateTo(to)  // move to new user id folder
+				updateForMigration()
 			}
 		}
 	}
@@ -157,7 +194,7 @@ extension ZCoreDataStack {
 		if  persistentContainer == nil {
 			persistentContainer  = getPersistentContainer()
 
-			if  gUseCloud, !gCDMigrationState.isActive {
+			if  gCDUseCloud, !gCDMigrationState.isActive {
 				do {
 					try persistentContainer?.initializeCloudKitSchema()
 				} catch {
@@ -169,44 +206,38 @@ extension ZCoreDataStack {
 		}
 	}
 
-	func getRepositoryID() -> Bool {
-		for id in ZCKRepositoryID.all.reversed() {
-			if  id.repositoryExists {
+}
 
-				// //////////////////////////////////////////////////////////// //
-				//                                                              //
-				//  id.repositoryExists : repository file exists for this id    //
-				//  gUseExistingStores  : don't erase the repository            //
-				//  gUseUserID          : use data/<userID>/cloud.public.store  //
-				//  rUserID             : is using userID                       //
-				//                                                              //
-				// //////////////////////////////////////////////////////////// //
+extension String {
 
-				if !gUseExistingStores {
-					id.removeFolder()
-				} else if gUseUserID == (id == .rUserID) {
-					gCKRepositoryID = id
+	var       dataExtensionPath : String? { return dataExtensionURL?.path }
+	var       dataExtensionURL  : URL?    { return URL(string: gDataDirectoryName)?.appendingPathComponent(self) }
+	var repositoryPath : String  { return repositoryURL.path }
+	var repositoryURL  : URL     { return gFilesURL.appendingPathComponent(self) }
 
-					return true
-				}
-			}
-		}
-
-		return false
-	}
-
-	func migrateFrom(_ moveFrom: String, _ moveTo: String) {
+	func migrateTo(_ to: String?) {
 		do {
-			let moveTemporary = "temp"
-			let         urlTo = gFilesURL.appendingPathComponent(moveTo).path
-			let          path = gFilesURL.path
-			let             m = gFileManager
+			let temporary = "delete me"
 
-			try m.moveSubpath(from: moveFrom,      to: moveTemporary, relativeTo: path)
-			try m.createDirectory(atPath: urlTo, withIntermediateDirectories: true)
-			try m.moveSubpath(from: moveTemporary, to: moveTo,        relativeTo: path)
+			try           moveItem(to: temporary) // in case to is inside from, in which case the file manager will throw (move self inside self, a no can do)
+			try temporary.moveItem(to: to)
 		} catch {
 			printDebug(.dError, "\(error)")
+		}
+	}
+
+	func moveItem(to: String?) throws {
+		if  let toPath = to?.repositoryPath {
+			let   path = repositoryPath
+			let      m = gFileManager
+
+			if          m.fileExists(atPath: path) {
+				if      m.fileExists(atPath: toPath) {
+					try m.removeItem(atPath: toPath)
+				}
+
+				try     m.moveItem  (atPath: path, toPath: toPath)
+			}
 		}
 	}
 
@@ -226,6 +257,7 @@ extension ZFiles {
 
 				gSaveContext()
 				gEveryoneCloud?.rootZone?.expandAndGrab(focus: false)
+				gUpdateCDMigrationState()
 
 				onCompletion?(result)
 			}
