@@ -144,15 +144,16 @@ class ZCoreDataStack: NSObject {
 						if  databaseID == .mineID {
 							loadRootZone(recordName: kFavoritesRootName, into: databaseID)
 						}
+
 					} else if let records = gRemoteStorage.zRecords(for: databaseID) {
-						load(type: kZoneType,  into: databaseID)
-						load(type: kTraitType, into: databaseID)
+						load(type: kZoneType, into: databaseID)
 						FOREGROUND {
 							records.resolveAllParents()
 						}
 					}
 
-					load(type: kFileType, into: databaseID)
+					load(type: kTraitType, into: databaseID)
+					load(type: kFileType,  into: databaseID)
 
 					if  gCDUseRelationships {
 						let array = load(type: kRelationshipType, into: databaseID)
@@ -454,11 +455,11 @@ class ZCoreDataStack: NSObject {
 				description.setOption(true as NSNumber, forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
 
 				if  gCDUseCloud,
-					let                               id = gCKRepositoryID.cloudKitID {
-					let                          options = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
+					let                    id = gCKRepositoryID.cloudKitID {
+					let               options = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
 
 					if  type == .sPublic {
-						options.databaseScope            = CKDatabase.Scope.public    // default is private. public needs osx v11.0
+						options.databaseScope = .public    // default is private. public needs osx v11.0
 					}
 
 					description.cloudKitContainerOptions = options
@@ -494,7 +495,7 @@ class ZCoreDataStack: NSObject {
 		}
 
 		container.viewContext.automaticallyMergesChangesFromParent = true
-		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .overwriteMergePolicyType)
+		container.viewContext.mergePolicy                          = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
 
 		return container
 	}

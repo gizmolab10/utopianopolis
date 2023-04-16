@@ -44,13 +44,13 @@ class ZCloud: ZRecords {
     }
 
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
-		switch identifier { // inner switch
-			case .oHere:             establishHere                  (cloudCallback)
-			case .oRoots:            establishRoots     (identifier, cloudCallback)
+		switch identifier {
 			case .oManifest:         establishManifest  (identifier, cloudCallback)
-			case .oResolveMissing:   resolveMissing                 (cloudCallback)
+			case .oRoots:            establishRoots     (identifier, cloudCallback)
+			case .oHere:             establishHere                  (cloudCallback)
+			case .oAdopt:            assureAdoption                 (cloudCallback)
 			case .oResolve:          resolve                        (cloudCallback)
-			case .oAdopt:            assureZoneAdoption             (cloudCallback)
+			case .oResolveMissing:   resolveMissing                 (cloudCallback)
 			default:                                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
 	}

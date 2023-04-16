@@ -579,6 +579,14 @@ class ZRecords: NSObject {
 		}
 	}
 
+	func applyToAllTraits(closure: ZTraitClosure) {
+		applyToAllZRecords { zRecord in
+			if  let trait = zRecord.maybeTrait {
+				closure(trait)
+			}
+		}
+	}
+
 	func applyToAllZones(closure: ZoneClosure) {
 		applyToAllZRecords { zRecord in
 			if  let zone = zRecord.maybeZone {
@@ -636,16 +644,18 @@ class ZRecords: NSObject {
 		return (iFixed + fixed, iLost + lost)
 	}
 
-	func assureZoneAdoption(_ onCompletion: IntClosure? = nil) {
+	func assureAdoption(_ onCompletion: IntClosure? = nil) {
+		let dbid = databaseID.identifier
 		FOREGROUND { [self] in
-			applyToAllZones { zone in
-				zone.dbid = databaseID.identifier
-
-				if !zone.isARoot {
+			applyToAllZRecords { zRecord in
+				zRecord.dbid = dbid
+				if let trait = zRecord.maybeTrait {
+					trait.adopt()
+				} else if let zone = zRecord.maybeZone, !zone.isARoot {
 					zone.adopt(recursively: true)
 
 					if  zone.root == nil, !zone.isBookmark {
-						printDebug(.dAdopt, "lost child: (\(databaseID.identifier)) \(zone)")
+						printDebug(.dAdopt, "lost child: (\(dbid)) \(zone)")
 					}
 				}
 			}

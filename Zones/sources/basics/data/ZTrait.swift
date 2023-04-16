@@ -200,8 +200,9 @@ class ZTrait: ZTraitAssets {
 	override var isAdoptable: Bool { return ownerLink != nil }
 
 	var ownerZone: Zone? {
-		if  _ownerZone == nil {
-			_ownerZone  = ownerLink?.maybeZone
+		if  _ownerZone == nil,
+			let  owner  = ownerRID?.maybeZRecord(in: databaseID)?.maybeZone {
+			_ownerZone  = owner
 		}
 
 		return _ownerZone
