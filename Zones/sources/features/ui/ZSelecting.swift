@@ -228,6 +228,31 @@ class ZSelecting: NSObject {
         return movable
     }
 
+	var visibleGrabs: ZoneArray {
+		var result = ZoneArray()
+
+		for zone in currentMapGrabs {
+			if  zone.widget != nil {
+				result.append(zone)
+			}
+		}
+
+		return result
+	}
+
+	var mostVisibleGrab: Zone? {
+		let grabs = visibleGrabs
+		let count = grabs.count
+
+		if  count > 0 {
+			let index = count / 2
+
+			return grabs[index]
+		}
+
+		return nil
+	}
+
 	var pastableRecordName: String? {
 		let pastables = pasteableZones
 

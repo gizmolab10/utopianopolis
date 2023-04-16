@@ -102,8 +102,6 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 }
 
 func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
-	gMainController?.showAppIsBusy(true)
-
 	if  let  window = gApplication?.mainWindow {
 		let   panel = NSOpenPanel()
 
@@ -115,12 +113,13 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 		panel.canDownloadUbiquitousContents = false
 
 		panel.beginSheetModal(for: window) { result in
-			if  result          == .OK,
+			if  result == .OK,
 				panel.urls.count > 0 {
-				let          url = panel.urls[0]
+				let url = panel.urls[0]
 
-				callback?(url)
-				gMainController?.showAppIsBusy(false)
+				gShowAppIsBusyWhile {
+					callback?(url)
+				}
 			}
 		}
 	}
@@ -148,7 +147,7 @@ func gPresentSavePanel(name iName: String?, suffix: String, _ callback: URLClosu
 		}
 
 		panel.beginSheetModal(for: window) { result in
-			if  result                 == .OK,
+			if  result == .OK,
 				let fileURL = panel.url {
 				gIsExportingToAFile     = true
 

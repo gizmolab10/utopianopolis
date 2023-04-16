@@ -100,7 +100,7 @@ class ZCoreDataStack: NSObject {
 			deferUntilAvailable(for: .oSave) {
 				gInBackgroundWhileShowingBusy { [self] in
 					if  let c = persistentContainer?.viewContext, c.hasChanges {
-						checkCrossStore()
+						maybeReportCrossStore()
 
 						do {
 							try c.save()
@@ -548,19 +548,41 @@ class ZCoreDataStack: NSObject {
 		return nil
 	}
 
-	func checkCrossStore() {
+	func maybeReportCrossStore() {
 		if  let c = persistentContainer?.viewContext, gPrintModes.contains(.dCross) {
-			for updated in c.updatedObjects {
-				if  let  zone  = updated as? Zone,
-					let zdbid  = zone.dbid,
-					let pdbid  = zone.parentZone?.dbid {
-					if  zdbid != pdbid {
-						printDebug(.dCross, "\(zone)")
+			for object in c.updatedObjects {
+				if  let               record = object as? ZRecord,
+					let           objectDBid = record.dbid {
+					if      let         zone = record as? Zone {
+						if  let   parentDBid = zone.parentZone?.dbid,
+							parentDBid      != objectDBid {
+//							let        store = gCoreDataStack.persistentStore(for: objectDBid.databaseID.scope) {
+//							gCDCurrentBackgroundContext?.assign(zone.parentZone!, to: store)
+							printDebug(.dCross, "[\(parentDBid)p] \(zone.getRoot): \(zone)")
+						} else
+
+						if  let   storeDBid  = record.objectID.persistentStore?.dbid,
+							storeDBid       != objectDBid {
+							printDebug(.dCross, "[\(storeDBid)s] \(zone.getRoot): \(zone)")  // my destroy's progeny, also all have wrong root
+						}
+					} else
+
+					if  let            trait = record as? ZTrait,
+					    let        traitDBid = trait.ownerZone?.dbid,
+					    traitDBid           != objectDBid {
+						printDebug(.dCross, "[\(traitDBid)t] \(trait.ownerZone!.getRoot): \(trait)")
 					}
+				} else {
+					printDebug(.dCross, "[??] \(object)")
 				}
 			}
 		}
 	}
+
+//	if  let store = gCoreDataStack.persistentStore(for: databaseID.scope) {
+//		context.assign(self, to: store)
+//	}
+
 
 	// MARK: - vaccuum
 	// MARK: -
@@ -591,6 +613,19 @@ class ZCoreDataStack: NSObject {
 					}
 				}
 			}
+		}
+	}
+
+}
+
+extension NSPersistentStore {
+
+	var dbid: String? {
+
+		switch configurationName {
+			case "Private": return ZDatabaseID    .mineID.identifier
+			case "Public":  return ZDatabaseID.everyoneID.identifier
+			default: return nil
 		}
 	}
 

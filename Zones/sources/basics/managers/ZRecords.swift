@@ -639,9 +639,7 @@ class ZRecords: NSObject {
 	func assureZoneAdoption(_ onCompletion: IntClosure? = nil) {
 		FOREGROUND { [self] in
 			applyToAllZones { zone in
-				if  zone.dbid == nil {
-					zone.dbid  = databaseID.identifier
-				}
+				zone.dbid = databaseID.identifier
 
 				if !zone.isARoot {
 					zone.adopt(recursively: true)

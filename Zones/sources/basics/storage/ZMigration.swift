@@ -111,7 +111,8 @@ enum ZCKRepositoryID: String {
 	static var defaultIDs : [ZCKRepositoryID] { return [.rSubmitted, .rUserID] }
 	static var        all : [ZCKRepositoryID] { return [.rOriginal, .rSubmitted, .rUserID] } // used for erasing CD stores
 	var        cloudKitID : String?           { return kBaseCloudID + kPeriod  + cloudKitName }
-	var      cloudKitName : String            { return notUseUserID ? rawValue : kDefaultCDStore }
+	var      cloudKitName : String            { return notUseUserID ? rawValue : storeName }
+	var         storeName : String            { return gCDNormalStore ? kDefaultCDStore : kMigrationTestCDStore }
 	var    repositoryName : String            { return notUseUserID ? rawValue : (gUserRecordName ?? submittedName) }
 	var     submittedName : String            { return ZCKRepositoryID.rSubmitted.rawValue }
 	var     repositoryURL : URL?              { return gCDBaseDataURL.appendingPathComponent(repositoryName) }
@@ -198,7 +199,7 @@ extension ZCoreDataStack {
 		if  persistentContainer == nil {
 			persistentContainer  = getPersistentContainer()
 
-			if  gCDUseCloud, !gCDMigrationState.isActive {
+			if  gCDUseCloud {
 				do {
 					try persistentContainer?.initializeCloudKitSchema()
 				} catch {

@@ -12,9 +12,9 @@
     import UIKit
 #endif
 
-func gInBackgroundWhileShowingBusy(_ closure: @escaping Closure) { gMainController?.inBackgroundWhileShowingBusy(closure) }
-func           gShowAppIsBusyWhile(_ closure: @escaping Closure) { gMainController?.showAppIsBusyWhile          (closure) }
-var            gMainController : ZMainController?                { return gControllers.controllerForID(.idMain) as? ZMainController }
+func gInBackgroundWhileShowingBusy(_ closure : @escaping Closure) { gMainController?.inBackgroundWhileShowingBusy(closure) }
+func           gShowAppIsBusyWhile(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhile          (closure) }
+var            gMainController : ZMainController?                 { return gControllers.controllerForID(.idMain) as? ZMainController }
 
 class ZMainController: ZGesturesController {
 

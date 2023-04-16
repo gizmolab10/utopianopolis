@@ -117,10 +117,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		}
 	}
 
-	static func object(for id: String, isExpanded: Bool) -> NSObject? {
+	static func object(for recordName: String, isExpanded: Bool) -> NSObject? {
 		var object: ZNote?
 
-		if  let       zone = gMaybeZoneForRecordName(id),
+		if  let       zone = gMaybeZoneForRecordName(recordName),
 			zone.hasTrait(for: .tNote) {
 
 			object = isExpanded ? gCreateEssay(zone) : ZNote(zone)

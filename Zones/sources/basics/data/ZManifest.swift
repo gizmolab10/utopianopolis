@@ -35,7 +35,6 @@ class ZManifest : ZRecord {
 	@NSManaged var deletedRecordNames: StringsArray?
 	override var cloudProperties: StringsArray { return ZManifest.cloudProperties }
 	override class var cloudProperties: StringsArray { return super.cloudProperties + [#keyPath(deletedRecordNames), #keyPath(count)] }
-//	override func ignoreKeyPathsForStorage() -> StringsArray { return super.ignoreKeyPathsForStorage() + [#keyPath(deletedRecordNames)] }
 
     var updatedRefs: StringsArray? {
         if  let d = deletedRecordNames {                 // FIRST: merge deleted into zDeleted

@@ -15,14 +15,14 @@ import Cocoa
 import UIKit
 #endif
 
-extension ZTraitArray {
-
-	init(set: Set<ZTrait>) {
-		self.init()
-
-		for trait in set {
-			append(trait)
-		}
-	}
-
-}
+//extension ZTraitArray {
+//
+//	init(set: Set<ZTrait>) {
+//		self.init()
+//
+//		for trait in set {
+//			append(trait)
+//		}
+//	}
+//
+//}

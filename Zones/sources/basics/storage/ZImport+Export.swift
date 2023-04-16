@@ -94,6 +94,7 @@ extension ZFiles {
 
 	func replaceDatabase(_ databaseID: ZDatabaseID?, onCompletion: Closure?) {
 		if  let            id = databaseID {
+			let          dbid = id.identifier
 			gPresentOpenPanel(type: .eSeriously) { [self] iAny in
 				if  let   url = iAny as? URL,
 					let cloud = gRemoteStorage.cloud(for: id),
@@ -115,6 +116,10 @@ extension ZFiles {
 								gHere                   = cloudRoot
 
 								cloudRoot.updateZoneNamesForBookmkarksTargetingSelf()
+							}
+
+							cloud.applyToAllZones { zone in
+								zone.dbid = dbid
 							}
 
 							onCompletion?()

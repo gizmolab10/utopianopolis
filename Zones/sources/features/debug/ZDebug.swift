@@ -24,7 +24,7 @@ func gSetupDebugFeatures() {
 
 	gCoreDataMode       = []
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
-	gCoreDataMode.insert(.dNotUseCloud)         // TODO: need to implement. for now, don't store data in cloud
+//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: need to implement. for now, don't store data in cloud
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
@@ -33,9 +33,10 @@ func gSetupDebugFeatures() {
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)
 //	gPrintModes  .insert(.dTime)
+	gPrintModes  .insert(.dError)
+	gPrintModes  .insert(.dCross)
 //	gPrintModes  .insert(.dMoving)
-//	gPrintModes  .insert(.dRecords)
-	gPrintModes  .insert(.dMigrate)
+//	gPrintModes  .insert(.dMigrate)
 
 }
 
@@ -160,9 +161,9 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let   dWidget = ZPrintMode(rawValue: 1 << 24) // lookup, hit tests
 	static let   dTimers = ZPrintMode(rawValue: 1 << 25) // assure completion
 	static let   dLevels = ZPrintMode(rawValue: 1 << 26) // fetching depth
-	static let   dMoving = ZPrintMode(rawValue: 1 << 27) // creating and registering ZRecords
+	static let   dMoving = ZPrintMode(rawValue: 1 << 27) // moving and dragging ideas
 	static let  dMigrate = ZPrintMode(rawValue: 1 << 28) // migrating to core data and cloud
-	static let dRegister = ZPrintMode(rawValue: 1 << 29) // moving and dragging ideas
+	static let dRegister = ZPrintMode(rawValue: 1 << 29) // creating and registering ZRecords
 
 	var description: String { return descriptions.joined(separator: kSpace) }
 

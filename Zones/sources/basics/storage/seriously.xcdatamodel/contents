@@ -37,7 +37,6 @@
         <attribute name="zoneProgeny" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <relationship name="childArray" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Zone" inverseName="parentRef" inverseEntity="Zone"/>
         <relationship name="parentRef" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="childArray" inverseEntity="Zone"/>
-        <relationship name="traitArray" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ZTrait" inverseName="ownerRef" inverseEntity="ZTrait"/>
     </entity>
     <entity name="ZRelationship" representedClassName="ZRelationship" syncable="YES">
         <attribute name="dbid" optional="YES" attributeType="String"/>
@@ -50,12 +49,12 @@
     <entity name="ZTrait" representedClassName="ZTrait" parentEntity="ZTraitAssets" syncable="YES">
         <attribute name="format" optional="YES" attributeType="String"/>
         <attribute name="owner" optional="YES" attributeType="Transformable" valueTransformerName="ZReferenceTransformer" customClassName="CKReference"/>
+        <attribute name="ownerLink" optional="YES" attributeType="String"/>
         <attribute name="ownerRID" optional="YES" attributeType="String"/>
         <attribute name="strings" optional="YES" attributeType="Transformable" valueTransformerName="ZStringArrayTransformer"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <attribute name="visibility" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
-        <relationship name="ownerRef" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Zone" inverseName="traitArray" inverseEntity="Zone"/>
     </entity>
     <entity name="ZTraitAssets" representedClassName="ZTraitAssets" syncable="YES">
         <attribute name="assetNames" optional="YES" attributeType="String"/>

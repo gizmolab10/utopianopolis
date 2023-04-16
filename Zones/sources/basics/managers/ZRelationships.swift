@@ -23,11 +23,11 @@ class ZRelationships: NSObject {
 	}
 
 	@discardableResult func addBookmarkRelationship(for bookmark: Zone, targetNamed: String, in databaseID: ZDatabaseID) -> ZRelationship? {
-		return addUniqueRelationship(type: .target, fromString: bookmark.asString, relativeString: targetNamed, in: databaseID)
+		return addUniqueRelationship(type: .target, fromString: bookmark.linkAsString, relativeString: targetNamed, in: databaseID)
 	}
 
 	@discardableResult func addUniqueRelationship(type: ZRelationType, from zone: Zone?, relative: Zone?, in databaseID: ZDatabaseID) -> ZRelationship? {
-		return addUniqueRelationship(type: type, fromString: zone?.asString, relativeString: relative?.asString, in: databaseID)
+		return addUniqueRelationship(type: type, fromString: zone?.linkAsString, relativeString: relative?.linkAsString, in: databaseID)
 	}
 
 	@discardableResult func addUniqueRelationship(type: ZRelationType, fromString: String?, relativeString: String?, in databaseID: ZDatabaseID) -> ZRelationship? {
@@ -65,7 +65,7 @@ class ZRelationships: NSObject {
 
 	func relationshipsFor(_ zone: Zone) -> ZRelationshipArray? {
 		if  gCDUseRelationships,
-			let key = zone.asString?.hash {
+			let key = zone.linkAsString?.hash {
 			return lookup[key]
 		}
 
@@ -82,7 +82,7 @@ class ZRelationships: NSObject {
 	func swapParentRelationship(_ zone: Zone, parent: Zone?, priorParent: Zone?) -> Bool {
 		if  let prior         = priorParent,
 			var relationships = relationshipsFor(zone) {
-			let replacement   = parent?.asString
+			let replacement   = parent?.linkAsString
 			var removeMe      : Int?
 
 			for (index, relationship) in relationships.enumerated() {
@@ -100,7 +100,7 @@ class ZRelationships: NSObject {
 			}
 
 			if  let index = removeMe,
-				let   key = zone.asString?.hash {
+				let   key = zone.linkAsString?.hash {
 				let     r = relationships[index]
 
 				relationships.remove(at: index)    // mutate

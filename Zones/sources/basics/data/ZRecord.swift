@@ -142,7 +142,7 @@ class ZRecord: ZManagedObject {
 		return kRootNames.contains(recordName!)
 	}
 
-	var asString: String? {
+	var linkAsString: String? {
 		if  let name = recordName {
 			let dbid = databaseID.rawValue
 
@@ -310,7 +310,7 @@ class ZRecord: ZManagedObject {
     // MARK: - files
     // MARK: -
 
-    func type(from keyPath: String) -> ZStorageType? {
+    func sType(from keyPath: String) -> ZStorageType? {
         func extractType(_ ignored: String) -> (ZStorageType?) {
             let     parts = keyPath.lowercased().components(separatedBy: ignored)
 
@@ -398,7 +398,7 @@ class ZRecord: ZManagedObject {
 		var       dict = ZStorageDictionary()
 
 		for keyPath in keyPaths {
-			if  let    type = type(from: keyPath),
+			if  let    type = sType(from: keyPath),
 				let extract = extract(valueOf: type, at: keyPath),
 				let  object = prepare(extract, of: type) {
 				dict[type]  = object
@@ -432,11 +432,11 @@ class ZRecord: ZManagedObject {
 		// case 3: name is not nil
 
 		for keyPath in cloudProperties + [kpModificationDate, kpDBID] {
-			if  let   type = type(from: keyPath),
-				let object = dict[type],
+			if  let  sType = sType(from: keyPath),
+				let object = dict[sType],
 				let  value = object as? CKRecordValue {
 
-				switch type {
+				switch sType {
 					case .type: // convert essay trait to note trait
 						if  var string = object as? String,
 							let trait = ZTraitType(rawValue: string),

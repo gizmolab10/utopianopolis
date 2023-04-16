@@ -30,9 +30,7 @@ var gHasInternet              = true
 
 class ZOnboarding : ZOperations {
 
-    var          user : ZUser?
-	var    macAddress : String?
-	var hasFullAccess : Bool { return (user?.access ?? .eNormal) == .eFull }
+	var macAddress : String?
 
     // MARK: - internals
     // MARK: -
@@ -79,7 +77,7 @@ class ZOnboarding : ZOperations {
 			return
 		}
 
-		c.accountStatus { (iStatus, iError) in
+		c.accountStatus { (iStatus, error) in
 			if  iStatus            == .available {
 				gCloudAccountStatus = .available
 
@@ -106,33 +104,18 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserID(_ onCompletion: @escaping Closure) {
-		guard let c = gCloudContainer, gHasInternet, gUserRecordName == nil, gCloudAccountStatus == .available else {
+		let needsFetch = gHasInternet && gUser == nil && gCloudAccountStatus == .available
+		guard    let c = gCloudContainer, needsFetch else {
 			onCompletion()
 			return
 		}
 
-		c.fetchUserRecordID() { iRecordID, iError in
+		c.fetchUserRecordID() { recordID, error in
 			FOREGROUND {
-				gAlerts.alertError(iError, "failed to fetch user record id from cloud") { iHasError in
-					if !iHasError {
+				gAlerts.alertError(error, "failed to fetch user record id from cloud") { hasError in
 
-						// //////////////////////////////////////////// //
-						// persist for file read on subsequent launch   //
-						//   also: for determining write permission     //
-						//   also: for core data latest store location  //
-						// //////////////////////////////////////////// //
-
-						if  let      recordName = iRecordID?.recordName {
-							let            user = ZUser.uniqueUser(recordName: recordName, in: gDatabaseID)
-							self.user           = user
-							gCloudAccountStatus = .active
-
-							user.persistRecordName()
-
-							// ////////////////////// //
-							// ONBOARDING IS COMPLETE //
-							// ////////////////////// //
-						}
+					if  let name = recordID?.recordName, !hasError {
+						ZUser.createUser(from: name)
 					}
 
 					onCompletion()

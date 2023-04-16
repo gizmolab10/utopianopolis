@@ -61,7 +61,6 @@ var          gIsDraggableMode :                Bool { return gIsMapMode || gIsEd
 var   gDrawCirclesAroundIdeas :                Bool { return gCirclesDisplayMode.contains(.cIdeas) }
 var      gDetailsViewIsHidden :                Bool { return gMainController?.detailView?.isHidden ?? true }
 var           gMapIsResponder :                Bool { return gMainWindow?.firstResponder == gMapView && gMapView != nil }
-var             gUserIsExempt :                Bool { return gIgnoreExemption ? false  : gUser?.isExempt ?? false } // discard this?
 var               gUserIsIdle :                Bool { return gUserActiveInWindow == nil }
 var         gCurrentEssayZone :               Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName :              String { return CKRecordID().recordName }

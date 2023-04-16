@@ -73,6 +73,7 @@ enum ZTraitType: String { // stored in database: do not change
 class ZTrait: ZTraitAssets {
 
 	@NSManaged var      strings : StringsArray?
+	@NSManaged var    ownerLink : String?
 	@NSManaged var     ownerRID : String?
 	@NSManaged var       format : String?
 	@NSManaged var         type : String?
@@ -106,7 +107,8 @@ class ZTrait: ZTraitAssets {
 	}
 
 	override class var optionalCloudProperties: StringsArray {
-		return [#keyPath(ownerRID),
+		return [#keyPath(ownerLink),
+				#keyPath(ownerRID),
 				#keyPath(format)] +
 			super.optionalCloudProperties
 	}
@@ -195,11 +197,11 @@ class ZTrait: ZTraitAssets {
 	// MARK: - owner
 	// MARK: -
 
-	override var isAdoptable: Bool { return ownerRID != nil }
+	override var isAdoptable: Bool { return ownerLink != nil }
 
 	var ownerZone: Zone? {
 		if  _ownerZone == nil {
-			_ownerZone  = gMaybeZoneForRecordName(ownerRID)
+			_ownerZone  = ownerLink?.maybeZone
 		}
 
 		return _ownerZone
@@ -213,7 +215,7 @@ class ZTrait: ZTraitAssets {
 	override func orphan() {
 		ownerZone?.setTraitText(nil, for: traitType)
 
-		ownerRID = nil
+		ownerLink = nil
 	}
 
 	override func adopt(recursively: Bool = false) {

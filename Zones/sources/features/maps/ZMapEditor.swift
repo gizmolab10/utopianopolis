@@ -497,7 +497,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func applyToMenu(_ createMenu: ToMenuClosure) {
-		if  let widget = gSelecting.lastGrab.widget?.textWidget {
+		if  let widget = gSelecting.mostVisibleGrab?.widget?.textWidget {
 			var  point = widget.bounds.bottomRight
 			point      = widget.convert(point, to: gMapView).offsetBy(-160.0, -20.0)
 

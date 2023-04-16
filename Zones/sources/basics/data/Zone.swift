@@ -324,7 +324,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		set {
 			crossLinkMaybe = nil   // force update (get)
-			zoneLink       = newValue?.asString
+			zoneLink       = newValue?.linkAsString
 		}
 	}
 
@@ -762,7 +762,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	@discardableResult override func convertFromCoreData(visited: StringsArray?) -> StringsArray {
 		alterAttribute(ZoneAttributeType.validCoreData)
-		updateFromCoreDataTraitRelationships()
+//		updateFromCoreDataTraitRelationships()
 		return super.convertFromCoreData(visited: visited) // call super, too
 	}
 
@@ -788,9 +788,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			// which kinda works, but has a problem
 			// fetches extra ideas, deleted long ago or something ???
 
-			if  needed > 0, maybeDatabaseID == .mineID,
+			if  needed > 0,
+				let         id = maybeDatabaseID,
 				let       name = recordName,
-			    let      zones = gCoreDataStack.fetchChildrenOf(name, in: .mineID) {
+			    let      zones = gCoreDataStack.fetchChildrenOf(name, in: id) {
 				fetchableCount = zones.count
 				childArray     = zones
 			}
@@ -819,28 +820,28 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return converted
 	}
 
-	func updateFromCoreDataTraitRelationships() {
-		if  let        set = mutableSetValue(forKeyPath: kTraitArray) as? Set<ZTrait>, set.count > 0 {
-			let traitArray = ZTraitArray(set: set)
-
-			for trait in traitArray {
-				trait.convertFromCoreData(visited: [])
-
-				if  let type = trait.traitType,
-					!hasTrait(for: type) {
-					addTrait(trait, updateCoreData: false) // we got here because this is not a first-time launch and thus core data already exists
-				}
-
-				trait.register()
-			}
-		}
-	}
+//	func updateFromCoreDataTraitRelationships() {
+//		if  let        set = mutableSetValue(forKeyPath: kTraitArray) as? Set<ZTrait>, set.count > 0 {
+//			let traitArray = ZTraitArray(set: set)
+//
+//			for trait in traitArray {
+//				trait.convertFromCoreData(visited: [])
+//
+//				if  let type = trait.traitType,
+//					!hasTrait(for: type) {
+//					addTrait(trait, updateCoreData: false) // we got here because this is not a first-time launch and thus core data already exists
+//				}
+//
+//				trait.register()
+//			}
+//		}
+//	}
 
 	func updateCoreDataRelationships() {
 		if  gIsUsingCD,
 			let      zID = dbid {
 			var childSet = Set<Zone>()
-			var traitSet = Set<ZTrait>()
+//			var traitSet = Set<ZTrait>()
 
 			for child in children {
 				if  let cID = child.dbid,
@@ -850,13 +851,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 
-			for trait in traits.values {
-				if  let tID = trait.dbid,
-					zID    == tID,
-					let   t = trait.selfInContext?.maybeTrait {                 // avoid cross-store relationships
-					traitSet.insert(t)
-				}
-			}
+//			for trait in traits.values {
+//				if  let tID = trait.dbid,
+//					zID    == tID,
+//					let   t = trait.selfInContext?.maybeTrait {                 // avoid cross-store relationships
+//					traitSet.insert(t)
+//				}
+//			}
 
 			if  childSet.count > 0 {
 				setValue(childSet as NSObject, forKeyPath: kChildArray)
@@ -864,11 +865,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				setValue(nil,                  forKeyPath: kChildArray)
 			}
 
-			if  traitSet.count > 0 {
-				setValue(traitSet as NSObject, forKeyPath: kTraitArray)
-			} else {
-				setValue(nil,                  forKeyPath: kTraitArray)
-			}
+//			if  traitSet.count > 0 {
+//				setValue(traitSet as NSObject, forKeyPath: kTraitArray)
+//			} else {
+//				setValue(nil,                  forKeyPath: kTraitArray)
+//			}
 		}
 	}
 
@@ -880,7 +881,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return t.userHasDirectOwnership
 		}
 
-		return !isTrashRoot && !isFavoritesRoot && !isLostAndFoundRoot && (maybeDatabaseID == .mineID || zoneAuthor == gAuthorID || gHasFullAccess)
+		return !isTrashRoot && !isFavoritesRoot && !isLostAndFoundRoot && (maybeDatabaseID == .mineID || zoneAuthor == gAuthorID || gUserHasFullAccess)
 	}
 
 	var directAccess: ZoneAccess {
@@ -1108,7 +1109,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			parentZoneMaybe?.expand()
 			gTextEditor.stopCurrentEdit()
 
-			if !gHasFullAccess,
+			if !gUserHasFullAccess,
 			    databaseID        == .everyoneID,
 			    let       identity = gAuthorID {
 			    newIdea.zoneAuthor = identity
@@ -1574,11 +1575,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addTrait(_ trait: ZTrait, updateCoreData: Bool = true) {
 		if  let                  type  = trait.traitType {
 			traits              [type] = trait
-			let             ownerName  = trait.ownerRID
-			if  let          selfName  = recordName,
-				selfName != ownerName {
+			let             ownerLink  = trait.ownerLink
+			if  let          selfLink  = linkAsString,
+				selfLink != ownerLink {
 				trait     ._ownerZone  = nil
-				trait      .ownerRID   = selfName
+				trait      .ownerLink  = selfLink
 			}
 
 			if  updateCoreData {
@@ -1662,9 +1663,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func traitFor(_ iType: ZTraitType) -> ZTrait {
 		var trait            = traits[iType]
 		if  trait           == nil,
-			let         name = recordName {
+			let         link = linkAsString {
 			trait            = ZTrait.uniqueTrait(recordName: nil, in: databaseID)
-			trait?.ownerRID  = name
+			trait?.ownerLink = link
 			trait?.traitType = iType
 			traits[iType]    = trait
 		}

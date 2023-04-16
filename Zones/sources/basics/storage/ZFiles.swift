@@ -216,13 +216,13 @@ class ZFiles: NSObject {
 	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		if  let    zRecords  = gRemoteStorage.zRecords(for: databaseID),
 			let       index  = databaseID.index {
-			isReading[index] = true
-			typealias  types = [ZStorageType]
-			let  keys: types = [.date, .manifest, .graph, .favorites, .bookmarks, .trash, .lost, .destroy]
-			if  let     data = gFileManager.contents(atPath: path),
-				data  .count > 0,
-				let     json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
-				let     dict = dictFromJSON(json)
+			isReading[index]  = true
+			typealias  sTypes = [ZStorageType]
+			let  keys: sTypes = [.date, .manifest, .graph, .favorites, .bookmarks, .trash, .lost, .destroy]
+			if  let      data = gFileManager.contents(atPath: path),
+				data   .count > 0,
+				let      json = try JSONSerialization.jsonObject(with: data) as? ZStringObjectDictionary {
+				let      dict = dictFromJSON(json)
 
 				for key in keys {
 					if  let   value = dict[key] {
@@ -250,9 +250,9 @@ class ZFiles: NSObject {
 									}
 								}
 							default:
-								if  subDict != nil, !databaseID.isDeleted(dict: subDict!) {
-									let check: types = [.favorites, .bookmarks, .destroy, .trash, .lost] // these zones may already be in the CD store
-									let         zone = Zone.uniqueZone(from: subDict!, in: databaseID, checkCDStore: check.contains(key))
+								if  subDict          != nil, !databaseID.isDeleted(dict: subDict!) {
+									let check: sTypes = [.favorites, .bookmarks, .destroy, .trash, .lost] // these [root] zones may already be in the CD store
+									let          zone = Zone.uniqueZone(from: subDict!, in: databaseID, checkCDStore: check.contains(key))
 
 									zone.updateRecordName(for: key)
 									zRecords.registerZRecord(zone)
