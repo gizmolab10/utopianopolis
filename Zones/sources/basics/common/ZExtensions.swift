@@ -2100,6 +2100,18 @@ extension String {
 		return result
 	}
 
+	var fileSystemSafe: String {
+		var     result    = "\(self)"
+		for character in "/+=" {
+			let separator = "\(character)"
+			if  result.contains(separator) {
+				result    = result.replacingOccurrences(of: separator, with: kEmpty)
+			}
+		}
+
+		return result
+	}
+
     var escaped: String {
         var     result    = "\(self)"
         for character in "\\\"\'`" {

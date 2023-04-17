@@ -28,7 +28,6 @@ enum ZOperationID: Int, CaseIterable {
 	case oRoots
 	case oFavorites			 // MINE ONLY
 	case oHere
-	case oAdopt
 	case oWrite
 	case oDone
 
@@ -40,6 +39,7 @@ enum ZOperationID: Int, CaseIterable {
     case oFinishing
     case oBookmarks			 // MINE ONLY
 	case oResolve
+	case oAdopt
 	case oEnd
 
 	var useTimer: Bool {

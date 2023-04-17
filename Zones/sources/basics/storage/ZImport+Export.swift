@@ -27,44 +27,48 @@ extension ZFiles {
 	// MARK: -
 
 	func export(_ iZone: Zone?, toFileAs type: ZExportType) {
-		guard let zone = iZone else { return }
-		let     suffix = type.rawValue
-		let       name = zone.zoneName ?? "no name"
+		guard let  zone = iZone else { return }
+		let      suffix = type.rawValue
+		let        name = zone.zoneName ?? "no name"
 
-		gPresentSavePanel(name: name, suffix: suffix) { url in
-			do {
-				switch type {
-					case .eOutline:
-						let string = zone.outlineString()
+		gPresentSavePanel(name: name, suffix: suffix) { iURL in
+			if  let url = iURL {
+				do {
+					switch type {
+						case .eOutline:
+							let string = zone.outlineString()
 
-						try string.write(to: url, atomically: true, encoding: .utf8)
-					case .eSeriously:
-						let     dict = try zone.storageDictionary()
-						let jsonDict = dict.jsonDict
-						let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
+							try string.write(to: url, atomically: true, encoding: .utf8)
+						case .eSeriously:
+							let     dict = try zone.storageDictionary()
+							let jsonDict = dict.jsonDict
+							let     data = try! JSONSerialization.data(withJSONObject: jsonDict, options: .prettyPrinted)
 
-						try data.write(to: url)
-					case .eEssay:
-						if  let     text = zone.note?.essayText {
-							let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
-							let  wrapper = FileWrapper(regularFileWithContents: fileData)
+							try data.write(to: url)
+						case .eEssay:
+							if  let     text = zone.note?.essayText {
+								let fileData = try text.data(from: NSRange(location: 0, length: text.length), documentAttributes: [.documentType : NSAttributedString.DocumentType.rtfd])
+								let  wrapper = FileWrapper(regularFileWithContents: fileData)
 
-							try  wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
-						}
-					default: break
+								try  wrapper.write(to: url, options: .atomic, originalContentsURL: nil)
+							}
+						default: break
+					}
+				} catch {
+					printDebug(.dError, "\(error)")
 				}
-			} catch {
-				printDebug(.dError, "\(error)")
 			}
 		}
 	}
 
 	func exportDatabase(_ databaseID: ZDatabaseID) {
 
-//		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
+		//		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
 
-		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] url in
-			try? self.writeFile(at: url.relativePath, from: databaseID)
+		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iURL in
+			if  let path = iURL?.relativePath {
+				try? self.writeFile(at: path, from: databaseID)
+			}
 		}
 	}
 
@@ -83,12 +87,10 @@ extension ZFiles {
 	// MARK: -
 
 	func importToZone(_ zone: Zone, with flags: ZEventFlags) {
-		if  flags.exactlyAll {
-			replaceDatabase(zone.maybeDatabaseID) { gRelayoutMaps() }
-		} else {
-			let type : ZExportType = flags.hasOption ? .eOutline : flags.exactlySplayed ? .eCSV : .eSeriously
-			
-			zone.importFromFile(type)             { gRelayoutMaps() }
+		let type : ZExportType = flags.hasOption ? .eOutline : flags.exactlySplayed ? .eCSV : .eSeriously
+
+		zone.importFromFile(type) {
+			gRelayoutMaps()
 		}
 	}
 

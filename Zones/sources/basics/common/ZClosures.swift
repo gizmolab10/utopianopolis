@@ -19,7 +19,7 @@ enum ZTraverseStatus: Int {
 
 typealias Closure                         = ()                         -> (Void)
 typealias IntClosure                      = (Int)                      -> (Void)
-typealias URLClosure                      = (URL)                      -> (Void)
+typealias URLClosure                      = (URL?)                     -> (Void)
 typealias AnyClosure                      = (Any?)                     -> (Void)
 typealias DotClosure                      = (ZoneDot?)                 -> (Void)
 typealias BoolClosure                     = (Bool)                     -> (Void)

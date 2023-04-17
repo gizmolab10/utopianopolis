@@ -113,8 +113,9 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 		panel.canDownloadUbiquitousContents = false
 
 		panel.beginSheetModal(for: window) { result in
-			if  result == .OK,
-				panel.urls.count > 0 {
+			if  result != .OK {
+				callback?(nil)
+			} else if panel.urls.count > 0 {
 				let url = panel.urls[0]
 
 				gShowAppIsBusyWhile {
@@ -147,8 +148,9 @@ func gPresentSavePanel(name iName: String?, suffix: String, _ callback: URLClosu
 		}
 
 		panel.beginSheetModal(for: window) { result in
-			if  result == .OK,
-				let fileURL = panel.url {
+			if  result != .OK {
+				callback?(nil)
+			} else if let fileURL = panel.url {
 				gIsExportingToAFile     = true
 
 				gInBackgroundWhileShowingBusy {

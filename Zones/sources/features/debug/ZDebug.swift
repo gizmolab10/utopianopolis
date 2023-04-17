@@ -24,7 +24,7 @@ func gSetupDebugFeatures() {
 
 	gCoreDataMode       = []
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
-//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: need to implement. for now, don't store data in cloud
+	gCoreDataMode.insert(.dNotUseCloud)         // confusing, duplicate traits
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet

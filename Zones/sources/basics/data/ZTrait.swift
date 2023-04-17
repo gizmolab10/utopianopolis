@@ -201,7 +201,7 @@ class ZTrait: ZTraitAssets {
 
 	var ownerZone: Zone? {
 		if  _ownerZone == nil,
-			let  owner  = ownerRID?.maybeZRecord(in: databaseID)?.maybeZone {
+			let  owner  = ownerLink?.maybeZone {
 			_ownerZone  = owner
 		}
 

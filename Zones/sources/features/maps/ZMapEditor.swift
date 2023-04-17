@@ -134,7 +134,7 @@ class ZMapEditor: ZBaseEditor {
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "n":        editNote(flags: flags)
-						case "o":        gFiles.importToZone(moveable, with: flags)
+						case "o":        if ALL { gFiles.replaceDatabase(gDatabaseID) { gRelayoutMaps() } } else { gFiles.importToZone(moveable, with: flags) }
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
 						case "s":        gFiles.exportFromZone(moveable, with: flags)

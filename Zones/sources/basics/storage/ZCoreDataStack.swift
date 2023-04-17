@@ -23,7 +23,7 @@ enum ZCDStoreType: String {
 
 	static var     all : [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
 	var    originalURL :           URL  { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(storeName) }
-	var    ckUserIDURL :           URL? { return url(for: gUserRecordName) }    // TODO: needs mechanism for detecting when new user logs in
+	var    ckUserIDURL :           URL? { return url(for: gUserID) }    // TODO: needs mechanism for detecting when new user logs in
 	var ckSubmittedURL :           URL? { return url(for: ZCKRepositoryID.rSubmitted.rawValue) }
 	var          cdURL :           URL? { return url(for: gCKRepositoryID.repositoryName) }
 
@@ -97,10 +97,10 @@ class ZCoreDataStack: NSObject {
 
 	func saveContext() {
 		if  gCDCanSave, gIsReadyToShowUI {
-			deferUntilAvailable(for: .oSave) {
+			deferUntilAvailable(for: .oSave) { [self] in
+				maybeReportCrossStore() // must be done in FOREGROUND
 				gInBackgroundWhileShowingBusy { [self] in
 					if  let c = persistentContainer?.viewContext, c.hasChanges {
-						maybeReportCrossStore()
 
 						do {
 							try c.save()
@@ -147,12 +147,12 @@ class ZCoreDataStack: NSObject {
 
 					} else if let records = gRemoteStorage.zRecords(for: databaseID) {
 						load(type: kZoneType, into: databaseID)
+						load(type: kTraitType, into: databaseID)
 						FOREGROUND {
 							records.resolveAllParents()
 						}
 					}
 
-					load(type: kTraitType, into: databaseID)
 					load(type: kFileType,  into: databaseID)
 
 					if  gCDUseRelationships {

@@ -113,7 +113,7 @@ enum ZCKRepositoryID: String {
 	var        cloudKitID : String?           { return kBaseCloudID + kPeriod  + cloudKitName }
 	var      cloudKitName : String            { return notUseUserID ? rawValue : storeName }
 	var         storeName : String            { return gCDNormalStore ? kDefaultCDStore : kMigrationTestCDStore }
-	var    repositoryName : String            { return notUseUserID ? rawValue : (gUserRecordName ?? submittedName) }
+	var    repositoryName : String            { return notUseUserID ? rawValue : (gUserID ?? submittedName) }
 	var     submittedName : String            { return ZCKRepositoryID.rSubmitted.rawValue }
 	var     repositoryURL : URL?              { return gCDBaseDataURL.appendingPathComponent(repositoryName) }
 	var  repositoryExists : Bool              { return repositoryURL?.fileExists ?? false }
