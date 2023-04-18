@@ -24,10 +24,11 @@ func gSetupDebugFeatures() {
 
 	gCoreDataMode       = []
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
-	gCoreDataMode.insert(.dNotUseCloud)         // confusing, duplicate traits
+//	gCoreDataMode.insert(.dNotUseCloud)         // confusing, duplicate traits
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
+//	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
 //	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
 	gPrintModes         = []
@@ -50,6 +51,7 @@ var         gCDUseUserID : Bool { return !gCoreDataMode.contains(.dNotUseUserID)
 var       gCDNormalStore : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCD }
 var      gCDUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)          && gIsUsingCD }
 var      gCDLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCD }
+var     gCKIsInitialized : Bool { return !gCoreDataMode.contains(.dInitializeCloud)  && gIsUsingCD }
 var  gCDUseRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCD }
 var gCDUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCD }
 
@@ -71,16 +73,17 @@ struct ZCoreDataMode: OptionSet {
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dNotSave          = ZCoreDataMode(rawValue: 1 << 0) // save is not operational
-	static let dNotLoad          = ZCoreDataMode(rawValue: 1 << 1) // load is not operational
-	static let dUseFlat          = ZCoreDataMode(rawValue: 1 << 2) // use flat data folder and not use <user id> in store file path
-	static let dDisabled         = ZCoreDataMode(rawValue: 1 << 3) // cannot use core data
-	static let dNotUseCloud      = ZCoreDataMode(rawValue: 1 << 4) // store in cloud kit
-	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 5) // start the CD repo fresh
-	static let dNotUseUserID     = ZCoreDataMode(rawValue: 1 << 6) // use flat data folder and not use <user id> in store file path
-	static let dLoadAllAtOnce    = ZCoreDataMode(rawValue: 1 << 7) // load all zones and traits at once (only marginally faster, percentages don't show)
-	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 8) // not use ZRelationship
-	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 9) // use migration.testing (not data)
+	static let dNotSave          = ZCoreDataMode(rawValue: 1 << 00) // save is not operational
+	static let dNotLoad          = ZCoreDataMode(rawValue: 1 << 01) // load is not operational
+	static let dUseFlat          = ZCoreDataMode(rawValue: 1 << 02) // use flat data folder and not use <user id> in store file path
+	static let dDisabled         = ZCoreDataMode(rawValue: 1 << 03) // cannot use core data
+	static let dNotUseCloud      = ZCoreDataMode(rawValue: 1 << 04) // store in cloud kit
+	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 05) // start the CD repo fresh
+	static let dNotUseUserID     = ZCoreDataMode(rawValue: 1 << 06) // use flat data folder and not use <user id> in store file path
+	static let dLoadAllAtOnce    = ZCoreDataMode(rawValue: 1 << 07) // load all zones and traits at once (only marginally faster, percentages don't show)
+	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 08) // not use ZRelationship
+	static let dInitializeCloud  = ZCoreDataMode(rawValue: 1 << 09) // only need to do this once
+	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 10) // use migration.testing (not data)
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {

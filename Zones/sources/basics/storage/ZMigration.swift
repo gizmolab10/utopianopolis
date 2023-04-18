@@ -199,7 +199,7 @@ extension ZCoreDataStack {
 		if  persistentContainer == nil {
 			persistentContainer  = getPersistentContainer()
 
-			if  gCDUseCloud {
+			if  gCDUseCloud, !gCKIsInitialized {
 				do {
 					try persistentContainer?.initializeCloudKitSchema()
 				} catch {

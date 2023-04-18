@@ -939,7 +939,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return t.isIdeaEditable
 		} else if isReadOnlyRoot {
 			return false
-		} else if directAccess == .eWritable || databaseID != .everyoneID {
+		} else if directAccess == .eWritable || ((maybeDatabaseID != nil) && (maybeDatabaseID != .everyoneID)) {
 			return true
 		} else if let p = parentZone, p != self, p.parentZone != self {
 			return p.directAccess == .eProgenyWritable || p.isIdeaEditable
