@@ -330,6 +330,20 @@ var gDatabaseID: ZDatabaseID {
 	}
 }
 
+var gCurrentHelpMode: ZHelpMode {
+	get {
+		if  let v = getPreferenceString(for: kLastChosenCheatSheet) {
+			return ZHelpMode(rawValue: v) ?? .noMode
+		}
+
+		return .noMode
+	}
+
+	set {
+		setPreferencesString(newValue.rawValue, for: kLastChosenCheatSheet)
+	}
+}
+
 // MARK: - growth (direction & confinement)
 // MARK: -
 

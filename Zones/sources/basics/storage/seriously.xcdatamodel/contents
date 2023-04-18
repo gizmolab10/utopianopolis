@@ -7,6 +7,7 @@
     <entity name="ZFile" representedClassName="ZFile" syncable="YES">
         <attribute name="asset" optional="YES" attributeType="Binary"/>
         <attribute name="dbid" optional="YES" attributeType="String"/>
+        <attribute name="isTrashed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
@@ -17,11 +18,13 @@
         <attribute name="count" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="deletedRecordNames" optional="YES" attributeType="String"/>
+        <attribute name="iaTrashed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Zone" representedClassName="Zone" syncable="YES">
         <attribute name="dbid" optional="YES" attributeType="String"/>
+        <attribute name="isTrashed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="parentLink" optional="YES" attributeType="String"/>
         <attribute name="parentRID" optional="YES" attributeType="String"/>
@@ -42,6 +45,7 @@
     <entity name="ZRelationship" representedClassName="ZRelationship" syncable="YES">
         <attribute name="dbid" optional="YES" attributeType="String"/>
         <attribute name="from" optional="YES" attributeType="String"/>
+        <attribute name="isTrashed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
         <attribute name="to" optional="YES" attributeType="String"/>
@@ -62,6 +66,7 @@
         <attribute name="assetNames" optional="YES" attributeType="String"/>
         <attribute name="assets" optional="YES" attributeType="Transformable" valueTransformerName="ZAssetArrayTransformer" customClassName="Array"/>
         <attribute name="dbid" optional="YES" attributeType="String"/>
+        <attribute name="isTrashed" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="modificationDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="recordName" optional="YES" attributeType="String"/>
         <relationship name="files" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ZFile" inverseName="owners" inverseEntity="ZFile"/>

@@ -349,7 +349,7 @@ class ZFavorites: ZRecords {
 
 					discard.needDestroy()
 					discard.orphan()
-					gCDCurrentBackgroundContext?.delete(discard)
+					discard.deleteFromCD()
 				}
 			}
 

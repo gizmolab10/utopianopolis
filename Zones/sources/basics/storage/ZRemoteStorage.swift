@@ -131,9 +131,9 @@ class ZRemoteStorage: NSObject {
         return recordsArray
     }
 
-	func removeAllDuplicates() {
+	func deleteFromCDAllDuplicates() {
 		for records in allRecordsArrays {
-			records.removeAllDuplicates()
+			records.deleteFromCDAllDuplicates()
 		}
 	}
 

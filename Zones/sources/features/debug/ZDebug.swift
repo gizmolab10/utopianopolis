@@ -24,12 +24,13 @@ func gSetupDebugFeatures() {
 
 	gCoreDataMode       = []
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
-//	gCoreDataMode.insert(.dNotUseCloud)         // confusing, duplicate traits
-//	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
+	gCoreDataMode.insert(.dNotUseCloud)         // confusing, duplicate traits
+	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
+	gCoreDataMode.insert(.dNotTestTrashed)      // ignore isTrashed during fetch TODO: missing keypath
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
 //	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
-//	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
+	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)
@@ -39,6 +40,9 @@ func gSetupDebugFeatures() {
 //	gPrintModes  .insert(.dMoving)
 //	gPrintModes  .insert(.dMigrate)
 
+	if !gCDUseExistingStores {  // if we erase stores, we should also erase old record names
+		setPreferencesString(kDefaultRecordNames, for: kHereRecordNames)
+	}
 }
 
 // all these are eventually going to be true
@@ -49,6 +53,7 @@ var           gCDCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)     
 var          gCDUseCloud : Bool { return !gCoreDataMode.contains(.dNotUseCloud)      && gIsUsingCD }
 var         gCDUseUserID : Bool { return !gCoreDataMode.contains(.dNotUseUserID)     && gIsUsingCD }
 var       gCDNormalStore : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCD }
+var       gCDTestTrashed : Bool { return !gCoreDataMode.contains(.dNotTestTrashed)   && gIsUsingCD }
 var      gCDUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)          && gIsUsingCD }
 var      gCDLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCD }
 var     gCKIsInitialized : Bool { return !gCoreDataMode.contains(.dInitializeCloud)  && gIsUsingCD }
@@ -81,9 +86,10 @@ struct ZCoreDataMode: OptionSet {
 	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 05) // start the CD repo fresh
 	static let dNotUseUserID     = ZCoreDataMode(rawValue: 1 << 06) // use flat data folder and not use <user id> in store file path
 	static let dLoadAllAtOnce    = ZCoreDataMode(rawValue: 1 << 07) // load all zones and traits at once (only marginally faster, percentages don't show)
-	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 08) // not use ZRelationship
-	static let dInitializeCloud  = ZCoreDataMode(rawValue: 1 << 09) // only need to do this once
-	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 10) // use migration.testing (not data)
+	static let dNotTestTrashed   = ZCoreDataMode(rawValue: 1 << 08) // ignore isTrashed during fetch
+	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 09) // not use ZRelationship
+	static let dInitializeCloud  = ZCoreDataMode(rawValue: 1 << 10) // only need to do this once
+	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 11) // use migration.testing (not data)
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {

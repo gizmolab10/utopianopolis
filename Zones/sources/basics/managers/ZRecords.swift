@@ -181,7 +181,7 @@ class ZRecords: NSObject {
 
 			old.unregister()
 			root.register()
-			gCDCurrentBackgroundContext?.delete(old)
+			old.deleteFromCD()
 		}
 
 		oldRoot = root
@@ -332,9 +332,9 @@ class ZRecords: NSObject {
 		return result
 	}
 
-	func removeAllDuplicates() {
+	func deleteFromCDAllDuplicates() {
 		applyToAllZRecords { zRecord in
-			gCoreDataStack.removeAllDuplicatesOf(zRecord)
+			gCoreDataStack.deleteFromCDAllDuplicatesOf(zRecord)
 		}
 
 		gCoreDataStack.emptyZones(within: databaseID) { empties in

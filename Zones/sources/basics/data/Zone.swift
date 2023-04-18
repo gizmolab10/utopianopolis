@@ -1202,7 +1202,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							iZone.orphan()
 							gManifest?.smartAppend(iZone)
 							gFavorites.pop(iZone)  // avoid getting stuck on a zombie
-							iZone.deleteSelf()
+							iZone.deleteFromCD()
 						}
 					}
 
@@ -1682,7 +1682,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let t = trait {
 			t.unregister()
-			gCDCurrentBackgroundContext?.delete(t)
+			t.deleteFromCD()
 		}
 	}
 

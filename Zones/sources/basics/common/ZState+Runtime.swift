@@ -186,20 +186,6 @@ var gHereMaybe: Zone? {
     set { gRecords.hereZoneMaybe = newValue }
 }
 
-var gCurrentHelpMode: ZHelpMode {
-	get {
-		if  let v = getPreferenceString(for: kLastChosenCheatSheet) {
-			return ZHelpMode(rawValue: v) ?? .noMode
-		}
-
-		return .noMode
-	}
-
-	set {
-		setPreferencesString(newValue.rawValue, for: kLastChosenCheatSheet)
-	}
-}
-
 var gUserActivityDetected: Bool {
 	if  let w = gUserActiveInWindow {
 		printDebug(.dUser, "throwing user interrupt in \(w.description) \(gInterruptionCount)")

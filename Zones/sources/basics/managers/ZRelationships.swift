@@ -104,7 +104,7 @@ class ZRelationships: NSObject {
 				let     r = relationships[index]
 
 				relationships.remove(at: index)    // mutate
-				gCDCurrentBackgroundContext?.delete(r)
+				r.deleteFromCD()
 
 				lookup[key] = relationships
 

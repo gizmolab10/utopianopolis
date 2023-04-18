@@ -77,7 +77,7 @@ class ZCoreDataStack: NSObject {
 		if  gIsUsingCD,
 			let             c = persistentContainer?.viewContext {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
-			request.predicate = dbidPredicate(from: databaseID)
+			request.predicate = corePredicate(from: databaseID)
 
 			do {
 				let     count = try c.count(for: request)    // TODO: this is called each time an entity is created !!!!
@@ -117,15 +117,6 @@ class ZCoreDataStack: NSObject {
 
 	// MARK: - load
 	// MARK: -
-
-	func loadManifest(into databaseID: ZDatabaseID) {
-		let manifests       = load(type: kManifestType, into: databaseID, onlyOne: true)
-		if  manifests.count > 0,
-			let manifest    = manifests[0] as? ZManifest,
-			let cloud       = gRemoteStorage.cloud(for: databaseID) {
-			cloud.manifest  = manifest
-		}
-	}
 
 	func loadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if !gCDCanLoad {
@@ -172,6 +163,15 @@ class ZCoreDataStack: NSObject {
 					}
 				}
 			}
+		}
+	}
+
+	func loadManifest(into databaseID: ZDatabaseID) {
+		let manifests       = load(type: kManifestType, into: databaseID, onlyOne: true)
+		if  manifests.count > 0,
+			let manifest    = manifests[0] as? ZManifest,
+			let cloud       = gRemoteStorage.cloud(for: databaseID) {
+			cloud.manifest  = manifest
 		}
 	}
 
@@ -228,7 +228,7 @@ class ZCoreDataStack: NSObject {
 			let            type = descriptor.type,
 			let            databaseID = descriptor.databaseID {
 			let         request = NSFetchRequest<NSFetchRequestResult>(entityName: kFileType)
-			request  .predicate = NSPredicate(format: "name = %@ AND type = %@", name, type, databaseID.identifier).and(dbidPredicate(from: databaseID))
+			request  .predicate = NSPredicate(format: "name = %@ AND type = %@", name, type, databaseID.identifier).and(corePredicate(from: databaseID))
 			let        zRecords = fetchUsing(request: request)
 
 			for zRecord in zRecords {
@@ -504,33 +504,40 @@ class ZCoreDataStack: NSObject {
 	// MARK: - internal
 	// MARK: -
 
-	func   zoneNamePredicate(from string:         String)  -> NSPredicate  { return NSPredicate(format: "zoneName contains[cd] %@",   string.lowercased()) }
-	func      traitPredicate(from string:         String)  -> NSPredicate  { return NSPredicate(format:     "text contains[cd] %@",   string.lowercased()) }
-	func     parentPredicate(from recordName:     String)  -> NSPredicate  { return NSPredicate(format:           "parentRID = %@",            recordName) }
-	func       dbidPredicate(from databaseID: ZDatabaseID) -> NSPredicate  { return NSPredicate(format:                "dbid = %@", databaseID.identifier) }
+	func   zoneNamePredicate(from string:          String) -> NSPredicate { return NSPredicate(format: "zoneName contains[cd] %@",          string.lowercased()) }
+	func      traitPredicate(from string:          String) -> NSPredicate { return NSPredicate(format:     "text contains[cd] %@",          string.lowercased()) }
+	func     parentPredicate(from recordName:      String) -> NSPredicate { return NSPredicate(format:           "parentRID = %@",                   recordName) }
+	func       dbidPredicate(from databaseID: ZDatabaseID) -> NSPredicate { return NSPredicate(format:                "dbid = %@",        databaseID.identifier) }
+	func    trashedPredicate(isTrashed:      Bool = false) -> NSPredicate { return NSPredicate(format:           "isTrashed = %@", isTrashed) }
 
 	func recordNamePredicate(from recordName: String?) -> NSPredicate? {
-		return recordName == nil ? nil : NSPredicate(format: "recordName = %@", recordName!)
+		return recordName == nil ? nil :
+		NSPredicate(format: "recordName = %@", recordName!)
 	}
 
-	func fetchRequest(type: String, recordName: String?, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> NSFetchRequest<NSFetchRequestResult> {
-		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
-		request.predicate = fetchPredicate(type: type, recordName: recordName, into: databaseID, onlyOne: onlyOne)
+	func corePredicate(from databaseID: ZDatabaseID, isTrashed: Bool = false) -> NSPredicate {
+		let d = dbidPredicate(from: databaseID)
 
-		return request
+		if  gCDTestTrashed {
+			let t = trashedPredicate(isTrashed: isTrashed)
+
+			return d.and(t)
+		}
+
+		return d
 	}
 
 	func fetchPredicate(type: String, recordName: String?, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> NSPredicate {
+		let c =       corePredicate(from: databaseID)
 		let r = recordNamePredicate(from: recordName)
-		let d =       dbidPredicate(from: databaseID)
 
-		return !onlyOne ? d : type == kUserType ? r! : r == nil ? d : d.and(r!)
+		return !onlyOne ? c : type == kUserType ? r! : r == nil ? c : c.and(r!)
 	}
 
 	func fetchChildrenPredicate(recordName: String, into databaseID: ZDatabaseID) -> NSPredicate {
-		let r = parentPredicate(from: recordName)
-		let d =   dbidPredicate(from: databaseID)
-		return r.and(d)
+		let c =   corePredicate(from: databaseID)
+		let p = parentPredicate(from: recordName)
+		return c.and(p)
 	}
 
 	func searchPredicate(entityName: String, string: String?) -> NSPredicate? {
@@ -547,6 +554,13 @@ class ZCoreDataStack: NSObject {
 		}
 
 		return nil
+	}
+
+	func fetchRequest(type: String, recordName: String?, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> NSFetchRequest<NSFetchRequestResult> {
+		let       request = NSFetchRequest<NSFetchRequestResult>(entityName: type)
+		request.predicate = fetchPredicate(type: type, recordName: recordName, into: databaseID, onlyOne: onlyOne)
+
+		return request
 	}
 
 	func maybeReportCrossStore() {
@@ -580,11 +594,6 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-//	if  let store = gCoreDataStack.persistentStore(for: databaseID.scope) {
-//		context.assign(self, to: store)
-//	}
-
-
 	// MARK: - vaccuum
 	// MARK: -
 
@@ -595,7 +604,7 @@ class ZCoreDataStack: NSObject {
 		}
 	}
 
-	func removeAllDuplicatesOf(_ zRecord: ZRecord) {
+	func deleteFromCDAllDuplicatesOf(_ zRecord: ZRecord) {
 		if  let       dbid = zRecord.dbid,
 			let databaseID = ZDatabaseID(rawValue: dbid),
 			let       name = zRecord.recordName,
@@ -609,7 +618,7 @@ class ZCoreDataStack: NSObject {
 					FOREGROUND {
 						for extra in extras {
 							extra.unregister()
-							gCDCurrentBackgroundContext?.delete(extra)
+							extra.deleteFromCD()
 						}
 					}
 				}

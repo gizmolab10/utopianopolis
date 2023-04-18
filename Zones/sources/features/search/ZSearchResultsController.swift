@@ -100,7 +100,7 @@ class ZSearchResultsController: ZGenericTableController {
 		return nil
 	}
 
-	func removeRecord(at row: Int) -> Bool {
+	func deleteFromCDRecord(at row: Int) -> Bool {
 		if  let            (databaseID, record) = databaseIDAndRecord(at: row) {
 			var                         records = filteredResultsDict[databaseID]
 			if  let                       index = records?.firstIndex(of: record) {
@@ -110,7 +110,7 @@ class ZSearchResultsController: ZGenericTableController {
 				if  let                    zone = record.zone {
 					zone.deleteSelf { flag in }
 				} else {
-					record.deleteSelf()
+					record.deleteFromCD()
 				}
 
 				return true
@@ -301,7 +301,7 @@ class ZSearchResultsController: ZGenericTableController {
 		if  let   t = genericTableView {
 			let row = t.selectedRow
 
-			if  removeRecord(at: row) {
+			if  deleteFromCDRecord(at: row) {
 				t.reloadData()
 				selectAndRedisplay(row: row)
 			}
