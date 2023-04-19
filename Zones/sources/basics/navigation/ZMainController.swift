@@ -12,9 +12,9 @@
     import UIKit
 #endif
 
-func gInBackgroundWhileShowingBusy(_ closure : @escaping Closure) { gMainController?.inBackgroundWhileShowingBusy(closure) }
-func           gShowAppIsBusyWhile(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhile          (closure) }
-var            gMainController : ZMainController?                 { return gControllers.controllerForID(.idMain) as? ZMainController }
+func gShowAppIsBusyWhileInBackground(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhileInBackground(closure) }
+func             gShowAppIsBusyWhile(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhile          (closure) }
+var                            gMainController : ZMainController?   { return gControllers.controllerForID(.idMain) as? ZMainController }
 
 class ZMainController: ZGesturesController {
 
@@ -152,6 +152,7 @@ class ZMainController: ZGesturesController {
 					gRefusesFirstResponder = true
 
 					spinner.startAnimating()
+					gMainController?.view.setNeedsDisplay()
 				}
 
 				shownBusyDepth += 1
@@ -160,6 +161,7 @@ class ZMainController: ZGesturesController {
 
 				if  shownBusyDepth == 0 {
 					spinner.stopAnimating()
+					gMainController?.view.setNeedsDisplay()
 
 					gRefusesFirstResponder = false
 				}
@@ -168,14 +170,16 @@ class ZMainController: ZGesturesController {
 	}
 
 	func showAppIsBusyWhile(_ closure: @escaping Closure) {
-		FOREGROUND {
-			self.showAppIsBusy(true)
-			closure()
-			self.showAppIsBusy(false)
+		FOREGROUND(after:0.00001) { [self] in
+			showAppIsBusy(true)
+			FOREGROUND(after:0.00001) { [self] in
+				closure()
+				showAppIsBusy(false)
+			}
 		}
 	}
 
-	func inBackgroundWhileShowingBusy(_ closure: @escaping Closure) {
+	func showAppIsBusyWhileInBackground(_ closure: @escaping Closure) {
 		FOREGROUND {
 			self.showAppIsBusy(true)
 

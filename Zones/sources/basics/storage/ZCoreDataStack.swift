@@ -99,7 +99,7 @@ class ZCoreDataStack: NSObject {
 		if  gCDCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) { [self] in
 				maybeReportCrossStore() // must be done in FOREGROUND, else throws modifying-while-enumerating error
-				gInBackgroundWhileShowingBusy { [self] in
+				gShowAppIsBusyWhileInBackground { [self] in
 					if  let c = persistentContainer?.viewContext, c.hasChanges {
 
 						do {

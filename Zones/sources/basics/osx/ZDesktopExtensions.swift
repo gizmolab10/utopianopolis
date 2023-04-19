@@ -101,16 +101,17 @@ func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 	return false
 }
 
-func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
+func gPresentOpenPanel(at url: URL? = nil, _ callback: AnyClosure? = nil) {
 	if  let  window = gApplication?.mainWindow {
 		let   panel = NSOpenPanel()
 
-		callback?(panel)
+		callback?(panel) // allow custom configuration, beyond the following:
 
-		panel.resolvesAliases               = true
-		panel.canChooseDirectories          = false
 		panel.canResolveUbiquitousConflicts = false
 		panel.canDownloadUbiquitousContents = false
+		panel.canChooseDirectories          = false
+		panel.resolvesAliases               = true
+		panel.directoryURL                  = url // hmm, setting this has no effect
 
 		panel.beginSheetModal(for: window) { result in
 			if  result != .OK {
@@ -126,8 +127,8 @@ func gPresentOpenPanel(_ callback: AnyClosure? = nil) {
 	}
 }
 
-func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
-	gPresentOpenPanel() { iAny in
+func gPresentOpenPanel(type: ZExportType, at url: URL? = nil, _ callback: AnyClosure? = nil) {
+	gPresentOpenPanel(at: url) { iAny in
 		if  let   panel = iAny as? NSOpenPanel {
 			let  suffix = ZExportType.eSeriously.rawValue
 			panel.title = "Import as \(suffix)"
@@ -139,12 +140,13 @@ func gPresentOpenPanel(type: ZExportType, _ callback: AnyClosure? = nil) {
 	}
 }
 
-func gPresentSavePanel(name iName: String?, suffix: String, _ callback: URLClosure? = nil) {
-	if  let                      window = gApplication?.mainWindow {
-		let                       panel = NSSavePanel()
-		panel                  .message = "Export a \(suffix) file"
-		if  let                    name = iName {
-			panel .nameFieldStringValue = name + kPeriod + suffix
+func gPresentSavePanel(name iName: String?, suffix: String, at url: URL? = nil, _ callback: URLClosure? = nil) {
+	if  let                     window = gApplication?.mainWindow {
+		let                      panel = NSSavePanel()
+		panel.message                  = "Export a \(suffix) file"
+//		panel.directoryURL             = url
+		if  let                   name = iName {
+			panel.nameFieldStringValue = name + kPeriod + suffix
 		}
 
 		panel.beginSheetModal(for: window) { result in
@@ -153,7 +155,7 @@ func gPresentSavePanel(name iName: String?, suffix: String, _ callback: URLClosu
 			} else if let fileURL = panel.url {
 				gIsExportingToAFile     = true
 
-				gInBackgroundWhileShowingBusy {
+				gShowAppIsBusyWhileInBackground {
 					callback?(fileURL)
 
 					gIsExportingToAFile = false

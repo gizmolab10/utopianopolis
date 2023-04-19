@@ -65,7 +65,7 @@ extension ZFiles {
 
 		//		gRemoteStorage.updateManifests()             // INSANE! this aborts the current runloop!!!
 
-		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue) { [self] iURL in
+		gPresentSavePanel(name: databaseID.rawValue, suffix: ZExportType.eSeriously.rawValue, at: gCDBaseDataURL) { [self] iURL in
 			if  let path = iURL?.relativePath {
 				try? self.writeFile(at: path, from: databaseID)
 			}
@@ -73,13 +73,27 @@ extension ZFiles {
 	}
 
 	func exportFromZone(_ zone: Zone, with flags: ZEventFlags) {
-		if  flags.exactlyAll {
-			exportDatabase(zone.databaseID)
-		} else {
-			let          exporting = flags.hasCommand ? gRecords.rootZone : zone
-			let type : ZExportType = flags.hasOption  ? .eOutline : .eSeriously
+		let          exporting = flags.hasCommand ? gRecords.rootZone : zone
+		let type : ZExportType = flags.hasOption  ? .eOutline : .eSeriously
 
-			export(exporting, toFileAs: type)
+		export(exporting, toFileAs: type)
+	}
+
+	func importExport(export: Bool, _ zone: Zone, with flags: ZEventFlags) {
+		if !flags.exactlyAll {
+			if  export {
+				exportFromZone(zone, with: flags)
+			} else {
+				importToZone(zone, with: flags)
+			}
+		} else {
+			if  export {
+				exportDatabase(gDatabaseID)
+			} else {
+				replaceDatabase(gDatabaseID) {
+					gRelayoutMaps()
+				}
+			}
 		}
 	}
 
@@ -97,12 +111,14 @@ extension ZFiles {
 	func replaceDatabase(_ databaseID: ZDatabaseID?, onCompletion: Closure?) {
 		if  let            id = databaseID {
 			let          dbid = id.identifier
-			gPresentOpenPanel(type: .eSeriously) { [self] iAny in
-				if  let   url = iAny as? URL,
-					let cloud = gRemoteStorage.cloud(for: id),
-					let  root = cloud.rootZone {
+			gPresentOpenPanel(type: .eSeriously, at: gCDBaseDataURL) { [self] iAny in
+				guard  let   url = iAny as? URL else { return }
+				if let cloud = gRemoteStorage.cloud(for: id),
+				   let  root = cloud.rootZone {
 
 					let closure: Closure = { [self] in
+						gClearHereRecordNames() // erase zombie record names
+
 						try? readFile(from: url.relativePath, into: id) { _ in
 
 							// minor corrections needed for favorites font size and updating bookmark names

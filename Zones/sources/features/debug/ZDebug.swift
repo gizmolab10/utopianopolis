@@ -41,7 +41,7 @@ func gSetupDebugFeatures() {
 //	gPrintModes  .insert(.dMigrate)
 
 	if !gCDUseExistingStores {  // if we erase stores, we should also erase old record names
-		setPreferencesString(kDefaultRecordNames, for: kHereRecordNames)
+		gClearHereRecordNames()
 	}
 }
 

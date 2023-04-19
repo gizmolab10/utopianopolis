@@ -8,6 +8,10 @@
 
 import Foundation
 
+func gClearHereRecordNames() {
+	setPreferencesString(kDefaultRecordNames, for: kHereRecordNames)
+}
+
 var gTemporaryFullTitleMode : Bool {
 	get { return getPreferencesBool(   for: kTemporaryFullTitleMode, defaultBool: false) }
 	set { setPreferencesBool(newValue, for: kTemporaryFullTitleMode) }
