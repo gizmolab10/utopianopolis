@@ -170,9 +170,9 @@ class ZMainController: ZGesturesController {
 	}
 
 	func showAppIsBusyWhile(_ closure: @escaping Closure) {
-		FOREGROUND(after:0.00001) { [self] in
+		FOREGROUND    (after:0.00001) { [self] in
 			showAppIsBusy(true)
-			FOREGROUND(after:0.00001) { [self] in
+			FOREGROUND(after:0.00001) { [self] in    // need a fresh run loop cycle to let the UI update
 				closure()
 				showAppIsBusy(false)
 			}

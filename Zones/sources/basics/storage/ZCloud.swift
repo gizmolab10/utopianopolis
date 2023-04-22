@@ -38,9 +38,9 @@ class ZCloud: ZRecords {
     func start(_ operation: CKDatabaseOperation) {
         currentOperation = operation
 
-		FOREBACKGROUND { [self] in     // not stall foreground processor
+//		BACKGROUND { [self] in     // not stall foreground processor
             database?.add(operation)
-        }
+//        }
     }
 
 	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
@@ -62,7 +62,7 @@ class ZCloud: ZRecords {
 		}
 	}
 
-    func queryFor(_ recordType: String, with predicate: NSPredicate, properties: StringsArray, batchSize: Int = kBatchSize, cursor iCursor: CKQueryOperation.Cursor? = nil, onCompletion: RecordErrorClosure?) {
+	func queryFor(_ recordType: String, with predicate: NSPredicate, properties: StringsArray?, sortedBy: [NSSortDescriptor]? = nil, batchSize: Int = kBatchSize, cursor iCursor: CKQueryOperation.Cursor? = nil, onCompletion: RecordErrorClosure?) {
         currentPredicate                 = predicate
         if  var                operation = configure(CKQueryOperation()) as? CKQueryOperation {
             if  let               cursor = iCursor {
@@ -71,15 +71,16 @@ class ZCloud: ZRecords {
                 operation         .query = CKQuery(recordType: recordType, predicate: predicate)
             }
 
-            operation       .desiredKeys = properties
-            operation      .resultsLimit = batchSize
-            operation.recordFetchedBlock = { iRecord in
+            operation           .desiredKeys = properties
+            operation          .resultsLimit = batchSize
+			operation.query?.sortDescriptors = sortedBy
+            operation    .recordFetchedBlock = { iRecord in                                 // TODO: recordMatchedBlock
                 onCompletion?(iRecord, nil)
             }
 
-			operation.queryCompletionBlock = { [self] (iCursor, error) in
+			operation.queryCompletionBlock = { [self] iCursor, error in                 // TODO: queryResultBlock
                 if  let cursor = iCursor {
-                    queryFor(recordType, with: predicate, properties: properties, cursor: cursor, onCompletion: onCompletion)  // recurse with cursor
+                    queryFor(recordType, with: predicate, properties: properties, batchSize: batchSize, cursor: cursor, onCompletion: onCompletion)  // recurse with cursor
                 } else {
                     gAlerts.alertError(error, predicate.description) { iHasError in     // noop if error is nil
                         onCompletion?(nil, error)
@@ -218,4 +219,3 @@ class ZCloud: ZRecords {
     }
 
 }
-

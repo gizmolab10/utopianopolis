@@ -43,7 +43,9 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 		gStartup.captureElapsedTime()
 	}
 
-    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {}
+    func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+		print("remote note")
+	}
 	
     func application(_ application: NSApplication, openFiles: StringsArray) {
         var parent = gSelecting.currentMoveable
@@ -80,12 +82,10 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
-        // Insert code here to tear down your application
+		gSaveContext()
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-		gSaveContext()
-
 		return .terminateNow
     }
 

@@ -96,6 +96,7 @@ class ZRecord: ZManagedObject {
 	var              _toolTipRecord : Any?
 	var           writtenModifyDate : Date?
 	var                       color : ZColor?    // overridden by Zone and ZTrait (latter grabs from its ownerZone)
+	var               maybeManifest : ZManifest?   { return self as? ZManifest }
 	var                  maybeTrait : ZTrait?      { return self as? ZTrait }
 	var                   maybeZone : Zone?        { return self as? Zone }
 	var                        zone : Zone?        { return maybeZone ?? maybeTrait?.ownerZone }
@@ -122,6 +123,12 @@ class ZRecord: ZManagedObject {
 	var                needsDestroy : Bool         { return  hasState(.needsDestroy) }
 	var               needsAdoption : Bool         { return  hasState(.needsAdoption) }
 	var              needsBookmarks : Bool         { return  hasState(.needsBookmarks) }
+
+	var isDuplicate : Bool {
+		guard let name = recordName else { return false }
+
+		return zRecords?.duplicates.keys.contains(name) ?? false
+	}
 
 	// MARK: - overrides
 	// MARK: -
@@ -342,10 +349,10 @@ class ZRecord: ZManagedObject {
         }
     }
 
-    func extract(valueOf iType: ZStorageType, at iKeyPath: String) -> NSObject? {     // all properties are extracted from record, using iKeyPath as key
-		switch iKeyPath {
+    func extract(valueAt keyPath: String) -> NSObject? {           // all properties are extracted from record, using keyPath
+		switch keyPath {
 			case kpRecordName: return recordName as NSObject?      // except for the record name
-			default:           return value(forKeyPath: iKeyPath) as? NSObject
+			default:           return value(forKeyPath: keyPath) as? NSObject
 		}
     }
 
@@ -407,7 +414,7 @@ class ZRecord: ZManagedObject {
 
 		for keyPath in keyPaths {
 			if  let    type = sType(from: keyPath),
-				let extract = extract(valueOf: type, at: keyPath),
+				let extract = extract(valueAt: keyPath),
 				let  object = prepare(extract, of: type) {
 				dict[type]  = object
 			} else if !optionals.contains(keyPath){

@@ -193,11 +193,11 @@ class ZRecords: NSObject {
 	func getRoot(for rootID: ZRootID?) -> Zone? {
 		if  let id = rootID {
 			switch id {
+				case .lostID:      return lostAndFoundZone
 				case .favoritesID: return favoritesZone
 				case .destroyID:   return destroyZone
 				case .trashID:     return trashZone
 				case .rootID:      return rootZone
-				case .lostID:      return lostAndFoundZone
 			}
 		}
 
@@ -646,10 +646,10 @@ class ZRecords: NSObject {
 
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		let dbid = databaseID.identifier
-		FOREGROUND { [self] in
+		gShowAppIsBusyWhile { [self] in
 			applyToAllZRecords { zRecord in
 				zRecord.dbid = dbid
-				if let trait = zRecord.maybeTrait {
+				if  let trait = zRecord.maybeTrait {
 					trait.adopt()
 				} else if let zone = zRecord.maybeZone, !zone.isARoot {
 					zone.adopt(recursively: true)

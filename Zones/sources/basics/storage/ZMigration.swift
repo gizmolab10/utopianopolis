@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CloudKit
 
 var  gCDMigrationState    =                  ZCDMigrationState.mFirstTime
 var  gCDMigrationIsDone   :   Bool { return  gCDMigrationState.isCompleted }
@@ -153,10 +154,16 @@ extension ZBatches {
 	func load(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		gUpdateCDMigrationState()
 
-		let finish: AnyClosure = { item in
+		let finish: AnyClosure = { loadResult in
 			gUpdateCDMigrationState()
 
-			onCompletion?(item)
+			if  databaseID == .mineID {
+				gMineCloud?.loadEverythingMaybe { everythingResult in // because Seriously is now running on a second device
+					onCompletion?(everythingResult)
+				}
+			} else {
+				onCompletion?(loadResult)
+			}
 		}
 
 		switch gCDMigrationState {
@@ -208,41 +215,6 @@ extension ZCoreDataStack {
 			}
 
 			gUpdateCDMigrationState()
-		}
-	}
-
-}
-
-extension String {
-
-	var       dataExtensionPath : String? { return dataExtensionURL?.path }
-	var       dataExtensionURL  : URL?    { return URL(string: gDataDirectoryName)?.appendingPathComponent(self) }
-	var repositoryPath : String  { return repositoryURL.path }
-	var repositoryURL  : URL     { return gFilesURL.appendingPathComponent(self) }
-
-	func migrateTo(_ to: String?) {
-		do {
-			let temporary = "delete me"
-
-			try           moveItem(to: temporary) // in case to is inside from, in which case the file manager will throw (move self inside self, a no can do)
-			try temporary.moveItem(to: to)
-		} catch {
-			printDebug(.dError, "\(error)")
-		}
-	}
-
-	func moveItem(to: String?) throws {
-		if  let toPath = to?.repositoryPath {
-			let   path = repositoryPath
-			let      m = gFileManager
-
-			if          m.fileExists(atPath: path) {
-				if      m.fileExists(atPath: toPath) {
-					try m.removeItem(atPath: toPath)
-				}
-
-				try     m.moveItem  (atPath: path, toPath: toPath)
-			}
 		}
 	}
 
@@ -381,6 +353,157 @@ extension Zone {
 						}
 					}
 				}
+			}
+		}
+	}
+
+}
+
+extension ZManifest {
+
+	func extractData(from ckRecord: CKRecord) {
+		count = ckRecord.value(forKeyPath: "CD_count") as? NSNumber
+
+		// TODO: deletedZones ... or not, since we are using isTrashed instead
+	}
+
+}
+
+extension ZTrait {
+
+	func extractData(from ckRecord: CKRecord) {
+		text      = ckRecord.value(forKeyPath: "CD_text")      as? String
+		type      = ckRecord.value(forKeyPath: "CD_type")      as? String
+		format    = ckRecord.value(forKeyPath: "CD_format")    as? String
+		ownerLink = ckRecord.value(forKeyPath: "CD_ownerLink") as? String
+		ownerRID  = ckRecord.value(forKeyPath: "CD_ownerRID")  as? String
+
+		// TODO: strings and owner (they are transformables)
+	}
+
+}
+
+extension Zone {
+
+	func extractData(from ckRecord: CKRecord) {
+		zoneName       = ckRecord.value(forKeyPath: "CD_zoneName")       as? String
+		zoneLink       = ckRecord.value(forKeyPath: "CD_zoneLink")       as? String
+		zoneColor      = ckRecord.value(forKeyPath: "CD_zoneColor")      as? String
+		parentRID      = ckRecord.value(forKeyPath: "CD_parentRID")      as? String
+		parentLink     = ckRecord.value(forKeyPath: "CD_parentLink")     as? String
+		zoneAuthor     = ckRecord.value(forKeyPath: "CD_zoneAuthor")     as? String
+		zoneAttributes = ckRecord.value(forKeyPath: "CD_zoneAttributes") as? String
+		zoneProgeny    = ckRecord.value(forKeyPath: "CD_zoneProgeny")    as? NSNumber
+		zoneAccess     = ckRecord.value(forKeyPath: "CD_zoneAccess")     as? NSNumber
+	}
+
+}
+
+extension CKRecord {
+
+	func createZRecord(of type: String, in databaseID: ZDatabaseID) -> ZRecord? {
+		var zRecord: ZRecord?
+
+		if  let                  name = value(forKeyPath: "CD_recordName")    as? String {
+			zRecord                   = ZRecord.uniqueZRecord(entityName: type, recordName: name, in: databaseID)
+			zRecord?            .dbid = value(forKeyPath: "CD_dbid")          as? String
+			zRecord?.modificationDate = value(forKeyPath: "modificationDate") as? Date
+			zRecord?       .isTrashed = value(forKeyPath: "CD_isTrashed")     as? NSNumber
+
+			switch type {
+				case        kZoneType: zRecord?.maybeZone?    .extractData(from: self)
+				case    kManifestType: zRecord?.maybeManifest?.extractData(from: self)
+				case kTraitAssetsType: zRecord?.maybeTrait?   .extractData(from: self)
+				default:                break
+			}
+		}
+
+		return zRecord
+	}
+
+}
+
+extension ZCloud {
+
+	func loadEverythingMaybe(onCompletion: AnyClosure?) {
+		var typeCount = 3
+
+		guard gCDUseCloud, gCDPreloadFromCK, (rootZone == nil || rootZone!.count == 0) else {
+			onCompletion?(0)
+
+			return
+		}
+
+		for type in [kZoneType, kTraitAssetsType, kManifestType] {
+			fetchAllRecords(of: type) { [self] ckRecords in
+				print("fetched \(ckRecords.count) \(type) record(s)")
+
+				FOREGROUND() { [self] in    // adding records must be done in FOREGROUND: to avoid corruption and mutation while enumerating
+					for ckRecord in ckRecords {
+						let zRecord = ckRecord.createZRecord(of: type, in: databaseID)
+
+						zRecord?.register()
+					}
+
+					typeCount -= 1
+
+					if  typeCount == 0 {
+						assureAdoption { value in
+							onCompletion?(0)
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	func fetchAllRecords(of type: String, closure: CKRecordsClosure?) {
+		var ckRecords = CKRecordsArray()
+		let predicate = NSPredicate(value: true)
+//		let  timeSort : NSSortDescriptor? // = NSSortDescriptor(key: "modifiedTimestamp", ascending: true)
+
+		queryFor(type.cloudKitType, with: predicate, properties: nil, sortedBy: nil, batchSize: 250) { record, error in
+			if  let ckRecord = record {
+				ckRecords.append(ckRecord)
+			} else { // after all records have arrived
+				closure?(ckRecords)
+			}
+		}
+	}
+
+}
+
+extension String {
+
+	var            cloudKitType : String  { return "CD_" + self }
+	var          repositoryPath : String  { return repositoryURL.path }
+	var       dataExtensionPath : String? { return dataExtensionURL?.path }
+	var       dataExtensionURL  : URL?    { return URL(string: gDataDirectoryName)?.appendingPathComponent(self) }
+	var          repositoryURL  : URL     { return gFilesURL.appendingPathComponent(self) }
+
+	func migrateTo(_ to: String?) {
+		do {
+			let temporary = "delete me"
+
+			try           moveItem(to: temporary) // in case to is inside from, in which case the file manager will throw (move self inside self, a no can do)
+			try temporary.moveItem(to: to)
+		} catch {
+			printDebug(.dError, "\(error)")
+		}
+	}
+
+	func moveItem(to: String?) throws {
+		if  let toPath = to?.repositoryPath {
+			let   path = repositoryPath
+			let      m = gFileManager
+
+			if          m.fileExists(atPath: path) {
+				if      m.fileExists(atPath: toPath) {
+					try m.removeItem(atPath: toPath)
+				}
+
+				try     m.moveItem  (atPath: path, toPath: toPath)
 			}
 		}
 	}

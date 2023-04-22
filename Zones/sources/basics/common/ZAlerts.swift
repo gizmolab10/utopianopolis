@@ -58,12 +58,11 @@ class ZAlerts : NSObject {
 
         if  let ckError: CKError = iError as? CKError {
 			switch ckError.code {
-//				case .notAuthenticated: closure?(true) // was showAlert("No active iCloud account", "allows you to create new ideas", "Go to Settings and set this up?", closure)
-				case .networkUnavailable: gHasInternet = false; closure?(true) // was alertNoInternet
-				default:
-					printDebug(.dError, ckError.localizedDescription + text)
-					closure?(true)
+				case .networkUnavailable: gHasInternet = false
+				default:                  printDebug(.dError, ckError.localizedDescription + text)
 			}
+
+			closure?(true)
         } else if let nsError = iError as? NSError {
             let waitForIt = nsError.userInfo[CKErrorRetryAfterKey] as? String ?? kEmpty
 

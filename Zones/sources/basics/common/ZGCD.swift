@@ -26,8 +26,6 @@ func FOREGROUND(forced: Bool = false, after seconds: Double? = nil, _ closure: @
     }
 }
 
-func FOREBACKGROUND(_ closure: @escaping Closure) { closure() }
-
 func BACKGROUND(_ closure: @escaping Closure) {
 	if !Thread.isMainThread {
 		closure()

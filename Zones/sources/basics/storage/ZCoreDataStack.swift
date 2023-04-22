@@ -144,7 +144,7 @@ class ZCoreDataStack: NSObject {
 						}
 					}
 
-					load(type: kFileType,  into: databaseID)
+					load(type: kFileType, into: databaseID)
 
 					if  gCDUseRelationships {
 						let array = load(type: kRelationshipType, into: databaseID)

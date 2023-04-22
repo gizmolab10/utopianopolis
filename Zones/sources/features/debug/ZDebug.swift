@@ -24,17 +24,19 @@ func gSetupDebugFeatures() {
 
 	gCoreDataMode       = []
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
-	gCoreDataMode.insert(.dNotUseCloud)         // confusing, duplicate traits
-	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
+//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: public data, acquire initial data
+//	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNotTestTrashed)      // ignore isTrashed during fetch TODO: missing keypath
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
 //	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
+//	gCoreDataMode.insert(.dNotPreloadFromCK)    // don't pre-populate CD from CK
 	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)
 //	gPrintModes  .insert(.dTime)
+	gPrintModes  .insert(.dAdopt)
 	gPrintModes  .insert(.dError)
 	gPrintModes  .insert(.dCross)
 //	gPrintModes  .insert(.dMoving)
@@ -56,6 +58,7 @@ var       gCDNormalStore : Bool { return !gCoreDataMode.contains(.dTestingMigrat
 var       gCDTestTrashed : Bool { return !gCoreDataMode.contains(.dNotTestTrashed)   && gIsUsingCD }
 var      gCDUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)          && gIsUsingCD }
 var      gCDLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCD }
+var     gCDPreloadFromCK : Bool { return !gCoreDataMode.contains(.dNotPreloadFromCK) && gIsUsingCD }
 var     gCKIsInitialized : Bool { return !gCoreDataMode.contains(.dInitializeCloud)  && gIsUsingCD }
 var  gCDUseRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCD }
 var gCDUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCD }
@@ -90,6 +93,7 @@ struct ZCoreDataMode: OptionSet {
 	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 09) // not use ZRelationship
 	static let dInitializeCloud  = ZCoreDataMode(rawValue: 1 << 10) // only need to do this once
 	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 11) // use migration.testing (not data)
+	static let dNotPreloadFromCK = ZCoreDataMode(rawValue: 1 << 12) // don't pre-populate CD from CK
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {

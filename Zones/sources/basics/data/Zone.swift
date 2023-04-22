@@ -2702,7 +2702,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// adopt recursively
 
 	override func adopt(recursively: Bool = false) {
-		if  !needsDestroy {
+		if  !needsDestroy, !isDuplicate, isTrashed == NSNumber(value: false) {
 			if  let p = parentZone, p != self {        // first compute parentZone
 				if !p.children.contains(self) {        // see if already adopted
 					p.addChildAndRespectOrder(self)

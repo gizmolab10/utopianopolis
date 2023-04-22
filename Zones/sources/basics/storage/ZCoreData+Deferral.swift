@@ -60,7 +60,7 @@ extension ZCoreDataStack {
 			printDebug(.dExist, "\(databaseID.identifier) = \(count)\(entityName)")
 
 			deferUntilAvailable(for: .oExistence) {
-				FOREBACKGROUND { [self] in
+				BACKGROUND { [self] in
 					do {
 						let items = try c.fetch(request)
 

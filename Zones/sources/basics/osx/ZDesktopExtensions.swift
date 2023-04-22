@@ -755,9 +755,9 @@ extension ZAlerts {
     }
 
 	func alertWithClosure(_ message: String = "Warning", _ information: String? = nil, _ iOKTitle: String = "OK", _ iCancelTitle: String? = nil, _ iImage: ZImage? = nil, _ width: CGFloat? = nil, _ closure: AlertClosure? = nil) {
-		FOREGROUND { [self] in
-			let a = alert(message, information, iOKTitle, iCancelTitle, iImage, width)
+		let a = alert(message, information, iOKTitle, iCancelTitle, iImage, width)
 
+		FOREGROUND {
 			closure?(a, .sShow)
 		}
 	}
