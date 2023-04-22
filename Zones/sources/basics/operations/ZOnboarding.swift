@@ -22,6 +22,7 @@ enum ZCloudAccountStatus: Int {
 	case active
 }
 
+var gCloudStatusIsDead        : Bool { return gCloudAccountStatus == .begin }
 var gCloudStatusIsActive      : Bool { return gCloudAccountStatus == .active }
 var gCloudStatusIsAvailable   : Bool { return gCloudAccountStatus == .available }
 var gCloudAccountStatus       = ZCloudAccountStatus.begin

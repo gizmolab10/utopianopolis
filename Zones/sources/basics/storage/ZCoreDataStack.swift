@@ -205,7 +205,7 @@ class ZCoreDataStack: NSObject {
 		let objects = fetch(type: type, recordName: recordName, into: databaseID, onlyOne: onlyOne)
 
 		let ids = objects.map { $0.objectID }
-		FOREGROUND() { [self] in
+		FOREGROUND { [self] in
 			gInvokeUsingDatabaseID(databaseID) {
 				for id in ids {
 					let      object = persistentContainer?.viewContext.object(with: id)

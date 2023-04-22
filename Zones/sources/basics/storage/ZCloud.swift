@@ -43,15 +43,15 @@ class ZCloud: ZRecords {
 //        }
     }
 
-	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) {
+	func invokeOperation(for identifier: ZOperationID, onCompletion: AnyClosure?) {
 		switch identifier {
-			case .oManifest:         establishManifest  (identifier, cloudCallback)
-			case .oRoots:            establishRoots     (identifier, cloudCallback)
-			case .oHere:             establishHere                  (cloudCallback)
-			case .oAdopt:            assureAdoption                 (cloudCallback)
-			case .oResolve:          resolve                        (cloudCallback)
-			case .oResolveMissing:   resolveMissing                 (cloudCallback)
-			default:                                                 cloudCallback?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
+			case .oManifest:         establishManifest  (identifier, onCompletion)
+			case .oRoots:            establishRoots     (identifier, onCompletion)
+			case .oHere:             establishHere                  (onCompletion)
+			case .oAdopt:            assureAdoption                 (onCompletion)
+			case .oResolve:          resolve                        (onCompletion)
+			case .oResolveMissing:   resolveMissing                 (onCompletion)
+			default:                                                 onCompletion?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
 	}
 

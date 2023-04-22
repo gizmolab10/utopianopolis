@@ -22,16 +22,18 @@ func gSetupDebugFeatures() {
 	gDebugModes  .insert(.dNoSubscriptions)
 	gDebugModes  .insert(.dHideNoteVisibility)
 
-	gCoreDataMode       = []
-//	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
-//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: public data, acquire initial data
+	gCoreDataMode       = []                    // current work is focused on these:
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
+//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: public data, acquire initial data
+//	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
+//	gCoreDataMode.insert(.dNotPreloadFromCK)    // don't pre-populate CD from CK
+	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate { local test folder & CK repository }
+
+//                                              // these are unlikely to change any time soon:
+//	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
 //	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
 	gCoreDataMode.insert(.dNotTestTrashed)      // ignore isTrashed during fetch TODO: missing keypath
 	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
-//	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
-//	gCoreDataMode.insert(.dNotPreloadFromCK)    // don't pre-populate CD from CK
-	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate test folder
 
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)

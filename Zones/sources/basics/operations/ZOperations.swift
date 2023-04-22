@@ -27,13 +27,13 @@ enum ZOperationID: Int, CaseIterable {
 	case oManifest
 	case oRoots
 	case oFavorites			 // MINE ONLY
+	case oMigrateFromCloud   // " " until public data can be stored in CK
 	case oHere
 	case oWrite
 	case oDone
 
     // miscellaneous      --> no particular order
 
-	case oMigrateFromCloud
 	case oSavingLocalData    // LOCAL
 	case oResolveMissing
     case oFinishing
@@ -53,7 +53,7 @@ enum ZOperationID: Int, CaseIterable {
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oFinishing] }
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites, .oMigration] }
-	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing] }
+	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing, .oMigrateFromCloud] }
 	var    localOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oMigration, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oGetCloudStatus] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
@@ -78,7 +78,7 @@ class ZOperations: NSObject {
 	var     operationText :          String  { return currentOp.description }
 	func unHang()                            { if gStartupLevel != .firstStartup { onCloudResponse?(0) } }
 	func printOp(_ message: String = kEmpty) { printDebug(.dOps, operationText + message) }
-	func invokeOperation(for identifier: ZOperationID, cloudCallback: AnyClosure?) throws                                  {}
+	func invokeOperation(for identifier: ZOperationID, onCompletion: AnyClosure?) throws                                  {}
 	func invokeMultiple (for identifier: ZOperationID, restoreToID: ZDatabaseID, _ onCompletion: @escaping BooleanClosure) {}
 
     var isConnectedToInternet: Bool {
@@ -151,7 +151,7 @@ class ZOperations: NSObject {
 					// ignore operations that are not local when have no internet //
 					// ////////////////////////////////////////////////////////// //
 
-					if  !operationID.isLocal && !gCloudStatusIsActive {
+					if  !operationID.isLocal && gCloudStatusIsDead {
 						onCompletion()
 					} else {
 						currentOp         = operationID            // if hung, it happened inside this op

@@ -2844,7 +2844,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				updateCoreDataRelationships()
 			}
 
-			needCount()
 			updateMaxLevel()
 			onCompletion?(child)
 

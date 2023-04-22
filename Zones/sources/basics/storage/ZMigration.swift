@@ -156,20 +156,23 @@ extension ZBatches {
 
 		let finish: AnyClosure = { loadResult in
 			gUpdateCDMigrationState()
-
-			if  databaseID == .mineID {
-				gMineCloud?.loadEverythingMaybe { everythingResult in // because Seriously is now running on a second device
-					onCompletion?(everythingResult)
-				}
-			} else {
-				onCompletion?(loadResult)
-			}
+			onCompletion?(loadResult)
 		}
 
 		switch gCDMigrationState {
 			case .mFirstTime,
 				 .mFiles: try gFiles.migrate(into: databaseID, onCompletion: finish)
 			default:            gLoadContext(into: databaseID, onCompletion: finish)
+		}
+	}
+
+	func migrateFromCloud(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
+		if  databaseID == .mineID {
+			gMineCloud?.loadEverythingMaybe { everythingResult in // because Seriously is now running on a second device
+				onCompletion?(everythingResult)
+			}
+		} else {
+			onCompletion?(0)
 		}
 	}
 
@@ -438,7 +441,7 @@ extension ZCloud {
 			fetchAllRecords(of: type) { [self] ckRecords in
 				print("fetched \(ckRecords.count) \(type) record(s)")
 
-				FOREGROUND() { [self] in    // adding records must be done in FOREGROUND: to avoid corruption and mutation while enumerating
+				gShowAppIsBusyWhile { [self] in    // adding records must be done in FOREGROUND: to avoid corruption and mutation while enumerating
 					for ckRecord in ckRecords {
 						let zRecord = ckRecord.createZRecord(of: type, in: databaseID)
 

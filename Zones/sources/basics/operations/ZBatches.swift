@@ -297,16 +297,17 @@ class ZBatches: ZOnboarding {
         }
     }
 
-    override func invokeOperation(for operationID: ZOperationID, cloudCallback: AnyClosure?) throws {
-        onCloudResponse = cloudCallback     // for retry cloud in tools controller
+    override func invokeOperation(for operationID: ZOperationID, onCompletion: AnyClosure?) throws {
+        onCloudResponse = onCompletion     // for retry cloud in tools controller
 
 		switch operationID {
-			case .oFavorites:                                                                       gFavorites.setup(cloudCallback)
-			case .oSavingLocalData:  gSaveContext();                                                                 cloudCallback?(0)
-			case .oMigration:        gCoreDataStack.assureMigrationToLatest();                                       cloudCallback?(0)
-			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                                cloudCallback?(0)
-			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                  onCompletion: cloudCallback)
-			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: operationID, cloudCallback: cloudCallback)
+			case .oFavorites:        gFavorites.setup(                                                              onCompletion)
+			case .oSavingLocalData:  gSaveContext();                                                                onCompletion?(0)
+			case .oMigration:        gCoreDataStack.assureMigrationToLatest();                                      onCompletion?(0)
+			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               onCompletion?(0)
+			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                 onCompletion: onCompletion)
+			case .oMigrateFromCloud: migrateFromCloud(into:       currentDatabaseID!,                 onCompletion: onCompletion)
+			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: operationID, onCompletion: onCompletion)
 		}
     }
 

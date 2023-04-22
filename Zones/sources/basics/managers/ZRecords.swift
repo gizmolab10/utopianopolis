@@ -646,22 +646,21 @@ class ZRecords: NSObject {
 
 	func assureAdoption(_ onCompletion: IntClosure? = nil) {
 		let dbid = databaseID.identifier
-		gShowAppIsBusyWhile { [self] in
-			applyToAllZRecords { zRecord in
-				zRecord.dbid = dbid
-				if  let trait = zRecord.maybeTrait {
-					trait.adopt()
-				} else if let zone = zRecord.maybeZone, !zone.isARoot {
-					zone.adopt(recursively: true)
 
-					if  zone.root == nil, !zone.isBookmark {
-						printDebug(.dAdopt, "lost child: (\(dbid)) \(zone)")
-					}
+		applyToAllZRecords { zRecord in
+			zRecord.dbid = dbid
+			if  let trait = zRecord.maybeTrait {
+				trait.adopt()
+			} else if let zone = zRecord.maybeZone, !zone.isARoot {
+				zone.adopt(recursively: true)
+
+				if  zone.root == nil, !zone.isBookmark {
+					printDebug(.dAdopt, "lost child: (\(dbid)) \(zone)")
 				}
 			}
-
-			onCompletion?(0)
 		}
+
+		onCompletion?(0)
 	}
 
     @discardableResult func adoptAllNeedingAdoption() -> Int {
