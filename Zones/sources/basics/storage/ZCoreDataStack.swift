@@ -99,18 +99,20 @@ class ZCoreDataStack: NSObject {
 	func saveContext() {
 		if  gCDCanSave, gIsReadyToShowUI {
 			deferUntilAvailable(for: .oSave) { [self] in
-				maybeReportCrossStore() // must be done in FOREGROUND, else throws modifying-while-enumerating error
-				gShowAppIsBusyWhileInBackground { [self] in
-					if  let c = persistentContainer?.viewContext, c.hasChanges {
+				gSynchronized(lock: gCoreDataStack) {
+					maybeReportCrossStore() // must be done in FOREGROUND, else throws modifying-while-enumerating error
+					gShowAppIsBusyWhileInBackground { [self] in
+						if  let c = persistentContainer?.viewContext, c.hasChanges {
 
-						do {
-							try c.save()
-						} catch {
-							printDebug(.dError, "\(error)")
+							do {
+								try c.save()
+							} catch {
+								printDebug(.dError, "\(error)")
+							}
 						}
-					}
 
-					makeAvailable()
+						makeAvailable()
+					}
 				}
 			}
 		}
@@ -319,26 +321,28 @@ class ZCoreDataStack: NSObject {
 	func fetchUsing(request: NSFetchRequest<NSFetchRequestResult>, onlyOne: Bool = true) -> ZManagedObjectsArray {
 		var   objects = ZManagedObjectsArray()
 
-		do {
-			if  let items = try persistentContainer?.viewContext.fetch(request) {
-				for item in items {
-					if  let object = item as? ZManagedObject {
+		gSynchronized(lock: gCoreDataStack) {
+			do {
+				if  let items = try persistentContainer?.viewContext.fetch(request) {
+					for item in items {
+						if  let object = item as? ZManagedObject {
 
-						objects.append(object)
+							objects.append(object)
 
-						if  onlyOne {
+							if  onlyOne {
 
-							// //////////////////////////////////////////////////////////////////////////////// //
-							// NOTE: all but the first of multiple values found are duplicates and thus ignored //
-							// //////////////////////////////////////////////////////////////////////////////// //
+								// //////////////////////////////////////////////////////////////////////////////// //
+								// NOTE: all but the first of multiple values found are duplicates and thus ignored //
+								// //////////////////////////////////////////////////////////////////////////////// //
 
-							break
+								break
+							}
 						}
 					}
 				}
+			} catch {
+				printDebug(.dError, "\(error)")
 			}
-		} catch {
-			printDebug(.dError, "\(error)")
 		}
 
 		return objects
