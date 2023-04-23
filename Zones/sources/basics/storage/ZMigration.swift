@@ -144,7 +144,7 @@ enum ZCKRepositoryID: String {
 			}
 		}
 
-		gCKRepositoryID = (gCDUseUserID && gUserRecordName != nil) ? .rUserID : .rSubmitted
+		gCKRepositoryID = (gCDUseUserID && gUserID != nil) ? .rUserID : .rSubmitted
 	}
 
 }
@@ -196,7 +196,7 @@ extension ZCoreDataStack {
 			}
 
 			if	gCDMigrationState == .mCDHierarchal, gCDUseUserID,
-				let            to  =  gUserRecordName?.dataExtensionPath,                          //   to ends in  <user id>
+				let            to  =  gUserID?.dataExtensionPath,                          //   to ends in  <user id>
 				let          from  =  ZCKRepositoryID.rSubmitted.rawValue.dataExtensionPath {      // from ends in  test2
 
 				from.migrateTo(to)  // move to new user id folder

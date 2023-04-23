@@ -192,7 +192,7 @@ class ZFiles: NSObject {
 						dict[.bookmarks] = bookmarks as NSObject
 					}
 
-					if  let      userID  = gUserRecordName {
+					if  let      userID  = gUserID {
 						dict   [.userID] = userID as NSObject
 					}
 				}
@@ -389,7 +389,7 @@ class ZFiles: NSObject {
             var name = databaseID.rawValue
 
             if  databaseID      == .mineID, !isGeneric,
-                let userID = gUserRecordName {
+                let userID = gUserID {
                 name       = userID
             }
 

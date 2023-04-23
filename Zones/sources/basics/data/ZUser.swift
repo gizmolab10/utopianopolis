@@ -25,7 +25,6 @@ class ZUser : ZRecord {
 	@NSManaged var   sentEmailType : String?
 	@NSManaged var     writeAccess : NSNumber?
 	override   var cloudProperties : StringsArray { return ZUser.cloudProperties }
-	func       persistRecordName()                { gUserRecordName = recordName }
 
 	var userAccess: ZUserAccess? {
 		var access = writeAccess?.userAccess
@@ -67,7 +66,6 @@ class ZUser : ZRecord {
 		// ONBOARDING IS NOW COMPLETE //
 		// ////////////////////////// //
 
-		gUser?.persistRecordName()
 	}
 
 	static func uniqueUser(recordName: String?, in databaseID: ZDatabaseID) -> ZUser {

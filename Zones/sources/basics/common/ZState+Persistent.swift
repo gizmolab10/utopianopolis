@@ -82,11 +82,6 @@ var gAuthorID: String? {    // persist for file read on launch
 	set { setPreferencesString(newValue, for: kAuthorID) }
 }
 
-var gUserRecordName: String? {    // persist for file read on launch
-	get { return getPreferenceString(    for: kUserRecordName) }
-	set { setPreferencesString(newValue, for: kUserRecordName) }
-}
-
 var gWindowRect: CGRect {
 	get { return getPreferencesRect(for: kWindowRectKey, defaultRect: kDefaultWindowRect) }
 	set { setPreferencesRect(newValue, for: kWindowRectKey) }
