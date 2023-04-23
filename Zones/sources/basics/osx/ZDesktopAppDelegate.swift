@@ -48,22 +48,22 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 	}
 	
     func application(_ application: NSApplication, openFiles: StringsArray) {
-        var parent = gSelecting.currentMoveable
+        var zone = gSelecting.currentMoveable
         
-        if !parent.userCanWrite {
+        if !zone.userCanWrite {
 			if  let candidate = gMineCloud?.hereZoneMaybe ?? gMineCloud?.rootZone {
-				parent        = candidate
+				zone          = candidate
             } else {
                 return
             }
         }
 
-		if  parent.databaseID != gDatabaseID {
+		if  zone.databaseID != gDatabaseID {
 			gToggleDatabaseID()
 		}
 
         for file in openFiles {
-			parent.importFile(from: file) {
+			zone.importFile(from: file) {
 				gRelayoutMaps()
 			}
         }
@@ -74,18 +74,17 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
     }
 
     func application(_ application: NSApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        // printDebug(.dError, deviceToken)
+		printDebug(.dRemote, deviceToken.base64EncodedString())
     }
 
     func application(_ application: NSApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         printDebug(.dError, "\(error)")
     }
 
-    func applicationWillTerminate(aNotification: NSNotification) {
-		gSaveContext()
-    }
+    func applicationWillTerminate(aNotification: NSNotification) {}
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+		gSaveContext()
 		return .terminateNow
     }
 

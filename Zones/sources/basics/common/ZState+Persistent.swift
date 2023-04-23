@@ -633,7 +633,7 @@ var gUserActiveInWindow: ZActiveWindowID? {
 var gLastLocation = CGPoint.zero
 
 func gThrowOnUserActivity() throws {
-	if  Thread.isMainThread {
+	if  gIsMainThread {
 		if  gUserActivityDetected {
 			throw(ZInterruptionError.userInterrupted)
 		}

@@ -55,11 +55,20 @@ enum ZCDStoreType: String {
 }
 
 let  gCoreDataStack                                    = ZCoreDataStack()
-var  gCDCurrentBackgroundContext                       : NSManagedObjectContext? { return gCoreDataStack.persistentContainer?.viewContext }
+var  gCDMainContext                                    : NSManagedObjectContext? { return gCoreDataStack.persistentContainer?.viewContext }
+var  gCDThreadAppropriateContext                       : NSManagedObjectContext? { return gIsMainThread ? gCDMainContext : gCDCurrentBackgroundContext }
 var  gCoreDataIsSetup                                                     : Bool { return gCoreDataStack.persistentContainer != nil }
 var  gCoreDataIsBusy                                                      : Bool { return gCoreDataStack.currentOpID         != nil }
+func gObjectInMainContext(with objectID: NSManagedObjectID) -> NSManagedObject?  { return gCDMainContext?.object(with: objectID)}
 func gLoadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: databaseID, onCompletion: onCompletion) }
 func gSaveContext()                                                              { gCoreDataStack.saveContext() }
+
+var gCDCurrentBackgroundContext: NSManagedObjectContext = {
+	let    context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+	context.parent = gCDMainContext
+
+	return context
+}()
 
 class ZCoreDataStack: NSObject {
 
@@ -76,7 +85,7 @@ class ZCoreDataStack: NSObject {
 
 	func hasStore(for databaseID: ZDatabaseID = .mineID) -> Bool {
 		if  gIsUsingCD,
-			let             c = persistentContainer?.viewContext {
+			let             c = gCDThreadAppropriateContext {
 			let       request = NSFetchRequest<NSFetchRequestResult>(entityName: kZoneType)
 			request.predicate = corePredicate(from: databaseID)
 
@@ -102,7 +111,7 @@ class ZCoreDataStack: NSObject {
 				gSynchronized(lock: gCoreDataStack) {
 					maybeReportCrossStore() // must be done in FOREGROUND, else throws modifying-while-enumerating error
 					gShowAppIsBusyWhileInBackground { [self] in
-						if  let c = persistentContainer?.viewContext, c.hasChanges {
+						if  let c = gCDMainContext, c.hasChanges {
 
 							do {
 								try c.save()
@@ -188,7 +197,7 @@ class ZCoreDataStack: NSObject {
 					zone.respectOrder()
 
 					FOREGROUND { [self] in
-						if  let root = persistentContainer?.viewContext.object(with: oid) as? Zone {
+						if  let root = gObjectInMainContext(with: oid) as? Zone {
 							if  recordName == kFavoritesRootName {
 								gFavoritesCloud.setRoot(root, for: .favoritesID)
 							} else {
@@ -211,8 +220,7 @@ class ZCoreDataStack: NSObject {
 		FOREGROUND { [self] in
 			gInvokeUsingDatabaseID(databaseID) {
 				for id in ids {
-					let      object = persistentContainer?.viewContext.object(with: id)
-					if  let zRecord = object as? ZRecord {
+					if  let zRecord = gObjectInMainContext(with: id) as? ZRecord {
 						if  gCDLoadEachRoot {
 							zRecord.convertFromCoreData(visited: [])
 						}
@@ -249,7 +257,7 @@ class ZCoreDataStack: NSObject {
 
 	func registerObject(_ objectID: NSManagedObjectID, recordName: String?, databaseID: ZDatabaseID) {
 		if  let name   = recordName,
-			let object = persistentContainer?.viewContext.object(with: objectID) {
+			let object = gObjectInMainContext(with: objectID) {
 			var dict   = fetchedRegistry[databaseID] ?? ZManagedObjectsDictionary()
 
 			dict[name]                  = object
@@ -323,7 +331,7 @@ class ZCoreDataStack: NSObject {
 
 		gSynchronized(lock: gCoreDataStack) {
 			do {
-				if  let items = try persistentContainer?.viewContext.fetch(request) {
+				if  let items = try gCDMainContext?.fetch(request) {
 					for item in items {
 						if  let object = item as? ZManagedObject {
 
@@ -571,7 +579,7 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func maybeReportCrossStore() {
-		if  let c = persistentContainer?.viewContext, gPrintModes.contains(.dCross) {
+		if  let c = gCDMainContext, gPrintModes.contains(.dCross) {
 			for object in c.updatedObjects {
 				if  let               record = object as? ZRecord,
 					let           objectDBid = record.dbid {
@@ -579,7 +587,7 @@ class ZCoreDataStack: NSObject {
 						if  let   parentDBid = zone.parentZone?.dbid,
 							parentDBid      != objectDBid {
 //							let        store = gCoreDataStack.persistentStore(for: objectDBid.databaseID.scope) {
-//							gCDCurrentBackgroundContext?.assign(zone.parentZone!, to: store)
+//							gCDMainContext?.assign(zone.parentZone!, to: store)
 							printDebug(.dCross, "[\(parentDBid)p] \(zone.getRoot): \(zone)")
 						} else
 

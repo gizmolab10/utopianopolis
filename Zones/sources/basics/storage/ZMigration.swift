@@ -78,7 +78,7 @@ enum ZCDMigrationState: Int {
 
 		// if user id is not known -> FUBAR (wrong migration location, data will be lost once user id becomes known)
 
-		let publicScope = ZDatabaseID.everyoneID.scope
+		let publicScope = ZCDStoreType.sPublic
 
 		if  gCDBaseDataURL.fileExists {                                   // data           <- folder exists
 			if  let url = publicScope.ckUserIDURL,    url.containsData {  // data/<user id> <- store exists and is not empty
@@ -440,9 +440,10 @@ extension ZCloud {
 				print("fetched \(ckRecords.count) \(type) record(s)")
 
 				gShowAppIsBusyWhile { [self] in    // adding records must be done in FOREGROUND: to avoid corruption and mutation while enumerating
-					for ckRecord in ckRecords {
+					for (index, ckRecord) in ckRecords.enumerated() {
 						let zRecord = ckRecord.createZRecord(of: type, in: databaseID)
 
+						printDebug(.dRemote, "\(index)")
 						zRecord?.register()
 					}
 

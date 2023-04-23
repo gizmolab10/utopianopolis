@@ -185,7 +185,7 @@ class ZRecord: ZManagedObject {
 
 	func deleteFromCD() {
 		if  let c = gCoreDataStack.persistentContainer, c.canDeleteRecord(forManagedObjectWith: objectID) {
-			gCDCurrentBackgroundContext?.delete(self)
+			gCDThreadAppropriateContext?.delete(self)
 		} else {
 			isTrashed = NSNumber(value: true)
 		}
@@ -194,7 +194,7 @@ class ZRecord: ZManagedObject {
 	// MARK: - core data
 	// MARK: -
 
-	var selfInContext: ZRecord? { return Thread.isMainThread ? self : gCDCurrentBackgroundContext?.object(with: objectID) as? ZRecord }
+	var selfInContext: ZRecord? { return gIsMainThread ? self : gObjectInMainContext(with: objectID) as? ZRecord }
 
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 

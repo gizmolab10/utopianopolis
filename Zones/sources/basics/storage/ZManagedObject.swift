@@ -27,7 +27,7 @@ extension ZManagedObject {
 
 	convenience init(entityName: String?, databaseID: ZDatabaseID) {
 		if  let    name = entityName,
-			let context = gCDCurrentBackgroundContext,
+			let context = gCDThreadAppropriateContext,
 			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {
 			self.init(entity: entity, insertInto: context)
 

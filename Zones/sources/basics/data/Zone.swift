@@ -816,7 +816,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					converted.append(contentsOf: strings)
 					let cid = child.objectID
 					FOREGROUND { [self] in
-						if  let zone = gCDCurrentBackgroundContext?.object(with: cid) as? Zone {
+						if  let zone = gObjectInMainContext(with: cid) as? Zone {
 							addChildNoDuplicate(zone, updateCoreData: false) // not update core data, it already exists
 							zone.register() // need to wait until after child has a parent so bookmarks will be registered properly
 						}

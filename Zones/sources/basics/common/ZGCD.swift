@@ -11,13 +11,14 @@ import Foundation
 
 let gFOREGROUND = DispatchQueue.main
 let gBACKGROUND = DispatchQueue.global(qos: .background)
+var gIsMainThread: Bool { return Thread.isMainThread }
 
 func FOREGROUND(forced: Bool = false, after seconds: Double? = nil, _ closure: @escaping Closure) {
 	if  let after = seconds, after != .zero {
 		let  when = DispatchWallTime.now() + Double(Int64(after * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
 
 		gFOREGROUND.asyncAfter(wallDeadline: when) { closure() }
-	} else if Thread.isMainThread {
+	} else if gIsMainThread {
 		closure()
 	} else if forced {
 		gFOREGROUND .sync { closure() }
@@ -27,7 +28,7 @@ func FOREGROUND(forced: Bool = false, after seconds: Double? = nil, _ closure: @
 }
 
 func BACKGROUND(_ closure: @escaping Closure) {
-	if !Thread.isMainThread {
+	if !gIsMainThread {
 		closure()
 	} else {
 		gBACKGROUND.async { closure() }
