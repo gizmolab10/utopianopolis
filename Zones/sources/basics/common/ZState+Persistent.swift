@@ -8,6 +8,16 @@
 
 import Foundation
 
+func gUpdatePersistence() {
+	if !gCDUseExistingDefaults {
+		let domain = Bundle.main.bundleIdentifier!
+		UserDefaults.standard.removePersistentDomain(forName: domain)
+		UserDefaults.standard.synchronize()
+	} else if !gCDUseExistingStores {  // if we erase stores, we should also erase old record names, but above will also erase them
+		gClearHereRecordNames()
+	}
+}
+
 func gClearHereRecordNames() {
 	setPreferencesString(kDefaultRecordNames, for: kHereRecordNames)
 }
@@ -819,7 +829,7 @@ func setPreferencesInt(_ iInt: Int?, for key: String) {
 }
 
 func getPreferencesBool(for key: String, defaultBool: Bool) -> Bool {
-	if  let value: NSNumber = UserDefaults.standard.object(forKey: key) as? NSNumber {
+	if  let    value: NSNumber = UserDefaults.standard.object(forKey: key) as? NSNumber {
 		return value.boolValue
 	}
 

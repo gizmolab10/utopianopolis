@@ -28,6 +28,7 @@ func gSetupDebugFeatures() {
 //	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
 //	gCoreDataMode.insert(.dNotPreloadFromCK)    // don't pre-populate CD from CK
 //	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate { local test folder & CK repository }
+//	gCoreDataMode.insert(.dEraseUserDefaults)   // remove user defaults repository
 
 //                                              // these are unlikely to change any time soon:
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
@@ -43,59 +44,57 @@ func gSetupDebugFeatures() {
 	gPrintModes  .insert(.dCross)
 //	gPrintModes  .insert(.dMoving)
 //	gPrintModes  .insert(.dMigrate)
-
-	if !gCDUseExistingStores {  // if we erase stores, we should also erase old record names
-		gClearHereRecordNames()
-	}
 }
 
 // all these are eventually going to be true
 
-var           gIsUsingCD : Bool { return !gCoreDataMode.contains(.dDisabled) }
-var           gCDCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)          && gIsUsingCD }
-var           gCDCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)          && gIsUsingCD }
-var          gCDUseCloud : Bool { return !gCoreDataMode.contains(.dNotUseCloud)      && gIsUsingCD }
-var         gCDUseUserID : Bool { return !gCoreDataMode.contains(.dNotUseUserID)     && gIsUsingCD }
-var       gCDNormalStore : Bool { return !gCoreDataMode.contains(.dTestingMigration) && gIsUsingCD }
-var       gCDTestTrashed : Bool { return !gCoreDataMode.contains(.dNotTestTrashed)   && gIsUsingCD }
-var      gCDUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)          && gIsUsingCD }
-var      gCDLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)    && gIsUsingCD }
-var     gCDPreloadFromCK : Bool { return !gCoreDataMode.contains(.dNotPreloadFromCK) && gIsUsingCD }
-var     gCKIsInitialized : Bool { return !gCoreDataMode.contains(.dInitializeCloud)  && gIsUsingCD }
-var  gCDUseRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)  && gIsUsingCD }
-var gCDUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)      && gIsUsingCD }
+var             gIsUsingCD : Bool { return !gCoreDataMode.contains(.dDisabled) }
+var             gCDCanSave : Bool { return !gCoreDataMode.contains(.dNotSave)           && gIsUsingCD }
+var             gCDCanLoad : Bool { return !gCoreDataMode.contains(.dNotLoad)           && gIsUsingCD }
+var            gCDUseCloud : Bool { return !gCoreDataMode.contains(.dNotUseCloud)       && gIsUsingCD }
+var           gCDUseUserID : Bool { return !gCoreDataMode.contains(.dNotUseUserID)      && gIsUsingCD }
+var         gCDNormalStore : Bool { return !gCoreDataMode.contains(.dTestingMigration)  && gIsUsingCD }
+var         gCDTestTrashed : Bool { return !gCoreDataMode.contains(.dNotTestTrashed)    && gIsUsingCD }
+var        gCDUseHierarchy : Bool { return !gCoreDataMode.contains(.dUseFlat)           && gIsUsingCD }
+var        gCDLoadEachRoot : Bool { return !gCoreDataMode.contains(.dLoadAllAtOnce)     && gIsUsingCD }
+var       gCDPreloadFromCK : Bool { return !gCoreDataMode.contains(.dNotPreloadFromCK)  && gIsUsingCD }
+var       gCKIsInitialized : Bool { return !gCoreDataMode.contains(.dInitializeCloud)   && gIsUsingCD }
+var    gCDUseRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)   && gIsUsingCD }
+var   gCDUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)       && gIsUsingCD }
+var gCDUseExistingDefaults : Bool { return !gCoreDataMode.contains(.dEraseUserDefaults) && gIsUsingCD }
 
-var gIsShowingDuplicates : Bool { return  gDebugModes  .contains(.dShowDuplicates) }
-var gSubscriptionTimeout : Bool { return  gDebugModes  .contains(.dSubscriptionTimeout) }
-var  gHideNoteVisibility : Bool { return  gDebugModes  .contains(.dHideNoteVisibility) }
-var     gNoSubscriptions : Bool { return  gDebugModes  .contains(.dNoSubscriptions) }
-var     gIgnoreExemption : Bool { return  gDebugModes  .contains(.dIgnoreExemption) }
-var         gDebugAngles : Bool { return  gDebugModes  .contains(.dDebugAngles) }
-var         gDebugAccess : Bool { return  gDebugModes  .contains(.dDebugAccess) }
-var          gAddDestroy : Bool { return  gDebugModes  .contains(.dShowDestroy) }
-var          gWriteFiles : Bool { return  gDebugModes  .contains(.dWriteFiles) }
-var           gDebugInfo : Bool { return  gDebugModes  .contains(.dDebugInfo) }
-var           gDebugDraw : Bool { return  gDebugModes  .contains(.dDebugDraw) }
-var             gNewUser : Bool { return  gDebugModes  .contains(.dNewUser) }
+var   gIsShowingDuplicates : Bool { return  gDebugModes  .contains(.dShowDuplicates) }
+var   gSubscriptionTimeout : Bool { return  gDebugModes  .contains(.dSubscriptionTimeout) }
+var    gHideNoteVisibility : Bool { return  gDebugModes  .contains(.dHideNoteVisibility) }
+var       gNoSubscriptions : Bool { return  gDebugModes  .contains(.dNoSubscriptions) }
+var       gIgnoreExemption : Bool { return  gDebugModes  .contains(.dIgnoreExemption) }
+var           gDebugAngles : Bool { return  gDebugModes  .contains(.dDebugAngles) }
+var           gDebugAccess : Bool { return  gDebugModes  .contains(.dDebugAccess) }
+var            gAddDestroy : Bool { return  gDebugModes  .contains(.dShowDestroy) }
+var            gWriteFiles : Bool { return  gDebugModes  .contains(.dWriteFiles) }
+var             gDebugInfo : Bool { return  gDebugModes  .contains(.dDebugInfo) }
+var             gDebugDraw : Bool { return  gDebugModes  .contains(.dDebugDraw) }
+var               gNewUser : Bool { return  gDebugModes  .contains(.dNewUser) }
 
 struct ZCoreDataMode: OptionSet {
 	let rawValue : Int
 
 	init(rawValue: Int) { self.rawValue = rawValue }
 
-	static let dNotSave          = ZCoreDataMode(rawValue: 1 << 00) // save is not operational
-	static let dNotLoad          = ZCoreDataMode(rawValue: 1 << 01) // load is not operational
-	static let dUseFlat          = ZCoreDataMode(rawValue: 1 << 02) // use flat data folder and not use <user id> in store file path
-	static let dDisabled         = ZCoreDataMode(rawValue: 1 << 03) // cannot use core data
-	static let dNotUseCloud      = ZCoreDataMode(rawValue: 1 << 04) // store in cloud kit
-	static let dEraseStores      = ZCoreDataMode(rawValue: 1 << 05) // start the CD repo fresh
-	static let dNotUseUserID     = ZCoreDataMode(rawValue: 1 << 06) // use flat data folder and not use <user id> in store file path
-	static let dLoadAllAtOnce    = ZCoreDataMode(rawValue: 1 << 07) // load all zones and traits at once (only marginally faster, percentages don't show)
-	static let dNotTestTrashed   = ZCoreDataMode(rawValue: 1 << 08) // ignore isTrashed during fetch
-	static let dNoRelationships  = ZCoreDataMode(rawValue: 1 << 09) // not use ZRelationship
-	static let dInitializeCloud  = ZCoreDataMode(rawValue: 1 << 10) // only need to do this once
-	static let dTestingMigration = ZCoreDataMode(rawValue: 1 << 11) // use migration.testing (not data)
-	static let dNotPreloadFromCK = ZCoreDataMode(rawValue: 1 << 12) // don't pre-populate CD from CK
+	static let dNotSave           = ZCoreDataMode(rawValue: 1 << 00) // save is not operational
+	static let dNotLoad           = ZCoreDataMode(rawValue: 1 << 01) // load is not operational
+	static let dUseFlat           = ZCoreDataMode(rawValue: 1 << 02) // use flat data folder and not use <user id> in store file path
+	static let dDisabled          = ZCoreDataMode(rawValue: 1 << 03) // cannot use core data
+	static let dNotUseCloud       = ZCoreDataMode(rawValue: 1 << 04) // store in cloud kit
+	static let dEraseStores       = ZCoreDataMode(rawValue: 1 << 05) // start the CD repo fresh
+	static let dNotUseUserID      = ZCoreDataMode(rawValue: 1 << 06) // use flat data folder and not use <user id> in store file path
+	static let dLoadAllAtOnce     = ZCoreDataMode(rawValue: 1 << 07) // load all zones and traits at once (only marginally faster, percentages don't show)
+	static let dNotTestTrashed    = ZCoreDataMode(rawValue: 1 << 08) // ignore isTrashed during fetch
+	static let dNoRelationships   = ZCoreDataMode(rawValue: 1 << 09) // not use ZRelationship
+	static let dInitializeCloud   = ZCoreDataMode(rawValue: 1 << 10) // only need to do this once
+	static let dTestingMigration  = ZCoreDataMode(rawValue: 1 << 11) // use migration.testing (not data)
+	static let dNotPreloadFromCK  = ZCoreDataMode(rawValue: 1 << 12) // don't pre-populate CD from CK
+	static let dEraseUserDefaults = ZCoreDataMode(rawValue: 1 << 13) // remove user defaults repository
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {
