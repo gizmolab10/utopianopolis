@@ -342,18 +342,16 @@ extension Zone {
 					unlinkParentAndMaybeNeedSave()
 				} else if let parentName  = parentZoneMaybe?.recordName,
 						  let parentDBID  = parentZoneMaybe?.databaseID {
-					if        parentDBID == databaseID {
-						if  parentRID    != parentName {
-							parentRID     = parentName
-							parentLink    = kNullLink
-						}
-					} else {                                                                                // new parent is in different db
+					if        parentDBID != maybeDatabaseID {                                  // new parent is in different db
 						let newParentLink = parentDBID.rawValue + kDoubleColonSeparator + parentName
 
 						if  parentLink   != newParentLink {
 							parentLink    = newParentLink  // references don't work across dbs
 							parentRID     = kNullParent
 						}
+					} else if parentRID  != parentName {
+						parentRID         = parentName
+						parentLink        = kNullLink
 					}
 				}
 			}

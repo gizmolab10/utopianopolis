@@ -84,7 +84,7 @@ class ZSelecting: NSObject {
 		var start: Zone?
 
 		if  let zone = firstGrab() {
-			start = zone.isInFavorites ? gFavorites.hereZoneMaybe : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
+			start = zone.isInFavorites ? gFavoritesCloud.hereZoneMaybe : zone.isInLostAndFound ? gLostAndFound : gHereMaybe
 		}
 
 		return start
@@ -285,7 +285,7 @@ class ZSelecting: NSObject {
 		
 		updateBrowsingLevel()
 		updateCousinList()
-		gFavorites.updateFavoritesAndRedraw(needsRedraw: needsRedraw) {
+		gFavoritesCloud.updateFavoritesAndRedraw(needsRedraw: needsRedraw) {
 			gSignal([.sDetails])
 		}
 	}
@@ -426,8 +426,8 @@ class ZSelecting: NSObject {
 
 				moveInto.moveZone(to: toRecords.rootZone)
 
-				if  gFavorites == toRecords {
-					gFavorites.setHere(to: moveInto)
+				if  gFavoritesCloud == toRecords {
+					gFavoritesCloud.setHere(to: moveInto)
 				}
 			}
 

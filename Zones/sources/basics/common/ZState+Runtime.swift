@@ -65,7 +65,7 @@ var               gUserIsIdle :               Bool  { return gUserActiveInWindow
 var         gCurrentEssayZone :               Zone? { return gCurrentEssay?.zone }
 var         gUniqueRecordName :             String  { return CKRecordID().recordName }
 var                   gUserID :             String? { return (gFileManager.ubiquityIdentityToken as? Data)?.base64EncodedString().fileSystemSafe }
-var                  gRecords :           ZRecords  { return (kIsPhone && gShowFavoritesMapForIOS) ? gFavorites : gRemoteStorage.currentRecords }
+var                  gRecords :           ZRecords  { return (kIsPhone && gShowFavoritesMapForIOS) ? gFavoritesCloud : gRemoteStorage.currentRecords }
 var                 gDarkMode :     InterfaceStyle  { return InterfaceStyle() }
 var            gModifierFlags :        ZEventFlags  { return ZEvent.modifierFlags } // use when don't have an event handy
 var    gTimeSinceCurrentEvent :       TimeInterval  { return Date.timeIntervalSinceReferenceDate - gTimeUntilCurrentEvent }
@@ -176,7 +176,7 @@ var gHere: Zone {
 		}
 
 		newValue.assureZoneAdoption()
-		gFavorites.push(newValue)
+		gFavoritesCloud.push(newValue)
 
 	}
 }

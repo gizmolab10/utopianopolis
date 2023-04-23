@@ -78,7 +78,7 @@ extension ZMapEditor {
 	func nextBookmark(down: Bool, flags: ZEventFlags) {
 		if !flags.exactlySplayed ||
 			!gSelecting.currentMoveable.cycleToNextInGroup(down) {
-			gFavorites.nextBookmark(down: down, flags: flags)
+			gFavoritesCloud.nextBookmark(down: down, flags: flags)
 			gRelayoutMaps()
 		}
 	}
@@ -90,7 +90,7 @@ extension ZEssayView {
 	func nextNotemark(down: Bool) {
 		save()
 		clearResizing()
-		gFavorites.nextBookmark(down: down, amongNotes: true)
+		gFavoritesCloud.nextBookmark(down: down, amongNotes: true)
 	}
 
 }

@@ -147,7 +147,7 @@ extension ZFiles {
 					// first delete potentially duplicated zones (root and children of recents)
 
 					root.deleteSelf(permanently: true, force: true) { _ in
-						if  let zones = gFavorites.recentsMaybe?.children {
+						if  let zones = gFavoritesCloud.recentsMaybe?.children {
 							zones.deleteZones(permanently: true, onCompletion: closure)
 						} else {
 							closure()

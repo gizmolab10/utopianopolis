@@ -198,11 +198,11 @@ class ZDragging: NSObject {
 
 			if  !isDone {
 				view.highlightUpDownButton(down)
-			} else if let parent = gFavorites.showNextList(down: down) {
+			} else if let parent = gFavoritesCloud.showNextList(down: down) {
 				var zones = draggedZones
 
 				if  controller.isMainMap {
-					zones = draggedZones.map { $0.isBookmark ? $0 : gFavorites.matchOrCreateBookmark(for: $0, addToRecents: false) }
+					zones = draggedZones.map { $0.isBookmark ? $0 : gFavoritesCloud.matchOrCreateBookmark(for: $0, addToRecents: false) }
 				}
 
 				zones.moveIntoAndGrab(parent) { flag in }   // move dragged zone into the new focused list

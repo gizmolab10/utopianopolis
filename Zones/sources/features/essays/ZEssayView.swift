@@ -438,7 +438,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					case "a":      selectAll(nil)
 					case "n":      swapBetweenNoteAndEssay()
 					case "t":      if let string = selectionString { showThesaurus(for: string) } else { return false }
-					case "]", "[": gFavorites.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
+					case "]", "[": gFavoritesCloud.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 					case kSlash:   gHelpController?.show(flags: flags)
 					case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
 					case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
@@ -450,7 +450,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		} else if CONTROL {
 			switch key {
-				case kSlash:   if gFavorites.popNoteAndUpdate() { updateTextStorage() }
+				case kSlash:   if gFavoritesCloud.popNoteAndUpdate() { updateTextStorage() }
 				default:       if !enabled { return false } else {
 					switch key {
 						case "d": convertSelectedTextToChild()

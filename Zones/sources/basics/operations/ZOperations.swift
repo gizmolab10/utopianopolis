@@ -122,7 +122,7 @@ class ZOperations: NSObject {
 
 				gBatches.batch(identifier) { iResult in
 					if  gCloudStatusIsActive {
-						gFavorites.updateAllFavorites()
+						gFavoritesCloud.updateAllFavorites()
 					}
 
 					gRelayoutMaps()

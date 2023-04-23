@@ -54,7 +54,7 @@ class ZFavoritesMapController: ZMapController {
 	override func handleSignal(kind: ZSignalKind) {
 		if  gFavoritesAreVisible {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()
-			gFavorites.updateCurrentWithBookmarksTargetingHere()
+			gFavoritesCloud.updateCurrentWithBookmarksTargetingHere()
 			super.handleSignal(kind: kind)
 		}
 	}

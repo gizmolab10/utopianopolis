@@ -214,7 +214,7 @@ extension ZoneArray {
 			removeLast()
 		}
 
-		gFavorites.updateFavoritesAndRedraw()
+		gFavoritesCloud.updateFavoritesAndRedraw()
 	}
 
 	mutating func reverseOrder() {
@@ -444,7 +444,7 @@ extension ZoneArray {
 		if  into.isInFavorites {
 			into.parentZone?.collapse()
 
-			gFavorites.hereZoneMaybe = into
+			gFavoritesCloud.hereZoneMaybe = into
 		}
 
 		gSelecting.ungrabAll()
@@ -643,7 +643,7 @@ extension ZoneArray {
 			}
 		}
 
-		gFavorites.resetRecents()
+		gFavoritesCloud.resetRecents()
 	}
 
 	var firstUndeleted : Zone? {
@@ -729,9 +729,9 @@ extension ZoneArray {
 			}
 		}
 
-		gFavorites.showRoot()                           // point here to root, and expand
+		gFavoritesCloud.showRoot()                           // point here to root, and expand
 		groupOwner.alterAttribute(.groupOwner, remove: false)
-		gFavorites.insertAsNext(groupOwner)
+		gFavoritesCloud.insertAsNext(groupOwner)
 		FOREGROUND(after: 0.1) {
 			gRelayoutMaps()
 			groupOwner.edit()

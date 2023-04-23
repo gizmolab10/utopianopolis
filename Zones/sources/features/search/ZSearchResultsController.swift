@@ -246,7 +246,7 @@ class ZSearchResultsController: ZGenericTableController {
 				zone.resolveAsHere()
 			} else {
 				zone.grab()
-				gFavorites.revealInFavoritesMap(zone)
+				gFavoritesCloud.revealInFavoritesMap(zone)
 				gSignal([.spFavoritesMap])
 			}
 

@@ -10,8 +10,8 @@
 import Foundation
 import CloudKit
 
-let gFavorites     = ZFavorites(ZDatabaseID.favoritesID)
-var gFavoritesRoot : Zone? { return gFavorites.rootZone }
+let gFavoritesCloud     = ZFavorites(ZDatabaseID.favoritesID)
+var gFavoritesRoot : Zone? { return gFavoritesCloud.rootZone }
 var gFavoritesHere : Zone? { return gFavoritesHereMaybe ?? gFavoritesRoot }
 
 var gFavoritesHereMaybe: Zone? {

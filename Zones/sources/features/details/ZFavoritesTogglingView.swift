@@ -16,7 +16,7 @@ class ZFavoritesTogglingView : ZTogglingView {
 
 	@IBAction override func buttonAction(_ button: ZButton) {
 		switch identity {
-			case .vFavorites: gFavorites.showNextList(down: button == downButton)
+			case .vFavorites: gFavoritesCloud.showNextList(down: button == downButton)
 			default:          super.buttonAction(button)
 		}
 	}
@@ -57,13 +57,13 @@ class ZFavoritesTogglingView : ZTogglingView {
 	}
 
 	override func updateTitleBarButtons() {
-		let       bothHidden = gFavorites.hideUpDownView || hideHideable
-		let       downHidden = gFavorites.hideDownButton
+		let       bothHidden = gFavoritesCloud.hideUpDownView || hideHideable
+		let       downHidden = gFavoritesCloud.hideDownButton
 		upDownView?.isHidden = bothHidden
 
 		if !bothHidden {
-			downButton?.attributedTitle = gFavorites.nextListAttributedTitle(down:  true)
-			upButton?  .attributedTitle = gFavorites.nextListAttributedTitle(down: false)
+			downButton?.attributedTitle = gFavoritesCloud.nextListAttributedTitle(down:  true)
+			upButton?  .attributedTitle = gFavoritesCloud.nextListAttributedTitle(down: false)
 		}
 
 		if  let t = titleButton {

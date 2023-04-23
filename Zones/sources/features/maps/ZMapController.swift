@@ -112,7 +112,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		gToggleDatabaseID()
 		gHere.grab()
 		gHere.expand()
-		gFavorites.push(gHere)
+		gFavoritesCloud.push(gHere)
 	}
 
 	func recenter(_ SPECIAL: Bool = false) {

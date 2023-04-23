@@ -93,7 +93,7 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 		if  gIsEssayMode {
 			gEssayView?.nextNotemark(down: down)
 		} else {
-			gFavorites .nextBookmark(down: down)
+			gFavoritesCloud .nextBookmark(down: down)
 		}
 	}
 

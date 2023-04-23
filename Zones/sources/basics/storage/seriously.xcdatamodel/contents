@@ -101,4 +101,13 @@
         <memberEntity name="ZFile"/>
         <memberEntity name="ZRelationship"/>
     </configuration>
+    <configuration name="Shared">
+        <memberEntity name="ZFile"/>
+        <memberEntity name="ZManifest"/>
+        <memberEntity name="Zone"/>
+        <memberEntity name="ZRelationship"/>
+        <memberEntity name="ZTrait"/>
+        <memberEntity name="ZTraitAssets"/>
+        <memberEntity name="ZUser"/>
+    </configuration>
 </model>

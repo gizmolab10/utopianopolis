@@ -18,10 +18,11 @@ import UIKit
 enum ZCDStoreType: String {
 
 	case sLocal   = "Local"
+	case sShared  = "Shared"
 	case sPublic  = "Public"
 	case sPrivate = "Private"
 
-	static var     all : [ZCDStoreType] { return [.sLocal, .sPublic, .sPrivate] }
+	static var     all : [ZCDStoreType] { return [.sLocal, .sPublic, .sShared, .sPrivate] }
 	var    originalURL :           URL  { return gFilesURL.appendingPathComponent(gDataDirectoryName).appendingPathComponent(storeName) }
 	var    ckUserIDURL :           URL? { return url(for: gUserID) }    // TODO: needs mechanism for detecting when new user logs in
 	var ckSubmittedURL :           URL? { return url(for: ZCKRepositoryID.rSubmitted.rawValue) }
@@ -187,7 +188,7 @@ class ZCoreDataStack: NSObject {
 					FOREGROUND { [self] in
 						if  let root = persistentContainer?.viewContext.object(with: oid) as? Zone {
 							if  recordName == kFavoritesRootName {
-								gFavorites.setRoot(root, for: .favoritesID)
+								gFavoritesCloud.setRoot(root, for: .favoritesID)
 							} else {
 								zRecords.setRoot(root, for: recordName.rootID)
 							}
@@ -458,8 +459,10 @@ class ZCoreDataStack: NSObject {
 					let                    id = gCKRepositoryID.cloudKitID {
 					let               options = NSPersistentCloudKitContainerOptions(containerIdentifier: id)
 
-					if  type == .sPublic {
-						options.databaseScope = .public    // default is private. public needs osx v11.0
+					switch type {
+						case .sPublic: options.databaseScope = .public    // default is private. public needs osx v11.0
+						case .sShared: options.databaseScope = .shared
+						default:       break
 					}
 
 					description.cloudKitContainerOptions = options

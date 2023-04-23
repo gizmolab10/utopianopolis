@@ -30,7 +30,7 @@ class ZFocusing : NSObject {
 
 	func pushPopFavorite(_ flags: ZEventFlags, kind: ZFocusKind) {
 		if  flags.hasControl {
-			gFavorites.popAndUpdateCurrent()
+			gFavoritesCloud.popAndUpdateCurrent()
 		} else {
 			focusOnGrab(kind, flags, shouldGrab: true) { // complex grab logic
 				gRelayoutMaps()
@@ -66,15 +66,15 @@ class ZFocusing : NSObject {
 				finishAndGrabHere()
 			}
 		} else if zone == gHere {       // state 2
-			if !gFavorites.swapBetweenBookmarkAndTarget(flags, doNotGrab: !shouldGrab) {
-				gFavorites.matchOrCreateBookmark(for: zone, addToRecents: true)
+			if !gFavoritesCloud.swapBetweenBookmarkAndTarget(flags, doNotGrab: !shouldGrab) {
+				gFavoritesCloud.matchOrCreateBookmark(for: zone, addToRecents: true)
 			}
 
 			atArrival()
 		} else if zone.isInFavorites {  // state 3
 			finishAndGrabHere()
 		} else if flags.hasCommand {             // state 4
-			gFavorites.refocus {
+			gFavoritesCloud.refocus {
 				atArrival()
 			}
 		} else {                        // state 5

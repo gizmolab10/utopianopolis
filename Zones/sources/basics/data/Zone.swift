@@ -99,8 +99,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                         isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
 	var                                       isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
 	var                                    isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
-	var                                   isInFavoritesHere :               Bool  { return isProgenyOfOrEqualTo(gFavorites.currentHere) }
-	var                                    isInRecentsGroup :               Bool  { return isProgenyOfOrEqualTo(gFavorites.getRecentsGroup()) }
+	var                                   isInFavoritesHere :               Bool  { return isProgenyOfOrEqualTo(gFavoritesCloud.currentHere) }
+	var                                    isInRecentsGroup :               Bool  { return isProgenyOfOrEqualTo(gFavoritesCloud.getRecentsGroup()) }
 	var                                      isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || mapType.isExemplar }
 	var                                    isProgenyOfAGrab :               Bool  { return isProgenyOfAny(of: gSelecting.currentMapGrabs) }
 	var                                          spawnCycle :               Bool  { return isProgenyOfAGrab || dropCycle }
@@ -133,6 +133,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func orphan()                                                        { parentZone?.removeChild(self) }
 	func          toggleShowing()                                                 { isShowing ? hide() : show() }
 	func          recount()                                                       { updateAllProgenyCounts() }
+
+	var ckRecord: CKRecord? {
+		return gCoreDataStack.persistentContainer?.record(for: objectID)
+	}
+
+	var share: CKShare? {
+		if  let ck = ckRecord {
+			return CKShare(rootRecord: ck)
+		}
+
+		return nil
+	}
 
 	var parentZone : Zone? {
 		get { return getParentZone() }
@@ -1154,7 +1166,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					// SPECIAL CASE: delete here but here has no parent ... so, go somewhere useful and familiar //
 					// ///////////////////////////////////////////////////////////////////////////////////////// //
 
-					gFavorites.refocus { [self] in               // travel through current favorite, then ...
+					gFavoritesCloud.refocus { [self] in               // travel through current favorite, then ...
 						if  gHere != self {
 							recurse()
 						} else {
@@ -1171,7 +1183,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 						if  p.count == 0, p.isInFavorites,
 							let g = p.parentZone {
-							gFavorites.hereZoneMaybe = g
+							gFavoritesCloud.hereZoneMaybe = g
 
 							g.expand()
 							p.grab()
@@ -1201,7 +1213,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 							iZone.unregister()
 							iZone.orphan()
 							gManifest?.smartAppend(iZone)
-							gFavorites.pop(iZone)  // avoid getting stuck on a zombie
+							gFavoritesCloud.pop(iZone)  // avoid getting stuck on a zombie
 							iZone.deleteFromCD()
 						}
 					}
@@ -1290,7 +1302,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func maybeRestoreParent() {
-		let clouds: [ZRecords?] = [gFavorites, zRecords]
+		let clouds: [ZRecords?] = [gFavoritesCloud, zRecords]
 
 		for cloud in clouds {
 			restoreParentFrom(cloud?.rootZone)   // look through all records for a match with which to set parent
@@ -1354,8 +1366,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			addAGrab(extreme: extreme, onCompletion: onCompletion)
 		} else if let next = gListsGrowDown ? children.last : children.first {
 			next.grab()
-			gFavorites.setHere(to: self)
-			gFavorites.updateFavoritesAndRedraw {
+			gFavoritesCloud.setHere(to: self)
+			gFavoritesCloud.updateFavoritesAndRedraw {
 				gSignal([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
 			}
 		}
@@ -1385,7 +1397,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					p.expand()
 				} else if let g = p.parentZone { // narrow: hide children and set here zone to parent
 					g.concealAllProgeny()
-					gFavorites.setHere(to: g)
+					gFavoritesCloud.setHere(to: g)
 					// FUBAR: parent sometimes disappears!!!!!!!!!
 				} else if p.isARoot {
 					onCompletion?(true)
@@ -1749,7 +1761,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func deleteNote() {
 		removeTrait(for: .tNote)
-		gFavorites.pop(self)
+		gFavoritesCloud.pop(self)
 
 		noteMaybe     = nil
 		gNeedsRecount = true          // trigger recount on next timer fire
@@ -1780,7 +1792,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior or create new (OPTION -> create)
 					gCurrentEssay  = note
 
-					gFavorites.push(note?.zone)
+					gFavoritesCloud.push(note?.zone)
 				}
 
 				if  SPECIAL {
@@ -1979,7 +1991,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 //			print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
 
-			gFavorites.show(zone)
+			gFavoritesCloud.show(zone)
 			zone.grab()
 			gRelayoutMaps()
 
@@ -1999,7 +2011,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.expand()
 				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKindArray) in
-					gFavorites.updateCurrentWithBookmarksTargetingHere()
+					gFavoritesCloud.updateCurrentWithBookmarksTargetingHere()
 					atArrival()
 				}
 
@@ -2038,7 +2050,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var               there : Zone?
 
 			let complete : SignalClosure = { [self] (iObject, kind) in
-				gFavorites.setCurrentFavoriteBoomkarks(to: self)
+				gFavoritesCloud.setCurrentFavoriteBoomkarks(to: self)
 				showTopLevelFunctions()
 				atArrival(iObject, kind)
 			}
@@ -2111,8 +2123,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  COMMAND, target.invokeEssay() { // first, check if target has an essay
 				onCompletion?(false)
 			} else if target.isInFavorites {
-				gFavorites.setHere(to: target)
-				gFavorites.updateFavoritesAndRedraw {
+				gFavoritesCloud.setHere(to: target)
+				gFavoritesCloud.updateFavoritesAndRedraw {
 					onCompletion?(false)
 				}
 			} else {
@@ -2225,7 +2237,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				child.grab()
 
 				if  zone.isInFavorites { // narrow, so hide former here and ignore extreme
-					gFavorites.setHere(to: zone)
+					gFavoritesCloud.setHere(to: zone)
 				} else if extreme {
 					zone = child
 
@@ -2343,7 +2355,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					var bookmark = zone
 
 					if  toFavorites && !bookmark.isInFavorites && !bookmark.isBookmark && !bookmark.isInTrash && !STAYHERE {
-						bookmark = gFavorites.matchOrCreateBookmark(for: bookmark, addToRecents: false)
+						bookmark = gFavoritesCloud.matchOrCreateBookmark(for: bookmark, addToRecents: false)
 					} else if bookmark.databaseID != into.databaseID {    // being moved to the other db
 						if  bookmark.parentZone == nil || !bookmark.parentZone!.children.contains(bookmark) || !COPY {
 							bookmark.needDestroy()                        // in wrong DB ... is not a child within its parent
@@ -3000,7 +3012,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				if  show {
-					gFavorites.swapBetweenBookmarkAndTarget()
+					gFavoritesCloud.swapBetweenBookmarkAndTarget()
 				} else if grabHere {
 					gHere.grab()
 				}
@@ -3364,7 +3376,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.showAccess    = hasAccessDecoration
 		p.hasTargetNote = t?.hasNote ?? false
 		p.isGroupOwner  = g == self || g == t
-		p.showSideDot   = gFavorites.isCurrent(self)
+		p.showSideDot   = gFavoritesCloud.isCurrent(self)
 		p.childCount    = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.accessType    = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
 		p.isDragged     = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil

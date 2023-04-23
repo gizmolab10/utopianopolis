@@ -38,7 +38,7 @@ class ZOnboarding : ZOperations {
 
 	@objc func completeOnboarding(_ notification: Notification) {
 		gBatches.batch(.bNewAppleID) { iResult in
-			gFavorites.updateAllFavorites()
+			gFavoritesCloud.updateAllFavorites()
 			gRelayoutMaps()
 		}
 	}

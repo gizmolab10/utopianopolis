@@ -572,7 +572,7 @@ var gAdjustedEssayTitleMode: ZEssayTitleMode {
 
 func gRefreshCurrentEssay() {
 	if  let identifier = getPreferencesString(for: kCurrentEssay, defaultString: kTutorialRecordName),
-		let      essay = gFavorites.object(for: identifier) as? ZNote {
+		let      essay = gFavoritesCloud.object(for: identifier) as? ZNote {
 		gCurrentEssay  = essay
 	}
 }

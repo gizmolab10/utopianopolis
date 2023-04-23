@@ -137,7 +137,7 @@ class ZMapEditor: ZBaseEditor {
 						case "o":        gFiles.importExport(export: false, moveable, with: flags)
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
-						case "s":        gFiles.importExport(export: true, moveable, with: flags)
+						case "s":        if     ALL { invokeShare() } else { gFiles.importExport(export: true, moveable, with: flags) }
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }
@@ -380,6 +380,16 @@ class ZMapEditor: ZBaseEditor {
 
 	// MARK: - features
 	// MARK: -
+
+	func invokeShare() {
+		if  let share = gSelecting.currentMoveableMaybe?.share,
+			let c = gCloudContainer {
+			let s = NSSharingService(named: NSSharingService.Name("Seriously"))
+			let p = NSItemProvider()
+			p.registerCloudKitShare(share, container: c)
+		}
+
+	}
 
 	func mapControl(_ OPTION: Bool) {
 		if !OPTION {
@@ -783,7 +793,7 @@ class ZMapEditor: ZBaseEditor {
 	func delete(permanently: Bool = false, preserveChildren: Bool = false, convertToTitledLine: Bool = false) {
 		if  preserveChildren && !permanently {
 			preserveChildrenOfGrabbedZones(convertToTitledLine: convertToTitledLine) {
-				gFavorites.updateFavoritesAndRedraw(needsRedraw: false) {
+				gFavoritesCloud.updateFavoritesAndRedraw(needsRedraw: false) {
 					FOREGROUND(after: 0.05) {
 						gRelayoutMaps()
 					}
@@ -803,7 +813,7 @@ class ZMapEditor: ZBaseEditor {
 					let c  = p.count
 					if  c == 0 || c <= i {   // no more siblings
 						if  p.isInFavorites {
-							gFavorites.updateAllFavorites()
+							gFavoritesCloud.updateAllFavorites()
 						} else if c == 0 {
 							ZBookmarks.newOrExistingBookmark(targeting: gHere, addTo: gFavoritesHere)  // assure at least one bookmark in recents (targeting here)
 
@@ -859,7 +869,7 @@ class ZMapEditor: ZBaseEditor {
 					undoManager.endUndoGrouping()
 				}
 
-				gFavorites.updateFavoritesAndRedraw()
+				gFavoritesCloud.updateFavoritesAndRedraw()
 			}
 
 			if !isBookmark {
@@ -962,7 +972,7 @@ class ZMapEditor: ZBaseEditor {
 						gSelecting.updateCousinList()
 						moveUp(up, originalGrabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset, forcedResponse: response, onCompletion: onCompletion)
 					} else {
-						gFavorites.updateAllFavorites()
+						gFavoritesCloud.updateAllFavorites()
 						onCompletion?([.spRelayout])
 					}
 				}
@@ -1266,7 +1276,7 @@ class ZMapEditor: ZBaseEditor {
 						} else if inFavoritesMap {
 							moveOut(to: gp) { reveal in
 								zone.grab()
-								gFavorites.setHere(to: gp)
+								gFavoritesCloud.setHere(to: gp)
 								onCompletion?(reveal)
 							}
 

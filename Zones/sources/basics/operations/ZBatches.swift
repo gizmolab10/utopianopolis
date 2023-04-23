@@ -301,7 +301,7 @@ class ZBatches: ZOnboarding {
         onCloudResponse = onCompletion     // for retry cloud in tools controller
 
 		switch operationID {
-			case .oFavorites:        gFavorites.setup(                                                              onCompletion)
+			case .oFavorites:        gFavoritesCloud.setup(                                                              onCompletion)
 			case .oSavingLocalData:  gSaveContext();                                                                onCompletion?(0)
 			case .oMigration:        gCoreDataStack.assureMigrationToLatest();                                      onCompletion?(0)
 			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               onCompletion?(0)

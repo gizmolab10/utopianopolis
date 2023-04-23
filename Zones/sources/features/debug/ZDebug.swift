@@ -27,7 +27,7 @@ func gSetupDebugFeatures() {
 //	gCoreDataMode.insert(.dNotUseCloud)         // TODO: public data, acquire initial data
 //	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
 //	gCoreDataMode.insert(.dNotPreloadFromCK)    // don't pre-populate CD from CK
-	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate { local test folder & CK repository }
+//	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate { local test folder & CK repository }
 
 //                                              // these are unlikely to change any time soon:
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder

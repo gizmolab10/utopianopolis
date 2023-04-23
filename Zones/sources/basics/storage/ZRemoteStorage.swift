@@ -11,6 +11,7 @@ import CloudKit
 
 let gRemoteStorage = ZRemoteStorage()
 var gEveryoneCloud : ZCloud?     { return gRemoteStorage.zRecords(for: .everyoneID) as? ZCloud }
+var   gSharedCloud : ZCloud?     { return gRemoteStorage.zRecords(for:   .sharedID) as? ZCloud }
 var     gMineCloud : ZCloud?     { return gRemoteStorage.zRecords(for:     .mineID) as? ZCloud }
 var         gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
 var     gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
@@ -218,7 +219,7 @@ class ZRemoteStorage: NSObject {
 		var zRecords   = records[databaseID]
 		if  zRecords  == nil {
 			switch databaseID {
-			case .favoritesID: zRecords = gFavorites
+			case .favoritesID: zRecords = gFavoritesCloud
 			default:           zRecords = ZCloud(databaseID)
 			}
 			
