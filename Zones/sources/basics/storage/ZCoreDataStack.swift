@@ -349,7 +349,7 @@ class ZCoreDataStack: NSObject {
 					}
 				}
 			} catch {
-				printDebug(.dError, "\(error)")
+				printDebug(.dError, "FETCH \(error)")
 			}
 		}
 

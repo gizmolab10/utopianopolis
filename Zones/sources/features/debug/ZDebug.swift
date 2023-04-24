@@ -15,26 +15,26 @@ import UIKit
 #endif
 
 func gSetupDebugFeatures() {
-//	gClearUserDefaults()                        // TODO: comment this out to erase all leftover configuration
+//	gClearUserDefaults()                             // TODO: comment this out to erase all leftover configuration
 
-	// all these flags will eventually be commented out
+	// all these flags will eventually be removed
 
 	gDebugModes         = []
 	gDebugModes  .insert(.dNoSubscriptions)
 	gDebugModes  .insert(.dHideNoteVisibility)
 
-	gCoreDataMode       = []                    // current work is focused on these:
-//	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
-//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: public data
-//	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
-//	gCoreDataMode.insert(.dNotPreloadFromCK)    // don't pre-populate CD from CK
-	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate { local test folder & CK repository }
+	gCoreDataMode       = []                         // current work is focused on these:
+//	gCoreDataMode.insert(.dEraseStores)              // discard CD stores and start from stratch
+//	gCoreDataMode.insert(.dNotUseCloud)              // ignore CK
+//	gCoreDataMode.insert(.dInitializeCloud)          // do this once, when change and reset CK schema
+//	gCoreDataMode.insert(.dNotPreloadFromCK)         // don't pre-populate CD from CK
+//	gCoreDataMode.insert(.dTestingMigration)         // store core data in a separate { local test folder & CK repository }
 
-//                                              // these are unlikely to change any time soon:
-//	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
-//	gCoreDataMode.insert(.dNotUseUserID)        // not use <user id> in store file path
-	gCoreDataMode.insert(.dNotTestTrashed)      // ignore isTrashed during fetch TODO: missing keypath
-	gCoreDataMode.insert(.dNoRelationships)     // don't use the relationships table yet
+//                                                   // these are unlikely to change any time soon:
+//	gCoreDataMode.insert(.dUseFlat)                  // use flat data folder
+//	gCoreDataMode.insert(.dNotUseUserID)             // not use <user id> in store file path
+	gCoreDataMode.insert(.dNotTestTrashed)           // ignore isTrashed during fetch TODO: missing keypath
+	gCoreDataMode.insert(.dNoRelationships)          // don't use the relationships table yet
 
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)
