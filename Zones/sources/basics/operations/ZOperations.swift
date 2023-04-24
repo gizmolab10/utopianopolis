@@ -27,13 +27,13 @@ enum ZOperationID: Int, CaseIterable {
 	case oManifest
 	case oRoots
 	case oFavorites			 // MINE ONLY
-	case oMigrateFromCloud   // " " until public data can be stored in CK
 	case oHere
 	case oWrite
 	case oDone
 
     // miscellaneous      --> no particular order
 
+	case oMigrateFromCloud
 	case oSavingLocalData    // LOCAL
 	case oResolveMissing
     case oFinishing

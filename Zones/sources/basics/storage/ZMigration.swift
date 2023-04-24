@@ -160,9 +160,9 @@ extension ZBatches {
 		}
 
 		switch gCDMigrationState {
-			case .mFirstTime,
-				 .mFiles: try gFiles.migrate(into: databaseID, onCompletion: finish)
-			default:            gLoadContext(into: databaseID, onCompletion: finish)
+			case .mFiles:     try gFiles.migrate(into: databaseID, onCompletion: finish)
+			case .mFirstTime:   migrateFromCloud(into: databaseID, onCompletion: finish)
+			default:                gLoadContext(into: databaseID, onCompletion: finish)
 		}
 	}
 
