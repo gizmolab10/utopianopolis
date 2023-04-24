@@ -154,9 +154,9 @@ extension ZBatches {
 	func load(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		gUpdateCDMigrationState()
 
-		let finish: AnyClosure = { loadResult in
+		let finish: AnyClosure = { result in
 			gUpdateCDMigrationState()
-			onCompletion?(loadResult)
+			onCompletion?(result)
 		}
 
 		switch gCDMigrationState {
@@ -167,12 +167,8 @@ extension ZBatches {
 	}
 
 	func migrateFromCloud(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
-		if  databaseID == .mineID {
-			gMineCloud?.loadEverythingMaybe { everythingResult in // because Seriously is now running on a second device
-				onCompletion?(everythingResult)
-			}
-		} else {
-			onCompletion?(0)
+		gMineCloud?.loadEverythingMaybe { result in    // because Seriously is now running on a second device
+			onCompletion?(result)
 		}
 	}
 
