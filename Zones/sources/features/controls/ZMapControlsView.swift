@@ -26,8 +26,11 @@ enum ZModeButtonType: String {
 var gMapControlsView : ZMapControlsView? { return gControlsController?.mapControlsView }
 
 class ZMapControlsView : ZButtonsView, ZToolTipper {
+	var alreadySetup = false
 
 	override func setupButtons() {
+		if  alreadySetup { return }
+
 		super.setupButtons()
 
 		buttons                       = [ZHoverableButton]()
@@ -40,6 +43,8 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 			button.setButtonType(.momentaryLight)
 			buttons.append(button)
 		}
+
+		alreadySetup = true
 	}
 
 	func buttonFor(type: ZModeButtonType) -> ZButton {

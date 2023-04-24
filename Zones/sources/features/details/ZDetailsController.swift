@@ -26,7 +26,6 @@ struct ZDetailsViewID: OptionSet {
 	static let    vFavorites = ZDetailsViewID(rawValue: 1 << 3)
 	static let    vSubscribe = ZDetailsViewID(rawValue: 1 << 4)
 	static let          vAll = ZDetailsViewID(rawValue: 1 << 5)
-	static let  vFirstHidden = ZDetailsViewID(rawValue: 1 << 6)
 	static let         vLast = vFavorites
 }
 

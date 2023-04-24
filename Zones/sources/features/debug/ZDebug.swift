@@ -15,6 +15,7 @@ import UIKit
 #endif
 
 func gSetupDebugFeatures() {
+//	gClearUserDefaults()                        // TODO: comment this out to erase all leftover configuration
 
 	// all these flags will eventually be commented out
 
@@ -24,11 +25,10 @@ func gSetupDebugFeatures() {
 
 	gCoreDataMode       = []                    // current work is focused on these:
 //	gCoreDataMode.insert(.dEraseStores)         // discard CD stores and start from stratch
-//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: public data, acquire initial data
+//	gCoreDataMode.insert(.dNotUseCloud)         // TODO: public data
 //	gCoreDataMode.insert(.dInitializeCloud)     // do this once, when change and reset CK schema
 //	gCoreDataMode.insert(.dNotPreloadFromCK)    // don't pre-populate CD from CK
-//	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate { local test folder & CK repository }
-//	gCoreDataMode.insert(.dEraseUserDefaults)   // remove user defaults repository
+	gCoreDataMode.insert(.dTestingMigration)    // store core data in a separate { local test folder & CK repository }
 
 //                                              // these are unlikely to change any time soon:
 //	gCoreDataMode.insert(.dUseFlat)             // use flat data folder
@@ -61,7 +61,6 @@ var       gCDPreloadFromCK : Bool { return !gCoreDataMode.contains(.dNotPreloadF
 var       gCKIsInitialized : Bool { return !gCoreDataMode.contains(.dInitializeCloud)   && gIsUsingCD }
 var    gCDUseRelationships : Bool { return !gCoreDataMode.contains(.dNoRelationships)   && gIsUsingCD }
 var   gCDUseExistingStores : Bool { return !gCoreDataMode.contains(.dEraseStores)       && gIsUsingCD }
-var gCDUseExistingDefaults : Bool { return !gCoreDataMode.contains(.dEraseUserDefaults) && gIsUsingCD }
 
 var   gIsShowingDuplicates : Bool { return  gDebugModes  .contains(.dShowDuplicates) }
 var   gSubscriptionTimeout : Bool { return  gDebugModes  .contains(.dSubscriptionTimeout) }
@@ -94,7 +93,6 @@ struct ZCoreDataMode: OptionSet {
 	static let dInitializeCloud   = ZCoreDataMode(rawValue: 1 << 10) // only need to do this once
 	static let dTestingMigration  = ZCoreDataMode(rawValue: 1 << 11) // use migration.testing (not data)
 	static let dNotPreloadFromCK  = ZCoreDataMode(rawValue: 1 << 12) // don't pre-populate CD from CK
-	static let dEraseUserDefaults = ZCoreDataMode(rawValue: 1 << 13) // remove user defaults repository
 }
 
 func gToggleDebugMode(_ mode: ZDebugMode) {
@@ -253,3 +251,11 @@ func printDebug(_ mode: ZPrintMode, prefix: String = "  ", _ message: String, su
 		printFancy("\(mode): " + prefix + message, surround: surround, test)
 	}
 }
+
+func gClearUserDefaults() {
+	if  let domain = Bundle.main.bundleIdentifier {
+		UserDefaults.standard.removePersistentDomain(forName: domain)
+		UserDefaults.standard.synchronize()
+	}
+}
+

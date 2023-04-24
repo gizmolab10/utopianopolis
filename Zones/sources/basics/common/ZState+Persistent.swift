@@ -9,11 +9,7 @@
 import Foundation
 
 func gUpdatePersistence() {
-	if !gCDUseExistingDefaults {
-		let domain = Bundle.main.bundleIdentifier!
-		UserDefaults.standard.removePersistentDomain(forName: domain)
-		UserDefaults.standard.synchronize()
-	} else if !gCDUseExistingStores {  // if we erase stores, we should also erase old record names, but above will also erase them
+	if !gCDUseExistingStores {  // if we erase stores, we should also erase old record names, but above will also erase them
 		gClearHereRecordNames()
 	}
 }
@@ -38,7 +34,7 @@ var gNeedsMigrate : Bool {
 }
 
 var gShowDetailsView : Bool {
-	get { return getPreferencesBool(   for: kShowDetails, defaultBool: false) }
+	get { return getPreferencesBool(   for: kShowDetails, defaultBool: true) }
 	set { setPreferencesBool(newValue, for: kShowDetails) }
 }
 
@@ -63,7 +59,7 @@ var gShowExplanations : Bool {
 }
 
 var gShowMainControls : Bool {
-	get { return getPreferencesBool(   for: kShowMainControls, defaultBool: false) }
+	get { return getPreferencesBool(   for: kShowMainControls, defaultBool: true) }
 	set { setPreferencesBool(newValue, for: kShowMainControls) }
 }
 
@@ -506,7 +502,7 @@ var gHiddenDetailViewIDs: ZDetailsViewID {
 		}
 
 		if  viewID    == nil {
-			viewID     = .vFirstHidden
+			viewID     = [.vData, .vPreferences, .vSubscribe, .vKickoffTools]
 
 			UserDefaults.standard.set(viewID!.rawValue, forKey:kDetailsState)
 			UserDefaults.standard.synchronize()
