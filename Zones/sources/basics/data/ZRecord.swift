@@ -229,7 +229,8 @@ class ZRecord: ZManagedObject {
 	}
 
 	@nonobjc static func uniqueZRecord(entityName: String, recordName: String?, in databaseID: ZDatabaseID, checkCDStore: Bool = false) -> ZRecord {
-		let        zRecord = uniqueManagedObject(entityName: entityName, recordName: recordName, in: databaseID, checkCDStore: checkCDStore) as! ZRecord
+		let         object = uniqueManagedObject(entityName: entityName, recordName: recordName, in: databaseID, checkCDStore: checkCDStore)
+		let        zRecord = object as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 		zRecord      .dbid = databaseID.identifier
 		
