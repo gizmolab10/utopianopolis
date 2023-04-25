@@ -24,11 +24,11 @@ func gSetupDebugFeatures() {
 	gDebugModes  .insert(.dHideNoteVisibility)
 
 	gCoreDataMode       = []                         // current work is focused on these:
-//	gCoreDataMode.insert(.dEraseStores)              // discard CD stores and start from stratch
+	gCoreDataMode.insert(.dEraseStores)              // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseCloud)              // ignore CK
 //	gCoreDataMode.insert(.dInitializeCloud)          // do this once, when change and reset CK schema
 //	gCoreDataMode.insert(.dNotPreloadFromCK)         // don't pre-populate CD from CK
-//	gCoreDataMode.insert(.dTestingMigration)         // store core data in a separate { local test folder & CK repository }
+	gCoreDataMode.insert(.dTestingMigration)         // store core data in a separate { local test folder & CK repository }
 
 //                                                   // these are unlikely to change any time soon:
 //	gCoreDataMode.insert(.dUseFlat)                  // use flat data folder

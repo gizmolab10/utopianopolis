@@ -3100,6 +3100,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		children.reorderAccordingToValue()
 	}
 
+	func respectOrderForAllProgeny() {
+		traverseAllProgeny { zone in
+			zone.respectOrder()
+		}
+	}
+
 	func isChild(of iParent: Zone?) -> Bool {
 		return iParent != nil && iParent == parentZone
 	}

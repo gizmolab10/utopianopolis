@@ -431,6 +431,8 @@ extension ZCloud {
 			return
 		}
 
+		gRefusesAlterOrdering = true // so idea ordering stored in repository is not destroyed
+
 		for type in [kZoneType, kTraitAssetsType, kManifestType] {
 			fetchAllRecords(of: type) { [self] ckRecords in
 				print("fetched \(ckRecords.count) \(type) record(s)")
@@ -446,7 +448,10 @@ extension ZCloud {
 					typeCount -= 1
 
 					if  typeCount == 0 {
-						assureAdoption { value in
+						assureAdoption { [self] value in
+							gRefusesAlterOrdering = false
+
+							rootZone?.respectOrderForAllProgeny()
 							onCompletion?(0)
 						}
 					}

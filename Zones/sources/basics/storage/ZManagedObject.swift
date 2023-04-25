@@ -26,6 +26,8 @@ extension ZManagedObject {
 	@objc var isActualChild: Bool { return true }
 
 	convenience init(entityName: String?, databaseID: ZDatabaseID) {
+		gCoreDataStack.assureContainerIsSetup()
+
 		if  let    name = entityName,
 			let context = gCDThreadAppropriateContext,
 			let  entity = NSEntityDescription.entity(forEntityName: name, in: context) {

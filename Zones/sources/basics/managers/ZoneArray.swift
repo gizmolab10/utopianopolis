@@ -109,6 +109,8 @@ extension ZoneArray {
 	}
 
 	func updateOrdering(start: Double, end: Double) {
+		if  gRefusesAlterOrdering { return }
+
 		let increment = (end - start) / Double(count + 2)
 
 		for (index, child) in enumerated() {
