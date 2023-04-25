@@ -34,6 +34,7 @@ class ZMainController: ZGesturesController {
 	@IBOutlet var dismissButton              : ZButton?
 	@IBOutlet var hamburgerButton            : ZButton?
 	@IBOutlet var helpButton                 : ZHelpButton?
+	@IBOutlet var testingIndicator           : ZTextField?
 	@IBOutlet var spinner                    : ZProgressIndicator?
 	var           shownBusyDepth             = 0
 
@@ -61,6 +62,7 @@ class ZMainController: ZGesturesController {
 		detailView?      .isHidden = !showDetails
 		debugView?       .isHidden = !gDebugInfo || [.wResultsMode, .wEssayMode].contains(gWorkMode)
 		controlsView?    .isHidden = !gShowMainControls
+		testingIndicator?.isHidden =  gCDNormalStore
 		hamburgerButton?  .toolTip =  gConcealmentString(hide: gShowDetailsView) + " detail views"
 		hamburgerButton?    .image =  hamburgerImage
 	}

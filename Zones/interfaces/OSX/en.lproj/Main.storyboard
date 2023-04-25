@@ -1214,6 +1214,18 @@ CA
                                     <action selector="helpButtonAction:" target="MXk-17-6Dz" id="4jL-i4-hFc"/>
                                 </connections>
                             </button>
+                            <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OEn-2i-jSE">
+                                <rect key="frame" x="20" y="22" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="NQD-sk-4GH"/>
+                                    <constraint firstAttribute="width" constant="20" id="dNr-VX-boo"/>
+                                </constraints>
+                                <textFieldCell key="cell" lineBreakMode="clipping" allowsUndo="NO" borderStyle="border" alignment="center" title="T" drawsBackground="YES" usesSingleLineMode="YES" id="RNb-1S-Wmu">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" red="0.99999600649999998" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="backgroundColor" red="1" green="0.57997884150000001" blue="0.54889668530000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="3wl-F6-Mu5" secondAttribute="trailing" id="1LB-o3-akz"/>
@@ -1223,6 +1235,7 @@ CA
                             <constraint firstItem="F4I-P3-P2H" firstAttribute="leading" secondItem="A3N-dA-Iov" secondAttribute="trailing" id="8iE-rx-QEt"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="9Q8-HC-P7X"/>
                             <constraint firstItem="3wl-F6-Mu5" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="GgL-zJ-zYQ"/>
+                            <constraint firstItem="OEn-2i-jSE" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="20" symbolic="YES" id="GhQ-d7-Uc7"/>
                             <constraint firstItem="5oi-yK-PC4" firstAttribute="top" secondItem="eh7-uz-OG5" secondAttribute="top" id="HVB-l5-rqc"/>
                             <constraint firstAttribute="bottom" secondItem="5oi-yK-PC4" secondAttribute="bottom" id="Hxj-uH-co3"/>
                             <constraint firstAttribute="trailing" secondItem="0Id-yV-n0k" secondAttribute="trailing" id="L9B-Tn-dxD"/>
@@ -1235,6 +1248,7 @@ CA
                             <constraint firstAttribute="trailing" secondItem="uYG-mD-FXW" secondAttribute="trailing" constant="20" symbolic="YES" id="ZLr-De-wDX"/>
                             <constraint firstAttribute="bottom" secondItem="5jB-w2-4Dg" secondAttribute="bottom" id="bsX-IT-HDI"/>
                             <constraint firstItem="E8R-Lg-1Ha" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="ewO-M2-RZg"/>
+                            <constraint firstAttribute="bottom" secondItem="OEn-2i-jSE" secondAttribute="bottom" constant="22" id="f5x-gL-zXQ"/>
                             <constraint firstItem="5jB-w2-4Dg" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" constant="226" identifier="alternate side view leading" id="fVF-7D-R74"/>
                             <constraint firstItem="0Id-yV-n0k" firstAttribute="leading" secondItem="eh7-uz-OG5" secondAttribute="leading" id="gCG-TN-uGZ"/>
                             <constraint firstAttribute="trailing" secondItem="5oi-yK-PC4" secondAttribute="trailing" id="haB-GJ-03K"/>
@@ -1260,6 +1274,7 @@ CA
                         <outlet property="searchOptionsContainerView" destination="F4I-P3-P2H" id="LSS-OW-NHN"/>
                         <outlet property="searchResultsView" destination="cYx-gW-vNV" id="P84-rs-AYH"/>
                         <outlet property="spinner" destination="RFd-PF-BOD" id="vCH-ep-VXW"/>
+                        <outlet property="testingIndicator" destination="OEn-2i-jSE" id="72J-XL-aCx"/>
                     </connections>
                 </viewController>
                 <customObject id="GDK-b2-17b" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

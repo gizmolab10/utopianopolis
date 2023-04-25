@@ -140,7 +140,7 @@ class ZTimers: NSObject {
 			// ////////////////////////////////////////////////////////// //
 
 			resetTimer(for: timerID, withTimeInterval: waitFor, repeats: repeats, requiresFront: requiresFront) {
-				gCurrentTimerID     = timerID      // this is for cloudStatusLabel, during closure
+				gCurrentTimerID     = timerID   // so stopTimer(for: .tCoreDataDeferral) can reduce the number of timers
 
 				block()
 
