@@ -136,6 +136,7 @@ class ZCoreDataStack: NSObject {
 		} else {
 			deferUntilAvailable(for: .oLoad) { [self] in
 				assureContainerIsSetup()
+
 				FOREGROUND { [self] in
 					loadManifest(into: databaseID)
 
@@ -182,7 +183,7 @@ class ZCoreDataStack: NSObject {
 		let manifests       = load(type: kManifestType, into: databaseID, onlyOne: true)
 		if  manifests.count > 0,
 			let manifest    = manifests[0] as? ZManifest,
-			let cloud       = gRemoteStorage.cloud(for: databaseID) {
+			let cloud       = gCloudFor(databaseID) {
 			cloud.manifest  = manifest
 		}
 	}

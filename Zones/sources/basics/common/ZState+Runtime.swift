@@ -12,7 +12,7 @@ import CloudKit
 var  gTextEditorHandlesArrows                       = false
 var   gIsEditingStateChanging                       = false
 var    gRefusesFirstResponder                       = false
-var     gRefusesAlterOrdering                       = false
+var     gWhileMigratingFromCloudKit                       = false
 var      gAllowSavingWorkMode                       = false
 var       gHasFinishedStartup                       = false
 var       gIsExportingToAFile                       = false

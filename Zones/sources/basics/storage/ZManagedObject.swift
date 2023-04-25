@@ -46,7 +46,7 @@ extension ZManagedObject {
 	}
 
 	static func uniqueManagedObject(entityName: String, recordName: String?, in databaseID: ZDatabaseID, checkCDStore: Bool = false) -> ZManagedObject {
-		let       check = gIsUsingCD && !gFiles.isReading(for: databaseID)
+		let       check = gIsUsingCD && !gFiles.whileReading(for: databaseID) && !gWhileMigratingFromCloudKit
 		if  let    name = recordName, (checkCDStore || check) {
 			let objects = gCoreDataStack.find(type: entityName, recordName: name, in: databaseID, onlyOne: true, trackMissing: false)
 

@@ -160,16 +160,9 @@ extension ZBatches {
 		}
 
 		switch gCDMigrationState {
-			case .mFiles:     try gFiles.migrate(into: databaseID, onCompletion: finish)
-			case .mFirstTime:   migrateFromCloud(into: databaseID, onCompletion: finish)
-			default:                gLoadContext(into: databaseID, onCompletion: finish)
-		}
-	}
-
-	func migrateFromCloud(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
-		gCoreDataStack.assureContainerIsSetup()
-		gMineCloud?.loadEverythingMaybe { result in    // because Seriously is now running on a second device
-			onCompletion?(result)
+			case .mFirstTime: gCloudFor               (databaseID)?.loadEverythingMaybe(onCompletion: finish)
+			case .mFiles:     try gFiles.migrate(into: databaseID,                      onCompletion: finish)
+			default:          gLoadContext      (into: databaseID,                      onCompletion: finish)
 		}
 	}
 
@@ -177,19 +170,23 @@ extension ZBatches {
 
 extension ZCoreDataStack {
 
-	func updateForMigration() {
+	func updateRepositoryIDAndMigrationState() {
 		ZCKRepositoryID.updateRepositoryID()
 		gUpdateCDMigrationState()
 	}
 
 	func assureMigrationToLatest() {
-		updateForMigration()
+		updateRepositoryIDAndMigrationState()
 
 		if  gCDUseHierarchy {
+//			if  gCDMigrationState == .mFirstTime {
+//
+//			}
+
 			if  gCDMigrationState == .mCDOriginal,
 				let            to  = gCKRepositoryID.repositoryName.dataExtensionPath {            //   to ends in either  test2  or  <user id>
 				gDataDirectoryName.migrateTo(to)                                                   // move from old flat data folder
-				updateForMigration()
+				updateRepositoryIDAndMigrationState()
 			}
 
 			if	gCDMigrationState == .mCDHierarchal, gCDUseUserID,
@@ -197,7 +194,7 @@ extension ZCoreDataStack {
 				let          from  =  ZCKRepositoryID.rSubmitted.rawValue.dataExtensionPath {      // from ends in  test2
 
 				from.migrateTo(to)  // move to new user id folder
-				updateForMigration()
+				updateRepositoryIDAndMigrationState()
 			}
 		}
 	}
@@ -432,13 +429,15 @@ extension ZCloud {
 			return
 		}
 
-		gRefusesAlterOrdering = true // so idea ordering stored in repository is not destroyed
+		gWhileMigratingFromCloudKit = true         // 1. idea ordering stored in repository is not destroyed, 2. ignore core data repository (faster)
+
+		gCoreDataStack.assureContainerIsSetup()    // so ZManagedObject creation won't crash (gCDThreadAppropriateContext is not nil)
 
 		for type in [kZoneType, kTraitAssetsType, kManifestType] {
 			fetchAllRecords(of: type) { [self] ckRecords in
 				print("fetched \(ckRecords.count) \(type) record(s)")
 
-				gShowAppIsBusyWhile { [self] in    // adding records must be done in FOREGROUND: to avoid corruption and mutation while enumerating
+				gShowAppIsBusyWhileInForeground { [self] in    // adding records must be done in FOREGROUND: to avoid corruption and mutation while enumerating
 					for (index, ckRecord) in ckRecords.enumerated() {
 						let zRecord = ckRecord.createZRecord(of: type, in: databaseID)
 
@@ -450,9 +449,10 @@ extension ZCloud {
 
 					if  typeCount == 0 {
 						assureAdoption { [self] value in
-							gRefusesAlterOrdering = false
-
 							rootZone?.respectOrderForAllProgeny()
+
+							gWhileMigratingFromCloudKit = false
+
 							onCompletion?(0)
 						}
 					}
@@ -465,9 +465,9 @@ extension ZCloud {
 	func fetchAllRecords(of type: String, closure: CKRecordsClosure?) {
 		var ckRecords = CKRecordsArray()
 		let predicate = NSPredicate(value: true)
-//		let  timeSort : NSSortDescriptor? // = NSSortDescriptor(key: "modifiedTimestamp", ascending: true)
+		let  timeSort = NSSortDescriptor(key: "createdTimestamp", ascending: true)
 
-		queryFor(type.cloudKitType, with: predicate, properties: nil, sortedBy: nil, batchSize: 250) { record, error in
+		queryFor(type.cloudKitType, with: predicate, properties: nil, sortedBy: [timeSort], batchSize: 250) { record, error in
 			if  let ckRecord = record {
 				ckRecords.append(ckRecord)
 			} else { // after all records have arrived

@@ -119,7 +119,7 @@ func gPresentOpenPanel(at url: URL? = nil, _ callback: AnyClosure? = nil) {
 			} else if panel.urls.count > 0 {
 				let url = panel.urls[0]
 
-				gShowAppIsBusyWhile {
+				gShowAppIsBusyWhileInForeground {
 					callback?(url)
 				}
 			}

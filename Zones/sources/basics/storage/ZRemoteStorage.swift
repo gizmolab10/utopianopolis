@@ -19,12 +19,12 @@ var  gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
 var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
-
 func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID)  { gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe = here }
 func gMaybeZoneForRecordName (_ name: String?) -> Zone?          { return gRemoteStorage.maybeZoneForRecordName(name) }
+func gCloudFor(_ databaseID: ZDatabaseID?)     -> ZCloud?        { return gRemoteStorage.cloud(for: databaseID) }
 
 func gHereZoneForDatabaseIDMaybe(_ databaseID: ZDatabaseID) -> Zone? {
-	if  let    cloud = gRemoteStorage.zRecords(for: databaseID) {
+	if  let    cloud = gCloudFor(databaseID) {
 		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
 	}
 
@@ -53,9 +53,9 @@ class ZRemoteStorage: NSObject {
     var        trashZone : Zone?       { return currentRecords.trashZone }
 	var         rootZone : Zone? { get { return currentRecords.rootZone } set { currentRecords.rootZone  = newValue } }
 
-	func cloud(for databaseID: ZDatabaseID) -> ZCloud? { return zRecords(for: databaseID) as? ZCloud }
-	func clear()                                       { records =       [ZDatabaseID : ZCloud] () }
-	func cancel()                                      { currentCloud?.currentOperation?.cancel() }
+	func cloud(for databaseID: ZDatabaseID?) -> ZCloud? { return zRecords(for: databaseID) as? ZCloud }
+	func clear()                                        { records =       [ZDatabaseID : ZCloud] () }
+	func cancel()                                       { currentCloud?.currentOperation?.cancel() }
 
 	var all : ZoneArray {
 		var total = ZoneArray()

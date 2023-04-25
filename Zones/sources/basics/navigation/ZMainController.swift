@@ -12,9 +12,9 @@
     import UIKit
 #endif
 
+var  gMainController : ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
 func gShowAppIsBusyWhileInBackground(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhileInBackground(closure) }
-func             gShowAppIsBusyWhile(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhile          (closure) }
-var                            gMainController : ZMainController?   { return gControllers.controllerForID(.idMain) as? ZMainController }
+func gShowAppIsBusyWhileInForeground(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhileInForeground(closure) }
 
 class ZMainController: ZGesturesController {
 
@@ -171,7 +171,7 @@ class ZMainController: ZGesturesController {
 		}
 	}
 
-	func showAppIsBusyWhile(_ closure: @escaping Closure) {
+	func showAppIsBusyWhileInForeground(_ closure: @escaping Closure) {
 		FOREGROUND    (after:0.00001) { [self] in
 			showAppIsBusy(true)
 			FOREGROUND(after:0.00001) { [self] in    // need a fresh run loop cycle to let the UI update

@@ -301,13 +301,13 @@ class ZBatches: ZOnboarding {
         onCloudResponse = onCompletion     // for retry cloud in tools controller
 
 		switch operationID {
-			case .oFavorites:        gFavoritesCloud.setup(                                                              onCompletion)
-			case .oSavingLocalData:  gSaveContext();                                                                onCompletion?(0)
-			case .oMigration:        gCoreDataStack.assureMigrationToLatest();                                      onCompletion?(0)
-			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                               onCompletion?(0)
-			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                 onCompletion: onCompletion)
-			case .oMigrateFromCloud: migrateFromCloud(into:       currentDatabaseID!,                 onCompletion: onCompletion)
-			default: gRemoteStorage.cloud(for: currentDatabaseID!)?.invokeOperation(for: operationID, onCompletion: onCompletion)
+			case .oFavorites:        gFavoritesCloud.setup(                                                        onCompletion)
+			case .oSavingLocalData:  gSaveContext();                                                               onCompletion?(0)
+			case .oMigration:        gCoreDataStack.assureMigrationToLatest();                                     onCompletion?(0)
+			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                              onCompletion?(0)
+			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                onCompletion: onCompletion)
+			case .oMigrateFromCloud: gCloudFor(currentDatabaseID)?.loadEverythingMaybe              (onCompletion: onCompletion)
+			default:                 gCloudFor(currentDatabaseID)?.invokeOperation(for: operationID, onCompletion: onCompletion)
 		}
     }
 

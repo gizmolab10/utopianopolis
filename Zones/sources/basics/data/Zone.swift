@@ -3608,8 +3608,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	static func create(within rootName: String, for index: Int = 0, databaseID: ZDatabaseID) -> Zone {
 		let      name = recordNameFor(rootName, at: index)
 		var   created : Zone
-		if  let cloud = gRemoteStorage.cloud(for: .everyoneID),
-			let found = cloud.maybeZoneForRecordName(name) {
+		if  let found = gCloudFor(.everyoneID)?.maybeZoneForRecordName(name) {
 			created   = found
 		} else {
 			created   = Zone.uniqueZone(recordName: name, in: databaseID)

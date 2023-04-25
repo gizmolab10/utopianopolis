@@ -109,12 +109,12 @@ extension ZFiles {
 	}
 
 	func replaceDatabase(_ databaseID: ZDatabaseID?, onCompletion: Closure?) {
-		if  let            id = databaseID {
-			let          dbid = id.identifier
+		if  let             id = databaseID {
+			let           dbid = id.identifier
 			gPresentOpenPanel(type: .eSeriously, at: gCDBaseDataURL) { [self] iAny in
-				guard  let   url = iAny as? URL else { return }
-				if let cloud = gRemoteStorage.cloud(for: id),
-				   let  root = cloud.rootZone {
+				guard  let url = iAny as? URL else { return }
+				if let   cloud = gCloudFor(id),
+				   let    root = cloud.rootZone {
 
 					let closure: Closure = { [self] in
 						gClearHereRecordNames() // erase zombie record names

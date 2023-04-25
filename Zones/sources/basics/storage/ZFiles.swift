@@ -34,7 +34,7 @@ enum ZInterruptionError : Error {
 
 class ZFiles: NSObject {
 
-	var                       isReading  = [false, false, false]
+	var                    whileReading  = [false, false, false]
     var  filePaths:           [String?]  = [nil, nil, nil]
 	var                         hasMine  : Bool  { return fileExistsFor(.mineIndex) }
 	lazy var                  assetsURL  : URL = { return createAssetsDirectory() }()
@@ -84,10 +84,10 @@ class ZFiles: NSObject {
 		return false
 	}
 
-    func isReading(for iDatabaseID: ZDatabaseID?) -> Bool {
+    func whileReading(for iDatabaseID: ZDatabaseID?) -> Bool {
         if  let  databaseID = iDatabaseID,
             let index = databaseID.index {
-            return isReading[index]
+            return whileReading[index]
         }
 
         return false
@@ -216,7 +216,7 @@ class ZFiles: NSObject {
 	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
 		if  let    zRecords  = gRemoteStorage.zRecords(for: databaseID),
 			let       index  = databaseID.index {
-			isReading[index]  = true
+			whileReading[index]  = true
 			typealias  sTypes = [ZStorageType]
 			let  keys: sTypes = [.date, .manifest, .graph, .favorites, .bookmarks, .trash, .lost, .destroy]
 			if  let      data = gFileManager.contents(atPath: path),
@@ -265,7 +265,7 @@ class ZFiles: NSObject {
 
 			zRecords.recount()
 
-			isReading[index] = false
+			whileReading[index] = false
 		}
 
 		onCompletion?(0)

@@ -15,7 +15,7 @@ import UIKit
 #endif
 
 func gSetupDebugFeatures() {
-	gClearUserDefaults()                           // TODO: comment this out to erase all leftover configuration
+//	gClearUserDefaults()                           // TODO: comment this out to erase all leftover configuration
 
 	// all these flags will eventually be removed
 
