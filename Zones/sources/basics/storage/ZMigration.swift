@@ -167,6 +167,7 @@ extension ZBatches {
 	}
 
 	func migrateFromCloud(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
+		gCoreDataStack.assureContainerIsSetup()
 		gMineCloud?.loadEverythingMaybe { result in    // because Seriously is now running on a second device
 			onCompletion?(result)
 		}
@@ -205,7 +206,7 @@ extension ZCoreDataStack {
 		if  persistentContainer == nil {
 			persistentContainer  = getPersistentContainer()
 
-			if  gCDUseCloud, !gCKIsInitialized {
+			if  gCDUseCloud, !gCKMustInitialize {
 				do {
 					try persistentContainer?.initializeCloudKitSchema()
 				} catch {
