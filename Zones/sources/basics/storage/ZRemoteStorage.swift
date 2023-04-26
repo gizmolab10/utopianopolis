@@ -18,18 +18,12 @@ var     gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
 var  gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
 var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
-var          gRoot : Zone? { get { return gRemoteStorage.rootZone } set { gRemoteStorage.rootZone  = newValue } }
-func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID)  { gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe = here }
-func gMaybeZoneForRecordName (_ name: String?) -> Zone?          { return gRemoteStorage.maybeZoneForRecordName(name) }
-func gCloudFor(_ databaseID: ZDatabaseID?)     -> ZCloud?        { return gRemoteStorage.cloud(for: databaseID) }
-
-func gHereZoneForDatabaseIDMaybe(_ databaseID: ZDatabaseID) -> Zone? {
-	if  let    cloud = gCloudFor(databaseID) {
-		return cloud.maybeZoneForRecordName(cloud.hereRecordName, trackMissing: false)
-	}
-
-	return nil
-}
+var          gRoot : Zone? { get { return gRemoteStorage.rootZone }         set { gRemoteStorage.rootZone  = newValue } }
+func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID)          { gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe = here }
+func gHereZoneForDatabaseIDMaybe(_ databaseID: ZDatabaseID) -> Zone?     { return gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe }
+func gZRecordsFor(_ databaseID: ZDatabaseID?)               -> ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
+func gCloudFor   (_ databaseID: ZDatabaseID?)               -> ZCloud?   { return gRemoteStorage   .cloud(for: databaseID) }
+func gMaybeZoneForRecordName (_ name: String?)              -> Zone?     { return gRemoteStorage.maybeZoneForRecordName(name) }
 
 func gRecountMaybe() {
 	if  gNeedsRecount {

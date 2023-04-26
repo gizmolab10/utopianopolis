@@ -23,12 +23,12 @@ func gSetupDebugFeatures() {
 	gDebugModes  .insert(.dNoSubscriptions)
 	gDebugModes  .insert(.dHideNoteVisibility)
 
-	gCoreDataMode       = []                       // current work is focused on these:
-	gCoreDataMode.insert(.dEraseStores)            // discard CD stores and start from stratch
+	gCoreDataMode       = []                       // current work is focused on these (goal is remove them for submission):
+//	gCoreDataMode.insert(.dEraseStores)            // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseCloud)            // ignore CK
 //	gCoreDataMode.insert(.dCKMustInitialize)       // do this once, when change and reset CK schema
 //	gCoreDataMode.insert(.dNotPreloadFromCK)       // don't pre-populate CD from CK
-	gCoreDataMode.insert(.dTestingMigration)       // store core data in a separate { local test folder & CK repository }
+//	gCoreDataMode.insert(.dTestingMigration)       // store core data in a separate { local test folder & CK repository }
 
 //                                                 // these are unlikely to change any time soon:
 //	gCoreDataMode.insert(.dUseFlat)                // use flat data folder
@@ -39,9 +39,11 @@ func gSetupDebugFeatures() {
 	gPrintModes         = []
 //	gPrintModes  .insert(.dEdit)
 //	gPrintModes  .insert(.dTime)
-	gPrintModes  .insert(.dAdopt)
+//	gPrintModes  .insert(.dAdopt)
+//	gPrintModes  .insert(.dCross)
+//	gPrintModes  .insert(.dFetch)
 	gPrintModes  .insert(.dError)
-	gPrintModes  .insert(.dCross)
+//	gPrintModes  .insert(.dWidget)
 //	gPrintModes  .insert(.dMoving)
 //	gPrintModes  .insert(.dMigrate)
 }
@@ -200,8 +202,8 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 				(.dExist,    "   exist"),
 				(.dTrack,    "   track"),
 				(.dFetch,    " fetched"),
+				(.dWidget,   " widgets"),
 				(.dAccess,   "  access"),
-				(.dWidget,   "  widget"),
 				(.dRemote,   "  remote"),
 				(.dImages,   "  images"),
 				(.dTimers,   "  timers"),

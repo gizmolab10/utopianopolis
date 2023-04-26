@@ -107,11 +107,13 @@ class ZFavorites: ZRecords {
 
 	func setup(_ onCompletion: IntClosure?) {
 		FOREGROUND { [self] in               // avoid error? mutating core data while enumerating
-			rootZone = rootZone ?? Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID, checkCDStore: true)
+			if  rootZone == nil {
+				rootZone  = Zone.uniqueZone(recordName: kFavoritesRootName, in: .mineID, checkCDStore: true)
+			}
 
 			updateAllFavorites() // setup roots group
 
-			if  gCDMigrationState == .mFirstTime {
+			if  getCDMigrationState(for: databaseID) == .mFirstTime {
 				hereZoneMaybe = getRecentsGroup()
 			}
 

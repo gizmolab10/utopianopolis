@@ -299,15 +299,16 @@ class ZBatches: ZOnboarding {
 
     override func invokeOperation(for operationID: ZOperationID, onCompletion: AnyClosure?) throws {
         onCloudResponse = onCompletion     // for retry cloud in tools controller
+		let id = currentDatabaseID
 
 		switch operationID {
-			case .oFavorites:        gFavoritesCloud.setup(                                                        onCompletion)
-			case .oSavingLocalData:  gSaveContext();                                                               onCompletion?(0)
-			case .oMigration:        gCoreDataStack.assureMigrationToLatest();                                     onCompletion?(0)
-			case .oWrite:            try gFiles.writeToFile(from: currentDatabaseID);                              onCompletion?(0)
-			case .oLoadingIdeas:     try load(into:               currentDatabaseID!,                onCompletion: onCompletion)
-			case .oMigrateFromCloud: gCloudFor(currentDatabaseID)?.loadEverythingMaybe              (onCompletion: onCompletion)
-			default:                 gCloudFor(currentDatabaseID)?.invokeOperation(for: operationID, onCompletion: onCompletion)
+			case .oFavorites:        gFavoritesCloud.setup(                                         onCompletion)
+			case .oSavingLocalData:  gSaveContext();                                                onCompletion?(0)
+			case .oMigration:        gCoreDataStack.assureMigrationToLatest(for: id);               onCompletion?(0)
+			case .oWrite:            try gFiles.writeToFile(from: id);                              onCompletion?(0)
+			case .oLoadingIdeas:     try load(into:               id!,                onCompletion: onCompletion)
+			case .oMigrateFromCloud: gCloudFor(id)?.loadEverythingMaybe              (onCompletion: onCompletion)
+			default:                 gCloudFor(id)?.invokeOperation(for: operationID, onCompletion: onCompletion)
 		}
     }
 

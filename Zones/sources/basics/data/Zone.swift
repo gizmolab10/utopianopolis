@@ -1381,8 +1381,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let here = gHere // revealZonesToRoot (below) changes gHere, so nab it first
 
 				grab()
-				revealZonesToRoot() {
-					here.revealSiblings(untilReaching: gRoot!)
+				revealZonesToRoot() { [self] in
+					here.revealSiblings(untilReaching: root ?? gRoot!)
 					onCompletion?(true)
 				}
 

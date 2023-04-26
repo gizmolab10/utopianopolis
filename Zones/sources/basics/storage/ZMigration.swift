@@ -9,20 +9,53 @@
 import Foundation
 import CloudKit
 
-var  gCDMigrationState    =                  ZCDMigrationState.mFirstTime
-var  gCDMigrationIsDone   :   Bool { return  gCDMigrationState.isCompleted }
-var  gCDBaseDataURL       :    URL { return  gFilesURL.appendingPathComponent(gDataDirectoryName) }
-var  gDataDirectoryName   : String { return (gCDNormalStore ? kDataDirectoryName : "migration.testing") }
-func gUpdateCDMigrationState()     {         gCDMigrationState = ZCDMigrationState.currentState }
+var  gCDMigrationStates : [ZCDMigrationState] = [.mFirstTime, .mFirstTime]
+var  gCDBaseDataURL     :    URL { return  gFilesURL.appendingPathComponent(gDataDirectoryName) }
+var  gDataDirectoryName : String { return (gCDNormalStore ? kDataDirectoryName : "migration.testing") }
+
+var  gCDMigrationStateIsInactive : Bool {
+	let            states : [ZCDMigrationState] = [.mFirstTime, .mFiles]
+	if  let  publicState  = getCDMigrationState(for: .everyoneID),
+		let privateState  = getCDMigrationState(for: .mineID) {
+		return states.contains(publicState) && states.contains(privateState)
+	}
+
+	return true
+}
+
+func gUpdateCDMigrationState(for databaseID: ZDatabaseID?) {
+	setCDMigrationState(for: databaseID, with: ZCDMigrationState.currentState(for: databaseID))
+}
+
+func gUpdateRepositoryIDAndMigrationState(for databaseID: ZDatabaseID?) {
+	ZCKRepositoryID.updateRepositoryID()
+	gUpdateCDMigrationState(for: databaseID)
+}
+
+func setCDMigrationState(for databaseID: ZDatabaseID?, with newValue: ZCDMigrationState) {
+	if  let index = databaseID?.acceptableMigrationIndex {
+		gCDMigrationStates[index] = newValue
+	}
+}
+
+func getCDMigrationState(for databaseID: ZDatabaseID?) -> ZCDMigrationState? {
+	if  let index = databaseID?.acceptableMigrationIndex {
+		return gCDMigrationStates[index]
+	}
+
+	return nil
+}
 
 enum ZCDMigrationState: Int {
 
-	// //////////////////////////////////////////// //
-	// 1. read files into CD                        //
-	// 2. migrate original CD data into CK folders: //
-	//        data/test2/cloud.public.store         //
-	// 3. store to and retrieve from cloud          //
-	// //////////////////////////////////////////// //
+	// ////////////////////////////////////////////// //
+	//                                                //
+	//  1. read files into CD                         //
+	//  2. migrate original CD data into CK folders:  //
+	//         data/test2/cloud.public.store          //
+	//  3. store to and retrieve from cloud           //
+	//                                                //
+	// ////////////////////////////////////////////// //
 
 	case mFirstTime = 0
 	case mFiles         // *.seriously
@@ -54,7 +87,7 @@ enum ZCDMigrationState: Int {
 		// //////////////////////////////////////////////////////// //
 
 		if                    gCDUseCloud {
-			return   self == .mCloud                // TODO: NEVER true
+			return   self == .mCloud
 		} else if             gCDUseUserID {
 			return   self == .mUserID
 		} else if             gCDUseHierarchy {
@@ -64,7 +97,7 @@ enum ZCDMigrationState: Int {
 		}
 	}
 
-	static var currentState: ZCDMigrationState {
+	static func currentState(for databaseID: ZDatabaseID?) -> ZCDMigrationState {
 
 		// /////////////////////////////////////////////////////////// //
 		//                                                             //
@@ -72,25 +105,24 @@ enum ZCDMigrationState: Int {
 		//  mFiles        : mine file exists but store data does not   //
 		//  mCDOriginal   : data/cloud.public.store exists             //
 		//  mCDHierarchal : data/test2/cloud.public.store exists       //
-		//  mCloud        : cloud data can be retrieved   ? ? ? ? ?    // see the TODO above
+		//  mCloud        : cloud data can be retrieved                //
 		//                                                             //
 		// /////////////////////////////////////////////////////////// //
 
-		// if user id is not known -> FUBAR (wrong migration location, data will be lost once user id becomes known)
+		// if user is not logged in -> FUBAR (wrong migration location, data will be lost once user id becomes known)
 
-		let publicScope = ZCDStoreType.sPublic
+		if  let scope = databaseID?.scope,
+			gCDBaseDataURL.fileExists {                                // data           <- folder exists
+			if  let   url = scope.ckUserIDURL,    url.containsData {   // data/<user id> <- store exists and is not empty
+				return           .mUserID
+   			}
 
-		if  gCDBaseDataURL.fileExists {                                   // data           <- folder exists
-			if  let url = publicScope.ckUserIDURL,    url.containsData {  // data/<user id> <- store exists and is not empty
-				return               .mUserID
+			if  let   url = scope.ckSubmittedURL, url.containsData {   // data/test2     <- store exists and is not empty
+				return           .mCDHierarchal
 			}
 
-			if  let url = publicScope.ckSubmittedURL, url.containsData {  // data/test2     <- store exists and is not empty
-				return               .mCDHierarchal
-			}
-
-			if  publicScope          .originalURL        .containsData {  // data           <- store exists and is not empty
-				return               .mCDOriginal
+			if  scope.originalURL.containsData {                       // data           <- store exists and is not empty
+				return           .mCDOriginal
 			}
 		}
 
@@ -152,14 +184,14 @@ enum ZCKRepositoryID: String {
 extension ZBatches {
 
 	func load(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		gUpdateCDMigrationState()
+		gUpdateCDMigrationState(for: databaseID)
 
 		let finish: AnyClosure = { result in
-			gUpdateCDMigrationState()
+			gUpdateCDMigrationState(for: databaseID)
 			onCompletion?(result)
 		}
 
-		switch gCDMigrationState {
+		switch getCDMigrationState(for: databaseID) {
 			case .mFirstTime: gCloudFor               (databaseID)?.loadEverythingMaybe(onCompletion: finish)
 			case .mFiles:     try gFiles.migrate(into: databaseID,                      onCompletion: finish)
 			default:          gLoadContext      (into: databaseID,                      onCompletion: finish)
@@ -170,31 +202,26 @@ extension ZBatches {
 
 extension ZCoreDataStack {
 
-	func updateRepositoryIDAndMigrationState() {
-		ZCKRepositoryID.updateRepositoryID()
-		gUpdateCDMigrationState()
-	}
-
-	func assureMigrationToLatest() {
-		updateRepositoryIDAndMigrationState()
+	func assureMigrationToLatest(for databaseID: ZDatabaseID?) {
+		gUpdateRepositoryIDAndMigrationState(for: databaseID)
 
 		if  gCDUseHierarchy {
-//			if  gCDMigrationState == .mFirstTime {
+//			if  databaseID.cdMigrationState == .mFirstTime {
 //
 //			}
 
-			if  gCDMigrationState == .mCDOriginal,
+			if  getCDMigrationState(for: databaseID) == .mCDOriginal,
 				let            to  = gCKRepositoryID.repositoryName.dataExtensionPath {            //   to ends in either  test2  or  <user id>
 				gDataDirectoryName.migrateTo(to)                                                   // move from old flat data folder
-				updateRepositoryIDAndMigrationState()
+				gUpdateRepositoryIDAndMigrationState(for: databaseID)
 			}
 
-			if	gCDMigrationState == .mCDHierarchal, gCDUseUserID,
+			if	getCDMigrationState(for: databaseID) == .mCDHierarchal, gCDUseUserID,
 				let            to  =  gUserID?.dataExtensionPath,                          //   to ends in  <user id>
 				let          from  =  ZCKRepositoryID.rSubmitted.rawValue.dataExtensionPath {      // from ends in  test2
 
 				from.migrateTo(to)  // move to new user id folder
-				updateRepositoryIDAndMigrationState()
+				gUpdateRepositoryIDAndMigrationState(for: databaseID)
 			}
 		}
 	}
@@ -210,8 +237,6 @@ extension ZCoreDataStack {
 					printDebug(.dError, "\(error)")
 				}
 			}
-
-			gUpdateCDMigrationState()
 		}
 	}
 
@@ -231,31 +256,50 @@ extension ZFiles {
 
 				gSaveContext()
 				gEveryoneCloud?.rootZone?.expandAndGrab(focus: false)
-				gUpdateCDMigrationState()
+				gUpdateCDMigrationState(for: databaseID)
 
 				onCompletion?(result)
 			}
 		}
 	}
 
-	func migrationFilesSize() -> Int {
-		switch gCDMigrationState {
-			case .mFirstTime: return fileSizeFor(.everyoneID)
-			case .mFiles:   return totalFilesSize
-			default:          return 0
+	func migrationFilesSize(for databaseID: ZDatabaseID?) -> Int {
+		if  let state = getCDMigrationState(for: databaseID) {
+			switch state {
+				case .mFirstTime: return fileSizeFor(databaseID)
+				case .mFiles:     return totalFilesSize
+				default:          return 0
+			}
 		}
+
+		return 0
 	}
 
 }
 
 extension ZRemoteStorage {
 
-	var totalLoadableRecordsCount: Int {
-		switch gCDMigrationState {
-			case .mFirstTime,
-				 .mFiles: return gFiles.migrationFilesSize() / kFileRecordSize
-			default:        return totalManifestCount
+	func totalLoadableRecordsCount(for databaseID: ZDatabaseID?) -> Int {
+		if  let state = getCDMigrationState(for: databaseID) {
+			switch state {
+				case .mFirstTime,
+					 .mFiles:   return gFiles.migrationFilesSize(for: databaseID) / kFileRecordSize
+				default:        return totalManifestCount
+			}
 		}
+
+		return 0
+	}
+
+	var totalLoadableRecordsCount: Int {
+		let databaseIDs : [ZDatabaseID] = kAllDatabaseIDs
+		var result = 0
+
+		for databaseID in databaseIDs {
+			result = max(result, totalLoadableRecordsCount(for: databaseID))
+		}
+
+		return result
 	}
 
 }
@@ -352,14 +396,16 @@ extension Zone {
 		}
 	}
 
-}
-
-extension ZManifest {
-
 	func extractData(from ckRecord: CKRecord) {
-		count = ckRecord.value(forKeyPath: "CD_count") as? NSNumber
-
-		// TODO: deletedZones ... or not, since we are using isTrashed instead
+		zoneName       = ckRecord.value(forKeyPath: "CD_zoneName")       as? String
+		zoneLink       = ckRecord.value(forKeyPath: "CD_zoneLink")       as? String
+		zoneColor      = ckRecord.value(forKeyPath: "CD_zoneColor")      as? String
+		parentRID      = ckRecord.value(forKeyPath: "CD_parentRID")      as? String
+		parentLink     = ckRecord.value(forKeyPath: "CD_parentLink")     as? String
+		zoneAuthor     = ckRecord.value(forKeyPath: "CD_zoneAuthor")     as? String
+		zoneAttributes = ckRecord.value(forKeyPath: "CD_zoneAttributes") as? String
+		zoneProgeny    = ckRecord.value(forKeyPath: "CD_zoneProgeny")    as? NSNumber
+		zoneAccess     = ckRecord.value(forKeyPath: "CD_zoneAccess")     as? NSNumber
 	}
 
 }
@@ -378,18 +424,12 @@ extension ZTrait {
 
 }
 
-extension Zone {
+extension ZManifest {
 
 	func extractData(from ckRecord: CKRecord) {
-		zoneName       = ckRecord.value(forKeyPath: "CD_zoneName")       as? String
-		zoneLink       = ckRecord.value(forKeyPath: "CD_zoneLink")       as? String
-		zoneColor      = ckRecord.value(forKeyPath: "CD_zoneColor")      as? String
-		parentRID      = ckRecord.value(forKeyPath: "CD_parentRID")      as? String
-		parentLink     = ckRecord.value(forKeyPath: "CD_parentLink")     as? String
-		zoneAuthor     = ckRecord.value(forKeyPath: "CD_zoneAuthor")     as? String
-		zoneAttributes = ckRecord.value(forKeyPath: "CD_zoneAttributes") as? String
-		zoneProgeny    = ckRecord.value(forKeyPath: "CD_zoneProgeny")    as? NSNumber
-		zoneAccess     = ckRecord.value(forKeyPath: "CD_zoneAccess")     as? NSNumber
+		count = ckRecord.value(forKeyPath: "CD_count") as? NSNumber
+
+		// TODO: deletedZones ... or not, since we are using isTrashed instead
 	}
 
 }
@@ -465,9 +505,9 @@ extension ZCloud {
 	func fetchAllRecords(of type: String, closure: CKRecordsClosure?) {
 		var ckRecords = CKRecordsArray()
 		let predicate = NSPredicate(value: true)
-		let  timeSort = NSSortDescriptor(key: "createdTimestamp", ascending: true)
+//		let  timeSort = NSSortDescriptor(key: "createdTimestamp", ascending: true)
 
-		queryFor(type.cloudKitType, with: predicate, properties: nil, sortedBy: [timeSort], batchSize: 250) { record, error in
+		queryFor(type.cloudKitType, with: predicate, properties: nil, sortedBy: nil, batchSize: 250) { record, error in    // [timeSort]
 			if  let ckRecord = record {
 				ckRecords.append(ckRecord)
 			} else { // after all records have arrived

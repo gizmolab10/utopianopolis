@@ -63,7 +63,7 @@ class ZStartup: NSObject {
 				gHereMaybe?.grab()
 
 				FOREGROUND(after: 0.1) { [self] in
-					if !gCDMigrationState.isActive {
+					if  gCDMigrationStateIsInactive {
 						gSaveContext()
 					}
 

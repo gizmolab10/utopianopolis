@@ -190,20 +190,19 @@ class ZCoreDataStack: NSObject {
 
 	func loadRootZone(recordName: String, into databaseID: ZDatabaseID) {
 		if  let zRecords = gRemoteStorage.zRecords(for: databaseID) {
-			let  fetched = load(type: kZoneType, recordName: recordName, into: databaseID, onlyOne: true)
+			let  objects = load(type: kZoneType, recordName: recordName, into: databaseID, onlyOne: true)
 
-			for object in fetched {
-				if  let zone = object as? Zone {
-					let oid = object.objectID
-					zone.respectOrder()
+			for object in objects {
+				let  oid = object.objectID
 
-					FOREGROUND { [self] in
-						if  let root = gObjectInMainContext(with: oid) as? Zone {
-							if  recordName == kFavoritesRootName {
-								gFavoritesCloud.setRoot(root, for: .favoritesID)
-							} else {
-								zRecords.setRoot(root, for: recordName.rootID)
-							}
+				FOREGROUND {
+					if  let root = gObjectInMainContext(with: oid) as? Zone {
+						root.respectOrder()
+
+						if  recordName == kFavoritesRootName {
+							gFavoritesCloud.setRoot(root, for: .favoritesID)
+						} else {
+							zRecords       .setRoot(root, for: recordName.rootID)
 						}
 					}
 				}
@@ -218,7 +217,7 @@ class ZCoreDataStack: NSObject {
 		let objects = fetch(type: type, recordName: recordName, into: databaseID, onlyOne: onlyOne)
 
 		let ids = objects.map { $0.objectID }
-		FOREGROUND { [self] in
+		FOREGROUND {
 			gInvokeUsingDatabaseID(databaseID) {
 				for id in ids {
 					if  let zRecord = gObjectInMainContext(with: id) as? ZRecord {

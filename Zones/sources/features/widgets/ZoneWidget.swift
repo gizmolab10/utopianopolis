@@ -92,7 +92,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	@discardableResult func createPseudoViews(for parentPseudoView: ZPseudoView?, for mapType: ZMapType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		let     mapView = absoluteView as? ZMapView
 		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.decorationsView) : nil
-		var       count = 1
+		var       count = 1 // begin with self
 
 		if  let v = parentPseudoView,
 		   !v.subpseudoviews.contains(self) {

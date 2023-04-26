@@ -51,10 +51,10 @@ class ZFiles: NSObject {
 		return result
 	}()
 
-	func fileSizeFor(_ databaseID: ZDatabaseID) -> Int {
+	func fileSizeFor(_ databaseID: ZDatabaseID?) -> Int {
 		var         result     = 0
 		do {
-			if  let      index = databaseID.index,
+			if  let      index = databaseID?.index,
 				let    dbIndex = ZDatabaseIndex(rawValue: index) {
 				let       path = filePath(for: dbIndex)
 				let       dict = try gFileManager.attributesOfItem(atPath: path)
