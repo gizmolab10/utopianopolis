@@ -2066,14 +2066,10 @@ extension String {
 	var       containsNoTabs :             Bool  { return filter{ $0 != kTab.first}.count != 0 }
     var           isOpposite :             Bool  { return "]}>)".contains(self) }
 	var         isDashedLine :             Bool  { return contains(kHalfLineOfDashes) }
-	var          isValidLink :             Bool  { return components != nil }
 	var containsLineEndOrTab :             Bool  { return hasMatchIn(kLineEndingsAndTabArray) }
 	var        smartStripped :           String  { return substring(fromInclusive: 4).spacesStripped }
 	var           asciiValue :           UInt32  { return asciiArray[0] }
 	var           asciiArray :          [UInt32] { return unicodeScalars.filter { $0.isASCII }.map{ $0.value } }
-	var           components :     StringsArray? { return components(separatedBy: kColonSeparator) }
-	var            maybeZone :             Zone? { return maybeZRecord?.maybeZone }
-	func maybeZone(in id: ZDatabaseID?) -> Zone? { return maybeZRecord(in: id)?.maybeZone }
 
     var opposite: String {
 		switch self {
@@ -2189,42 +2185,11 @@ extension String {
 	// MARK: - bookmarks
 	// MARK: -
 
-	var maybeRecordName: String? {
-		if  let   parts  = components, parts.count > 1 {
-			let    name  = parts[2]
-			return name != kEmpty ? name : kRootName // by design: empty component means root
-		}
-
-		return nil
-	}
-
-	var maybeDatabaseID: ZDatabaseID? {
-		if  let         parts  = components {
-			let    databaseID  = parts[0]
-			return databaseID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: databaseID)
-		}
-
-		return nil
-	}
-
 	func maybeZRecord(in databaseID: ZDatabaseID?) -> ZRecord? {
 		let zRecords = gRemoteStorage.zRecords(for: databaseID)
 		let  zRecord = zRecords?.maybeZoneForRecordName(self)
 
 		return zRecord
-	}
-
-	var maybeZRecord: ZRecord? {
-		if  self          != kEmpty,
-			let       name = maybeRecordName,
-			let      parts = components, parts.count > 0 {
-			let    rawDBID = parts[0]
-			let databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
-
-			return name.maybeZRecord(in: databaseID)
-		}
-
-		return nil
 	}
 
 	var rootID: ZRootID? {

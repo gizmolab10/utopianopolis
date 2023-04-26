@@ -45,6 +45,42 @@ class ZoneLink : NSObject {
 
 extension String {
 
+	var  isValidLink :         Bool              { return components != nil }
+	var  maybeZone   :         Zone?             { return maybeZRecord?.maybeZone }
+	var  components  : StringsArray?             { return components(separatedBy: kColonSeparator) }
+	func maybeZone(in id: ZDatabaseID?) -> Zone? { return maybeZRecord(in: id)?.maybeZone }
+
+	var maybeZRecord: ZRecord? {
+		if  self          != kEmpty,
+			let       name = maybeRecordName,
+			let      parts = components, parts.count > 0 {
+			let    rawDBID = parts[0]
+			let databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
+
+			return name.maybeZRecord(in: databaseID)
+		}
+
+		return nil
+	}
+
+	var maybeRecordName: String? {
+		if  let   parts  = components, parts.count > 1 {
+			let    name  = parts[2]
+			return name != kEmpty ? name : kRootName // by design: empty component means root
+		}
+
+		return nil
+	}
+
+	var maybeDatabaseID: ZDatabaseID? {
+		if  let         parts  = components {
+			let    databaseID  = parts[0]
+			return databaseID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: databaseID)
+		}
+
+		return nil
+	}
+
 	var hasEmptyDatabase: Bool {
 		if  let         parts  = components {
 			let    databaseID  = parts[0]

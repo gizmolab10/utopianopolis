@@ -313,8 +313,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return databaseID.rawValue + kDoubleColonSeparator + name
 	}
 
+	var shouldUpdateCrossLink : Bool {
+		return (crossLinkMaybe == nil)
+			|| (crossLinkMaybe!.recordName == nil)
+			|| (zoneLink?.hasEmptyDatabase ?? false)
+	}
+
 	func updateCrossLinkMaybe(force: Bool = false) {
-		if (force || (crossLinkMaybe == nil) || (crossLinkMaybe!.recordName == nil)),
+		if (force || shouldUpdateCrossLink),
 		    var l                = zoneLink {
 			if  l.contains(kOptional) {    // repair consequences of an old, but now fixed, bookmark bug
 				l                = l.replacingOccurrences(of: kOptional + kDoubleQuote, with: kEmpty).replacingOccurrences(of: kDoubleQuote + ")", with: kEmpty)
