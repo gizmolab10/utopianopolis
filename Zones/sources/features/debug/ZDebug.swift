@@ -24,7 +24,7 @@ func gSetupDebugFeatures() {
 	gDebugModes  .insert(.dHideNoteVisibility)
 
 	gCoreDataMode       = []                       // current work is focused on these (goal is remove them for submission):
-//	gCoreDataMode.insert(.dEraseStores)            // discard CD stores and start from stratch
+	gCoreDataMode.insert(.dEraseStores)            // discard CD stores and start from stratch
 //	gCoreDataMode.insert(.dNotUseCloud)            // ignore CK
 //	gCoreDataMode.insert(.dCKMustInitialize)       // do this once, when change and reset CK schema
 //	gCoreDataMode.insert(.dNotPreloadFromCK)       // don't pre-populate CD from CK

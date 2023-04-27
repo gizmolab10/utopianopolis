@@ -54,14 +54,14 @@ enum ZCDStoreType: String {
 
 }
 
-let  gCoreDataStack                                    = ZCoreDataStack()
-var  gCDMainContext                                    : NSManagedObjectContext? { return gCoreDataStack.persistentContainer?.viewContext }
-var  gCDThreadAppropriateContext                       : NSManagedObjectContext? { return gIsMainThread ? gCDMainContext : gCDCurrentBackgroundContext }
-var  gCoreDataIsSetup                                                     : Bool { return gCoreDataStack.persistentContainer != nil }
-var  gCoreDataIsBusy                                                      : Bool { return gCoreDataStack.currentOpID         != nil }
-func gObjectInMainContext(with objectID: NSManagedObjectID) -> NSManagedObject?  { return gCDMainContext?.object(with: objectID)}
-func gLoadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: databaseID, onCompletion: onCompletion) }
-func gSaveContext()                                                              { gCoreDataStack.saveContext() }
+let  gCoreDataStack                                      = ZCoreDataStack()
+var  gCDMainContext                                      : NSManagedObjectContext? { return gCoreDataStack.persistentContainer?.viewContext }
+var  gCDThreadAppropriateContext                         : NSManagedObjectContext? { return gIsMainThread ? gCDMainContext : gCDCurrentBackgroundContext }
+var  gCoreDataIsSetup                                                       : Bool { return gCoreDataStack.persistentContainer != nil }
+var  gCoreDataIsBusy                                                        : Bool { return gCoreDataStack.currentOpID         != nil }
+func gObjectInMainContext(with objectID: NSManagedObjectID) -> NSManagedObject?    { return gCDMainContext?.object(with: objectID)}
+func gLoadContext(into databaseID: ZDatabaseID, _ onCompletion: AnyClosure? = nil) { gCoreDataStack.loadContext(into: databaseID, onCompletion: onCompletion) }
+func gSaveContext()                                                                { gCoreDataStack.saveContext() }
 
 var gCDCurrentBackgroundContext: NSManagedObjectContext = {
 	let    context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
@@ -360,10 +360,10 @@ class ZCoreDataStack: NSObject {
 	// else throws mutate while enumerate error
 
 	func fetch(type: String, recordName: String? = nil, into databaseID: ZDatabaseID, onlyOne: Bool = true) -> ZManagedObjectsArray {
-		var objects       = ZManagedObjectsArray()
-		let request       = fetchRequest(type: type, recordName: recordName, into: databaseID)
-		let items         = fetchUsing(request: request, onlyOne: onlyOne)
-		if  items.count  == 0 {
+		var objects      = ZManagedObjectsArray()
+		let request      = fetchRequest(type: type, recordName: recordName, into: databaseID)
+		let items        = fetchUsing(request: request, onlyOne: onlyOne)
+		if  items.count == 0 {
 			registerAsMissing(recordName: recordName, databaseID: databaseID)
 		} else {
 			for item in items {

@@ -93,6 +93,14 @@ class ZRemoteStorage: NSObject {
 		return count
 	}
 
+	var totalLoadableRecordsCount : Int {
+		var total = 0
+		for databaseID in kAllDatabaseIDs {
+			total += databaseID.loadableRecordsCount
+		}
+		return total
+	}
+
 	var countStatus : String {
 		let lCount  = Double(totalLoadableRecordsCount)
 		if  lCount == .zero { return kEmpty }

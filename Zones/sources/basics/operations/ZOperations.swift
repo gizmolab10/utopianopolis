@@ -16,15 +16,15 @@ enum ZOperationID: Int, CaseIterable {
     // start up / onboard --> order of operations
 
 	case oStartingUp
-	case oMigration          // data file locations
+	case oConfigureStorage   // data file locations
 	case oUserPermissions
 	case oMacAddress
 	case oObserveUbiquity
 	case oGetCloudStatus     // is icloud account available? (exists and accessible)
 	case oUbiquity
 	case oFetchUserID        // needs cloud access
-	case oLoadingIdeas       // all these are LOCAL with files or core data
-	case oManifest
+	case oLoadingIdeas       // from core data or from cloud kit
+	case oManifest           // all these are LOCAL (from files or core data)
 	case oRoots
 	case oFavorites			 // MINE ONLY
 	case oHere
@@ -52,9 +52,9 @@ enum ZOperationID: Int, CaseIterable {
 
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oFinishing] }
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
-	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites, .oMigration] }
+	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites, .oConfigureStorage] }
 	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing, .oMigrateFromCloud] }
-	var    localOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oMigration, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oGetCloudStatus] + bothDBOps }
+	var    localOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oConfigureStorage, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oGetCloudStatus] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }
 	var alwaysBoth  : Bool   { return   bothDBOps.contains(self) }

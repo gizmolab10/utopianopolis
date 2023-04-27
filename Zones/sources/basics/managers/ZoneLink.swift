@@ -53,9 +53,7 @@ extension String {
 	var maybeZRecord: ZRecord? {
 		if  self          != kEmpty,
 			let       name = maybeRecordName,
-			let      parts = components, parts.count > 0 {
-			let    rawDBID = parts[0]
-			let databaseID = rawDBID == kEmpty ? gDatabaseID : ZDatabaseID(rawValue: rawDBID)
+			let databaseID = maybeDatabaseID {
 
 			return name.maybeZRecord(in: databaseID)
 		}

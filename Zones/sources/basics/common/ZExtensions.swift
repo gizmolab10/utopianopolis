@@ -360,7 +360,7 @@ extension URL {
 	var originalImageName : String? { return CGImageSource.readFrom(self)?.originalImageName }
 	var walURL            :    URL? { return URL(string: path + "-wal") }
 	var fileExists        :    Bool { return gFileManager.fileExists(atPath: path) }
-	var containsData      :    Bool { return fileExists && dataRepresentation.count > 0 }
+	var containsData      :    Bool { return fileExists && dataRepresentation.count > 100 }
 	var walContainsData   :    Bool { return walURL?.containsData ?? false }
 	func remove()            throws { try gFileManager.removeItem(at: self) }
 

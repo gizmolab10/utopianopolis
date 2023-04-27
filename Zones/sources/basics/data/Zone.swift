@@ -93,12 +93,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                            hasAsset :               Bool  { return hasTrait(for: .tAssets) }
 	var                                             hasNote :               Bool  { return hasTrait(for: .tNote) }
 	var                                      hasNoteOrEssay :               Bool  { return hasTrait(matchingAny: [.tNote, .tEssay]) }
-	var                                           isInTrash :               Bool  { return root?.isTrashRoot        ?? false }
-	var                                          isInAnyMap :               Bool  { return root?.isAnyMapRoot       ?? false }
-	var                                         isInMainMap :               Bool  { return root?.isMainMapRoot      ?? false }
-	var                                         isInDestroy :               Bool  { return root?.isDestroyRoot      ?? false }
-	var                                       isInFavorites :               Bool  { return root?.isFavoritesRoot    ?? false }
-	var                                    isInLostAndFound :               Bool  { return root?.isLostAndFoundRoot ?? false }
+	var                                           isInTrash :               Bool  { return getRoot.isTrashRoot }
+	var                                          isInAnyMap :               Bool  { return getRoot.isAnyMapRoot }
+	var                                         isInMainMap :               Bool  { return getRoot.isMainMapRoot }
+	var                                         isInDestroy :               Bool  { return getRoot.isDestroyRoot }
+	var                                       isInFavorites :               Bool  { return getRoot.isFavoritesRoot }
+	var                                    isInLostAndFound :               Bool  { return getRoot.isLostAndFoundRoot }
 	var                                   isInFavoritesHere :               Bool  { return isProgenyOfOrEqualTo(gFavoritesCloud.currentHere) }
 	var                                    isInRecentsGroup :               Bool  { return isProgenyOfOrEqualTo(gFavoritesCloud.getRecentsGroup()) }
 	var                                      isReadOnlyRoot :               Bool  { return isLostAndFoundRoot || isFavoritesRoot || isTrashRoot || mapType.isExemplar }
@@ -270,20 +270,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return []
 	}
 
-	func applyToAllBookmarksTargetingSelf(_ closure: ZoneClosure) {
-		for bookmark in bookmarksTargetingSelf {
-			closure(bookmark)
-		}
-	}
-
-	func setNameForSelfAndBookmarks(to name: String) {
-		zoneName = name
-
-		applyToAllBookmarksTargetingSelf { b in
-			b.zoneName = name
-		}
-	}
-
 	var firstBookmarkTargetingSelf: Zone? {
 		let    bookmarks = bookmarksTargetingSelf
 
@@ -315,20 +301,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var shouldUpdateCrossLink : Bool {
 		return (crossLinkMaybe == nil)
-			|| (crossLinkMaybe!.recordName == nil)
-			|| (zoneLink?.hasEmptyDatabase ?? false)
-	}
-
-	func updateCrossLinkMaybe(force: Bool = false) {
-		if (force || shouldUpdateCrossLink),
-		    var l                = zoneLink {
-			if  l.contains(kOptional) {    // repair consequences of an old, but now fixed, bookmark bug
-				l                = l.replacingOccurrences(of: kOptional + kDoubleQuote, with: kEmpty).replacingOccurrences(of: kDoubleQuote + ")", with: kEmpty)
-				zoneLink         = l
-			}
-
-			crossLinkMaybe       = l.maybeZone
-		}
+		|| (crossLinkMaybe!.recordName == nil)
+		|| (zoneLink?.hasEmptyDatabase ?? false)
 	}
 
 	var crossLink: ZRecord? {
@@ -343,6 +317,32 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		set {
 			crossLinkMaybe = nil   // force update (get)
 			zoneLink       = newValue?.linkAsString
+		}
+	}
+
+	func updateCrossLinkMaybe(force: Bool = false) {
+		if (force || shouldUpdateCrossLink),
+		    var l                = zoneLink {
+			if  l.contains(kOptional) {    // repair consequences of an old, but now fixed, bookmark bug
+				l                = l.replacingOccurrences(of: kOptional + kDoubleQuote, with: kEmpty).replacingOccurrences(of: kDoubleQuote + ")", with: kEmpty)
+				zoneLink         = l
+			}
+
+			crossLinkMaybe       = l.maybeZone
+		}
+	}
+
+	func applyToAllBookmarksTargetingSelf(_ closure: ZoneClosure) {
+		for bookmark in bookmarksTargetingSelf {
+			closure(bookmark)
+		}
+	}
+
+	func setNameForSelfAndBookmarks(to name: String) {
+		zoneName = name
+
+		applyToAllBookmarksTargetingSelf { b in
+			b.zoneName = name
 		}
 	}
 
@@ -2074,9 +2074,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  gDatabaseID != targetDBID {
 					gDatabaseID  = targetDBID
 
-					// ///////////////////////// //
-					// TRAVEL TO A DIFFERENT MAP //
-					// ///////////////////////// //
+					// ////////////////////////////// //
+					// TRAVEL TO A DIFFERENT DATABASE //
+					// ////////////////////////////// //
 
 					target.expandAndGrab()
 					gFocusing.focusOnGrab(.eSelected) {
@@ -2084,9 +2084,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				} else {
 
-					// /////////////// //
-					// STAY WITHIN MAP //
-					// /////////////// //
+					// //////////////////// //
+					// STAY WITHIN DATABASE //
+					// //////////////////// //
 
 					there       = gRecords.maybeZoneForRecordName(targetRecordName)
 					let grabbed = gSelecting.firstSortedGrab

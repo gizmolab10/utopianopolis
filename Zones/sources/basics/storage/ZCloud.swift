@@ -43,7 +43,7 @@ class ZCloud: ZRecords {
 //        }
     }
 
-	func invokeOperation(for identifier: ZOperationID, onCompletion: AnyClosure?) {
+	func invokeOperation(for identifier: ZOperationID, _ onCompletion: AnyClosure?) {
 		switch identifier {
 			case .oManifest:         establishManifest  (identifier, onCompletion)
 			case .oRoots:            establishRoots     (identifier, onCompletion)
@@ -51,6 +51,7 @@ class ZCloud: ZRecords {
 			case .oAdopt:            assureAdoption                 (onCompletion)
 			case .oResolve:          resolve                        (onCompletion)
 			case .oResolveMissing:   resolveMissing                 (onCompletion)
+			case .oMigrateFromCloud: loadFromCKMaybe                (onCompletion)
 			default:                                                 onCompletion?(0) // empty operations (e.g., .oStartUp and .oFinishUp)
 		}
 	}
