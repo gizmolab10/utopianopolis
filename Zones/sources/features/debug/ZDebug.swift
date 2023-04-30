@@ -15,19 +15,21 @@ import UIKit
 #endif
 
 func gSetupDebugFeatures() {
-//	gClearUserDefaults()                           // TODO: comment this out to erase all leftover configuration
 
+	// TODO: DO NOT CHANGE THESE UNTIL SPARE TIME SHOWS UP
 	// all these flags will eventually be removed
+
+//	gClearUserDefaults()                           // TODO: WARNING DANGEROUS comment this out to erase ALL leftover configuration
 
 	gDebugModes         = []
 	gDebugModes  .insert(.dNoSubscriptions)
 	gDebugModes  .insert(.dHideNoteVisibility)
 
 	gCoreDataMode       = []                       // current work is focused on these (goal is remove them for submission):
-	gCoreDataMode.insert(.dEraseStores)            // discard CD stores and start from stratch
-//	gCoreDataMode.insert(.dNotUseCloud)            // ignore CK
+//	gCoreDataMode.insert(.dEraseStores)            // discard CD stores and start from stratch
+	gCoreDataMode.insert(.dNotUseCloud)            // ignore CK TODO: loses data
 //	gCoreDataMode.insert(.dCKMustInitialize)       // do this once, when change and reset CK schema
-//	gCoreDataMode.insert(.dNotPreloadFromCK)       // don't pre-populate CD from CK
+	gCoreDataMode.insert(.dNotPreloadFromCK)       // don't pre-populate CD from CK TODO: loses data
 //	gCoreDataMode.insert(.dTestingMigration)       // store core data in a separate { local test folder & CK repository }
 
 //                                                 // these are unlikely to change any time soon:

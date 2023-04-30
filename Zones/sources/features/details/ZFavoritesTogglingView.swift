@@ -10,24 +10,24 @@ import Foundation
 
 class ZFavoritesTogglingView : ZTogglingView {
 
-	@IBOutlet var upDownView : ZView?
-	@IBOutlet var downButton : ZButton?
-	@IBOutlet var   upButton : ZButton?
+	@IBOutlet var buttonsView : ZView?
+	@IBOutlet var rightButton : ZButton?
+	@IBOutlet var  leftButton : ZButton?
 
 	@IBAction override func buttonAction(_ button: ZButton) {
 		switch identity {
-			case .vFavorites: gFavoritesCloud.showNextList(down: button == downButton)
+			case .vFavorites: gFavoritesCloud.showNextList(down: button == leftButton)
 			default:          super.buttonAction(button)
 		}
 	}
 
 	func detectUpDownButton(at location: CGPoint, inView: ZView) -> Bool? { // true means down
-		if  let down = downButton,
-			let   up = upButton {
-			let both = [down, up]
+		if  let right = rightButton,
+			let  left = leftButton {
+			let  both = [left, right]
 
 			for button in both {
-				let  flag = button == down
+				let  flag = button == left
 				let frame = button.convert(button.bounds, to: inView)
 				if  frame.contains(location) {
 					return flag
@@ -38,13 +38,13 @@ class ZFavoritesTogglingView : ZTogglingView {
 		return nil
 	}
 
-	func unhighlightUpDownButtons() {
-		upButton?  .highlight(false)
-		downButton?.highlight(false)
+	func unhighlightButtons() {
+		rightButton?.highlight(false)
+		leftButton? .highlight(false)
 	}
 
-	func highlightUpDownButton(_ down: Bool) {
-		let button = down ? downButton : upButton
+	func highlightButton(_ left: Bool) {
+		let button = left ? leftButton : rightButton
 
 		button?.highlight(true)
 	}
@@ -52,18 +52,18 @@ class ZFavoritesTogglingView : ZTogglingView {
 	override func updateColors() {
 		super.updateColors()
 
-		downButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
-		upButton?  .zlayer.backgroundColor = gDarkAccentColor.cgColor
+		leftButton? .zlayer.backgroundColor = gDarkAccentColor.cgColor
+		rightButton?.zlayer.backgroundColor = gDarkAccentColor.cgColor
 	}
 
 	override func updateTitleBarButtons() {
-		let       bothHidden = gFavoritesCloud.hideUpDownView || hideHideable
-		let       downHidden = gFavoritesCloud.hideDownButton
-		upDownView?.isHidden = bothHidden
+		let        bothHidden = gFavoritesCloud.hideButtonsView || hideHideable
+		let        leftHidden = gFavoritesCloud.hideLeftButton
+		buttonsView?.isHidden = bothHidden
 
 		if !bothHidden {
-			downButton?.attributedTitle = gFavoritesCloud.nextListAttributedTitle(down:  true)
-			upButton?  .attributedTitle = gFavoritesCloud.nextListAttributedTitle(down: false)
+			leftButton? .attributedTitle = gFavoritesCloud.nextListAttributedTitle(forward: false)
+			rightButton?.attributedTitle = gFavoritesCloud.nextListAttributedTitle(forward: true)
 		}
 
 		if  let t = titleButton {
@@ -71,16 +71,16 @@ class ZFavoritesTogglingView : ZTogglingView {
 			t.snp.makeConstraints{ make in
 				if  bothHidden {
 					make.right.equalToSuperview() .offset(-1.0)
-				} else if let v = upDownView {
+				} else if let v = buttonsView {
 					make.right.equalTo(v.snp.left).offset(-1.0)
 				}
 			}
 		}
 
-		if  let d = downButton {
+		if  let d = leftButton {
 			d.snp.removeConstraints()
 			d.snp.makeConstraints{ make in
-				if  downHidden {
+				if  leftHidden {
 					make.right.equalTo(d.snp.left)
 				}
 			}

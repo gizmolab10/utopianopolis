@@ -44,7 +44,7 @@ class ZFiles: NSObject {
 	lazy var totalFilesSize : Int = {
 		var result = 0
 
-		for databaseID in kAllDatabaseIDs {
+		for databaseID in kAllActualDatabaseIDs {
 			result += fileSizeFor(databaseID)
 		}
 

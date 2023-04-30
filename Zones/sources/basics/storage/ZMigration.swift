@@ -76,11 +76,10 @@ enum ZCDMigrationState: Int {
 
 }
 
-
-enum ZCKRepositoryID: String {
+enum ZCKRepositoryID: String {   // describe evolving versions of containers
 	case rOriginal  = "Zones"    // Thoughtful and early Seriously
 	case rSubmitted = "test2"    // latest submitted to the app store
-	case rUserID    = "dynamically uses user record name. if you can read this something is wrong"  // not yet submitted
+	case rUserID    = "dynamically uses OSX ubiquity token. if you can read this something is wrong"  // not yet submitted
 
 	static var defaultIDs : [ZCKRepositoryID] { return [.rSubmitted, .rUserID] }
 	static var        all : [ZCKRepositoryID] { return [.rOriginal, .rSubmitted, .rUserID] } // used for erasing CD stores
@@ -180,7 +179,7 @@ extension ZDatabaseID {
 	}
 
 	func load(_ onCompletion: AnyClosure?) throws {
-		updateCDMigrationState()
+		updateRepositoryIDAndMigrationState()
 
 		let finish: AnyClosure = { result in
 			updateCDMigrationState()
@@ -199,7 +198,7 @@ extension ZDatabaseID {
 extension ZCoreDataStack {
 
 	func configureStorage(for databaseID: ZDatabaseID?) {
-		databaseID?.updateCDMigrationState()
+		databaseID?.updateRepositoryIDAndMigrationState()
 
 		if  gCDUseHierarchy {
 			if  databaseID?.cdMigrationState == .mCDOriginal,
@@ -240,6 +239,7 @@ extension ZFiles {
 		if  !hasMine, databaseID == .mineID {
 			onCompletion?(0)                   // mine file does not exist, do nothing (everyone file always exists)
 		} else {
+			databaseID.updateRepositoryIDAndMigrationState()
 			gCoreDataStack.assureContainerIsSetup()
 			try readFile(into: databaseID) { result in
 				gColorfulMode = true

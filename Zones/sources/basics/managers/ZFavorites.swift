@@ -10,7 +10,7 @@
 import Foundation
 import CloudKit
 
-let gFavoritesCloud     = ZFavorites(ZDatabaseID.favoritesID)
+let gFavoritesCloud = ZFavorites(ZDatabaseID.favoritesID)
 var gFavoritesRoot : Zone? { return gFavoritesCloud.rootZone }
 var gFavoritesHere : Zone? { return gFavoritesHereMaybe ?? gFavoritesRoot }
 
@@ -26,7 +26,7 @@ class ZFavorites: ZRecords {
 	var recentsMaybe     : Zone?
 	var recentCurrent    : Zone?
 	var currentlyPopping : Zone?
-	var workingBookmarks : ZoneArray { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.bookmarks) ?? [] }
+	var workingBookmarks : ZoneArray  { return (gBrowsingIsConfined ? hereZoneMaybe?.bookmarks : rootZone?.bookmarks) ?? [] }
 
 	var hasMultipleNotes : Bool {
 		if  let    zones = gBrowsingIsConfined ? hereZoneMaybe?.notemarks : rootZone?.notemarks {
@@ -154,25 +154,16 @@ class ZFavorites: ZRecords {
 		return bookmarkToMove(is: gSelecting.currentMoveableMaybe) ?? bookmarkToMove(is: otherCurrent)
 	}
 
-	var allGroups: ZoneArray? {
-		if  var zones = rootZone?.allGroups {
-			zones.appendUnique(item: rootZone)
-			return zones
-		}
-
-		return nil
-	}
-
-	var hideDownButton: Bool {
-		if  let zones = allGroups {
+	var hideLeftButton: Bool {
+		if  let zones = rootZone?.allGroups {
 			return zones.count < 3
 		}
 
 		return true
 	}
 
-	var hideUpDownView: Bool {
-		if  let zones = allGroups {
+	var hideButtonsView: Bool {
+		if  let zones = rootZone?.allGroups {
 			return zones.count < 2
 		}
 
@@ -353,7 +344,7 @@ class ZFavorites: ZRecords {
 				}
 			}
 
-			for databaseID in kAllDatabaseIDs {
+			for databaseID in kAllActualDatabaseIDs {
 				if !hasDatabaseIDs.contains(databaseID) {
 					let        dbName = databaseID.rawValue
 					let      bookmark = Zone.uniqueZone(recordName: dbName + kFavoritesSuffix, in: .mineID, checkCDStore: true)

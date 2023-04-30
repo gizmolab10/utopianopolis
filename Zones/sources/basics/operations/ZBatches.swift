@@ -254,7 +254,7 @@ class ZBatches: ZOnboarding {
 				var                 invokeForIndex : IntClosure?                // declare closure first, so compiler will let it recurse
                 let                         isMine = restoreToID == .mineID
 				let                  onlyCurrentID = (!gCloudStatusIsActive && !operationID.alwaysBoth)
-				let databaseIDs : ZDatabaseIDArray = operationID.forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllDatabaseIDs
+				let databaseIDs : ZDatabaseIDArray = operationID.forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllActualDatabaseIDs
 				let                         isNoop = !gCloudStatusIsActive && onlyCurrentID && isMine && !operationID.forMineOnly
 				invokeForIndex                     = { [self] index in
 

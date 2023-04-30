@@ -472,11 +472,11 @@
                                         </constraints>
                                         <connections>
                                             <outlet property="bannerView" destination="s1s-Ki-o6t" id="33f-CI-SSo"/>
-                                            <outlet property="downButton" destination="Jor-km-2fV" id="RzW-1R-X2f"/>
+                                            <outlet property="buttonsView" destination="b88-zM-8k7" id="sUJ-US-h7q"/>
                                             <outlet property="hideableView" destination="n0Y-Iw-0NV" id="Q6s-o8-Vgy"/>
+                                            <outlet property="leftButton" destination="Jor-km-2fV" id="RzW-1R-X2f"/>
+                                            <outlet property="rightButton" destination="zUL-Q6-aba" id="Qnp-ni-7s8"/>
                                             <outlet property="titleButton" destination="3bx-6i-bTg" id="exk-Jc-pw4"/>
-                                            <outlet property="upButton" destination="zUL-Q6-aba" id="Qnp-ni-7s8"/>
-                                            <outlet property="upDownView" destination="b88-zM-8k7" id="sUJ-US-h7q"/>
                                         </connections>
                                     </customView>
                                 </subviews>

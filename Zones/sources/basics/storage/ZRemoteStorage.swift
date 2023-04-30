@@ -65,7 +65,7 @@ class ZRemoteStorage: NSObject {
 
 	var count: Int {
 		var sum = 0
-		for databaseID in kAllDatabaseIDs {
+		for databaseID in kAllActualDatabaseIDs {
 			if let zRecords = zRecords(for: databaseID) {
 				sum += zRecords.recordNamesLookup.count
 			}
@@ -95,7 +95,7 @@ class ZRemoteStorage: NSObject {
 
 	var totalLoadableRecordsCount : Int {
 		var total = 0
-		for databaseID in kAllDatabaseIDs {
+		for databaseID in kAllActualDatabaseIDs {
 			total += databaseID.loadableRecordsCount
 		}
 		return total
@@ -113,7 +113,7 @@ class ZRemoteStorage: NSObject {
     var allClouds: [ZCloud] {
         var clouds = [ZCloud] ()
         
-        for databaseID in kAllDatabaseIDs {
+        for databaseID in kAllActualDatabaseIDs {
             if  let cloud = zRecords(for: databaseID) as? ZCloud {
                 clouds.append(cloud)
             }
@@ -125,7 +125,7 @@ class ZRemoteStorage: NSObject {
     var allRecordsArrays:  [ZRecords] {
         var recordsArray = [ZRecords] ()
         
-        for databaseID in kAllDatabaseIDs {
+        for databaseID in kAllActualDatabaseIDs {
             if  let records = zRecords(for: databaseID) {
                 recordsArray.append(records)
             }

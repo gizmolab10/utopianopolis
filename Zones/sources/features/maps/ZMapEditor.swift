@@ -73,8 +73,9 @@ class ZMapEditor: ZBaseEditor {
 		if !gIsEditingStateChanging, !gIsExportingToAFile, !gRefusesFirstResponder, !gIsPrinting,
 		    var     key = iKey {
 			let   arrow = key.arrow
-			let CONTROL = flags.hasControl
 			let SPECIAL = flags.exactlySpecial
+			let SPLAYED = flags.exactlySplayed
+			let CONTROL = flags.hasControl
 			let COMMAND = flags.hasCommand
 			let  OPTION = flags.hasOption
 			var   SHIFT = flags.hasShift
@@ -137,7 +138,7 @@ class ZMapEditor: ZBaseEditor {
 						case "o":        gFiles.importExport(export: false, moveable, with: flags)
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
-						case "s":        if     ALL { invokeShare() } else { gFiles.importExport(export: true, moveable, with: flags) }
+						case "s":        if SPLAYED { invokeShare() } else { gFiles.importExport(export: true, moveable, with: flags) }
 						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
 						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }

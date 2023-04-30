@@ -84,7 +84,7 @@ class ZDragging: NSObject {
 		current    = .zero
 		dropCrumb?.highlight(false)
 		gRubberband.clearRubberband()
-		view?.unhighlightUpDownButtons()
+		view?.unhighlightButtons()
 		clearDragAndDrop()
 		gMapController?.setNeedsDisplay() // erase drag: line and dot
 	}
@@ -197,7 +197,7 @@ class ZDragging: NSObject {
 			let   isDone = iGesture?.isDone ?? false
 
 			if  !isDone {
-				view.highlightUpDownButton(down)
+				view.highlightButton(down)
 			} else if let parent = gFavoritesCloud.showNextList(down: down) {
 				var zones = draggedZones
 

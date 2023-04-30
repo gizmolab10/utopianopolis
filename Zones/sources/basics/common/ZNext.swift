@@ -124,7 +124,7 @@ extension ZFavorites {
 
 	func nextList(down: Bool) -> Zone? {
 		if  let  here = hereZoneMaybe,
-			let zones = allGroups,
+			let zones = rootZone?.allGroups,
 			let index = zones.firstIndexWithRecordNameMatching(here),
 			let  next = index.next(increasing: !down, max: zones.count - 1) {
 			return zones[next]
@@ -133,8 +133,8 @@ extension ZFavorites {
 		return rootZone
 	}
 
-	func nextListAttributedTitle(down: Bool) -> NSAttributedString {
-		let string = nextList(down: down)?.unwrappedName.capitalized ?? kEmpty
+	func nextListAttributedTitle(forward: Bool) -> NSAttributedString {
+		let string = nextList(down: forward)?.unwrappedName.capitalized ?? kEmpty
 
 		return string.darkAdaptedTitle
 	}
