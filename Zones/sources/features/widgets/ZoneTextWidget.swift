@@ -47,16 +47,21 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
     }
 
     func updateTextColor() {
+		var color = textColor
 		if  gDragging.isDragged(widgetZone) {
-			textColor = gActiveColor
+			color = gActiveColor
 		} else if gIsEssayMode, widgetZone?.isInMainMap ?? true {
-			textColor = kClearColor
+			color = kClearColor
 		} else if let tColor = widgetZone?.textColor,
 				  let cColor = widgetZone?.lighterColor?.invertedBlackAndWhite,
 				  let isLinear = widget?.isLinearMode {
 			let plain = !gDrawCirclesAroundIdeas
-			textColor = (isLinear || plain) ? tColor : cColor
-        }
+			color = (isLinear || plain) ? tColor : cColor
+		} else {
+			return
+		}
+
+		textColor = color?.accountingForDarkMode
     }
 
 	func controllerSetup(with mapView: ZMapView?) {

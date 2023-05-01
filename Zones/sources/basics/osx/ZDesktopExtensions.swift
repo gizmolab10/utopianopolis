@@ -339,6 +339,9 @@ extension ZEvent {
 
 extension ZColor {
 
+	var accountingForDarkMode: ZColor { return gIsDark ? invertedColor : self }
+	var invertedBlackAndWhite: ZColor { return (brightnessComponent < 0.5) ? kWhiteColor : kBlackColor }
+
 	convenience init(string: String) {
 		var r: CGFloat = 1
 		var g: CGFloat = 1
@@ -372,8 +375,6 @@ extension ZColor {
 		return nil
 	}
 
-	var accountingForDarkMode: NSColor { return gIsDark ? invertedColor : self }
-
     func darker(by: CGFloat) -> NSColor {
         return NSColor(calibratedHue: hueComponent, saturation: saturationComponent * (by * 2), brightness: brightnessComponent / (by / 3), alpha: alphaComponent)
     }
@@ -383,23 +384,15 @@ extension ZColor {
     }
     
     func lightish(by: CGFloat) -> NSColor {
-        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent,              brightness: brightnessComponent * by,         alpha: alphaComponent)
+        return NSColor(calibratedHue: hueComponent, saturation: saturationComponent,            brightness: brightnessComponent * by,       alpha: alphaComponent)
     }
 
     var invertedColor: ZColor {
-        let b = max(.zero, min(1.0, 1.25 - brightnessComponent))
-        let s = max(.zero, min(1.0, 1.45 - saturationComponent))
+        let b =                    max(.zero, min(1.0, 1.25 - brightnessComponent))
+		let s = (b == 1.0) ? 0.0 : max(.zero, min(1.0, 1.45 - saturationComponent))
         
         return ZColor(calibratedHue: hueComponent, saturation: s, brightness: b, alpha: alphaComponent)
     }
-
-	var invertedBlackAndWhite: ZColor {
-		if  brightnessComponent < 0.5 {
-			return kWhiteColor
-		}
-
-		return kBlackColor
-	}
 
 }
 
