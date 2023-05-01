@@ -16,7 +16,7 @@ class ZFavoritesTogglingView : ZTogglingView {
 
 	@IBAction override func buttonAction(_ button: ZButton) {
 		switch identity {
-			case .vFavorites: gFavoritesCloud.showNextList(down: button == leftButton)
+			case .vFavorites: gFavoritesCloud.showNextList(down: button == rightButton)
 			default:          super.buttonAction(button)
 		}
 	}
