@@ -2260,38 +2260,99 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func addZones(_ iZones: ZoneArray, at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ flags: ZEventFlags, onCompletion: Closure?) {
+	func addZones(_ newChildren: ZoneArray, at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ flags: ZEventFlags, onCompletion: Closure?) {
 
-		if  iZones.count == 0 {
-			return
+		if  newChildren.count == 0 {
+			return  // nothing to move
 		}
-
-		// ///////////////////////////////////////////////////////////////////////////////////////////////////////////// //
-		// 1. move a normal zone into another normal zone                                                                //
-		// 2. move a normal zone through a bookmark                                                                      //
-		// 3. move a normal zone into favorites map -- create a bookmark pointing at normal zone, then add it to the map //
-		// 4. move from favorites map into a normal zone -- convert to a bookmark, then move the bookmark                //
-		//                                                                                                               //
-		// OPTION  = copy                                                                                                //
-		// SPECIAL = don't create bookmark              (case 3)                                                         //
-		// CONTROL = don't change here or expand into                                                                    //
-		// ///////////////////////////////////////////////////////////////////////////////////////////////////////////// //
 
 		guard let undoManager = iUndoManager else {
 			onCompletion?()
-
-			return
 		}
 
-		let   toBookmark = isBookmark                    // type 2
-		let  toFavorites = isInFavorites && !toBookmark   // type 3
-		let         into = bookmarkTarget ?? self        // grab bookmark AFTER travel
-		var        zones = iZones
+		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////// //
+		//                                                                                                                 //
+		//  into receives the newChildren                                                                                  //
+		//                                                                                                                 //
+		//  1. move a normal zone into another normal zone                                                                 //
+		//  2. move a normal zone through a bookmark                                                                       //
+		//  3. move a normal zone into favorites map -- create a bookmark pointing at normal zone, then add it to the map  //
+		//  4. move from favorites map into a normal zone -- convert to a bookmark, then move the bookmark                 //
+		//                                                                                                                 //
+		//  OPTION  = copy                                                                                                 //
+		//  SPECIAL = don't create bookmark                 case 3                                                         //
+		//  CONTROL = change here or expand into                                                                           //
+		//                                                                                                                 //
+		// /////////////////////////////////////////////////////////////////////////////////////////////////////////////// //
+
+		let   toBookmark = isBookmark                     // case 2
+		let  toFavorites = isInFavorites && !toBookmark   // case 3
+		let         into = bookmarkTarget ?? self         // grab bookmark AFTER travel
+		var        zones = newChildren                    // NOTE: may contain cycles, which are removed in this method
 		var      restore = [Zone: (Zone, Int?)] ()
-		let     STAYHERE = flags.exactlySpecial
-		let   NOBOOKMARK = flags.hasControl
+		let         STAY = flags.exactlySpecial
+		let       EXPAND = flags.hasControl
 		let         COPY = flags.hasOption
 		var    cyclicals = IndexSet()
+
+		// /////////////////// //
+		// move logic ... last //
+		// /////////////////// //
+
+		let finish = {
+			var onlyTime = true
+
+			if  EXPAND {
+				into.expand()
+			}
+
+			if  onlyTime {
+				onlyTime          = false
+				if  let firstGrab = zones.first,
+					let fromIndex = firstGrab.siblingIndex,
+					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
+					zones = zones.reversed()
+				}
+
+				gSelecting.ungrabAll()
+
+				for zone in zones {
+					var newChild = zone // main player is newChild
+
+					if  toFavorites && !newChild.isInFavorites && !newChild.isBookmark && !newChild.isInTrash && !STAY {
+						newChild = gFavoritesCloud.matchOrCreateBookmark(for: newChild, addToRecents: false)
+					} else if newChild.databaseID != into.databaseID {    // being moved to the other db
+						if  newChild.parentZone == nil || !newChild.parentZone!.children.contains(newChild) || !COPY {
+							newChild.needDestroy()                        // in wrong DB ... is not a child within its parent
+							newChild.orphan()
+						}
+
+						newChild = newChild.deepCopy(into: into.databaseID)
+					}
+
+					if !STAY, EXPAND {
+						newChild.addToGrabs()
+
+						if  toFavorites {
+							into.updateVisibilityInFavoritesMap(true)
+						}
+					}
+
+					newChild.orphan()
+					into.addChildAndUpdateOrder(newChild, at: iIndex)
+					newChild.recursivelyApplyDatabaseID(into.databaseID)
+					if  gBookmarks.addToReverseLookup(newChild) {
+						gRelationships.addBookmarkRelationship(newChild, target: zone, in: zone.databaseID)
+					}
+				}
+
+				if  toBookmark && undoManager.groupingLevel > 0 {
+					undoManager.endUndoGrouping()
+				}
+
+				onCompletion?()
+			}
+		}
 
 		// separate zones that are connected back to themselves
 
@@ -2336,73 +2397,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			onCompletion?()
 		}
 
-		// ////////// //
-		// move logic //
-		// ////////// //
+		// /////////////////////// //
+		// treat it as a bookmark? //
+		// /////////////////////// //
 
-		let finish = {
-			var onlyTime = true
-
-			if !NOBOOKMARK {
-				into.expand()
-			}
-
-			if  onlyTime {
-				onlyTime          = false
-				if  let firstGrab = zones.first,
-					let fromIndex = firstGrab.siblingIndex,
-					(firstGrab.parentZone != into || fromIndex > (iIndex ?? 1000)) {
-					zones = zones.reversed()
-				}
-
-				gSelecting.ungrabAll()
-
-				for zone in zones {
-					var bookmark = zone
-
-					if  toFavorites && !bookmark.isInFavorites && !bookmark.isBookmark && !bookmark.isInTrash && !STAYHERE {
-						bookmark = gFavoritesCloud.matchOrCreateBookmark(for: bookmark, addToRecents: false)
-					} else if bookmark.databaseID != into.databaseID {    // being moved to the other db
-						if  bookmark.parentZone == nil || !bookmark.parentZone!.children.contains(bookmark) || !COPY {
-							bookmark.needDestroy()                        // in wrong DB ... is not a child within its parent
-							bookmark.orphan()
-						}
-
-						bookmark = bookmark.deepCopy(into: into.databaseID)
-					}
-
-					if !STAYHERE, !NOBOOKMARK {
-						bookmark.addToGrabs()
-
-						if  toFavorites {
-							into.updateVisibilityInFavoritesMap(true)
-						}
-					}
-
-					bookmark.orphan()
-					into.addChildAndUpdateOrder(bookmark, at: iIndex)
-					bookmark.recursivelyApplyDatabaseID(into.databaseID)
-					if  gBookmarks.addToReverseLookup(bookmark) {
-						gRelationships.addBookmarkRelationship(bookmark, target: zone, in: zone.databaseID)
-					}
-				}
-
-				if  toBookmark && undoManager.groupingLevel > 0 {
-					undoManager.endUndoGrouping()
-				}
-
-				onCompletion?()
-			}
-		}
-
-		// ///////////////////////////////// //
-		// deal with target being a bookmark //
-		// ///////////////////////////////// //
-
-		if !toBookmark || STAYHERE || NOBOOKMARK || COPY {
+		if !toBookmark || STAY || !EXPAND || COPY {            // NOPE
 			finish()
 		} else {
-			focusOnBookmarkTarget() { (iAny, iSignalKind) in
+			focusOnBookmarkTarget() { (iAny, iSignalKind) in   // YEP
 				finish()
 			}
 		}
