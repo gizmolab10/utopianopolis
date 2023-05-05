@@ -21,7 +21,7 @@ class ZFavoritesTogglingView : ZTogglingView {
 		}
 	}
 
-	func detectUpDownButton(at location: CGPoint, inView: ZView) -> Bool? { // true means down
+	func detectLeftButton(at location: CGPoint, inView: ZView) -> Bool? { // true means left
 		if  let right = rightButton,
 			let  left = leftButton {
 			let  both = [left, right]
@@ -43,7 +43,7 @@ class ZFavoritesTogglingView : ZTogglingView {
 		leftButton? .highlight(false)
 	}
 
-	func highlightButton(_ left: Bool) {
+	func highlightLeftButton(_ left: Bool) {
 		let button = left ? leftButton : rightButton
 
 		button?.highlight(true)

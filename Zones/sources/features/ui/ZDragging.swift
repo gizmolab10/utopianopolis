@@ -192,20 +192,22 @@ class ZDragging: NSObject {
 
 	func dropMaybeOntoFavoritesButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
 		if  let location = iGesture?.location(in: controller.view),
+			let    flags = iGesture?.modifiers,
 		    let     view = gDetailsController?.view(for: .vFavorites) as? ZFavoritesTogglingView,
-			let     down = view.detectUpDownButton(at: location, inView: controller.view) {
+			let     left = view.detectLeftButton(at: location, inView: controller.view) {
 			let   isDone = iGesture?.isDone ?? false
+			let  COMMAND = flags.isCommand
 
 			if  !isDone {
-				view.highlightButton(down)
-			} else if let parent = gFavoritesCloud.showNextList(down: down) {
+				view.highlightLeftButton(left)
+			} else if let parent = gFavoritesCloud.showNextList(down: !left, changeHere: COMMAND) {
 				var zones = draggedZones
 
 				if  controller.isMainMap {
 					zones = draggedZones.map { $0.isBookmark ? $0 : gFavoritesCloud.matchOrCreateBookmark(for: $0, addToRecents: false) }
 				}
 
-				zones.moveIntoAndGrab(parent) { flag in }   // move dragged zone into the new focused list
+				zones.moveIntoAndGrab(parent, changeHere: COMMAND) { flag in }   // move dragged zone into the new focused list
 			}
 
 			return true

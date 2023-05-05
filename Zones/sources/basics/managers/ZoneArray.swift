@@ -442,8 +442,8 @@ extension ZoneArray {
 		}
 	}
 
-	func moveIntoAndGrab(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, onCompletion: BoolClosure?) {
-		if  into.isInFavorites {
+	func moveIntoAndGrab(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, changeHere: Bool = true, onCompletion: BoolClosure?) {
+		if  into.isInFavorites, changeHere {
 			into.parentZone?.collapse()
 
 			gFavoritesCloud.hereZoneMaybe = into

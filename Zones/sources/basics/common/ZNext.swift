@@ -97,13 +97,16 @@ extension ZEssayView {
 
 extension ZFavorites {
 
-	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false) -> Zone? {
+	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false, changeHere: Bool = true) -> Zone? {
 		if  let here  = nextList(down: down) {
 			if  let b = bookmarkToMove, moveCurrent {
 				b.moveZone(to: here)
 			}
 
-			setHere(to: here)
+			if  changeHere {
+				setHere(to: here)
+			}
+			
 			gSignal([.spCrumbs, .spFavoritesMap])
 
 			return here
