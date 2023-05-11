@@ -207,7 +207,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
     func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
-        let alterers = "ehlnuw#" + kMarkingCharacters + kReturn
+        let alterers = "hluw#" + kMarkingCharacters + kReturn
 		let  ALTERER = alterers.contains(key)
         let  COMMAND = flags.hasCommand
         let  CONTROL = flags.hasControl

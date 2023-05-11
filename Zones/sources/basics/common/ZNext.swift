@@ -97,13 +97,13 @@ extension ZEssayView {
 
 extension ZFavorites {
 
-	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false, changeHere: Bool = true) -> Zone? {
+	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false, travel: Bool = true) -> Zone? {
 		if  let here  = nextList(down: down) {
 			if  let b = bookmarkToMove, moveCurrent {
 				b.moveZone(to: here)
 			}
 
-			if  changeHere {
+			if  travel {
 				setHere(to: here)
 			}
 			

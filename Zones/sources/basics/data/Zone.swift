@@ -2263,6 +2263,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addZones(_ newChildren: ZoneArray, at iIndex: Int?, undoManager iUndoManager: UndoManager?, _ flags: ZEventFlags, onCompletion: Closure?) {
 
 		if  newChildren.count == 0 {
+			onCompletion?()
+
 			return  // nothing to move
 		}
 

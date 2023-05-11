@@ -94,18 +94,21 @@ class ZDragging: NSObject {
 			return
 		}
 
-		if  let     flags  = gesture.modifiers {
-			let   location = gesture.location(in: gesture.view)
-			let     state  = gesture.state
+		if  let    flags = gesture.modifiers {
+			let    state = gesture.state
+			let location = gesture.location(in: gesture.view)
+			let  COMMAND = flags.hasCommand
+			let  CONTROL = flags.hasControl
+			let   OPTION = flags.hasOption
 
 			gTextEditor.stopCurrentEdit(forceCapture: true, andRedraw: false) // so drag and rubberband do not lose user's changes
 
-			if  flags.hasCommand && !flags.hasOption {          // shift background
+			if  COMMAND && !OPTION {                          // shift background
 				controller.offsetEvent(move: state == .changed,  to: location)
 			} else if !draggedZones.isEmpty {
 				dropMaybeGesture(gesture, in: controller)     // logic for drawing the drop dot, and for dropping dragged idea
 			} else if state == .changed {
-				if  flags.hasControl, controller.inCircularMode {
+				if  CONTROL, controller.inCircularMode {
 					controller.rotationEvent(location)
 				} else if gRubberband.setRubberbandExtent(to: location) {  // enlarge rubberband
 					gRubberband.updateGrabs()
@@ -191,23 +194,22 @@ class ZDragging: NSObject {
 	}
 
 	func dropMaybeOntoFavoritesButton(_ iGesture: ZGestureRecognizer?, in controller: ZMapController) -> Bool { // true means successful drop
-		if  let location = iGesture?.location(in: controller.view),
-			let    flags = iGesture?.modifiers,
-		    let     view = gDetailsController?.view(for: .vFavorites) as? ZFavoritesTogglingView,
-			let     left = view.detectLeftButton(at: location, inView: controller.view) {
-			let   isDone = iGesture?.isDone ?? false
-			let  COMMAND = flags.isCommand
+		if  let gesture = iGesture as? ZPanGestureRecognizer,
+		    let    view = gDetailsController?.view(for: .vFavorites) as? ZFavoritesTogglingView,
+			let    left = view.detectLeftButton(at: gesture.location(in: controller.view), inView: controller.view) {
+			let  isDone = iGesture?.isDone ?? false
+			let CONTROL = gesture.isControlDown
 
 			if  !isDone {
 				view.highlightLeftButton(left)
-			} else if let parent = gFavoritesCloud.showNextList(down: !left, changeHere: COMMAND) {
+			} else if let parent = gFavoritesCloud.showNextList(down: !left, travel: CONTROL) {
 				var zones = draggedZones
 
 				if  controller.isMainMap {
 					zones = draggedZones.map { $0.isBookmark ? $0 : gFavoritesCloud.matchOrCreateBookmark(for: $0, addToRecents: false) }
 				}
 
-				zones.moveIntoAndGrab(parent, changeHere: COMMAND) { flag in }   // move dragged zone into the new focused list
+				zones.moveIntoAndGrab(parent, travel: CONTROL) { flag in }   // move dragged zone into the new focused list
 			}
 
 			return true
