@@ -439,7 +439,7 @@ class ZMapEditor: ZBaseEditor {
 			let promoteToParent: ClosureClosure = { innerClosure in
 				original.convertFromLineWithTitle()
 
-				grabs.reversed().moveIntoAndGrab(original) { reveal in
+				grabs.reversed().moveInto(original) { reveal in
 					original.grab()
 					innerClosure()
 					onCompletion?()
@@ -904,7 +904,7 @@ class ZMapEditor: ZBaseEditor {
 				zone.orphan()
 			}
 
-			grabs.moveIntoAndGrab(done!) { good in
+			grabs.moveInto(done!) { good in
 				done?.grab()
 				gRelayoutMaps()
 			}
@@ -1023,7 +1023,7 @@ class ZMapEditor: ZBaseEditor {
 						let   newIndex = indexer.siblingIndex
 						let  moveThese = moveUp ? iZones.reversed() : iZones
 
-						moveThese.moveIntoAndGrab(intoParent, at: newIndex, orphan: true) { reveal in
+						moveThese.moveInto(intoParent, at: newIndex, orphan: true) { reveal in
 							gSelecting.grab(moveThese)
 							intoParent.children.updateOrder()
 							onCompletion?([.spRelayout])
@@ -1188,7 +1188,7 @@ class ZMapEditor: ZBaseEditor {
 			}
 
 			if !SHIFT || moveable.isInFavorites {
-				move(out: out, selectionOnly: !OPTION, extreme: COMMAND) { neededReveal in
+				move(out: out, flags: flags) { neededReveal in
 					gSelecting.updateAfterMove(!OPTION, needsRedraw: neededReveal)  // relayout map when travelling through a bookmark
 					onCompletion?() // invoke closure from essay editor
 				}
@@ -1207,8 +1207,10 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    func moveOut(selectionOnly: Bool = true, extreme: Bool = false, force: Bool = false, onCompletion: BoolClosure?) {
-		if  let zone: Zone = moveables?.first, !zone.isARoot {
+    func moveOut(_ flags: ZEventFlags? = nil, force: Bool = false, onCompletion: BoolClosure?) {
+		if  let zone          = moveables?.first, !zone.isARoot {
+			let extreme       =   flags?.hasCommand ?? false
+			let selectionOnly = !(flags?.hasOption  ?? false)
 			if  selectionOnly {
 
 				// ////////////// //
@@ -1236,7 +1238,7 @@ class ZMapEditor: ZBaseEditor {
 
 					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? kEmpty)\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { [self] iStatus in
 						if  iStatus == .sYes {
-							moveOut(selectionOnly: selectionOnly, extreme: extreme, force: true, onCompletion: onCompletion)
+							moveOut(flags, force: true, onCompletion: onCompletion)
 						}
 					}
 				} else {
@@ -1295,19 +1297,21 @@ class ZMapEditor: ZBaseEditor {
 		onCompletion?(false)
     }
     
-    func move(out: Bool, selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
+    func move(out: Bool, flags: ZEventFlags, onCompletion: BoolClosure?) {
         if  out {
-            moveOut (selectionOnly: selectionOnly, extreme: extreme, onCompletion: onCompletion)
+            moveOut (flags, onCompletion: onCompletion)
         } else {
-            moveInto(selectionOnly: selectionOnly, extreme: extreme, onCompletion: onCompletion)
+			moveInto(flags, onCompletion: onCompletion)
         }
     }
 
-	func moveInto(selectionOnly: Bool = true, extreme: Bool = false, onCompletion: BoolClosure?) {
+	func moveInto(_ flags: ZEventFlags? = nil, onCompletion: BoolClosure?) {
+		let extreme       =   flags?.hasCommand ?? false
+		let selectionOnly = !(flags?.hasOption  ?? false)
 		if  selectionOnly {
 			moveables?.first?.browseRight(extreme: extreme, onCompletion: onCompletion)
 		} else {
-			moveables?.actuallyMoveInto(onCompletion: onCompletion)
+			moveables?.actuallyMoveInto(flags, onCompletion: onCompletion)
 		}
 	}
 

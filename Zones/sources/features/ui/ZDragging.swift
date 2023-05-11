@@ -209,7 +209,7 @@ class ZDragging: NSObject {
 					zones = draggedZones.map { $0.isBookmark ? $0 : gFavoritesCloud.matchOrCreateBookmark(for: $0, addToRecents: false) }
 				}
 
-				zones.moveIntoAndGrab(parent, travel: CONTROL) { flag in }   // move dragged zone into the new focused list
+				zones.moveInto(parent, travel: CONTROL) { flag in }   // move dragged zone into the new focused list
 			}
 
 			return true

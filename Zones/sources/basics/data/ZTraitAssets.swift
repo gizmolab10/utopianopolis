@@ -65,11 +65,13 @@ class ZTraitAssets : ZRecord {
 		var  extend : String?
 
 		let grabWrapper = {
-			do {
-				wrapper = try FileWrapper(url: url, options: [])
-				extend  = url.pathExtension
-			} catch {
-				printDebug(.dError, "\(error)")
+			if  url.fileExists {
+				do {
+					wrapper = try FileWrapper(url: url, options: [])
+					extend  = url.pathExtension
+				} catch {
+					printDebug(.dError, "\(error)")
+				}
 			}
 		}
 
@@ -161,19 +163,19 @@ class ZTraitAssets : ZRecord {
 	}
 
 	func assetFromAssetNames(for name: String) -> CKAsset? {
-		if  let items = assetNames?.componentsSeparatedAt(level: 0),
-			let array = assets,
+		if  let items   = assetNames?.componentsSeparatedAt(level: 0),
+			let array   = assets,
 			array.count > 0 {
 			for item in items {
 				let parts = item.componentsSeparatedAt(level: 1)
 
 				if  parts.count == 2,
-					name == parts[0],
+					name        == parts[0],
 					let checksum = parts[1].integerValue {
 
 					for asset in array {
-						if  let  data  = asset.data {
-							let delta  = abs(data.checksum - checksum)
+						if  let data   = asset.data {
+							let delta  = data.checksum - checksum
 							if  delta == 0 {
 								return asset
 							}

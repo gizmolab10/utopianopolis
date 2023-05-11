@@ -433,16 +433,23 @@ extension ZoneArray {
 		return into
 	}
 
-	func actuallyMoveInto(onCompletion: BoolClosure?) {
-		if  let into = appropriateParent {
-			into.expand()
-			moveIntoAndGrab(into, horizontal: true, onCompletion: onCompletion)
-		} else {
+	func actuallyMoveInto(_ flags: ZEventFlags? = nil, onCompletion: BoolClosure?) {
+		let CONTROL = flags?.hasControl ?? false
+
+		guard let into = appropriateParent else {
 			onCompletion?(true)
+
+			return
 		}
+
+		if  CONTROL {
+			into.expand()
+		}
+
+		moveInto(into, horizontal: true, grab: CONTROL, onCompletion: onCompletion)
 	}
 
-	func moveIntoAndGrab(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, travel: Bool = true, onCompletion: BoolClosure?) {
+	func moveInto(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, travel: Bool = true, grab: Bool = true, onCompletion: BoolClosure?) {
 		if  into.isInFavorites, travel {
 			into.parentZone?.collapse()
 
@@ -460,7 +467,12 @@ extension ZoneArray {
 				}
 
 				into.addChildAndUpdateOrder(zone, at: iIndex)
-				zone.addToGrabs()
+
+				if  grab {
+					zone.addToGrabs()
+				} else {
+					into.addToGrabs()
+				}
 			}
 		}
 
