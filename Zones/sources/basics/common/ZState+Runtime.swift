@@ -120,7 +120,7 @@ var gCompleteHereRecordNames: StringsArray {
 
 	func rootFor(_ index: Int) -> Zone? {
 		if  let     dbid = ZDatabaseIndex(rawValue: index)?.databaseID,
-			let zRecords = gRemoteStorage.zRecords(for: dbid),
+			let zRecords = dbid.zRecords,
 			let     root = zRecords.rootZone {
 
 			return  root

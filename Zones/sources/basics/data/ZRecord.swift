@@ -102,7 +102,7 @@ class ZRecord: ZManagedObject {
 	var                        zone : Zone?        { return maybeZone ?? maybeTrait?.ownerZone }
 	var             maybeDatabaseID : ZDatabaseID? { return dbid?.databaseID }
 	var                  databaseID : ZDatabaseID  { return maybeDatabaseID! }
-	var                    zRecords : ZRecords?    { return gRemoteStorage.zRecords(for: maybeDatabaseID) }
+	var                    zRecords : ZRecords?    { return maybeDatabaseID?.zRecords }
 	var         unwrappedRecordName : String       { return recordName ?? kEmpty }
 	var               decoratedName : String       { return recordName ?? kNoValue }
 	var               unwrappedName : String       { return recordName ?? emptyName }
@@ -278,10 +278,10 @@ class ZRecord: ZManagedObject {
 	}
 
 	func stringForNeeds(in iDatabaseID: ZDatabaseID) -> String? {
-		if  let       r = recordName,
-			let manager = gRemoteStorage.zRecords(for: iDatabaseID) {
-			let  states = manager.states(for: r)
-			var   marks = StringsArray ()
+		if  let     name = recordName,
+			let zRecords = iDatabaseID.zRecords {
+			let   states = zRecords.states(for: name)
+			var    marks = StringsArray ()
 
 			for state in states {
 				marks.append("\(state.rawValue)")

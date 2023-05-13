@@ -78,7 +78,7 @@ enum ZDatabaseID: String {
 	func isDeleted(dict: ZStorageDictionary) -> Bool {
 		let    name = dict[.recordName] as? String
 
-		return name == nil ? false : gRemoteStorage.zRecords(for: self)?.manifest?.deletedRecordNames?.contains(name!) ?? false
+		return name == nil ? false : zRecords?.manifest?.deletedRecordNames?.contains(name!) ?? false
 	}
 
 }

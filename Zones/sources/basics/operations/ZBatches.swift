@@ -306,6 +306,7 @@ class ZBatches: ZOnboarding {
 			case .oSavingLocalData:  gSaveContext                          (); onCompletion?(0)
 			case .oConfigureStorage: gCoreDataStack.configureStorage(for: id); onCompletion?(0)
 			case .oWrite:            try gFiles.writeToFile        (from: id); onCompletion?(0)
+			case .oLoadManifest:     try id?.loadManifest(                     onCompletion)
 			case .oLoadingIdeas:     try id?.load(                             onCompletion)
 			case .oFavorites:        gFavoritesCloud.setup(                    onCompletion)
 			default:                 gCloudFor(id)?.invokeOperation(for: opID, onCompletion)

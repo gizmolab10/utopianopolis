@@ -153,7 +153,7 @@ class ZFiles: NSObject {
 		if  gHasFinishedStartup, // guarantee that file read finishes before this code runs
 			let     databaseID = databaseID,
 			databaseID        != .favoritesID,
-			let          cloud = gRemoteStorage.zRecords(for: databaseID) {
+			let          cloud = databaseID.zRecords {
 			var           dict = ZStorageDictionary ()
 
 			do {
@@ -214,7 +214,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(from path: String, into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  let    zRecords  = gRemoteStorage.zRecords(for: databaseID),
+		if  let    zRecords  = databaseID.zRecords,
 			let       index  = databaseID.index {
 			whileReading[index]  = true
 			typealias  sTypes = [ZStorageType]

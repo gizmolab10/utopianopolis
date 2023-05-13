@@ -10,19 +10,19 @@ import Foundation
 import CloudKit
 
 let gRemoteStorage = ZRemoteStorage()
-var gEveryoneCloud : ZCloud?     { return gRemoteStorage.zRecords(for: .everyoneID) as? ZCloud }
-var   gSharedCloud : ZCloud?     { return gRemoteStorage.zRecords(for:   .sharedID) as? ZCloud }
-var     gMineCloud : ZCloud?     { return gRemoteStorage.zRecords(for:     .mineID) as? ZCloud }
+var gEveryoneCloud : ZCloud?     { return gCloudFor(.everyoneID) }
+var   gSharedCloud : ZCloud?     { return gCloudFor(  .sharedID) }
+var     gMineCloud : ZCloud?     { return gCloudFor(    .mineID) }
 var         gCloud : ZCloud?     { return gRemoteStorage.currentCloud }
 var     gAllClouds : [ZCloud]    { return gRemoteStorage.allClouds }
 var  gLostAndFound : Zone?       { return gRemoteStorage.lostAndFoundZone }
 var       gDestroy : Zone?       { return gRemoteStorage.destroyZone }
 var         gTrash : Zone?       { return gRemoteStorage.trashZone }
 var          gRoot : Zone? { get { return gRemoteStorage.rootZone }         set { gRemoteStorage.rootZone  = newValue } }
-func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID)          { gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe = here }
-func gHereZoneForDatabaseIDMaybe(_ databaseID: ZDatabaseID) -> Zone?     { return gRemoteStorage.zRecords(for: databaseID)?.hereZoneMaybe }
-func gZRecordsFor(_ databaseID: ZDatabaseID?)               -> ZRecords? { return gRemoteStorage.zRecords(for: databaseID) }
-func gCloudFor   (_ databaseID: ZDatabaseID?)               -> ZCloud?   { return gRemoteStorage   .cloud(for: databaseID) }
+func gSetHereZoneForDatabaseID(here: Zone?, _ databaseID: ZDatabaseID)          { databaseID .zRecords?.hereZoneMaybe = here }
+func gHereZoneForDatabaseIDMaybe(_ databaseID: ZDatabaseID) -> Zone?     { return databaseID .zRecords?.hereZoneMaybe }
+func gZRecordsFor(_ databaseID: ZDatabaseID?)               -> ZRecords? { return databaseID?.zRecords }
+func gCloudFor   (_ databaseID: ZDatabaseID?)               -> ZCloud?   { return gRemoteStorage.cloud(for: databaseID) }
 func gMaybeZoneForRecordName (_ name: String?)              -> Zone?     { return gRemoteStorage.maybeZoneForRecordName(name) }
 
 func gRecountMaybe() {
@@ -102,12 +102,12 @@ class ZRemoteStorage: NSObject {
 	}
 
 	var countStatus : String {
-		let lCount  = Double(totalLoadableRecordsCount)
-		if  lCount == .zero { return kEmpty }
-		let tCount  = Double(totalRecordsCount)
-		let  ratio  = (tCount * 100.0 / lCount).float.roundedToNearestInt
+		let tCount     = Double(totalRecordsCount)
+		let lCount     = Double(totalLoadableRecordsCount)
+		if  lCount    == .zero { return kEmpty }
+		let percentage = (tCount * 100.0 / lCount).float.roundedToNearestInt
 
-		return "\(ratio) %"
+		return "\(percentage) %"
 	}
 
     var allClouds: [ZCloud] {

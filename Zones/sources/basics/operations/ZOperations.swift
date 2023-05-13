@@ -23,6 +23,7 @@ enum ZOperationID: Int, CaseIterable {
 	case oGetCloudStatus     // is icloud account available? (exists and accessible)
 	case oUbiquity
 	case oFetchUserID        // needs cloud access
+	case oLoadManifest
 	case oLoadingIdeas       // from core data or from cloud kit
 	case oManifest           // all these are LOCAL (from files or core data)
 	case oRoots
@@ -44,7 +45,8 @@ enum ZOperationID: Int, CaseIterable {
 
 	var useTimer: Bool {
 		switch self {
-			case .oLoadingIdeas, .oWrite,
+			case .oLoadingIdeas,
+				 .oWrite,
 				 .oRoots: return true
 			default:      return false
 		}
@@ -53,7 +55,7 @@ enum ZOperationID: Int, CaseIterable {
 	var	    doneOps : ZOpIDsArray { return [.oNone, .oDone, .oFinishing] }
 	var    countOps : ZOpIDsArray { return [.oLoadingIdeas] }
 	var mineOnlyOps : ZOpIDsArray { return [.oDone, .oBookmarks, .oFavorites, .oConfigureStorage] }
-	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oHere, .oRoots, .oManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing, .oMigrateFromCloud] }
+	var   bothDBOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oHere, .oRoots, .oManifest, .oLoadManifest, .oLoadingIdeas, .oSavingLocalData, .oResolveMissing, .oMigrateFromCloud] }
 	var    localOps : ZOpIDsArray { return [.oWrite, .oAdopt, .oDone, .oUbiquity, .oFavorites, .oFinishing, .oMacAddress, .oStartingUp, .oConfigureStorage, .oFetchUserID, .oUserPermissions, .oObserveUbiquity, .oGetCloudStatus] + bothDBOps }
 
 	var forMineOnly : Bool   { return mineOnlyOps.contains(self) }

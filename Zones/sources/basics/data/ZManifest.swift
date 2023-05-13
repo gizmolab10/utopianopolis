@@ -63,18 +63,17 @@ class ZManifest : ZRecord {
 		}
 	}
 
-    func applyDeleted() {
-        for deleteMe in zDeleted {
-            if  let      name = deleteMe.name {
-                let   records = gRemoteStorage.zRecords(for: databaseID)
-                if  let  zone = records?.maybeZoneForRecordName(name),
-                    let trash = records?.trashZone {
-                    zone.orphan()
-                    trash.addChildNoDuplicate(zone)
-                }
-            }
-        }
-    }
+	func applyDeleted() {
+		let       records = databaseID.zRecords
+		for deleteMe in zDeleted {
+			if  let  name = deleteMe.name,
+				let  zone = records?.maybeZoneForRecordName(name),
+				let trash = records?.trashZone {
+				zone.orphan()
+				trash.addChildNoDuplicate(zone)
+			}
+		}
+	}
     
     @discardableResult func smartAppend(_ iItem: Any) -> Bool {
         let refString  = iItem as? String

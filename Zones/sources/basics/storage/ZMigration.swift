@@ -123,6 +123,7 @@ enum ZCKRepositoryID: String {   // describe evolving versions of containers
 
 extension ZDatabaseID {
 
+//	var  zRecords         :          ZRecords? { return gRemoteStorage.zRecords(for: self) }
 	var  cdMigrationState : ZCDMigrationState? { return gCDMigrationStates[acceptableMigrationIndex] }
 	func updateCDMigrationState()              {        gCDMigrationStates[acceptableMigrationIndex] = recomputedMigrationState }
 
@@ -166,7 +167,7 @@ extension ZDatabaseID {
 			switch state {
 				case .mFirstTime,
 					 .mFiles:   return gFiles.migrationFilesSize(for: self) / kFileRecordSize
-				default:        return gRemoteStorage.totalManifestCount
+				default:        return zRecords?.manifest?.count?.intValue ?? 0
 			}
 		}
 
@@ -176,6 +177,11 @@ extension ZDatabaseID {
 	func updateRepositoryIDAndMigrationState() {
 		ZCKRepositoryID.updateRepositoryID()
 		updateCDMigrationState()
+	}
+
+	func loadManifest(_ onCompletion: AnyClosure?) throws {
+		updateRepositoryIDAndMigrationState()
+		gCoreDataStack.loadManifest(into: self, onCompletion: onCompletion)
 	}
 
 	func load(_ onCompletion: AnyClosure?) throws {

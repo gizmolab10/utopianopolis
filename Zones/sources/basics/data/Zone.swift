@@ -36,7 +36,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           noteMaybe :              ZNote?
 	var                                      crossLinkMaybe :            ZRecord?
 	var                                     parentZoneMaybe :               Zone?
-	var                                                root :               Zone? { return mapType.root ?? gRemoteStorage.zRecords(for: maybeDatabaseID)?.rootZone }
+	var                                                root :               Zone? { return mapType.root ?? maybeDatabaseID?.zRecords?.rootZone }
 	var                                          groupOwner :               Zone? { if let (_, r) = groupOwner([]) { return r } else { return nil } }
 	var                                         destroyZone :               Zone? { return zRecords?.destroyZone }
 	var                                           trashZone :               Zone? { return zRecords?.trashZone }
@@ -2439,7 +2439,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func asssureIsVisible() {
-		if  let goal = gRemoteStorage.zRecords(for: databaseID)?.currentHere {
+		if  let goal = databaseID.zRecords?.currentHere {
 
 			traverseAncestors { iAncestor -> ZTraverseStatus in
 				if  iAncestor != self {
@@ -3208,7 +3208,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func updateMaxLevel() {
 		if  gIsReadyToShowUI {
-			gRemoteStorage.zRecords(for: maybeDatabaseID)?.updateMaxLevel(with: level)
+			maybeDatabaseID?.zRecords?.updateMaxLevel(with: level)
 		}
 	}
 

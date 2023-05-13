@@ -130,7 +130,7 @@ class ZCoreDataStack: NSObject {
 	// MARK: - load
 	// MARK: -
 
-	func loadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
+	func loadManifest(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
 		if !gCDCanLoad {
 			onCompletion?(0)
 		} else {
@@ -139,7 +139,21 @@ class ZCoreDataStack: NSObject {
 
 				FOREGROUND { [self] in
 					loadManifest(into: databaseID)
+					makeAvailable()
+					onCompletion?(0)
+				}
+			}
+		}
+	}
 
+	func loadContext(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) {
+		if !gCDCanLoad {
+			onCompletion?(0)
+		} else {
+			deferUntilAvailable(for: .oLoad) { [self] in
+				assureContainerIsSetup()
+
+				FOREGROUND { [self] in
 					if  gCDLoadEachRoot {
 						for rootName in [kRootName, kTrashName, kDestroyName, kLostAndFoundName] {
 							loadRootZone(recordName: rootName, into: databaseID)
@@ -149,11 +163,11 @@ class ZCoreDataStack: NSObject {
 							loadRootZone(recordName: kFavoritesRootName, into: databaseID)
 						}
 
-					} else if let records = gRemoteStorage.zRecords(for: databaseID) {
-						load(type: kZoneType, into: databaseID)
+					} else if let zRecords = databaseID.zRecords {
+						load(type:  kZoneType, into: databaseID)
 						load(type: kTraitType, into: databaseID)
 						FOREGROUND {
-							records.resolveAllParents()
+							zRecords.resolveAllParents()
 						}
 					}
 
@@ -189,7 +203,7 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func loadRootZone(recordName: String, into databaseID: ZDatabaseID) {
-		if  let zRecords = gRemoteStorage.zRecords(for: databaseID) {
+		if  let zRecords = databaseID.zRecords {
 			let  objects = load(type: kZoneType, recordName: recordName, into: databaseID, onlyOne: true)
 
 			for object in objects {

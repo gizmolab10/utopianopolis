@@ -552,7 +552,7 @@ extension CKRecord {
     }
 
     func isDeleted(databaseID: ZDatabaseID) -> Bool {
-        return gRemoteStorage.zRecords(for: databaseID)?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
+        return databaseID.zRecords?.manifest?.deletedRecordNames?.contains(recordID.recordName) ?? false
     }
 
     @discardableResult func copy(to iCopy: CKRecord?, properties: StringsArray) -> Bool {
@@ -2073,8 +2073,9 @@ extension String {
     var           isOpposite :                    Bool  { return "]}>)".contains(self) }
 	var containsLineEndOrTab :                    Bool  { return hasMatchIn(kLineEndingsAndTabArray) }
 	var         isDashedLine :                    Bool  { return contains(kHalfLineOfDashes) }
-	var      isLine :                    Bool  { return extractedTitle != self }
+	var               isLine :                    Bool  { return extractedTitle != self }
 	func isLineTitle(enclosing range: NSRange) -> Bool  { return extractedTitle == substring(with: range) }
+	func maybeZRecord(in id: ZDatabaseID?)  -> ZRecord? { return id?.zRecords?.maybeZoneForRecordName(self) }
 
     var opposite: String {
 		switch self {
@@ -2189,13 +2190,6 @@ extension String {
 
 	// MARK: - bookmarks
 	// MARK: -
-
-	func maybeZRecord(in databaseID: ZDatabaseID?) -> ZRecord? {
-		let zRecords = gRemoteStorage.zRecords(for: databaseID)
-		let  zRecord = zRecords?.maybeZoneForRecordName(self)
-
-		return zRecord
-	}
 
 	var rootID: ZRootID? {
 		switch self {
