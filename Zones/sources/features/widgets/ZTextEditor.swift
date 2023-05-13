@@ -108,13 +108,13 @@ class ZTextPack: NSObject {
 
 		if  !isEditing,
 		    let         w = widget {
+			let      type = w.mapType
 			let  isLinear = w.isLinearMode
 			let threshold = isLinear ? 18 : 20
-			let      type = w.mapType
 			if  threshold < text.length,
 				!type.isExemplar,
 				!type.isMainMap || !isLinear {                       // is in favorites or is circular
-				let  isLine = text[0] == kHyphen
+				let  isLine = text.isLine
 				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 10) // shorten to fit (in favorites map area or in circles)
 
 				if !isLine {
@@ -372,15 +372,19 @@ class ZTextEditor: ZTextView {
 		}
 	}
 
+	func cancelEdit() {
+		clearEdit()
+		fullResign()
+		currentEdit?.updateWidgetsForEndEdit()
+	}
+
 	func stopCurrentEdit(forceCapture: Bool = false, andRedraw: Bool = true) {
 		if  let    e = currentEdit, !gIsEditingStateChanging {
 			let zone = e.packedZone
 
 			capture(force: forceCapture)
 
-			clearEdit()
-			fullResign()
-			e.updateWidgetsForEndEdit()
+			cancelEdit()
 			zone?.grab()
 
 			if  andRedraw {

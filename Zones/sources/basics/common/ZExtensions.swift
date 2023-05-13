@@ -2057,19 +2057,24 @@ extension NSTextAttachment {
 }
 
 extension String {
-    var               length :              Int  { return unicodeScalars.count }
-	var             isHyphen :             Bool  { return self == kHyphen }
-    var              isDigit :             Bool  { return "0123456789.+-=*/".contains(self[startIndex]) }
-    var       isAlphabetical :             Bool  { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
-    var              isAscii :             Bool  { return unicodeScalars.filter{  $0.isASCII }.count > 0 }
-	var      containsNoAscii :             Bool  { return unicodeScalars.filter{ !$0.isASCII }.count > 0 }
-	var       containsNoTabs :             Bool  { return filter{ $0 != kTab.first}.count != 0 }
-    var           isOpposite :             Bool  { return "]}>)".contains(self) }
-	var         isDashedLine :             Bool  { return contains(kHalfLineOfDashes) }
-	var containsLineEndOrTab :             Bool  { return hasMatchIn(kLineEndingsAndTabArray) }
-	var        smartStripped :           String  { return substring(fromInclusive: 4).spacesStripped }
-	var           asciiValue :           UInt32  { return asciiArray[0] }
-	var           asciiArray :          [UInt32] { return unicodeScalars.filter { $0.isASCII }.map{ $0.value } }
+	var               length :                     Int  { return unicodeScalars.count }
+	var           asciiArray :                 [UInt32] { return unicodeScalars.filter { $0.isASCII }.map{ $0.value } }
+	var           asciiValue :                  UInt32  { return asciiArray[0] }
+	var        smartStripped :                  String  { return substring(fromInclusive: 4).spacesStripped }
+	var       spacesStripped :                  String  { return strip(kSpace) }
+	var      hyphensStripped :                  String  { return strip(kSuperHyphen).strip(kHyphen) }
+	var       extractedTitle :                  String  { return hyphensStripped.spacesStripped }
+	var             isHyphen :                    Bool  { return self == kHyphen }
+    var              isDigit :                    Bool  { return "0123456789.+-=*/".contains(self[startIndex]) }
+    var       isAlphabetical :                    Bool  { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
+    var              isAscii :                    Bool  { return unicodeScalars.filter{  $0.isASCII }.count > 0 }
+	var      containsNoAscii :                    Bool  { return unicodeScalars.filter{ !$0.isASCII }.count > 0 }
+	var       containsNoTabs :                    Bool  { return filter{ $0 != kTab.first}.count != 0 }
+    var           isOpposite :                    Bool  { return "]}>)".contains(self) }
+	var containsLineEndOrTab :                    Bool  { return hasMatchIn(kLineEndingsAndTabArray) }
+	var         isDashedLine :                    Bool  { return contains(kHalfLineOfDashes) }
+	var      isLine :                    Bool  { return extractedTitle != self }
+	func isLineTitle(enclosing range: NSRange) -> Bool  { return extractedTitle == substring(with: range) }
 
     var opposite: String {
 		switch self {
@@ -2134,14 +2139,14 @@ extension String {
 		return self
 	}
 
-    var spacesStripped: String {
+	func strip(_ string: String) -> String {
         var before = self
         
-        while before.starts(withAnyCharacterIn: kSpace) {
+        while before.starts(withAnyCharacterIn: string) {
             before = before.substring(fromInclusive: 1) // strip extra space
         }
         
-        while before.ends(withAnyCharacterIn: kSpace) {
+        while before.ends(withAnyCharacterIn: string) {
             before = before.substring(toExclusive: before.length - 1) // strip trailing space
         }
         
@@ -2455,23 +2460,6 @@ extension String {
 		appending.appendSpacesToLength(iLength)
 
 		return appending
-    }
-
-    var isLineWithTitle: Bool {
-        let substrings = components(separatedBy: kHalfLineOfDashes)
-        
-        if  substrings.count == 3 {
-            return substrings[1].count > 0 || substrings[2].count > 0
-        }
-        
-        return false
-    }
-
-    func isLineTitle(enclosing range: NSRange) -> Bool {
-        let a = substring(  toExclusive: range.lowerBound - 1)
-        let b = substring(fromInclusive: range.upperBound + 1)
-
-        return a == kHalfLineOfDashes && b == kHalfLineOfDashes
     }
 
 	static func forZones(_ zones: ZoneArray?) -> String {

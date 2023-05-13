@@ -2334,7 +2334,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						newChild = newChild.deepCopy(into: into.databaseID)
 					}
 
-					if !STAY, EXPAND {
+					if  into.isExpanded {
 						newChild.addToGrabs()
 
 						if  toFavorites {
@@ -2898,15 +2898,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func createIdeaFromSelectedText() {
-		if  let newName  = textWidget?.extractTitleOrSelectedText() {
+		if  let name  = textWidget?.extractTitleOrSelectedText() {
 
 			gTextEditor.stopCurrentEdit()
 
-			if  newName == zoneName {
+			if  name == zoneName {
 				combineIntoParent()
 			} else {
 				gDeferRedraw {
-					addIdea(at: gListsGrowDown ? nil : 0, with: newName) { [self] iChild in
+					addIdea(at: gListsGrowDown ? nil : 0, with: name) { [self] iChild in
 						gDeferringRedraw = false
 
 						if  let child = iChild {
@@ -3463,39 +3463,44 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func convertToFromLine() -> Bool {
-		if  var childName = textWidget?.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
-			var location = 12
+	func convertToFromLine(onCompletion: Closure? = nil) -> Bool {
+		var result = false
 
-			if      childName == zoneName {
+		if  var name     = textWidget?.extractTitleOrSelectedText(requiresAllOrTitleSelected: true) {
+			var location = kHalfLineOfDashes.length + 1
+
+			if      name      == zoneName {
 				if  zoneName  == kLineOfDashes {
 					zoneName   = kVerticalBar
-					childName  = kVerticalBar
+					name       = kVerticalBar
 				}
 
 				convertToTitledLine()
 			} else {
-				if  childName == kVerticalBar {
-					childName  = kLineOfDashes
+				if  [kVerticalBar, kEmpty].contains(name) {
+					name  = kLineOfDashes
 				}
 
-				zoneName  = childName
-				colorized = !colorized // WTF?
+				colorized = !colorized    // TODO: why is this needed here?
+				zoneName  = name          // former selection or title or full line
 				location  = 0
 			}
 
-			gTextEditor.stopCurrentEdit()
-			editAndSelect(range: NSMakeRange(location, childName.length))
+			gTextEditor.cancelEdit()      // ignore editing
+			gRelayoutMaps()
+			editAndSelect(range: NSMakeRange(location, name.length))
 
-			return true
+			result = true
 		}
 
-		return false
+		onCompletion?()
+
+		return result
 	}
 
 	func convertFromLineWithTitle() {
-		if  let childName = textWidget?.extractedTitle {
-			zoneName  = childName
+		if  let name  = textWidget?.text?.extractedTitle {
+			zoneName  = name
 			colorized = !colorized // WTF?
 		}
 	}

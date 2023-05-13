@@ -204,7 +204,7 @@ class ZSelecting: NSObject {
     
     var currentMoveableLine: Zone? {
         for grab in currentMapGrabs + [gHere] {
-            if grab.zoneName?.isLineWithTitle ?? false {
+            if grab.zoneName?.isLine ?? false {
                 return grab
             }
         }

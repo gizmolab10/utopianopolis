@@ -78,8 +78,8 @@ class ZOnboarding : ZOperations {
 			return
 		}
 
-		c.accountStatus { (iStatus, error) in
-			if  iStatus            == .available {
+		c.accountStatus { (status, error) in
+			if  status             == .available {
 				gCloudAccountStatus = .available
 
 				// //////////////////// //

@@ -23,9 +23,9 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 
-	override var     debugName : String          { return   widgetZone?.zoneName ?? kUnknown }
-    var             widgetZone : Zone?           { return   widget?.widgetZone }
-	var             controller : ZMapController? { return   widget?.controller }
+	override var     debugName : String          { return widgetZone?.zoneName ?? kUnknown }
+    var             widgetZone : Zone?           { return widget?.widgetZone }
+	var             controller : ZMapController? { return widget?.controller }
     weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
 	var              drawnSize = CGSize.zero
@@ -209,7 +209,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 	}
 
     func extractTitleOrSelectedText(requiresAllOrTitleSelected: Bool = false) -> String? {
-        var      extract = extractedTitle
+        var      extract = text?.extractedTitle
 
         if  let original = text, gIsEditIdeaMode {
             let    range = gTextEditor.selectedRange
@@ -222,19 +222,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
                 } else if range.location != 0 && !original.isLineTitle(enclosing: range) {
                     extract = nil
                 }
-            }
-        }
-        
-        return extract
-    }
-    
-    var extractedTitle: String? {
-		var     extract  = text
-        
-        if  let original = text {
-            let substrings = original.components(separatedBy: kHalfLineOfDashes)
-            if  substrings.count > 1 {
-                extract = substrings[1].spacesStripped
             }
         }
         

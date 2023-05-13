@@ -331,7 +331,7 @@ class ZMapEditor: ZBaseEditor {
 		if  COMMAND && OPTION {
 			delete(preserveChildren: true, convertToTitledLine: true)
 		} else if OPTION {
-			return gSelecting.currentMoveable.convertToFromLine()
+			return gSelecting.currentMoveable.convertToFromLine { gRelayoutMaps() }
 		} else if COMMAND {
 			gUpdateBaseFontSize(up: false)
 		} else {
@@ -455,7 +455,7 @@ class ZMapEditor: ZBaseEditor {
 				original.assignAndColorize(kLineWithStubTitle)   // convert into a stub title
 
 				if !isMultiple {
-					original.editAndSelect(range: NSMakeRange(12, 1))   // edit selecting stub
+					original.editAndSelect(range: NSMakeRange(kHalfLineOfDashes.length + 1, 1))   // edit selecting stub
 				} else {
 					promoteToParent {
 						original.edit()
@@ -463,7 +463,7 @@ class ZMapEditor: ZBaseEditor {
 				}
 
 				return
-			} else if name.isLineWithTitle {
+			} else if name.isLine {
 				if !isMultiple {
 
 					// /////// //
@@ -888,7 +888,7 @@ class ZMapEditor: ZBaseEditor {
     // MARK: -
 
 	func moveToDone() -> Bool {
-		if  let   zone = gSelecting.rootMostMoveable,
+		if  let   zone = gSelecting.rootMostMoveable, zone.zoneName != kDone,
 			let parent = zone.parentZone {
 			let  grabs = gSelecting.currentMapGrabs
 			var   done = zone.visibleDoneZone

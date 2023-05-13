@@ -837,15 +837,7 @@ extension ZoneTextWidget {
         }
 
 		updateSize()
-
-        if  text?.contains(kHalfLineOfDashes + " - ") ?? false {
-            widgetZone?.zoneName = kLineOfDashes
-
-            gTextEditor.updateText(inZone: widgetZone)
-            gTextEditor.stopCurrentEdit()
-        } else {
-            updateGUI()
-        }
+		updateGUI()
     }
 
 	override func textDidEndEditing(_ notification: Notification) {

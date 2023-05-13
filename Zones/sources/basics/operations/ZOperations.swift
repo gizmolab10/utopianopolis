@@ -146,22 +146,21 @@ class ZOperations: NSObject {
         for operationID in operationIDs + [.oFinishing] {
 			let blockOperation = BlockOperation { [self] in
 				FOREGROUND { [self] in
-
-					// ////////////////////////////////////////////////////////// //
-					// ignore operations that are not local when have no internet //
-					// ////////////////////////////////////////////////////////// //
-
 					if  !operationID.isLocal && gCloudStatusIsDead {
+
+						// ////////////////////////////////////////////////////////// //
+						// ignore operations that are not local when have no internet //
+						// ////////////////////////////////////////////////////////// //
+
 						onCompletion()
 					} else {
 						currentOp         = operationID            // if hung, it happened inside this op
+						lastOpStart       = Date()
+						queue.isSuspended = true
 
 						// ///////////////////////////////////////////////// //
 						// susend queue until operation calls its closure... //
 						// ///////////////////////////////////////////////// //
-
-						queue.isSuspended = true
-						lastOpStart       = Date()
 
 						invokeMultiple(for: operationID, restoreToID: saved) { [self] iResult in
 
@@ -171,7 +170,7 @@ class ZOperations: NSObject {
 
 							queue.isSuspended = false
 
-							if  currentOp == .oFinishing {
+							if  currentOp.isDoneOp {
 
 								// //////////// //
 								// end of batch //

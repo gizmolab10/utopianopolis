@@ -183,9 +183,9 @@ class ZBatches: ZOnboarding {
 //				}
 //			}
 		} else {
-            let    current = getBatch(iID, from: currentBatches)
-            let completion = [ZBatchCompletion(iCompletion)]
-            let  startOver = currentBatches.count == 0
+            let     current = getBatch(iID, from: currentBatches)
+            let  completion = [ZBatchCompletion(iCompletion)]
+            let doNextBatch = currentBatches.count == 0
 
             // 1. is in deferral            -> add its completion to that deferred batch
             // 2. in neither                -> create new batch + append to current
@@ -202,7 +202,7 @@ class ZBatches: ZOnboarding {
                 current?.completions.append(contentsOf: completion)         // 4.
             }
 
-            if  startOver {
+            if  doNextBatch {
                 processNextBatch()
             }
         }
@@ -251,18 +251,19 @@ class ZBatches: ZOnboarding {
             if  iCompleted {
                 onCompletion(true)
             } else {
-				var                 invokeForIndex : IntClosure?                // declare closure first, so compiler will let it recurse
-                let                         isMine = restoreToID == .mineID
-				let                  onlyCurrentID = (!gCloudStatusIsActive && !operationID.alwaysBoth)
-				let databaseIDs : ZDatabaseIDArray = operationID.forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllActualDatabaseIDs
-				let                         isNoop = !gCloudStatusIsActive && onlyCurrentID && isMine && !operationID.forMineOnly
-				invokeForIndex                     = { [self] index in
+				var invokeForIndex : IntClosure?                // declare closure first, so compiler will let it recurse
+                let         isMine = restoreToID == .mineID
+				let    forMineOnly = operationID.forMineOnly
+				let  onlyCurrentID = !gCloudStatusIsActive && !operationID.alwaysBoth
+				let         isNoop = onlyCurrentID && isMine && !forMineOnly
+				let    databaseIDs = forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllActualDatabaseIDs
+				invokeForIndex     = { [self] index in
 
                     // /////////////////////////// //
                     // always called in foreground //
                     // /////////////////////////// //
 
-                    if  operationID == .oFinishing || isNoop || index >= databaseIDs.count {
+					if  operationID.isDoneOp || isNoop || index >= databaseIDs.count {
                         onCompletion(true)
                     } else {
                         currentDatabaseID = databaseIDs[index]      // if hung, it happened in currentDatabaseID
