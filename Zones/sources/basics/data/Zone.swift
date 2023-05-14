@@ -73,6 +73,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                                          isBookmark :               Bool  { return zoneLink != nil }
+	var                                     isValidBookmark :               Bool  { return bookmarkTarget != nil }
 	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.mapType.isMainMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
@@ -778,9 +779,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	// MARK: - core data
 	// MARK: -
 
+	func correctDeprecatedData() {
+		if  zoneName == kDeprecatedLineOfDashes {
+			zoneName  = kLineOfDashes
+		}
+	}
+
 	@discardableResult override func convertFromCoreData(visited: StringsArray?) -> StringsArray {
 		alterAttribute(ZoneAttributeType.validCoreData)
 		updateFromCoreDataTraitRelationships()
+		correctDeprecatedData()
+
 		return super.convertFromCoreData(visited: visited) // call super, too
 	}
 
@@ -3066,6 +3075,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	func rotateChildren(from: Int, to: Int) {
+		if  count > 1 {
+			let max    = count - 1
+			var delta  = to - from
+			if  delta  < 0 {
+				delta += 1
+			}
+
+			while delta < 0 {
+				delta += 1
+				moveChild(from: 0, to: count)
+			}
+
+			while delta > 0 {
+				delta -= 1
+				moveChild(from: max, to: 0)
+			}
+		}
+	}
+
 	@discardableResult func moveChild(from: Int, to: Int) -> Bool {
 		if  from < count, to <= count, from != to,
 			let child = self[from] { // nothing is created or destroyed
@@ -3531,8 +3560,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				progenyCount  = counter
 			}
 		}
-
-		return
 	}
 
 	// MARK: - receive from cloud

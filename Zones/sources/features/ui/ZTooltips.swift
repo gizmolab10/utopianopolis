@@ -85,16 +85,16 @@ extension ZKickoffToolButton {
 			let  forSibling = OPTION  ? "parent" : "sibling"
 
 			switch buttonID {
-				case .sibling: return addANew  + forSibling + " to" + currentIdea
-				case .child:   return addANew  + "child to"         + currentIdea
-				case .note:    return editing  + " the note of"     + currentIdea
-				case .idea:    return editing                       + currentIdea
-				case .focus:   return forFocus                      + currentIdea
-				case .up,
-					 .down:    break
-				case .left,
-					 .right:   break
-				default:       break
+				case .tSibling: return addANew  + forSibling + " to" + currentIdea
+				case .tChild:   return addANew  + "child to"         + currentIdea
+				case .tNote:    return editing  + " the note of"     + currentIdea
+				case .tIdea:    return editing                       + currentIdea
+				case .tFocus:   return forFocus                      + currentIdea
+				case .tUp,
+					 .tDown:    break
+				case .tLeft,
+					 .tRight:   break
+				default:        break
 			}
 		}
 
@@ -113,7 +113,7 @@ extension ZBox {
 			let OPTION = flags?.hasOption ?? false
 
 			switch boxID {
-				case .move: return SHIFT && !OPTION ? "horizontal arrows conceal and reveal, vertical arrows expand selection" : (OPTION ? "relocate" : "browse to next") + " selected idea"
+				case .tMove: return SHIFT && !OPTION ? "horizontal arrows conceal and reveal, vertical arrows expand selection" : (OPTION ? "relocate" : "browse to next") + " selected idea"
 				default:    break
 			}
 		}

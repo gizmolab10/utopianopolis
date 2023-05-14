@@ -167,7 +167,7 @@ extension ZDatabaseID {
 			switch state {
 				case .mFirstTime,
 					 .mFiles:   return gFiles.migrationFilesSize(for: self) / kFileRecordSize
-				default:        return zRecords?.manifest?.count?.intValue ?? 0
+				default:        return zRecords?.manifest?.count?.intValue ?? 1
 			}
 		}
 

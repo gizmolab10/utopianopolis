@@ -105,7 +105,7 @@ class ZOnboarding : ZOperations {
     }
 
 	func fetchUserID(_ onCompletion: @escaping Closure) {
-		let needsFetch = gHasInternet && gUser == nil && gCloudAccountStatus == .available
+		let needsFetch = gHasInternet && gUser == nil // && gCloudAccountStatus == .available
 		guard    let c = gCloudContainer, needsFetch else {
 			onCompletion()
 			return

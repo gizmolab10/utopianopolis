@@ -30,7 +30,7 @@ class ZUser : ZRecord {
 		var access = writeAccess?.userAccess
 
 		var hasMasterKey : Bool {                                    // authorID == "783BF01A-7535-4950-99EE-B63DB2732824"
-			return recordName == "_925d8acf4e622d5eca4d33938a6cc07e"
+			return recordName == "_bd0f258c61806cc7232118700c46914c"
 
 			// /////////////////////////////////// //
 			//        previous record names        //

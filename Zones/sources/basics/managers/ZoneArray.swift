@@ -412,7 +412,7 @@ extension ZoneArray {
 	}
 
 	var appropriateParent: Zone? {
-		var into = rootMost?.parentZone                             // default: move into parent of root most
+		var into = rootMost?.parentZone                                                  // default: move into parent of root most
 		if  count > 0,
 			let siblings = into?.children {
 			var  fromTop = false

@@ -23,25 +23,51 @@ import UIKit
 var gKickoffToolsController: ZKickoffToolsController? { return gControllers.controllerForID(.idStartHere) as? ZKickoffToolsController }
 
 enum ZKickoffToolID: String {
-	case up      = "up"
-	case add     = "add"
-	case edit    = "edit"
-	case move    = "move"
-	case idea    = "idea"
-	case note    = "note"
-	case down    = "down"
-	case left    = "left"
-	case child   = "child"
-	case right   = "right"
-	case focus   = "focus"
-	case shift   = "shift"
-	case swapDB  = "swapDB"
-	case option  = "option"
-	case command = "command"
-	case control = "control"
-	case sibling = "sibling"
-	case toolTip = "toolTip"
-	case explain = "explain"
+
+	case tUp      = "up"
+	case tAdd     = "add"
+	case tEdit    = "edit"
+	case tMove    = "move"
+	case tIdea    = "idea"
+	case tNote    = "note"
+	case tDown    = "down"
+	case tLeft    = "left"
+	case tChild   = "child"
+	case tRight   = "right"
+	case tFocus   = "focus"
+	case tShift   = "shift"
+	case tSwapDB  = "swapDB"
+	case tOption  = "option"
+	case tCommand = "command"
+	case tControl = "control"
+	case tSibling = "sibling"
+	case tToolTip = "toolTip"
+	case tExplain = "explain"
+
+	var arrow: ZArrowKey? {
+		switch self {
+			case .tUp:      return .up
+			case .tDown:    return .down
+			case .tLeft:    return .left
+			case .tRight:   return .right
+			default:        return  nil
+		}
+	}
+
+	var key: String? {
+		switch self {
+			case .tExplain: return "e"
+			case .tNote:    return "n"
+			case .tToolTip: return "y"
+			case .tSibling: return kTab
+			case .tChild:   return kSpace
+			case .tFocus:   return kSlash
+			case .tIdea:    return kReturn
+			case .tSwapDB:  return kBackSlash
+			default:        return arrow?.key
+		}
+	}
+
 }
 
 class ZKickoffToolsController: ZGenericController, ZToolTipper {
@@ -63,34 +89,34 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 
 		// provide useful hits about how behavior changes with work mode and modifier keys
 
-		buttonFor(.control)?.isEnabled = !gIsSearching
-		buttonFor(.option)? .isEnabled = !gIsSearching
-		buttonFor(.shift)?  .isEnabled = !gIsSearching
-		buttonFor(.focus)?  .isEnabled =  gIsMapMode
-		buttonFor(.note)?   .isEnabled = !gIsEditIdeaMode
-		boxFor   (.edit)?    .isHidden =  gIsSearching || gIsEssayMode
-		boxFor   (.add)?     .isHidden =  gIsSearching || gIsEssayMode
-		buttonFor(.swapDB)?     .title =  swapDBText
-		buttonFor(.up)?         .title =  expandMaybe       + "up"
-		buttonFor(.down)?       .title =  expandMaybe       + "down"
-		buttonFor(.sibling)?    .title =  flags.hasOption    ? "parent"       : "sibling"
-		buttonFor(.left)?       .title =  isMixed           ? "conceal"      : "left"
-		buttonFor(.right)?      .title =  isMixed           ? "reveal"       : canTravel ? "invoke" : "right"
-		buttonFor(.focus)?      .title =  canUnfocus        ? "unfocus"      : canTravel ? "invoke" : gSelecting.movableIsHere ? "favorite" : "focus"
-		buttonFor(.toolTip)?    .title = (gShowToolTips     ? "hide"         : "show")   + " toolTips"
-		buttonFor(.explain)?    .title = (gShowExplanations ? "hide"         : "show")   + " explains"
-		boxFor   (.move)?       .title = (isRelocate        ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.hasCommand ? " to farthest"  : kEmpty)
-		boxFor   (.edit)?       .title =  gIsEditing        ? "Stop Editing" : "Edit"
-		buttonFor(.idea)?       .title =  "idea"
-		buttonFor(.note)?       .title =  "note"
-		buttonFor(.child)?      .title =  "child"
+		buttonFor(.tControl)?.isEnabled = !gIsSearching
+		buttonFor(.tOption)? .isEnabled = !gIsSearching
+		buttonFor(.tShift)?  .isEnabled = !gIsSearching
+		buttonFor(.tFocus)?  .isEnabled =  gIsMapMode
+		buttonFor(.tNote)?   .isEnabled = !gIsEditIdeaMode
+		boxFor   (.tEdit)?    .isHidden =  gIsSearching || gIsEssayMode
+		boxFor   (.tAdd)?     .isHidden =  gIsSearching || gIsEssayMode
+		buttonFor(.tSwapDB)?     .title =  swapDBText
+		buttonFor(.tUp)?         .title =  expandMaybe       + "up"
+		buttonFor(.tDown)?       .title =  expandMaybe       + "down"
+		buttonFor(.tSibling)?    .title =  flags.hasOption    ? "parent"       : "sibling"
+		buttonFor(.tLeft)?       .title =  isMixed           ? "conceal"      : "left"
+		buttonFor(.tRight)?      .title =  isMixed           ? "reveal"       : canTravel ? "invoke" : "right"
+		buttonFor(.tFocus)?      .title =  canUnfocus        ? "unfocus"      : canTravel ? "invoke" : gSelecting.movableIsHere ? "favorite" : "focus"
+		buttonFor(.tToolTip)?    .title = (gShowToolTips     ? "hide"         : "show")   + " toolTips"
+		buttonFor(.tExplain)?    .title = (gShowExplanations ? "hide"         : "show")   + " explains"
+		boxFor   (.tMove)?       .title = (isRelocate        ? "Relocate"     : isMixed   ? "Mixed"  : "Browse") + (flags.hasCommand ? " to farthest"  : kEmpty)
+		boxFor   (.tEdit)?       .title =  gIsEditing        ? "Stop Editing" : "Edit"
+		buttonFor(.tIdea)?       .title =  "idea"
+		buttonFor(.tNote)?       .title =  "note"
+		buttonFor(.tChild)?      .title =  "child"
 	}
 
 	@IBAction func buttonAction(_ button: ZKickoffToolButton) {
 		toolsUpdate()
 
 		if  let itemID = button.kickoffToolID,
-			let    key = keyFrom(itemID) {
+			let    key = itemID.key {
 			let isEdit = gIsEditIdeaMode && key.arrow != nil && flags.hasCommand
 			var      f = flags
 
@@ -140,7 +166,7 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 	}
 
 	func setAutoRepeat(for button: ZKickoffToolButton) {
-		let autorepeaters: [ZKickoffToolID] = [.up, .down, .right, .left]
+		let autorepeaters: [ZKickoffToolID] = [.tUp, .tDown, .tRight, .tLeft]
 		if  let                    buttonID  = button.kickoffToolID,
 			autorepeaters.contains(buttonID) {
 			button.isContinuous              = true
@@ -162,34 +188,10 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 	}
 
 	func updateFlags() {
-		flags.hasShift   = buttonFor(.shift)?  .state == NSControl.StateValue.on
-		flags.hasOption  = buttonFor(.option)? .state == NSControl.StateValue.on
-		flags.hasCommand = buttonFor(.command)?.state == NSControl.StateValue.on
-		flags.hasControl = buttonFor(.control)?.state == NSControl.StateValue.on
-	}
-
-	func arrowFrom(_ from: ZKickoffToolID) -> ZArrowKey? {
-		switch from {
-			case .up:      return .up
-			case .down:    return .down
-			case .left:    return .left
-			case .right:   return .right
-			default:       return  nil
-		}
-	}
-
-	func keyFrom(_ from: ZKickoffToolID) -> String? {
-		switch from {
-			case .note:    return "n"
-			case .focus:   return "/"
-			case .toolTip: return "y"
-			case .explain: return "e"
-			case .sibling: return kTab
-			case .swapDB:  return kBackSlash
-			case .child:   return kSpace
-			case .idea:    return kReturn
-			default:       return arrowFrom(from)?.key
-		}
+		flags.hasShift   = buttonFor(.tShift)?  .state == NSControl.StateValue.on
+		flags.hasOption  = buttonFor(.tOption)? .state == NSControl.StateValue.on
+		flags.hasCommand = buttonFor(.tCommand)?.state == NSControl.StateValue.on
+		flags.hasControl = buttonFor(.tControl)?.state == NSControl.StateValue.on
 	}
 
 }

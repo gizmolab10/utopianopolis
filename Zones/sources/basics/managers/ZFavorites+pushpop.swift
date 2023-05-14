@@ -14,12 +14,13 @@ extension ZFavorites {
 	// MARK: -
 
 	func resetRecents() { recentsMaybe = nil } // force reconstruction of recents group
+	func recentsTargeting(_ target: Zone) -> Zone? { return getRecentsGroup().children.whoseTargetIntersects(with: [target]).firstUndeleted }
 
 	@discardableResult func push(_ zone: Zone? = gHere, down: Bool = true) -> Zone? {
 		if  let target        = zone {
-			let prior         = recentCurrent?.siblingIndex ?? 0
 			let recents       = getRecentsGroup()
-			var bookmark      = target.bookmarkTarget != nil ? target : recents.children.whoseTargetIntersects(with: [target]).firstUndeleted           // bookmark pointing to target is already present
+			let prior         = recentCurrent?.siblingIndex ?? 0
+			var bookmark      = target.isValidBookmark ? target : recentsTargeting(target)             // bookmark pointing to target is already present
 			if  let to        = !down ? prior : recents.children.nextBookmarkIndex(increasing: true,  from: prior) {
 				if  let from  = bookmark?.siblingIndex,
 					let guess =                 recents.children.nextBookmarkIndex(increasing: false, from: from) {
@@ -27,8 +28,6 @@ extension ZFavorites {
 					if ![from, prior, guess].contains(to) {
 						recents.moveChild(from: from, to: to)
 					}
-
-					bookmark  = recents[to]
 				} else {
 					bookmark  = ZBookmarks.newBookmark(targeting: target)
 
@@ -88,6 +87,8 @@ extension ZFavorites {
 			let        next = children.nextBookmark(increasing: false, from: index), next != c,
 			pop(c) {
 			setCurrentFavoriteBoomkarks(to: next)
+
+			print(next)
 
 			if  let    here = next.bookmarkTarget {
 				gHere       = here

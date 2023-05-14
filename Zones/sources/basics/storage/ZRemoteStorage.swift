@@ -144,19 +144,21 @@ class ZRemoteStorage: NSObject {
 		for cloud in allClouds {
 			var level = 1
 
-			cloud.applyToAllRoots { root in
-				let isExactRoot = root?.recordName == kRootName
+			cloud.applyToAllRoots { zone in
+				if  let root        = zone {
+					let isExactRoot = root.recordName == kRootName
 
-				root?.traverseAllProgeny { zone in
-					if  isExactRoot {
-						let zLevel = zone.level
-						if  level  < zLevel {
-							level  = zLevel
+					root.traverseAllProgeny { zone in
+						if  isExactRoot {
+							let zLevel = zone.level
+							if  level  < zLevel {
+								level  = zLevel
+							}
 						}
 					}
-				}
 
-				root?.recount()
+					root.recount()
+				}
 			}
 
 			cloud.updateMaxLevel(with: level)

@@ -57,7 +57,7 @@ class ZFavoritesTogglingView : ZTogglingView {
 	}
 
 	override func updateTitleBarButtons() {
-		let        bothHidden = gFavoritesCloud.hideButtonsView || hideHideable
+		let        bothHidden = gFavoritesCloud.hideButtonsView || hideHideable || gFavoritesHereMaybe == gFavoritesRoot
 		let        leftHidden = gFavoritesCloud.hideLeftButton
 		buttonsView?.isHidden = bothHidden
 
