@@ -374,8 +374,8 @@ class ZTextEditor: ZTextView {
 	}
 
 	func cancelEdit() {
-		clearEdit()
 		currentEdit?.updateWidgetsForEndEdit()
+		clearEdit()
 	}
 
 	func stopCurrentEdit(forceCapture: Bool = false, andRedraw: Bool = true) {

@@ -27,7 +27,7 @@ class ZHelpDotsExemplarController : ZMapController {
 	@IBOutlet var    helpMapView : ZMapView?
 
 	override func shouldHandle(_ kind: ZSignalKind) -> Bool {
-		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false)
+		return super.shouldHandle(kind) && (gHelpWindow?.isVisible ?? false) && gCurrentHelpMode == .dotMode
 	}
 
 	override func controllerStartup() {
@@ -37,8 +37,13 @@ class ZHelpDotsExemplarController : ZMapController {
 		topLabel?   .font = kLargeHelpFont
 		topLabel?   .text = "ALL ideas have a DRAG dot on the left. Many have a REVEAL dot on the right. For example:"
 		bottomLabel?.font = kLargeHelpFont
-		bottomLabel?.text = "\t• The drag dot (at left of idea text) is used to select, deselect and drag the idea\n\t• The reveal dot (at right of idea text) is used to show or hide its list, or activate the idea\n\nWhen the cursor hovers over a dot, the fill in color reverses (try the dots above). Dots are often decorated, providing further information about their idea. This is extensively explained below."
-		gRelayoutMaps()
+		bottomLabel?.text = ["\t• The drag dot (at left of idea text) is used to select, deselect and drag the idea",
+							 "\t• The reveal dot (at right of idea text) is used to show or hide its list, or activate the idea\n",
+							 "When the cursor hovers over a dot, the fill in color reverses (try the dots above). Dots are often decorated, providing useful information about their idea (described below)."].joined(separator: kNewLine)
+
+		FOREGROUND(after: 0.01) { [self] in // need a delayed runloop so exemplar will appear and hover will work
+			handleSignal(kind: .sData)
+		}
 	}
 
 	func setupExemplar() {
