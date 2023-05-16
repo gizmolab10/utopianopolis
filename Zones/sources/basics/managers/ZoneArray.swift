@@ -789,30 +789,4 @@ extension ZoneArray {
 		gRelayoutMaps()
 	}
 
-	func invokeTravel(_ COMMAND: Bool = false, onCompletion: BoolClosure? = nil) {
-		var url = kEmpty
-		for zone in self {
-			if  zone.invokeBookmark(COMMAND, onCompletion: onCompletion) ||
-				zone.invokeURL(for: .tHyperlink) {
-				return
-			}
-
-			if  zone.hasNoteOrEssay,
-			    zone.invokeEssay() {
-				break
-			} else if let e = zone.link(for: .tEmail) {
-				url.append(e)
-			}
-		}
-
-		if  !url.isEmpty {
-			let addresses = url.components(separatedBy: kMailTo).dropFirst()
-			let csv = addresses.joined(separator: kCommaSeparator)
-			url = kMailTo.appending(csv)
-			url.openAsURL()
-		}
-
-		onCompletion?(true)
-	}
-
 }

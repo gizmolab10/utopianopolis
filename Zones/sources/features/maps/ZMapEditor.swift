@@ -154,7 +154,7 @@ class ZMapEditor: ZBaseEditor {
 						case kSpace:     if CONTROL || OPTION || isWindow { moveable.addIdea() } else { gCurrentKeyPressed = nil; return false }
 						case kQuestion:  if CONTROL { openBrowserForSeriouslyWebsite() } else { gCurrentKeyPressed = nil; return false }
 						case kReturn:    if COMMAND { editNote(flags: flags) } else { editIdea(OPTION) }
-						case kEquals:    if COMMAND { gUpdateBaseFontSize(up: true) } else { gSelecting.sortedGrabs.invokeTravel() { reveal in gRelayoutMaps() } }
+						case kEquals:    if COMMAND { gUpdateBaseFontSize(up: true) } else { invokeTravel() }
 						case kEscape:    editNote(flags: flags, useGrabbed: false)
 						case kBackSlash: mapControl(OPTION)
 						case kHyphen:    return handleHyphen(COMMAND, OPTION)
@@ -308,8 +308,22 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
+	@objc func handleTraitActivationPopupMenu(_ iItem: ZMenuItem) {
+		handleTraitActivationForKey(iItem.keyEquivalent)
+	}
+
 	@objc func handleTraitsPopupMenu(_ iItem: ZMenuItem) {
 		handleTraitsKey(iItem.keyEquivalent)
+	}
+
+	@objc func handleTraitActivationForKey(_ key: String) {
+		if  let zone = gSelecting.mostVisibleGrab,
+			let type = ZTraitType(rawValue: key) {
+			switch type {
+				case .tNote, .tEssay: zone.invokeEssay()
+				default:              zone.invokeURL(for: type)
+			}
+		}
 	}
 
 	@objc func handleTraitsKey(_ key: String) {
@@ -490,6 +504,23 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
+	func invokeTravel() {
+		let zone = gSelecting.currentMoveable
+		if  zone.traits.count < 2 {
+			zone.invokeTravel() { reveal in gRelayoutMaps() }
+		} else {
+			showTraitActivationPopup()
+		}
+	}
+
+	func showTraitActivationPopup() {
+		applyToMenu { return gSelecting.currentMoveable.traitTypes.traitsPopup(target: self, action: #selector(handleTraitActivationPopupMenu(_:))) }
+	}
+
+	func showTraitsPopup() {
+		applyToMenu { return ZTraitType.activeTypes.traitsPopup(target: self, action: #selector(handleTraitsPopupMenu(_:))) }
+	}
+
 	func showMutateTextPopup() {
 		if  let widget = gSelecting.currentMoveable.widget?.textWidget {
 			let   menu = ZMenu.mutateTextPopup(target: self, action: #selector(handleMutateTextPopupMenu(_:)))
@@ -497,10 +528,6 @@ class ZMapEditor: ZBaseEditor {
 
 			menu.popUp(positioning: nil, at: point, in: widget)
 		}
-	}
-
-	func showTraitsPopup() {
-		applyToMenu { return ZMenu .traitsPopup(target: self, action: #selector(handleTraitsPopupMenu(_:))) }
 	}
 
 	func showReorderPopup() {

@@ -271,6 +271,7 @@ class ZTextEditor: ZTextView {
 				deferEditingStateChange()
 				pack.updateText(isEditing: true)            // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
+				gRelayoutMaps()
 				gSetEditIdeaMode()
 
 				if  let t = zone.widget?.textWidget {
@@ -374,7 +375,6 @@ class ZTextEditor: ZTextView {
 
 	func cancelEdit() {
 		clearEdit()
-		fullResign()
 		currentEdit?.updateWidgetsForEndEdit()
 	}
 

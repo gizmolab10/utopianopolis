@@ -135,6 +135,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func          toggleShowing()                                                 { isShowing ? hide() : show() }
 	func          recount()                                                       { updateAllProgenyCounts() }
 
+	var traitTypes : ZTraitTypesArray {
+		var types = ZTraitTypesArray()
+
+		for key in traits.keys {
+			types.append(key)
+		}
+
+		return types
+	}
+
 	var ckRecord: CKRecord? {
 		return gCoreDataStack.persistentContainer?.record(for: objectID)
 	}
@@ -1615,7 +1625,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func hasTrait(matchingAny iTypes: [ZTraitType]) -> Bool {
+	func hasTrait(matchingAny iTypes: ZTraitTypesArray) -> Bool {
 		for type in iTypes {
 			if  hasTrait(for: type) {
 				return true
@@ -2165,7 +2175,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return false
 	}
 
-	func invokeEssay() -> Bool { // false means not handled
+	@discardableResult func invokeEssay() -> Bool { // false means not handled
 		if  hasNoteOrEssay {
 			gCreateCombinedEssay = true
 			gCurrentEssay        = note
@@ -2193,7 +2203,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@discardableResult func invokeURL(for type: ZTraitType?) -> Bool { // false means not traveled
 		if  let    t = type,
 			let link = link(for: t),
-			link    != kNullLink {
+			link.isValidURL {
 			link.openAsURL()
 
 			return true
@@ -3414,12 +3424,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var           p = ZDotParameters()
 		let           t = bookmarkTarget
 		let           g = groupOwner
-		let           k = traitKeys
 		p.color         = dotColor
 		p.isGrouped     = g != nil
 		p.showList      = isExpanded
 		p.hasTarget     = isBookmark
-		p.typeOfTrait   = k.first ?? kEmpty
+		p.typesOfTrait  = traitKeys
 		p.showAccess    = hasAccessDecoration
 		p.hasTargetNote = t?.hasNote ?? false
 		p.isGroupOwner  = g == self || g == t

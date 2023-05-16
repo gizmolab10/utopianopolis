@@ -36,7 +36,7 @@ enum ZTraitType: String { // stored in database: do not change
 	case tDate      = "d"
 	case tNote      = "n"
 
-	static var activeTypes: [ZTraitType] { return [.tEmail, .tHyperlink, .tNote] }
+	static var activeTypes: ZTraitTypesArray { return [.tNote, .tEmail, .tHyperlink] }
 
 	var heightRatio: CGFloat {
 		switch self {
@@ -65,6 +65,29 @@ enum ZTraitType: String { // stored in database: do not change
 				 .tEssay: return true
 			default:      return false
 		}
+	}
+
+	func traitsItem(target: AnyObject, action: Selector) -> ZMenuItem {
+		let                      title = title ?? ""
+		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: rawValue)
+		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
+		item                   .target = target
+		item                .isEnabled = true
+
+		return item
+	}
+}
+
+extension ZTraitTypesArray {
+
+	func traitsPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let menu = ZMenu(title: "traits")
+
+		for type in self {
+			menu.addItem(type.traitsItem(target: target, action: action))
+		}
+
+		return menu
 	}
 
 }
@@ -220,12 +243,12 @@ class ZTrait: ZTraitAssets {
 	}
 
 	override func adopt(recursively: Bool = false) {
-		if  let      o = ownerZone,
+		if  let  owner = ownerZone,
 			let traits = ownerZone?.traits,
 			let      t = traitType, traits[t] == nil {
 			removeState(.needsAdoption)
 
-			o.addTrait(self)
+			owner.addTrait(self)
 		}
 	}
 
@@ -322,7 +345,7 @@ class ZTrait: ZTraitAssets {
 	}
 
 	func updateSearchables() {
-		let searchables: [ZTraitType] = [.tNote, .tEssay, .tEmail, .tHyperlink]
+		let searchables: ZTraitTypesArray = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
 		if  let  tt = traitType, searchables.contains(tt) {
 			strings = text?.searchable.components(separatedBy: kSpace)

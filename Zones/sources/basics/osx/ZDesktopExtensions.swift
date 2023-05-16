@@ -9,12 +9,7 @@
 import Foundation
 import CloudKit
 import SnapKit
-
-#if os(OSX)
 import AppKit
-#elseif os(iOS)
-import UIKit
-#endif
 
 enum ZArrowKey: Int8 {
     case up    = -128
@@ -28,56 +23,6 @@ enum ZArrowKey: Int8 {
 		return String(cString: &utf)
 	}
 }
-
-public typealias ZBox                        = NSBox
-public typealias ZFont                       = NSFont
-public typealias ZView                       = NSView
-public typealias ZMenu                       = NSMenu
-public typealias ZAlert                      = NSAlert
-public typealias ZEvent                      = NSEvent
-public typealias ZImage                      = NSImage
-public typealias ZColor                      = NSColor
-public typealias ZButton                     = NSButton
-public typealias ZSlider                     = NSSlider
-public typealias ZWindow                     = NSWindow
-public typealias ZControl                    = NSControl
-public typealias ZMenuItem                   = NSMenuItem
-public typealias ZClipView                   = NSClipView
-public typealias ZTextView                   = NSTextView
-public typealias ZTextField                  = NSTextField
-public typealias ZTableView                  = NSTableView
-public typealias ZStackView                  = NSStackView
-public typealias ZImageView                  = NSImageView
-public typealias ZColorWell                  = NSColorWell
-public typealias ZEventType                  = ZEvent.EventType
-public typealias ZButtonCell                 = NSButtonCell
-public typealias ZBezierPath                 = NSBezierPath
-public typealias ZScrollView                 = NSScrollView
-public typealias ZController                 = NSViewController
-public typealias ZToolTipTag                 = ZView.ToolTipTag
-public typealias ZEventFlags                 = ZEvent.ModifierFlags
-public typealias ZSearchField                = NSSearchField
-public typealias ZTableColumn                = NSTableColumn
-public typealias ZTableRowView               = NSTableRowView
-public typealias ZMenuDelegate               = NSMenuDelegate
-public typealias ZTableCellView              = NSTableCellView
-public typealias ZBitmapImageRep             = NSBitmapImageRep
-public typealias ZWindowDelegate             = NSWindowDelegate
-public typealias ZFontDescriptor             = NSFontDescriptor
-public typealias ZWindowController           = NSWindowController
-public typealias ZSegmentedControl           = NSSegmentedControl
-public typealias ZTextViewDelegate           = NSTextViewDelegate
-public typealias ZTextFieldDelegate          = NSTextFieldDelegate
-public typealias ZGestureRecognizer          = NSGestureRecognizer
-public typealias ZProgressIndicator          = NSProgressIndicator
-public typealias ZTableViewDelegate          = NSTableViewDelegate
-public typealias ZTableViewDataSource        = NSTableViewDataSource
-public typealias ZSearchFieldDelegate        = NSSearchFieldDelegate
-public typealias ZApplicationDelegate        = NSApplicationDelegate
-public typealias ZClickGestureRecognizer     = NSClickGestureRecognizer
-public typealias ZGestureRecognizerState     = NSGestureRecognizer.State
-public typealias ZGestureRecognizerDelegate  = NSGestureRecognizerDelegate
-public typealias ZEdgeSwipeGestureRecognizer = NSNull
 
 let kVerticalWeight      = CGFloat(1)
 var gIsPrinting          = false
@@ -1036,26 +981,6 @@ extension ZMenu {
 		let                      title = flagged ? "\(type.title) reversed" : type.title
 		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
 		item.keyEquivalentModifierMask = flagged ? ZEventFlags.shift : ZEventFlags(rawValue: 0)
-		item                   .target = target
-		item                .isEnabled = true
-
-		return item
-	}
-
-	static func traitsPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "traits")
-
-		for type in ZTraitType.activeTypes {
-			menu.addItem(traitsItem(type: type, target: target, action: action))
-		}
-
-		return menu
-	}
-
-	static func traitsItem(type: ZTraitType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let                      title = type.title ?? ""
-		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
-		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
 		item                   .target = target
 		item                .isEnabled = true
 

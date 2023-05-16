@@ -54,7 +54,7 @@ class ZHelpGridView: ZView {
 					if  f {
 						// draw filled dot in second column
 
-						let p = CGPoint(x: x + 20.0, y: y)
+						let p = CGPoint(x: x + 45.0, y: y)
 						let r = dt.rect(p)
 						let m = dt.helpDotParameters(isFilled: true)
 
@@ -65,7 +65,7 @@ class ZHelpGridView: ZView {
 					if  t {
 						// draw filled circle in third column
 
-						let p = CGPoint(x: x + 40.0, y: y)
+						let p = CGPoint(x: x + 90.0, y: y)
 						let r = dt.rect(p)
 						let m = dt.helpDotParameters(isFilled: true, showAsACircle: true)
 

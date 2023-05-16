@@ -318,6 +318,7 @@ enum ZHelpDotType: String {
 	case one        = "single"
 	case ten        = "10"
 	case has        = "in"
+	case both       = "both"
 	case note       = "note"
 	case drag       = "editable"
 	case five       = "5"
@@ -327,27 +328,29 @@ enum ZHelpDotType: String {
 	case owner      = "owner"
 	case member     = "member"
 	case eleven     = "11"
-	case progeny    = "only"
+	case progeny    = "ideas"
 	case favorite   = "this"
-	case bookmark   = "bookmark"
 	case notemark   = "target"
+	case bookmark   = "bookmark"
+	case multiple   = "multiple"
 	case hyperlink  = "hyperlink"
 	case oneEleven  = "111"
 	case unwritable = "not"
 
 	var accessType    :    ZDecorationType { return self == .progeny ? .sideDot : .vertical }
 	var pointLeft     :               Bool { return self == .click }
-	var showAccess    :               Bool { return  [.progeny,                     .unwritable].contains(self) }
+	var showAccess    :               Bool { return  [.both, .unwritable,              .progeny].contains(self) }
 	var isReveal      :               Bool { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
 	var size          :             CGSize { return gHelpController?.dotSize(forReveal: isReveal) ?? .zero }
 	func rect(_ origin: CGPoint) -> CGRect { return CGRect(origin: origin, size: size) }
 
-	var traitType: String {
+	var traitTypes: StringsArray {
 		switch self {
-			case .note, .essay: return ZTraitType.tNote     .rawValue
-			case .email:        return ZTraitType.tEmail    .rawValue
-			case .hyperlink:    return ZTraitType.tHyperlink.rawValue
-			default:            return kEmpty
+			case .note, .essay: return [ZTraitType.tNote     .rawValue]
+			case .email:        return [ZTraitType.tEmail    .rawValue]
+			case .hyperlink:    return [ZTraitType.tHyperlink.rawValue]
+			case .multiple:     return  ZTraitType.activeTypes.map { $0.rawValue }
+			default:            return []
 		}
 	}
 
@@ -368,12 +371,12 @@ enum ZHelpDotType: String {
 		p.fill          = isFilled ? p.color : gBackgroundColor
 		p.isFilled      = isFilled
 		p.isReveal      = isReveal
-		p.typeOfTrait   = traitType
+		p.typesOfTrait  = traitTypes
 		p.showAccess    = showAccess
 		p.accessType    = accessType
 		p.showList      = pointLeft || !isFilled
 		p.isGroupOwner  = self == .owner
-		p.isGrouped     = self == .owner    || self == .member
+		p.isGrouped     = self == .owner    || self == .both || self == .member
 		p.hasTargetNote = self == .notemark || self == .has
 		p.hasTarget     = self == .bookmark
 		p.showSideDot   = self == .favorite

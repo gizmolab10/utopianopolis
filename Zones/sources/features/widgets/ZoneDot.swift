@@ -36,7 +36,7 @@ struct  ZDotParameters {
 	var showList      = false
 	var showAccess    = false
 	var showSideDot   = false
-	var typeOfTrait   = kEmpty
+	var typesOfTrait  = StringsArray()
 	var fill          = gBackgroundColor
 	var color         = kDefaultIdeaColor
 	var accessType    = ZDecorationType.vertical
@@ -49,15 +49,15 @@ class ZoneDot: ZPseudoView, ZToolTipper {
     // MARK: - properties
     // MARK: -
 
+	var               isReveal = true
 	var                   line : ZoneLine?
 	weak var            widget : ZoneWidget?
-	var                  ratio : CGFloat         { return widget?.mapReduction ?? 1.0 }
-	var             widgetZone : Zone?           { return widget?.widgetZone }
 	override var    controller : ZMapController? { return widget?.controller }
 	override var zClassInitial : String          { return isReveal ? "R" : "D" }
 	override var     debugName : String          { return widgetZone?.zoneName ?? kUnknown }
+	var                  ratio : CGFloat         { return widget?.mapReduction ?? 1.0 }
+	var             widgetZone : Zone?           { return widget?.widgetZone }
 	var        dragDotIsHidden : Bool            { return widgetZone?.dragDotIsHidden ?? true }
-	var               isReveal = true
 
 	var dotIsVisible: Bool {
 		guard let zone = widgetZone else {
@@ -191,22 +191,49 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 	func offsetFor(_ string: String) -> CGFloat {
 		switch string {
-			case "=", "+": return 0.9
-			default:       return .zero
+			case kEquals,
+				"+": return 0.9
+			default: return .zero
 		}
 	}
 
-	func drawTraitDecoration(in iDirtyRect: CGRect, string: String, color: ZColor, angle: CGFloat = .zero, isForMainMap: Bool = true) {
+	func drawTraitDecorations(in iDirtyRect: CGRect, strings: StringsArray, color: ZColor, angle: CGFloat = .zero, isForMainMap: Bool = true) {
 		if  let      c = controller ?? gHelpController { // for help dots, widget and controller are nil; so use help controller
-			let   char = string == "h" ? "=" : string == "n" ? "+" : string == "w" ? "&" : string
-			let  width = c.dotWidth * ratio * 1.4
-			let   font = ZFont.boldSystemFont(ofSize: width)
-			let   size = char.sizeWithFont(font)
-			let offset = size.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.8))
-			let origin = iDirtyRect.center.retreatBy(offset) //  * factor)
-			let   rect = CGRect(origin: origin, size: size)
+			let center = iDirtyRect.center
+			let  count = strings.count
+			let single = count == 1
+			let  width = c.dotWidth * (single ? 1.3 : 1.1)
+			let   font = ZFont.systemFont(ofSize: width)
 
-			char.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+			func draw(_ string: String, angle: Double? = nil) {
+				let       size = string.sizeWithFont(font)
+				let     offset = size.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.8))
+				if  let      a = angle {
+					let origin = center - offset
+					let radius = iDirtyRect.height
+					let      x = origin.x + (radius * CGFloat(cos(a)))
+					let      y = origin.y + (radius * CGFloat(sin(a)))
+					let   rect = CGRect(x: x, y: y, width: size.width, height: size.height)
+
+					string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+				} else {
+					let offset = size.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.8))
+					let origin = center.retreatBy(offset)
+					let   rect = CGRect(origin: origin, size: size)
+
+					string.draw(in: rect, withAttributes: [.foregroundColor : color, .font: font])
+				}
+			}
+
+			if  single {
+				draw(strings[0])
+			} else {
+				let angles = count.anglesArray(startAngle: count == 2 ? kHalfPI : kPI)
+
+				for (index, string) in strings.enumerated() {
+					draw(string, angle: angles[index])
+				}
+			}
 		}
 	}
 
@@ -225,15 +252,16 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawDotInterior(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		let fillColor = parameters.isFilled ? gBackgroundColor : parameters.color
+		let count = parameters.typesOfTrait.count
 
-		if  parameters.typeOfTrait != kEmpty, controller?.inCircularMode != isReveal {
+		if  count > 0, controller?.inCircularMode != isReveal {
+			let fillColor = parameters.isFilled && count == 1 ? gBackgroundColor : parameters.color
 
 			// ///////////////// //
 			// TRAIT DECORATIONS //
 			// ///////////////// //
 
-			drawTraitDecoration(in: iDirtyRect, string: parameters.typeOfTrait, color: fillColor)
+			drawTraitDecorations(in: iDirtyRect, strings: parameters.typesOfTrait.convertedTraits, color: fillColor)
 		}
 
 		if  parameters.isReveal {
@@ -244,6 +272,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 			drawRevealDotDecoration(iDirtyRect, parameters)
 		} else {
+			let fillColor = parameters.isFilled ? gBackgroundColor : parameters.color
 			fillColor.setFill()
 
 			if  parameters.isGrouped, !(controller?.inCircularMode ?? false) {

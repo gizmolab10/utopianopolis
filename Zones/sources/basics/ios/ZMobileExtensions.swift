@@ -18,47 +18,6 @@ enum ZArrowKey: Int8 {
     case right = 82 // R
 }
 
-public typealias ZFont                       = UIFont
-public typealias ZView                       = UIView
-public typealias ZAlert                      = UIAlertController
-public typealias ZImage                      = UIImage
-public typealias ZColor                      = UIColor
-public typealias ZEvent                      = UIKeyCommand
-public typealias ZButton                     = UIButton
-public typealias ZWindow                     = UIWindow
-public typealias ZSlider                     = UISlider
-public typealias ZControl                    = UIControl
-public typealias ZMenuItem                   = UIMenuItem
-public typealias ZTextView                   = UITextView
-public typealias ZTextField                  = UITextField
-public typealias ZStackView                  = UIStackView
-public typealias ZTableView                  = UITableView
-public typealias ZScrollView                 = UIScrollView
-public typealias ZController                 = UIViewController
-public typealias ZEventFlags                 = UIKeyModifierFlags
-public typealias ZBezierPath                 = UIBezierPath
-public typealias ZSearchField                = UISearchBar
-public typealias ZApplication                = UIApplication
-public typealias ZTableColumn                = ZNullProtocol
-//public typealias ZTableCellView              = UITableCellView
-public typealias ZWindowDelegate             = ZNullProtocol
-public typealias ZScrollDelegate             = UIScrollViewDelegate
-public typealias ZWindowController           = ZNullProtocol
-public typealias ZSegmentedControl           = UISegmentedControl
-public typealias ZGestureRecognizer          = UIGestureRecognizer
-public typealias ZProgressIndicator          = UIActivityIndicatorView
-public typealias ZTextFieldDelegate          = UITextFieldDelegate
-public typealias ZTableViewDelegate          = UITableViewDelegate
-public typealias ZSearchFieldDelegate        = UISearchBarDelegate
-public typealias ZTableViewDataSource        = UITableViewDataSource
-public typealias ZApplicationDelegate        = UIApplicationDelegate
-public typealias ZPanGestureRecognizer       = UIPanGestureRecognizer
-public typealias ZClickGestureRecognizer     = UITapGestureRecognizer
-public typealias ZSwipeGestureRecognizer     = UISwipeGestureRecognizer
-public typealias ZGestureRecognizerState     = UIGestureRecognizer.State
-public typealias ZGestureRecognizerDelegate  = UIGestureRecognizerDelegate
-public typealias ZEdgeSwipeGestureRecognizer = UIScreenEdgePanGestureRecognizer
-
 public protocol ZNullProtocol {}
 
 let             kVerticalWeight = CGFloat(-1)

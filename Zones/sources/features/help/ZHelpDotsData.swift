@@ -27,9 +27,10 @@ class ZHelpDotsData: ZHelpData {
 		"!filled drag dot",			"indicates idea is selected, or cursor is hovering over",						"",
 		".b",						"editable",																		"",
 		".b",						"not editable",																	"",
-		".b",						"only the ideas in all its sublists are editable",								"",
+		".b",						"ideas in its list are editable",												"",
 		".b",						"owner of a favorites group",													"",
 		".b",						"member of a favorites group",													"",
+		".b",						"both member of a favorites group and not editable",							"",
 		"",							"",																				"",
 		"!appears only in favorites",																			"",	"",
 		".b",						"this bookmark's target is the current focus",									""
@@ -40,9 +41,8 @@ class ZHelpDotsData: ZHelpData {
 		"!REVEAL DOT",				"click to conceal, reveal or activate",											"",
 		"",							"",																				"",
 		"!no reveal dot",			"indicates nothing to reveal (no list or traits)",								"",
-		"",							"",																				"",
-		"!when list is visible",	"click to hide list",															"",
-		".e",						"points to the left",															"",
+		"!when list is visible",	"points to the left",															"",
+		".e",						"click to hide list",															"",
 		"",							"",																				"",
 		"!when list is hidden",		"click to reveal list, surrounding dots indicate count:",						"",
 		".f",						"single idea             one small dot",										"",
@@ -52,15 +52,17 @@ class ZHelpDotsData: ZHelpData {
 		".f",						"111 ideas                large hollow dot left, medium dot right",				"",
 		"",							"                               (shows as 110, close enough, right?)",			"",
 		"",							"",																				"",
-		"!bookmark decorations",	"(always a filled circle) click to change focus", 								"",
+		"!bookmark decorations",	"(always a circle) click to change focus", 										"",
 		".f",						"bookmark              focus on bookmark's target",								"",
 		".f",						"target has a note  same, and also ⌘-click to edit note",						"",
 		"",							"",					 															"",
 		"!trait decorations",		"tap \"h\" to edit:    tap \"=\" to:",											"",
-		"i but, if it's a circle (third column of dots)",		"       click to:",									"",
+		"i but, if it's a circle (third column below)",		"         click to:",									"",
 		".3",						"email                      compose & send",									"",
 		".3",						"hyperlink               open in a browser",									"",
-		".3",						"note                       edit",												""
+		".3",						"note                       edit",												"",
+		"",							"",																				"",
+		".3",						"multiple traits         each of the above",									""
 	]
 
 }

@@ -15,41 +15,6 @@ import CloudKit
     import UIKit
 #endif
 
-typealias                CKRecordID = CKRecord.ID
-typealias               CKReference = CKRecord.Reference
-typealias          ZStoryboardSegue = NSStoryboardSegue
-
-typealias                 ZoneArray = [Zone]
-typealias               ZOpIDsArray = [ZOperationID]
-typealias               ZFilesArray = [ZFile]
-typealias               ZTraitArray = [ZTrait]
-typealias              StringsArray = [String]
-typealias             CKAssetsArray = [CKAsset]
-typealias             ZRecordsArray = [ZRecord]
-typealias             ZObjectsArray = [NSObject]
-typealias            CKRecordsArray = [CKRecord]
-typealias           ZoneWidgetArray = [ZoneWidget]
-typealias           ZObjectIDsArray = [NSManagedObjectID]
-typealias          CKRecordIDsArray = [CKRecordID]
-typealias          ZSignalKindArray = [ZSignalKind]
-typealias          ZDatabaseIDArray = [ZDatabaseID]
-typealias         CKReferencesArray = [CKReference]
-typealias         ZTinyDotTypeArray = [[ZTinyDotType]]
-typealias        ZRelationshipArray = [ZRelationship]
-typealias      ZManagedObjectsArray = [NSManagedObject]
-
-typealias          ZTraitDictionary = [ZTraitType   : ZTrait]
-typealias         ZAssetsDictionary = [UUID         : CKAsset]
-typealias        ZStorageDictionary = [ZStorageType : NSObject]
-typealias      WidgetHashDictionary = [Int          : ZoneWidget]
-typealias  ZRelationshipsDictionary = [Int          : ZRelationshipArray]
-typealias      ZStringAnyDictionary = [String       : Any]
-typealias   StringZRecordDictionary = [String       : ZRecord]
-typealias   ZStringObjectDictionary = [String       : NSObject]
-typealias ZManagedObjectsDictionary = [String       : ZManagedObject]
-typealias  StringZRecordsDictionary = [String       : ZRecordsArray]
-typealias    ZDBIDRecordsDictionary = [ZDatabaseID  : ZRecordsArray]
-typealias     ZAttributesDictionary = [NSAttributedString.Key : Any]
 protocol ZGeneric {
 	func controllerSetup(with mapView: ZMapView?)
 }
@@ -651,6 +616,12 @@ extension CGFloat {
 
 extension Int {
 
+	var  stringInThousands                    : String  { return "\(((float * 2.0 / 1000.0).rounded(.toNearestOrAwayFromZero) / 2.0).stringTo(precision: 1))" }
+	var  stringInHundreds                     : String  { return "\((float / 100.0).rounded(.toNearestOrAwayFromZero).stringTo(precision: 0))" }
+	var  float                                : CGFloat { return CGFloat(self) }
+	func isWithin(_ range: ClosedRange<Int>) -> Bool    { return range.contains(self) }
+	func confine(within: Int)                -> Int     { return Int(float.confine(within: CGFloat(within))) }
+
 	var ordinal: String {
 		switch self {
 			case 1:  return "first"
@@ -660,11 +631,9 @@ extension Int {
 		}
 	}
 
-	func isWithin(_ range: ClosedRange<Int>) -> Bool    { return range.contains(self) }
-	func confine(within: Int)                -> Int     { return Int(float.confine(within: CGFloat(within))) }
-	var  stringInThousands                    : String  { return "\(((float * 2.0 / 1000.0).rounded(.toNearestOrAwayFromZero) / 2.0).stringTo(precision: 1))" }
-	var  stringInHundreds                     : String  { return "\((float / 100.0).rounded(.toNearestOrAwayFromZero).stringTo(precision: 0))" }
-	var  float                                : CGFloat { return CGFloat(self) }
+	func pluralized(unit: String = kEmpty, plural: String = "s", followedBy: String = kEmpty) -> String {
+		return self <= 0 ? kEmpty : "\(self) \(unit)\(self == 1 ? kEmpty : "\(plural)")\(followedBy)"
+	}
 
 	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
 		var angles             = [Double]()
@@ -2058,6 +2027,7 @@ extension NSTextAttachment {
 
 extension String {
 	var               length :                     Int  { return unicodeScalars.count }
+	var          doubleValue :                  Double? { return Double(self) }
 	var           asciiArray :                 [UInt32] { return unicodeScalars.filter { $0.isASCII }.map{ $0.value } }
 	var           asciiValue :                  UInt32  { return asciiArray[0] }
 	var        smartStripped :                  String  { return substring(fromInclusive: 4).spacesStripped }
@@ -2073,9 +2043,16 @@ extension String {
     var           isOpposite :                    Bool  { return "]}>)".contains(self) }
 	var containsLineEndOrTab :                    Bool  { return hasMatchIn(kLineEndingsAndTabArray) }
 	var         isDashedLine :                    Bool  { return contains(kHalfLineOfDashes) }
+	var           isValidURL :                    Bool  { return contains(kPeriod) || contains("http") || contains("file") }
 	var               isLine :                    Bool  { return extractedTitle != self }
 	func isLineTitle(enclosing range: NSRange) -> Bool  { return extractedTitle == substring(with: range) }
+	func contains(_ string: String)            -> Bool  { return components(separatedBy: string).count > 1 }
 	func maybeZRecord(in id: ZDatabaseID?)  -> ZRecord? { return id?.zRecords?.maybeZoneForRecordName(self) }
+	func substring(fromInclusive: Int)       -> String  { return String(self[index(at: fromInclusive)...]) }
+	func substring(toExclusive:   Int)       -> String  { return String(self[..<index(at: toExclusive)]) }
+	static func from(_ ascii:  UInt32)       -> String  { return String(UnicodeScalar(ascii)!) }
+	subscript (i: Int)                       -> String  { return self[i ..< i + 1] }
+
 
     var opposite: String {
 		switch self {
@@ -2255,15 +2232,6 @@ extension String {
         return String(self[start ..< end])
     }
 
-	subscript (i: Int) -> String {
-        return self[i ..< i + 1]
-    }
-
-	static func pluralized(_ iValue: Int, unit: String = kEmpty, plural: String = "s", followedBy: String = kEmpty) -> String { return iValue <= 0 ? kEmpty : "\(iValue) \(unit)\(iValue == 1 ? kEmpty : "\(plural)")\(followedBy)" }
-    static func from(_ ascii:  UInt32) -> String  { return String(UnicodeScalar(ascii)!) }
-    func substring(fromInclusive: Int) -> String  { return String(self[index(at: fromInclusive)...]) }
-    func substring(toExclusive:   Int) -> String  { return String(self[..<index(at: toExclusive)]) }
-
     func rect(using font: ZFont, for iRange: NSRange, atStart: Bool) -> CGRect {
 		let within = substring(with: iRange)
 		let bounds = within.rectWithFont(font)
@@ -2289,10 +2257,6 @@ extension String {
 		}
 
 		return nil
-	}
-
-	var doubleValue: Double? {
-		return Double(self)
 	}
 
     var floatValue: CGFloat? {
@@ -2622,6 +2586,20 @@ extension String {
 		return result
 	}
 
+}
+
+extension StringsArray {
+
+	var convertedTraits: StringsArray {
+		var converted = StringsArray()
+
+		for string in self {
+			let   char = string == "h" ? kEquals : string == "n" ? "+" : string
+			converted.append(char)
+		}
+
+		return converted
+	}
 }
 
 extension NSPredicate {
@@ -3005,72 +2983,71 @@ extension ZView {
 extension ZPseudoView {
 
 	func drawTinyDots(surrounding rect: CGRect, count: Int?, radius: Double, color: ZColor?, countMax: Int = 10, clockwise: Bool = false, onEach: IntRectClosure? = nil) {
-		if  let              c = controller ?? gHelpController, // for help dots, widget and controller are nil; so use help controller
-			var       dotCount = count {
-			var      fatHollow = false
-			var     tinyHollow = false
-			var      tinyIsFat = false
-			var          scale = 1.0
+		if  let                c = controller ?? gHelpController, // for help dots, widget and controller are nil; so use help controller
+			var         dotCount = count {
+			var        fatHollow = false
+			var      smallHollow = false
+			var       smallIsFat = false
+			var            scale = 1.0
 
-			while     dotCount > (countMax *  countMax) {
-				dotCount       = (dotCount + (countMax / 2)) / countMax    // round to closest
-				scale          = 1.25
+			while       dotCount > (countMax *  countMax) {
+				dotCount         = (dotCount + (countMax / 2)) / countMax    // round to closest
+				scale            = 1.25
 
 				if  fatHollow {
-					tinyHollow = true
+					smallHollow  = true
 				} else {
-					tinyIsFat  = true
-					fatHollow  = true
+					smallIsFat   = true
+					fatHollow    = true
 				}
 			}
 
-			if  dotCount       > 0 {
-				let  tinyCount = dotCount % countMax
-				let   fatCount = dotCount / countMax
+			if  dotCount         > 0 {
+				let   smallCount = dotCount % countMax
+				let     fatCount = dotCount / countMax
 
 				let drawDots: IntBooleanClosure = { (iCount, isFat) in
-					let     oneSet = (isFat ? tinyCount : fatCount) == 0
-					let   isHollow = (isFat && fatHollow) || (!isFat && tinyHollow)
+					let   oneSet = (isFat ? smallCount : fatCount) == 0
+					let isHollow = (isFat && fatHollow) || (!isFat && smallHollow)
 
-					if  iCount     > 0 {
-						let isEven = iCount % 2 == 0
-						let fullCircle = k2PI
-						let startAngle = fullCircle / 4.0 * ((clockwise ? .zero : 1.0) * (oneSet ? (isEven ? .zero : 2.0) : isFat ? 1.0 : 3.0)) + (oneSet ? .zero : kPI)
-						let angles = iCount.anglesArray(startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
+					if  iCount          > 0 {
+						let      isEven = iCount % 2 == 0
+						let  fullCircle = k2PI
+						let  multiplier = oneSet ? (isEven ? .zero : 2.0) : isFat ? 1.0 : 3.0
+						let offsetAngle = oneSet ? .zero : kPI
+						let  startAngle = (clockwise ? .zero : (fullCircle / 4.0 * multiplier)) + offsetAngle
+						let      angles = iCount.anglesArray(startAngle: startAngle, oneSet: oneSet, isFat: isFat, clockwise: clockwise)
 
 						for (index, angle) in angles.enumerated() {
 							let (ideaFocus, asIdea, asEssay) = (false, true, false)
 
-							// notes are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
-							// ideas are ALWAYS tiny and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
+							// essays are ALWAYS big (fat ones are bigger) and ALWAYS hollow (surround idea dots)
+							// ideas  are ALWAYS small and SOMETIMES fat (if over ten) and SOMETIMES hollow (if over hundered)
 							//
-							// so, three booleans: isFat, isHollow, forNote
+							// so, three booleans: isFat, isHollow, asEssay
 							//
 							// everything should always goes out more (regardless of no notes)
 
 							func drawDot(isFocus: Bool) {
-								let          asFat = isFat || tinyIsFat
-								let    offsetRatio = asFat ? 2.1 : 1.28
-								let       fatRatio = isFat ? 2.0 : 1.6
-								let       dotRatio = asFat ? 4.0 : 2.5
+								let        asFat = isFat || smallIsFat
+								let  offsetRatio = asFat ? 2.1 : 1.28
+								let     fatRatio = isFat ? 2.0 : 1.6
+								let     dotRatio = asFat ? 4.0 : 2.5
 
-								let   scaledRadius = radius * scale
-								let  necklaceDelta = scaledRadius * 2.0 * 1.5
-								let      dotRadius = scaledRadius * fatRatio
-								let     rectRadius = Double(rect.size.height) / 2.0
-								let necklaceRadius = CGFloat(rectRadius + necklaceDelta)
-								let    dotDiameter = CGFloat(dotRadius  * dotRatio)
-								let         offset = CGFloat(dotRadius  * offsetRatio)
+								let scaledRadius = radius * scale
+								let    dotsDelta = scaledRadius * 1.8
+								let    dotRadius = scaledRadius * fatRatio
+								let   rectRadius = rect.size.dividedInHalf.height
+								let   dotsRadius = CGFloat(rectRadius + dotsDelta)
+								let  dotDiameter = CGFloat(dotRadius  * dotRatio)
+								let       offset = CGFloat(dotRadius  * offsetRatio)
+								let            x = rect.center.x - offset + (dotsRadius * CGFloat(cos(angle)))
+								let            y = rect.center.y - offset + (dotsRadius * CGFloat(sin(angle)))
 
-								let     rectCenter = rect.center
-								let         center = CGPoint(x: rectCenter.x - offset, y: rectCenter.y - offset)
-								let              x = center.x + (necklaceRadius * CGFloat(cos(angle)))
-								let              y = center.y + (necklaceRadius * CGFloat(sin(angle)))
-
-								let       ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
-								let           path = ZBezierPath(ovalIn: ovalRect)
-								path    .lineWidth = CGFloat(c.coreThickness * (asEssay ? 7.0 : 3.0))
-								path     .flatness = kDefaultFlatness
+								let     ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
+								let         path = ZBezierPath(ovalIn: ovalRect)
+								path  .lineWidth = CGFloat(c.coreThickness * (asEssay ? 7.0 : 3.0))
+								path   .flatness = kDefaultFlatness
 
 								if  isHollow {
 									color?.setStroke()
@@ -3090,8 +3067,8 @@ extension ZPseudoView {
 					}
 				}
 
-				drawDots( fatCount, true)  // isFat = true
-				drawDots(tinyCount, false)
+				drawDots(  fatCount, true)  // isFat is true
+				drawDots(smallCount, false)
 			}
 		}
 	}
