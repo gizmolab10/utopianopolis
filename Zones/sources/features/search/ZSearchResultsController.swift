@@ -167,7 +167,7 @@ class ZSearchResultsController: ZGenericTableController {
 		result.append(attributed)
 
 		if  let searched = searchText {
-			for text in searched.components(separatedBy: kSpace) {
+			for text in searched.componentsSeparatedBySpace {
 				if  let ranges = string.rangesMatching(text) {				      // find all matching substring ranges
 					for range in ranges {
 						let r = range.offsetBy(size)

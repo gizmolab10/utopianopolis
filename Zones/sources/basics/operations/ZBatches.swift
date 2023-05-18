@@ -159,7 +159,7 @@ class ZBatches: ZOnboarding {
             } else if deferredBatches.count > 0 {
                 transferDeferred()                         // 3.
                 processNextBatch()                         // recurse
-			} else {
+			} else if !currentOp.isDoneOp {
 				gSignal([.sData, .spStartupStatus])        // 4.
 			}
         }

@@ -47,7 +47,7 @@ class ZFocusing : NSObject {
 		// 4. not here, COMMAND    -> change here
 		// 5. not COMMAND          -> select here, create a bookmark
 
-		guard  let zone = (kind == .eEdited) ? gCurrentlyEditingWidget?.widgetZone : gSelecting.firstSortedGrab else {
+		guard let zone = (kind == .eEdited) ? gCurrentlyEditingZone : gSelecting.firstSortedGrab else {
 			atArrival()
 
 			return

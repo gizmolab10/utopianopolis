@@ -171,7 +171,7 @@ class ZRecords: NSObject {
 				let         value  = newValue,
 				references[index] != value {
 				references[index]  = value
-				gHereRecordNames   = references.joined(separator: kColonSeparator)
+				gHereRecordNames   = references.joinedWithColon
 			}
 		}
 
@@ -270,7 +270,7 @@ class ZRecords: NSObject {
 	}
 
 	func createRandomLost() -> Zone {
-        let lost = Zone.randomZone(in: databaseID)
+        let lost = databaseID.randomZone
 
         lostAndFoundZone?.addChildNoDuplicate(lost, at: nil)
 
@@ -334,7 +334,7 @@ class ZRecords: NSObject {
 	}
 
 	func appendZRecords(containing string: String, onEachHandful: @escaping ZRecordsToZRecordsClosure) {
-		let strings = string.components(separatedBy: kSpace).filter { $0 != kEmpty }
+		let strings = string.componentsSeparatedBySpace.filter { $0 != kEmpty }
 
 		gCoreDataStack.searchZRecordsForStrings(strings, within: databaseID) { [self] (dict: StringZRecordsDictionary) in
 			for (name, zRecords) in dict {

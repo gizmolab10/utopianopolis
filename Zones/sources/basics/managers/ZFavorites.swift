@@ -187,13 +187,14 @@ class ZFavorites: ZRecords {
 	}
 
 	func object(for id: String) -> NSObject? {
-		let parts = id.components(separatedBy: kColonSeparator)
+		let parts = id.componentsSeparatedByColon
 
 		if  parts.count == 2 {
+			let recordName = parts[1]
 			if  parts[0] == "note" {
-				return ZNote .object(for: parts[1], isExpanded: false)
+				return ZNote .object(for: recordName, isExpanded: false)
 			} else {
-				return ZEssay.object(for: parts[1], isExpanded: true)
+				return ZEssay.object(for: recordName, isExpanded: true)
 			}
 		}
 
@@ -348,21 +349,21 @@ class ZFavorites: ZRecords {
 				if !hasDatabaseIDs.contains(databaseID) {
 					let        dbName = databaseID.rawValue
 					let      bookmark = Zone.uniqueZone(recordName: dbName + kFavoritesSuffix, in: .mineID, checkCDStore: true)
-					bookmark.zoneLink = dbName + kDoubleColonSeparator
+					bookmark.zoneLink = dbName + kDoubleColon
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? dbName
 
 					getRootsGroup().addChildAndUpdateOrder(bookmark)
-					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: dbName + kDoubleColonSeparator + kRootName, in: databaseID)
+					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: dbName + kDoubleColon + kRootName, in: databaseID)
 				}
 			}
 
 			func createRootsBookmark(named: String) {
 				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID, checkCDStore: true)
-				bookmark.zoneLink = kDoubleColonSeparator + named                           // convert into a bookmark
+				bookmark.zoneLink = kDoubleColon + named                           // convert into a bookmark
 				bookmark.zoneName = named
 
 				if  gBookmarks.addToReverseLookup(bookmark) {
-					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: kDoubleColonSeparator + named, in: .mineID)
+					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: kDoubleColon + named, in: .mineID)
 				}
 
 				getRootsGroup().addChildAndUpdateOrder(bookmark)
@@ -428,7 +429,7 @@ class ZFavorites: ZRecords {
 
 	func revealAndMarkInFavoritesMap(_  iZone: Zone? = nil) {
 		revealInFavoritesMap(iZone)
-		setCurrentFavoriteBoomkarks(to: iZone)
+		setCurrentFavoriteBookmark(to: iZone)
 	}
 
 	var currentTargets: ZoneArray {

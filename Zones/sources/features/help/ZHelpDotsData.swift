@@ -62,7 +62,7 @@ class ZHelpDotsData: ZHelpData {
 		".3",						"hyperlink               open in a browser",									"",
 		".3",						"note                       edit",												"",
 		"",							"",																				"",
-		".3",						"multiple traits         each of the above",									""
+		".3",						"multiple traits        each of the above",									""
 	]
 
 }

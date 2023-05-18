@@ -17,9 +17,10 @@ enum ZDatabaseID: String {
 	case     sharedID = "shared"
 	case       mineID = "mine"
 
+	var    identifier : String { return rawValue.substring(toExclusive: 1) } // { f, e, s, m }
+	var    randomZone :   Zone { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: self) }
 	var isFavoritesDB :   Bool { return self == .favoritesID }
 	var      hasStore :   Bool { return gCoreDataStack.hasStore(for: self) }
-	var    identifier : String { return rawValue.substring(toExclusive: 1) } // { f, e, s, m }
 	var         index :   Int? { return databaseIndex?.rawValue }
 
 	var zRecords: ZRecords? {

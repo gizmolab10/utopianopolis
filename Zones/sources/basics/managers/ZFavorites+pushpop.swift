@@ -16,11 +16,11 @@ extension ZFavorites {
 	func resetRecents() { recentsMaybe = nil } // force reconstruction of recents group
 	func recentsTargeting(_ target: Zone) -> Zone? { return getRecentsGroup().children.whoseTargetIntersects(with: [target]).firstUndeleted }
 
-	@discardableResult func push(_ zone: Zone? = gHere, down: Bool = true) -> Zone? {
-		if  let target        = zone {
+	@discardableResult func push(_ iZone: Zone? = gHere, down: Bool = true) -> Zone? {
+		if  let zone          = iZone {
 			let recents       = getRecentsGroup()
 			let prior         = recentCurrent?.siblingIndex ?? 0
-			var bookmark      = target.isValidBookmark ? target : recentsTargeting(target)             // bookmark pointing to target is already present
+			var bookmark      = zone.isValidBookmark ? zone : recentsTargeting(zone)             // bookmark pointing to zone is already present
 			if  let to        = !down ? prior : recents.children.nextBookmarkIndex(increasing: true,  from: prior) {
 				if  let from  = bookmark?.siblingIndex,
 					let guess =                 recents.children.nextBookmarkIndex(increasing: false, from: from) {
@@ -29,19 +29,21 @@ extension ZFavorites {
 						recents.moveChild(from: from, to: to)
 					}
 				} else {
-					bookmark  = ZBookmarks.newBookmark(targeting: target)
+					bookmark  = ZBookmarks.newBookmark(targeting: zone)
 
 					recents.addChildNoDuplicate(bookmark, at: to)
 				}
 			}
 
 			if  gBookmarks.addToReverseLookup(bookmark) {
-				gRelationships.addBookmarkRelationship(bookmark, target: target, in: bookmark!.databaseID)
+				gRelationships.addBookmarkRelationship(bookmark, target: zone, in: bookmark!.databaseID)
 			}
 
-			setCurrentFavoriteBoomkarks(to: bookmark)
-			resetRecents()
-			gSignal([.spFavoritesMap])
+			FOREGROUND(after: 0.01) { [self] in
+				setCurrentFavoriteBookmark(to: bookmark)
+				resetRecents()
+				gSignal([.spFavoritesMap])
+			}
 
 			return bookmark
 		}
@@ -86,7 +88,7 @@ extension ZFavorites {
 			let    children = c.siblings,
 			let        next = children.nextBookmark(increasing: false, from: index), next != c,
 			pop(c) {
-			setCurrentFavoriteBoomkarks(to: next)
+			setCurrentFavoriteBookmark(to: next)
 
 			print(next)
 
@@ -141,15 +143,16 @@ extension ZFavorites {
 		return [recentCurrent, otherCurrent].contains(zone)
 	}
 
-	func setCurrentFavoriteBoomkarks(to zone: Zone?, mustBeRecents: Bool = false) {
-		if      let          z = zone {
-			if  let          t = z.bookmarkTarget,
-				let          r = recentsTargeting(t)?.firstUndeleted {
-				recentCurrent = r
-			}
-
-			if !mustBeRecents, !currentHere.isInRecentsGroup, !z.isInRecentsGroup {
-				otherCurrent   = z
+	func setCurrentFavoriteBookmark(to iBookmark: Zone?) {
+		if  let bookmarks = iBookmark?.bookmarkTarget?.bookmarksTargetingSelf {
+			for bookmark in bookmarks {
+				if  bookmark.isInFavorites {
+					if  bookmark.isInRecentsGroup {
+						recentCurrent = bookmark
+					} else if !currentHere.isInRecentsGroup {
+						otherCurrent  = bookmark
+					}
+				}
 			}
 		}
 	}

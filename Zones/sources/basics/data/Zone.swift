@@ -52,9 +52,9 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                        lighterColor :             ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
 	var                                      highlightColor :             ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
 	var                                            dotColor :             ZColor  { return mapType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
-	var                                       lowestExposed :                Int? { return exposed(upTo: highestExposed) }
-	var                                           halfCount :                Int  { return Int((Double(count) + 0.5) / 2.0) }
 	var                                               count :                Int  { return children.count }
+	var                                           halfCount :                Int  { return Int((Double(count) + 0.5) / 2.0) }
+	var                                       lowestExposed :                Int? { return exposed(upTo: highestExposed) }
 	var                                           emailLink :             String? { return email == nil ? nil : kMailTo + email! }
 	var                                      linkRecordName :             String? { return zoneLink?.maybeRecordName }
 	var                                         clippedName :             String  { return !gShowToolTips ? kEmpty : unwrappedName }
@@ -67,15 +67,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                    optionalCloudProperties :       StringsArray  { return Zone.optionalCloudProperties }
 	override var                              isActualChild :               Bool  { return siblingIndex != nil }
 	override var                                 isBrandNew :               Bool  { return zoneName == nil || zoneName == kEmpty }
-	override var                                isAdoptable :               Bool  { return parentRID != nil || parentLink != nil }
 	override var                                    isAZone :               Bool  { return true }
 	override var                               passesFilter :               Bool  { return isBookmark && gSearchFilter.contains(.fBookmarks) || !isBookmark && gSearchFilter.contains(.fIdeas) }
 	var                                           isDragged :               Bool  { return gDragging.isDragged(self) }
-	var                                          isAnOrphan :               Bool  { return parentRID == nil && parentLink == nil }
 	var                                          isBookmark :               Bool  { return zoneLink != nil }
-	var                                     isValidBookmark :               Bool  { return bookmarkTarget != nil }
+	var                                     isValidBookmark :               Bool  { return bookmarkTarget != nil && bookmarkTarget!.getRoot.isARoot }
 	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
-	var                                     dragDotIsHidden :               Bool  { return (isFavoritesHere && !(widget?.mapType.isMainMap ?? false)) || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
+	var                                     dragDotIsHidden :               Bool  { return isFavoritesHere || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
 	var                                  hasNarrowRevealDot :               Bool  { return isExpanded || [0, 1, 3].contains(count) || (gCountsMode != .dots) }
 	var                                    hasBadRecordName :               Bool  { return recordName == nil }
@@ -108,15 +106,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           dropCycle :               Bool  { return gDragging.draggedZones.contains(self) || isProgenyOfAny(of: gDragging.draggedZones) || (bookmarkTarget?.dropCycle ?? false) }
 	var                                          isInAGroup :               Bool  { return groupOwner?.bookmarkTargets.contains(self) ?? false }
 	var                                       isAGroupOwner :               Bool  { return zoneAttributes?.contains(ZoneAttributeType.groupOwner.rawValue) ?? false }
-	var                                         userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user and live in my databasse
+	var                                         userCanMove :               Bool  { return userCanMutateProgeny   || isBookmark } // all bookmarks are movable because they are created by user in private databasse
 	var                                        userCanWrite :               Bool  { return userHasDirectOwnership || isIdeaEditable }
 	var                                userCanMutateProgeny :               Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
 	var                                         hideDragDot :               Bool  { return isExpanded && (isFavoritesHere || (kIsPhone && (self == gHereMaybe))) }
-	var                                             mapType :           ZMapType  = .tMainMap
 	var                                     inheritedAccess :         ZoneAccess  { return zoneWithInheritedAccess.directAccess }
-	var                                              traits =   ZTraitDictionary  ()
-	var                                      duplicateZones =          ZoneArray  ()
-	var                                            children =          ZoneArray  ()
 	var                                     bookmarkTargets :          ZoneArray  { return bookmarks.filter { $0.bookmarkTarget != nil }.map { $0.bookmarkTarget! } }
 	var                                           notemarks :          ZoneArray  { return zonesMatching(.wNotemarks) }
 	var                                           bookmarks :          ZoneArray  { return zonesMatching(.wBookmarks) }
@@ -124,16 +118,21 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           allGroups :          ZoneArray  { return zonesMatching(.wGroups   ) }
 	var                                                 all :          ZoneArray  { return zonesMatching(.wAll      ) }
 	var                                     visibleChildren :          ZoneArray  { return hasVisibleChildren ? children : [] }
+	var                                      duplicateZones =          ZoneArray  ()
+	var                                            children =          ZoneArray  ()
+	var                                              traits =   ZTraitDictionary  ()
+	var                                             mapType :           ZMapType  = .tMainMap
 	func          identifier()                             ->             String? { return isARoot ? databaseID.rawValue : recordName }
 	func          toolName()                               ->             String? { return clippedName }
 	func          toolColor()                              ->             ZColor? { return color?.lighter(by: 3.0) }
 	func          maybeTraitFor(_ iType: ZTraitType)       ->             ZTrait? { return traits[iType] }
 	static   func object(for id: String, isExpanded: Bool) ->           NSObject? { return gMaybeZoneForRecordName(id) }
-	static   func randomZone(in dbID: ZDatabaseID)         ->               Zone  { return Zone.uniqueZoneNamed(String(arc4random()), databaseID: dbID) }
 	override func hasMissingChildren()                     ->               Bool  { return count < fetchableCount }
 	override func orphan()                                                        { parentZone?.removeChild(self) }
+	@discardableResult func updateEditorText()             ->          ZTextPack? { return gTextEditor.updateEditorText(inZone: self) }
 	func          toggleShowing()                                                 { isShowing ? hide() : show() }
 	func          recount()                                                       { updateAllProgenyCounts() }
+
 
 	var traitTypes : ZTraitTypesArray {
 		var types = ZTraitTypesArray()
@@ -211,6 +210,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		return value
+	}
+
+	func debug() {
+		if  zoneName == "changed text widget" {
+			noop()
+		}
 	}
 
 	func unwrappedNameWithEllipses(_ forceTruncation: Bool = true, noLongerThan threshold: Int = 25) -> String {
@@ -307,7 +312,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var asZoneLink: String? {
 		guard let name = recordName else { return nil }
 
-		return databaseID.rawValue + kDoubleColonSeparator + name
+		return databaseID.rawValue + kDoubleColon + name
 	}
 
 	var shouldUpdateCrossLink : Bool {
@@ -318,7 +323,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var crossLink: ZRecord? {
 		get {
-			if  gIsReadyToShowUI {       // zrecords registry not ready until ui can be shown
+			if  gHasFinishedStartup {       // zrecords registry not ready until ui can be shown
 				updateCrossLinkMaybe()
 			}
 
@@ -443,7 +448,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var ancestralString: String {
-		return ancestralStrings.joined(separator: kColonSeparator)
+		return ancestralStrings.joinedWithColon
 	}
 
 	var favoritesTitle: String {
@@ -453,7 +458,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			names.removeFirst(1)
 		}
 
-		return names.joined(separator: kColonSeparator)
+		return names.joinedWithColon
 	}
 
 
@@ -1524,7 +1529,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			zoneName  = iText
 			colorized = !colorized // WTF?
 
-			gTextEditor.updateText(inZone: self)
+			updateEditorText()
 		}
 	}
 
@@ -1573,8 +1578,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func reverseWordsInZoneName() -> Bool {
-		if  let words = zoneName?.components(separatedBy: kSpace), words.count > 1 {
-			zoneName = words.reversed().joined(separator: kSpace)
+		if  let words = zoneName?.componentsSeparatedBySpace, words.count > 1 {
+			zoneName = words.reversed().joinedWithSpace
 
 			return true
 		}
@@ -2075,7 +2080,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			var               there : Zone?
 
 			let complete : SignalClosure = { [self] (iObject, kind) in
-				gFavoritesCloud.setCurrentFavoriteBoomkarks(to: self)
+				gFavoritesCloud.setCurrentFavoriteBookmark(to: self)
 				showTopLevelFunctions()
 				atArrival(iObject, kind)
 			}
@@ -2144,7 +2149,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func invokeBookmark(_ COMMAND: Bool = false, onCompletion: BoolClosure?) -> Bool { // false means not traveled
-		if  let target = bookmarkTarget {
+		if  let target = bookmarkTarget, target.getRoot.isARoot {
 			if  COMMAND, target.invokeEssay() { // first, check if target has an essay
 				onCompletion?(false)
 			} else if target.isInFavorites {
@@ -3183,7 +3188,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			while divisions > 0 {
 				divisions  -= 1
 				var gotten  = 0
-				let holder  = Zone.randomZone(in: databaseID)
+				let holder  = databaseID.randomZone
 
 				holders.append(holder)
 
@@ -3491,7 +3496,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let     r = NSRange(location: range.location + o, length: range.length)
 			zoneName  = t
 
-			gTextEditor.updateText(inZone: self, isEditing: true)
+			updateEditorText()
 			textWidget?.updateGUI()
 			editAndSelect(range: r)
 

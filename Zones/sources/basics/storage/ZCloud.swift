@@ -119,7 +119,7 @@ class ZCloud: ZRecords {
     }
 
     func zoneSearchPredicateFrom(_ searchString: String) -> NSPredicate? {
-        let    tokens = searchString.components(separatedBy: kSpace)
+        let    tokens = searchString.componentsSeparatedBySpace
         var    string = kEmpty
         var separator = kEmpty
 
@@ -134,7 +134,7 @@ class ZCloud: ZRecords {
     }
 
 	func noteSearchPredicateFrom(_ searchString: String) -> NSPredicate? {
-		let    tokens = searchString.components(separatedBy: kSpace)
+		let    tokens = searchString.componentsSeparatedBySpace
 		var    string = kEmpty
 		var separator = kEmpty
 

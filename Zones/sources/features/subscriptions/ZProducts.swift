@@ -98,11 +98,11 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 				"I also hope you can appreciate the loving work I've put into it and my wish to generate an income by it.",
 				"Because I do see the value of letting you \(kTryThenBuy),",
 				"this alert is being shown to you after a free period of use.",
-				"During this period all features of Seriously have been enabled."].joined(separator: kSpace), [
+				"During this period all features of Seriously have been enabled."].joinedWithSpace, [
 					"If you wish to continue using Seriously for free,",
 					"some features [editing notes, search and print] will be disabled.",
 					"If these features are important to you,",
-					"you can continue using them by purchasing a license."].joined(separator: kSpace)].joined(separator: kDoubleNewLine),
+					"you can continue using them by purchasing a license."].joinedWithSpace].joinedWithDoubleNewLine,
 						  "Purchase a subscription",
 						  "No thanks, the limited features are perfect") { status in
 			if  status              == .sYes {
@@ -308,7 +308,7 @@ struct ZToken {
 		array.append(transactionID ?? kHyphen)
 		array.append(value         ?? kHyphen)
 
-		return array.joined(separator: kColonSeparator)
+		return array.joinedWithColon
 	}
 
 	var status: String {
@@ -325,7 +325,7 @@ struct ZToken {
 extension String {
 
 	var asZToken: ZToken? {
-		let array           = components(separatedBy: kColonSeparator)
+		let array           = componentsSeparatedByColon
 		if  array.count     > 4,
 			let   dateValue = Double(array[0]),
 			let  stateValue =    Int(array[1]) {

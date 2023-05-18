@@ -460,7 +460,7 @@ var gCollapsedIdeas : StringsArray {
 	get {
 		if  gCollapsed == nil {
 			let  value  = getPreferencesString(for: kCollapsedIdeas, defaultString: kEmpty)
-			gCollapsed  = value?.components(separatedBy: kColonSeparator)
+			gCollapsed  = value?.componentsSeparatedByColon
 		}
 
 		return gCollapsed!
@@ -469,7 +469,7 @@ var gCollapsedIdeas : StringsArray {
 	set {
 		gCollapsed = newValue
 
-		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kCollapsedIdeas)
+		setPreferencesString(newValue.joinedWithColon, for: kCollapsedIdeas)
 	}
 }
 
@@ -477,7 +477,7 @@ var gExpandedIdeas : StringsArray {
 	get {
 		if  gExpanded == nil {
 			let value  = getPreferencesString(for: kExpandedIdeas, defaultString: kEmpty)
-			gExpanded  = value?.components(separatedBy: kColonSeparator)
+			gExpanded  = value?.componentsSeparatedByColon
 		}
 
 		return gExpanded!
@@ -486,7 +486,7 @@ var gExpandedIdeas : StringsArray {
 	set {
 		gExpanded = newValue
 
-		setPreferencesString(newValue.joined(separator: kColonSeparator), for: kExpandedIdeas)
+		setPreferencesString(newValue.joinedWithColon, for: kExpandedIdeas)
 	}
 }
 

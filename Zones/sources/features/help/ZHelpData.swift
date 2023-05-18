@@ -44,7 +44,7 @@ class ZHelpData: NSObject {
 		var           dotType  : ZHelpDotType?
 		if  let      helpType  = ZHelpType(rawValue: helpTypeRaw),
 			helpType == .hDots {
-			let    dotTypeRaw  = second.components(separatedBy: kSpace)[0]
+			let    dotTypeRaw  = second.componentsSeparatedBySpace[0]
 			dotType            = ZHelpDotType(rawValue: dotTypeRaw)
 		}
 

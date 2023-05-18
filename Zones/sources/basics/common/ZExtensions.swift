@@ -93,12 +93,14 @@ extension NSObject {
 	@objc var zClassInitial : String { return zClassName[0] }
 
 	@objc var zClassName: String {
-		let parts = className.components(separatedBy: kDotSeparator)
+		let parts = className.componentsSeparatedByPeriod
 		let index = parts.count == 1 ? 0 : 1
 		let  name = parts[index].unCamelcased.uppercased()
-		let names = name.components(separatedBy: kSpace).dropFirst()
+		var names = name.componentsSeparatedBySpace
 
-		return names.joined(separator: kSpace)
+		names.remove(at: 0)
+
+		return names.joinedWithSpace
 	}
 
 	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
@@ -193,7 +195,7 @@ extension NSObject {
                 var       translated = false
 
                 if  let string       = value as? String {
-                    let parts        = string.components(separatedBy: kTimeInterval + kColonSeparator)
+                    let parts        = string.components(separatedBy: kTimeInterval + kColon)
                     if  parts.count > 1,
                         parts[0]    == kEmpty,
                         let interval = TimeInterval(parts[1]) {
@@ -379,7 +381,7 @@ extension URL {
 			}
 		}
 
-		return URL(fileURLWithPath: components.joined(separator: kSlash))
+		return URL(fileURLWithPath: components.joinedWithSlash)
 	}
 
 }
@@ -428,29 +430,6 @@ extension CKRecord {
 		}
 	}
 
-	var isOrphaned: Bool {
-		var parentRecordName : String?
-		var parentReference  = self[kpParent] as? CKReference
-
-		if  parentReference == nil {
-			if  let     link = self[kpZoneParentLink] as? String {
-				parentRecordName = link.maybeRecordName // parent is in other db
-			} else {
-				parentReference  = self[kpOwner] as? CKReference
-			}
-		}
-
-		if  let ref = parentReference {
-			parentRecordName = ref.recordID.recordName
-		}
-
-		if  parentRecordName != nil {
-			return gMaybeZoneForRecordName(parentRecordName) == nil
-		}
-
-		return true
-	}
-
 	var storable: String {
 		get {
 			var pairs = StringsArray()
@@ -464,7 +443,7 @@ extension CKRecord {
 				}
 			}
 
-			return pairs.joined(separator: gSeparatorAt(level: 1))
+			return pairs.joinedWithSeparatorAt(level: 1)
 		}
 
 		set {
@@ -494,7 +473,7 @@ extension CKRecord {
 
     var isBookmark: Bool {
         if  let    link = self[kpZoneLink] as? String {
-            return link.contains(kColonSeparator)
+            return link.contains(kColon)
         }
 
         return false
@@ -1852,7 +1831,7 @@ extension NSMutableAttributedString {
 	}
 
 	var attributesAsString: String {
-		get { return attributeStrings.joined(separator: gSeparatorAt(level: 1)) }
+		get { return attributeStrings.joinedWithSeparatorAt(level: 1) }
 		set { attributeStrings = newValue.componentsSeparatedAt(level: 1) }
 	}
 
@@ -2045,6 +2024,7 @@ extension String {
 	var         isDashedLine :                    Bool  { return contains(kHalfLineOfDashes) }
 	var           isValidURL :                    Bool  { return contains(kPeriod) || contains("http") || contains("file") }
 	var               isLine :                    Bool  { return extractedTitle != self }
+
 	func isLineTitle(enclosing range: NSRange) -> Bool  { return extractedTitle == substring(with: range) }
 	func contains(_ string: String)            -> Bool  { return components(separatedBy: string).count > 1 }
 	func maybeZRecord(in id: ZDatabaseID?)  -> ZRecord? { return id?.zRecords?.maybeZoneForRecordName(self) }
@@ -2109,7 +2089,7 @@ extension String {
 
 		if  parts.count > 2 {
 			let  bad = parts[1]
-			let good = bad.replacingOccurrences(of: kCommaSeparator, with: kUncommonSeparator)
+			let good = bad.replacingOccurrences(of: kComma, with: kUncommonSeparator)
 
 			return parts[0] + good + parts[2]
 		}
@@ -2193,6 +2173,12 @@ extension String {
 		return false
 	}
 
+	var componentsSeparatedByColon  : StringsArray { return components(separatedBy: kColon ) }
+	var componentsSeparatedBySlash  : StringsArray { return components(separatedBy: kSlash ) }
+	var componentsSeparatedBySpace  : StringsArray { return components(separatedBy: kSpace ) }
+	var componentsSeparatedByComma  : StringsArray { return components(separatedBy: kComma ) }
+	var componentsSeparatedByPeriod : StringsArray { return components(separatedBy: kPeriod) }
+
 	func componentsSeparatedAt(level: Int) -> StringsArray {
 		return components(separatedBy: gSeparatorAt(level: level))
 	}
@@ -2217,9 +2203,9 @@ extension String {
 	}
 
 	var asBundleResource: String? {
-		var    parts = components(separatedBy: kDotSeparator)
+		var    parts = componentsSeparatedByPeriod
 		let     last = parts.removeLast()
-		let resource = parts.joined(separator: kDotSeparator)
+		let resource = parts.joinedWithPeriod
 
 		return Bundle.main.path(forResource: resource, ofType: last)
 	}
@@ -2271,14 +2257,14 @@ extension String {
 		if  self == kEmpty {        // special case
 			return nil
 		} else {
-            let pairs = components(separatedBy: kCommaSeparator)
+            let pairs = componentsSeparatedByComma
 			var green = Double.zero
 			var  blue = Double.zero
 			var   red = Double.zero
 
 			if  pairs.count > 2 {
 				for pair in pairs {
-					let values = pair.components(separatedBy: kColonSeparator)
+					let values = pair.componentsSeparatedByColon
 					let  value = Double(values[1])!
 					let    key = values[0]
 
@@ -2600,6 +2586,16 @@ extension StringsArray {
 
 		return converted
 	}
+
+	func joinedWithSeparatorAt(level: Int) -> String { return joined(separator: gSeparatorAt(level: level)) }
+	var  joinedWithDoubleNewLine :            String { return joined(separator: kDoubleNewLine) }
+	var  joinedWithNewLine :                  String { return joined(separator: kNewLine) }
+	var  joinedWithPeriod :                   String { return joined(separator: kPeriod) }
+	var  joinedWithSpace :                    String { return joined(separator: kSpace) }
+	var  joinedWithSlash :                    String { return joined(separator: kSlash) }
+	var  joinedWithComma :                    String { return joined(separator: kComma) }
+	var  joinedWithColon :                    String { return joined(separator: kColon) }
+	
 }
 
 extension NSPredicate {
@@ -2684,7 +2680,7 @@ extension Data {
 		if  let     string  = String(data: self, encoding: .ascii)?.substring(fromInclusive: 3) {
 			let      items  = string.components(separatedBy: kNewLine)
 			for item in items {
-				let fields  = item.escapeCommasWithinQuotes.components(separatedBy: kCommaSeparator)
+				let fields  = item.escapeCommasWithinQuotes.componentsSeparatedByComma
 				rows.append(fields)
 			}
 		}
@@ -2884,7 +2880,7 @@ extension ZView {
 			result.append("\(constraint)")
 		}
 
-		print(result.joined(separator: kReturn))
+		print(result.joinedWithNewLine)
 	}
 
 	func drawColoredRect(_ rect: CGRect, _ color: ZColor, thickness: CGFloat = 0.5) {

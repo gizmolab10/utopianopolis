@@ -129,7 +129,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 			}
 		}
 
-		textWidget?.updateText()
+		widgetZone?.updateEditorText()
 
 		if  isLinearMode {
 			updateChildrenViewDrawnSize()

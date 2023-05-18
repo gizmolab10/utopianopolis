@@ -28,12 +28,12 @@ class ZGenericController: ZController, ZGeneric {
 	func disallowedKindsFor(_ id: ZControllerID) -> ZSignalKindArray {
 		switch id {
 			case .idSubscription,
-					.idDataDetails,
-					.idMain:    return [.sResize, .spStartupStatus]
+				 .idDataDetails,
+				 .idMain:       return [.sResize, .spStartupStatus]
 			case .idActions:    return [.sResize, .sSearch, .sFound]
 			case .idFavoritesMap,
-					.idPreferences,
-					.idMainMap: return [.sData, .spCrumbs]
+				 .idPreferences,
+				 .idMainMap:    return [.sData, .spCrumbs]
 			case .idCrumbs:     return [.sData]             // ignore the signal from the end of process next batch
 			default: break
 		}
@@ -48,7 +48,8 @@ class ZGenericController: ZController, ZGeneric {
 				 .idHelpDots:      return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
 			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spMainMap]
 			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spFavoritesMap, .sDetails]
-			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                     .sDetails]
+			case .idPreferences,
+				 .idDataDetails:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                     .sDetails]
 			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
 			case .idStartup:       return [.spStartupStatus]
 			case .idSubscription:  return [.spSubscription]

@@ -246,13 +246,13 @@ extension ZExistenceArray {
 				if  let  file = e.file,
 					let  name = file.name {
 					items.append("\(separator)'\(name)'")
-					separator = kCommaSeparator
+					separator = kComma
 				}
 			} else {
 				if  let entity = e.entity,
 					let   name = entity.recordName {
 					items.append("\(separator)'\(name)'")
-					separator  = kCommaSeparator
+					separator  = kComma
 				}
 			}
 		}

@@ -30,7 +30,7 @@ class ZFile : ZRecord {
 
 	var filename : String? {
 		if  let n = name, let t = type {
-			return databaseID.identifier + kDotSeparator + n + kDotSeparator + t
+			return databaseID.identifier + kPeriod + n + kPeriod + t
 		}
 
 		return nil

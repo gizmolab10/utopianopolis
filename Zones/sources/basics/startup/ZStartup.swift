@@ -97,7 +97,7 @@ class ZStartup: NSObject {
 			gAlerts.showAlert(
 				"Please forgive my interruption", [
 				"Thank you for downloading Seriously. Might you be interested in helping me beta test it, giving me feedback about it (good and bad)?",
-				"You can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below."].joined(separator: kDoubleNewLine),
+				"You can let me know at any time, by selecting Report an Issue under the Help menu (red arrow in image), or now, by clicking the Reply button below."].joinedWithDoubleNewLine,
 				"Reply in an email",
 				"Dismiss",
 				image) { [self] status in

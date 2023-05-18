@@ -141,7 +141,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 	func identifier() -> String? {
 		if  let id = zone?.identifier() {
-			return kind + kColonSeparator + id
+			return kind + kColon + id
 		}
 
 		return nil

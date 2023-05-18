@@ -351,7 +351,7 @@ extension Zone {
 				} else if let parentName  = parentZoneMaybe?.recordName,
 						  let parentDBID  = parentZoneMaybe?.databaseID {
 					if        parentDBID != maybeDatabaseID {                                  // new parent is in different db
-						let newParentLink = parentDBID.rawValue + kDoubleColonSeparator + parentName
+						let newParentLink = parentDBID.rawValue + kDoubleColon + parentName
 
 						if  parentLink   != newParentLink {
 							parentLink    = newParentLink  // references don't work across dbs

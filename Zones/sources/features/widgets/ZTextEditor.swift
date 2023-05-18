@@ -14,19 +14,22 @@ import AppKit
 import UIKit
 #endif
 
-let gTextEditor = ZTextEditor()
-var gCurrentlySelectedText  : String?         { return gCurrentlyEditingWidget?.text?.substring(with: gTextEditor.selectedRange) }
+let gTextEditor             = ZTextEditor()
 var gCurrentlyEditingWidget : ZoneTextWidget? { return gTextEditor.currentTextWidget }
+var gCurrentlySelectedText  : String?         { return gCurrentlyEditingWidget?.text?.substring(with: gTextEditor.selectedRange) }
+var gCurrentlyEditingZone   : Zone?           { return gCurrentlyEditingWidget?.widgetZone }
 
 class ZTextPack: NSObject {
 
-	let          createdAt =           Date()
-    var         packedZone :           Zone?
-    var        packedTrait :         ZTrait?
-    var       originalText :         String?
-    var         textWidget : ZoneTextWidget? { return widget?.textWidget }
-    var             widget :     ZoneWidget? { return packedZone?.widget }
-    var   adequatelyPaused :           Bool  { return Date().timeIntervalSince(createdAt) > 0.1 }
+	let        createdAt =           Date()
+    var       packedZone :           Zone?
+    var      packedTrait :         ZTrait?
+    var     originalText :         String?
+	var    unwrappedName :         String  { return packedTrait?.unwrappedName ?? packedZone?.unwrappedName ?? kNoValue }
+    var adequatelyPaused :           Bool  { return Date().timeIntervalSince(createdAt) > 0.1 }
+	var       textWidget : ZoneTextWidget? { return widget?.textWidget }
+	var           widget :     ZoneWidget? { return packedZone?.widget }
+
 
 	var emptyName: String {
 		if  let        trait = packedTrait {
@@ -37,16 +40,6 @@ class ZTextPack: NSObject {
 
 		return kNoValue
 	}
-
-    var unwrappedName: String {
-        if  let        trait = packedTrait {
-            return     trait  .unwrappedName
-        } else if let  zone  = packedZone {
-            return     zone   .unwrappedName
-        }
-
-        return kNoValue
-    }
 
     var textWithSuffix: String {
         var   result = emptyName
@@ -103,7 +96,7 @@ class ZTextPack: NSObject {
         self.setup(for: iZRecord)
     }
 
-	func updateText(isEditing: Bool = false) {
+	func updatePackText(isEditing: Bool = false) {
 		var          text = isEditing ? unwrappedName : textWithSuffix
 
 		if  !isEditing,
@@ -113,7 +106,14 @@ class ZTextPack: NSObject {
 			let threshold = isLinear ? 18 : 20
 			if  threshold < text.length,
 				!type.isExemplar,
-				!type.isMainMap || !isLinear {                       // is in favorites or is circular
+				!type.isMainMap || !isLinear {
+
+				// ////////////////////////////// //
+				// if in favorites or is circular //
+				// if not editing, clip and       //
+				// if favorite, add ellipses      //
+				// ////////////////////////////// //
+
 				let  isLine = text.isLine
 				text        = text.substring(toExclusive: isLinear ? isLine ? 20 : 15 : 10) // shorten to fit (in favorites map area or in circles)
 
@@ -238,7 +238,7 @@ class ZTextPack: NSObject {
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
 			t.deselectAllText()
 			t.updateTextColor()
-			t.updateText()
+			z.updateEditorText()
 		}
 	}
 
@@ -269,7 +269,7 @@ class ZTextEditor: ZTextView {
 
 				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
 				deferEditingStateChange()
-				pack.updateText(isEditing: true)            // updates drawnSize of textWidget
+				pack.updatePackText(isEditing: true)        // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gRelayoutMaps()
 				gSetEditIdeaMode()
@@ -290,15 +290,20 @@ class ZTextEditor: ZTextView {
 		return self
     }
 
-	@discardableResult func updateText(inZone: Zone?, isEditing: Bool = false) -> ZTextPack? {
-		var pack: ZTextPack?
-
+	@discardableResult func updateEditorText(inZone: Zone?) -> ZTextPack? {
 		if  let zone = inZone {
-			pack = ZTextPack(zone)
-			pack?.updateText(isEditing: isEditing)
+			var pack = currentEdit
+			let edit = zone == currentEdit?.packedZone
+			if !edit {
+				pack = ZTextPack(zone)
+			}
+
+			pack?.updatePackText(isEditing: edit)
+
+			return pack
 		}
 
-		return pack
+		return nil
 	}
 
 	func placeCursorAtEnd() {

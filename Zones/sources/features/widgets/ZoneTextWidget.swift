@@ -23,13 +23,13 @@ enum ZTextType: Int {
 
 class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 
-	override var     debugName : String          { return widgetZone?.zoneName ?? kUnknown }
-    var             widgetZone : Zone?           { return widget?.widgetZone }
-	var             controller : ZMapController? { return widget?.controller }
-    weak var            widget : ZoneWidget?
 	var                   type = ZTextType.name
 	var              drawnSize = CGSize.zero
 	var             isHovering = false
+    weak var            widget : ZoneWidget?
+	override var     debugName : String                       { return widgetZone?.zoneName ?? kUnknown }
+	var             widgetZone : Zone?                        { return widget?.widgetZone }
+	var             controller : ZMapController?              { return widget?.controller }
 	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool { return true }
 
     var selectionRange: NSRange {
@@ -86,10 +86,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 		return contextualMenu
 	}
 
-	func updateText(isEditing: Bool = false) {
-		gTextEditor.updateText(inZone: widgetZone, isEditing: isEditing)
-	}
-
 	func updateChildrenViewDrawnSizesOfAllAncestors() {
 		widgetZone?.traverseAncestors { ancestor in
 			if  let widget = ancestor.widget {
@@ -115,6 +111,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 	func setText(_ iText: String?) {
 		text = iText
 
+		widgetZone?.debug()
 		updateSize()
 	}
 

@@ -126,7 +126,7 @@ struct ZDebugMode: OptionSet, CustomStringConvertible {
 	static let dHideNoteVisibility  = ZDebugMode(rawValue: 1 << 11) // note visibility icons
 	static let dSubscriptionTimeout = ZDebugMode(rawValue: 1 << 12) // super short timeout
 
-	var description: String { return descriptions.joined(separator: kSpace) }
+	var description: String { return descriptions.joinedWithSpace }
 
 	var descriptions: [String] {
 		return [(.dNewUser,             "arrival"),
@@ -181,7 +181,7 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 	static let  dMigrate = ZPrintMode(rawValue: 1 << 28) // migrating to core data and cloud
 	static let dRegister = ZPrintMode(rawValue: 1 << 29) // creating and registering ZRecords
 
-	var description: String { return descriptions.joined(separator: kSpace) }
+	var description: String { return descriptions.joinedWithSpace }
 
 	var descriptions: [String] {
 		return [(.dOps,      "      op"),

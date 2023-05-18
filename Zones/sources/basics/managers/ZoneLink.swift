@@ -47,7 +47,7 @@ extension String {
 
 	var  isValidLink :         Bool              { return components != nil }
 	var  maybeZone   :         Zone?             { return maybeZRecord?.maybeZone }
-	var  components  : StringsArray?             { return components(separatedBy: kColonSeparator) }
+	var  components  : StringsArray?             { return componentsSeparatedByColon }
 	func maybeZone(in id: ZDatabaseID?) -> Zone? { return maybeZRecord(in: id)?.maybeZone }
 
 	var maybeZRecord: ZRecord? {

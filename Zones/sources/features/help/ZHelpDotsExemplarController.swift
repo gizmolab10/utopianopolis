@@ -39,7 +39,7 @@ class ZHelpDotsExemplarController : ZMapController {
 		bottomLabel?.font = kLargeHelpFont
 		bottomLabel?.text = ["\t• The drag dot (at left of idea text) is used to select, deselect and drag the idea",
 							 "\t• The reveal dot (at right of idea text) is used to show or hide its list, or activate the idea\n",
-							 "When the cursor hovers over a dot, the fill in color reverses (try the dots above). Dots are often decorated, providing useful information about their idea (described below)."].joined(separator: kNewLine)
+							 "When the cursor hovers over a dot, the fill in color reverses (try the dots above). Dots are often decorated, providing useful information about their idea (described below)."].joinedWithNewLine
 
 		FOREGROUND(after: 0.01) { [self] in // need a delayed runloop so exemplar will appear and hover will work
 			handleSignal(kind: .sData)

@@ -153,7 +153,7 @@ class ZTraitAssets : ZRecord {
 				names.append(assetName)				// add imageName and asset's uuid
 				printDebug(.dImages, "ADD NAME \(assetName)")
 
-				assetNames = names.joined(separator: gSeparatorAt(level: 0))
+				assetNames = names.joinedWithSeparatorAt(level: 0)
 
 				return true
 			}

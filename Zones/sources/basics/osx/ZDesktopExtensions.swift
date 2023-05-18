@@ -292,9 +292,9 @@ extension ZColor {
 		var g: CGFloat = 1
 		var b: CGFloat = 1
 		var a: CGFloat = 1
-		let parts = string.components(separatedBy: kCommaSeparator)
+		let parts = string.componentsSeparatedByColon
 		for part in parts {
-			let items = part.components(separatedBy: kColonSeparator)
+			let items = part.componentsSeparatedByColon
 			if  items.count > 1 {
 				let key = items[0]
 				let value = items[1]
@@ -728,7 +728,11 @@ extension ZAlerts {
 }
 
 extension ZTextField {
-    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? kEmpty } }
+    var          text:         String? { get {
+		if  stringValue == kEmpty {
+			noop()
+		}
+		return stringValue } set { stringValue = newValue ?? kEmpty } }
     var textAlignment: NSTextAlignment { get { return alignment }   set {   alignment = newValue } }
 
     func enableUndo() {
@@ -1249,7 +1253,7 @@ extension ZOnboarding {
     func getMAC() {
         if  let   iterator = findEthernetInterfaces() {
             if  let  array = getMACAddress(iterator) {
-                let string = array.map( { String(format:"%02x", $0) } ).joined(separator: kColonSeparator)
+                let string = array.map( { String(format:"%02x", $0) } ).joinedWithColon
                 macAddress = string
             }
             

@@ -121,14 +121,14 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 								"However, to reach iCloud, it needs access to your Apple ID.",
 								"Please be confident that Seriously vigorously enforces security.",
 								"Seriously will never allow anyone but you access to your Apple ID",
-								"nor to the information you enter into Seriously in your private database."].joined(separator: kSpace),
+								"nor to the information you enter into Seriously in your private database."].joinedWithSpace,
 							   ["Seriously can work without an internet connection.",
 								"All your work is always saved locally.",
 								"When an internet connection is established,",
-								"Seriously will automatically upload your work."].joined(separator: kSpace),
+								"Seriously will automatically upload your work."].joinedWithSpace,
 							   ["To share your personal data with other devices you own which run Seriously",
 								"this and those other devices must grant Seriously access to your Apple ID."].joined(separator: ", "),
-							   "Do you want to grant such access to Seriously?"].joined(separator: kDoubleNewLine)
+							   "Do you want to grant such access to Seriously?"].joinedWithDoubleNewLine
 
 	var enableCloudDriveText: String = [["In order to share your Seriously data with your other devices running Seriously",
 										 "your cloud drive must be enabled. Unfortunately",
@@ -138,15 +138,15 @@ class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate 
 										 "Look for iCloud Drive (it should be the first item)",
 										 "and click on the button next to it labeled \"Options...\"",
 										 "Scroll down until you see Seriously.",
-										 "Check the box next to it."].joined(separator: kSpace),
-										"Then return here and click Continue, below."].joined(separator: kDoubleNewLine)
+										 "Check the box next to it."].joinedWithSpace,
+										"Then return here and click Continue, below."].joinedWithDoubleNewLine
 
 	var loadingText: String = ["Your data is loading (it can take up to a minute the first time).",
-							   "Please wait until the drawing (of ideas) appears before adding new ideas to it."].joined(separator: kSpace)
+							   "Please wait until the drawing (of ideas) appears before adding new ideas to it."].joinedWithSpace
 
 	var helpText: String = ["Would you like to look at something more interesting than this progress bar?",
 							"Each button below takes you to a chart.",
 							"Some contain clickable links to further detail.",
-							"Warning, since this app is busy loading data, it may hesitate to respond to your mouse clicks."].joined(separator: kSpace)
+							"Warning, since this app is busy loading data, it may hesitate to respond to your mouse clicks."].joinedWithSpace
 
 }

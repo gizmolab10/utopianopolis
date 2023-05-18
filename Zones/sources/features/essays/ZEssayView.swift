@@ -1075,7 +1075,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		if  let   type = ZEssayLinkType(rawValue: iItem.keyEquivalent) {
 			let  range = selectedRange
 			let showAs = textStorage?.string.substring(with: range)
-			var   link : String? = type.linkType + kColonSeparator
+			var   link : String? = type.linkType + kColon
 
 			func setLink(to appendToLink: String?, replacement: String? = nil) {
 				if  let a = appendToLink, !a.isEmpty {
@@ -1130,7 +1130,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	func followLinkInSelection() -> Bool {
 		if  let  link = currentLink as? String {
-			let parts = link.components(separatedBy: kColonSeparator)
+			let parts = link.componentsSeparatedByColon
 
 			if  parts.count > 1,
 				let  one = parts.first?.first,                             // first character of first part

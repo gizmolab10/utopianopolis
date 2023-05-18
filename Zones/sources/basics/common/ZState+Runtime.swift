@@ -115,7 +115,7 @@ func gToggleShowExplanations() {
 }
 
 var gCompleteHereRecordNames: StringsArray {
-	var       references = gHereRecordNames.components(separatedBy: kColonSeparator)
+	var       references = gHereRecordNames.componentsSeparatedByColon
 	var          changed = false
 
 	func rootFor(_ index: Int) -> Zone? {
@@ -153,7 +153,7 @@ var gCompleteHereRecordNames: StringsArray {
 	}
 
 	if  changed {
-		gHereRecordNames = references.joined(separator: kColonSeparator)
+		gHereRecordNames = references.joinedWithColon
 	}
 
 	return references

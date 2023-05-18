@@ -220,8 +220,6 @@ class ZTrait: ZTraitAssets {
 	// MARK: - owner
 	// MARK: -
 
-	override var isAdoptable: Bool { return ownerLink != nil }
-
 	var ownerZone: Zone? {
 		if  _ownerZone == nil,
 			let  owner  = ownerLink?.maybeZone {
@@ -348,7 +346,7 @@ class ZTrait: ZTraitAssets {
 		let searchables: ZTraitTypesArray = [.tNote, .tEssay, .tEmail, .tHyperlink]
 
 		if  let  tt = traitType, searchables.contains(tt) {
-			strings = text?.searchable.components(separatedBy: kSpace)
+			strings = text?.searchable.componentsSeparatedBySpace
 		}
 	}
 
@@ -361,7 +359,7 @@ class ZTrait: ZTraitAssets {
 
 			for (index, part) in parts.enumerated() {
 				if  index              != 0 {
-					let subSeparator    = kColonSeparator
+					let subSeparator    = kColon
 					var subParts        = part.components(separatedBy: subSeparator)
 					let number          = subParts[0]
 

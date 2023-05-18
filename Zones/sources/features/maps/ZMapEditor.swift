@@ -399,7 +399,7 @@ class ZMapEditor: ZBaseEditor {
 	func invokeShare() {
 		if  let share = gSelecting.currentMoveableMaybe?.share,
 			let c = gCloudContainer {
-			let s = NSSharingService(named: NSSharingService.Name("Seriously"))
+//			let s = NSSharingService(named: NSSharingService.Name("Seriously"))
 			let p = NSItemProvider()
 			p.registerCloudKitShare(share, container: c)
 		}
@@ -626,7 +626,7 @@ class ZMapEditor: ZBaseEditor {
 
                 zone.zoneName             = name
 
-                gTextEditor.updateText(inZone: zone)?.updateBookmarkAssociates()
+				zone.updateEditorText()?.updateBookmarkAssociates()
             }
         }
 

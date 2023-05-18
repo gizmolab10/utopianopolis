@@ -116,7 +116,7 @@ class ZRecord: ZManagedObject {
 	var               isDestroyRoot : Bool         { return recordName == kDestroyName }
 	var          isLostAndFoundRoot : Bool         { return recordName == kLostAndFoundName }
 	var             isFavoritesRoot : Bool         { return recordName == kFavoritesRootName }
-	var             isFavoritesHere : Bool         { return recordName == gFavoritesHereMaybe?.recordName }
+	var             isFavoritesHere : Bool         { return recordName == gFavoritesHereMaybe?.recordName && recordName != nil }
 	var                isAnyMapRoot : Bool         { return isFavoritesRoot  || isMainMapRoot }
 	var                  needsCount : Bool         { return  hasState(.needsCount) }
 	var                  needsColor : Bool         { return  hasState(.needsColor) }
@@ -139,7 +139,6 @@ class ZRecord: ZManagedObject {
 	var       optionalCloudProperties : StringsArray { return ZRecord.optionalCloudProperties }
 	var                  isRegistered :         Bool { return zRecords?.isRegistered(self) ?? false }
 	var         stisfiesSearchOptions :         Bool { return passesFilter && isInScope }
-	var                   isAdoptable :         Bool { return false }
 	var                  passesFilter :         Bool { return true }
 	var                     isInScope :         Bool { return true }
 
@@ -288,7 +287,7 @@ class ZRecord: ZManagedObject {
 			}
 
 			if  marks.count > 0 {
-				return marks.joined(separator: kCommaSeparator)
+				return marks.joinedWithComma
 			}
 		}
 
@@ -296,7 +295,7 @@ class ZRecord: ZManagedObject {
 	}
 
 	func addNeedsFromString(_ iNeeds: String) {
-		let needs = iNeeds.components(separatedBy: kCommaSeparator)
+		let needs = iNeeds.componentsSeparatedByComma
 
 		temporarilyMarkNeeds {
 			for need in needs {
@@ -388,7 +387,7 @@ class ZRecord: ZManagedObject {
 					}
 
 					if  strings.count != 0 {
-						let string = strings.joined(separator: gSeparatorAt(level: 2))
+						let string = strings.joinedWithSeparatorAt(level: 2)
 
 						return string as NSObject
 					}

@@ -120,7 +120,7 @@ extension String {
 					  kEmpty,
 					  "RETURN to \(action)",
 					  "TAB to edit a new sibling idea",
-					  "\(alter)SPACE to edit a new child."].joined(separator: kNewLine)
+					  "\(alter)SPACE to edit a new child."].joinedWithNewLine
 
 		switch self {
 			case "e", "y": return nil

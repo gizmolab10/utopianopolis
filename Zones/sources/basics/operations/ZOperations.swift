@@ -13,7 +13,7 @@ enum ZOperationID: Int, CaseIterable {
 
 	case oNone               // default operation : does nothing
 
-    // start up / onboard --> order of operations
+    // start up / onboard --> order of operations at launch
 
 	case oStartingUp
 	case oConfigureStorage   // data file locations
