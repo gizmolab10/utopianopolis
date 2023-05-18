@@ -93,7 +93,7 @@ class ZTogglingView: ZView {
         repeatUntil({ () -> (Bool) in
             return gDetailsController != nil
 		}) {
-			gDetailsController?.register(id: self.identity, for: self)
+			gDetailsController?.registerDetailView(id: self.identity, for: self)
         }
 
 		updateView()

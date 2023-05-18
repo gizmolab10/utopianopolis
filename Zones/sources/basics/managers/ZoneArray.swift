@@ -449,7 +449,7 @@ extension ZoneArray {
 		moveInto(into, horizontal: true, grab: CONTROL || into.isExpanded, onCompletion: onCompletion)
 	}
 
-	func moveInto(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, travel: Bool = true, grab: Bool = true, onCompletion: BoolClosure?) {
+	func moveInto(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, travel: Bool = false, grab: Bool = true, onCompletion: BoolClosure?) {
 		if  into.isInFavorites, travel {
 			into.parentZone?.collapse()
 

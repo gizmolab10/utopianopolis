@@ -36,7 +36,7 @@ class ZDetailsController: ZGesturesController {
 	override  var      controllerID : ZControllerID                            { return .idDetails }
 	func viewIsVisible      (for id : ZDetailsViewID) ->                 Bool  { return !(view(for: id)?.hideHideable ?? true) }
 	func view               (for id : ZDetailsViewID) ->        ZTogglingView? { return viewsByID[id.rawValue] }
-	func register               (id : ZDetailsViewID, for view: ZTogglingView) { viewsByID[id.rawValue] = view }
+	func registerDetailView     (id : ZDetailsViewID, for view: ZTogglingView) { viewsByID[id.rawValue] = view }
 	func showViewFor          (_ id : ZDetailsViewID)                          { view(for: id)?.hideHideable = false; detailsUpdate() }
 
 	func temporarilyHideView(for id : ZDetailsViewID, _ closure: Closure) {

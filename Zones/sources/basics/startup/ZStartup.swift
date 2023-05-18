@@ -50,12 +50,6 @@ class ZStartup: NSObject {
 					gSetMapWorkMode()
 				}
 
-				if  gNoSubscriptions {
-					gDetailsController?.removeViewFromStack(for: .vSubscribe)
-				} else {
-					gProducts.fetchProductData()
-				}
-
 				gRemoteStorage.setupRootsLevelsAndCounts()
 				gRefreshPersistentWorkMode()
 				gFavoritesHere?.expand()
@@ -73,6 +67,12 @@ class ZStartup: NSObject {
 
 					requestFeedback() {
 						gMainController?.helpButton?.isHidden = false
+
+						if  gNoSubscriptions {
+							gDetailsController?.removeViewFromStack(for: .vSubscribe)
+						} else {
+							gProducts.fetchProductData()
+						}
 
 						gTimers.startTimers(for: [.tCloudAvailable, .tLicense, .tRecount, .tPersist, .tHover])
 						gSignal([.sSwap, .spMain, .spCrumbs, .spRelayout, .spDataDetails, .spPreferences])
