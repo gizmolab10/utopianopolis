@@ -111,7 +111,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 	func setText(_ iText: String?) {
 		text = iText
 
-		widgetZone?.debug()
 		updateSize()
 	}
 

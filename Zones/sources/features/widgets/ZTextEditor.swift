@@ -295,7 +295,7 @@ class ZTextEditor: ZTextView {
 			var pack = currentEdit
 			let edit = zone == currentEdit?.packedZone
 			if !edit {
-				pack = ZTextPack(zone)
+				pack = ZTextPack(zone)   // use "scratchpad text pack" to update text for ALL non-edited ideas
 			}
 
 			pack?.updatePackText(isEditing: edit)

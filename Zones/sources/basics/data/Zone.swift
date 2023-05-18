@@ -212,12 +212,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return value
 	}
 
-	func debug() {
-		if  zoneName == "changed text widget" {
-			noop()
-		}
-	}
-
 	func unwrappedNameWithEllipses(_ forceTruncation: Bool = true, noLongerThan threshold: Int = 25) -> String {
 		var      name = unwrappedName
 		let    length = name.length

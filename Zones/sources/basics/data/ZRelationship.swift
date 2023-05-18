@@ -30,7 +30,7 @@ class ZRelationship: ZRecord, ZIdentifiable {
 
 	var opposite: ZRelationship? {
 		if  let databaseID = to?.maybeDatabaseID {
-			var     result = ZRelationship.uniqueRelationship(in: databaseID)
+			let     result = ZRelationship.uniqueRelationship(in: databaseID)
 			result?  .type = relationType?.opposite.rawValue
 			result?  .from = to
 			result?    .to = from
