@@ -242,9 +242,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		delegate        = self 					    	                          // set delegate after discarding prior and injecting current text
 
 		if  gIsEssayMode {
-			assignAsFirstResponder(self)                                 // show cursor and respond to key input
-			gMainWindow?.setupEssayInspectorBar()
-
+			assignAsFirstResponder(self)                                          // show cursor and respond to key input
+			gMainWindow?       .setupEssayInspectorBar()
 			gEssayControlsView?.setupEssayControls()
 			gEssayControlsView?.enableEssayControls(true)
 		}

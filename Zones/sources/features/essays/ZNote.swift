@@ -204,7 +204,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 				let        title = name + suffix
 				var   attributes = titleAttributes
 				if  let        z = zone, z.colorized,
-					let    color = z.color?.lighter(by: 20.0).withAlphaComponent(0.5) {
+					let    color = z.widgetColor?.lighter(by: 20.0).withAlphaComponent(0.5) {
 
 					attributes?[.backgroundColor] = color
 				}

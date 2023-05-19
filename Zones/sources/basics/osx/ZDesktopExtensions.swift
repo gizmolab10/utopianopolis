@@ -292,7 +292,7 @@ extension ZColor {
 		var g: CGFloat = 1
 		var b: CGFloat = 1
 		var a: CGFloat = 1
-		let parts = string.componentsSeparatedByColon
+		let parts = string.componentsSeparatedByComma
 		for part in parts {
 			let items = part.componentsSeparatedByColon
 			if  items.count > 1 {
@@ -314,7 +314,7 @@ extension ZColor {
 
 	var string: String? {
 		if  let c = usingColorSpace(NSColorSpace.deviceRGB) {
-			return "red:\(c.redComponent),blue:\(c.blueComponent),green:\(c.greenComponent),alpha:\(c.alphaComponent)"
+			return "red:\(c.redComponent),green:\(c.greenComponent),blue:\(c.blueComponent),alpha:\(c.alphaComponent)"
 		}
 
 		return nil

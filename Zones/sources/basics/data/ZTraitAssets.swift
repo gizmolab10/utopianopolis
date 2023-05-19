@@ -135,8 +135,7 @@ class ZTraitAssets : ZRecord {
 		var         names = assetNames?.componentsSeparatedAt(level: 0) ?? []
 
 		if  let  checksum = asset.data?.checksum {
-			let separator = gSeparatorAt(level: 1)
-			let assetName = imageName + separator + "\(checksum)"
+			let assetName = [imageName, "\(checksum)"].joinedWithSeparatorAt(level: 1)
 
 			if !names.contains(assetName) {
 				for (index, name) in names.enumerated() {
@@ -144,7 +143,7 @@ class ZTraitAssets : ZRecord {
 
 					if  parts.count > 1,
 						parts[0] == imageName {
-						names.remove(at: index)     // remove duplicate imageName and uuid
+						names.remove(at: index)     // remove duplicate (to be replaced by append, below)
 
 						break
 					}
@@ -175,7 +174,7 @@ class ZTraitAssets : ZRecord {
 
 					for asset in array {
 						if  let data   = asset.data {
-							let delta  = data.checksum - checksum
+							let delta  = checksum - data.checksum
 							if  delta == 0 {
 								return asset
 							}

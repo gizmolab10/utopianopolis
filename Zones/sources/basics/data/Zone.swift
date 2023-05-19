@@ -541,10 +541,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		get {
 			var computed        = kDefaultIdeaColor
 
-			if  zoneName == "features", !isBookmark {
-				noop()
-			}
-
 			if  gColorfulMode {
 				if  let       t = bookmarkTarget {
 					return t.color
@@ -1652,11 +1648,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				let  trait = traitFor(type)
 				trait.text = text
 
-				if  addDefaultAttributes { // for creating new child notes with non-default text
-					let attributed = NSMutableAttributedString(string: text)
-
-					attributed.addAttribute(.font, value: kDefaultEssayFont, range: NSRange(location: 0, length: text.length))
-
+				if  addDefaultAttributes { // for creating new child notes with non-default text (iText)
+					let attributed = NSMutableAttributedString(string: text, attributes: [.font: kDefaultEssayFont])
 					trait.format   = attributed.attributesAsString
 				}
 

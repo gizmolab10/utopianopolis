@@ -1898,10 +1898,10 @@ extension NSMutableAttributedString {
 						default:    		   break
 					}
 
-					if  let v = attribute {
-						printDebug(.dNotes, "add attribute over \(range) for \(raw): \(v)")
+					if  let a = attribute {
+						printDebug(.dNotes, "add attribute over \(range) for \(raw): \(a)")
 
-						addAttribute(key, value: v, range: range)
+						addAttribute(key, value: a, range: range)
 					}
 				}
 			}
@@ -2283,10 +2283,7 @@ extension String {
 
 	var darkAdaptedTitle: NSAttributedString {
 		let color = gIsDark ? kDarkestGrayColor : kBlackColor
-		let title = NSMutableAttributedString(string: self)
-		let range = NSRange(location: 0, length: length)
-
-		title.addAttribute(.foregroundColor, value: color, range: range)
+		let title = NSMutableAttributedString(string: self, attributes: [.foregroundColor: color])
 
 		return title
 	}
