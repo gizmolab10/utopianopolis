@@ -308,14 +308,13 @@ extension ZMapControlsView {
 
 			if  gShowToolTips,
 				let     type = button.modeButtonType {
-				let browsing = "vertical browsing"
 				var      tip : String?
 
 				switch type {
 					case .tBack:    break
 					case .tForward: break
-					case .tGrowth:  tip = "Growth direction\n\ngrow lists \(gListsGrowDown ? "up" : "down")ward or browse (rightward) to the \(gListsGrowDown ? "top" : "bottom")"
-					case .tConfine: tip = "Browsing confinement\n\n\(gBrowsingIsConfined ? "allow unconfined \(browsing)" : "confine \(browsing) within current list")"
+					case .tGrowth:  tip = "Growth direction\n\nCurrently new child ideas are added at (and browsing to the right goes to) the \(gListsGrowDown ? "bottom" : "top"). Click to change."
+					case .tConfine: tip = "Browsing confinement\n\nCurrently vertical browsing is \(gBrowsingIsConfined ? "confined within the list" : "unconfined"). Click to change."
 				}
 
 				if  let t = tip {

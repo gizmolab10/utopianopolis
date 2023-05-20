@@ -233,7 +233,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let text = gCurrentEssay?.essayText {
 
 			discardPriorText()
-			gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setText(text) }   // inject text
+			gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setNoteText(text) }   // inject text
 			selectAndScrollTo(range)
 			undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
 		}
