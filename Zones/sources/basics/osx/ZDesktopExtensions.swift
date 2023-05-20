@@ -924,7 +924,7 @@ extension ZMenu {
 	static func specialCharactersPopup(target: AnyObject, action: Selector) -> ZMenu {
 		let menu = ZMenu(title: "add a special character")
 
-		for type in ZSpecialCharactersMenuType.activeTypes {
+		for type in gActiveSpecialCharacters {
 			menu.addItem(specialsItem(type: type, target: target, action: action))
 		}
 
@@ -968,7 +968,7 @@ extension ZMenu {
 	static func reorderPopup(target: AnyObject, action: Selector) -> ZMenu {
 		let menu = ZMenu(title: "reorder")
 
-		for type in ZReorderMenuType.activeTypes {
+		for type in gActiveReorderTypes {
 			menu.addItem(reorderingItem(type: type, target: target, action: action))
 
 			if  type != .eReversed {
@@ -998,8 +998,6 @@ extension ZMenu {
 		case eTraits  = "t"
 		case eProgeny = "p"
 
-		static var activeTypes: [ZRefetchMenuType] { return [.eIdeas, .eTraits, .eProgeny, .eList, .eAdopt] }
-
 		var title: String {
 			switch self {
 			case .eList:    return "list"
@@ -1012,9 +1010,10 @@ extension ZMenu {
 	}
 
 	static func refetchPopup(target: AnyObject, action: Selector) -> ZMenu {
+		let types: [ZRefetchMenuType] = [.eIdeas, .eTraits, .eProgeny, .eList, .eAdopt]
 		let menu = ZMenu(title: "refetch")
 
-		for type in ZRefetchMenuType.activeTypes {
+		for type in types {
 			menu.addItem(refetchingItem(type: type, target: target, action: action))
 		}
 

@@ -349,7 +349,7 @@ enum ZHelpDotType: String {
 			case .note, .essay: return [ZTraitType.tNote     .rawValue]
 			case .email:        return [ZTraitType.tEmail    .rawValue]
 			case .hyperlink:    return [ZTraitType.tHyperlink.rawValue]
-			case .multiple:     return  ZTraitType.activeTypes.map { $0.rawValue }
+			case .multiple:     return  gActiveTraitTypes.map { $0.rawValue }
 			default:            return []
 		}
 	}

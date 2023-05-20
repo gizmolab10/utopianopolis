@@ -25,6 +25,9 @@ struct ZNoteVisibilityMode: OptionSet {
 	static let mHidden   = ZNoteVisibilityMode(rawValue: 1 << 2)
 }
 
+var gActiveTraitTypes : ZTraitTypesArray { return [.tNote, .tEmail, .tHyperlink] }
+var  gPopupTraitTypes : ZTraitTypesArray { return gActiveTraitTypes + [.tClear] }
+
 enum ZTraitType: String { // stored in database: do not change
 
 	case tDuration  = "!" // accumulative
@@ -35,8 +38,7 @@ enum ZTraitType: String { // stored in database: do not change
 	case tEssay     = "w"
 	case tDate      = "d"
 	case tNote      = "n"
-
-	static var activeTypes: ZTraitTypesArray { return [.tNote, .tEmail, .tHyperlink] }
+	case tClear     = "x"
 
 	var heightRatio: CGFloat {
 		switch self {
@@ -51,6 +53,7 @@ enum ZTraitType: String { // stored in database: do not change
 
 	var description: String? {
 		switch self {
+			case .tClear:     return "REMOVE ALL"
 			case .tHyperlink: return "HYPERLINK"
 			case .tEmail:     return "EMAIL"
 			case .tEssay:     return "ESSAY"
@@ -80,11 +83,17 @@ enum ZTraitType: String { // stored in database: do not change
 
 extension ZTraitTypesArray {
 
-	func traitsPopup(target: AnyObject, action: Selector) -> ZMenu {
+	func traitsPopup(target: AnyObject, action: Selector, zone: Zone) -> ZMenu {
 		let menu = ZMenu(title: "traits")
 
 		for type in self {
-			menu.addItem(type.traitsItem(target: target, action: action))
+			let item = type.traitsItem(target: target, action: action)
+
+			if  zone.hasTrait(for: type) {
+				item.state = .on
+			}
+
+			menu.addItem(item)
 		}
 
 		return menu

@@ -60,6 +60,8 @@ enum ZMutateTextMenuType: String {
 	}
 }
 
+var gActiveSpecialCharacters: [ZSpecialCharactersMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eReturn, .eCopyright, .eArrow, .eBack] }
+
 enum ZSpecialCharactersMenuType: String {
 	case eCommand   = "c"
 	case eOption    = "o"
@@ -70,8 +72,6 @@ enum ZSpecialCharactersMenuType: String {
 	case eArrow     = "i"
 	case eBack      = "k"
 	case eCancel    = "\r"
-
-	static var activeTypes: [ZSpecialCharactersMenuType] { return [.eCommand, .eOption, .eShift, .eControl, eReturn, .eCopyright, .eArrow, .eBack] }
 
 	var both: (String, String) {
 		switch self {

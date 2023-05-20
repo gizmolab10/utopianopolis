@@ -1702,6 +1702,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return trait!
 	}
 
+	func removeAllTraits() {
+		for type in gActiveTraitTypes {
+			removeTrait(for: type)
+		}
+	}
+
 	func removeTrait(for iType: ZTraitType) {
 		let     trait = traits[iType]
 		traits[iType] = nil

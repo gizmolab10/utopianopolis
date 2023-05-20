@@ -16,14 +16,14 @@ import Foundation
 
 let gMapEditor = ZMapEditor()
 
+var gActiveReorderTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind] }
+
 enum ZReorderMenuType: String {
 	case eAlphabetical = "a"
 	case eByLength     = "l"
 	case eByKind       = "k"
 	case eReversed     = "r"
 	case eBySizeOfList = "s"
-
-	static var activeTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind] }
 
 	var title: String {
 		switch self {
@@ -129,7 +129,7 @@ class ZMapEditor: ZBaseEditor {
 						case "d":        if     ALL { gRemoteStorage.deleteFromCDAllDuplicates() } else if ANY { widget?.widgetZone?.combineIntoParent() } else { duplicate() }
 						case "e":        gToggleShowExplanations()
 						case "f":        gSearching.showSearch(OPTION)
-						case "h":        showTraitsPopup()
+						case "h":        showTraitsPopup(for: moveable)
 						case "i":        showMutateTextPopup()
 						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()
@@ -317,8 +317,8 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	@objc func handleTraitActivationForKey(_ key: String) {
-		if  let zone = gSelecting.mostVisibleGrab,
-			let type = ZTraitType(rawValue: key) {
+		if  let type = ZTraitType(rawValue: key) {
+			let zone = gSelecting.currentMoveable
 			switch type {
 				case .tNote, .tEssay: zone.invokeEssay()
 				default:              zone.invokeURL(for: type)
@@ -327,13 +327,16 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	@objc func handleTraitsKey(_ key: String) {
-		if  let type = ZTraitType(rawValue: key) {
+		let zone = gSelecting.currentMoveable
+		if  key == ZTraitType.tClear.rawValue {
+			zone.removeAllTraits()
+		} else if let type = ZTraitType(rawValue: key) {
 			UNDO(self) { iUndoSelf in
 				iUndoSelf.handleTraitsKey(key)
 			}
 
 			gTemporarilySetKey(key)
-			editTraitForType(type)
+			zone.editTraitForType(type)
 		}
 	}
 
@@ -509,16 +512,16 @@ class ZMapEditor: ZBaseEditor {
 		if  zone.traits.count < 2 {
 			zone.invokeTravel() { reveal in gRelayoutMaps() }
 		} else {
-			showTraitActivationPopup()
+			showTraitActivationPopup(for: zone)
 		}
 	}
 
-	func showTraitActivationPopup() {
-		applyToMenu { return gSelecting.currentMoveable.traitTypes.traitsPopup(target: self, action: #selector(handleTraitActivationPopupMenu(_:))) }
+	func showTraitActivationPopup(for zone: Zone) {
+		applyToMenu { return gSelecting.currentMoveable.traitTypes.traitsPopup(target: self, action: #selector(handleTraitActivationPopupMenu(_:)), zone: zone) }
 	}
 
-	func showTraitsPopup() {
-		applyToMenu { return ZTraitType.activeTypes.traitsPopup(target: self, action: #selector(handleTraitsPopupMenu(_:))) }
+	func showTraitsPopup(for zone: Zone) {
+		applyToMenu { return gPopupTraitTypes.traitsPopup(target: self, action: #selector(handleTraitsPopupMenu(_:)), zone: zone) }
 	}
 
 	func showMutateTextPopup() {
