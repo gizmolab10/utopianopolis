@@ -695,6 +695,17 @@ extension CGPoint {
 		return CGPoint(x: x + xOffset, y: y + yOffset)
 	}
 
+	func offsetBy(radius: CGFloat, angle: CGFloat) -> CGPoint {
+		let dX = radius * CGFloat(cos(angle))
+		let dY = radius * CGFloat(sin(angle))
+
+		return offsetBy(dX, dY)
+	}
+
+	func offsetBy(fractionX: CGFloat = .zero, fractionY: CGFloat = .zero) -> CGPoint {
+		return offsetBy(x * fractionX, y * fractionY)
+	}
+
 	func retreatBy(_ delta: CGSize) -> CGPoint { // reverse regress backslide goback
 		return CGPoint(x: x - delta.width, y: y - delta.height)
 	}
@@ -971,7 +982,7 @@ extension CGRect {
         let dX = size.width  * fractionX
         let dY = size.height * fractionY
         
-        return offsetBy(dx:dX, dy:dY)
+        return offsetBy(dx: dX, dy: dY)
     }
 
 	func expandedBy(_ expansionSize: CGSize) -> CGRect {

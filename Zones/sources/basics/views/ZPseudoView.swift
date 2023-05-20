@@ -15,12 +15,12 @@ import UIKit
 #endif
 
 enum ZDrawPhase: String {
+	case pSelections = "s"
 	case pLines      = "l"
-	case pHighlights = "h"
 	case pDots       = "d"
 }
 
-let gAllDrawPhases: [ZDrawPhase] = [.pHighlights, .pLines, .pDots]   // draw dots last so they can "cover" the ends of lines
+let gAllDrawPhases: [ZDrawPhase] = [.pSelections, .pLines, .pDots]   // draw dots last so they can "cover" the ends of lines
 
 class ZPseudoView: NSObject {
 

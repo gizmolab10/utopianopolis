@@ -343,7 +343,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 				for line in childrenLines {
 					line.draw(phase)
 				}
-			case .pHighlights:
+			case .pSelections:
 				if  let         t = textWidget {
 					let isGrabbed = zone.isGrabbed
 					let isEditing = t.isFirstResponder

@@ -55,6 +55,7 @@ extension ZGenericController {
 	var            dotWidth : CGFloat { return  dotHeight * kDragDotReduction }
 	var        dotHalfWidth : CGFloat { return  dotWidth  / 2.0 }
 	var       dotThirdWidth : CGFloat { return  dotWidth  / 3.0 }
+	var     dotQuarterWidth : CGFloat { return  dotWidth  / 4.0 }
 	var      dotEighthWidth : CGFloat { return  dotWidth  / 8.0 }
 	var       sideDotRadius : CGFloat { return  dotWidth  * 0.25 }
 	var                font :   ZFont { return .systemFont(ofSize: fontSize) }

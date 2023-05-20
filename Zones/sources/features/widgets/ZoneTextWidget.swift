@@ -224,10 +224,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
         return extract
     }
 
-    override func draw(_ iDirtyRect: CGRect) {
-		updateTextColor()
-        super.draw(iDirtyRect)
-
+	func drawUnderline(_ iDirtyRect: CGRect) {
 		if  !isFirstResponder,
 			gIsMapOrEditIdeaMode,
 			let zone = widgetZone,
@@ -249,6 +246,12 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 			zone.color?.setStroke()
 			path.stroke()
 		}
+	}
+
+    override func draw(_ iDirtyRect: CGRect) {
+		updateTextColor()
+        super.draw(iDirtyRect)
+//		drawUnderline(iDirtyRect)
 	}
 
 }
