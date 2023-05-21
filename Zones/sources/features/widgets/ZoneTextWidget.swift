@@ -27,10 +27,9 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 	var              drawnSize = CGSize.zero
 	var             isHovering = false
     weak var            widget : ZoneWidget?
-	override var     debugName : String                       { return widgetZone?.zoneName ?? kUnknown }
-	var             widgetZone : Zone?                        { return widget?.widgetZone }
-	var             controller : ZMapController?              { return widget?.controller }
-	open func validateMenuItem(_ menuItem: ZMenuItem) -> Bool { return true }
+	override var     debugName : String          { return widgetZone?.zoneName ?? kUnknown }
+	var             widgetZone : Zone?           { return widget?.widgetZone }
+	var             controller : ZMapController? { return widget?.controller }
 
     var selectionRange: NSRange {
         var range = gTextEditor.selectedRange
@@ -78,13 +77,6 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
             isEditable             = widgetZone?.userCanWrite ?? false
         #endif
     }
-
-	override func menu(for event: ZEvent) -> ZMenu? {
-		let         contextualMenu = controller?.ideaContextualMenu
-		contextualMenu?.textWidget = self
-
-		return contextualMenu
-	}
 
 	func updateChildrenViewDrawnSizesOfAllAncestors() {
 		widgetZone?.traverseAncestors { ancestor in

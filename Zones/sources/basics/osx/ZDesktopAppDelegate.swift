@@ -101,19 +101,5 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
 		}
 	}
 
-	// MARK: - menu
-	// MARK: -
-
-	@IBAction func genericMenuHandler(_ iItem: ZMenuItem?) {
-		if  let   item = iItem,
-			let editor = workingEditor {
-			if  editor.validateMenuItem(item) {
-				editor.handleMenuItem(item)
-			} else if let alert = editor.invalidMenuItemAlert(item) {
-				alert.runModal()
-			}
-		}
-	}
-
 }
 

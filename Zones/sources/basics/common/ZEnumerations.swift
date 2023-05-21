@@ -100,13 +100,7 @@ enum ZSpecialCharactersMenuType: String {
 
 }
 
-enum ZoneAttributeType: String {
-	case invertColorize = "c"
-	case validCoreData  = "v"
-	case groupOwner     = "+"
-}
-
-enum ZRelayoutMapType: Int {
+enum ZRelayoutMapType : Int {
 	case favorites
 	case main
 	case both

@@ -43,13 +43,4 @@ class ZApplication : NSApplication {
 		orderFrontStandardAboutPanel(nil)
 	}
 
-	override func validateMenuItem(_ iItem: ZMenuItem?) -> Bool {
-		if  let   item = iItem,
-			let editor = gAppDelegate?.workingEditor {
-			return editor.validateMenuItem(item)
-		}
-
-		return false
-	}
-
 }

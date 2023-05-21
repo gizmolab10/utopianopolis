@@ -696,10 +696,7 @@ extension CGPoint {
 	}
 
 	func offsetBy(radius: CGFloat, angle: CGFloat) -> CGPoint {
-		let dX = radius * CGFloat(cos(angle))
-		let dY = radius * CGFloat(sin(angle))
-
-		return offsetBy(dX, dY)
+		return offsetBy(radius * cos(angle), radius * sin(angle))
 	}
 
 	func offsetBy(fractionX: CGFloat = .zero, fractionY: CGFloat = .zero) -> CGPoint {
@@ -730,7 +727,7 @@ extension CGPoint {
 
 	func rotate(by angle: Double, around center: CGPoint = .zero) -> CGPoint {
 		let     r = length
-		let delta = CGPoint(x: r * CGFloat(cos(angle)), y: r * CGFloat(sin(angle)))
+		let delta = CGPoint(x: r * cos(angle), y: r * sin(angle))
 
 		return center + delta
 	}
@@ -750,30 +747,30 @@ extension CGPoint {
 
 extension CGSize {
 
-	static var big     : CGSize  { return CGSize.squared(1000000.0) }
-	var swapped        : CGSize  { return CGSize(width: height, height: width) }
-	var absSize        : CGSize  { return CGSize(width: abs(width), height: abs(height)) }
-	var dividedInHalf  : CGSize  { return multiplyBy(0.5) }
-	var hypotenuse     : CGFloat { return sqrt(width * width + height * height) }
-	var containsNAN    : Bool    { return width.isNaN || height.isNaN }
-	var smallDimension : CGFloat { return min(abs(height), abs(width)) }
-	func isLargerThan(_ other: CGSize)               -> Bool    { return hypotenuse > other.hypotenuse }
-	public static func squared(_ length: CGFloat)    -> CGSize  { return CGSize(width: length, height: length) }
+	var containsNAN                                   : Bool    { return width.isNaN || height.isNaN }
+	static var big                                    : CGSize  { return CGSize.squared(1000000.0) }
+	var dividedInHalf                                 : CGSize  { return multiplyBy(0.5) }
+	var swapped                                       : CGSize  { return CGSize(width: height,                        height: width) }
+	var absSize                                       : CGSize  { return CGSize(width: abs(width),                    height: abs(height)) }
+	var hypotenuse                                    : CGFloat { return sqrt(width.squared + height.squared) }
+	var smallDimension                                : CGFloat { return min(abs(height), abs(width)) }
 	public static func - (lhs: CGSize, rhs: CGPoint) -> CGPoint { return CGPoint(lhs) - rhs }
-	func hypotenuse(relativeTo other: CGSize)        -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
-	func add(width: CGFloat, height: CGFloat)        -> CGSize  { return self + CGSize(width: width, height: height) }
-	func multiplyBy(_ fraction: CGFloat)             -> CGSize  { return CGSize(width: width * fraction, height: height * fraction) }
-	func multiplyBy(_ fraction: CGSize)              -> CGSize  { return CGSize(width: width * fraction.width, height: height * fraction.height).absSize }
-	func fraction(_ delta: CGSize)                   -> CGSize  { CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
-	func expandedEquallyBy(_ expansion: CGFloat)     -> CGSize  { return insetEquallyBy(-expansion) }
+	public static func squared(_ length: CGFloat)    -> CGSize  { return CGSize(width: length,                        height: length) }
+	func add(width: CGFloat, height: CGFloat)        -> CGSize  { return CGSize(width:  width,                        height: height) + self }
+	func multiplyBy (_ fraction: CGFloat)            -> CGSize  { return CGSize(width:  width * fraction,             height: height * fraction) }
+	func multiplyBy (_ fraction: CGSize)             -> CGSize  { return CGSize(width:  width * fraction.width,       height: height * fraction.height)        .absSize }
+	func fraction   (_ delta:    CGSize)             -> CGSize  { return CGSize(width: (width - delta.width) / width, height: (height - delta.height) / height).absSize }
+	func offsetBy   (_ delta:    CGSize)             -> CGSize  { return CGSize(width:  width + delta.width,          height: height  + delta.height)          .absSize }
+	func insetBy    (_ x: CGFloat, _ y: CGFloat)     -> CGSize  { return CGSize(width:  width - (x * 2.0), height: height - (y * 2.0))                         .absSize }
+	func offsetBy   (_ x: CGFloat, _ y: CGFloat)     -> CGSize  { return CGSize(width:  width + x, height: height + y)                                         .absSize }
+	func expandedBy (_ x: CGFloat, _ y: CGFloat)     -> CGSize  { return insetBy(-x, -y) }
 	func    insetEquallyBy(_     inset: CGFloat)     -> CGSize  { return insetBy(inset, inset) }
-	func expandedBy(_ x: CGFloat, _ y: CGFloat)      -> CGSize  { return insetBy(-x, -y) }
-	func insetBy(_ x: CGFloat, _ y: CGFloat)         -> CGSize  { return CGSize(width: width - (x * 2.0), height: height - (y * 2.0)).absSize }
-	func offsetBy(_ x: CGFloat, _ y: CGFloat)        -> CGSize  { return CGSize(width: width + x, height: height + y).absSize }
-	func offsetBy(_ delta: CGSize)                   -> CGSize  { return CGSize(width: width + delta.width, height: height + delta.height).absSize }
+	func expandedEquallyBy(_ expansion: CGFloat)     -> CGSize  { return insetEquallyBy(-expansion) }
+	func hypotenuse(relativeTo other: CGSize)        -> CGFloat { return abs(hypotenuse - other.hypotenuse) }
+	func isLargerThan(_ other: CGSize)               -> Bool    { return     hypotenuse > other.hypotenuse  }
 
 	func scaleToFit(_ other: CGSize) -> CGFloat {
-		let horizontal = other.width / width
+		let horizontal = other.width  / width
 		let   vertical = other.height / height
 
 		return horizontal < vertical ? horizontal : vertical
@@ -831,7 +828,7 @@ extension CGSize {
 	func rotate(by angle: Double) -> CGSize {
 		let r = hypotenuse
 
-		return CGSize(width: r * CGFloat(cos(angle)), height: r * CGFloat(sin(angle)))
+		return CGSize(width: r * cos(angle), height: r * sin(angle))
 	}
 
 	func force(horizotal: Bool, into range: NSRange) -> CGSize {
@@ -845,46 +842,22 @@ extension CGSize {
 	}
 
 	func ellipticalLengthAt(_ angle: Double) -> Double {
-		let a = Double(width)  / 2.0
-		let b = Double(height) / 2.0
-		let c = sqrt((b * b * cos(angle) * cos(angle)) + (a * a * sin(angle) * sin(angle)))
-		let l = a * b / c // (𝑏*cos(𝜃))2+(𝑎*sin(𝜃))2
+		let a = width  / 2.0
+		let b = height / 2.0
+		let c = sqrt((b * cos(angle)).squared + (a * sin(angle)).squared)
+		let l = a * b / c // pythagorean formula for hypoteneuse
 
 		return l
 	}
 
 	func lengthAt(_ angle: CGFloat) -> CGFloat {
-		let a = Double(angle)
-		let x = width / CGFloat(abs(cos(a)))
+		let x = width / abs(cos(angle))
 
 		if  x < hypotenuse {
 			return x / 2.0
 		}
 
-		return height / CGFloat(abs(sin(a))) / 2.0
-	}
-
-}
-
-enum ZDirection : Int {
-
-	case top
-	case left
-	case right
-	case bottom
-	case topLeft
-	case topRight
-	case bottomLeft
-	case bottomRight
-
-	var isFullResizeCorner : Bool    { return self == .topLeft || self == .bottomRight }
-
-	var cursor: NSCursor {
-		switch self {
-			case .top, .bottom: return .resizeUpDown
-			case .left, .right: return .resizeLeftRight
-			default:            return  kFourArrowsCursor ?? .crosshair
-		}
+		return height / abs(sin(angle)) / 2.0
 	}
 
 }
@@ -897,7 +870,7 @@ extension CGRect {
 	var hasSize:             Bool { return size != .zero }
 
 	var cornerPoints: [ZDirection : CGPoint] {
-		var           result = [ZDirection : CGPoint]()
+		var result           = [ZDirection : CGPoint]()
 		result[.topLeft]     = topLeft
 		result[.topRight]    = topRight
 		result[.bottomLeft]  = bottomLeft
@@ -907,7 +880,7 @@ extension CGRect {
 	}
 
 	var selectionPoints: [ZDirection : CGPoint] {
-		var           result = cornerPoints
+		var result           = cornerPoints
 		result[.top]         = centerTop
 		result[.left]        = centerLeft
 		result[.right]       = centerRight
@@ -3045,8 +3018,8 @@ extension ZPseudoView {
 								let   dotsRadius = CGFloat(rectRadius + dotsDelta)
 								let  dotDiameter = CGFloat(dotRadius  * dotRatio)
 								let       offset = CGFloat(dotRadius  * offsetRatio)
-								let            x = rect.center.x - offset + (dotsRadius * CGFloat(cos(angle)))
-								let            y = rect.center.y - offset + (dotsRadius * CGFloat(sin(angle)))
+								let            x = rect.center.x - offset + (dotsRadius * cos(angle))
+								let            y = rect.center.y - offset + (dotsRadius * sin(angle))
 
 								let     ovalRect = CGRect(x: x, y: y, width: dotDiameter, height: dotDiameter)
 								let         path = ZBezierPath(ovalIn: ovalRect)

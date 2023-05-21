@@ -581,7 +581,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			if  let         attach = hitTestForAttachment(in: rect) {
 				selectedAttachment = attach
 				resizeDragStart    = rect.origin
-				resizeDot          = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect)
+				resizeDot          = attach.glyphRect(for: textStorage, margin: margin)?.hitTestForResizeDot(in: rect)
 				result             = resizeDot != nil
 
 				setSelectedRange(attach.glyphRange)
@@ -982,25 +982,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	// MARK: - special characters
-	// MARK: -
-
-	private func showSpecialCharactersPopup() {
-		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:)))
-		let point = selectionRect.origin.offsetBy(-165.0, -60.0)
-
-		menu.popUp(positioning: nil, at: point, in: self)
-	}
-
-	@objc private func handleSymbolsPopupMenu(_ iItem: ZMenuItem) {
-		if  let type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
-			type    != .eCancel {
-			let text = type.text
-
-			insertText(text, replacementRange: selectedRange)
-		}
-	}
-
 	// MARK: - hyperlinks
 	// MARK: -
 
@@ -1047,84 +1028,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 
 		return false
-	}
-
-	private func showLinkPopup() {
-		let menu = ZMenu(title: "create a link")
-		menu.autoenablesItems = false
-
-		for type in ZEssayLinkType.all {
-			menu.addItem(item(type: type))
-		}
-
-		menu.popUp(positioning: nil, at: selectionRect.origin, in: self)
-	}
-
-	private func item(type: ZEssayLinkType) -> ZMenuItem {
-		let  	  item = ZMenuItem(title: type.title, action: #selector(handleLinkPopupMenu(_:)), keyEquivalent: type.rawValue)
-		item   .target = self
-		item.isEnabled = true
-
-		item.keyEquivalentModifierMask = ZEvent.ModifierFlags(rawValue: 0)
-
-		return item
-	}
-
-	@objc private func handleLinkPopupMenu(_ iItem: ZMenuItem) {
-		if  let   type = ZEssayLinkType(rawValue: iItem.keyEquivalent) {
-			let  range = selectedRange
-			let showAs = textStorage?.string.substring(with: range)
-			var   link : String? = type.linkType + kColon
-
-			func setLink(to appendToLink: String?, replacement: String? = nil) {
-				if  let a = appendToLink, !a.isEmpty {
-					link?.append(a)
-				} else {
-					link  = nil  // remove existing hyperlink
-				}
-
-				if  link == nil {
-					textStorage?.removeAttribute(.link,               range: range)
-				} else {
-					textStorage?   .addAttribute(.link, value: link!, range: range)
-				}
-
-				if  let r = replacement {
-					textStorage?.replaceCharacters(in: range, with: r)
-				}
-
-				selectAndScrollTo(range)
-			}
-
-			func displayUploadDialog() {
-				gPresentOpenPanel() {  iAny in
-					if  let      url = iAny as? URL {
-						let    asset = CKAsset(fileURL: url)
-						if  let file = ZFile.uniqueFile(asset, databaseID: gDatabaseID),
-							let name = file.recordName {
-
-							setLink(to: name, replacement: showAs)
-						}
-					} else if let panel = iAny as? NSPanel {
-						panel.title = "Import"
-					}
-				}
-			}
-
-			func displayLinkDialog() {
-				gEssayController?.modalForLink(type: type, showAs) { path, replacement in
-					setLink(to: path, replacement: replacement)
-				}
-			}
-
-			switch type {
-				case .hEmail,
-					 .hWeb:   displayLinkDialog()
-				case .hFile:  displayUploadDialog()
-				case .hClear: setLink(to: nil)
-				default:      setLink(to: gSelecting.pastableRecordName)
-			}
-		}
 	}
 
 	func followLinkInSelection() -> Bool {
@@ -1438,7 +1341,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	private func selectAndScrollTo(_ range: NSRange? = nil) {
+	func selectAndScrollTo(_ range: NSRange? = nil) {
 		var        point = CGPoint()                          // scroll to top
 		if  let    essay = gCurrentEssay,
 			(essay.lastTextIsDefault || range != nil),

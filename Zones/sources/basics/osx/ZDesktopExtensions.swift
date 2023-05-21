@@ -30,22 +30,6 @@ var gFavoritesAreVisible : Bool { return gDetailsViewIsVisible(for: .vFavorites)
 
 protocol ZScrollDelegate : NSObjectProtocol {}
 
-func isDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
-	if  let e  = event {
-		if  e == gCurrentEvent {
-			return true
-		} else {
-			gCurrentEvent = e
-		}
-	}
-
-	if  item != nil {
-		return gCurrentEvent != nil && (gTimeSinceCurrentEvent < 0.4)
-	}
-
-	return false
-}
-
 func gPresentOpenPanel(at url: URL? = nil, _ callback: AnyClosure? = nil) {
 	if  let  window = gApplication?.mainWindow {
 		let   panel = NSOpenPanel()
@@ -818,23 +802,6 @@ extension ZTextEditor {
     
     func fullResign()  { assignAsFirstResponder (nil) }
 
-	func showSpecialCharactersPopup() {
-		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:)))
-		let point = CGPoint(x: -165.0, y: -60.0)
-
-		menu.popUp(positioning: nil, at: point, in: gTextEditor.currentTextWidget)
-	}
-
-	@objc func handleSpecialsPopupMenu(_ iItem: ZMenuItem) {
-		if  let  type = ZSpecialCharactersMenuType(rawValue: iItem.keyEquivalent),
-			let range = selectedRanges[0] as? NSRange,
-			type     != .eCancel {
-			let  text = type.text
-
-			insertText(text, replacementRange: range)
-		}
-	}
-
     override func doCommand(by selector: Selector) {
         switch selector {
         case #selector(insertNewline):       stopCurrentEdit()
@@ -914,120 +881,6 @@ extension ZTextEditor {
             }
         }
     }
-
-}
-
-extension ZMenu {
-
-	static func handleMenu() {}
-
-	static func specialCharactersPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "add a special character")
-
-		for type in gActiveSpecialCharacters {
-			menu.addItem(specialsItem(type: type, target: target, action: action))
-		}
-
-		menu.addItem(ZMenuItem.separator())
-		menu.addItem(specialsItem(type: .eCancel, target: target, action: action))
-
-		return menu
-	}
-
-	static func specialsItem(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.isEnabled = true
-		item.target    = target
-
-		if  type != .eCancel {
-			item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
-		}
-
-		return item
-	}
-
-	static func mutateTextPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "change text")
-
-		for type in ZMutateTextMenuType.allTypes {
-			menu.addItem(mutateTextItem(type: type, target: target, action: action))
-		}
-
-		return menu
-	}
-
-	static func mutateTextItem(type: ZMutateTextMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.isEnabled = true
-		item.target    = target
-		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
-
-		return item
-	}
-
-	static func reorderPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "reorder")
-
-		for type in gActiveReorderTypes {
-			menu.addItem(reorderingItem(type: type, target: target, action: action))
-
-			if  type != .eReversed {
-				menu.addItem(reorderingItem(type: type, target: target, action: action, flagged: true))
-			}
-
-			menu.addItem(.separator())
-		}
-
-		return menu
-	}
-
-	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector, flagged: Bool = false) -> ZMenuItem {
-		let                      title = flagged ? "\(type.title) reversed" : type.title
-		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
-		item.keyEquivalentModifierMask = flagged ? ZEventFlags.shift : ZEventFlags(rawValue: 0)
-		item                   .target = target
-		item                .isEnabled = true
-
-		return item
-	}
-
-	enum ZRefetchMenuType: String {
-		case eList    = "l"
-		case eIdeas   = "g"
-		case eAdopt   = "a"
-		case eTraits  = "t"
-		case eProgeny = "p"
-
-		var title: String {
-			switch self {
-			case .eList:    return "list"
-			case .eAdopt:   return "adopt"
-			case .eIdeas:   return "all ideas"
-			case .eTraits:  return "all traits"
-			case .eProgeny: return "all progeny"
-			}
-		}
-	}
-
-	static func refetchPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let types: [ZRefetchMenuType] = [.eIdeas, .eTraits, .eProgeny, .eList, .eAdopt]
-		let menu = ZMenu(title: "refetch")
-
-		for type in types {
-			menu.addItem(refetchingItem(type: type, target: target, action: action))
-		}
-
-		return menu
-	}
-
-	static func refetchingItem(type: ZRefetchMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let                       item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.keyEquivalentModifierMask = ZEvent.ModifierFlags(rawValue: 0)
-		item                   .target = target
-		item                .isEnabled = true
-
-		return item
-	}
 
 }
 

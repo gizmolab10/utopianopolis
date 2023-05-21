@@ -43,8 +43,8 @@ enum ZTraitType: String { // stored in database: do not change
 	var heightRatio: CGFloat {
 		switch self {
 			case .tHyperlink,
-				 .tMoney,
-				 .tDate: return 1.0
+					.tMoney,
+					.tDate: return 1.0
 			default:     return 0.66667
 		}
 	}
@@ -65,38 +65,9 @@ enum ZTraitType: String { // stored in database: do not change
 	var isEssayOrNote: Bool {
 		switch self {
 			case .tNote,
-				 .tEssay: return true
+					.tEssay: return true
 			default:      return false
 		}
-	}
-
-	func traitsItem(target: AnyObject, action: Selector) -> ZMenuItem {
-		let                      title = title ?? ""
-		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: rawValue)
-		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
-		item                   .target = target
-		item                .isEnabled = true
-
-		return item
-	}
-}
-
-extension ZTraitTypesArray {
-
-	func traitsPopup(target: AnyObject, action: Selector, zone: Zone) -> ZMenu {
-		let menu = ZMenu(title: "traits")
-
-		for type in self {
-			let item = type.traitsItem(target: target, action: action)
-
-			if  zone.hasTrait(for: type) {
-				item.state = .on
-			}
-
-			menu.addItem(item)
-		}
-
-		return menu
 	}
 
 }

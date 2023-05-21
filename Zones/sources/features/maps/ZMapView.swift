@@ -28,7 +28,6 @@ class ZMapView: ZView {
 	var                  hovering : ZHovering?
 	var                controller : ZMapController?
 	@IBOutlet var decorationsView : ZMapView?
-	override func  menu(for event : ZEvent) -> ZMenu? { return controller?.mapContextualMenu }
 	override var        debugName : String            { return controller?.zClassName ?? kUnknown }
 
 	// MARK: - initialize

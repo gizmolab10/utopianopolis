@@ -186,61 +186,6 @@ class ZMapEditor: ZBaseEditor {
 		onCompletion?()
     }
 
-	enum ZMenuType: Int {
-		case eUndo
-		case eHelp
-		case eSort
-		case eFind
-		case eColor
-		case eChild
-		case eAlter
-		case eFiles
-		case eCloud
-		case eAlways
-		case eParent
-		case eTravel
-
-		case eRedo
-		case ePaste
-		case eUseGrabs
-		case eMultiple
-	}
-
-    func menuType(for key: String, _ flags: ZEventFlags) -> ZMenuType {
-        let alterers = "hluw#" + kMarkingCharacters + kReturn
-		let  ALTERER = alterers.contains(key)
-        let  COMMAND = flags.hasCommand
-        let  CONTROL = flags.hasControl
-		let      ANY = COMMAND || CONTROL
-
-        if  !ANY && ALTERER {    return .eAlter
-        } else {
-			switch key {
-				case "f":               return .eFind
-				case "z":               return .eUndo
-				case "k":               return .eColor
-				case "g":               return .eCloud
-				case "o", "s":          return .eFiles
-				case kQuestion, kSlash: return .eHelp
-				case "x", kSpace:       return .eChild
-				case "b", "t", kTab:    return .eParent
-				case "d":               return  COMMAND ? .eAlter  : .eParent
-				case kDelete:           return  CONTROL ? .eAlways : .eParent
-				case kEquals:           return  COMMAND ? .eAlways : .eTravel
-				default:                return .eAlways
-			}
-        }
-    }
-
-	override func invalidMenuItemAlert(_ menuItem: ZMenuItem) -> ZAlert? {
-		let     type = menuType(for: menuItem.keyEquivalent, menuItem.keyEquivalentModifierMask)
-		let subtitle = type != .eTravel ? "is not editable" : "cannot be activated"
-		let   prefix = type != .eParent ? kEmpty : "parent of "
-		let selected = "selected item "
-
-		return gAlerts.alert("Menu item disabled", prefix + selected + subtitle, "OK", nil, nil, nil)
-	}
-
     override func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool {
 		if  gIsEditIdeaMode {
 			return true

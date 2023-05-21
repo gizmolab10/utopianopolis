@@ -38,43 +38,6 @@ class ZFile : ZRecord {
 
 	func activate() { gFiles.unqiueAssetPath(for: self)?.openAsURL() }
 
-	// MARK: - create
-	// MARK: -
-
-	static func uniqueFile(recordName: String?, in databaseID: ZDatabaseID) -> ZFile {
-		return uniqueZRecord(entityName: kFileType, recordName: recordName, in: databaseID) as! ZFile
-	}
-
-	static func assetExists(for descriptor: ZFileDescriptor, databaseID: ZDatabaseID) -> ZFile? {
-		return gFilesRegistry.assetExists(for: descriptor) ?? gCoreDataStack.loadFile(for: descriptor)
-	}
-
-	static func uniqueFile(_ asset: CKAsset, databaseID: ZDatabaseID) -> ZFile? {
-		let  url  = asset.fileURL!
-		do {
-			let data  = try Data(contentsOf: url)
-			let name  = url.deletingPathExtension().lastPathComponent
-			let type  = url.pathExtension
-			let desc  = ZFileDescriptor(name: name, type: type, databaseID: databaseID)
-			var file  = assetExists(for: desc, databaseID: databaseID)
-			if  file == nil {
-				file  = ZFile.uniqueFile(recordName: nil, in: databaseID)
-				file! .name = name
-				file! .type = type
-				file!.asset = data
-				file!.modificationDate = Date()
-
-				gFilesRegistry.register(file!, in: databaseID)
-			}
-
-			return file!
-		} catch {
-			printDebug(.dError, "\(error)")
-		}
-
-		return nil
-	}
-
 	// MARK: - properties
 	// MARK: -
 

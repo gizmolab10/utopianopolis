@@ -89,7 +89,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 	// cannot declare this in extensions because compiler barfs about objective-c method conflict (and then compiler throws a seg fault)
 
 	override func keyDown(with event: ZEvent) {
-		if  !isDuplicate(event: event),
+		if  !gIsDuplicate(event: event),
 			gMapEditor.handleEvent(event, isWindow: true) != nil {
 			super.keyDown(with: event)
 		}

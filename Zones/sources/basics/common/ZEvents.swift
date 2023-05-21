@@ -78,7 +78,7 @@ class ZEvents: ZGeneric {
 		}
 
 		keyDownMonitor = ZEvent.addLocalMonitorForEvents(matching: .keyDown) { event -> ZEvent? in
-			if  !isDuplicate(event: event),
+			if  !gIsDuplicate(event: event),
 			    !gRefusesFirstResponder {
 
 				// do not detect gIsHelpFrontmost nor handle event in gHelpController except in default of work mode switch

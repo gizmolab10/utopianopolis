@@ -311,3 +311,25 @@ extension ZEssayView {
 	}
 
 }
+
+enum ZDirection : Int {
+	case top
+	case left
+	case right
+	case bottom
+	case topLeft
+	case topRight
+	case bottomLeft
+	case bottomRight
+
+	var isFullResizeCorner : Bool    { return self == .topLeft || self == .bottomRight }
+
+	var cursor: NSCursor {
+		switch self {
+			case .top, .bottom: return .resizeUpDown
+			case .left, .right: return .resizeLeftRight
+			default:            return  kFourArrowsCursor ?? .crosshair
+		}
+	}
+
+}

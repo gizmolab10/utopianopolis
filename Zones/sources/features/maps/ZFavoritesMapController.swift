@@ -24,7 +24,7 @@ class ZFavoritesMapController: ZMapController {
 
 	override func createAndLayoutWidgets(_ kind: ZSignalKind) {
 		if  gHasFinishedStartup, gFavoritesAreVisible, shouldHandle(kind) {
-			FOREGROUND(after: kind == .sLaunchDone ? 0.01 : .zero) { // so favorites map is not too high when other details views are shown
+			FOREGROUND(after: kind == .sLaunchDone ? 0.01 : .zero) {  // so favorites map is not too high when other details views are shown
 				super.createAndLayoutWidgets(kind)
 			}
 		}
@@ -52,7 +52,9 @@ class ZFavoritesMapController: ZMapController {
 	}
 
 	override func handleSignal(kind: ZSignalKind) {
-		if  gFavoritesAreVisible {  // don't send signal to a hidden controller
+		if !gFavoritesAreVisible {
+			mapView?.removeAllTextViews(ofType: .favorites)           // clear remnants of prior loop
+		} else {  // don't send signal to a hidden controller
 			gMapControlsView?.controlsUpdate()
 			gFavoritesCloud.updateCurrentWithBookmarksTargetingHere()
 			super.handleSignal(kind: kind)

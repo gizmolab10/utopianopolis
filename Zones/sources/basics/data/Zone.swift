@@ -3779,6 +3779,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 }
 
+enum ZoneAttributeType: String {
+	case invertColorize = "c"
+	case validCoreData  = "v"
+	case groupOwner     = "+"
+}
+
 enum ZoneAccess: Int, CaseIterable {
 	case eInherit
 	case eReadOnly

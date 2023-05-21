@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CloudKit
 
 let kAllActualDatabaseIDs: ZDatabaseIDArray = [.mineID, .everyoneID]
 
@@ -80,6 +81,43 @@ enum ZDatabaseID: String {
 		let    name = dict[.recordName] as? String
 
 		return name == nil ? false : zRecords?.manifest?.deletedRecordNames?.contains(name!) ?? false
+	}
+
+	// MARK: - ZFiles
+	// MARK: -
+
+	func uniqueFile(recordName: String?) -> ZFile {
+		return ZRecord.uniqueZRecord(entityName: kFileType, recordName: recordName, in: self) as! ZFile
+	}
+
+	func assetExists(for descriptor: ZFileDescriptor) -> ZFile? {
+		return gFilesRegistry.assetExists(for: descriptor) ?? gCoreDataStack.loadFile(for: descriptor)
+	}
+
+	func uniqueFile(_ asset: CKAsset) -> ZFile? {
+		let  url  = asset.fileURL!
+		do {
+			let data  = try Data(contentsOf: url)
+			let name  = url.deletingPathExtension().lastPathComponent
+			let type  = url.pathExtension
+			let desc  = ZFileDescriptor(name: name, type: type, databaseID: self)
+			var file  = assetExists(for: desc)
+			if  file == nil {
+				file  = uniqueFile(recordName: nil)
+				file! .name = name
+				file! .type = type
+				file!.asset = data
+				file!.modificationDate = Date()
+
+				gFilesRegistry.register(file!, in: self)
+			}
+
+			return file!
+		} catch {
+			printDebug(.dError, "\(error)")
+		}
+
+		return nil
 	}
 
 }

@@ -215,7 +215,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 					let offset = size.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
 					let origin = dCenter.offsetBy(radius: radius, angle: a) - offset
 					let   rect = CGRect(origin: origin, size: size)
-					let center = rect.center.offsetBy(.zero, (-offset.height / 3.0))
+					let center = rect.center.offsetBy(.zero, (-offset.height / 2.5))
 					let  other = CGRect(center: center, size: CGSize.squared(c.dotWidth))
 
 					altColor.setFill()
