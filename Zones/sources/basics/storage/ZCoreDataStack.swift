@@ -397,10 +397,10 @@ class ZCoreDataStack: NSObject {
 	}
 
 	func searchZRecordsForStrings(_ strings: StringsArray, within databaseID: ZDatabaseID, onCompletion: StringZRecordsDictionaryClosure? = nil) {
-		var result = StringZRecordsDictionary()
+		var results = StringZRecordsDictionary()
 
 		if !gIsReadyToShowUI || !gCDCanLoad {
-			onCompletion?(result)
+			onCompletion?(results)
 		} else {
 			let searchables = strings.map { $0.searchable }.filter { $0 != kSpace }
 			let    entities = [kTraitType, kZoneType]
@@ -411,12 +411,12 @@ class ZCoreDataStack: NSObject {
 					if  let predicate = searchPredicate(entityName: entity, string: searchable) {
 						search(within: databaseID, entityName: entity, using: predicate) { matches in
 							if  matches.count > 0 {
-								result[searchable] = matches.appending(result[searchable])
+								results[searchable] = matches.appending(results[searchable])
 							}
 
 							count     -= 1
 							if  count == 0 {
-								onCompletion?(result)
+								onCompletion?(results)
 							}
 						}
 					}

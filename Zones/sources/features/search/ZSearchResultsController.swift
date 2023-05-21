@@ -26,23 +26,6 @@ class ZSearchResultsController: ZGenericTableController {
 	var        selectedResult : Zone?         { return  zRecordAt(genericTableView?.selectedRow)?.zone }
 	func              clear()                 { gExitSearchMode(force: gIsSearching) }
 
-	func applySearchOptions() {
-		filteredResultsDict = ZDBIDRecordsDictionary()
-
-		for (databaseID, records) in foundRecordsDict {
-			var matches = ZRecordsArray()
-
-			for record in records {
-				if  record.satisfiesSearchOptions, !gCancelSearch,
-					record.isActualChild {
-					matches.appendUnique(item: record)
-				}
-			}
-
-			filteredResultsDict[databaseID] = matches
-		}
-	}
-
     var hasResults: Bool {
         for     results in filteredResultsDict.values {
             if  results.count > 0 {
@@ -74,6 +57,23 @@ class ZSearchResultsController: ZGenericTableController {
 		error.append(match)
 
 		return error
+	}
+
+	func applySearchOptions() {
+		filteredResultsDict = ZDBIDRecordsDictionary()
+
+		for (key, records) in foundRecordsDict {
+			var matches = ZRecordsArray()
+
+			for record in records {
+				if  record.satisfiesSearchOptions, !gCancelSearch,
+					record.isActualChild {
+					matches.appendUnique(item: record)
+				}
+			}
+
+			filteredResultsDict[key] = matches
+		}
 	}
 
     // MARK: - content

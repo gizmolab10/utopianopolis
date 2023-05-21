@@ -106,7 +106,7 @@ class ZSearchOptionsController: ZGenericController {
 	}
 
 	func searchOptionsDidChange() {
-		if  gSearching.searchState == .sList {
+		if  gSearchStateIsList || (gSearchResultsController?.hasResults ?? false) {
 			gSearchBarController?.updateSearchBar(allowSearchToEnd: false)
 			gSearchResultsController?.applySearchOptions()
 			gSearchResultsController?.genericTableUpdate()

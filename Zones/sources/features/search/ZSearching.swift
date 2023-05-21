@@ -72,28 +72,25 @@ class ZSearching: NSObject, ZSearcher {
 			return
 		}
 
-		var         search  : Closure?
-		var       combined  = ZDBIDRecordsDictionary()
-		var          index  = 0
-		search              = {
-			if       index == gAllClouds.count {
+		var       search  : Closure?
+		var        found  = ZDBIDRecordsDictionary()
+		var        index  = 0
+		search            = {
+			if     index == gAllClouds.count {
+				gSearchResultsController?.foundRecordsDict = found   // keep for reinvoking filter (below) when user changes search options
+
 				controller.applySearchOptions()
 				finish()
 
 				return
 			}
 
-			let       cloud = gAllClouds[index]
-			let  databaseID = cloud.databaseID
+			let     cloud = gAllClouds[index]
+			let        id = cloud.databaseID
 
 			cloud.searchLocal(for: searchString) { zRecords in
-				index      += 1
-				var results = combined[databaseID] ?? ZRecordsArray()
-
-				results.append(contentsOf: zRecords)
-
-				combined[databaseID]                       = results
-				gSearchResultsController?.foundRecordsDict = combined
+				found[id] = zRecords
+				index    += 1
 
 				search?()
 			}
