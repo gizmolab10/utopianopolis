@@ -27,7 +27,6 @@ enum ZRecordState: String {
 class ZRecords: NSObject {
 
 	var            maxLevel = 0
-	var       foundInSearch =  ZRecordsArray                ()
 	var          duplicates =  StringZRecordDictionary      ()
 	var     recordsMistyped =  StringZRecordDictionary      ()
 	var   recordNamesLookup =  StringZRecordDictionary      ()
@@ -336,12 +335,10 @@ class ZRecords: NSObject {
 	func appendZRecords(containing string: String, onEachHandful: @escaping ZRecordsToZRecordsClosure) {
 		let strings = string.componentsSeparatedBySpace.filter { $0 != kEmpty }
 
-		gCoreDataStack.searchZRecordsForStrings(strings, within: databaseID) { [self] (dict: StringZRecordsDictionary) in
+		gCoreDataStack.searchZRecordsForStrings(strings, within: databaseID) { [self] dict in
 			for (name, zRecords) in dict {
 				let               records = onEachHandful(zRecords)
 				zRecordsArrayLookup[name] = records
-
-				foundInSearch.append(contentsOf: records)
 			}
 
 			let _ = onEachHandful(nil) // indicates done
@@ -365,13 +362,17 @@ class ZRecords: NSObject {
         }
     }
 
-	func searchLocal(for string: String, onCompletion: @escaping Closure) {
+	func searchLocal(for string: String, onCompletion: @escaping ZRecordsClosure) {
+		var found = ZRecordsArray()
+
 		appendZRecords(containing: string) { iRecords -> ZRecordsArray in
 			guard let records = iRecords else {
-				onCompletion()
+				onCompletion(found)
 
 				return []
 			}
+
+			found.append(contentsOf: records)
 
 			return records // add these to name key
 		}

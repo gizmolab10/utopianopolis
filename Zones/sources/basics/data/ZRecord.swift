@@ -138,7 +138,7 @@ class ZRecord: ZManagedObject {
 	var               cloudProperties : StringsArray { return ZRecord.cloudProperties }
 	var       optionalCloudProperties : StringsArray { return ZRecord.optionalCloudProperties }
 	var                  isRegistered :         Bool { return zRecords?.isRegistered(self) ?? false }
-	var         stisfiesSearchOptions :         Bool { return passesFilter && isInScope }
+	var        satisfiesSearchOptions :         Bool { return passesFilter && isInScope }
 	var                  passesFilter :         Bool { return true }
 	var                     isInScope :         Bool { return true }
 

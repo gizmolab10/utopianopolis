@@ -31,7 +31,7 @@ class ZSearchOptionsController: ZGenericController {
 	}
 
 	func updateStatus() {
-		let         show = gSearchResultsController?.hasResults ?? false
+		let         show = gSearchStateIsList
 		status?.isHidden = !show
 
 		if  show,

@@ -61,31 +61,45 @@ class ZSearching: NSObject, ZSearcher {
 	}
 
 	func performSearch(for searchString: String, closure: Closure?) {
-		var combined = ZDBIDRecordsDictionary()
-		var    count = gAllClouds.count - 1
+		let finish = { [self] in
+			setSearchStateTo(.sList)
+			closure?() // hide spinner
+		}
 
-		for cloud in gAllClouds {
-			cloud.foundInSearch = []
-			let      databaseID = cloud.databaseID
-			cloud.searchLocal(for: searchString) { [self] in
-				var     results = combined[databaseID] ?? ZRecordsArray()
-				count          -= 1
+		guard let controller = gSearchResultsController else {
+			finish()
 
-				results.append(contentsOf: cloud.foundInSearch)
+			return
+		}
+
+		var         search  : Closure?
+		var       combined  = ZDBIDRecordsDictionary()
+		var          index  = 0
+		search              = {
+			if       index == gAllClouds.count {
+				controller.applySearchOptions()
+				finish()
+
+				return
+			}
+
+			let       cloud = gAllClouds[index]
+			let  databaseID = cloud.databaseID
+
+			cloud.searchLocal(for: searchString) { zRecords in
+				index      += 1
+				var results = combined[databaseID] ?? ZRecordsArray()
+
+				results.append(contentsOf: zRecords)
 
 				combined[databaseID]                       = results
 				gSearchResultsController?.foundRecordsDict = combined
 
-				if  let c = gSearchResultsController {
-					c.applySearchOptions()
-					setSearchStateTo(.sList)
-				}
-
-				if  count == 0 {
-					closure?() // hide spinner
-				}
+				search?()
 			}
 		}
+
+		search?()
 	}
 
 }

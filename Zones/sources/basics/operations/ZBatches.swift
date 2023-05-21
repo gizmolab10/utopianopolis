@@ -251,13 +251,14 @@ class ZBatches: ZOnboarding {
             if  iCompleted {
                 onCompletion(true)
             } else {
-				var invokeForIndex : IntClosure?                // declare closure first, so compiler will let it recurse
+				var          index = 0
+				var invokeForIndex : Closure?                // declare closure first, so compiler will let it recurse
                 let         isMine = restoreToID == .mineID
 				let    forMineOnly = operationID.forMineOnly
 				let  onlyCurrentID = !gCloudStatusIsActive && !operationID.alwaysBoth
 				let         isNoop = onlyCurrentID && isMine && !forMineOnly
 				let    databaseIDs = forMineOnly ? [.mineID] : onlyCurrentID ? [restoreToID] : kAllActualDatabaseIDs
-				invokeForIndex     = { [self] index in
+				invokeForIndex     = { [self] in
 
                     // /////////////////////////// //
                     // always called in foreground //
@@ -276,24 +277,25 @@ class ZBatches: ZOnboarding {
 								let     result = iResult as? Int
 								let    isError = error      != nil
 								let       isOp = expectedOp != nil
+								index         += 1
 
 								if     isError || isOp || result == 0 {
 									if isError || (isOp && (expectedOp != operationID)) {
 										printOp("\(error!)")
 									}
 
-									invokeForIndex?(index + 1)         // recurse
+									invokeForIndex?()         // recurse
 								}
 							}
 						} catch {
 							gTimers.assureCompletion(for: .tOperation, withTimeInterval: 0.1) {
-								invokeForIndex?(index)
+								invokeForIndex?()  // index has not yet incremented
 							}
 						}
                     }
                 }
 
-                invokeForIndex?(0)
+                invokeForIndex?()
             }
         }
     }

@@ -200,8 +200,9 @@ extension ZEssayView {
 				if  let imageRect = rectForRangedAttachment(attach)?.expandedEquallyBy(kEssayImageDotRadius),
 					imageRect.intersects(rect) {
 
-					if  attach.filename == selectedAttachment?.filename {
-						selectedAttachment  = attach
+					if  let       selected = selectedAttachment?.filename,
+						attach.filename   == selected {
+						selectedAttachment = attach
 					}
 
 					return attach

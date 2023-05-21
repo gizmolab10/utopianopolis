@@ -164,7 +164,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var isInScope: Bool {
 		if  parentZone        == nil {
 			return gSearchScope.contains(.sOrphan)
-		} else if let rootName = root?.recordName {
+		} else if let rootName = getRoot.recordName {
 			if  rootName      == kRootName {
 				switch databaseID {
 					case .everyoneID: if gSearchScope.contains(.sPublic) { return true }
@@ -174,7 +174,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  gSearchScope.contains(.sFavorites),
-				isInFavorites {
+				rootName == kFavoritesRootName {
 				return true
 			}
 

@@ -33,7 +33,7 @@ class ZSearchResultsController: ZGenericTableController {
 			var matches = ZRecordsArray()
 
 			for record in records {
-				if  record.stisfiesSearchOptions, !gCancelSearch,
+				if  record.satisfiesSearchOptions, !gCancelSearch,
 					record.isActualChild {
 					matches.appendUnique(item: record)
 				}
@@ -130,10 +130,10 @@ class ZSearchResultsController: ZGenericTableController {
 
 #else // OSX
 
-	override func numberOfRows(in tableView: ZTableView) -> Int { max(gSearchStateIsList ? 1 : 0, filteredResultsCount) }
+	override func numberOfRows(in tableView: ZTableView) -> Int { filteredResultsCount }
 
 	func tableView(_ tableView: ZTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		return !hasResults ? gSearchStateIsList ? noResultsString : nil : attributedString(for: row, isSelected: row == tableView.selectedRow)
+		return !hasResults ? nil : attributedString(for: row, isSelected: row == tableView.selectedRow)
 	}
 
 	func attributedString(for row: Int, isSelected: Bool) -> NSAttributedString {

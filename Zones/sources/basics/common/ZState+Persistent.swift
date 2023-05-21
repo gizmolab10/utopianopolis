@@ -144,11 +144,10 @@ struct ZSearchScope: OptionSet {
 	static let      sNone =  ZSearchScope([])
 	static let      sMine =  ZSearchScope(rawValue: 1 << 0)
 	static let    sPublic =  ZSearchScope(rawValue: 1 << 1)
-//	static let    sShared =  ZSearchScope(rawValue: 1 << 2)
+//	static let    sShared =  ZSearchScope(rawValue: 1 << 2) // if this is commented out, the following must continue sequence, NOT skip this raw value
 	static let sFavorites =  ZSearchScope(rawValue: 1 << 2)
 	static let    sOrphan =  ZSearchScope(rawValue: 1 << 3)
 	static let     sTrash =  ZSearchScope(rawValue: 1 << 4)
-	static let       sAll =  ZSearchScope(rawValue: 0x11)
 	static var        all : [ZSearchScope]                  { return [.sMine, .sPublic, .sFavorites, .sOrphan, .sTrash] }
 }
 
