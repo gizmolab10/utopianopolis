@@ -960,15 +960,11 @@ CA
                                         <rect key="frame" x="226" y="0.0" width="225" height="33"/>
                                         <subviews>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="TGS-db-Yos" userLabel="search and dismiss buttons">
-                                                <rect key="frame" x="0.0" y="0.0" width="27" height="31"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="33" height="31"/>
                                                 <subviews>
-                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RjV-tY-a8J" userLabel="Search Buttons">
-                                                        <rect key="frame" x="6" y="8" width="15" height="15"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="9" id="6gn-6u-4Qb"/>
-                                                            <constraint firstAttribute="width" constant="15" id="d3L-0l-AB2"/>
-                                                        </constraints>
-                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="MGu-Pu-2JQ">
+                                                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RjV-tY-a8J" userLabel="Search Button">
+                                                        <rect key="frame" x="0.0" y="-3" width="33" height="37"/>
+                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" controlSize="large" inset="2" id="MGu-Pu-2JQ">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -977,12 +973,8 @@ CA
                                                         </connections>
                                                     </button>
                                                     <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lIw-5I-Mig">
-                                                        <rect key="frame" x="6" y="8" width="15" height="15"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="9" id="1EF-9x-VXf"/>
-                                                            <constraint firstAttribute="width" constant="15" id="hfn-38-2PL"/>
-                                                        </constraints>
-                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" imageScaling="proportionallyDown" inset="2" id="tWJ-5j-O3c">
+                                                        <rect key="frame" x="0.0" y="-3" width="33" height="37"/>
+                                                        <buttonCell key="cell" type="roundRect" bezelStyle="roundedRect" image="NSStopProgressFreestandingTemplate" imagePosition="overlaps" alignment="center" controlSize="large" imageScaling="proportionallyDown" inset="2" id="tWJ-5j-O3c">
                                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                             <font key="font" metaFont="system"/>
                                                         </buttonCell>
@@ -992,23 +984,28 @@ CA
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="RjV-tY-a8J" firstAttribute="centerX" secondItem="TGS-db-Yos" secondAttribute="centerX" id="KXF-9y-9Dn"/>
-                                                    <constraint firstItem="lIw-5I-Mig" firstAttribute="centerX" secondItem="TGS-db-Yos" secondAttribute="centerX" id="cGo-4z-UjE"/>
-                                                    <constraint firstItem="lIw-5I-Mig" firstAttribute="centerY" secondItem="TGS-db-Yos" secondAttribute="centerY" id="epC-oi-lsU"/>
-                                                    <constraint firstItem="RjV-tY-a8J" firstAttribute="centerY" secondItem="TGS-db-Yos" secondAttribute="centerY" id="tbZ-Bn-EY7"/>
+                                                    <constraint firstAttribute="trailing" secondItem="RjV-tY-a8J" secondAttribute="trailing" id="9Kf-FR-MgB"/>
+                                                    <constraint firstItem="RjV-tY-a8J" firstAttribute="top" secondItem="TGS-db-Yos" secondAttribute="top" id="Cfo-a6-VJQ"/>
+                                                    <constraint firstAttribute="width" constant="33" id="D2G-VI-hRj"/>
+                                                    <constraint firstItem="lIw-5I-Mig" firstAttribute="top" secondItem="TGS-db-Yos" secondAttribute="top" id="Hfd-dj-AVY"/>
+                                                    <constraint firstItem="RjV-tY-a8J" firstAttribute="leading" secondItem="TGS-db-Yos" secondAttribute="leading" id="Qjm-vE-Yc2"/>
+                                                    <constraint firstAttribute="bottom" secondItem="lIw-5I-Mig" secondAttribute="bottom" id="QkA-pm-Ch9"/>
+                                                    <constraint firstAttribute="trailing" secondItem="lIw-5I-Mig" secondAttribute="trailing" id="RQA-Wr-9rn"/>
+                                                    <constraint firstItem="lIw-5I-Mig" firstAttribute="leading" secondItem="TGS-db-Yos" secondAttribute="leading" id="kCm-vv-02M"/>
+                                                    <constraint firstAttribute="bottom" secondItem="RjV-tY-a8J" secondAttribute="bottom" id="u7K-jg-8ca"/>
                                                 </constraints>
                                             </customView>
                                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="bdu-fM-xV9" userLabel="search and crumbs">
-                                                <rect key="frame" x="27" y="0.0" width="198" height="33"/>
+                                                <rect key="frame" x="33" y="0.0" width="192" height="33"/>
                                                 <subviews>
                                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="6sw-vi-DPR" userLabel="Crumbs Container View" customClass="ZBreadcrumbsView" customModule="Seriously" customModuleProvider="target">
-                                                        <rect key="frame" x="0.0" y="0.0" width="198" height="33"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="192" height="33"/>
                                                         <connections>
                                                             <segue destination="auf-AV-5qA" kind="embed" id="8CD-jp-sY9"/>
                                                         </connections>
                                                     </containerView>
                                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="58m-fY-Oaa" userLabel="Search Bar Container View">
-                                                        <rect key="frame" x="0.0" y="0.0" width="198" height="33"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="192" height="33"/>
                                                         <connections>
                                                             <segue destination="cYL-kx-LTL" kind="embed" id="chv-HO-K3M"/>
                                                         </connections>
@@ -1037,7 +1034,6 @@ CA
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="bdu-fM-xV9" secondAttribute="trailing" id="2fx-9A-kiu"/>
                                             <constraint firstAttribute="height" constant="33" id="AWT-PZ-Vy8"/>
-                                            <constraint firstItem="bdu-fM-xV9" firstAttribute="leading" secondItem="LQL-Kb-jgm" secondAttribute="leading" constant="27" id="IJS-L6-zkA"/>
                                             <constraint firstAttribute="bottom" secondItem="bdu-fM-xV9" secondAttribute="bottom" id="O0t-pk-mPh"/>
                                             <constraint firstItem="bdu-fM-xV9" firstAttribute="leading" secondItem="TGS-db-Yos" secondAttribute="trailing" id="QxK-Si-tKX"/>
                                             <constraint firstAttribute="bottom" secondItem="TGS-db-Yos" secondAttribute="bottom" id="V8T-tj-dCr"/>

@@ -336,9 +336,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		gExitSearchMode(force: gIsSearching)
 		gHideExplanation()
 
-		if (gIsMapOrEditIdeaMode || gIsEssayMode),
+		if (gIsMapOrEditIdeaMode || gIsEssayMode), gCurrentMouseDownZone == nil,
 		    let        gesture = iGesture as? ZKeyClickGestureRecognizer {
 			let       location = gesture.location(in: mapView)
+			let            hit = detectHit(at: location)
             var notEditingIdea = true
 
 			printDebug(.dClick, "only")
@@ -362,13 +363,11 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 					gSetMapWorkMode()
 				}
 
-				if  let any = detectHit(at: location) {
-					if  let w = any as? ZoneWidget {
-						w.widgetZone?.grab()
-					} else if let d = any as? ZoneDot,
-						let   flags = gesture.modifiers {
-						d.widgetZone?.dotClicked(flags, isReveal: d.isReveal)
-					}
+				if  let w = hit as? ZoneWidget {
+					w.widgetZone?.grab()
+				} else if let     d = hit as? ZoneDot,
+						  let flags = gesture.modifiers {
+					d.widgetZone?.dotClicked(flags, isReveal: d.isReveal)
 				} else if gIsMapMode {
 
 					// /////////////////// //

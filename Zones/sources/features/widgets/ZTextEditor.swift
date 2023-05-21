@@ -266,6 +266,7 @@ class ZTextEditor: ZTextView {
 			if  let    zone = pack.packedZone,
 				zone.userCanWrite {
 				currentEdit = pack
+				var  offset = setOffset
 
 				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
 				deferEditingStateChange()
@@ -274,12 +275,17 @@ class ZTextEditor: ZTextView {
 				gRelayoutMaps()
 				gSetEditIdeaMode()
 
-				if  let t = zone.widget?.textWidget {
+				if  let t = zone.textWidget {
 					t.enableUndo()
 					assignAsFirstResponder(t)
+
+					if  offset     == nil,
+						let current = gCurrentOffset {
+						offset      = current + t.frame.minX
+					}
 				}
 
-				if  let at = setOffset ?? gCurrentMouseDownLocation {
+				if  let at = offset {
 					setCursor(at: at)
 				}
 

@@ -24,7 +24,6 @@ enum ZTimerID : Int {
 	case tCoreDataDeferral         // repeat forever
 	case tNeedUserAccess
 	case tCloudAvailable           // repeat forever
-	case tMouseLocation
 	case tMouseZone
 	case tOperation
 	case tLicense
@@ -51,16 +50,16 @@ func gTemporarilySetKey(_ key: String) {
 	gTimers.startTimer(for: .tKey)
 }
 
-func gTemporarilySetMouseZone(_ zone: Zone?) {
+func gTemporarilySetMouseZone(_ zone: Zone?, _ location: CGPoint? = nil) {
 	gCurrentMouseDownZone = zone
 
+	if  let          l = location,
+		let          z = zone {
+		gCurrentHit    = z.widget?.detectHit(at: l)
+		gCurrentOffset = z.textWidget?.convert(l, from: nil).x
+	}
+
 	gTimers.startTimer(for: .tMouseZone)
-}
-
-func gTemporarilySetMouseDownLocation(_ location: CGFloat?, for seconds: Double = 1.0) {
-	gCurrentMouseDownLocation = location
-
-	gTimers.startTimer(for: .tMouseLocation)
 }
 
 func gTemporarilySetTextEditorHandlesArrows(for seconds: Double = 1.0) {
@@ -121,10 +120,9 @@ class ZTimers: NSObject {
 			// ////////////////////////////////////// //
 
 			switch tid {
-				case .tKey:                     block = { gCurrentKeyPressed        = nil }
-				case .tMouseZone:               block = { gCurrentMouseDownZone     = nil }
-				case .tMouseLocation:           block = { gCurrentMouseDownLocation = nil }
-				case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows  = false }
+				case .tKey:                     block = { gCurrentKeyPressed       = nil }
+				case .tMouseZone:               block = { gCurrentMouseDownZone    = nil; gCurrentOffset = nil; gCurrentHit = nil }
+				case .tTextEditorHandlesArrows: block = { gTextEditorHandlesArrows = false }
 				case .tCoreDataDeferral:        block = { gCoreDataStack.invokeDeferralMaybe(tid) }
 				case .tCloudAvailable:          block = { gBatches.cloudFire() }
 				case .tLicense:                 block = { gProducts.updateForSubscriptionChange() }

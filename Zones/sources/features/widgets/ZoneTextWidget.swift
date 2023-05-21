@@ -131,8 +131,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 
 	override func mouseDown(with event: ZEvent) {
 		if !gRefusesFirstResponder, window == gMainWindow { // ignore mouse down during startup
-			gTemporarilySetMouseDownLocation(event.locationInWindow.x)
-			gTemporarilySetMouseZone(widgetZone)
+			gTemporarilySetMouseZone(widgetZone, event.locationInWindow)
 
 			if !becomeFirstResponder() {
 				super.mouseDown(with: event)
