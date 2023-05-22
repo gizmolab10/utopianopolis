@@ -24,7 +24,7 @@ class ZHelpData: NSObject {
 	var rowHeight         :  CGFloat       { return 16.0 }
 	var dotOffset         :  CGFloat       { return  2.1 }
 	var noTabPrefix       :  String        { return "   " }
-	var tabOffsets        : [Int]          { return [0, 20, 85] }
+	var tabOffsets        : IntArray          { return [0, 20, 85] }
 	var columnWidth       :  Int           { return 580 }
 	var indexOfLastColumn :  Int           { return 1 }
 	var stringsPerColumn  :  Int           { return 3 }
@@ -66,7 +66,7 @@ class ZHelpData: NSObject {
 	func setupForMode(_ iMode: ZHelpMode) {
 		helpMode   = iMode
 		var offset = 0
-		var values : [Int] = []
+		var values : IntArray = []
 
 		for _ in 0...indexOfLastColumn {
 			for index in 0..<stringsPerColumn {

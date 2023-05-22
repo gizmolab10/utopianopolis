@@ -45,20 +45,20 @@ func gUpdateBaseFontSize(up: Bool) {
 
 extension ZGenericController {
 
-	@objc var horizontalGap : CGFloat { return gHorizontalGap }
-	@objc var coreThickness : CGFloat { return gLineThickness }
-	@objc var  coreFontSize : CGFloat { return gBaseFontSize }
-	var            fontSize : CGFloat { return  coreFontSize + kFontDelta }      // 15 ... 28
-	var           dotHeight : CGFloat { return (fontSize  / kDotFactor) + 2.0 }
-	var       dotHalfHeight : CGFloat { return  dotHeight / 2.0 }
-	var    circleIdeaRadius : CGFloat { return  dotHeight * 2.2 }
-	var            dotWidth : CGFloat { return  dotHeight * kDragDotReduction }
-	var        dotHalfWidth : CGFloat { return  dotWidth  / 2.0 }
-	var       dotThirdWidth : CGFloat { return  dotWidth  / 3.0 }
-	var     dotQuarterWidth : CGFloat { return  dotWidth  / 4.0 }
-	var      dotEighthWidth : CGFloat { return  dotWidth  / 8.0 }
-	var       sideDotRadius : CGFloat { return  dotWidth  * 0.25 }
-	var                font :   ZFont { return .systemFont(ofSize: fontSize) }
+	@objc var horizontalGap         : CGFloat { return gHorizontalGap }
+	@objc var coreThickness         : CGFloat { return gLineThickness }
+	@objc var  coreFontSize         : CGFloat { return gBaseFontSize }
+	var            fontSize         : CGFloat { return  coreFontSize + kFontDelta }      // 15 ... 28
+	var           dotHeight         : CGFloat { return (fontSize  / kDotFactor) + 2.0 }
+	var       dotHalfHeight         : CGFloat { return  dotHeight / 2.0 }
+	var    circleIdeaRadius         : CGFloat { return  dotHeight * 2.2 }
+	var            dotWidth         : CGFloat { return  dotHeight * kWidthToHeightRatio }
+	var        dotHalfWidth         : CGFloat { return  dotWidth  / 2.0 }
+	var       dotThirdWidth         : CGFloat { return  dotWidth  / 3.0 }
+	var     dotQuarterWidth         : CGFloat { return  dotWidth  / 4.0 }
+	var      dotEighthWidth         : CGFloat { return  dotWidth  / 8.0 }
+	var       sideDotRadius         : CGFloat { return  dotWidth  * 0.25 }
+	var                font         :   ZFont { return .systemFont(ofSize: fontSize) }
 	func  dotSize(forReveal : Bool) -> CGSize { return CGSize(width: forReveal ? dotHeight : dotWidth, height: dotHeight) }
 
 }

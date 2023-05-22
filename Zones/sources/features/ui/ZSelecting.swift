@@ -168,7 +168,7 @@ class ZSelecting: NSObject {
 
     var currentMapGrabsHaveVisibleChildren: Bool {
         for     grab in currentMapGrabs {
-            if  grab.count > 0 &&
+			if  grab.hasChildren &&
                 grab.isExpanded {
                 return true
             }

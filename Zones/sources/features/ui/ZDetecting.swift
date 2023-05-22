@@ -148,7 +148,7 @@ extension ZView {
 	}
 
 	func removeAllTracking() {
-		var indices = [Int]()
+		var indices = IntArray()
 
 		for area in trackingAreas {
 			removeTrackingArea(area)

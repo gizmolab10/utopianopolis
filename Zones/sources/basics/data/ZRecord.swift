@@ -101,7 +101,7 @@ class ZRecord: ZManagedObject {
 	var                   maybeZone : Zone?        { return self as? Zone }
 	var                        zone : Zone?        { return maybeZone ?? maybeTrait?.ownerZone }
 	var             maybeDatabaseID : ZDatabaseID? { return dbid?.databaseID }
-	var                  databaseID : ZDatabaseID  { return maybeDatabaseID! }
+	var                  databaseID : ZDatabaseID  { return maybeDatabaseID ?? gDatabaseID }
 	var                    zRecords : ZRecords?    { return maybeDatabaseID?.zRecords }
 	var         unwrappedRecordName : String       { return recordName ?? kEmpty }
 	var               decoratedName : String       { return recordName ?? kNoValue }

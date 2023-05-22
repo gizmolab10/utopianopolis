@@ -15,6 +15,8 @@ import Cocoa
 import UIKit
 #endif
 
+var gNarrowRevealChildCounts = IntArray()
+
 @objc (Zone)
 class Zone : ZRecord, ZIdentifiable, ZToolable {
 
@@ -71,13 +73,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override var                               passesFilter :               Bool  { return isBookmark && gSearchFilter.contains(.fBookmarks) || !isBookmark && gSearchFilter.contains(.fIdeas) }
 	var                                           isDragged :               Bool  { return gDragging.isDragged(self) }
 	var                                          isBookmark :               Bool  { return zoneLink != nil }
+	var                                         hasChildren :               Bool  { return count > 0 }
 	var                                     isValidBookmark :               Bool  { return bookmarkTarget != nil && bookmarkTarget!.getRoot.isARoot }
-	var                                  hasVisibleChildren :               Bool  { return isExpanded && count > 0 }
 	var                                     dragDotIsHidden :               Bool  { return isFavoritesHere || (kIsPhone && self == gHereMaybe && isExpanded) } // hide favorites root drag dot
+	var                                  hasVisibleChildren :               Bool  { return isExpanded && hasChildren }
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
-	var                                  hasNarrowRevealDot :               Bool  { return isExpanded || [0, 1, 3].contains(count) || (gCountsMode != .dots) }
+	var                                  hasNarrowRevealDot :               Bool  { return isExpanded || gNarrowRevealChildCounts.contains(count) || (gCountsMode != .dots) }
 	var                                    hasBadRecordName :               Bool  { return recordName == nil }
-	var                                       showRevealDot :               Bool  { return count > 0 || isTraveller }
+	var                                       showRevealDot :               Bool  { return hasChildren || isTraveller }
 	var                                       hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
 	var                                       hasZonesAbove :               Bool  { return hasAnyZonesAbove(true) }
 	var                                       hasChildNotes :               Bool  { return zonesWithNotes.count > 1 }
@@ -132,7 +135,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@discardableResult func updateEditorText()             ->          ZTextPack? { return gTextEditor.updateEditorText(inZone: self) }
 	func          toggleShowing()                                                 { isShowing ? hide() : show() }
 	func          recount()                                                       { updateAllProgenyCounts() }
-
 
 	var traitTypes : ZTraitTypesArray {
 		var types = ZTraitTypesArray()
@@ -2254,7 +2256,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				zone.expand()
 			}
 
-			if  zone.count > 0,
+			if  zone.hasChildren,
 				let child = gListsGrowDown ? zone.children.last : zone.children.first {
 
 				child.grab()
@@ -2715,14 +2717,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var isFirstSibling: Bool {
-		if  let parent     = parentZone {
-			let siblings   = parent.children
-			if  siblings.count > 0 {
-				let first  = siblings[0]
-				let isHere = parent.widget?.isHere ?? false
+		if  let parent = parentZone, parent.hasChildren {
+			let  first = parent.children[0]
+			let isHere = parent.widget?.isHere ?? false
 
-				return first == self && (isHere || parent.isFirstSibling)
-			}
+			return first == self && (isHere || parent.isFirstSibling)
 		}
 
 		return false
@@ -3185,7 +3184,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				holders.append(holder)
 
-				while gotten < size && count > 0 {
+				while gotten < size && hasChildren {
 					if  let child = children.popLast(),
 						child.progenyCount < (optimumSize / 2) {
 						holder.addChildNoDuplicate(child, at: nil)
@@ -3260,7 +3259,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let markMatch = zone.bookmarksMatching(type)
 			let qualifies = all ||
 				(!groups && (!progeny ||  notSelf) && markMatch) ||
-			(notSelf && ( progeny || markMatch ||   (groups && (zone.count > 0))))
+			(notSelf && ( progeny || markMatch ||   (groups && zone.hasChildren)))
 
 			if  qualifies {
 				result.prependUnique(item: zone) { (a, b) in
@@ -3333,7 +3332,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
 				gSignal([.spRelayout, .spCrumbs])
 			}
-		} else if count > 0, !OPTION {
+		} else if hasChildren, !OPTION {
 			let show = !isExpanded
 
 			if  isInFavorites {

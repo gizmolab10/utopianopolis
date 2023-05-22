@@ -19,6 +19,7 @@ typealias                CKRecordID = CKRecord.ID
 typealias               CKReference = CKRecord.Reference
 typealias          ZStoryboardSegue = NSStoryboardSegue
 
+typealias                  IntArray = [Int]
 typealias                 ZoneArray = [Zone]
 typealias               ZOpIDsArray = [ZOperationID]
 typealias               ZFilesArray = [ZFile]

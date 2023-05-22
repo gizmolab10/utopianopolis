@@ -87,7 +87,7 @@ extension ZoneWidget {
 				let child = childrenWidgets[index]
 
 				if  absolute {
-					child.relayoutAbsoluteFrame(relativeTo: controller)
+					child.convertFrameToAbsolute(relativeTo: controller)
 				} else {
 					let    size = child.drawnSize
 					let  origin = CGPoint(x: .zero, y: y)
@@ -100,17 +100,19 @@ extension ZoneWidget {
 	}
 
 	func linearRelayoutTextViewFrame(_ absolute: Bool = false) {
-		if  let              t = pseudoTextWidget,
-			let              c = controller {
+		if  let          t = pseudoTextWidget,
+			let          w = textWidget,
+			let          c = controller {
 			if  absolute {
-				t.relayoutAbsoluteFrame(relativeTo: c)
+				t.convertFrameToAbsolute(relativeTo: c)
 
-				textWidget?.frame = t.absoluteFrame
-			} else if let size = textWidget?.drawnSize.insetBy(.zero, c.dotWidth * 0.1) {
-				let          x = hideDragDot ? 20.0 : c.horizontalGap + c.fontSize + c.coreThickness * 5.0 - 20.0
-				let          y = (drawnSize.height - size.height) / 2.0
-				let     origin = CGPoint(x: x, y: y)
-				t       .frame = CGRect(origin: origin, size: size)
+				w   .frame = t.absoluteFrame
+			} else {
+				let   size = w.drawnSize.insetBy(.zero, c.dotWidth * 0.1)
+				let      x = hideDragDot ? 20.0 : c.horizontalGap + c.fontSize + c.coreThickness * 5.0 - 20.0
+				let      y = (drawnSize.height - size.height) / 2.0
+				let origin = CGPoint(x: x, y: y)
+				t   .frame = CGRect(origin: origin, size: size)
 			}
 		}
 	}
@@ -118,7 +120,7 @@ extension ZoneWidget {
 	func linearRelayoutChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren, let c = childrenView {
 			if  absolute {
-				c.relayoutAbsoluteFrame(relativeTo: controller)
+				c.convertFrameToAbsolute(relativeTo: controller)
 			} else if let tFrame = pseudoTextWidget?.frame {
 				let    reduction = mapType.isMainMap ? 0.8 : kFavoritesMapReduction / 1.5
 				let            x = tFrame.maxX + dotPlusGap * reduction
@@ -150,17 +152,20 @@ extension ZoneWidget {
 	}
 
 	func linearRelayoutHighlightRect() {
-		if  let      frame = textWidget?.frame,
-			let       zone = widgetZone,
-			let          c = controller {
-			let      thick = c.coreThickness
-			let showReveal = zone.showRevealDot
-			let    yExpand = c.dotHeight / -25.0 * mapReduction
-			let    fExpand = showReveal ? 0.56 : -1.06
-			let    mExpand = showReveal ? 1.25 :  0.65
-			let    xOffset = c.dotHalfWidth * fExpand + thick * 3.0
-			let    xExpand = c.dotHeight    * mExpand + thick * 4.0
-			highlightRect  = frame.expandedBy(dx: xExpand, dy: yExpand + 2.0).offsetBy(dx: xOffset, dy: .zero)
+		if  let     frame = textWidget?.frame,
+			let      zone = widgetZone,
+			let         c = controller {
+			let     thick = c.coreThickness
+			let hasReveal = zone.showRevealDot
+			let    narrow = zone.hasNarrowRevealDot
+			let    oWidth = c.dotThirdWidth * (narrow ? 1.0 : -10.6)
+			let    eWidth = c.dotThirdWidth * (narrow ? 1.0 :   1.3)
+			let   yExpand = c.dotHeight / -25.0 * mapReduction
+			let   wExpand = hasReveal ? -0.1 : -2.5
+			let   hExpand = hasReveal ?  4.4 :  2.0
+			let   xOffset = oWidth * wExpand + thick * 3.0
+			let   xExpand = eWidth * hExpand + thick * 4.0
+			highlightRect = frame.offsetBy(dx: xOffset, dy: .zero).expandedBy(dx: xExpand, dy: yExpand + 2.0)
 		}
 	}
 
@@ -215,7 +220,7 @@ extension ZoneWidget {
 	func linearGrandRelayout() {
 		linearRelayoutAllFrames()
 		updateFrameSize()
-		relayoutAbsoluteFrame(relativeTo: controller)
+		convertFrameToAbsolute(relativeTo: controller)
 		linearRelayoutAllFrames(true)
 	}
 
@@ -321,7 +326,7 @@ extension ZoneLine {
 
 extension CGRect {
 
-	func center(_ dot: ZoneDot) -> CGPoint? {
+	func center(of dot: ZoneDot) -> CGPoint? {
 		if  let      controller = dot.controller {
 			if !dot.isReveal {
 				return centerLeft.offsetBy(-controller.dotHalfWidth, .zero)
@@ -354,7 +359,7 @@ extension ZoneDot {
 
 	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
 		if  let           c = controller,
-			let      center = absoluteTextFrame.center(self) {
+			let      center = absoluteTextFrame.center(of: self) {
 			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
 			absoluteHitRect = absoluteFrame.expandedEquallyBy(c.dotHalfWidth)
 		}

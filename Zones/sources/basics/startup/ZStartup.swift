@@ -22,6 +22,7 @@ class ZStartup: NSObject {
 	func grandStartup() {
 		gSetupDebugFeatures()
 		gUpdatePersistence()
+		gSetupConstants()
 
 		gRefusesFirstResponder = true			// WORKAROUND new feature of mac os x, prevents crash by ignoring user input
 		gHelpWindowController  = NSStoryboard(name: "Help", bundle: nil).instantiateInitialController() as? NSWindowController
@@ -86,6 +87,10 @@ class ZStartup: NSObject {
 		gStartupCount = gStartupCount + 1
 
 		return gStartupCount > 10
+	}
+
+	func gSetupConstants() {
+		gNarrowRevealChildCounts = [0, 1, 3, 10, 30, 100, 300]
 	}
 
 	func requestFeedback(_ onCompletion: @escaping Closure) {

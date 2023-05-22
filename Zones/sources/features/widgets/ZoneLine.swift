@@ -84,8 +84,8 @@ class ZoneLine: ZPseudoView {
 	}
 
 	func drawLine(using color: ZColor) {
-		guard let c = controller else { return }
-		if  let  p = parentWidget?.widgetZone, !p.isExpanded, self != gDragging.dragLine {
+		guard let    c = controller else { return }
+		if  let      p = parentWidget?.widgetZone, !p.isExpanded, self != gDragging.dragLine {
 			return
 		}
 

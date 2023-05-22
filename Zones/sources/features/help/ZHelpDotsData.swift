@@ -15,7 +15,7 @@ class ZHelpDotsData: ZHelpData {
 
 	override var noTabPrefix   :  String        { return "                    " }
 	override var columnStrings : [StringsArray] { return [dotsColumnOne, dotsColumnTwo] }
-	override var tabOffsets    : [Int]          { return [0, 20, 165] }
+	override var tabOffsets    : IntArray          { return [0, 20, 165] }
 	override var italicsFont   :  ZFont         { return kLargeItalicsFont }
 	override var boldFont      :  ZFont         { return kLargeBoldFont }
 	override var rowHeight     :  CGFloat       { return 21.0 }

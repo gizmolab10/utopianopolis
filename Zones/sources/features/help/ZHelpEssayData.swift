@@ -14,7 +14,7 @@ class ZHelpEssayData: ZHelpData {
 
 	override var noTabPrefix   :  String        { return "                    " }
 	override var columnStrings : [StringsArray] { return [essayColumnOne, essayColumnTwo] }
-	override var tabOffsets    : [Int]          { return [0, 20, 220] }
+	override var tabOffsets    : IntArray          { return [0, 20, 220] }
 	override var rowHeight     :  CGFloat       { return 14.0 }
 	override var dotOffset     :  CGFloat       { return  2.3 }    
 

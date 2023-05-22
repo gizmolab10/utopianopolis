@@ -11,7 +11,7 @@ import Foundation
 class ZHelpMapData : ZHelpData {
 
 	override var columnStrings     : [StringsArray] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
-	override var tabOffsets        : [Int]          { return [0, 12, 77] }
+	override var tabOffsets        : IntArray          { return [0, 12, 77] }
 	override var columnWidth       :  Int           { return 288 }
 	override var indexOfLastColumn :  Int           { return 3 }
 

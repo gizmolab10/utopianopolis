@@ -261,7 +261,7 @@ class ZTextEditor: ZTextView {
 	// MARK: -
 
     @discardableResult func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) -> ZTextEditor {
-        if  (currentEdit == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside becomeFirstResponder, called below
+        if  (currentEdit == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside assignAsFirstResponder, called below
             let        pack = ZTextPack(zRecord)
 			if  let    zone = pack.packedZone,
 				zone.userCanWrite {
@@ -280,7 +280,7 @@ class ZTextEditor: ZTextView {
 					assignAsFirstResponder(t)
 
 					if  offset     == nil,
-						let current = gCurrentOffset {
+						let current = gCurrentOffset {      // from mouse down event
 						offset      = current + t.frame.minX
 					}
 				}

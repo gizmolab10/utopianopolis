@@ -189,7 +189,7 @@ extension ZoneArray {
 
 	mutating func duplicate() {
 		var duplicated = ZoneArray ()
-		var    indices = [Int] ()
+		var    indices =  IntArray ()
 
 		reorderAccordingToValue()
 

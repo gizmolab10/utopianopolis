@@ -69,7 +69,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		}   else {
 			return  isDragDrop       ||
 				(   zone.isTraveller ||
-					zone.count > 0)
+					zone.hasChildren)
 		}
     }
 
@@ -233,7 +233,8 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			if  single {
 				draw(strings[0])
 			} else {
-				let angles = count.anglesArray(startAngle: count == 2 ? kHalfPI : kPI)
+				let quantity = count == 2 ? 3 : 6
+				let   angles = quantity.anglesArray(startAngle: k2PI / Double(quantity))
 
 				for (index, string) in strings.enumerated() {
 					draw(string, angle: angles[index])
