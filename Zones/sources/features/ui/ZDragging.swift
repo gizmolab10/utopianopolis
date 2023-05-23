@@ -90,7 +90,7 @@ class ZDragging: NSObject {
 	}
 
 	func handleDragGesture(_ gesture: ZPanGestureRecognizer, in controller: ZMapController) {
-		if  gIgnoreEvents {
+		if  gPreferencesAreTakingEffect {
 			return
 		}
 
@@ -104,7 +104,7 @@ class ZDragging: NSObject {
 			gTextEditor.stopCurrentEdit(forceCapture: true, andRedraw: false) // so drag and rubberband do not lose user's changes
 
 			if  COMMAND && !OPTION {                          // shift background
-				controller.offsetEvent(move: state == .changed,  to: location)
+				controller.offsetEvent(move: state == .changed, to: location)
 			} else if !draggedZones.isEmpty {
 				dropMaybeGesture(gesture, in: controller)     // logic for drawing the drop dot, and for dropping dragged idea
 			} else if state == .changed {
@@ -123,7 +123,7 @@ class ZDragging: NSObject {
 				let       dot = any as? ZoneDot {
 				if  dot.isReveal {
 					cleanupAfterDrag()                        // no dragging
-					dot.widgetZone?.revealDotClicked(flags)
+					dot.widgetZone?.handleDotClicked(flags, isReveal: true)
 				} else {
 					dragStartEvent(dot, gesture)              // start dragging a drag dot
 				}

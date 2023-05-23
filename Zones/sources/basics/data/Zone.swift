@@ -1429,6 +1429,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				p.grab()
 				gSignal([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
 			}
+
+			gFavoritesCloud.updateCurrentBookmarks()
 		} else if let bookmark = firstBookmarkTargetingSelf {		 // self is an orphan
 			gHere              = bookmark			                 // change focus to bookmark of self
 		}
@@ -2036,7 +2038,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				targetParent?.expand()
 				focusOnBookmarkTarget { (iObject: Any?, kind: ZSignalKindArray) in
-					gFavoritesCloud.updateCurrentWithBookmarksTargetingHere()
+					gFavoritesCloud.updateCurrentBookmarks()
 					atArrival()
 				}
 
@@ -3259,13 +3261,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let markMatch = zone.bookmarksMatching(type)
 			let qualifies = all ||
 				(!groups && (!progeny ||  notSelf) && markMatch) ||
-			(notSelf && ( progeny || markMatch ||   (groups && zone.hasChildren)))
+				(notSelf && ( progeny || markMatch ||   (groups && zone.hasChildren)))
 
 			if  qualifies {
 				result.prependUnique(item: zone) { (a, b) in
 					if  let    aZone = a as? Zone,
 						let    bZone = b as? Zone {
-						return aZone.hasSameZoneLink(as:bZone)
+						return aZone == bZone
 					}
 
 					return false
@@ -3293,28 +3295,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func dragDotClicked(_ flags: ZEventFlags) {
-		let COMMAND = flags.hasCommand
-		let   SHIFT = flags.hasShift
-
-		if  COMMAND {
-			grab()            // narrow selection to just this one zone
-
-			if  self != gHere {
-				gFocusing.focusOnGrab(.eSelected) {
-					gRelayoutMaps()
-				}
-			}
-		} else if SHIFT {
-			addToGrabs()
+	func handleDotClicked(_ flags: ZEventFlags, isReveal: Bool, isCircularMode: Bool = false) {
+		if  isReveal {
+			handleRevealDotClicked(flags, isCircularMode: isCircularMode)
 		} else {
-			grab()
+			handleDragDotClicked  (flags)
 		}
 
-		gRelayoutMaps()
 	}
 
-	func revealDotClicked(_ flags: ZEventFlags, isCircularMode: Bool = false) {
+	func handleRevealDotClicked(_ flags: ZEventFlags, isCircularMode: Bool = false) {
 		ungrabProgeny()
 
 		let COMMAND = flags.hasCommand
@@ -3346,14 +3336,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 	}
-	
-	func dotClicked(_ flags: ZEventFlags, isReveal: Bool, isCircularMode: Bool = false) {
-		if  isReveal {
-			revealDotClicked(flags, isCircularMode: isCircularMode)
+
+	func handleDragDotClicked(_ flags: ZEventFlags) {
+		let COMMAND = flags.hasCommand
+		let   SHIFT = flags.hasShift
+
+		if  COMMAND {
+			grab()            // narrow selection to just this one zone
+
+			if  self != gHere {
+				gFocusing.focusOnGrab(.eSelected) {
+					gRelayoutMaps()
+				}
+			}
+		} else if SHIFT {
+			addToGrabs()
 		} else {
-			dragDotClicked  (flags)
+			grab()
 		}
 
+		gRelayoutMaps()
 	}
 
 	func updateVisibilityInFavoritesMap(_ show: Bool) {

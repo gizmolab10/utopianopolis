@@ -52,11 +52,11 @@ class ZFavoritesMapController: ZMapController {
 	}
 
 	override func handleSignal(kind: ZSignalKind) {
-		if !gFavoritesAreVisible {
+		if !gFavoritesAreVisible {                                    // don't send signal to a hidden controller
 			mapView?.removeAllTextViews(ofType: .favorites)           // clear remnants of prior loop
-		} else {  // don't send signal to a hidden controller
+		} else {
 			gMapControlsView?.controlsUpdate()
-			gFavoritesCloud.updateCurrentWithBookmarksTargetingHere()
+			gFavoritesCloud.updateCurrentBookmarks()
 			super.handleSignal(kind: kind)
 		}
 	}
@@ -66,8 +66,8 @@ class ZFavoritesMapController: ZMapController {
 		gMapControlsView?.setupAndRedraw()
 	}
 
-	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {   // true means handled
-		return gMapController?.handleDragGesture(iGesture) ?? false                    // use drag view coordinates from main (not favorites) map controller
+	@objc override func handleControllerDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {   // true means handled
+		return gMapController?.handleControllerDragGesture(iGesture) ?? false                    // use drag view coordinates from main (not favorites) map controller
 	}
 
 }

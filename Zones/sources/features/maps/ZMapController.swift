@@ -302,8 +302,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		}
 	}
 
-	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
-		if  gIgnoreEvents {
+	@objc override func handleControllerDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool { // true means handled
+		if  gPreferencesAreTakingEffect {
 			return true
 		}
 
@@ -328,8 +328,8 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		return false
     }
 	
-	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gIgnoreEvents {
+	@objc override func handleControllerClickGesture(_ iGesture: ZGestureRecognizer?) {
+		if  gPreferencesAreTakingEffect {
 			return
 		}
 
@@ -363,11 +363,15 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 					gSetMapWorkMode()
 				}
 
+				// ////////////////// //
+				// click on something //
+				// ////////////////// //
+
 				if  let w = hit as? ZoneWidget {
 					w.widgetZone?.grab()
 				} else if let     d = hit as? ZoneDot,
 						  let flags = gesture.modifiers {
-					d.widgetZone?.dotClicked(flags, isReveal: d.isReveal)
+					d.widgetZone?.handleDotClicked(flags, isReveal: d.isReveal)
 				} else if gIsMapMode {
 
 					// /////////////////// //

@@ -43,17 +43,6 @@ enum ZEssayTitleMode: Int {
 	case sFull
 }
 
-typealias ZEssayDragDotArray = [ZEssayDragDot]
-
-struct ZEssayDragDot {
-	var     color = kWhiteColor
-	var  dragRect = CGRect.zero
-	var  textRect = CGRect.zero
-	var  lineRect : CGRect?
-	var noteRange : NSRange?
-	var      note : ZNote?
-}
-
 struct ZNoteVisibility {
 	var       eyeRect = CGRect .zero
 	var     stackRect = CGRect .zero

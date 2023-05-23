@@ -45,7 +45,7 @@ class ZFocusing : NSObject {
 		// 2. is here              -> update in favorites map
 		// 3. in favorites map     -> grab here, if grabbed then do as for state 4
 		// 4. not here, COMMAND    -> change here
-		// 5. not COMMAND          -> select here, create a bookmark
+		// 5. not COMMAND          -> change here to grab
 
 		guard let zone = (kind == .eEdited) ? gCurrentlyEditingZone : gSelecting.firstSortedGrab else {
 			atArrival()
@@ -73,7 +73,7 @@ class ZFocusing : NSObject {
 			atArrival()
 		} else if zone.isInFavorites {  // state 3
 			finishAndGrabHere()
-		} else if flags.hasCommand {             // state 4
+		} else if flags.hasCommand {    // state 4
 			gFavoritesCloud.refocus {
 				atArrival()
 			}

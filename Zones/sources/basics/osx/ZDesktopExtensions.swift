@@ -440,8 +440,8 @@ extension ZView {
             clearGestures()
 
             if  let controller = newValue {
-                controller.movementGesture = createDragGestureRecognizer (controller, action: #selector(controller.handleDragGesture))
-                controller.clickGesture    = createPointGestureRecognizer(controller, action: #selector(controller.handleClickGesture), clicksRequired: 1)
+                controller.movementGesture = createDragGestureRecognizer (controller, action: #selector(controller.handleControllerDragGesture))
+                controller.clickGesture    = createPointGestureRecognizer(controller, action: #selector(controller.handleControllerClickGesture), clicksRequired: 1)
             }
         }
     }

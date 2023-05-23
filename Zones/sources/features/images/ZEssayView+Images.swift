@@ -104,13 +104,6 @@ extension ZEssayView {
 	// MARK: - mouse events
 	// MARK: -
 
-	override func mouseDown(with event: ZEvent) {
-		if  !handleClick   (with: event) {
-			super.mouseDown(with: event)
-			mouseMoved     (with: event)
-		}
-	}
-
 	override func mouseDragged(with event: ZEvent) {
 		super.mouseDragged(with: event)
 

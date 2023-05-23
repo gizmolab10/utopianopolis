@@ -432,7 +432,7 @@ class ZFavorites: ZRecords {
 		setCurrentFavoriteBookmark(to: iZone)
 	}
 
-	var currentTargets: ZoneArray {
+	var currentMainMapTargets: ZoneArray {
 		var  targets = ZoneArray()
 
 		if  gIsEssayMode,
@@ -450,9 +450,9 @@ class ZFavorites: ZRecords {
 		return targets
 	}
 
-	var bookmarksTargetingHere: ZoneArray? {
+	var bookmarksWithCurrentMainMapTargets: ZoneArray? {
 		if  let bookmarks = rootZone?.bookmarks, bookmarks.count > 0 {
-			let matches   = bookmarks.whoseTargetIntersects(with: currentTargets, orSpawnsIt: false)
+			let matches   = bookmarks.whoseTargetIntersects(with: currentMainMapTargets, orSpawnsIt: false)
 			if  matches.count > 0 {
 				return matches
 			}
@@ -461,11 +461,11 @@ class ZFavorites: ZRecords {
 		return nil
 	}
 
-	func updateCurrentWithBookmarksTargetingHere() {
-		if  let      bookmarks = bookmarksTargetingHere {
+	func updateCurrentBookmarks() {
+		if  let      bookmarks = bookmarksWithCurrentMainMapTargets {
 			let      inRecents = currentHere.isInRecentsGroup
-			var markedRecent   = false
 			var markedFavorite = false
+			var markedRecent   = false
 			for bookmark in bookmarks {
 				let toRecents  = bookmark.isInRecentsGroup
 				if  toRecents {
@@ -474,7 +474,7 @@ class ZFavorites: ZRecords {
 						recentCurrent  = bookmark
 					}
 				} else if !markedFavorite, !inRecents {
-					otherCurrent    = bookmark
+					otherCurrent       = bookmark
 
 					if  bookmark.isInFavoritesHere {
 						markedFavorite = true

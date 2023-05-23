@@ -98,25 +98,25 @@ class ZMainController: ZGesturesController {
 		gSignal([.spMain, .sDetails, .spRelayout])
 	}
 
-	@objc override func handleDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {         // false means not handled
-		if  gIgnoreEvents {
+	@objc override func handleControllerDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {         // false means not handled
+		if  gPreferencesAreTakingEffect {
 			return true
 		}
 
-		return gIsEssayMode ? false : (gMapController?.handleDragGesture(iGesture) ?? false)
+		return gIsEssayMode ? false : (gMapController?.handleControllerDragGesture(iGesture) ?? false)
 	}
 
-	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  let         gesture = iGesture, !gIgnoreEvents {
+	@objc override func handleControllerClickGesture(_ iGesture: ZGestureRecognizer?) {
+		if  let         gesture = iGesture, !gPreferencesAreTakingEffect {
 			if  !gIsEssayMode {
-				gMapController?.handleClickGesture(iGesture)
+				gMapController?.handleControllerClickGesture(iGesture)
 			} else if let eView = gEssayView {
 				let    location = gesture.location(in: eView)
 
 				if  location.x < .zero {				// is gesture located outside essay view?
 					eView.save()
 					gControllers.swapMapAndEssay(force: .wMapMode) {
-						gMapController?.handleClickGesture(iGesture)
+						gMapController?.handleControllerClickGesture(iGesture)
 					}
 				}
 			}

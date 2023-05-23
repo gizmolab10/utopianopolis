@@ -32,22 +32,15 @@ func gSetupDebugFeatures() {
 	gCoreDataMode.insert(.dNotPreloadFromCK)       // don't pre-populate CD from CK TODO: loses data
 //	gCoreDataMode.insert(.dTestingMigration)       // store core data in a separate { local test folder & CK repository }
 
-//                                                 // these are unlikely to change any time soon:
+//                                                 // these rarely change:
 //	gCoreDataMode.insert(.dUseFlat)                // use flat data folder
 //	gCoreDataMode.insert(.dNotUseUserID)           // not use <user id> in store file path
 	gCoreDataMode.insert(.dNotTestTrashed)         // ignore isTrashed during fetch TODO: missing keypath
 	gCoreDataMode.insert(.dNoRelationships)        // don't use the relationships table yet
 
 	gPrintModes         = []
-//	gPrintModes  .insert(.dEdit)
-//	gPrintModes  .insert(.dTime)
-//	gPrintModes  .insert(.dAdopt)
-//	gPrintModes  .insert(.dCross)
-//	gPrintModes  .insert(.dFetch)
 	gPrintModes  .insert(.dError)
-	gPrintModes  .insert(.dImages)
-//	gPrintModes  .insert(.dWidget)
-//	gPrintModes  .insert(.dMoving)
+//	gPrintModes  .insert(.dImages)
 //	gPrintModes  .insert(.dMigrate)
 }
 

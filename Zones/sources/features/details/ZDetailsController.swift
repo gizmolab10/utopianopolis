@@ -62,8 +62,8 @@ class ZDetailsController: ZGesturesController {
 		stackView?.layer?.backgroundColor = kClearColor.cgColor
 	}
 
-	@objc override func handleClickGesture(_ iGesture: ZGestureRecognizer?) {
-		if  gIsEssayMode, !gIgnoreEvents {
+	@objc override func handleControllerClickGesture(_ iGesture: ZGestureRecognizer?) {
+		if  gIsEssayMode, !gPreferencesAreTakingEffect {
 			gEssayView?.save()
 			gControllers.swapMapAndEssay(force: .wMapMode)
 		}

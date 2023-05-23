@@ -9,6 +9,7 @@
 import Foundation
 import CloudKit
 
+var gPreferencesAreTakingEffect                       = false
 var gWhileMigratingFromCloudKit                       = false
 var    gTextEditorHandlesArrows                       = false
 var     gIsEditingStateChanging                       = false
@@ -21,7 +22,6 @@ var            gIsReadyToShowUI                       = false
 var            gDeferringRedraw                       = false
 var             gPushIsDisabled                       = false
 var              gTextCapturing                       = false
-var               gIgnoreEvents                       = false
 var               gNeedsRecount                       = false
 var               gCancelSearch                       = false
 var                 gLaunchedAt                       = Date()

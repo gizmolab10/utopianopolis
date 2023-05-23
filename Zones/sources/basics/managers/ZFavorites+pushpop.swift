@@ -157,12 +157,12 @@ extension ZFavorites {
 		}
 	}
 
-	func setAsCurrent(_ zone: Zone?, alterMainMapFocus: Bool = false) {
-		if  let target = zone?.bookmarkTarget {
+	func setAsCurrent(_ bookmark: Zone?, alterMainMapFocus: Bool = false) {
+		if  let target = bookmark?.bookmarkTarget {
 			if  alterMainMapFocus {
 				gDatabaseID          = target.databaseID
 				gRecords.currentHere = target // avoid push
-				recentCurrent        = zone
+				recentCurrent        = bookmark
 
 				target.grab()
 			}

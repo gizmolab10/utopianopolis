@@ -75,7 +75,7 @@ class ZDisplayPreferencesController: ZGenericController {
 			}
 
 			temporarilyApplyThenDelay(for: 0.2) { flag in
-				gIgnoreEvents = flag
+				gPreferencesAreTakingEffect = flag
 			}
 
 			gSignal([.spRelayout, .spCrumbs, .spPreferences])
