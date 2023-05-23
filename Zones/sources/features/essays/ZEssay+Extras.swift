@@ -43,47 +43,6 @@ enum ZEssayTitleMode: Int {
 	case sFull
 }
 
-enum ZEssayLinkType: String {
-	case hWeb   = "h"
-	case hFile  = "u"
-	case hIdea  = "i"
-	case hNote  = "n"
-	case hEssay = "e"
-	case hEmail = "m"
-	case hClear = "c"
-
-	var title: String {
-		switch self {
-			case .hWeb:   return "Internet"
-			case .hFile:  return "Upload"
-			case .hIdea:  return "Idea"
-			case .hNote:  return "Note"
-			case .hEssay: return "Essay"
-			case .hEmail: return "Email"
-			case .hClear: return "Clear"
-		}
-	}
-
-	var linkDialogLabel: String {
-		switch self {
-			case .hWeb:   return "Text of link"
-			case .hEmail: return "Email address"
-			default:      return "Name of file"
-		}
-	}
-
-	var linkType: String {
-		switch self {
-			case .hWeb:   return "http"
-			case .hEmail: return "mailto"
-			default:      return title.lowercased()
-		}
-	}
-
-	static var all: [ZEssayLinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hFile, .hClear] }
-
-}
-
 typealias ZEssayDragDotArray = [ZEssayDragDot]
 
 struct ZEssayDragDot {

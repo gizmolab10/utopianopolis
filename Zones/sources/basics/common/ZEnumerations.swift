@@ -62,44 +62,6 @@ enum ZMutateTextMenuType: String {
 
 var gActiveSpecialCharacters: [ZSpecialCharactersMenuType] { return [.eCommand, .eOption, .eShift, .eControl, .eReturn, .eCopyright, .eArrow, .eBack] }
 
-enum ZSpecialCharactersMenuType: String {
-	case eCommand   = "c"
-	case eOption    = "o"
-	case eShift     = "s"
-	case eControl   = "n"
-	case eCopyright = "g"
-	case eReturn    = "r"
-	case eArrow     = "i"
-	case eBack      = "k"
-	case eCancel    = "\r"
-
-	var both: (String, String) {
-		switch self {
-			case .eCopyright: return ("©",  "Copyright")
-			case .eControl:   return ("^",  "Control")
-			case .eCommand:   return ("⌘",  "Command")
-			case .eOption:    return ("⌥",  "Option")
-			case .eReturn:    return ("􀅇", "Return")
-			case .eCancel:    return ("",   "Cancel")
-			case .eShift:     return ("⇧",  "Shift")
-			case .eArrow:     return ("⇨",  "⇨")
-			case .eBack:      return ("⇦",  "⇦")
-		}
-	}
-
-	var text: String {
-		let (insert, _) = both
-
-		return insert
-	}
-
-	var title: String {
-		let (_, title) = both
-		return title
-	}
-
-}
-
 enum ZRelayoutMapType : Int {
 	case favorites
 	case main

@@ -15,6 +15,104 @@ import Cocoa
 import UIKit
 #endif
 
+enum ZReorderMenuType: String {
+	case eAlphabetical = "a"
+	case eByLength     = "l"
+	case eByKind       = "k"
+	case eReversed     = "r"
+	case eBySizeOfList = "s"
+
+	var title: String {
+		switch self {
+			case .eAlphabetical: return "alphabetically"
+			case .eReversed:     return "reverse order"
+			case .eByLength:     return "by length of idea"
+			case .eBySizeOfList: return "by size of list"
+			case .eByKind:       return "by kind of idea"
+		}
+	}
+
+}
+
+enum ZSpecialCharactersMenuType: String {
+	case eCommand   = "c"
+	case eOption    = "o"
+	case eShift     = "s"
+	case eControl   = "n"
+	case eCopyright = "g"
+	case eReturn    = "r"
+	case eArrow     = "i"
+	case eBack      = "k"
+	case eCancel    = "\r"
+
+	var both: (String, String) {
+		switch self {
+			case .eCopyright: return ("©",  "Copyright")
+			case .eControl:   return ("^",  "Control")
+			case .eCommand:   return ("⌘",  "Command")
+			case .eOption:    return ("⌥",  "Option")
+			case .eReturn:    return ("􀅇", "Return")
+			case .eCancel:    return ("",   "Cancel")
+			case .eShift:     return ("⇧",  "Shift")
+			case .eArrow:     return ("⇨",  "⇨")
+			case .eBack:      return ("⇦",  "⇦")
+		}
+	}
+
+	var text: String {
+		let (insert, _) = both
+
+		return insert
+	}
+
+	var title: String {
+		let (_, title) = both
+		return title
+	}
+
+}
+
+enum ZEssayLinkType: String {
+	case hWeb   = "h"
+	case hFile  = "u"
+	case hIdea  = "i"
+	case hNote  = "n"
+	case hEssay = "e"
+	case hEmail = "m"
+	case hClear = "c"
+
+	var title: String {
+		switch self {
+			case .hWeb:   return "Internet"
+			case .hFile:  return "Upload"
+			case .hIdea:  return "Idea"
+			case .hNote:  return "Note"
+			case .hEssay: return "Essay"
+			case .hEmail: return "Email"
+			case .hClear: return "Clear"
+		}
+	}
+
+	var linkDialogLabel: String {
+		switch self {
+			case .hWeb:   return "Text of link"
+			case .hEmail: return "Email address"
+			default:      return "Name of file"
+		}
+	}
+
+	var linkType: String {
+		switch self {
+			case .hWeb:   return "http"
+			case .hEmail: return "mailto"
+			default:      return title.lowercased()
+		}
+	}
+
+	static var all: [ZEssayLinkType] { return [.hWeb, .hIdea, .hEmail, .hNote, .hEssay, .hFile, .hClear] }
+
+}
+
 func gIsDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 	if  let e  = event {
 		if  e == gCurrentEvent {
@@ -29,6 +127,76 @@ func gIsDuplicate(event: ZEvent? = nil, item: ZMenuItem? = nil) -> Bool {
 	}
 
 	return false
+}
+
+func gSpecialCharactersPopup(target: AnyObject, action: Selector) -> ZMenu {
+	let menu = ZMenu(title: "add a special character")
+
+	for type in gActiveSpecialCharacters {
+		menu.addItem(gSpecialsItem(type: type, target: target, action: action))
+	}
+
+	menu.addItem(ZMenuItem.separator())
+	menu.addItem(gSpecialsItem(type: .eCancel, target: target, action: action))
+
+	return menu
+}
+
+func gSpecialsItem(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
+	let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+	item.isEnabled = true
+	item.target    = target
+
+	if  type != .eCancel {
+		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
+	}
+
+	return item
+}
+
+func gMutateTextPopup(target: AnyObject, action: Selector) -> ZMenu {
+	let menu = ZMenu(title: "change text")
+
+	for type in ZMutateTextMenuType.allTypes {
+		menu.addItem(gMutateTextItem(type: type, target: target, action: action))
+	}
+
+	return menu
+}
+
+func gMutateTextItem(type: ZMutateTextMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
+	let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
+	item.isEnabled = true
+	item.target    = target
+	item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
+
+	return item
+}
+
+func gReorderPopup(target: AnyObject, action: Selector) -> ZMenu {
+	let menu = ZMenu(title: "reorder")
+
+	for type in gActiveReorderTypes {
+		menu.addItem(gReorderingItem(type: type, target: target, action: action))
+
+		if  type != .eReversed {
+			menu.addItem(gReorderingItem(type: type, target: target, action: action, flagged: true))
+		}
+
+		menu.addItem(.separator())
+	}
+
+	return menu
+}
+
+func gReorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector, flagged: Bool = false) -> ZMenuItem {
+	let                      title = flagged ? "\(type.title) reversed" : type.title
+	let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
+	item.keyEquivalentModifierMask = flagged ? ZEventFlags.shift : ZEventFlags(rawValue: 0)
+	item                   .target = target
+	item                .isEnabled = true
+
+	return item
 }
 
 @objc (ZoneContextualMenu)
@@ -77,120 +245,6 @@ class ZContextualMenu: ZMenu {
 			case "y":     gToggleShowToolTips()
 			default:  break
 		}
-	}
-
-}
-
-extension ZMenu {
-
-	static func handleMenu() {}
-
-	static func specialCharactersPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "add a special character")
-
-		for type in gActiveSpecialCharacters {
-			menu.addItem(specialsItem(type: type, target: target, action: action))
-		}
-
-		menu.addItem(ZMenuItem.separator())
-		menu.addItem(specialsItem(type: .eCancel, target: target, action: action))
-
-		return menu
-	}
-
-	static func specialsItem(type: ZSpecialCharactersMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.isEnabled = true
-		item.target    = target
-
-		if  type != .eCancel {
-			item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
-		}
-
-		return item
-	}
-
-	static func mutateTextPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "change text")
-
-		for type in ZMutateTextMenuType.allTypes {
-			menu.addItem(mutateTextItem(type: type, target: target, action: action))
-		}
-
-		return menu
-	}
-
-	static func mutateTextItem(type: ZMutateTextMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let  	  item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.isEnabled = true
-		item.target    = target
-		item.keyEquivalentModifierMask = ZEventFlags(rawValue: 0)
-
-		return item
-	}
-
-	static func reorderPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let menu = ZMenu(title: "reorder")
-
-		for type in gActiveReorderTypes {
-			menu.addItem(reorderingItem(type: type, target: target, action: action))
-
-			if  type != .eReversed {
-				menu.addItem(reorderingItem(type: type, target: target, action: action, flagged: true))
-			}
-
-			menu.addItem(.separator())
-		}
-
-		return menu
-	}
-
-	static func reorderingItem(type: ZReorderMenuType, target: AnyObject, action: Selector, flagged: Bool = false) -> ZMenuItem {
-		let                      title = flagged ? "\(type.title) reversed" : type.title
-		let                       item = ZMenuItem(title: title, action: action, keyEquivalent: type.rawValue)
-		item.keyEquivalentModifierMask = flagged ? ZEventFlags.shift : ZEventFlags(rawValue: 0)
-		item                   .target = target
-		item                .isEnabled = true
-
-		return item
-	}
-
-	enum ZRefetchMenuType: String {
-		case eList    = "l"
-		case eIdeas   = "g"
-		case eAdopt   = "a"
-		case eTraits  = "t"
-		case eProgeny = "p"
-
-		var title: String {
-			switch self {
-				case .eList:    return "list"
-				case .eAdopt:   return "adopt"
-				case .eIdeas:   return "all ideas"
-				case .eTraits:  return "all traits"
-				case .eProgeny: return "all progeny"
-			}
-		}
-	}
-
-	static func refetchPopup(target: AnyObject, action: Selector) -> ZMenu {
-		let types: [ZRefetchMenuType] = [.eIdeas, .eTraits, .eProgeny, .eList, .eAdopt]
-		let menu = ZMenu(title: "refetch")
-
-		for type in types {
-			menu.addItem(refetchingItem(type: type, target: target, action: action))
-		}
-
-		return menu
-	}
-
-	static func refetchingItem(type: ZRefetchMenuType, target: AnyObject, action: Selector) -> ZMenuItem {
-		let                       item = ZMenuItem(title: type.title, action: action, keyEquivalent: type.rawValue)
-		item.keyEquivalentModifierMask = ZEvent.ModifierFlags(rawValue: 0)
-		item                   .target = target
-		item                .isEnabled = true
-
-		return item
 	}
 
 }
@@ -285,7 +339,7 @@ extension ZTextEditor {
 	}
 
 	func showSpecialCharactersPopup() {
-		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:)))
+		let  menu = gSpecialCharactersPopup(target: self, action: #selector(handleSpecialsPopupMenu(_:)))
 		let point = CGPoint(x: -165.0, y: -60.0)
 
 		menu.popUp(positioning: nil, at: point, in: gTextEditor.currentTextWidget)
@@ -309,7 +363,7 @@ extension ZEssayView {
 	// MARK: -
 
 	func showSpecialCharactersPopup() {
-		let  menu = ZMenu.specialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:)))
+		let  menu = gSpecialCharactersPopup(target: self, action: #selector(handleSymbolsPopupMenu(_:)))
 		let point = selectionRect.origin.offsetBy(-165.0, -60.0)
 
 		menu.popUp(positioning: nil, at: point, in: self)

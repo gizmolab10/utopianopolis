@@ -45,6 +45,7 @@ func gSetupDebugFeatures() {
 //	gPrintModes  .insert(.dCross)
 //	gPrintModes  .insert(.dFetch)
 	gPrintModes  .insert(.dError)
+	gPrintModes  .insert(.dImages)
 //	gPrintModes  .insert(.dWidget)
 //	gPrintModes  .insert(.dMoving)
 //	gPrintModes  .insert(.dMigrate)

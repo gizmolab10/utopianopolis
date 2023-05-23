@@ -18,25 +18,6 @@ let gMapEditor = ZMapEditor()
 
 var gActiveReorderTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind] }
 
-enum ZReorderMenuType: String {
-	case eAlphabetical = "a"
-	case eByLength     = "l"
-	case eByKind       = "k"
-	case eReversed     = "r"
-	case eBySizeOfList = "s"
-
-	var title: String {
-		switch self {
-		case .eAlphabetical: return "alphabetically"
-		case .eReversed:     return "reverse order"
-		case .eByLength:     return "by length of idea"
-		case .eBySizeOfList: return "by size of list"
-		case .eByKind:       return "by kind of idea"
-		}
-	}
-
-}
-
 // mix of zone mutations and web services requests
 
 class ZMapEditor: ZBaseEditor {
@@ -471,7 +452,7 @@ class ZMapEditor: ZBaseEditor {
 
 	func showMutateTextPopup() {
 		if  let widget = gSelecting.currentMoveable.widget?.textWidget {
-			let   menu = ZMenu.mutateTextPopup(target: self, action: #selector(handleMutateTextPopupMenu(_:)))
+			let   menu = gMutateTextPopup(target: self, action: #selector(handleMutateTextPopupMenu(_:)))
 			let  point = CGPoint(x: -30.0, y: 30.0)
 
 			menu.popUp(positioning: nil, at: point, in: widget)
@@ -479,7 +460,7 @@ class ZMapEditor: ZBaseEditor {
 	}
 
 	func showReorderPopup() {
-		applyToMenu { return ZMenu.reorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))) }
+		applyToMenu { return gReorderPopup(target: self, action: #selector(handleReorderPopupMenu(_:))) }
 	}
 
 	func applyToMenu(_ createMenu: ToMenuClosure) {

@@ -93,7 +93,7 @@ class ZTraitAssets : ZRecord {
 					url = original
 
 					grabWrapper()
-					printDebug(.dImages, "RENAME   \(url)")
+					printDebug(.dImages, "RENAME   \(url.lastPathComponent)")
 				} catch {
 					printDebug(.dError, "\(error)")
 				}
@@ -101,10 +101,12 @@ class ZTraitAssets : ZRecord {
 		}
 
 		if  wrapper == nil {
-			printDebug(.dImages, "MISSING  \(url)")
+			printDebug(.dImages, "MISSING  \(url.lastPathComponent)")
 
 			return nil
 		}
+
+		printDebug(.dImages, "FOUND    \(url.lastPathComponent)")
 
 		return ZImageAttachment(fileWrapper: wrapper)
 	}

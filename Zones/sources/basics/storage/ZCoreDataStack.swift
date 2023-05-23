@@ -162,7 +162,6 @@ class ZCoreDataStack: NSObject {
 						if  databaseID == .mineID {
 							loadRootZone(recordName: kFavoritesRootName, into: databaseID)
 						}
-
 					} else if let zRecords = databaseID.zRecords {
 						load(type:  kZoneType, into: databaseID)
 						load(type: kTraitType, into: databaseID)
