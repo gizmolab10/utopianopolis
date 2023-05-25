@@ -157,9 +157,10 @@ extension ZoneWidget {
 			let         c = controller {
 			let     thick = c.coreThickness
 			let hasReveal = zone.showRevealDot
+			let  multiple = zone.hasMultipleTraits
 			let    narrow = zone.hasNarrowRevealDot
-			let    oWidth = c.dotThirdWidth * (narrow ? 1.0 : -10.6)
-			let    eWidth = c.dotThirdWidth * (narrow ? 1.0 :   1.3)
+			let    oWidth = c.dotThirdWidth * (multiple ? -12.0 : (narrow ? 1.0 : -10.6))
+			let    eWidth = c.dotThirdWidth * (multiple ?   1.5 : (narrow ? 1.0 :   1.3))
 			let   yExpand = c.dotHeight / -25.0 * mapReduction
 			let   wExpand = hasReveal ? -0.1 : -2.5
 			let   hExpand = hasReveal ?  4.4 :  2.0
@@ -331,7 +332,7 @@ extension CGRect {
 			if !dot.isReveal {
 				return centerLeft.offsetBy(-controller.dotHalfWidth, .zero)
 			} else if let zone = dot.widgetZone {
-				let      width = zone.hasNarrowRevealDot ? controller.dotThirdWidth : controller.dotWidth
+				let      width = zone.hasMultipleTraits ? controller.dotHeight : zone.hasNarrowRevealDot ? controller.dotThirdWidth : controller.dotWidth
 
 				return centerRight.offsetBy(width + controller.coreThickness * 5.0, .zero)
 			}

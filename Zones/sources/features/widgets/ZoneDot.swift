@@ -233,8 +233,8 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			if  single {
 				draw(strings[0])
 			} else {
-				let quantity = count == 2 ? 3 : 6
-				let   angles = quantity.anglesArray(startAngle: k2PI / Double(quantity))
+				let  start = kPI / 7.0 * Double(count == 3 ? 10 : 9)
+				let angles = 7.anglesArray(startAngle: start, clockwise: false)
 
 				for (index, string) in strings.enumerated() {
 					draw(string, angle: angles[index])

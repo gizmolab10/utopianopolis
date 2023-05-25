@@ -309,44 +309,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func drawNoteDecorations() {
-		resetVisibilities()
-
-		let dots = dragDots
-		if  dots.count > 0 {
-			for (index, dot) in dots.enumerated() {
-				if  let     note = dot.note?.firstNote,
-					let     zone = note.zone {
-					let  grabbed = grabbedZones.contains(zone)
-					let selected = note.noteRange.inclusiveIntersection(selectedRange) != nil
-					let   filled = selected && !hasGrabbedNote
-					let    color = dot.color
-
-					drawVisibilityIcons(for: index, y: dot.dragRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
-
-					if  gEssayTitleMode == .sFull {
-						dot.dragRect.drawColoredOval(color, thickness: 2.0, filled: filled || grabbed)   // draw drag dot
-
-						if  let lineRect = dot.lineRect {
-							drawColoredRect(lineRect, color, thickness: 0.5)             // draw indent line in front of drag dot
-						}
-
-						if  grabbed {
-							drawColoredRect(dot.textRect, color)                         // draw box around entire note
-						}
-					}
-				}
-			}
-		} else if let  note = gCurrentEssay, visibilities.count > 0,
-				  let  zone = note.zone,
-				  let     c = textContainer,
-				  let     l = layoutManager {
-			let        rect = l.boundingRect(forGlyphRange: note.noteRange, in: c)
-
-			drawVisibilityIcons(for: 0, y: rect.minY + 33.0, isANote: !zone.hasChildNotes)                              // draw visibility icons
-		}
-	}
-
 	// MARK: - input
 	// MARK: -
 

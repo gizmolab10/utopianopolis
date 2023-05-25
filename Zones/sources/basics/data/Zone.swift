@@ -79,6 +79,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                  hasVisibleChildren :               Bool  { return isExpanded && hasChildren }
 	var                                  canRelocateInOrOut :               Bool  { return parentZoneMaybe?.widget != nil }
 	var                                  hasNarrowRevealDot :               Bool  { return isExpanded || gNarrowRevealChildCounts.contains(count) || (gCountsMode != .dots) }
+	var                                   hasMultipleTraits :               Bool  { return traits.count > 1 }
 	var                                    hasBadRecordName :               Bool  { return recordName == nil }
 	var                                       showRevealDot :               Bool  { return hasChildren || isTraveller }
 	var                                       hasZonesBelow :               Bool  { return hasAnyZonesAbove(false) }
