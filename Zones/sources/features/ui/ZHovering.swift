@@ -13,6 +13,7 @@ class ZHovering: NSObject {
 	var dot             : ZoneDot?
 	var widget          : ZoneWidget?
 	var textWidget      : ZoneTextWidget?
+	var traitWidget     : ZTraitWidget?
 	var absoluteView    : ZView?     { return dot?.absoluteView ?? textWidget?.controller?.mapView ?? widget?.absoluteView }
 	var onObject        : AnyObject? { return dot ?? widget ?? textWidget }
 	var showHover       : Bool       { return absoluteView != nil }
@@ -34,13 +35,14 @@ class ZHovering: NSObject {
 	}
 
 	@discardableResult func clear() -> Bool {
-		let            cleared = showHover // do this before setting everything to nil
-		dot?       .isHovering = false
-		widget?    .isHovering = false
-		textWidget?.isHovering = false
-		dot                    = nil
-		widget                 = nil
-		textWidget             = nil
+		let             cleared = showHover // do this before setting everything to nil
+		dot?        .isHovering = false
+		widget?     .isHovering = false
+		textWidget? .isHovering = false
+		traitWidget?.isHovering = false
+		dot                     = nil
+		widget                  = nil
+		textWidget              = nil
 
 		return cleared
 	}
@@ -53,6 +55,8 @@ class ZHovering: NSObject {
 			dot         = d
 		} else if let w = p as? ZoneWidget {
 			widget      = w
+		} else if let t = p as? ZTraitWidget {
+			traitWidget = t
 		} else {
 			isHovering  = false
 		}

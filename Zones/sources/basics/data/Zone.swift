@@ -244,7 +244,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var zoneType : ZoneType {
 		var type = ZoneType()
 
-		if  count == 0 {
+		if  !hasChildren {
 			type.insert(.zChildless)
 		}
 
@@ -1204,7 +1204,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					if  let            p = parent, p != self {
 						p.fetchableCount = p.count       // delete alters the count
 
-						if  p.count == 0, p.isInFavorites,
+						if !p.hasChildren, p.isInFavorites,
 							let g = p.parentZone {
 							gFavoritesCloud.hereZoneMaybe = g
 
@@ -1383,7 +1383,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func browseRight(extreme: Bool = false, onCompletion: BoolClosure?) {
 		if  isBookmark {
 			invokeBookmark(onCompletion: onCompletion)
-		} else if isTraveller && fetchableCount == 0 && count == 0 {
+		} else if isTraveller && fetchableCount == 0 && !hasChildren {
 			invokeTravel(onCompletion: onCompletion)
 		} else if isInMainMap {
 			addAGrab(extreme: extreme, onCompletion: onCompletion)
@@ -1769,7 +1769,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			noteMaybe = note
 
 			note?.updateChildren()
-		} else if count == 0 || !gCreateCombinedEssay {
+		} else if !hasChildren || !gCreateCombinedEssay {
 			note      = ZNote(self)
 			noteMaybe = note
 		} else {
@@ -2555,7 +2555,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func exposed(upTo highestLevel: Int) -> Int? {
-		if  count == 0 {
+		if  !hasChildren {
 			return nil
 		}
 
@@ -2995,7 +2995,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func recursiveUpdate(_ show: Bool, to iLevel: Int?, onCompletion: Closure?) {
-		if !show && isGrabbed && (count == 0 || !isExpanded) {
+		if !show && isGrabbed && (!hasChildren || !isExpanded) {
 
 			// ///////////////////////// //
 			// COLLAPSE LEFT INTO PARENT //
@@ -3227,7 +3227,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				iChild.addToGrabs()
 			}
 		} else {
-			if  count == 0 || !isExpanded {
+			if  !hasChildren || !isExpanded {
 				if  let parent = parentZone {
 					parent.selectAll(progeny: progeny)
 				}
@@ -3319,7 +3319,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 			
 			gRelayoutMaps()
-		} else if isBookmark || (isTraveller && (COMMAND || count == 0)) {
+		} else if hasMultipleTraits, !hasChildren {
+		} else if isBookmark || (isTraveller && (COMMAND || !hasChildren)) {
 			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
 				gSignal([.spRelayout, .spCrumbs])
 			}

@@ -396,6 +396,9 @@
 		A7C942FE2A1D42280000FB7E /* ZEssayView+Grab.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C942FD2A1D42280000FB7E /* ZEssayView+Grab.swift */; };
 		A7C942FF2A1D42280000FB7E /* ZEssayView+Grab.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C942FD2A1D42280000FB7E /* ZEssayView+Grab.swift */; };
 		A7C943002A1D42280000FB7E /* ZEssayView+Grab.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C942FD2A1D42280000FB7E /* ZEssayView+Grab.swift */; };
+		A7C943032A1FFB0C0000FB7E /* ZTraitWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C943022A1FFB0C0000FB7E /* ZTraitWidget.swift */; };
+		A7C943042A1FFB0C0000FB7E /* ZTraitWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C943022A1FFB0C0000FB7E /* ZTraitWidget.swift */; };
+		A7C943052A1FFB0C0000FB7E /* ZTraitWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C943022A1FFB0C0000FB7E /* ZTraitWidget.swift */; };
 		A7CC53AD267C2A7F00370BC0 /* CryptoKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */; };
 		A7CC53AF267FD07300370BC0 /* ZSubscriptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */; };
 		A7CC53B0267FD07300370BC0 /* ZSubscriptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */; };
@@ -706,6 +709,7 @@
 		A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHoverableButton.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7C942FD2A1D42280000FB7E /* ZEssayView+Grab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZEssayView+Grab.swift"; sourceTree = "<group>"; };
+		A7C943022A1FFB0C0000FB7E /* ZTraitWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraitWidget.swift; sourceTree = "<group>"; };
 		A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CryptoKit.framework; path = System/Library/Frameworks/CryptoKit.framework; sourceTree = SDKROOT; };
 		A7CC53AE267FD07300370BC0 /* ZSubscriptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZSubscriptionController.swift; sourceTree = "<group>"; };
 		A7CF3203260D737B00285A03 /* ZHelpEssayGraphicalsController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZHelpEssayGraphicalsController.swift; sourceTree = "<group>"; };
@@ -1301,6 +1305,7 @@
 				A7B48A8323E0E80C00654DBD /* ZoneTextWidget.swift */,
 				A7B48A8923E0E80C00654DBD /* ZoneWidget.swift */,
 				A7395BAD21B877B600F5759F /* ZTextEditor.swift */,
+				A7C943022A1FFB0C0000FB7E /* ZTraitWidget.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -1695,6 +1700,7 @@
 				0C43EFE021010F62000976CE /* ZCloud.swift in Sources */,
 				A79655492A19A6DB007F86E7 /* ZMenu.swift in Sources */,
 				A7C344E025FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */,
+				A7C943032A1FFB0C0000FB7E /* ZTraitWidget.swift in Sources */,
 				A70CFB5D298F305000EF56A5 /* ZDarkableImageView.swift in Sources */,
 				A7E096CA23EB98FA0017EC32 /* ZLinkDialogController.swift in Sources */,
 				A7D507D3269151B7001CEA9F /* ZReceipt.swift in Sources */,
@@ -1827,6 +1833,7 @@
 				0C2E22C01F75B8AB00B50A71 /* ZMainController.swift in Sources */,
 				A78460F327289E7D006A4075 /* ZoneLine.swift in Sources */,
 				A7395BB121B877B600F5759F /* ZTextEditor.swift in Sources */,
+				A7C943052A1FFB0C0000FB7E /* ZTraitWidget.swift in Sources */,
 				0CAC18E32006A84800D641C4 /* ZBookmarks.swift in Sources */,
 				A706443D246F720700F90B86 /* ZMapControlsView.swift in Sources */,
 				A7CC53B1267FD07300370BC0 /* ZSubscriptionController.swift in Sources */,
@@ -1988,6 +1995,7 @@
 				A7C344E125FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */,
 				A796554A2A19A6DB007F86E7 /* ZMenu.swift in Sources */,
 				A7E9A3B123C115470064C89A /* ZHelpMapData.swift in Sources */,
+				A7C943042A1FFB0C0000FB7E /* ZTraitWidget.swift in Sources */,
 				A70CFB5C298F305000EF56A5 /* ZDarkableImageView.swift in Sources */,
 				A7D507D4269151B7001CEA9F /* ZReceipt.swift in Sources */,
 				A70064DE22484808004E3A8D /* ZManifest.swift in Sources */,

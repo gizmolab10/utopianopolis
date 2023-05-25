@@ -279,7 +279,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 
 	func dot(at iIndex: Int) -> ZoneDot? {
 		if  let zone = widgetZone {
-			if  zone.count == 0 || iIndex < 0 {
+			if !zone.hasChildren || iIndex < 0 {
 				return nil
 			}
 

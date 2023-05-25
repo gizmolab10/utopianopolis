@@ -77,7 +77,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		var     filled = false
 		if  let zone   = widgetZone {
 			if  isReveal {
-				filled = ((!zone.isExpanded || (zone.isTraveller && zone.count == 0)) && isLinearMode) != isHovering
+				filled = ((!zone.isExpanded || (zone.isTraveller && !zone.hasChildren)) && isLinearMode) != isHovering
 			} else {
 				filled =   zone.isGrabbed   || isHovering
 			}
