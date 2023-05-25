@@ -90,8 +90,6 @@ extension ZFavorites {
 			pop(c) {
 			setCurrentFavoriteBookmark(to: next)
 
-			print(next)
-
 			if  let    here = next.bookmarkTarget {
 				gHere       = here
 

@@ -10,12 +10,12 @@ import Foundation
 
 class ZBreadcrumbButton: ZHoverableButton {
 
-	var               zone = gHere
-	var       currentEvent : ZEvent?
-	override var debugName : String { return zone.debugName }
+	var                   zone = gHere
+	var currentBreadcrumbEvent : ZEvent?
+	override var     debugName : String { return zone.debugName }
 
 	override func mouseDown(with event: ZEvent) {
-		currentEvent = event
+		currentBreadcrumbEvent = event
 
 		super.mouseDown(with: event)
 	}
