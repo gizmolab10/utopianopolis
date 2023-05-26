@@ -51,6 +51,7 @@ extension ZGenericController {
 	var            fontSize         : CGFloat { return  coreFontSize + kFontDelta }      // 15 ... 28
 	var           dotHeight         : CGFloat { return (fontSize  / kDotFactor) + 2.0 }
 	var       dotHalfHeight         : CGFloat { return  dotHeight / 2.0 }
+	var      dotExtraHeight         : CGFloat { return  dotHeight * 1.3}
 	var    circleIdeaRadius         : CGFloat { return  dotHeight * 2.2 }
 	var            dotWidth         : CGFloat { return  dotHeight * kWidthToHeightRatio }
 	var        dotHalfWidth         : CGFloat { return  dotWidth  / 2.0 }

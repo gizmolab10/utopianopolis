@@ -58,7 +58,7 @@ class ZHelpGridView: ZView {
 						let r = dt.rect(p)
 						let m = dt.helpDotParameters(isFilled: true)
 
-						d.drawDot(r, m)
+						d.drawDot        (r, m)
 						d.drawDotExterior(r, m)
 					}
 
@@ -69,7 +69,7 @@ class ZHelpGridView: ZView {
 						let r = dt.rect(p)
 						let m = dt.helpDotParameters(isFilled: true, showAsACircle: true)
 
-						d.drawDot(r, m)
+						d.drawDot        (r, m)
 						d.drawDotExterior(r, m)
 					}
 				}

@@ -332,7 +332,7 @@ extension CGRect {
 			if !dot.isReveal {
 				return centerLeft.offsetBy(-controller.dotHalfWidth, .zero)
 			} else if let zone = dot.widgetZone {
-				let      width = zone.hasMultipleTraits ? controller.dotHeight : zone.hasNarrowRevealDot ? controller.dotThirdWidth : controller.dotWidth
+				let      width = zone.hasMultipleTraits ? controller.dotExtraHeight : zone.hasNarrowRevealDot ? controller.dotThirdWidth : controller.dotWidth
 
 				return centerRight.offsetBy(width + controller.coreThickness * 5.0, .zero)
 			}
@@ -387,10 +387,11 @@ extension ZoneDot {
 extension ZTraitWidget {
 
 	func linearRelayoutTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect) {
-		let    radius = absoluteDotFrame.height
-		let    offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
-		let    origin = absoluteDotFrame.center.offsetBy(radius: radius, angle: angle) - offset
-		absoluteFrame = CGRect(origin: origin, size: drawnSize)
+		if  let    radius = dot?.widget?.controller?.dotExtraHeight {
+			let    offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
+			let    origin = absoluteDotFrame.center.offsetBy(radius: radius, angle: angle) - offset
+			absoluteFrame = CGRect(origin: origin, size: drawnSize)
+		}
 	}
 
 }

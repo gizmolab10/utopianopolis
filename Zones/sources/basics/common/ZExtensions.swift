@@ -479,18 +479,6 @@ extension CKRecord {
         return false
     }
 
-	var traitType: String {
-		var string = kEmpty
-
-		if  let        type = self["type"] as? String,
-			let       trait = ZTraitType(rawValue: type),
-			let description = trait.description {
-			string          = description + kUncommonSeparator
-		}
-
-		return string
-	}
-
     convenience init(for name: String) {
         self.init(recordType: kZoneType, recordID: CKRecordID(recordName: name))
     }
@@ -2556,17 +2544,6 @@ extension String {
 }
 
 extension StringsArray {
-
-	var convertedTraits: StringsArray {
-		var converted = StringsArray()
-
-		for string in self {
-			let   char = string == "h" ? kEquals : string == "n" ? "+" : string
-			converted.append(char)
-		}
-
-		return converted
-	}
 
 	func joinedWithSeparatorAt(level: Int) -> String { return joined(separator: gSeparatorAt(level: level)) }
 	var  joinedWithDoubleNewLine :            String { return joined(separator: kDoubleNewLine) }

@@ -354,6 +354,15 @@ enum ZHelpDotType: String {
 		}
 	}
 
+	var traitType: String? {
+		switch self {
+			case .note, .essay: return ZTraitType.tNote     .rawValue
+			case .email:        return ZTraitType.tEmail    .rawValue
+			case .hyperlink:    return ZTraitType.tHyperlink.rawValue
+			default:            return nil
+		}
+	}
+
 	var childCount: Int {
 		switch self {
 			case .oneEleven: return 111
@@ -368,13 +377,13 @@ enum ZHelpDotType: String {
 	func helpDotParameters(isFilled: Bool = false, showAsACircle: Bool = false) -> ZDotParameters {
 		var p           = ZDotParameters()
 		p.color         = gHelpHyperlinkColor
-		p.fill          = isFilled ? p.color : gBackgroundColor
-		p.isFilled      = isFilled
+		p.showList      = !isFilled || pointLeft
+		p.fill          =  isFilled ? p.color : gBackgroundColor
+		p.isFilled      =  isFilled
 		p.isReveal      = isReveal
-		p.typesOfTrait  = traitTypes
+		p.traitTypes  = traitTypes
 		p.showAccess    = showAccess
 		p.accessType    = accessType
-		p.showList      = pointLeft || !isFilled
 		p.isGroupOwner  = self == .owner
 		p.isGrouped     = self == .owner    || self == .both || self == .member
 		p.hasTargetNote = self == .notemark || self == .has
