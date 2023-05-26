@@ -1997,6 +1997,7 @@ extension String {
 	var       spacesStripped :                  String  { return strip(kSpace) }
 	var      hyphensStripped :                  String  { return strip(kSuperHyphen).strip(kHyphen) }
 	var       extractedTitle :                  String  { return hyphensStripped.spacesStripped }
+	var       convertedTrait :                  String  { return self == "h" ? kEquals : self == "n" ? "+" : self }
 	var             isHyphen :                    Bool  { return self == kHyphen }
     var              isDigit :                    Bool  { return "0123456789.+-=*/".contains(self[startIndex]) }
     var       isAlphabetical :                    Bool  { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
@@ -2016,7 +2017,6 @@ extension String {
 	func substring(toExclusive:   Int)       -> String  { return String(self[..<index(at: toExclusive)]) }
 	static func from(_ ascii:  UInt32)       -> String  { return String(UnicodeScalar(ascii)!) }
 	subscript (i: Int)                       -> String  { return self[i ..< i + 1] }
-
 
     var opposite: String {
 		switch self {

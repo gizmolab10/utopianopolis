@@ -50,6 +50,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
     // MARK: -
 
 	var               isReveal = true
+	var           traitWidgets = [ZTraitWidget]()
 	var                   line : ZoneLine?
 	weak var            widget : ZoneWidget?
 	override var    controller : ZMapController? { return widget?.controller }
@@ -93,9 +94,28 @@ class ZoneDot: ZPseudoView, ZToolTipper {
         isReveal = asReveal
         widget   = w
 
+		if  isReveal, widgetZone?.hasMultipleTraits ?? false,
+			let traits = widgetZone?.traits {
+			let  count = traits.count
+			let  start = kPI / 7.0 * Double(count == 3 ? 10 : 9)
+			let angles = 7.anglesArray(startAngle: start, clockwise: false)
+			for  (index, trait) in traits.values.enumerated() {
+				let  t = ZTraitWidget(view: nil, with: trait, at: angles[index], around: self)
+
+				t.updateTraitWidgetDrawnSize()
+				traitWidgets.append(t)
+			}
+		}
+
 		updateDotDrawnSize()
 	}
-	
+
+	@discardableResult func updateDotDrawnSize() -> CGSize {
+		drawnSize = controller?.dotSize(forReveal: isReveal) ?? .zero
+
+		return drawnSize
+	}
+
 	override func setupDrawnView() {
 		super.setupDrawnView()
 
@@ -232,13 +252,13 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 			if  single {
 				draw(strings[0])
-			} else {
-				let  start = kPI / 7.0 * Double(count == 3 ? 10 : 9)
-				let angles = 7.anglesArray(startAngle: start, clockwise: false)
-
-				for (index, string) in strings.enumerated() {
-					draw(string, angle: angles[index])
-				}
+//			} else {
+//				let  start = kPI / 7.0 * Double(count == 3 ? 10 : 9)
+//				let angles = 7.anglesArray(startAngle: start, clockwise: false)
+//
+//				for (index, string) in strings.enumerated() {
+//					draw(string, angle: angles[index])
+//				}
 			}
 		}
 	}
@@ -301,25 +321,29 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	}
 
 	func drawDotExterior(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
-		if  parameters.showSideDot,
-			!parameters.isReveal {
+		if !parameters.isReveal,
+			parameters.showSideDot {
 
 			// ///////////////////////////////// //
 			// INDICATE CURRENT IN FAVORITES MAP //
 			// ///////////////////////////////// //
 
 			drawFavoriteSideDot(in: iDirtyRect, parameters)
-		} else if  isLinearMode,
-			gCountsMode == .dots,
-			parameters.isReveal,
-			!parameters.hasTarget,
-			!parameters.showList {
+		} else if  isLinearMode, parameters.isReveal {
+			for traitWidget in traitWidgets {
+				traitWidget.draw(parameters)
+			}
 
-			// /////////////// //
-			// TINY COUNT DOTS //
-			// /////////////// //
+			if gCountsMode == .dots,
+			   !parameters.hasTarget,
+			   !parameters.showList {
 
-			drawTinyCountDots(iDirtyRect, parameters: parameters)
+				// /////////////// //
+				// TINY COUNT DOTS //
+				// /////////////// //
+
+				drawTinyCountDots(iDirtyRect, parameters: parameters)
+			}
 		}
 	}
 

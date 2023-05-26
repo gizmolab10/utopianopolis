@@ -432,14 +432,6 @@ extension ZoneDot {
 		}
 	}
 
-	@discardableResult func circularUpdateDotDrawnSize() -> CGSize {
-		linearUpdateDotDrawnSize()
-
-		// drawnSize = drawnSize.multiplyBy(1.4)
-
-		return drawnSize
-	}
-
 	enum ZPosition: Int {
 		case above
 		case below

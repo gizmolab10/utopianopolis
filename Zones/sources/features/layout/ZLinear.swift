@@ -352,20 +352,6 @@ extension ZoneDot {
 		return false
 	}
 
-	@discardableResult func linearUpdateDotDrawnSize() -> CGSize {
-		drawnSize = controller?.dotSize(forReveal: isReveal) ?? .zero
-
-		return drawnSize
-	}
-
-	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		if  let           c = controller,
-			let      center = absoluteTextFrame.center(of: self) {
-			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
-			absoluteHitRect = absoluteFrame.expandedEquallyBy(c.dotHalfWidth)
-		}
-	}
-
 	func linearDrawMainDot(in iDirtyRect: CGRect, using parameters: ZDotParameters) {
 		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and thus controller are nil; so use help controller
 		let  thickness = c.coreThickness * 2.0
@@ -380,6 +366,31 @@ extension ZoneDot {
 
 		path.stroke()
 		path.fill()
+	}
+
+	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
+		if  let           c = controller,
+			let      center = absoluteTextFrame.center(of: self) {
+			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
+			absoluteHitRect = absoluteFrame.expandedEquallyBy(c.dotHalfWidth)
+
+			if  isReveal, widgetZone?.hasMultipleTraits ?? false {
+				for traitWidget in traitWidgets {
+					traitWidget.linearRelayoutTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame)
+				}
+			}
+		}
+	}
+
+}
+
+extension ZTraitWidget {
+
+	func linearRelayoutTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect) {
+		let    radius = absoluteDotFrame.height
+		let    offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
+		let    origin = absoluteDotFrame.center.offsetBy(radius: radius, angle: angle) - offset
+		absoluteFrame = CGRect(origin: origin, size: drawnSize)
 	}
 
 }

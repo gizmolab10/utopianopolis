@@ -538,7 +538,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func handleEssayViewClick(with event: ZEvent) -> Bool { // true means do not further process this event
-		var              result = true
+		var                 result = true
 		if  !gPreferencesAreTakingEffect {
 			let               rect = event.locationRect(in: self)
 			if  let         attach = hitTestForAttachment(in: rect) {
@@ -551,8 +551,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				setNeedsDisplay()
 
 			} else if let      dot = dragDotHit(at: rect),
-					  var     note = dot.note {
-				if  let      index = grabbedNotes.firstIndex(of: note) {
+					  let     note = dot.note {
+				if    let    index = grabbedNotes.firstIndex(of: note) {
 					grabbedNotes.remove(at: index)
 				} else {
 					if !event.modifierFlags.hasShift {
