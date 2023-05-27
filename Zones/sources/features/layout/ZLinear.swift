@@ -138,15 +138,16 @@ extension ZoneWidget {
 	func linearRelayoutAbsoluteHitRect() {
 		if  let            c = controller {
 			var rect         = absoluteFrame
-			let hasReveal    = widgetZone?.showRevealDot ?? false
-			let deltaX       = c.dotWidth * (hasReveal ? 3.0 : 1.0)    // why 3?
-			let extra        = CGSize(width: deltaX, height: .zero)
+			let hasReveal    = widgetZone?    .showRevealDot ?? false
+			let extraTraits  = widgetZone?.hasMultipleTraits ?? false
+			let extraX       = c.dotWidth * (hasReveal ? 3.0 : 1.0)    // why 3?
+			let extraY       = extraTraits ? c.dotWidth : .zero
 			for child in childrenWidgets {
 				if  let zone = child.widgetZone, zone.isVisible {
 					rect     = rect.union(child.absoluteHitRect)
 				}
 			}
-			absoluteHitRect  = rect.expandedBy(extra).offsetBy(extra)
+			absoluteHitRect  = rect.expandedBy(dx: extraX, dy: extraY).offsetBy(dx: extraX, dy: .zero)
 //			debug(absoluteHitRect, "HIT RECT ")
 		}
 	}
@@ -381,7 +382,7 @@ extension ZoneDot {
 
 		if  isReveal, traitWidgets.count > 1 {
 			for traitWidget in traitWidgets {
-				traitWidget.linearRelayoutTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame)
+				traitWidget.linearRelayoutTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame, angle: traitWidget.angle)
 			}
 		}
 	}
@@ -390,12 +391,15 @@ extension ZoneDot {
 
 extension ZTraitWidget {
 
-	func linearRelayoutTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect) {
-		if  let         c = dot?.widget?.controller ?? gHelpController {
-			let    radius = c.dotExtraHeight
-			let    offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
-			let    origin = absoluteDotFrame.center.offsetBy(radius: radius, angle: angle) - offset
-			absoluteFrame = CGRect(origin: origin, size: drawnSize)
+	func linearRelayoutTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect, angle: CGFloat) {
+		if  let            c = dot?.widget?.controller ?? gHelpController {
+			let       radius = c.dotExtraHeight
+			let       offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
+			let       origin = absoluteDotFrame.center.offsetBy(radius: radius, at: angle) - offset
+			var         rect = CGRect(origin: origin, size: drawnSize)
+			absoluteFrame    = rect
+			rect.size.height = rect.width
+			absoluteHitRect  = rect.expandedEquallyBy(3.0).offsetBy(radius: 3.0, at: angle)
 		}
 	}
 

@@ -10,40 +10,21 @@ import Foundation
 
 class ZTraitWidget : ZPseudoView {
 
-	var string : String?
-	var dot    : ZoneDot?
-	var angle  : CGFloat = .zero
+	var angle : CGFloat = .zero
+	var type  : String?
+	var dot   : ZoneDot?
 
-	var font: ZFont? {
-		if  let c = controller ?? gHelpController {
-			let w = c.dotWidth * 0.9
-
-			return ZFont.systemFont(ofSize: w)
-		}
-
-		return nil
-	}
-
-	init(view: ZView?, with trait: String, at angle: CGFloat, around dot: ZoneDot) {
+	init(view: ZView?, with type: String, at angle: CGFloat, around dot: ZoneDot) {
 		super.init(view: view)
 
-		self.string = trait
-		self.angle  = angle
-		self.dot    = dot
-	}
-
-	@discardableResult func updateTraitWidgetDrawnSize() -> CGSize {
-		if  let     f = font,
-			let     s = string {
-			drawnSize = s.sizeWithFont(f)
-		}
-
-		return drawnSize
+		self.angle = angle
+		self.type  = type
+		self.dot   = dot
 	}
 
 	func draw(_ parameters: ZDotParameters) {
 		if  let        c = controller ?? gHelpController,
-			let        s = string,
+			let        t = type,
 			let        f = font,
 			let        d = dot {
 			let isFilled = parameters.isFilled
@@ -55,7 +36,29 @@ class ZTraitWidget : ZPseudoView {
 
 			altColor.setFill()
 			d.drawMainDot(other, ZDotParameters(isReveal: true, isCircle: true))
-			s.draw(in: absoluteFrame, withAttributes: [.foregroundColor : color, .font: f])
+			t.draw(in: absoluteFrame, withAttributes: [.foregroundColor : color, .font: f])
+
+//			absoluteHitRect.drawColoredRect(.red)
 		}
 	}
+
+	@discardableResult func updateTraitWidgetDrawnSize() -> CGSize {
+		if  let     f = font,
+			let     s = type {
+			drawnSize = s.sizeWithFont(f)
+		}
+
+		return drawnSize
+	}
+
+	var font: ZFont? {
+		if  let c = controller ?? gHelpController {
+			let w = c.dotWidth * 0.9
+
+			return ZFont.systemFont(ofSize: w)
+		}
+
+		return nil
+	}
+
 }

@@ -64,6 +64,9 @@ extension ZoneWidget {
 
 	func detectHit(at location: CGPoint, recursive: Bool = true) -> Any? {
 		if                                        absoluteHitRect.contains(location) {
+			if  widgetZone?.zoneName == "essays" {
+				noop()
+			}
 			if  let    d = parentLine?.dragDot, d.absoluteHitRect.contains(location) {
 				return d
 			} else if isCircularMode {
@@ -85,14 +88,16 @@ extension ZoneWidget {
 				}
 			}
 			if  let    s = sharedRevealDot {
-				if                              s.absoluteHitRect.contains(location) {
-					return s
-				}
-
-				for t in s.traitWidgets {
-					if                            t.absoluteFrame.contains(location) {
+				for (i, t) in s.traitWidgets.enumerated() {
+					if                          t.absoluteHitRect.contains(location) {
+						let h = t.absoluteHitRect
+//						print("\(i) \(t.type!) \(h.minY.digits2) < \(location.y.digits2) < \(h.maxY.digits2)") // xxxx
 						return t
 					}
+				}
+
+				if                              s.absoluteHitRect.contains(location) {
+					return s
 				}
 			}
 			if  let    t = pseudoTextWidget,      t.absoluteFrame.contains(location) {

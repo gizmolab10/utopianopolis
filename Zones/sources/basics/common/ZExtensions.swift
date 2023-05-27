@@ -555,8 +555,8 @@ extension CGFloat {
 	var  upward                                  : Bool    { return     self < kPI.float }
 	var  squared                                 : CGFloat { return     self * self }
 	var  invertedSquared                         : CGFloat { return 1.0 / squared }
-	var  oneDigitString                          : String  { return stringTo(precision: 1) }
-	var  twoDigitString                          : String  { return stringTo(precision: 2) }
+	var  digits1                                 : String  { return stringTo(precision: 1) }
+	var  digits2                                 : String  { return stringTo(precision: 2) }
 	func stringTo(precision: Int)               -> String  { return String(format: "%.0\(precision)f", self) }
 	func isBetween(low: CGFloat, high: CGFloat) -> Bool    { return low < high && low < self && self < high }
 
@@ -626,14 +626,14 @@ infix operator -- : AdditionPrecedence
 
 extension CGPoint {
 
-	var containsNAN     : Bool    { return x.isNaN || y.isNaN }
-	var twoDigitsString : String  { return "(\(x.stringTo(precision: 2)), \(y.stringTo(precision: 2)))"}
-	var oneDigitString  : String  { return "(\(x.stringTo(precision: 1)), \(y.stringTo(precision: 1)))"}
-	var integerString   : String  { return "(\(Int(x)), \(Int(y)))" }
-	var dividedInHalf   : CGPoint { return multiplyBy(0.5) }
-	var inverted        : CGPoint { return CGPoint(x: -x, y: -y) }
-	var length          : CGFloat { return sqrt(x * x + y * y) }
-	var angle           : CGFloat { return atan2(y, x) }
+	var containsNAN   : Bool    { return x.isNaN || y.isNaN }
+	var digits2       : String  { return "(\(x.stringTo(precision: 2)), \(y.stringTo(precision: 2)))"}
+	var digits1       : String  { return "(\(x.stringTo(precision: 1)), \(y.stringTo(precision: 1)))"}
+	var integerString : String  { return "(\(Int(x)), \(Int(y)))" }
+	var dividedInHalf : CGPoint { return multiplyBy(0.5) }
+	var inverted      : CGPoint { return CGPoint(x: -x, y: -y) }
+	var length        : CGFloat { return sqrt(x * x + y * y) }
+	var angle         : CGFloat { return atan2(y, x) }
 
 	public static func squared(_ length: CGFloat) -> CGPoint { return CGPoint(x: length, y: length) }
 
@@ -683,7 +683,7 @@ extension CGPoint {
 		return CGPoint(x: x + xOffset, y: y + yOffset)
 	}
 
-	func offsetBy(radius: CGFloat, angle: CGFloat) -> CGPoint {
+	func offsetBy(radius: CGFloat, at angle: CGFloat) -> CGPoint {
 		return offsetBy(radius * cos(angle), radius * sin(angle))
 	}
 
@@ -946,13 +946,11 @@ extension CGRect {
         return offsetBy(dx: dX, dy: dY)
     }
 
-	func expandedBy(_ expansionSize: CGSize) -> CGRect {
-		let dX = -expansionSize.width
-		let dY = -expansionSize.height
-
-		return insetBy(dx: dX, dy: dY)
+	func offsetBy(radius: CGFloat, at angle: CGFloat) -> CGRect {
+		return offsetBy(dx: radius * cos(angle), dy: radius * sin(angle))
 	}
 
+	func        expandedBy(_ expansionSize: CGSize)  -> CGRect { return expandedBy(dx: expansionSize.width, dy: expansionSize.height) }
 	func        expandedBy(dx: CGFloat, dy: CGFloat) -> CGRect { return insetBy(dx: -dx, dy: -dy) }
 	func expandedEquallyBy(_     expansion: CGFloat) -> CGRect { return insetEquallyBy(-expansion) }
 	func expandedEquallyBy(       fraction: CGFloat) -> CGRect { return insetEquallyBy(fraction: -fraction) }

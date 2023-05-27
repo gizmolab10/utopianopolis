@@ -370,7 +370,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 				if  let w = hit as? ZoneWidget {
 					w.widgetZone?.grab()
 				} else if let     t = hit as? ZTraitWidget,
-						  let s = t.string?.unconvertedTrait {
+						  let s = t.type?.unconvertedTrait {
 					t.dot?.widgetZone?.handleTraitDotClicked(s)
 				} else if let     d = hit as? ZoneDot,
 						  let flags = gesture.modifiers {

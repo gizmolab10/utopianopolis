@@ -81,7 +81,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func updateAllDotFrames() {
+	func circularUpdateAllDotFrames() {
 		for line in childrenLines {
 			line.revealDot?.circularUpdateDotAbsoluteFrame()     // start of line
 
@@ -170,7 +170,7 @@ extension ZoneWidget {
 		if  absolute  {
 			traverseAllVisibleWidgetProgeny(inReverse: true) { widget in
 				widget.circularUpdateHighlightRect()
-				widget.updateAllDotFrames()
+				widget.circularUpdateAllDotFrames()
 			}
 
 			traverseAllVisibleWidgetProgeny(inReverse: true) { widget in
