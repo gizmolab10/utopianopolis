@@ -14,7 +14,7 @@ class ZHovering: NSObject {
 	var widget          : ZoneWidget?
 	var textWidget      : ZoneTextWidget?
 	var traitWidget     : ZTraitWidget?
-	var absoluteView    : ZView?     { return dot?.absoluteView ?? textWidget?.controller?.mapView ?? widget?.absoluteView }
+	var absoluteView    : ZView?     { return dot?.absoluteView ?? textWidget?.controller?.mapView ?? widget?.absoluteView ?? traitWidget?.absoluteView }
 	var onObject        : AnyObject? { return dot ?? widget ?? textWidget }
 	var showHover       : Bool       { return absoluteView != nil }
 
@@ -43,6 +43,7 @@ class ZHovering: NSObject {
 		dot                     = nil
 		widget                  = nil
 		textWidget              = nil
+		traitWidget             = nil
 
 		return cleared
 	}

@@ -105,7 +105,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		let     start = kPI / 10.0 * Double(traits.count == 3 ? 12 : 11)
 		let    angles = 10.anglesArray(startAngle: start, clockwise: false, max: traits.count)
 		for (index, trait) in traits.enumerated() {
-			let t = ZTraitWidget(view: nil, with: trait, at: angles[index], around: self)
+			let t = ZTraitWidget(view: absoluteView, with: trait, at: angles[index], around: self)
 
 			t.updateTraitWidgetDrawnSize()
 			traitWidgets.append(t)
@@ -314,7 +314,11 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 			for traitWidget in traitWidgets {
 				var      p = parameters
-				p.isFilled = false
+				p.isFilled = traitWidget.isHovering
+
+				if  p.isFilled {
+					noop()
+				}
 
 				traitWidget.draw(p)
 			}
