@@ -335,7 +335,8 @@ extension ZoneLine {
 	var parentToChildAngle : CGFloat { return parentToChildVector?.angle ?? .zero }
 
 	var dragDotVector : CGPoint {
-		let item = gDrawCirclesAroundIdeas ? parentWidget : dragDot
+		let    showDrag = parentWidget?.widgetZone?.isExpanded ?? true
+		let        item = (showDrag && !gDrawCirclesAroundIdeas) ? dragDot : parentWidget
 		if  let rCenter = revealDot?.absoluteCenter,
 			let pCenter = item?     .absoluteCenter {
 			let    sign = gDrawCirclesAroundIdeas ? 1.0 : -1.0

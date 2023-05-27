@@ -88,9 +88,9 @@ extension ZoneWidget {
 				}
 			}
 			if  let    s = sharedRevealDot {
-				for (i, t) in s.traitWidgets.enumerated() {
+				for (_, t) in s.traitWidgets.enumerated() {
 					if                          t.absoluteHitRect.contains(location) {
-						let h = t.absoluteHitRect
+//						let h = t.absoluteHitRect
 //						print("\(i) \(t.type!) \(h.minY.digits2) < \(location.y.digits2) < \(h.maxY.digits2)") // xxxx
 						return t
 					}

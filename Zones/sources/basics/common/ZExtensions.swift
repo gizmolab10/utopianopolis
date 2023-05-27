@@ -602,14 +602,14 @@ extension Int {
 		return self <= 0 ? kEmpty : "\(self) \(unit)\(self == 1 ? kEmpty : "\(plural)")\(followedBy)"
 	}
 
-	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false, max: Int? = nil) -> [Double] {
+	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false, limit: Int? = nil) -> [Double] {
 		var angles             = [Double]()
-		if  self               > 0, (max == nil || max! > 0) {
+		if  self               > 0, (limit == nil || limit! > 0) {
 			let         isEven = self % 2 == 0
 			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? .zero : 0.5)
 			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-self) // negative means clockwise in osx (counterclockwise in ios)
 
-			for index in 0 ... (max ?? self) - 1 {
+			for index in 0 ... (limit ?? self) - 1 {
 				let increments = Double(index) + extra
 				let      angle = startAngle + incrementAngle * increments
 
@@ -2959,7 +2959,7 @@ extension ZPseudoView {
 				let   smallCount = dotCount % countMax
 				let     fatCount = dotCount / countMax
 
-				let drawDots: IntBooleanClosure = { (iCount, isFat) in
+				func internalDrawDots(_ iCount: Int, _ isFat: Bool) {
 					let   oneSet = (isFat ? smallCount : fatCount) == 0
 					let isHollow = (isFat && fatHollow) || (!isFat && smallHollow)
 
@@ -2981,7 +2981,7 @@ extension ZPseudoView {
 							//
 							// everything should always goes out more (regardless of no notes)
 
-							func drawDot(isFocus: Bool) {
+							func internalDrawDot(isFocus: Bool) {
 								let        asFat = isFat || smallIsFat
 								let  offsetRatio = asFat ? 2.1 : 1.28
 								let     fatRatio = isFat ? 2.0 : 1.6
@@ -3014,14 +3014,14 @@ extension ZPseudoView {
 							}
 
 							if  asIdea {
-								drawDot(isFocus: ideaFocus)
+								internalDrawDot(isFocus: ideaFocus)
 							}
 						}
 					}
 				}
 
-				drawDots(  fatCount, true)  // isFat is true
-				drawDots(smallCount, false)
+				internalDrawDots(  fatCount, true)  // isFat is true
+				internalDrawDots(smallCount, false)
 			}
 		}
 	}

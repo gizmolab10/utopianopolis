@@ -92,6 +92,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                          linkIsRoot :             Bool  { return linkRecordName == kRootName }
 	var                                          isSelected :             Bool  { return gSelecting.isSelected(self) }
 	var                                           isGrabbed :             Bool  { return gSelecting .isGrabbed(self) }
+	var                                           hasTraits :             Bool  { return traits.count > 0 }
 	var                                            hasColor :             Bool  { return isBookmark ? (bookmarkTarget?.hasColor ?? false) : (zoneColor != nil && !zoneColor!.isEmpty) }
 	var                                            hasEmail :             Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
 	var                                            hasAsset :             Bool  { return hasTrait(for: .tAssets) }

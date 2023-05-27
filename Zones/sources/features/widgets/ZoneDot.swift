@@ -101,11 +101,12 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 		updateDotDrawnSize()
 	}
 
-	func setupForTraits(_ traits: StringsArray) {
-		let     start = kPI / 10.0 * Double(traits.count == 3 ? 12 : 11)
-		let    angles = 10.anglesArray(startAngle: start, clockwise: false, max: traits.count)
-		for (index, trait) in traits.enumerated() {
-			let t = ZTraitWidget(view: absoluteView, with: trait, at: angles[index], around: self)
+	func setupForTraits(_ traitStrings: StringsArray) {
+		let     count = traitStrings.count
+		let     start = kPI * (1.0 + (Double(count - 1) / 10.0))
+		let    angles = 10.anglesArray(startAngle: start, clockwise: false, limit: count)
+		for (index, string) in traitStrings.enumerated() {
+			let t = ZTraitWidget(view: absoluteView, with: string, at: angles[index], around: self)
 
 			t.updateTraitWidgetDrawnSize()
 			traitWidgets.append(t)
@@ -226,7 +227,6 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			let     font = ZFont.systemFont(ofSize: width)
 			let     flag = parameters.isFilled
 			let    color = flag ? gBackgroundColor : parameters.color
-//			let altColor = flag ? parameters.color : gBackgroundColor
 			let     size = string.sizeWithFont(font)
 			let   offset = size.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.8))
 			let   origin = dCenter.retreatBy(offset)
@@ -315,10 +315,6 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			for traitWidget in traitWidgets {
 				var      p = parameters
 				p.isFilled = traitWidget.isHovering
-
-				if  p.isFilled {
-					noop()
-				}
 
 				traitWidget.draw(p)
 			}

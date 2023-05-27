@@ -18,7 +18,7 @@ class ZHelpDotsData: ZHelpData {
 	override var tabOffsets    :  IntArray      { return [0, 20, 165] }
 	override var italicsFont   :  ZFont         { return kLargeItalicsFont }
 	override var boldFont      :  ZFont         { return kLargeBoldFont }
-	override var rowHeight     :  CGFloat       { return 18.0 }
+	override var rowHeight     :  CGFloat       { return 17.0 }
 
 	let dotsColumnOne: StringsArray = dotsPrefixArray + [
 		"!DRAG DOT",				"click to select, deselect or drag",											"",
@@ -61,7 +61,8 @@ class ZHelpDotsData: ZHelpData {
 		".3",						"hyperlink               open in a browser",									"",
 		".3",						"note                       edit",												"",
 		"",							"",																				"",
-		".3",						"multiple traits        each of the above",									""
+		".3",						"multiple traits        each of the above",										"",
+		"",							"",																				""
 	]
 
 }
