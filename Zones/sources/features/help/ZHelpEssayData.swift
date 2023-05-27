@@ -8,18 +8,17 @@
 
 import Foundation
 
-let essayPrefixArray = Array(repeating: kEmpty, count: 3 * 13)
+let essayPrefixArray = Array(repeating: kEmpty, count: 3 * 14)
 
 class ZHelpEssayData: ZHelpData {
 
-	override var noTabPrefix   :  String        { return "                    " }
 	override var columnStrings : [StringsArray] { return [essayColumnOne, essayColumnTwo] }
-	override var tabOffsets    : IntArray          { return [0, 20, 220] }
+	override var noTabPrefix   :  String        { return "                    " }
+	override var tabOffsets    :  IntArray      { return [0, 20, 220] }
 	override var rowHeight     :  CGFloat       { return 14.0 }
 	override var dotOffset     :  CGFloat       { return  2.3 }    
 
 	let essayColumnOne: StringsArray = essayPrefixArray + [
-		"",																							"",	"",
 		"!GRAPHICS",																				"",	"",
 		"",																							"",	"",
 		"_drag dot",					"filled dot indicates note contains cursor or is grabbed",		"",
@@ -31,7 +30,6 @@ class ZHelpEssayData: ZHelpData {
 	]
 
 	let essayColumnTwo: StringsArray = essayPrefixArray + [
-		"",																							"",	"",
 		"!ALWAYS",									 												"",	"",
 		"",																							"",	"",
 		"_KEY",			 																			"", "",

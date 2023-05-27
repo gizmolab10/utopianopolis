@@ -11,12 +11,11 @@ import Foundation
 class ZHelpMapData : ZHelpData {
 
 	override var columnStrings     : [StringsArray] { return [mapColumnOne, mapColumnTwo, mapColumnThree, mapColumnFour] }
-	override var tabOffsets        : IntArray          { return [0, 12, 77] }
+	override var tabOffsets        :  IntArray      { return [0, 12, 77] }
 	override var columnWidth       :  Int           { return 288 }
 	override var indexOfLastColumn :  Int           { return 3 }
 
 	let mapColumnOne: StringsArray = [
-		"0",			 												"", "",
 		"0!EVERYWHERE IN MAPS:", 										"", "",
 		"0",			 												"", "",
 		"0_KEY", 		 												"", "",
@@ -56,7 +55,6 @@ class ZHelpMapData : ZHelpData {
 	]
 
 	let mapColumnTwo: StringsArray = [
-		"0",			 												"", "",
 		"0!WHILE EDITING AN IDEA:", 									"", "",
 		"0",			 												"", "",
 		"0_KEY",		 												"", "",
@@ -101,7 +99,6 @@ class ZHelpMapData : ZHelpData {
 	]
 
 	let mapColumnThree: StringsArray = [
-		"0",			 												"", "",
 		"0!WHILE NAVIGATING (SINGLE IDEA SELECTED, NOT BEING EDITED):",	"", "",
 		"2",			 												"", "",
 		"2mark:", 		kMarkingCharacters, 								"more+a+extras-2a9b1a7db21f",
@@ -147,7 +144,6 @@ class ZHelpMapData : ZHelpData {
 	]
 
 	let mapColumnFour: StringsArray = [
-		"0",			 												"", "",
 		"0",			 												"", "",
 		"1",			 												"", "",
 		"1_COMMAND + KEY", 												"", "",

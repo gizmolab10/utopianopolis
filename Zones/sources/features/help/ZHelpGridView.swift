@@ -28,49 +28,42 @@ class ZHelpGridView: ZView {
 				let (dotType, fillType) = data.dotTypes(for: row, column: column)
 				if  let dt = dotType,
 					let ft = fillType {
-					let  e = ft != .fFilled
-					let  f = ft != .fEmpty
-					let  t = ft == .fThree
 					let vo = Double(data.rowHeight) + data.dotOffset
 					let  x = Double(column) * 580.0 + Double(iDirtyRect.minX)   + 30.0
 					let  y = Double(row)    *   -vo + Double(iDirtyRect.height) - 24.0
 					let  d = ZoneDot(view: self)
 
-					if  e {
-						// draw empty dot in first column
+					func internalDraw(_ isFavorite: Bool = false, xOffset : Double = .zero, _ parameters: ZDotParameters) {
+						let point = CGPoint(x: x + xOffset, y: y)
+						let  rect = dt.rect(point)
+						let types = parameters.traitTypes
 
-						let p = CGPoint(x: x, y: y)
-						let r = dt.rect(p)
-						let m = dt.helpDotParameters()
+						if  types.count > 1 {
+							d.absoluteFrame = rect
 
-						d.drawDot(r, m)
-
-						if  dt == .favorite {
-							m.color.withAlphaComponent(0.7).setFill()
-							d.drawDotExterior(r, m)
+							d.setupForTraits(types)
+							d.linearRelayoutDotAbsoluteFrame(relativeTo: rect.center)   // TODO: dot's controller is nil
 						}
+
+						d.drawDot(rect, parameters)
+
+						if  isFavorite {
+							parameters.color.withAlphaComponent(0.7).setFill()
+						}
+
+						d.drawDotExterior(rect, parameters)
 					}
 
-					if  f {
-						// draw filled dot in second column
-
-						let p = CGPoint(x: x + 45.0, y: y)
-						let r = dt.rect(p)
-						let m = dt.helpDotParameters(isFilled: true)
-
-						d.drawDot        (r, m)
-						d.drawDotExterior(r, m)
+					if  ft != .fFilled {
+						internalDraw(dt == .favorite, dt.helpDotParameters())                                    // draw empty dot in first column
 					}
 
-					if  t {
-						// draw filled circle in third column
+					if  ft != .fEmpty {
+						internalDraw(xOffset: 45.0, dt.helpDotParameters(isFilled: true))                        // draw filled dot in second column
+					}
 
-						let p = CGPoint(x: x + 90.0, y: y)
-						let r = dt.rect(p)
-						let m = dt.helpDotParameters(isFilled: true, showAsACircle: true)
-
-						d.drawDot        (r, m)
-						d.drawDotExterior(r, m)
+					if  ft == .fThree {
+						internalDraw(xOffset: 90.0, dt.helpDotParameters(isFilled: true, showAsACircle: true))   // draw filled circle in third column
 					}
 				}
 			}

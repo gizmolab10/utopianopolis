@@ -36,7 +36,7 @@ struct  ZDotParameters {
 	var showList      = false
 	var showAccess    = false
 	var showSideDot   = false
-	var traitTypes  = StringsArray()
+	var traitTypes    = StringsArray()
 	var fill          = gBackgroundColor
 	var color         = kDefaultIdeaColor
 	var accessType    = ZDecorationType.vertical
@@ -94,18 +94,18 @@ class ZoneDot: ZPseudoView, ZToolTipper {
         isReveal       = asReveal
         widget         = w
 		if  isReveal, widgetZone?.hasMultipleTraits ?? false,
-			let traits = widgetZone?.traits.map({ $0.value }) {
+			let traits = widgetZone?.traits.map({ $0.value.traitType?.rawValue.convertedTrait ?? kEmpty }) {
 			setupForTraits(traits)
 		}
 
 		updateDotDrawnSize()
 	}
 
-	func setupForTraits(_ traits: ZTraitArray) {
-		let  start = kPI / 10.0 * Double(traits.count == 3 ? 12 : 11)
-		let angles = 10.anglesArray(startAngle: start, clockwise: false)
-		for  (index, trait) in traits.enumerated() {
-			let  t = ZTraitWidget(view: nil, with: trait, at: angles[index], around: self)
+	func setupForTraits(_ traits: StringsArray) {
+		let     start = kPI / 10.0 * Double(traits.count == 3 ? 12 : 11)
+		let    angles = 10.anglesArray(startAngle: start, clockwise: false, max: traits.count)
+		for (index, trait) in traits.enumerated() {
+			let t = ZTraitWidget(view: nil, with: trait, at: angles[index], around: self)
 
 			t.updateTraitWidgetDrawnSize()
 			traitWidgets.append(t)

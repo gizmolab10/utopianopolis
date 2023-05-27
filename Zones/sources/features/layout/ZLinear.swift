@@ -182,12 +182,19 @@ extension ZoneWidget {
 		if  absolute,
 			let textFrame = pseudoTextWidget?.absoluteFrame {
 
-			if !hideDragDot {
-				parentLine?.dragDot?.linearRelayoutDotAbsoluteFrame(relativeTo: textFrame)
+			if !hideDragDot,
+			    let    dot = parentLine?.dragDot,
+			    let center = textFrame.center(of: dot) {
+
+				dot.linearRelayoutDotAbsoluteFrame(relativeTo: center)
 			}
 
 			for line in childrenLines {
-				line     .revealDot?.linearRelayoutDotAbsoluteFrame(relativeTo: textFrame)
+				if  let    dot = line.revealDot,
+					let center = textFrame.center(of: dot) {
+
+					dot.linearRelayoutDotAbsoluteFrame(relativeTo: center)
+				}
 			}
 		}
 	}
@@ -368,16 +375,13 @@ extension ZoneDot {
 		path.fill()
 	}
 
-	func linearRelayoutDotAbsoluteFrame(relativeTo absoluteTextFrame: CGRect) {
-		if  let           c = controller,
-			let      center = absoluteTextFrame.center(of: self) {
-			absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
-			absoluteHitRect = absoluteFrame.expandedEquallyBy(c.dotHalfWidth)
+	func linearRelayoutDotAbsoluteFrame(relativeTo center: CGPoint) {
+		absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
+		absoluteHitRect = absoluteFrame.expandedEquallyBy(drawnSize.width / 2.0)
 
-			if  isReveal, widgetZone?.hasMultipleTraits ?? false {
-				for traitWidget in traitWidgets {
-					traitWidget.linearRelayoutTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame)
-				}
+		if  isReveal, traitWidgets.count > 1 {
+			for traitWidget in traitWidgets {
+				traitWidget.linearRelayoutTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame)
 			}
 		}
 	}
@@ -387,7 +391,8 @@ extension ZoneDot {
 extension ZTraitWidget {
 
 	func linearRelayoutTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect) {
-		if  let    radius = dot?.widget?.controller?.dotExtraHeight {
+		if  let         c = dot?.widget?.controller ?? gHelpController {
+			let    radius = c.dotExtraHeight
 			let    offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
 			let    origin = absoluteDotFrame.center.offsetBy(radius: radius, angle: angle) - offset
 			absoluteFrame = CGRect(origin: origin, size: drawnSize)

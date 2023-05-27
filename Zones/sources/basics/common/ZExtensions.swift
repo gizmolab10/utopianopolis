@@ -602,14 +602,14 @@ extension Int {
 		return self <= 0 ? kEmpty : "\(self) \(unit)\(self == 1 ? kEmpty : "\(plural)")\(followedBy)"
 	}
 
-	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false) -> [Double] {
+	func anglesArray(startAngle: Double, spreadAngle: Double = k2PI, offset: Double? = nil, oneSet: Bool = true, isFat: Bool = false, clockwise: Bool = false, max: Int? = nil) -> [Double] {
 		var angles             = [Double]()
-		if  self              > 0 {
+		if  self               > 0, (max == nil || max! > 0) {
 			let         isEven = self % 2 == 0
 			let          extra = offset ?? ((clockwise || (isEven && oneSet)) ? .zero : 0.5)
 			let incrementAngle = spreadAngle / (oneSet ? 1.0 : 2.0) / Double(-self) // negative means clockwise in osx (counterclockwise in ios)
 
-			for index in 0 ... self - 1 {
+			for index in 0 ... (max ?? self) - 1 {
 				let increments = Double(index) + extra
 				let      angle = startAngle + incrementAngle * increments
 

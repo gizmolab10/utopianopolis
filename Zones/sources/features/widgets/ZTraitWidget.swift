@@ -10,27 +10,26 @@ import Foundation
 
 class ZTraitWidget : ZPseudoView {
 
-	var trait  : ZTrait?
+	var string : String?
 	var dot    : ZoneDot?
 	var angle  : CGFloat = .zero
-	var string : String? { return trait?.traitType?.rawValue.convertedTrait }
 
 	var font: ZFont? {
-		if  let     c = controller ?? gHelpController {
-			let width = c.dotWidth * 0.9
+		if  let c = controller ?? gHelpController {
+			let w = c.dotWidth * 0.9
 
-			return ZFont.systemFont(ofSize: width)
+			return ZFont.systemFont(ofSize: w)
 		}
 
 		return nil
 	}
 
-	init(view: ZView?, with trait: ZTrait, at angle: CGFloat, around dot: ZoneDot) {
+	init(view: ZView?, with trait: String, at angle: CGFloat, around dot: ZoneDot) {
 		super.init(view: view)
 
-		self.trait = trait
-		self.angle = angle
-		self.dot   = dot
+		self.string = trait
+		self.angle  = angle
+		self.dot    = dot
 	}
 
 	@discardableResult func updateTraitWidgetDrawnSize() -> CGSize {

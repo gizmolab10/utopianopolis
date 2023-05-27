@@ -337,28 +337,25 @@ enum ZHelpDotType: String {
 	case oneEleven  = "111"
 	case unwritable = "not"
 
-	var accessType    :    ZDecorationType { return self == .progeny ? .sideDot : .vertical }
-	var pointLeft     :               Bool { return self == .click }
-	var showAccess    :               Bool { return  [.both, .unwritable,              .progeny].contains(self) }
-	var isReveal      :               Bool { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
-	var size          :             CGSize { return gHelpController?.dotSize(forReveal: isReveal) ?? .zero }
-	func rect(_ origin: CGPoint) -> CGRect { return CGRect(origin: origin, size: size) }
+	var  accessType    :    ZDecorationType { return self == .progeny ? .sideDot : .vertical }
+	var  pointLeft     :               Bool { return self == .click }
+	var  showAccess    :               Bool { return  [.both, .unwritable,              .progeny].contains(self) }
+	var  isReveal      :               Bool { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
+	var  size          :             CGSize { return gHelpController?.dotSize(forReveal: isReveal) ?? .zero }
+	func rect(_ origin : CGPoint) -> CGRect { return CGRect(origin: origin, size: size) }
 
 	var traitTypes: StringsArray {
 		switch self {
-			case .note, .essay: return [ZTraitType.tNote     .rawValue]
-			case .email:        return [ZTraitType.tEmail    .rawValue]
-			case .hyperlink:    return [ZTraitType.tHyperlink.rawValue]
-			case .multiple:     return  gActiveTraitTypes.map { $0.rawValue }
-			default:            return []
+			case .multiple: return  gActiveTraitTypes.map { $0.rawValue.convertedTrait }
+			default:        if let t = traitType { return [t] } else { return [] }
 		}
 	}
 
 	var traitType: String? {
 		switch self {
-			case .note, .essay: return ZTraitType.tNote     .rawValue
-			case .email:        return ZTraitType.tEmail    .rawValue
-			case .hyperlink:    return ZTraitType.tHyperlink.rawValue
+			case .note, .essay: return ZTraitType.tNote     .rawValue.convertedTrait
+			case .email:        return ZTraitType.tEmail    .rawValue.convertedTrait
+			case .hyperlink:    return ZTraitType.tHyperlink.rawValue.convertedTrait
 			default:            return nil
 		}
 	}
@@ -381,7 +378,7 @@ enum ZHelpDotType: String {
 		p.fill          =  isFilled ? p.color : gBackgroundColor
 		p.isFilled      =  isFilled
 		p.isReveal      = isReveal
-		p.traitTypes  = traitTypes
+		p.traitTypes    = traitTypes
 		p.showAccess    = showAccess
 		p.accessType    = accessType
 		p.isGroupOwner  = self == .owner
