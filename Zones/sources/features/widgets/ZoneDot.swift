@@ -342,13 +342,13 @@ class ZoneDot: ZPseudoView, ZToolTipper {
     func draw() {
 		let rect  = absoluteFrame
 		if  rect.hasSize, dotIsVisible,
-			let p = widgetZone?.plainDotParameters(isFilled, isReveal, isDragDrop) {
+			let z = widgetZone {
 
 			if  isCircularMode, gDebugDraw {
 				absoluteHitRect.drawColoredRect(.blue, radius: 2.0, thickness: 1.0)
 			}
 			
-			drawDot(rect, p)
+			drawDot(rect, z.plainDotParameters(isFilled, isReveal, isDragDrop))
 		}
 	}
 

@@ -3294,6 +3294,15 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	}
 
+	func handleTraitDotClicked(_ trait: String) {
+		if  let    type = ZTraitType(rawValue: trait) {
+			switch type {
+				case .tNote, .tEssay: invokeEssay()
+				default:              invokeURL(for: type)
+			}
+		}
+	}
+
 	func handleRevealDotClicked(_ flags: ZEventFlags, isCircularMode: Bool = false) {
 		ungrabProgeny()
 
@@ -3308,7 +3317,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 			
 			gRelayoutMaps()
-		} else if hasMultipleTraits, !hasChildren {
 		} else if isBookmark || (isTraveller && (COMMAND || !hasChildren)) {
 			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
 				gSignal([.spRelayout, .spCrumbs])

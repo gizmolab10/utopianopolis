@@ -1985,6 +1985,7 @@ extension String {
 	var       spacesStripped :                  String  { return strip(kSpace) }
 	var      hyphensStripped :                  String  { return strip(kSuperHyphen).strip(kHyphen) }
 	var       extractedTitle :                  String  { return hyphensStripped.spacesStripped }
+	var     unconvertedTrait :                  String  { return self == kEquals ? "h" : self == "+" ? "n" : self }
 	var       convertedTrait :                  String  { return self == "h" ? kEquals : self == "n" ? "+" : self }
 	var             isHyphen :                    Bool  { return self == kHyphen }
     var              isDigit :                    Bool  { return "0123456789.+-=*/".contains(self[startIndex]) }
