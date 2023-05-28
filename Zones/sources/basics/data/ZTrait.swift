@@ -25,48 +25,45 @@ struct ZNoteVisibilityMode: OptionSet {
 	static let mHidden   = ZNoteVisibilityMode(rawValue: 1 << 2)
 }
 
-var gActiveTraitTypes : ZTraitTypesArray { return [.tNote, .tEmail, .tHyperlink] }
-var  gPopupTraitTypes : ZTraitTypesArray { return gActiveTraitTypes + [.tClear] }
+var gActiveTraitTypes : ZTraitTypesArray { return [.tNote, .tEmail, .tHyperlink, .tPhone] }
+var  gPopupTraitTypes : ZTraitTypesArray { return gActiveTraitTypes + [.tSeparator, .tClear] }
 
 enum ZTraitType: String { // stored in database: do not change
 
+	case tSeparator = "-"
 	case tDuration  = "!" // accumulative
 	case tMoney     = "$" //      "
 	case tAssets    = "a" // can have multiple
-	case tHyperlink = "h"
-	case tEmail     = "e"
-	case tEssay     = "w"
 	case tDate      = "d"
+	case tEmail     = "e"
+	case tHyperlink = "h"
 	case tNote      = "n"
+	case tPhone     = "p"
 	case tClear     = "x"
+	case tEssay     = "w"
+
+	var title         : String? { return description?.capitalized }
+	var isEssayOrNote :   Bool  { return [.tNote, .tEssay].contains(self) }
 
 	var heightRatio: CGFloat {
 		switch self {
 			case .tHyperlink,
-					.tMoney,
-					.tDate: return 1.0
+				 .tMoney,
+				 .tDate: return 1.0
 			default:     return 0.66667
 		}
 	}
 
-	var title: String? { return description?.capitalized }
-
 	var description: String? {
 		switch self {
+			case .tSeparator: return kLineOfDashes
+			case .tPhone:     return "PHONE NUMBER"
 			case .tClear:     return "REMOVE ALL"
 			case .tHyperlink: return "HYPERLINK"
 			case .tEmail:     return "EMAIL"
 			case .tEssay:     return "ESSAY"
 			case .tNote:      return "NOTE"
 			default:          return nil
-		}
-	}
-
-	var isEssayOrNote: Bool {
-		switch self {
-			case .tNote,
-					.tEssay: return true
-			default:      return false
 		}
 	}
 
@@ -284,6 +281,7 @@ class ZTrait: ZTraitAssets {
         if  let tType = traitType {
             switch tType {
 				case .tEmail:     return "email address"
+				case .tPhone:     return "phone number"
 				case .tHyperlink: return "hyperlink"
 				default:          break
             }
@@ -323,7 +321,7 @@ class ZTrait: ZTraitAssets {
 	}
 
 	func updateSearchables() {
-		let searchables: ZTraitTypesArray = [.tNote, .tEssay, .tEmail, .tHyperlink]
+		let searchables: ZTraitTypesArray = [.tNote, .tEssay, .tEmail, .tHyperlink, .tPhone]
 
 		if  let  tt = traitType, searchables.contains(tt) {
 			strings = text?.searchable.componentsSeparatedBySpace

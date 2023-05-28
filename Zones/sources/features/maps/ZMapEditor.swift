@@ -234,12 +234,33 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-	@objc func handleTraitActivationPopupMenu(_ iItem: ZMenuItem) {
-		handleTraitActivationForKey(iItem.keyEquivalent)
-	}
-
 	@objc func handleTraitsPopupMenu(_ iItem: ZMenuItem) {
 		handleTraitsKey(iItem.keyEquivalent)
+	}
+
+	@objc func handleTraitsKey(_ key: String) {
+		if  let type = ZTraitType(rawValue: key) {
+			let zone = gSelecting.currentMoveable
+
+			switch type {
+				case .tSeparator:
+					break
+				case .tClear:
+					zone.removeAllTraits()
+					gRelayoutMaps()
+				default:
+					UNDO(self) { iUndoSelf in
+						iUndoSelf.handleTraitsKey(key)
+					}
+
+					gTemporarilySetKey(key)
+					zone.editTraitForType(type)
+			}
+		}
+	}
+
+	@objc func handleTraitActivationPopupMenu(_ iItem: ZMenuItem) {
+		handleTraitActivationForKey(iItem.keyEquivalent)
 	}
 
 	@objc func handleTraitActivationForKey(_ key: String) {
@@ -249,20 +270,6 @@ class ZMapEditor: ZBaseEditor {
 				case .tNote, .tEssay: zone.invokeEssay()
 				default:              zone.invokeURL(for: type)
 			}
-		}
-	}
-
-	@objc func handleTraitsKey(_ key: String) {
-		let zone = gSelecting.currentMoveable
-		if  key == ZTraitType.tClear.rawValue {
-			zone.removeAllTraits()
-		} else if let type = ZTraitType(rawValue: key) {
-			UNDO(self) { iUndoSelf in
-				iUndoSelf.handleTraitsKey(key)
-			}
-
-			gTemporarilySetKey(key)
-			zone.editTraitForType(type)
 		}
 	}
 

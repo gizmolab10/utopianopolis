@@ -32,6 +32,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	@NSManaged var                               zoneAuthor :           String?
 	@NSManaged var                           zoneAttributes :           String?
 	var                                      hyperLinkMaybe :           String?
+	var                                      telephoneMaybe :           String?
 	var                                          emailMaybe :           String?
 	var                                          assetMaybe :          CKAsset?
 	var                                          colorMaybe :           ZColor?
@@ -57,7 +58,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                               count :              Int  { return children.count }
 	var                                           halfCount :              Int  { return Int((Double(count) + 0.5) / 2.0) }
 	var                                       lowestExposed :              Int? { return exposed(upTo: highestExposed) }
-	var                                           emailLink :           String? { return email == nil ? nil : kMailTo + email! }
+	var                                           emailLink :           String? { return email       == nil ? nil : kMailTo    + email! }
+	var                                       telephoneLink :           String? { return phoneNumber == nil ? nil : kTelephone + phoneNumber! }
 	var                                      linkRecordName :           String? { return zoneLink?.maybeRecordName }
 	var                                           traitType :           String? { return traits.count != 1 ? nil : traitTypes[0].rawValue }
 	var                                         clippedName :           String  { return !gShowToolTips ? kEmpty : unwrappedName }
@@ -88,13 +90,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                       hasChildNotes :             Bool  { return zonesWithNotes.count > 1 }
 	var                                        hasHyperlink :             Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
 	var                                         hasSiblings :             Bool  { return parentZoneMaybe?.count ?? 0 > 1 }
-	var                                         isTraveller :             Bool  { return isBookmark || hasHyperlink || hasEmail || hasNote }
+	var                                         isTraveller :             Bool  { return isBookmark || hasHyperlink || hasEmail || hasPhone || hasNote }
 	var                                          linkIsRoot :             Bool  { return linkRecordName == kRootName }
 	var                                          isSelected :             Bool  { return gSelecting.isSelected(self) }
 	var                                           isGrabbed :             Bool  { return gSelecting .isGrabbed(self) }
 	var                                           hasTraits :             Bool  { return traits.count > 0 }
 	var                                            hasColor :             Bool  { return isBookmark ? (bookmarkTarget?.hasColor ?? false) : (zoneColor != nil && !zoneColor!.isEmpty) }
-	var                                            hasEmail :             Bool  { return hasTrait(for: .tEmail) && !(email?.isEmpty ?? true) }
+	var                                            hasPhone :             Bool  { return hasTrait(for: .tPhone) && !(phoneNumber?.isEmpty ?? true) }
+	var                                            hasEmail :             Bool  { return hasTrait(for: .tEmail) && !(email?      .isEmpty ?? true) }
 	var                                            hasAsset :             Bool  { return hasTrait(for: .tAssets) }
 	var                                             hasNote :             Bool  { return hasTrait(for: .tNote) }
 	var                                      hasNoteOrEssay :             Bool  { return hasTrait(matchingAny: [.tNote, .tEssay]) }
@@ -467,6 +470,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	var phoneNumber: String? {
+		get {
+			if  telephoneMaybe == nil {
+				telephoneMaybe  = getTraitText(for: .tPhone)
+			}
+
+			return telephoneMaybe
+		}
+
+		set {
+			if  telephoneMaybe != newValue {
+				telephoneMaybe  = newValue
+
+				setTraitText(newValue, for: .tPhone)
+			}
+		}
+	}
+
 	var hyperLink: String? {
 		get {
 			if  hyperLinkMaybe == nil {
@@ -769,7 +790,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	var userWantsToEdit: Bool {
 		let key = gCurrentKeyPressed ?? kEmpty
-		return "-deh, \t\r".contains(key)
+		return "-dehp, \t\r".contains(key)
 		|| gCurrentKeyPressed?.arrow != nil
 		|| gCurrentMouseDownZone     == self
 	}
@@ -1659,6 +1680,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			switch (type) {
 				case .tEmail:     emailMaybe     = iText
+				case .tPhone:     telephoneMaybe = iText
 				case .tHyperlink: hyperLinkMaybe = iText
 				default:          break
 			}
@@ -1704,15 +1726,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func removeTrait(for iType: ZTraitType) {
-		let     trait = traits[iType]
-		traits[iType] = nil
+		if  let     trait = traits[iType] {
+			traits[iType] = nil
 
-		updateCoreDataRelationships()
-		trait?.needDestroy()
-
-		if  let t = trait {
-			t.unregister()
-			t.deleteFromCD()
+			updateCoreDataRelationships()
+			trait.needDestroy()
+			trait.unregister()
+			trait.deleteFromCD()
 		}
 	}
 
@@ -1762,7 +1782,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		} else if !hasChildren || !gCreateCombinedEssay {
 			note      = ZNote(self)
 			noteMaybe = note
-		} else {
+		} else if count > 0 {
 			let  zone = zones[0]
 			note      = ZNote(zone)
 			zone.noteMaybe = note
@@ -1807,10 +1827,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  ALL {
 				convertChildrenToNote()
 			} else {
-				if  gCurrentEssay == nil || OPTION || useGrabbed {     // restore prior or create new (OPTION -> create)
-					gCurrentEssay  = note
+				if  gCurrentEssay == nil || OPTION || useGrabbed,
+					let         n  = note {     // restore prior or create new (OPTION -> create)
+					gCurrentEssay  = n
 
-					gFavoritesCloud.push(note?.zone)
+					gFavoritesCloud.push(n.zone)
 				}
 
 				if  SPECIAL {
@@ -2131,7 +2152,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func invokeTravel(_ COMMAND: Bool = false, onCompletion: BoolClosure? = nil) {
 		if !invokeBookmark(COMMAND, onCompletion: onCompletion),
 		   !invokeEssay(),
-		   !invokeURL(for: .tHyperlink) {
+		   !invokeURL(for: .tHyperlink),
+		   !invokeURL(for: .tPhone) {
 			invokeURL(for: .tEmail)
 		}
 	}
@@ -2187,6 +2209,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func link(for traitType: ZTraitType) -> String? {
 		switch traitType {
+			case .tPhone:     return telephoneLink
 			case .tHyperlink: return hyperLink
 			case .tEmail:     return emailLink
 			default:          return nil

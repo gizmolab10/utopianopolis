@@ -89,7 +89,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 	// MARK: - view hierarchy
 	// MARK: -
 
-	@discardableResult func createPseudoViews(for parentPseudoView: ZPseudoView?, for mapType: ZMapType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
+	@discardableResult func createPseudoViews(in parentPseudoView: ZPseudoView?, for mapType: ZMapType, atIndex: Int?, _ kind: ZSignalKind, visited: ZoneArray) -> Int {
 		let     mapView = absoluteView as? ZMapView
 		sharedRevealDot = isLinearMode ? ZoneDot(view: mapView?.decorationsView) : nil
 		var       count = 1 // begin with self
@@ -125,7 +125,7 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 				let child        = childrenWidgets[index]
 				child.widgetZone =            zone[index]
 				let   parentView = isLinearMode ? childrenView : parentPseudoView
-				count           += child.createPseudoViews(for: parentView, for: mapType, atIndex: index, kind, visited: vplus)
+				count           += child.createPseudoViews(in: parentView, for: mapType, atIndex: index, kind, visited: vplus)
 			}
 		}
 
@@ -309,8 +309,56 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		static let sNone        = ZHighlightStyle([])
 	}
 
+	override func draw(_ phase: ZDrawPhase) {
+		if (gCanDrawWidgets || !mapType.isMainMap),
+		   let zone = widgetZone {
+
+			switch phase {
+				case .pLines, .pDots:
+					for line in childrenLines {
+						line.draw(phase)
+					}
+				case .pSelections:
+					if  let         t = textWidget {
+						let isGrabbed = zone.isGrabbed
+						let isEditing = t.isFirstResponder
+						let tHovering = t.isHovering
+
+						if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
+							var style = ZHighlightStyle.sNone
+
+							if        isEditing      { style = .sThickDashed
+							} else if isGrabbed      { style = .sThick
+							} else if tHovering      {
+								if    isCircularMode { style = .sDashed
+								} else               { style = .sThin        }
+							} else if isHovering     {
+								if    isCircularMode { style = .sDashed
+								} else               { style = .sMedium      }
+							} else if isCircularMode { style = .sUltraThin   }
+
+							if  style != .sNone {
+								drawSelectionHighlight(style)
+							}
+						}
+
+						if  gDrawCirclesAroundIdeas,
+							controller?.inCircularMode ?? false,
+							let color = zone.lighterColor {
+							drawInterior(color)
+						}
+
+						//					debugDraw(isHovering || tHovering)
+					}
+			}
+		}
+	}
+
 	func drawSelectionHighlight(_ style: ZHighlightStyle) {
-		guard let c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
+		guard let c = controller ?? gHelpController else {   // for help dots, widget and controller are nil; so use help controller
+			return
+		}
+
 		if  highlightRect.hasZeroSize || style == .none {
 			return
 		}
@@ -334,50 +382,15 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 		path.stroke()
 	}
 
-    override func draw(_ phase: ZDrawPhase) {
-		if (gCanDrawWidgets || !mapType.isMainMap),
-			let zone = widgetZone {
+	func drawInterior(_ color: ZColor) {
+		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
+		let       path = selectionHighlightPath
+		path.lineWidth = CGFloat(c.coreThickness * 2.5)
+		path .flatness = kDefaultFlatness
 
-			switch phase {
-			case .pLines, .pDots:
-				for line in childrenLines {
-					line.draw(phase)
-				}
-			case .pSelections:
-				if  let         t = textWidget {
-					let isGrabbed = zone.isGrabbed
-					let isEditing = t.isFirstResponder
-					let tHovering = t.isHovering
-
-					if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
-						var style = ZHighlightStyle.sNone
-						
-						if        isEditing      { style = .sThickDashed
-						} else if isGrabbed      { style = .sThick
-						} else if tHovering      {
-							if    isCircularMode { style = .sDashed
-							} else               { style = .sThin        }
-						} else if isHovering     {
-							if    isCircularMode { style = .sDashed
-							} else               { style = .sMedium      }
-						} else if isCircularMode { style = .sUltraThin   }
-
-						if  style != .sNone {
-							drawSelectionHighlight(style)
-						}
-					}
-
-					if  gDrawCirclesAroundIdeas,
-						controller?.inCircularMode ?? false,
-						let color = zone.lighterColor {
-						drawInterior(color)
-					}
-
-//					debugDraw(isHovering || tHovering)
-				}
-			}
-		}
-    }
+		color.setFill()
+		path.fill()
+	}
 
 	func debugDraw(_ extraThick: Bool = false) {
 //		if isLinearMode { return }

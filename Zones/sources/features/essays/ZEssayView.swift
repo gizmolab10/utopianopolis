@@ -41,9 +41,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var selectedAttachment : ZRangedAttachment?
 
 	var selectedNotes : ZNoteArray {
-		gCurrentEssay?.updateNoteOffsets()
+		guard let essay = gCurrentEssay else {
+			return ZNoteArray() // empty because current essay is nil
+		}
 
-		return (gCurrentEssay?.zone?.zonesWithVisibleNotes.filter {
+		essay.updateNoteOffsets()
+
+		return (essay.zone?.zonesWithVisibleNotes.filter {
 			guard let range = $0.note?.noteRange else { return false }
 			return selectedRange.intersects(range.extendedBy(1))
 		}.map {

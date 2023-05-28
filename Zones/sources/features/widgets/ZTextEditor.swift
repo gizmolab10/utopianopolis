@@ -275,9 +275,8 @@ class ZTextEditor: ZTextView {
 				gRelayoutMaps()
 				gSetEditIdeaMode()
 
-				if  let t = zone.textWidget {
+				if  let t = zone.textWidget, t.becomeFirstResponder() {
 					t.enableUndo()
-					assignAsFirstResponder(t)
 
 					if  offset     == nil,
 						let current = gCurrentOffset {      // from mouse down event

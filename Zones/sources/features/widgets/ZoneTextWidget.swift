@@ -103,10 +103,10 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 	func setText(_ iText: String?) {
 		text = iText
 
-		updateSize()
+		updateDrawnSize()
 	}
 
-	func updateSize() {
+	func updateDrawnSize() {
 		if  let      f = font,
 			let   size = text?.sizeWithFont(f) {
 			let   hide = widgetZone?.isFavoritesHere ?? false

@@ -135,30 +135,17 @@ extension ZoneWidget {
 		absoluteHitRect = rect
 	}
 
-	// MARK: - draw
-	// MARK: -
-
-	func drawInterior(_ color: ZColor) {
-		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
-		let       path = selectionHighlightPath
-		path.lineWidth = CGFloat(c.coreThickness * 2.5)
-		path .flatness = kDefaultFlatness
-
-		color.setFill()
-		path.fill()
-	}
-
 	// MARK: - traverse
 	// MARK: -
 	
 	func circularGrandRelayout() {
-		updateAllProgenyFrames(in: controller)
+		circularUpdateAllProgenyFrames(in: controller)
 		updateFrameSize()
 		convertFrameToAbsolute(relativeTo: controller)
-		updateAllProgenyFrames(in: controller, true)    // sets widget absolute frame
+		circularUpdateAllProgenyFrames(in: controller, absolute: true)    // sets widget absolute frame
 	}
 
-	func updateAllProgenyFrames(in controller: ZMapController?, _ absolute: Bool = false) {
+	func circularUpdateAllProgenyFrames(in controller: ZMapController?, absolute: Bool = false) {
 		traverseAllWidgetsByLevel {          (level, widgets) in
 			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // not absolute sets lineAngle
 		}

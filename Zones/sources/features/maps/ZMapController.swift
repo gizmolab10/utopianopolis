@@ -165,7 +165,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		// create widget tree //
 		// ////////////////// //
 
-		if  let total = hereWidget?.createPseudoViews(for: mapPseudoView, for: mapType, atIndex: nil, kind, visited: []) {
+		if  let total = hereWidget?.createPseudoViews(in: mapPseudoView, for: mapType, atIndex: nil, kind, visited: []) {
 			printDebug(.dWidget, "\(total) \(mapType) pseudoViews")
 		}
 

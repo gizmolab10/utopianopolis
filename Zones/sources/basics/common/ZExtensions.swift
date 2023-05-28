@@ -1983,8 +1983,8 @@ extension String {
 	var       spacesStripped :                  String  { return strip(kSpace) }
 	var      hyphensStripped :                  String  { return strip(kSuperHyphen).strip(kHyphen) }
 	var       extractedTitle :                  String  { return hyphensStripped.spacesStripped }
-	var     unconvertedTrait :                  String  { return self == kEquals ? "h" : self == "+" ? "n" : self }
-	var       convertedTrait :                  String  { return self == "h" ? kEquals : self == "n" ? "+" : self }
+	var     unconvertedTrait :                  String  { return self == kEquals ? "h" : self == "+" ? "n" : self == "#" ? "p" : self }
+	var       convertedTrait :                  String  { return self == "h" ? kEquals : self == "n" ? "+" : self == "p" ? "#" : self }
 	var             isHyphen :                    Bool  { return self == kHyphen }
     var              isDigit :                    Bool  { return "0123456789.+-=*/".contains(self[startIndex]) }
     var       isAlphabetical :                    Bool  { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
@@ -1994,7 +1994,7 @@ extension String {
     var           isOpposite :                    Bool  { return "]}>)".contains(self) }
 	var containsLineEndOrTab :                    Bool  { return hasMatchIn(kLineEndingsAndTabArray) }
 	var         isDashedLine :                    Bool  { return contains(kHalfLineOfDashes) }
-	var           isValidURL :                    Bool  { return contains(kPeriod) || contains("http") || contains("file") }
+	var           isValidURL :                    Bool  { return contains(kPeriod) || contains("http") || contains("file") || contains("tel") }
 	var               isLine :                    Bool  { return extractedTitle != self }
 
 	func isLineTitle(enclosing range: NSRange) -> Bool  { return extractedTitle == substring(with: range) }

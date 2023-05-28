@@ -8,6 +8,14 @@
 
 import Foundation
 
+// ///////////////////////////////////////// //
+//                                           //
+//  line between parentWidget & childWidget  //
+//      straight and curved                  //
+//      data for linear and circular         //
+//                                           //
+// ///////////////////////////////////////// //
+
 enum ZLineCurveKind: Int {
 	case below    = -1
 	case straight =  0
@@ -25,36 +33,6 @@ class ZoneLine: ZPseudoView {
 	var        parentWidget : ZoneWidget?
 	var            isCenter : Bool            { return  parentWidget?.isCenter ?? true }
 	override var controller : ZMapController? { return (parentWidget ?? childWidget)?.controller }
-
-	func addDots(reveal: ZoneDot? = nil, drag: ZoneDot? = nil) {
-		if  let p                    = parentWidget {
-			if  revealDot           == nil {
-				revealDot            = reveal ?? ZoneDot(view: absoluteView)
-				if  revealDot?.line == nil {
-					revealDot?.line  = self
-					
-					addSubpseudoview(revealDot)
-					revealDot?.setupForWidget(p, asReveal: true)
-				}
-			}
-		}
-		
-		if  dragDot        == nil {
-			if  drag       != nil {
-				dragDot     = drag
-			} else if let c = childWidget, !c.hideDragDot,
-				let       z = c.widgetZone, z.isShowing {
-				dragDot     = ZoneDot(view: absoluteView)
-			}
-
-			if  let       d = dragDot {
-				d     .line = self
-
-				addSubpseudoview(d)
-				d.setupForWidget(childWidget, asReveal: false)
-			}
-		}
-	}
 
 	var lineKind : ZLineCurveKind {
 		if  isLinearMode,
@@ -81,6 +59,58 @@ class ZoneLine: ZPseudoView {
 		}
 
 		return ZBezierPath()
+	}
+
+	func addDots(reveal: ZoneDot? = nil, drag: ZoneDot? = nil) {
+		if  let p                    = parentWidget {
+			if  revealDot           == nil {
+				revealDot            = reveal ?? ZoneDot(view: absoluteView)
+				if  revealDot?.line == nil {
+					revealDot?.line  = self
+
+					addSubpseudoview(revealDot)
+					revealDot?.setupForWidget(p, asReveal: true)
+				}
+			}
+		}
+
+		if  dragDot        == nil {
+			if  drag       != nil {
+				dragDot     = drag
+			} else if let c = childWidget, !c.hideDragDot,
+					  let       z = c.widgetZone, z.isShowing {
+				dragDot     = ZoneDot(view: absoluteView)
+			}
+
+			if  let       d = dragDot {
+				d     .line = self
+
+				addSubpseudoview(d)
+				d.setupForWidget(childWidget, asReveal: false)
+			}
+		}
+	}
+
+	// MARK: - draw
+	// MARK: -
+
+	override func draw(_ phase: ZDrawPhase) {
+		switch phase {
+			case .pLines:
+				drawLine()
+			case .pDots:
+				revealDot?.draw()
+				dragDot?  .draw()
+			default:
+				break
+		}
+	}
+
+	func drawLine() {
+		if  let other = childWidget ?? parentWidget,
+			let color = other.widgetZone?.color {
+			drawLine(using: color)
+		}
 	}
 
 	func drawLine(using color: ZColor) {
@@ -121,25 +151,6 @@ class ZoneLine: ZPseudoView {
 			color.setStroke()
 			ZBezierPath(ovalIn: rect.insetEquallyBy(c.coreThickness)).fill() // draw dot
 			drawLine(using: color)
-		}
-	}
-
-	func drawLine() {
-		if  let other = childWidget ?? parentWidget,
-			let color = other.widgetZone?.color {
-			drawLine(using: color)
-		}
-	}
-
-	override func draw(_ phase: ZDrawPhase) {
-		switch phase {
-			case .pLines:
-				drawLine()
-			case .pDots:
-				revealDot?.draw()
-				dragDot?  .draw()
-			default:
-				break
 		}
 	}
 

@@ -769,7 +769,7 @@ extension ZoneTextWidget {
             textDidChange(iNote)
         }
 
-		updateSize()
+		updateDrawnSize()
 		updateGUI()
     }
 
