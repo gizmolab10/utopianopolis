@@ -420,7 +420,7 @@ extension ZoneArray {
 			for zone in self {
 				if  let    index = zone.siblingIndex {
 					fromTop      = fromTop || index == 0                                 // detect when moving the top sibling
-					if  let zone = siblings.next(increasing: fromTop, from: index),      // always move into sibling above, except at top
+					if  let zone = siblings.next(goingDown: fromTop, from: index),      // always move into sibling above, except at top
 						!contains(zone) {
 						into     = zone
 

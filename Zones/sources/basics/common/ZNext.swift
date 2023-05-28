@@ -10,12 +10,12 @@ import Foundation
 
 extension Int {
 
-	func next(increasing: Bool, max: Int) -> Int? {
+	func next(goingDown: Bool, max: Int) -> Int? {
 		if  max <= 0                  { return nil }
-		if self <= 0   && !increasing { return max }
-		if self >= max &&  increasing { return 0 }
+		if self <= 0   &&  !goingDown { return max }
+		if self >= max &&   goingDown { return 0 }
 
-		let    next = self + (increasing ? 1 : -1)
+		let    next = self + (goingDown ? 1 : -1)
 		if     next < 0 || next > max { return nil }
 		return next
 	}
@@ -24,8 +24,8 @@ extension Int {
 
 extension Array {
 
-	func next(increasing: Bool, from: Int) -> Element? {
-		if  let index = from.next(increasing: increasing, max: count - 1) {
+	func next(goingDown: Bool, from: Int) -> Element? {
+		if  let index = from.next(goingDown: goingDown, max: count - 1) {
 			return self[index]
 		}
 
@@ -40,7 +40,7 @@ extension ZoneArray {
 		var remaining = count
 		var      next = from
 		repeat {
-			if  let      n = next.next(increasing: increasing, max: count - 1) {
+			if  let      n = next.next(goingDown: increasing, max: count - 1) {
 				remaining -= 1
 				next       = n
 			} else {
@@ -118,7 +118,7 @@ extension ZFavorites {
 	func insertAsNext(_ zone: Zone) {
 		if  let      r = rootZone {
 			let cIndex = r.children.firstIndex(of: zone) ?? 0
-			let  index = cIndex.next(increasing: !gListsGrowDown, max: r.count - 1)
+			let  index = cIndex.next(goingDown: !gListsGrowDown, max: r.count - 1)
 
 			r.addChildNoDuplicate(zone, at: index)
 			setCurrentFavoriteBookmark(to: zone)
@@ -129,7 +129,7 @@ extension ZFavorites {
 		if  let  here = hereZoneMaybe,
 			let zones = rootZone?.allGroups,
 			let index = zones.firstIndexWithRecordNameMatching(here),
-			let  next = index.next(increasing: !down, max: zones.count - 1) {
+			let  next = index.next(goingDown: !down, max: zones.count - 1) {
 			return zones[next]
 		}
 
@@ -168,9 +168,9 @@ extension ZFavorites {
 				if  let  target = current?.zoneLink {
 					for (index, bookmark) in zones.enumerated() {
 						if  target       == bookmark.zoneLink,
-							var next      = index.next(increasing: !down, max: maxIndex) {
+							var next      = index.next(goingDown: !down, max: maxIndex) {
 							while zones[next].bookmarkTarget == nil {
-								if  let m = next .next(increasing: !down, max: maxIndex) {
+								if  let m = next .next(goingDown: !down, max: maxIndex) {
 									next  = m
 								} else {
 									break

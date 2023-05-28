@@ -76,7 +76,7 @@ extension ZEssayView {
 		if  linkHit(at: rect) {
 			NSCursor.arrow.set()
 		} else if let    dot = dragDotHit(at: rect) {
-			if  let     note = dot.note {
+			if  let     note = dot.dotNote {
 				let  grabbed = grabbedNotes.contains(note)
 				toolTip      = note.toolTipString(grabbed: grabbed)
 			}

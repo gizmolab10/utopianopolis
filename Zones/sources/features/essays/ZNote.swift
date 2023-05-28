@@ -29,7 +29,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          indentCount = 0
 	var           noteOffset = 0
 	var           autoDelete = false		// true means delete this note on exit from essay mode
-	var             children = ZNoteArray()
+	var        childrenNotes = ZNoteArray()
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
 	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }

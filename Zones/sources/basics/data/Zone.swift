@@ -54,7 +54,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                           textColor :           ZColor? { return isDragged ? gActiveColor : widgetColor }
 	var                                        lighterColor :           ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
 	var                                      highlightColor :           ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
-	var                                            dotColor :           ZColor  { return mapType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
+	var                                     widgetDotsColor :           ZColor  { return mapType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
 	var                                               count :              Int  { return children.count }
 	var                                           halfCount :              Int  { return Int((Double(count) + 0.5) / 2.0) }
 	var                                       lowestExposed :              Int? { return exposed(upTo: highestExposed) }
@@ -1806,7 +1806,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func deleteEssay() {
-		if  let c = note?.children {
+		if  let c = note?.childrenNotes {
 			for child in c {
 				if  let z = child.zone, z != self {
 					z.deleteEssay()   // recurse
@@ -2025,7 +2025,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  let     r = rr.ownedGroup([]), r.count > 1,
 			let index = indexIn(r),
-			let  zone = r.next(increasing: increasing, from: index) {
+			let  zone = r.next(goingDown: increasing, from: index) {
 			gHere     = zone
 
 //			print("\(rr) : \(r) -> \(zone)") // very helpful in final debugging
@@ -3446,7 +3446,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var           p = ZDotParameters()
 		let           t = bookmarkTarget
 		let           g = groupOwner
-		p.color         = dotColor
+		p.color         = widgetDotsColor
 		p.isGrouped     = g != nil
 		p.showList      = isExpanded
 		p.hasTarget     = isBookmark
@@ -3461,7 +3461,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.isReveal      = isReveal
 		p.isDrop        = isDragDrop && d != nil && d == self
 		p.isFilled      = isFilled
-		p.fill          = isFilled ? dotColor.lighter(by: 2.5) : gBackgroundColor
+		p.fill          = isFilled ? widgetDotsColor.lighter(by: 2.5) : gBackgroundColor
 		p.isCircle      = p.hasTarget || p.hasTargetNote || p.childCount == 0
 
 		return p

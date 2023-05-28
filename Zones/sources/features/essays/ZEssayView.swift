@@ -291,7 +291,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func grabDone() {
-		if  let zone = lastGrabbedDot?.note?.zone {
+		if  let zone = lastGrabbedDot?.dotNote?.zone {
 			zone.grab()
 		} else {
 			gCurrentEssayZone?.grab()
@@ -343,7 +343,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			switch key {
 				case "c":      grabbedZones.copyToPaste()
 				case "n":      setGrabbedZoneAsCurrentEssay()
-				case "t":      swapWithParent()
+				case "t":      swapGrabbedWithParent()
 				case kSlash:   if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
 				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
 				case kEscape:  save(); if ANY { grabDone()                      } else { done() }
@@ -555,15 +555,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				setNeedsDisplay()
 
 			} else if let      dot = dragDotHit(at: rect),
-					  let     note = dot.note {
-				if    let    index = grabbedNotes.firstIndex(of: note) {
-					grabbedNotes.remove(at: index)
-				} else {
+					  let     note = dot.dotNote {
+				if !ungrabNote(note){
 					if !event.modifierFlags.hasShift {
 						ungrabAll()
 					}
 
-					grabbedNotes.appendUnique(item: note)
+					grabNote(note)
 					setNeedsDisplay()
 					gSignal([.sDetails])
 				}
@@ -786,7 +784,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 							let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
 							FOREGROUND { [self] in
-								if  let  note = target.noteMaybe, gCurrentEssay?.children.contains(note) ?? false {
+								if  let  note = target.noteMaybe, gCurrentEssay?.childrenNotes.contains(note) ?? false {
 									let range = note.noteTextRange	    // text range of target essay
 									let start = NSRange(location: range.location, length: 1)
 
@@ -859,7 +857,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		let       range = selectedRange()
 		if  var    note = gCurrentEssay?.notes(in: range).first,
 			let    zone = note.zone {
-			let noChild = note.children.count == 0
+			let noChild = note.childrenNotes.count == 0
 			let toEssay = noChild || !gCreateCombinedEssay
 
 			if  toEssay, gEssayTitleMode == .sEmpty, note.essayText!.string.length > 0 {
@@ -902,7 +900,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					let delta = resetCurrentEssay(essay)
 
 					if  let zone = note?.zone {
-						for within in essay.children {
+						for within in essay.childrenNotes {
 							if  zone == within.zone {
 								let offset = within.noteOffset
 								let indent = within.indentCount
@@ -1048,8 +1046,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func selectFirstNote() {
-		if  let essay = gCurrentEssay, essay.children.count > 0 {
-			let child = essay.children[0]
+		if  let essay = gCurrentEssay, essay.childrenNotes.count > 0 {
+			let child = essay.childrenNotes[0]
 			let range = child.textRange
 			setSelectedRange(range)
 		}

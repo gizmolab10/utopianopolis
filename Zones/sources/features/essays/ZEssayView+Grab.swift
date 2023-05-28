@@ -11,12 +11,12 @@ import Foundation
 typealias ZEssayGrabDotArray = [ZEssayGrabDot]
 
 struct ZEssayGrabDot {
-	var     color = kWhiteColor
-	var  dragRect = CGRect.zero
-	var  textRect = CGRect.zero
-	var  lineRect : CGRect?
-	var noteRange : NSRange?
-	var      note : ZNote?
+	var      dotNote : ZNote?
+	var    noteRange : NSRange?
+	var noteLineRect : CGRect?
+	var noteDragRect = CGRect.zero
+	var noteTextRect = CGRect.zero
+	var     dotColor = kWhiteColor
 }
 
 extension ZEssayView {
@@ -26,7 +26,21 @@ extension ZEssayView {
 	var firstIsGrabbed     : Bool      { return hasGrabbedNote && firstGrabbedZone == firstNote?.zone }
 	var firstGrabbedNote   : ZNote?    { return hasGrabbedNote ? grabbedNotes[0] : nil }
 	var firstGrabbedZone   : Zone?     { return firstGrabbedNote?.zone }
-	var firstNote          : ZNote?    { return (grabDots.count == 0) ? nil : grabDots[0].note }
+	var firstNote          : ZNote?    { return (grabDots.count == 0) ? nil : grabDots[0].dotNote }
+
+	func grabNote(_ note: ZNote) {
+		grabbedNotes.appendUnique(item: note.firstNote)
+	}
+
+	func ungrabNote(_ note: ZNote) -> Bool {
+		if  let index = grabbedNotes.firstIndex(of: note.firstNote) {
+			grabbedNotes.remove(at: index)
+
+			return true
+		}
+
+		return false
+	}
 
 	func handleGrabbed(_ arrow: ZArrowKey, flags: ZEventFlags) {
 
@@ -53,20 +67,20 @@ extension ZEssayView {
 				swapBetweenNoteAndEssay()
 			}
 		} else if [.up, .down].contains(arrow) {
-			grabNextNote(up: arrow == .up, ungrab: !flags.hasShift)
+			grabNextNote(down: arrow == .down, ungrab: !flags.hasShift)
 			scrollToGrabbed()
 			gSignal([.sDetails])
 		}
 	}
 
-	func grabbedIndex(goingUp: Bool) -> Int? {
-		let dots = goingUp ? grabDots : grabDots.reversed()
+	func grabbedIndex(goingDown: Bool) -> Int? {
+		let dots = goingDown ? grabDots : grabDots.reversed()
 		let  max = dots.count - 1
 
 		for (index, dot) in dots.enumerated() {
-			if  let zone = dot.note?.zone,
+			if  let zone = dot.dotNote?.zone,
 				grabbedZones.contains(zone) {
-				return goingUp ? index : max - index
+				return goingDown ? index : max - index
 			}
 		}
 
@@ -77,7 +91,7 @@ extension ZEssayView {
 		var    grabbed : ZEssayGrabDot?
 
 		for dot in grabDots {
-			if  let zone = dot.note?.zone,
+			if  let zone = dot.dotNote?.zone,
 				grabbedZones.contains(zone) {
 				grabbed  = dot
 			}
@@ -120,7 +134,7 @@ extension ZEssayView {
 					let dragOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: dragHeight / -2.0))
 					let   dragSize = CGSize(width: dragWidth, height: dragHeight)
 					let   dragRect = CGRect(origin: dragOrigin, size: dragSize)
-					let        dot = ZEssayGrabDot(color: color, dragRect: dragRect, textRect: noteRect, lineRect: lineRect, noteRange: noteRange, note: note)
+					let        dot = ZEssayGrabDot(dotNote: note, noteRange: noteRange, noteLineRect: lineRect, noteDragRect: dragRect, noteTextRect: noteRect, dotColor: color)
 
 					dots.append(dot)
 				}
@@ -132,7 +146,7 @@ extension ZEssayView {
 
 	func dragDotHit(at rect: CGRect) -> ZEssayGrabDot? {
 		for dot in grabDots {
-			if  dot.dragRect.intersects(rect) {
+			if  dot.noteDragRect.intersects(rect) {
 				return dot
 			}
 		}
@@ -140,48 +154,7 @@ extension ZEssayView {
 		return nil
 	}
 
-	func grabSelected() {
-		let  hadNoGrabs = !hasGrabbedNote
-
-		ungrabAll()
-
-		if  hadNoGrabs,
-			gCurrentEssay?.children.count ?? 0 > 1 {     // ignore if does not have multiple children
-
-			for note in selectedNotes {
-				grabbedNotes.appendUnique(item: note)
-			}
-
-			scrollToGrabbed()
-			gSignal([.sDetails])
-		}
-
-		setNeedsDisplay()
-	}
-
-	func grabNextNote(up: Bool, ungrab: Bool) {
-		let      dots = grabDots
-		if  let index = grabbedIndex(goingUp: up),
-			let   dot = dots.next(increasing: up, from: index),
-			let  note = dot.note {
-
-			if  ungrab {
-				ungrabAll()
-			}
-
-			grabbedNotes.append(note)
-			scrollToGrabbed()
-			gSignal([.sDetails])
-		}
-	}
-
-	func scrollToGrabbed() {
-		if  let range = lastGrabbedDot?.noteRange {
-			scrollRangeToVisible(range)
-		}
-	}
-
-	func swapWithParent() {
+	func swapGrabbedWithParent() {
 		if !firstIsGrabbed,
 		   let note = firstGrabbedNote,
 		   let zone = note.zone {
@@ -202,6 +175,47 @@ extension ZEssayView {
 					resetTextAndGrabs(grab: parent)
 				}
 			}
+		}
+	}
+
+	func grabSelected() {
+		let  hadNoGrabs = !hasGrabbedNote
+
+		ungrabAll()
+
+		if  hadNoGrabs,
+			gCurrentEssay?.childrenNotes.count ?? 0 > 1 {     // ignore if does not have multiple children
+
+			for note in selectedNotes {
+				grabNote(note)
+			}
+
+			scrollToGrabbed()
+			gSignal([.sDetails])
+		}
+
+		setNeedsDisplay()
+	}
+
+	func grabNextNote(down: Bool, ungrab: Bool) {
+		let      dots = grabDots
+		if  let index = grabbedIndex(goingDown: down),
+			let   dot = dots.next(goingDown: down, from: index),
+			var  note = dot.dotNote {
+
+			if  ungrab {
+				ungrabAll()
+			}
+
+			grabNote(note)
+			scrollToGrabbed()
+			gSignal([.sDetails])
+		}
+	}
+
+	func scrollToGrabbed() {
+		if  let range = lastGrabbedDot?.noteRange {
+			scrollRangeToVisible(range)
 		}
 	}
 
@@ -244,7 +258,7 @@ extension ZEssayView {
 	func regrab(_ ungrabbed: ZoneArray) {
 		for zone in ungrabbed {                       // re-grab notes for set aside zones
 			if  let note = zone.note {                // note may not be same
-				grabbedNotes.appendUnique(item: note)
+				grabNote(note)
 			}
 		}
 	}
@@ -287,24 +301,24 @@ extension ZEssayView {
 		let dots = grabDots
 		if  dots.count > 0 {
 			for (index, dot) in dots.enumerated() {
-				if  let     note = dot.note?.firstNote,
+				if  let     note = dot.dotNote?.firstNote,
 					let     zone = note.zone {
 					let  grabbed = grabbedZones.contains(zone)
 					let selected = note.noteRange.inclusiveIntersection(selectedRange) != nil
 					let   filled = selected && !hasGrabbedNote
-					let    color = dot.color
+					let    color = dot.dotColor
 
-					drawVisibilityIcons(for: index, y: dot.dragRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
+					drawVisibilityIcons(for: index, y: dot.noteDragRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
 
 					if  gEssayTitleMode == .sFull {
-						dot.dragRect.drawColoredOval(color, thickness: 2.0, filled: filled || grabbed)   // draw drag dot
+						dot.noteDragRect.drawColoredOval(color, thickness: 2.0, filled: filled || grabbed)   // draw drag dot
 
-						if  let lineRect = dot.lineRect {
+						if  let lineRect = dot.noteLineRect {
 							drawColoredRect(lineRect, color, thickness: 0.5)             // draw indent line in front of drag dot
 						}
 
 						if  grabbed {
-							drawColoredRect(dot.textRect, color)                         // draw box around entire note
+							drawColoredRect(dot.noteTextRect, color)                         // draw box around entire note
 						}
 					}
 				}

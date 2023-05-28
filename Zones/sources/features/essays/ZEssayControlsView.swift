@@ -76,7 +76,7 @@ class ZEssayControlsView: ZView {
 	// MARK: -
 
 	func updateTitleSegments(_ enabled: Bool = true) {
-		let                  isNote = (gCurrentEssay?.children.count ?? 0) == 0
+		let                  isNote = (gCurrentEssay?.childrenNotes.count ?? 0) == 0
 		let                  invert = isTitlesControlDark != gIsDark
 		let                segments = isNote ? 2 : 3
 		titlesControl?.segmentCount = segments

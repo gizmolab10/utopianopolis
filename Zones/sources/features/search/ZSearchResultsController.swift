@@ -157,7 +157,7 @@ class ZSearchResultsController: ZGenericTableController {
 				prefix.addAttribute(.foregroundColor, value: ZColor.black,        range: r)
 			}
 
-			if  let color = z.color {
+			if  let color = (z as? Zone)?.widgetDotsColor {
 				attributed.addAttribute(.foregroundColor, value: color, range: NSRange(location: 0, length: string.length))
 			}
 		}
