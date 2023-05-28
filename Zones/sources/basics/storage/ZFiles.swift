@@ -105,7 +105,7 @@ class ZFiles: NSObject {
 	}
 
 	func readFile(into databaseID: ZDatabaseID, onCompletion: AnyClosure?) throws {
-		if  databaseID != .favoritesID,
+		if  databaseID != .favoritesID, false,
 			let  index  = databaseID.databaseIndex {
 			let   path  = filePath(for: index)
 

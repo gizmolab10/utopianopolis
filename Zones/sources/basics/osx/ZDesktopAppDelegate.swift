@@ -84,7 +84,9 @@ class ZDesktopAppDelegate: NSResponder, ZApplicationDelegate, ZMenuDelegate {
     func applicationWillTerminate(aNotification: NSNotification) {}
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+		try? gFiles.writeToFile(from: .everyoneID)
 		gSaveContext()
+
 		return .terminateNow
     }
 

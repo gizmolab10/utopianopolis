@@ -1630,6 +1630,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				trait      .ownerLink  = selfLink
 			}
 
+			trait.updateSearchables()
+
 			if  updateCoreData {
 				updateCoreDataRelationships()
 			}
@@ -1842,10 +1844,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 				}
 			}
-		}
 
-		gControllers.swapMapAndEssay(force: .wEssayMode) {
-			gEssayView?.selectFirstNote()
+			gControllers.swapMapAndEssay(force: .wEssayMode) {
+				gEssayView?.selectFirstNote()
+			}
 		}
 	}
 

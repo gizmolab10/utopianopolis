@@ -22,6 +22,7 @@ func gSetupDebugFeatures() {
 //	gClearUserDefaults()                           // TODO: WARNING DANGEROUS comment this out to erase ALL leftover configuration
 
 	gDebugModes         = []
+	gDebugModes  .insert(.dWriteFiles)
 	gDebugModes  .insert(.dNoSubscriptions)
 	gDebugModes  .insert(.dHideNoteVisibility)
 

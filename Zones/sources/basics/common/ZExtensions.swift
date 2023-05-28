@@ -2069,17 +2069,17 @@ extension String {
 	}
 
 	func strip(_ string: String) -> String {
-        var before = self
+        var stripped = self
         
-        while before.starts(withAnyCharacterIn: string) {
-            before = before.substring(fromInclusive: 1) // strip extra space
+        while stripped.starts(withAnyCharacterIn: string) {
+            stripped = stripped.substring(fromInclusive: 1) // strip extra space
         }
         
-        while before.ends(withAnyCharacterIn: string) {
-            before = before.substring(toExclusive: before.length - 1) // strip trailing space
+        while stripped.ends(withAnyCharacterIn: string) {
+            stripped = stripped.substring(toExclusive: stripped.length - 1) // strip trailing space
         }
         
-        return before
+        return stripped
     }
 
 	var modern: String {
@@ -2090,10 +2090,19 @@ extension String {
 	}
 
 	var searchable: String {
-		return lowercased()
-			.replacingEachCharacter(in: ",;@!(){}\\\"",              with: kEmpty)
-			.replacingEachCharacter(in: ".:_-='?/\r\n",              with: kSpace)
-			.replacingEachString   (in: ["%2f", "%3a", "   ", "  "], with: kSpace)
+		if  contains("\n\n\t• breadcrumbs") {
+			noop()
+		}
+		
+		let result = lowercased()
+			.replacingEachCharacter(in: ",;@!(){}",                                   with: kEmpty)
+			.replacingEachString   (in: ["\"", "\\"],                                 with: kEmpty)
+			.replacingEachString   (in: ["\r", "\n", "\t", "%2f", "%3a", "\u{FFFC}"], with: kSpace)
+			.replacingEachCharacter(in: ".:_-='?/",                                   with: kSpace)
+			.replacingEachString   (in: ["    ", "   ", "  "],                        with: kSpace)
+			.spacesStripped
+
+		return result
 	}
 
 	var unCamelcased: String {
@@ -2287,11 +2296,15 @@ extension String {
 		return withAnyCharacterIn.contains(start)
 	}
 
-    func ends(withAnyCharacterIn: String) -> Bool {
-        let end = substring(fromInclusive: length - 1)
+	func ends(withAnyCharacterIn: String) -> Bool {
+		if  length > 1 {
+			let end = substring(fromInclusive: length - 1)
 
-        return withAnyCharacterIn.contains(end)
-    }
+			return withAnyCharacterIn.contains(end)
+		}
+
+		return false
+	}
 
     func stringBySmartly(appending: String) -> String {
         var before = self

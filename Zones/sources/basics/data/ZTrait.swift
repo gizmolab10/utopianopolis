@@ -72,21 +72,21 @@ enum ZTraitType: String { // stored in database: do not change
 @objc(ZTrait)
 class ZTrait: ZTraitAssets {
 
-	@NSManaged var      strings : StringsArray?
-	@NSManaged var    ownerLink : String?
-	@NSManaged var     ownerRID : String?
-	@NSManaged var       format : String?
-	@NSManaged var         type : String?
-	@NSManaged var         text : String?
-	@NSManaged var   visibility : NSNumber?
-    override var  unwrappedName : String { return text ?? emptyName }
-	override var  decoratedName : String { return text ?? kNoValue }
-	override var     typePrefix : String { return traitType?.description ?? kEmpty }
-	override var   passesFilter : Bool   { return gSearchFilter.contains(.fNotes) && (traitType?.isEssayOrNote ?? false) }
-	override var      isInScope : Bool   { return ownerZone?.isInScope ?? false }
-	var               needsSave = false
-	var              _ownerZone : Zone?
-	var              _traitType : ZTraitType?
+	@NSManaged var       strings : StringsArray?
+	@NSManaged var     ownerLink : String?
+	@NSManaged var      ownerRID : String?
+	@NSManaged var        format : String?
+	@NSManaged var          type : String?
+	@NSManaged var          text : String?
+	@NSManaged var    visibility : NSNumber?
+	override   var unwrappedName : String { return text                   ?? emptyName }
+	override   var decoratedName : String { return text                   ?? kNoValue }
+	override   var    typePrefix : String { return traitType?.description ?? kEmpty }
+	override   var     isInScope : Bool   { return ownerZone?.isInScope   ?? false }
+	override   var  passesFilter : Bool   { return gSearchFilter.contains(.fNotes) && (traitType?.isEssayOrNote ?? false) }
+	var                needsSave = false
+	var               _ownerZone : Zone?
+	var               _traitType : ZTraitType?
 
 	var attributedText : NSMutableAttributedString? {
 		didSet {
@@ -321,9 +321,9 @@ class ZTrait: ZTraitAssets {
 	}
 
 	func updateSearchables() {
-		let searchables: ZTraitTypesArray = [.tNote, .tEssay, .tEmail, .tHyperlink, .tPhone]
+		let searchableTypes : ZTraitTypesArray = [.tNote, .tEssay, .tEmail, .tHyperlink, .tPhone]
 
-		if  let  tt = traitType, searchables.contains(tt) {
+		if  let type = traitType, searchableTypes.contains(type) {
 			strings = text?.searchable.componentsSeparatedBySpace
 		}
 	}
