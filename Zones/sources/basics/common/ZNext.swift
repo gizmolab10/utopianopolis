@@ -107,7 +107,7 @@ extension ZFavorites {
 				setHere(to: here)
 			}
 			
-			gSignal([.spCrumbs, .spFavoritesMap])
+			gDispatchSignals([.spCrumbs, .spFavoritesMap])
 
 			return here
 		}

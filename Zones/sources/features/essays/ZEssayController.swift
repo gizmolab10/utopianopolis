@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-var gEssayController   : ZEssayController?   { return gControllers.controllerForID(.idNote) as? ZEssayController }
+var gEssayController   : ZEssayController?   { return gControllerForID(.idNote) as? ZEssayController }
 var gEssayControlsView : ZEssayControlsView? { return gEssayController?.essayControlsView }
 
 class ZEssayController : ZGesturesController, ZScrollDelegate {

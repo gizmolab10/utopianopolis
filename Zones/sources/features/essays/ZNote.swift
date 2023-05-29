@@ -108,12 +108,13 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 					z.setNameForSelfAndBookmarks(to: name)
 				}
 
+				z.setModificationDateMaybe()
 				z.updateCoreDataRelationships()
 			}
 
 			needsSave = false
 
-			gSignal([.spCrumbs, .spRelayout])
+			gDispatchSignals([.spCrumbs, .spRelayout])
 		}
 	}
 

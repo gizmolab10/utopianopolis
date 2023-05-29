@@ -217,7 +217,7 @@ extension ZMainController {
 
 	@IBAction func debugInfoButtonAction(_ button: ZButton) {
 		gToggleDebugMode(.dDebugInfo)
-		gSignal([.spDebug, .spMain])
+		gDispatchSignals([.spDebug, .spMain])
 	}
 
 }

@@ -150,7 +150,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 			if  gIsSearching {
                 gExitSearchMode()
 			} else if gIsEssayMode {
-				gControllers.swapMapAndEssay()
+				gSwapMapAndEssay()
 			} else {
 				gSetEditIdeaMode()
 			}

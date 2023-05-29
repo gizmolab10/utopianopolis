@@ -40,7 +40,7 @@ func gUpdateBaseFontSize(up: Bool) {
 	size          = size.confineBetween(low: .zero, high: 15.0)
 	gBaseFontSize = size
 
-	gSignal([.spRelayout, .spPreferences])
+	gDispatchSignals([.spRelayout, .spPreferences])
 }
 
 extension ZGenericController {

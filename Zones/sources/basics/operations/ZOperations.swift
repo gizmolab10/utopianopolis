@@ -113,7 +113,7 @@ class ZOperations: NSObject {
 		}
 
 		if  cloudStatusChanged() {
-			gSignal([.spDataDetails]) // show change in cloud status
+			gDispatchSignals([.spDataDetails]) // show change in cloud status
 
 			// /////////////////////////////////////////// //
 			// assure that we can perform cloud operations //

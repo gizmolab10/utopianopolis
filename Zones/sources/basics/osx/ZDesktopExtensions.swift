@@ -569,7 +569,7 @@ extension ZoneWindow {
         setFrame(rect, display: true)
         
         observer = observe(\.effectiveAppearance) { _, _  in
-            gSignal([.sAppearance])
+            gDispatchSignals([.sAppearance])
         }
     }
     
@@ -712,11 +712,7 @@ extension ZAlerts {
 }
 
 extension ZTextField {
-    var          text:         String? { get {
-		if  stringValue == kEmpty {
-			noop()
-		}
-		return stringValue } set { stringValue = newValue ?? kEmpty } }
+    var          text:         String? { get { return stringValue } set { stringValue = newValue ?? kEmpty } }
     var textAlignment: NSTextAlignment { get { return alignment }   set {   alignment = newValue } }
 
     func enableUndo() {
@@ -867,14 +863,14 @@ extension ZTextEditor {
              .down: moveUp(arrow == .up, stopEdit: !flags.hasOption)
         case .left:
             if  atStart {
-                moveOut(true)
+				moveLeft(left: true)
             } else {
                 clearOffset()
                 handleArrow(arrow, with: flags)
             }
         case .right:
             if  atEnd {
-                moveOut(false)
+                moveLeft(left: false)
             } else {
                 clearOffset()
 				handleArrow(arrow, with: flags)

@@ -65,6 +65,11 @@ enum ZSignalKind: Int {
 
 let gControllers = ZControllers()
 
+func gDispatchSignals(_ multiple: ZSignalKindArray, _ closure: Closure? = nil) { gControllers.dispatchSignalsFor(multiple: multiple, onCompletion: closure) }
+func gSwapMapAndEssay(force mode: ZWorkMode? = nil, _ closure: Closure? = nil) { gControllers.swapMapAndEssay(force: mode, closure) }
+func gControllerForID(_ iID: ZControllerID?)            -> ZGenericController? { return gControllers.controllerForID(iID) }
+func gShowEssay(forGuide: Bool)                                                { gControllers.showEssay(forGuide: forGuide) }
+
 class ZControllers: NSObject {
 
 	var currentController: ZGenericController?
@@ -79,7 +84,7 @@ class ZControllers: NSObject {
 			let zone = gMaybeZoneForRecordName(recordName) {
 			e.resetCurrentEssay(zone.note)
 			swapMapAndEssay(force: .wEssayMode)
-			gSignal([.spCrumbs, .sDetails])
+			gDispatchSignals([.spCrumbs, .sDetails])
 		}
 	}
 
@@ -97,7 +102,7 @@ class ZControllers: NSObject {
 			gMainWindow?.revealEssayEditorInspectorBar(false)
 		}
 
-		gSignal([.sSwap, .spRelayout, .spCrumbs, .spFavoritesMap])
+		gDispatchSignals([.sSwap, .spRelayout, .spCrumbs, .spFavoritesMap, .spDataDetails])
 
 		closure?()
 	}
@@ -150,7 +155,7 @@ class ZControllers: NSObject {
 		}
 	}
 
-	func signalFor(multiple regards: ZSignalKindArray, onCompletion: Closure? = nil) {
+	func dispatchSignalsFor(multiple regards: ZSignalKindArray, onCompletion: Closure? = nil) {
 		FOREGROUND { [self] in
 			for regarding in regards {
 				for (controllerID, signalResponder) in signalRespondersByControllerID {

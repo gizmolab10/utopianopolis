@@ -323,6 +323,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		set {
 			crossLinkMaybe = nil   // force update (get)
 			zoneLink       = newValue?.linkAsString
+
+			setModificationDateMaybe()
 		}
 	}
 
@@ -344,11 +346,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
+	func setName(to name: String) {
+		zoneName  = name
+
+		setModificationDateMaybe()
+	}
+
 	func setNameForSelfAndBookmarks(to name: String) {
-		zoneName = name
+		setName(to: name)
 
 		applyToAllBookmarksTargetingSelf { b in
-			b.zoneName = name
+			b.setName(to: name)
 		}
 	}
 
@@ -401,6 +409,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		let theCopy = Zone.uniqueZoneNamed("noname", databaseID: id)
 
 		copyInto(theCopy)
+
 		if  gBookmarks.addToReverseLookup(theCopy) {  // only works for bookmarks
 			gRelationships.addBookmarkRelationship(theCopy, target: self, in: id)
 		}
@@ -585,6 +594,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				if  colorMaybe != computed {
 					colorMaybe  = computed
 					zoneColor   = computed?.string ?? kEmpty
+
+					setModificationDateMaybe()
 				}
 			}
 		}
@@ -665,6 +676,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		if  zoneAttributes != attributes {
 			zoneAttributes  = attributes
+
+			setModificationDateMaybe()
 		}
 	}
 
@@ -688,6 +701,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		set {
 			if  newValue != order {
 				zoneOrder = NSNumber(value: newValue)
+
+				setModificationDateMaybe()
 			}
 		}
 	}
@@ -708,6 +723,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		set {
 			if  newValue != fetchableCount && !isBookmark {
 				zoneCount = NSNumber(value: newValue)
+
+				setModificationDateMaybe()
 			}
 		}
 	}
@@ -738,6 +755,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		set {
 			if  newValue != progenyCount {
 				zoneProgeny = NSNumber(value: newValue)
+
+				setModificationDateMaybe()
 			}
 		}
 	}
@@ -815,6 +834,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray {
 		var      converted = StringsArray()
 		var              v = visited ?? StringsArray()
+
+		// //////////////////// //
+		//                      //
+		//   extract children   //
+		//                      //
+		// //////////////////// //
 
 		if  let       name = recordName {
 			v.appendUnique(item: name)
@@ -951,6 +976,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 				if  oldValue  != value {
 					zoneAccess = NSNumber(value: value)
+
+					setModificationDateMaybe()
 				}
 			}
 		}
@@ -1063,7 +1090,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		    userCanMutateProgeny {
 			expand()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
-				gControllers.signalFor(multiple: [.spRelayout]) {
+				gDispatchSignals([.spRelayout]) {
 					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}
@@ -1402,7 +1429,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			next.grab()
 			gFavoritesCloud.setHere(to: self)
 			gFavoritesCloud.updateFavoritesAndRedraw {
-				gSignal([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
+				gDispatchSignals([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
 			}
 		}
 	}
@@ -1439,7 +1466,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				p.grab()
-				gSignal([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
+				gDispatchSignals([.spCrumbs, .spDataDetails, .spFavoritesMap, .sDetails])
 			}
 
 			gFavoritesCloud.updateCurrentBookmarks()
@@ -1494,7 +1521,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		here.grab()
 		here.expand()
-		gControllers.swapMapAndEssay(force: .wMapMode)
+		gSwapMapAndEssay(force: .wMapMode)
 	}
 
 	func grab(updateBrowsingLevel: Bool = true) {
@@ -1671,13 +1698,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					trait.format   = attributed.attributesAsString
 				}
 
+				trait.setModificationDateMaybe()
 				trait.updateSearchables()
 			} else {
+				traits[type]?.setModificationDateMaybe()
 				traits[type]?.needDestroy()
 
 				traits[type] = nil
 			}
 
+			setModificationDateMaybe()
 			updateCoreDataRelationships()  // need to record changes in core data traits array
 
 			switch (type) {
@@ -1700,7 +1730,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  let        a = newValue {
 				let    trait = traitFor(.tAssets)
 				trait.assets = a
+
+				trait.setModificationDateMaybe()
 			} else {
+				traits[.tAssets]?.setModificationDateMaybe()
 				traits[.tAssets]?.needDestroy()
 
 				traits[.tAssets] = nil
@@ -1732,6 +1765,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			traits[iType] = nil
 
 			updateCoreDataRelationships()
+			setModificationDateMaybe()
 			trait.needDestroy()
 			trait.unregister()
 			trait.deleteFromCD()
@@ -1851,7 +1885,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  gCurrentEssay?.zone == self {
-				gControllers.swapMapAndEssay(force: .wEssayMode) {
+				gSwapMapAndEssay(force: .wEssayMode) {
 					gEssayView?.selectFirstNote()
 				}
 			}
@@ -1862,7 +1896,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gCreateCombinedEssay = false
 		gCurrentEssay        = note
 
-		gControllers.swapMapAndEssay(force: .wEssayMode)
+		gSwapMapAndEssay(force: .wEssayMode)
 	}
 
 	var zonesWithNotes : ZoneArray {
@@ -2178,7 +2212,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			} else {
 				if  gIsEssayMode {
-					gControllers.swapMapAndEssay(force: .wMapMode)
+					gSwapMapAndEssay(force: .wMapMode)
 				}
 
 				focusOnBookmarkTarget() { (object, kind) in
@@ -2193,7 +2227,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		if  gIsEssayMode {
-			gControllers.swapMapAndEssay(force: .wMapMode)
+			gSwapMapAndEssay(force: .wMapMode)
 		}
 
 		return false
@@ -2207,7 +2241,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  gIsEssayMode {
 				gEssayView?.updateTextStorage()
 			} else {
-				gControllers.swapMapAndEssay()
+				gSwapMapAndEssay()
 			}
 
 			return true
@@ -2246,7 +2280,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					gHere.grab()
 				}
 
-				gSignal([.spFavoritesMap, .spRelayout])
+				gDispatchSignals([.spFavoritesMap, .spRelayout])
 			}
 		}
 	}
@@ -2300,7 +2334,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		onCompletion?(needReveal)
 
 		if !needReveal {
-			gSignal([.spCrumbs, .spDataDetails])
+			gDispatchSignals([.spCrumbs, .spDataDetails])
 		}
 	}
 
@@ -2850,6 +2884,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			func finish() -> Int {
 				updateMaxLevel()
+				setModificationDateMaybe()
 				onCompletion?(child)
 
 				return toIndex
@@ -2909,6 +2944,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				updateCoreDataRelationships()
 			}
 
+			setModificationDateMaybe()
 			updateMaxLevel()
 			onCompletion?(child)
 
@@ -2929,6 +2965,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			child.setParentZone(nil)
 			child.setValue(nil, forKeyPath: kParentRef)
 			updateCoreDataRelationships()
+			setModificationDateMaybe()
 			updateMaxLevel()
 			needCount()
 
@@ -2969,11 +3006,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let childLength = childName.length
 			let    combined = original.stringBySmartly(appending: childName)
 			let       range = NSMakeRange(combined.length - childLength, childLength)
-			parent.zoneName = combined
+			parent.setName(to: combined)
 			parent.extractTraits  (from: self)
 			parent.extractChildren(from: self)
 
 			gDeferRedraw {
+				setModificationDateMaybe()
 				moveZone(to: gTrash)
 			}
 
@@ -3352,7 +3390,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gRelayoutMaps()
 		} else if isBookmark || (isTraveller && (COMMAND || !hasChildren)) {
 			invokeTravel(COMMAND) { reveal in      // note, email, bookmark, hyperlink
-				gSignal([.spRelayout, .spCrumbs])
+				gDispatchSignals([.spRelayout, .spCrumbs])
 			}
 		} else if hasChildren, !OPTION {
 			let show = !isExpanded
@@ -3750,7 +3788,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	override func extractFromStorageDictionary(_ dict: ZStorageDictionary, of iRecordType: String, into iDatabaseID: ZDatabaseID, checkCDStore: Bool = false) throws {
 		if  let name = dict[.name] as? String,
 			responds(to: #selector(setter: zoneName)) {
-			zoneName = name
+			setName(to: name)
 		}
 
 		try super.extractFromStorageDictionary(dict, of: iRecordType, into: iDatabaseID, checkCDStore: checkCDStore) // do this step last so the assignment above is NOT pushed to cloud

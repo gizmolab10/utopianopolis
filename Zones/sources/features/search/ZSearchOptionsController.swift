@@ -8,7 +8,7 @@
 
 import Foundation
 
-var gSearchOptionsController: ZSearchOptionsController? { return gControllers.controllerForID(.idSearchOptions) as? ZSearchOptionsController }
+var gSearchOptionsController: ZSearchOptionsController? { return gControllerForID(.idSearchOptions) as? ZSearchOptionsController }
 
 class ZSearchOptionsController: ZGenericController {
 

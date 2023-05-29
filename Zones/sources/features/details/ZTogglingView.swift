@@ -107,7 +107,7 @@ class ZTogglingView: ZView {
 		}
 
 		gRelayoutMaps()
-		gSignal([.sDetails])
+		gDispatchSignals([.sDetails])
 	}
 
 	// MARK: - update UI
@@ -129,7 +129,7 @@ class ZTogglingView: ZView {
 		}
 	}
 
-	func updateView() { // gSignal for .sDetails goes here
+	func updateView() { // gDispatchSignals for .sDetails goes here
 		updateColors()
 		updateTitleBarButtons()
 		updateTitleButton()

@@ -14,7 +14,7 @@ import SnapKit
     import UIKit
 #endif
 
-var gMapController    : ZMapController? { return gControllers.controllerForID(.idMainMap) as? ZMapController }
+var gMapController    : ZMapController? { return gControllerForID(.idMainMap) as? ZMapController }
 var gMapView          : ZMapView?       { return gMapController?.view as? ZMapView }
 var gLinesAndDotsView : ZMapView?       { return gMapView?.decorationsView }
 
@@ -386,10 +386,10 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 						setNeedsDisplay()
 					}
                 } else if gIsEssayMode {
-					gControllers.swapMapAndEssay(force: .wMapMode)
+					gSwapMapAndEssay(force: .wMapMode)
 				}
 
-                gSignal([.sData])
+                gDispatchSignals([.sData])
             }
 
             restartGestureRecognition()

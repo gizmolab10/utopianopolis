@@ -42,7 +42,7 @@ extension ZFavorites {
 			FOREGROUND(after: 0.01) { [self] in
 				setCurrentFavoriteBookmark(to: bookmark)
 				resetRecents()
-				gSignal([.spFavoritesMap])
+				gDispatchSignals([.spFavoritesMap])
 			}
 
 			return bookmark
@@ -97,7 +97,7 @@ extension ZFavorites {
 			}
 		}
 
-		gSignal([.sDetails, .spCrumbs, .spRelayout])
+		gDispatchSignals([.sDetails, .spCrumbs, .spRelayout])
 	}
 
 	func popNoteAndUpdate() -> Bool {
@@ -109,7 +109,7 @@ extension ZFavorites {
 
 			push(target)
 			setAsCurrent(notemark)
-			gSignal([.spFavoritesMap, .spCrumbs])
+			gDispatchSignals([.spFavoritesMap, .spCrumbs])
 
 			return true
 		}
@@ -167,11 +167,11 @@ extension ZFavorites {
 
 			if  gIsMapMode {
 				gFocusing.focusOnGrab(.eSelected) {
-					gSignal([.spCrumbs, .spRelayout, .spDataDetails])
+					gDispatchSignals([.spCrumbs, .spRelayout, .spDataDetails])
 				}
 			} else if gCurrentEssayZone != target {
 				gEssayView?.resetCurrentEssay(target.note)
-				gSignal([.spCrumbs, .sDetails, .spFavoritesMap])
+				gDispatchSignals([.spCrumbs, .sDetails, .spFavoritesMap])
 			}
 		}
 	}

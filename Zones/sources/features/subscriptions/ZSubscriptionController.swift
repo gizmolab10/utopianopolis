@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-var gSubscriptionController : ZSubscriptionController? { return gControllers.controllerForID(.idSubscription) as? ZSubscriptionController }
+var gSubscriptionController : ZSubscriptionController? { return gControllerForID(.idSubscription) as? ZSubscriptionController }
 var gSubscriptionDidChange  = true
 
 class ZSubscriptionController: ZGenericController {

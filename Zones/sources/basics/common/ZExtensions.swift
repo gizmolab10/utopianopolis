@@ -21,14 +21,10 @@ protocol ZGeneric {
 
 func gSeparatorAt(level: Int) -> String { return " ( \(level) ) " }
 
-func gSignal(_ multiple: ZSignalKindArray, _ onCompletion: Closure? = nil) {
-	gControllers.signalFor(multiple: multiple, onCompletion: onCompletion)
-}
-
 private var canUpdate = true
 
 func gRelayoutMaps(_ onCompletion: Closure? = nil) {
-	gSignal([.spRelayout], onCompletion)
+	gDispatchSignals([.spRelayout], onCompletion)
 }
 
 func gDeferRedraw(_ closure: Closure) {
@@ -399,13 +395,11 @@ extension ZSignalKindArray {
 	var debugDescription: String {
 		get {
 			var result = kEmpty
+
 			forEach { kind in
 				result.append("\(kind), ")
-
-				if  kind == .spRelayout {
-					noop()
-				}
 			}
+
 			return result
 		}
 	}
@@ -1345,14 +1339,17 @@ extension Array {
 
 		// TODO: use a dictionary of record names : records
 
-        if  let compare = using,
-			let to = other as AnyObject? {
-            for item in self {
-                if  compare(item as AnyObject, to) {
-                    return true     // true means has a match
-                }
-            }
-        }
+		if  let to = other as AnyObject? {
+			let compare = using ?? { (a: AnyObject, b: AnyObject) in
+				return a.isEqual(to: b)
+			}
+
+			for item in self {
+				if  compare(item as AnyObject, to) {
+					return true     // true means has a match
+				}
+			}
+		}
         
         return false    // false means has no match
     }
@@ -2089,11 +2086,7 @@ extension String {
 			.replacingOccurrences  (of: kLevelFourSeparator,  with: gSeparatorAt(level: 4))
 	}
 
-	var searchable: String {
-		if  contains("\n\n\t• breadcrumbs") {
-			noop()
-		}
-		
+	var searchable: String {		
 		let result = lowercased()
 			.replacingEachCharacter(in: ",;@!(){}",                                   with: kEmpty)
 			.replacingEachString   (in: ["\"", "\\"],                                 with: kEmpty)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-var gControlsController: ZControlsController? { return gControllers.controllerForID(.idControls) as? ZControlsController }
+var gControlsController: ZControlsController? { return gControllerForID(.idControls) as? ZControlsController }
 
 class ZControlsController: ZGenericController {
 

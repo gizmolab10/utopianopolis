@@ -42,7 +42,7 @@ class ZSearching: NSObject, ZSearcher {
 			searchState = .sNot       // don't call setSearchStateTo (below), it has unwanted side-effects
 
 			gSearchBarController?.spinner?.stopAnimating()
-			gSignal([.sFound, .sSearch, .spRelayout])
+			gDispatchSignals([.sFound, .sSearch, .spRelayout])
 
 			if  gIsEssayMode {
 				assignAsFirstResponder(gEssayView)
@@ -57,7 +57,7 @@ class ZSearching: NSObject, ZSearcher {
 		gSearchBarController?    .searchStateDidChange()
 		gSearchResultsController?.searchStateDidChange()
 
-		gSignal([gSearchStateIsList ? .sFound : .sSearch])
+		gDispatchSignals([gSearchStateIsList ? .sFound : .sSearch])
 	}
 
 	func performSearch(for searchString: String, closure: Closure?) {

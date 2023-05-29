@@ -9,7 +9,7 @@
 import Foundation
 import AuthenticationServices
 
-var gStartupController: ZStartupController? { return gControllers.controllerForID(.idStartup) as? ZStartupController }
+var gStartupController: ZStartupController? { return gControllerForID(.idStartup) as? ZStartupController }
 
 class ZStartupController: ZGenericController, ASAuthorizationControllerDelegate {
 

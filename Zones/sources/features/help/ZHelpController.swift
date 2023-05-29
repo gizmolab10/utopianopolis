@@ -114,7 +114,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 		essayHelpData.setupForMode(m)
 		dotsHelpData .setupForMode(m)
 		mapHelpData  .setupForMode(m)
-		gSignal([.sAppearance]) // redraw dots map
+		gDispatchSignals([.sAppearance]) // redraw dots map
 		setupGridViews()
 		setupTitleBar()
 

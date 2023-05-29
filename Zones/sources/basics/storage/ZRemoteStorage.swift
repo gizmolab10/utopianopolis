@@ -30,7 +30,7 @@ func gRecountMaybe() {
 		gNeedsRecount = false
 
 		gRemoteStorage.recount()
-		gSignal([.spDataDetails])
+		gDispatchSignals([.spDataDetails])
 	}
 }
 

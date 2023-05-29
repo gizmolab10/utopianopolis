@@ -187,8 +187,8 @@ class ZTextPack: NSObject {
 	// MARK: -
 
 	func capture(_ iText: String?) {
-		if  let text           = iText, text != kEmpty {
-			if  let     trait  = packedTrait {            // traits take logical priority (i.e., ignore zone if editing a trait)
+		if  let       text = iText, text != kEmpty {
+			if  let  trait = packedTrait {            // traits take logical priority (i.e., ignore zone if editing a trait)
 				trait.ownerZone?.setTraitText(text, for: trait.traitType)
 			} else if let zone = packedZone {
 				zone.zRecords?.removeFromLocalSearchIndex(nameOf: zone)
@@ -288,7 +288,7 @@ class ZTextEditor: ZTextView {
 					setCursor(at: at)
 				}
 
-				gSignal([.spCrumbs, .spPreferences])
+				gDispatchSignals([.spCrumbs, .spPreferences])
 			}
         }
 
@@ -432,8 +432,9 @@ class ZTextEditor: ZTextView {
 	// MARK: - events
 	// MARK: -
 
-	func moveOut(_ iMoveOut: Bool) {
+	func moveLeft(left moveLeft: Bool) {
 		let revealed = currentlyEditedZone?.isExpanded ?? false
+		let start = gStartMeasurement()
 
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
@@ -444,16 +445,19 @@ class ZTextEditor: ZTextView {
 			}
 
 			gTextEditorHandlesArrows = false       // done last
+			let duration = gEndMeasurement(start: start)
+
+			print("moving left took \(duration) seconds")
 		}
 
-		if  iMoveOut {
+		if  moveLeft {
 			quickStopCurrentEdit()
-			gMapEditor.moveOut { reveal in
+			gMapEditor.moveLeft { reveal in
 				editAtOffset(100000000.0)
 			}
 		} else if currentlyEditedZone?.children.count ?? 0 > 0 {
 			quickStopCurrentEdit()
-			gMapEditor.moveInto { reveal in
+			gMapEditor.moveRight { reveal in
 				if  !reveal {
 					editAtOffset(.zero)
 				} else {
@@ -482,7 +486,7 @@ class ZTextEditor: ZTextView {
         
         if  var original = e?.packedZone {
             gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
-				gControllers.signalFor(multiple: kinds) { [self] in
+				gDispatchSignals(kinds) { [self] in
 					if  let widget = original.widget, widget.isHere {       // offset has changed
                         currentOffset = widget.textWidget?.offset(for: selectedRange, up)
                     }

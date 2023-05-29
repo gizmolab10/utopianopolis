@@ -286,7 +286,7 @@ class ZSelecting: NSObject {
 		updateBrowsingLevel()
 		updateCousinList()
 		gFavoritesCloud.updateFavoritesAndRedraw(needsRedraw: needsRedraw) {
-			gSignal([.sDetails])
+			gDispatchSignals([.sDetails])
 		}
 	}
 
@@ -372,7 +372,7 @@ class ZSelecting: NSObject {
                 gCurrentBrowseLevel = level
             }
 
-			gSignal([.spCrumbs, .sDetails, .spPreferences, .spRelayout])                // so color wells and breadcrumbs are updated
+			gDispatchSignals([.spCrumbs, .sDetails, .spPreferences, .spRelayout])                // so color wells and breadcrumbs are updated
         }
     }
     

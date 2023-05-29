@@ -35,7 +35,7 @@ enum ZFunction: String {
 	case eMe         = "Me"
 }
 
-var gActionsController: ZActionsController { return gControllers.controllerForID(.idActions) as! ZActionsController }
+var gActionsController: ZActionsController { return gControllerForID(.idActions) as! ZActionsController }
 
 class ZActionsController : ZGenericController {
 

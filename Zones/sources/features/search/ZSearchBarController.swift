@@ -18,7 +18,7 @@ protocol ZSearcher {
 	func performSearch(for searchString: String, closure: Closure?)
 }
 
-var gSearchBarController: ZSearchBarController? { return gControllers.controllerForID(.idSearch) as? ZSearchBarController }
+var gSearchBarController: ZSearchBarController? { return gControllerForID(.idSearch) as? ZSearchBarController }
 
 class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 

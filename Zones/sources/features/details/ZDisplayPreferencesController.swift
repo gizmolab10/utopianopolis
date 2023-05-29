@@ -78,7 +78,7 @@ class ZDisplayPreferencesController: ZGenericController {
 				gPreferencesAreTakingEffect = flag
 			}
 
-			gSignal([.spRelayout, .spCrumbs, .spPreferences])
+			gDispatchSignals([.spRelayout, .spCrumbs, .spPreferences])
 			gExplainPopover?.reexplain()
 		}
     }
@@ -86,7 +86,7 @@ class ZDisplayPreferencesController: ZGenericController {
 	@IBAction func layoutButtonAction(_ button: ZHoverableButton) {
 		gMapLayoutMode = gMapLayoutMode.next; gRelayoutMaps()
 
-		gSignal([.spPreferences])
+		gDispatchSignals([.spPreferences])
 	}
 
     @IBAction func colorBoxAction(_ iColorBox: ZColorWell) {
@@ -100,7 +100,7 @@ class ZDisplayPreferencesController: ZGenericController {
 				default:             break
 			}
 
-			gSignal([.sDatum])
+			gDispatchSignals([.sDatum])
 			gExplainPopover?.reexplain()
         }
 	}
@@ -108,7 +108,7 @@ class ZDisplayPreferencesController: ZGenericController {
 	@IBAction func colorfulModeAction(_ button: ZButton) {
 		gColorfulMode = !gColorfulMode
 
-		gSignal([.spRelayout, .spPreferences, .spFavoritesMap])
+		gDispatchSignals([.spRelayout, .spPreferences, .spFavoritesMap])
 	}
 
 	@IBAction func clearColorAction(_ button: ZButton) {

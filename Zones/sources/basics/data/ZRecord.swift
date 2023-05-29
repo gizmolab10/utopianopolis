@@ -133,7 +133,7 @@ class ZRecord: ZManagedObject {
 	// MARK: - overrides
 	// MARK: -
 
-	class var         cloudProperties : StringsArray { return [#keyPath(isTrashed), #keyPath(recordName), #keyPath(dbid)] }
+	class var         cloudProperties : StringsArray { return [#keyPath(isTrashed), #keyPath(recordName), #keyPath(dbid), #keyPath(modificationDate)] }
 	class var optionalCloudProperties : StringsArray { return [] }
 	var               cloudProperties : StringsArray { return ZRecord.cloudProperties }
 	var       optionalCloudProperties : StringsArray { return ZRecord.optionalCloudProperties }
@@ -147,20 +147,23 @@ class ZRecord: ZManagedObject {
 	func ignoreKeyPathsForStorage()  -> StringsArray { return [kpParent, kpOwner] }
 	func unregister()                                { zRecords?.unregisterZRecord(self) }
 	func register()                                  { zRecords?  .registerZRecord(self) }
+	func setModificationDate()                       { modificationDate = Date() }
 	func orphan()                                    {}
 	func maybeNeedRoot()                             {}
 	func debug(_ iMessage: String)                   {}
 	func adopt(recursively : Bool = false)           {}
+
+	func setModificationDateMaybe() {
+		if gCanSetModificationDates {
+			setModificationDate()
+		}
+	}
 
 	func debugRegistration(_ prefix: String? = nil) {
 		if  let zone = self as? Zone,
 			let name = zone.zoneName, name == "urgent" {
 			let mark = prefix == nil ? kEmpty : "\(prefix!) "
 			printDebug(.dRegister, mark + zone.decoration + zone.ancestralString)
-
-			if  prefix == ">" {
-				noop()
-			}
 		}
 	}
 
@@ -195,6 +198,12 @@ class ZRecord: ZManagedObject {
 
 	var selfInContext: ZRecord? { return gIsMainThread ? self : gObjectInMainContext(with: objectID) as? ZRecord }
 
+	func updateMissingDataFromCoreData() {
+		if  modificationDate == nil {
+			modificationDate  = Date()
+		}
+	}
+
 	@discardableResult func updateFromCoreDataHierarchyRelationships(visited: StringsArray?) -> StringsArray { return StringsArray() }
 
 	@discardableResult func convertFromCoreData(visited: StringsArray?) -> StringsArray {
@@ -207,7 +216,10 @@ class ZRecord: ZManagedObject {
 				v        .appendUnique(item: name)
 			}
 
-			converted.append(contentsOf: updateFromCoreDataHierarchyRelationships(visited: v))
+			let updated = updateFromCoreDataHierarchyRelationships(visited: v)
+
+			converted.append(contentsOf: updated)
+			updateMissingDataFromCoreData()
 			gStartupController?.pingRunloop()
 		}
 
@@ -232,7 +244,8 @@ class ZRecord: ZManagedObject {
 		let        zRecord = object as! ZRecord
 		zRecord.recordName = recordName ?? gUniqueRecordName
 		zRecord      .dbid = databaseID.identifier
-		
+
+		zRecord.setModificationDateMaybe()
 		zRecord.register()
 
 		return zRecord

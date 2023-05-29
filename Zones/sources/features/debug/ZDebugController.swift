@@ -125,7 +125,7 @@ class ZDebugController: ZGenericTableController {
 			let    thingID = ZDebugThingID(rawValue: tag) {
 			switch thingID {
 				case .tBoxes:  gToggleDebugMode(.dDebugDraw)
-				case .tAngles: gToggleDebugMode(.dDebugAngles); gSignal([.spMain])
+				case .tAngles: gToggleDebugMode(.dDebugAngles); gDispatchSignals([.spMain])
 			}
 
 			gRelayoutMaps()

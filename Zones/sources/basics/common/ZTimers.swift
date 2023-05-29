@@ -68,6 +68,17 @@ func gTemporarilySetTextEditorHandlesArrows(for seconds: Double = 1.0) {
 	gTimers.startTimer(for: .tTextEditorHandlesArrows)
 }
 
+func gStartMeasurement() -> DispatchTime {
+	return DispatchTime.now()
+}
+
+func gEndMeasurement(start: DispatchTime) -> TimeInterval {
+	let end = DispatchTime.now()
+	let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
+	let timeInterval = Double(nanoTime) / 1_000_000_000
+	return timeInterval
+}
+
 class ZTimers: NSObject {
 
 	var timers = [ZTimerID : Timer]()
@@ -210,7 +221,7 @@ class ZTimers: NSObject {
 						do {
 							try block()
 							debug("•")
-							gSignal([.spDataDetails]) // show change in timer status
+							gDispatchSignals([.spDataDetails]) // show change in timer status
 						} catch {
 							startTimer()
 							debug(kHyphen)

@@ -342,6 +342,10 @@ class ZRecords: NSObject {
 			}
 
 			let _ = onEachHandful(nil) // indicates done
+
+			FOREGROUND(after: 0.1) {
+				gDispatchSignals([.spDataDetails])   // to remove "search for local" in cd status
+			}
 		}
 	}
 

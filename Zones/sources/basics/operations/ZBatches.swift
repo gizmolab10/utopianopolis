@@ -160,7 +160,7 @@ class ZBatches: ZOnboarding {
                 transferDeferred()                         // 3.
                 processNextBatch()                         // recurse
 			} else if !currentOp.isDoneOp {
-				gSignal([.sData, .spStartupStatus])        // 4.
+				gDispatchSignals([.sData, .spStartupStatus])        // 4.
 			}
         }
     }

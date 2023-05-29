@@ -20,7 +20,7 @@ import UIKit
 //                                                        //
 // ////////////////////////////////////////////////////// //
 
-var gKickoffToolsController: ZKickoffToolsController? { return gControllers.controllerForID(.idStartHere) as? ZKickoffToolsController }
+var gKickoffToolsController: ZKickoffToolsController? { return gControllerForID(.idStartHere) as? ZKickoffToolsController }
 
 enum ZKickoffToolID: String {
 

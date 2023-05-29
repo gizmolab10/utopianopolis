@@ -12,7 +12,7 @@
     import UIKit
 #endif
 
-var gDetailsController : ZDetailsController? { return gControllers.controllerForID(.idDetails) as? ZDetailsController }
+var gDetailsController : ZDetailsController? { return gControllerForID(.idDetails) as? ZDetailsController }
 private let  detailIds : [ZDetailsViewID] = [.vSubscribe, .vKickoffTools, .vData, .vPreferences, .vFavorites]
 
 struct ZDetailsViewID: OptionSet {
@@ -65,7 +65,7 @@ class ZDetailsController: ZGesturesController {
 	@objc override func handleControllerClickGesture(_ iGesture: ZGestureRecognizer?) {
 		if  gIsEssayMode, !gPreferencesAreTakingEffect {
 			gEssayView?.save()
-			gControllers.swapMapAndEssay(force: .wMapMode)
+			gSwapMapAndEssay(force: .wMapMode)
 		}
 	}
 
@@ -96,7 +96,7 @@ class ZDetailsController: ZGesturesController {
 		detailsUpdate()
 		stackView?.setAllSubviewsNeedDisplay()
 		stackView?.displayAllSubviews()
-		gSignal([.sDetails])
+		gDispatchSignals([.sDetails])
 		gRelayoutMaps()
 	}
 
@@ -116,7 +116,7 @@ class ZDetailsController: ZGesturesController {
 			showViewFor(.vPreferences)
 		}
 
-		gSignal([.spMain, .sDetails])
+		gDispatchSignals([.spMain, .sDetails])
 	}
 
 }

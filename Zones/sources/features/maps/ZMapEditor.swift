@@ -112,7 +112,7 @@ class ZMapEditor: ZBaseEditor {
 						case "f":        gSearching.showSearch(OPTION)
 						case "h":        showTraitsPopup(for: moveable)
 						case "i":        showMutateTextPopup()
-						case "j":        if SPECIAL { gRemoteStorage.recount(); gSignal([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
+						case "j":        if SPECIAL { gRemoteStorage.recount(); gDispatchSignals([.spDataDetails]) } else { gSelecting.handleDuplicates(COMMAND) }
 						case "k":        toggleColorized()
 						case "l":        alterCase(up: false)
 						case "n":        editNote(flags: flags)
@@ -120,8 +120,8 @@ class ZMapEditor: ZBaseEditor {
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
 						case "s":        if SPLAYED { invokeShare() } else { gFiles.importExport(export: true, moveable, with: flags) }
-						case "t":        if SPECIAL { gControllers.showEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
-						case "u":        if SPECIAL { gControllers.showEssay(forGuide:  true) } else { alterCase(up: true) }
+						case "t":        if SPECIAL { gShowEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
+						case "u":        if SPECIAL { gShowEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
 						case "x":        return handleX(flags)
@@ -389,7 +389,7 @@ class ZMapEditor: ZBaseEditor {
 			let promoteToParent: ClosureClosure = { innerClosure in
 				original.convertFromLineWithTitle()
 
-				grabs.reversed().moveInto(original) { reveal in
+				grabs.reversed().moveRight(into: original) { reveal in
 					original.grab()
 					innerClosure()
 					onCompletion?()
@@ -487,7 +487,7 @@ class ZMapEditor: ZBaseEditor {
                 swapAndResumeEdit()
             }
 
-			gSignal([.spMain, .sDetails, .spMainMap])
+			gDispatchSignals([.spMain, .sDetails, .spMainMap])
         } else if COMMA {
 			gDetailsController?.displayPreferences()
         } else if gIsEditIdeaMode {
@@ -867,7 +867,7 @@ class ZMapEditor: ZBaseEditor {
 				zone.orphan()
 			}
 
-			grabs.moveInto(done!) { good in
+			grabs.moveRight(into: done!) { good in
 				done?.grab()
 				gRelayoutMaps()
 			}
@@ -891,7 +891,7 @@ class ZMapEditor: ZBaseEditor {
 
 		if  let grabs = moveables {
 			moveUp(up, grabs, selectionOnly: selectionOnly, extreme: extreme, growSelection: growSelection, targeting: iOffset) { kinds in
-				gSignal(kinds)
+				gDispatchSignals(kinds)
 			}
 		}
 	}
@@ -986,7 +986,7 @@ class ZMapEditor: ZBaseEditor {
 						let   newIndex = indexer.siblingIndex
 						let  moveThese = moveUp ? iZones.reversed() : iZones
 
-						moveThese.moveInto(intoParent, at: newIndex, orphan: true) { reveal in
+						moveThese.moveRight(into: intoParent, at: newIndex, orphan: true) { reveal in
 							gSelecting.grab(moveThese)
 							intoParent.children.updateOrder()
 							onCompletion?([.spRelayout])
@@ -1170,7 +1170,7 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    func moveOut(_ flags: ZEventFlags? = nil, force: Bool = false, onCompletion: BoolClosure?) {
+    func moveLeft(_ flags: ZEventFlags? = nil, force: Bool = false, onCompletion: BoolClosure?) {
 		if  let zone          = moveables?.first, !zone.isARoot {
 			let extreme       =   flags?.hasCommand ?? false
 			let selectionOnly = !(flags?.hasOption  ?? false)
@@ -1201,7 +1201,7 @@ class ZMapEditor: ZBaseEditor {
 
 					gAlerts.showAlert("WARNING", "This will relocate \"\(zone.zoneName ?? kEmpty)\" to its parent's parent\(parenthetical)", "Relocate", "Cancel") { [self] iStatus in
 						if  iStatus == .sYes {
-							moveOut(flags, force: true, onCompletion: onCompletion)
+							moveLeft(flags, force: true, onCompletion: onCompletion)
 						}
 					}
 				} else {
@@ -1209,13 +1209,13 @@ class ZMapEditor: ZBaseEditor {
 						if  let here = iHere {
 							gHere = here
 
-							moveOut(to: here, onCompletion: onCompletion)
+							moveLeft(to: here, onCompletion: onCompletion)
 						}
 					}
 
 					if extreme {
 						if  gHere.isARoot {
-							moveOut(to: gHere, onCompletion: onCompletion)
+							moveLeft(to: gHere, onCompletion: onCompletion)
 						} else {
 							zone.revealZonesToRoot() {
 								moveOutToHere(gRoot)
@@ -1236,11 +1236,11 @@ class ZMapEditor: ZBaseEditor {
 						}
 
 						if  gp.isProgenyOf(gHere) || gp == gHere {
-							moveOut(to: gp, onCompletion: onCompletion)
+							moveLeft(to: gp, onCompletion: onCompletion)
 
 							return
 						} else if inFavoritesMap {
-							moveOut(to: gp) { reveal in
+							moveLeft(to: gp) { reveal in
 								zone.grab()
 								gFavoritesCloud.setHere(to: gp)
 								onCompletion?(reveal)
@@ -1262,23 +1262,23 @@ class ZMapEditor: ZBaseEditor {
     
     func move(out: Bool, flags: ZEventFlags, onCompletion: BoolClosure?) {
         if  out {
-            moveOut (flags, onCompletion: onCompletion)
+			moveLeft (flags, onCompletion: onCompletion)
         } else {
-			moveInto(flags, onCompletion: onCompletion)
+			moveRight(flags, onCompletion: onCompletion)
         }
     }
 
-	func moveInto(_ flags: ZEventFlags? = nil, onCompletion: BoolClosure?) {
+	func moveRight(_ flags: ZEventFlags? = nil, onCompletion: BoolClosure?) {
 		let extreme       =   flags?.hasCommand ?? false
 		let selectionOnly = !(flags?.hasOption  ?? false)
 		if  selectionOnly {
 			moveables?.first?.browseRight(extreme: extreme, onCompletion: onCompletion)
 		} else {
-			moveables?.actuallyMoveInto(flags, onCompletion: onCompletion)
+			moveables?.actuallyMoveRight(flags, onCompletion: onCompletion)
 		}
 	}
 
-	func moveOut(to into: Zone, onCompletion: BoolClosure?) {
+	func moveLeft(to into: Zone, onCompletion: BoolClosure?) {
 		if  let        zones = moveables?.reversed() as ZoneArray? {
 			var completedYet = false
 

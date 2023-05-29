@@ -47,7 +47,7 @@ extension ZSearching {
 		if  gHasEnabledSubscription {
 			searchState = .sEntry // don't call setSearchStateTo, it has unwanted side-effects
 
-			gSignal([OPTION ? .sFound : .sSearch])
+			gDispatchSignals([OPTION ? .sFound : .sSearch])
 		}
 	}
 

@@ -14,7 +14,7 @@ import Cocoa
 import UIKit
 #endif
 
-var gBreadcrumbsController: ZBreadcrumbsController? { return gControllers.controllerForID(.idCrumbs) as? ZBreadcrumbsController }
+var gBreadcrumbsController: ZBreadcrumbsController? { return gControllerForID(.idCrumbs) as? ZBreadcrumbsController }
 
 class ZBreadcrumbsController: ZGenericController {
 

@@ -17,7 +17,7 @@ import Foundation
 class ZGenericController: ZController, ZGeneric {
 
 	var        isVisible = false
-	var isHandlingSignal = false
+	var isHandlingDispatchSignals = false
 	var     controllerID : ZControllerID { return .idUndefined }
 	var     allowedKinds : ZSignalKindArray { return allowedKindsFor(controllerID) }
 	var  disallowedKinds : ZSignalKindArray { return disallowedKindsFor(controllerID) }
@@ -48,8 +48,8 @@ class ZGenericController: ZController, ZGeneric {
 				 .idHelpDots:      return [.sAppearance, .sDatum, .sData, .spRelayout, .spMain]
 			case .idMainMap:       return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spMainMap]
 			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spFavoritesMap]
-			case .idPreferences,
-				 .idDataDetails:   return [.sAppearance, .sDatum, .sData, .spPreferences,                                     .sDetails]
+			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences, .sDetails]
+			case .idDataDetails:   return [.sAppearance, .sDatum, .sData, .spPreferences, .sDetails, .spDataDetails]
 			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
 			case .idStartup:       return [.spStartupStatus]
 			case .idSubscription:  return [.spSubscription]
@@ -76,12 +76,12 @@ class ZGenericController: ZController, ZGeneric {
 			view.zlayer.backgroundColor = gControllers.backgroundColorFor(controllerID).cgColor
 
 			if  shouldHandle(kind),
-			   !isHandlingSignal {        // prevent re-entrance via signal generated during handleSignal below
-				isHandlingSignal = true
+			   !isHandlingDispatchSignals {        // prevent re-entrance via signal generated during handleSignal below
+				isHandlingDispatchSignals = true
 
 				handleSignal(kind: kind)
 
-				isHandlingSignal = false
+				isHandlingDispatchSignals = false
 			}
         }
     }

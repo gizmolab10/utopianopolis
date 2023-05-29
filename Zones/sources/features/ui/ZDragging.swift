@@ -118,7 +118,7 @@ class ZDragging: NSObject {
 
 				cleanupAfterDrag()
 				controller.restartGestureRecognition()
-				gSignal([.spPreferences, .sData])             // so color well and indicators get updated
+				gDispatchSignals([.spPreferences, .sData])             // so color well and indicators get updated
 			} else if let any = controller.detectHit(at: location),
 				let       dot = any as? ZoneDot {
 				if  dot.isReveal {
@@ -189,7 +189,7 @@ class ZDragging: NSObject {
 
 		if  iGesture?.isDone ?? false {
 			controller.restartGestureRecognition()
-			gSignal([.sDatum, .spPreferences, .spCrumbs]) // so color well gets updated
+			gDispatchSignals([.sDatum, .spPreferences, .spCrumbs]) // so color well gets updated
 		}
 	}
 
@@ -209,7 +209,7 @@ class ZDragging: NSObject {
 					zones = draggedZones.map { $0.isBookmark ? $0 : gFavoritesCloud.matchOrCreateBookmark(for: $0, addToRecents: false) }
 				}
 
-				zones.moveInto(parent, travel: CONTROL) { flag in }   // move dragged zone into the new focused list
+				zones.moveRight(into: parent, travel: CONTROL) { flag in }   // move dragged zone into the new focused list
 			}
 
 			return true

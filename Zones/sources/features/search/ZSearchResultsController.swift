@@ -14,7 +14,7 @@ import Foundation
     import UIKit
 #endif
 
-var gSearchResultsController: ZSearchResultsController? { return gControllers.controllerForID(.idSearchResults) as? ZSearchResultsController }
+var gSearchResultsController: ZSearchResultsController? { return gControllerForID(.idSearchResults) as? ZSearchResultsController }
 
 class ZSearchResultsController: ZGenericTableController {
 
@@ -247,7 +247,7 @@ class ZSearchResultsController: ZGenericTableController {
 			} else {
 				zone.grab()
 				gFavoritesCloud.revealInFavoritesMap(zone)
-				gSignal([.spFavoritesMap])
+				gDispatchSignals([.spFavoritesMap])
 			}
 
 			return true
@@ -277,7 +277,7 @@ class ZSearchResultsController: ZGenericTableController {
 			let ranges = note.noteText?.string.rangesMatching(searchText)
 			let range  = ranges == nil ? nil : ranges![0]
 
-			gControllers.swapMapAndEssay(force: .wEssayMode)
+			gSwapMapAndEssay(force: .wEssayMode)
 			gEssayView?.resetCurrentEssay(note, selecting: range)
 		}
 	}
@@ -293,7 +293,7 @@ class ZSearchResultsController: ZGenericTableController {
         if  gSearchStateIsList || filteredResultsDict.count == 0 {
             clear()
         } else {
-            gSignal([.sSearch])
+            gDispatchSignals([.sSearch])
         }
     }
 
@@ -314,7 +314,7 @@ class ZSearchResultsController: ZGenericTableController {
 
 			t.selectRowIndexes(rows, byExtendingSelection: false)
 			t.scrollRowToVisible(row)
-			gSignal([.spCrumbs])
+			gDispatchSignals([.spCrumbs])
 		}
 	}
 
@@ -345,7 +345,7 @@ class ZSearchResultsController: ZGenericTableController {
 	func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
 		gSearching.setSearchStateTo(.sList)
 		tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
-		gSignal([.spCrumbs])
+		gDispatchSignals([.spCrumbs])
 		return true
 	}
 

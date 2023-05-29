@@ -241,7 +241,7 @@ class ZContextualMenu: ZMenu {
 			kHyphen: gUpdateBaseFontSize(up: key == kEquals)
 			case "c":     gMapController?.recenter()
 			case "e":     gToggleShowExplanations()
-			case "k":     gColorfulMode = !gColorfulMode; gSignal([.sDatum])
+			case "k":     gColorfulMode = !gColorfulMode; gDispatchSignals([.sDatum])
 			case "y":     gToggleShowToolTips()
 			default:  break
 		}

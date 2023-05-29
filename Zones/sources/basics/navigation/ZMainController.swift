@@ -12,7 +12,7 @@
     import UIKit
 #endif
 
-var  gMainController : ZMainController? { return gControllers.controllerForID(.idMain) as? ZMainController }
+var  gMainController : ZMainController? { return gControllerForID(.idMain) as? ZMainController }
 func gShowAppIsBusyWhileInBackground(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhileInBackground(closure) }
 func gShowAppIsBusyWhileInForeground(_ closure : @escaping Closure) { gMainController?.showAppIsBusyWhileInForeground(closure) }
 
@@ -95,7 +95,7 @@ class ZMainController: ZGesturesController {
 
 		gTextEditor.stopCurrentEdit()
 		gMapView?.removeAllTextViews(ofType: .favorites)
-		gSignal([.spMain, .sDetails, .spRelayout])
+		gDispatchSignals([.spMain, .sDetails, .spRelayout])
 	}
 
 	@objc override func handleControllerDragGesture(_ iGesture: ZGestureRecognizer?) -> Bool {         // false means not handled
@@ -115,7 +115,7 @@ class ZMainController: ZGesturesController {
 
 				if  location.x < .zero {				// is gesture located outside essay view?
 					eView.save()
-					gControllers.swapMapAndEssay(force: .wMapMode) {
+					gSwapMapAndEssay(force: .wMapMode) {
 						gMapController?.handleControllerClickGesture(iGesture)
 					}
 				}

@@ -403,7 +403,7 @@ class ZCoreDataStack: NSObject {
 		} else {
 			let searchables = strings.map { $0.searchable }.filter { $0 != kSpace }
 			let    entities = [kTraitType, kZoneType]
-			var       count = searchables.count * entities.count
+			var       count = entities.count
 
 			for searchable in searchables {
 				for entity in entities {

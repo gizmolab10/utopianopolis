@@ -69,7 +69,7 @@ extension ZEssayView {
 		} else if [.up, .down].contains(arrow) {
 			grabNextNote(down: arrow == .down, ungrab: !flags.hasShift)
 			scrollToGrabbed()
-			gSignal([.sDetails])
+			gDispatchSignals([.sDetails])
 		}
 	}
 
@@ -191,7 +191,7 @@ extension ZEssayView {
 			}
 
 			scrollToGrabbed()
-			gSignal([.sDetails])
+			gDispatchSignals([.sDetails])
 		}
 
 		setNeedsDisplay()
@@ -209,7 +209,7 @@ extension ZEssayView {
 
 			grabNote(note)
 			scrollToGrabbed()
-			gSignal([.sDetails])
+			gDispatchSignals([.sDetails])
 		}
 	}
 
@@ -289,7 +289,7 @@ extension ZEssayView {
 		updateTextStorage()                             // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
-		gSignal([.spCrumbs, .sDetails])
+		gDispatchSignals([.spCrumbs, .sDetails])
 	}
 
 	// MARK: - draw grab dots

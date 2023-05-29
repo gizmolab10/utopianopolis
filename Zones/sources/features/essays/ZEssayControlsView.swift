@@ -179,7 +179,7 @@ class ZEssayControlsView: ZView {
 			titlesControl?.needsDisplay = true
 
 			gEssayView?.updateTextStorageRestoringSelection(range)
-			gSignal([.sEssay])
+			gDispatchSignals([.sEssay])
 		}
 	}
 

@@ -91,7 +91,7 @@ class ZMapControlsView : ZButtonsView, ZToolTipper {
 			}
 		}
 
-		gSignal([.sDetails])
+		gDispatchSignals([.sDetails])
 	}
 
 	func go(_ down: Bool) {

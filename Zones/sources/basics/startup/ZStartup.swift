@@ -37,7 +37,7 @@ class ZStartup: NSObject {
 		gRemoteStorage.clear()
 		gMainWindow?.revealEssayEditorInspectorBar(false)
 		gSearching.setSearchStateTo(.sNot)
-		gSignal([.spMain, .spStartupStatus])
+		gDispatchSignals([.spMain, .spStartupStatus])
 		gTimers.startTimer(for: .tStartup)
 		gEvents.controllerSetup(with: nil)
 
@@ -62,9 +62,10 @@ class ZStartup: NSObject {
 						gSaveContext()
 					}
 
-					gIsReadyToShowUI = true
+					gIsReadyToShowUI         = true
+					gCanSetModificationDates = true
 
-					gSignal([.sLaunchDone])
+					gDispatchSignals([.sLaunchDone])
 
 					requestFeedback() {
 						gMainController?.helpButton?.isHidden = false
@@ -76,7 +77,7 @@ class ZStartup: NSObject {
 						}
 
 						gTimers.startTimers(for: [.tCloudAvailable, .tLicense, .tRecount, .tPersist, .tHover])
-						gSignal([.sSwap, .spMain, .spCrumbs, .spRelayout, .spDataDetails, .spPreferences])
+						gDispatchSignals([.sSwap, .spMain, .spCrumbs, .spRelayout, .spDataDetails, .spPreferences])
 					}
 				}
 			}

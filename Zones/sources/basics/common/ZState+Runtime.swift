@@ -12,6 +12,7 @@ import CloudKit
 var gPreferencesAreTakingEffect                       = false
 var gWhileMigratingFromCloudKit                       = false
 var    gTextEditorHandlesArrows                       = false
+var    gCanSetModificationDates                       = false
 var     gIsEditingStateChanging                       = false
 var      gRefusesFirstResponder                       = false
 var        gAllowSavingWorkMode                       = false
@@ -97,13 +98,13 @@ func gInvokeUsingDatabaseID(_ databaseID: ZDatabaseID?, block: Closure) {
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next
 
-	gSignal([.sAll, .spRelayout, .spPreferences])
+	gDispatchSignals([.sAll, .spRelayout, .spPreferences])
 }
 
 func gToggleShowToolTips() {
 	gShowToolTips = !gShowToolTips
 
-	gSignal([.sDetails])
+	gDispatchSignals([.sDetails])
 	gRelayoutMaps()
 }
 
@@ -112,7 +113,7 @@ func gToggleShowExplanations() {
 	gShowMainControls = true
 
 	gHideExplanation()
-	gSignal([.sDetails])
+	gDispatchSignals([.sDetails])
 }
 
 var gCompleteHereRecordNames: StringsArray {

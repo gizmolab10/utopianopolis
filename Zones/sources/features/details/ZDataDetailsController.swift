@@ -69,6 +69,10 @@ class ZDataDetailsController: ZGenericController {
 		let timerStatus =        gTimers.statusText
 		let        text = cdStatus ?? opStatus ?? timerStatus ?? "all data synchronized\(gCloudStatusIsActive ? kEmpty : " locally")"
 
+		if  text.contains("searching") {
+			noop()
+		}
+
 		return text
     }
 

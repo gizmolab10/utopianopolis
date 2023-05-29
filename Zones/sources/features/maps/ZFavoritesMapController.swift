@@ -12,7 +12,7 @@ import Cocoa
 import UIKit
 #endif
 
-var gFavoritesMapController : ZFavoritesMapController { return gControllers.controllerForID(.idFavoritesMap) as? ZFavoritesMapController ?? ZFavoritesMapController() }
+var gFavoritesMapController : ZFavoritesMapController { return gControllerForID(.idFavoritesMap) as? ZFavoritesMapController ?? ZFavoritesMapController() }
 
 class ZFavoritesMapController: ZMapController {
 

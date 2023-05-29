@@ -74,9 +74,10 @@ class ZFavorites: ZRecords {
 
 		let          group = Zone.uniqueZone(recordName: name, in: .mineID)
 		group     .mapType = .tFavorite
-		group    .zoneName = name
+
 		group.directAccess = .eReadOnly
 
+		group.setName(to: name)
 		group.collapse()
 		group.register()
 		group.alterAttribute(.groupOwner, remove: false)
@@ -360,12 +361,12 @@ class ZFavorites: ZRecords {
 			func createRootsBookmark(named: String) {
 				let      bookmark = Zone.uniqueZone(recordName: named + kFavoritesSuffix, in: .mineID, checkCDStore: true)
 				bookmark.zoneLink = kDoubleColon + named                           // convert into a bookmark
-				bookmark.zoneName = named
 
 				if  gBookmarks.addToReverseLookup(bookmark) {
 					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: kDoubleColon + named, in: .mineID)
 				}
 
+				bookmark.setName(to: named)
 				getRootsGroup().addChildAndUpdateOrder(bookmark)
 			}
 
@@ -533,7 +534,7 @@ class ZFavorites: ZRecords {
 
 					bookmark.grab()
 					gDetailsController?.showViewFor(.vFavorites)
-					gSignal([.spMain, .sDetails, .spRelayout])
+					gDispatchSignals([.spMain, .sDetails, .spRelayout])
 
 					return true
 				}

@@ -124,7 +124,7 @@ extension ZCoreDataStack {
 				let waiting = deferralStack.remove(at: 0)
 				currentOpID = waiting.opID
 
-				gSignal([.spDataDetails])         // tell data detail view about it
+				gDispatchSignals([.spDataDetails])         // tell data detail view about it
 				waiting.closure?()                // do what was deferred
 			}
 		}

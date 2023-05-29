@@ -111,7 +111,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 
 				if !gNoSubscriptions {
 					gDetailsController?.showViewFor(.vSubscribe)
-					gSignal([.spSubscription, .sDetails])
+					gDispatchSignals([.spSubscription, .sDetails])
 				}
 			}
 		}
@@ -124,7 +124,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 		products                = extractAndSortProducts(from: response)
 		gSubscriptionDidChange  = true
 
-		gSignal([.spSubscription])                 // update subscription controller
+		gDispatchSignals([.spSubscription])                 // update subscription controller
 	}
 
 	func paymentQueue(_ queue: SKPaymentQueue, restoreCompletedTransactionsFailedWithError error: Error) {
@@ -132,7 +132,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	}
 
 	func paymentQueue(_ queue: SKPaymentQueue, shouldContinue transaction: SKPaymentTransaction, in newStorefront: SKStorefront) -> Bool {
-		gSignal([.spSubscription])                 // update subscription controller
+		gDispatchSignals([.spSubscription])                 // update subscription controller
 
 		return false  // THIS METHOD IS NEVER CALLED
 	}
@@ -165,7 +165,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 			if  let  t = token {
 				zToken = t
 
-				gSignal([.spSubscription])
+				gDispatchSignals([.spSubscription])
 			}
 		}
 	}
@@ -173,7 +173,7 @@ class ZProducts: NSObject, SKProductsRequestDelegate, SKPaymentQueueDelegate, SK
 	func purchaseSucceeded(type: ZProductType, state: ZSubscriptionState, on date: Date?) {
 		print("purchaseSucceeded")
 
-		gSignal([.spSubscription])
+		gDispatchSignals([.spSubscription])
 	}
 
 	func purchaseStarted()  { print("purchaseStarted") }

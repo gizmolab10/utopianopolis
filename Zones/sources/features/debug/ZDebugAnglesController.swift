@@ -8,7 +8,7 @@
 
 import Foundation
 
-var gDebugAnglesController : ZDebugAnglesController? { return gControllers.controllerForID(.idDebugAngles) as? ZDebugAnglesController }
+var gDebugAnglesController : ZDebugAnglesController? { return gControllerForID(.idDebugAngles) as? ZDebugAnglesController }
 
 class ZDebugAnglesController: ZGenericController {
 

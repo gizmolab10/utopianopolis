@@ -84,7 +84,7 @@ class ZBaseEditor : NSObject {
 
 	func clearRecents() {
 		if  gIsEssayMode {
-			gControllers.swapMapAndEssay()
+			gSwapMapAndEssay()
 		}
 
 		gCurrentEssay = nil
@@ -93,13 +93,13 @@ class ZBaseEditor : NSObject {
 	func toggleColorfulMode() {
 		gColorfulMode = !gColorfulMode
 
-		gSignal([.spRelayout, .spPreferences, .sDetails])
+		gDispatchSignals([.spRelayout, .spPreferences, .sDetails])
 	}
 
 	func reopenMainWindow() {
 		gMainWindow?.makeKeyAndOrderFront(self)
 		assignAsFirstResponder(gMapView)
-		gSignal([.spRelayout])
+		gDispatchSignals([.spRelayout])
 	}
 
 }

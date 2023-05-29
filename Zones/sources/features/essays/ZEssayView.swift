@@ -205,7 +205,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		var delta = 0
 
 		if  gCurrentEssay == nil {                           // make sure we actually have a current essay
-			gControllers.swapMapAndEssay(force: .wMapMode)   // not show blank essay
+			gSwapMapAndEssay(force: .wMapMode)   // not show blank essay
 		} else {
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
@@ -258,7 +258,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	func exit() {
 		prepareToExit()
-		gControllers.swapMapAndEssay(force: .wMapMode)
+		gSwapMapAndEssay(force: .wMapMode)
 	}
 
 	func save() {
@@ -388,8 +388,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			if  OPTION {
 				switch key {
-					case "t":      gControllers.showEssay(forGuide: false)
-					case "u":      gControllers.showEssay(forGuide: true)
+					case "t":      gShowEssay(forGuide: false)
+					case "u":      gShowEssay(forGuide: true)
 					default:       return false
 				}
 			} else {
@@ -563,7 +563,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 					grabNote(note)
 					setNeedsDisplay()
-					gSignal([.sDetails])
+					gDispatchSignals([.sDetails])
 				}
 			} else if let (zone, type) = visibilityIconHit(at: rect),
 					  let        trait = zone.maybeNoteOrEssayTrait {
@@ -803,7 +803,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 									target .asssureIsVisible()		   // for later, when user exits essay mode
 									common?.asssureIsVisible()
 									resetCurrentEssay(target.note)     // change current note to that of target
-									gSignal([.spFavoritesMap, .spCrumbs])
+									gDispatchSignals([.spFavoritesMap, .spCrumbs])
 								}
 							}
 
@@ -881,7 +881,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			}
 
 			resetCurrentEssay(note, selecting: range)
-			gSignal([.sDetails])
+			gDispatchSignals([.sDetails])
 		}
 	}
 
@@ -926,7 +926,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			selectAndScrollTo(select)
 		}
 
-		gSignal([.spCrumbs])
+		gDispatchSignals([.spCrumbs])
 	}
 
 	func resetAndSelect(_ zone: Zone?) {

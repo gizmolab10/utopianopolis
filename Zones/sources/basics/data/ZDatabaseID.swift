@@ -107,8 +107,8 @@ enum ZDatabaseID: String {
 				file! .name = name
 				file! .type = type
 				file!.asset = data
-				file!.modificationDate = Date()
 
+				file!.setModificationDateMaybe()
 				gFilesRegistry.register(file!, in: self)
 			}
 
