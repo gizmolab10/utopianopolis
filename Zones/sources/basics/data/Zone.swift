@@ -1781,13 +1781,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			noteMaybe = note
 
 			note?.updateChildren()
-		} else if !hasChildren || !gCreateCombinedEssay {
+		} else if !hasChildren || !gCreateCombinedEssay || !zones.contains(self) {
 			note      = ZNote(self)
 			noteMaybe = note
 		} else if count > 0 {
 			let  zone = zones[0]
-			note      = ZNote(zone)
-			zone.noteMaybe = note
+			note      = zone.noteMaybe
 		}
 
 		return note
@@ -1829,12 +1828,18 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			if  ALL {
 				convertChildrenToNote()
 			} else {
-				if  gCurrentEssay == nil || OPTION || useGrabbed,
-					let         n  = note {     // restore prior or create new (OPTION -> create)
-					gCurrentEssay  = n
+				var n : ZNote?
 
-					gFavoritesCloud.push(n.zone)
+				if  OPTION || useGrabbed || gCurrentEssay == nil {
+				    n      = note        // restore prior or create new (OPTION -> create)
+					if  n == nil {
+						n  = createNote()
+					}
 				}
+
+				gCurrentEssay = n
+
+				gFavoritesCloud.push(n?.zone)
 
 				if  SPECIAL {
 					traverseAllProgeny { child in
@@ -1845,8 +1850,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 			}
 
-			gControllers.swapMapAndEssay(force: .wEssayMode) {
-				gEssayView?.selectFirstNote()
+			if  gCurrentEssay?.zone == self {
+				gControllers.swapMapAndEssay(force: .wEssayMode) {
+					gEssayView?.selectFirstNote()
+				}
 			}
 		}
 	}
@@ -1862,7 +1869,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		var zones = ZoneArray()
 
 		traverseAllProgeny { zone in
-			if  zone.hasNote {
+			if  zone.hasNoteOrEssay {
 				zones.append(zone)
 			}
 		}

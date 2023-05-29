@@ -39,6 +39,7 @@ class ZHelpEssayData: ZHelpData {
 		" COMMAND + OPTION",			"edit the parent essay",										"",
 		"",																							"",	"",
 		"_RIGHT ARROW KEY", 																		"", "",
+		" COMMAND + OPTION",			"hide the parent essay",										"",
 		" COMMAND + CONTROL",			"create children (notes) from paragraphs in selected text",		"",
 		" COMMAND + CONTROL + OPTION",	"   \"       \"        \"     from sentences   \"    \"    \"",	"",
 		"",																							"",	"",

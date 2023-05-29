@@ -103,7 +103,7 @@ class ZEssay: ZNote {
 	override func updateChildren() {
 		childrenNotes.removeAll()
 		if  let     zones = zone?.zonesWithVisibleNotes {
-			childrenNotes = zones.map { return $0.note! }
+			childrenNotes = zones.filter { $0.noteMaybe != nil }.map { $0.noteMaybe! }
 		}
 	}
 

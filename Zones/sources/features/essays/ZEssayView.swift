@@ -118,7 +118,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func visibilityIconHit(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
-		if  !gHideNoteVisibility {
+		if !gHideNoteVisibility {
 			for visibility in visibilities {
 				for type in ZNoteVisibilityIconType.all {
 					if  visibility.rectFor(type).intersects(rect) {
