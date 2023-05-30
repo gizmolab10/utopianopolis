@@ -93,6 +93,15 @@ extension ZoneWidget {
 		}
 	}
 
+	func circularUpdateAllTraitFrames() {
+//		if  traitWidgets.count > 1 {
+//			for traitWidget in traitWidgets {
+//				traitWidget.circularUpdateTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame, angle: traitWidget.angle)
+//			}
+//		}
+
+	}
+
 	func circularUpdateHighlightRect() {
 		if  let             c = controller {
 			if  gDrawCirclesAroundIdeas {
@@ -106,7 +115,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func circularRelayoutAbsoluteHitRect() {
+	func circularUpdateAbsoluteHitRect() {
 		var rect  = highlightRect
 
 		for child in childrenWidgets {
@@ -139,13 +148,13 @@ extension ZoneWidget {
 	// MARK: -
 	
 	func circularGrandRelayout() {
-		circularUpdateAllProgenyFrames(in: controller)
+		circularUpdateSubrames(in: controller)
 		updateFrameSize()
 		convertFrameToAbsolute(relativeTo: controller)
-		circularUpdateAllProgenyFrames(in: controller, absolute: true)    // sets widget absolute frame
+		circularUpdateSubrames(in: controller, absolute: true)    // sets widget absolute frame
 	}
 
-	func circularUpdateAllProgenyFrames(in controller: ZMapController?, absolute: Bool = false) {
+	func circularUpdateSubrames(in controller: ZMapController?, absolute: Bool = false) {
 		traverseAllWidgetsByLevel {          (level, widgets) in
 			widgets.updateAllWidgetFrames(at: level, in: controller, absolute)  // not absolute sets lineAngle
 		}
@@ -158,10 +167,11 @@ extension ZoneWidget {
 			traverseAllVisibleWidgetProgeny(inReverse: true) { widget in
 				widget.circularUpdateHighlightRect()
 				widget.circularUpdateAllDotFrames()
+				widget.circularUpdateAllTraitFrames()
 			}
 
 			traverseAllVisibleWidgetProgeny(inReverse: true) { widget in
-				widget.circularRelayoutAbsoluteHitRect()
+				widget.circularUpdateAbsoluteHitRect()
 			}
 		}
 	}
@@ -507,6 +517,25 @@ extension ZoneDot {
 			path.fill()
 
 //			absoluteHitRect.drawColoredRect(.red)
+		}
+	}
+
+}
+
+// MARK: - trait widget
+// MARK: -
+
+extension ZTraitWidget {
+
+	func circularUpdateTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect, angle: CGFloat) {
+		if  let            c = dot?.widget?.controller ?? gHelpController {
+			let       radius = c.dotExtraHeight
+			let       offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
+			let       origin = absoluteDotFrame.center.offsetBy(radius: radius, at: angle) - offset
+			var         rect = CGRect(origin: origin, size: drawnSize)
+			absoluteFrame    = rect
+			rect.size.height = rect.width
+			absoluteHitRect  = rect.expandedEquallyBy(3.0).offsetBy(radius: 3.0, at: angle)
 		}
 	}
 

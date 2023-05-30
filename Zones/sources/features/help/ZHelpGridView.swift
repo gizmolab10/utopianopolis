@@ -42,7 +42,7 @@ class ZHelpGridView: ZView {
 							d.absoluteFrame = rect
 
 							d.setupForTraits(types)
-							d.linearRelayoutDotAbsoluteFrame(relativeTo: rect.center)   // TODO: dot's controller is nil
+							d.linearUpdateDotAbsoluteFrame(relativeTo: rect.center)   // TODO: dot's controller is nil
 						}
 
 						d.drawDot(rect, parameters)

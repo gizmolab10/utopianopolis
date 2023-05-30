@@ -3113,6 +3113,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if !show {
 				gSelecting.deselectGrabsWithin(self);
+				self.grab()
 			}
 
 			apply()

@@ -53,7 +53,7 @@ extension ZoneWidget {
 
 	func updateHighlightRect() {
 		switch mode {
-		case .linearMode:   return   linearRelayoutHighlightRect()
+		case .linearMode:   return   linearUpdateHighlightRect()
 		case .circularMode: return circularUpdateHighlightRect()
 		}
 	}
@@ -139,8 +139,8 @@ extension ZDragging {
 		if !draggedZones.containsARoot,
 			draggedZones.userCanMoveAll {
 			switch controller.mapLayoutMode {
-			case .linearMode:   return   linearDropMaybeOntoWidget(iGesture, in: controller)
-			case .circularMode: return circularDropMaybeOntoWidget(iGesture, in: controller)
+				case .linearMode:   return   linearDropMaybeOntoWidget(iGesture, in: controller)
+				case .circularMode: return circularDropMaybeOntoWidget(iGesture, in: controller)
 			}
 		}
 

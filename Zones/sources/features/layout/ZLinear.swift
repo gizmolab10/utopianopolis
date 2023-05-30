@@ -78,7 +78,7 @@ extension ZoneWidget {
 		linesView?.drawnSize = CGSize(width: width, height: height)
 	}
 
-	func linearRelayoutChildrenWidgetFrames(_ absolute: Bool = false) {
+	func linearUpdateChildrenWidgetFrames(_ absolute: Bool = false) {
 		if  hasVisibleChildren {
 			var         y = CGFloat.zero
 			var     index = childrenWidgets.count
@@ -99,7 +99,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearRelayoutTextViewFrame(_ absolute: Bool = false) {
+	func linearUpdateTextViewFrame(_ absolute: Bool = false) {
 		if  let          t = pseudoTextWidget,
 			let          w = textWidget,
 			let          c = controller {
@@ -117,7 +117,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearRelayoutChildrenViewFrame(_ absolute: Bool = false) {
+	func linearUpdateChildrenViewFrame(_ absolute: Bool = false) {
 		if  hasVisibleChildren, let c = childrenView {
 			if  absolute {
 				c.convertFrameToAbsolute(relativeTo: controller)
@@ -131,11 +131,11 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearRelayoutLinesViewFrame(_ absolute: Bool = false) {
+	func linearUpdateLinesViewFrame(_ absolute: Bool = false) {
 
 	}
 
-	func linearRelayoutAbsoluteHitRect() {
+	func linearUpdateAbsoluteHitRect() {
 		if  let            c = controller {
 			var rect         = absoluteFrame
 			let hasReveal    = widgetZone?    .showRevealDot ?? false
@@ -152,7 +152,7 @@ extension ZoneWidget {
 		}
 	}
 
-	func linearRelayoutHighlightRect() {
+	func linearUpdateHighlightRect() {
 		if  let     frame = textWidget?.frame,
 			let      zone = widgetZone,
 			let         c = controller {
@@ -179,7 +179,7 @@ extension ZoneWidget {
 		return path
 	}
 
-	func linearRelayoutBothDotFrames(_ absolute: Bool) {
+	func linearUpdateBothDotFrames(_ absolute: Bool) {
 		if  absolute,
 			let textFrame = pseudoTextWidget?.absoluteFrame {
 
@@ -187,14 +187,14 @@ extension ZoneWidget {
 			    let    dot = parentLine?.dragDot,
 			    let center = textFrame.center(of: dot) {
 
-				dot.linearRelayoutDotAbsoluteFrame(relativeTo: center)
+				dot.linearUpdateDotAbsoluteFrame(relativeTo: center)
 			}
 
 			for line in childrenLines {
 				if  let    dot = line.revealDot,
 					let center = textFrame.center(of: dot) {
 
-					dot.linearRelayoutDotAbsoluteFrame(relativeTo: center)
+					dot.linearUpdateDotAbsoluteFrame(relativeTo: center)
 				}
 			}
 		}
@@ -203,34 +203,34 @@ extension ZoneWidget {
 	// this is called twice in grand update
 	// first with absolute false, then with true
 
-	func linearRelayoutAllFrames(_ absolute: Bool = false) {
+	func linearUpdateAllFrames(_ absolute: Bool = false) {
 		traverseAllWidgetProgeny(inReverse: !absolute) { widget in
-			widget.linearRelayoutSubrames(absolute)
+			widget.linearUpdateSubrames(absolute)
 		}
 
 		if  absolute  {
 			traverseAllWidgetProgeny(inReverse: true) { widget in
 				if  let zone = widget.widgetZone, zone.isVisible {
-					widget.linearRelayoutHighlightRect()
-					widget.linearRelayoutAbsoluteHitRect()
+					widget.linearUpdateHighlightRect()
+					widget.linearUpdateAbsoluteHitRect()
 				}
 			}
 		}
 	}
 
-	func linearRelayoutSubrames(_ absolute: Bool = false) {
-		linearRelayoutTextViewFrame       (absolute)
-		linearRelayoutChildrenWidgetFrames(absolute)
-		linearRelayoutBothDotFrames       (absolute)
-		linearRelayoutChildrenViewFrame   (absolute)
-		linearRelayoutLinesViewFrame      (absolute)
+	func linearUpdateSubrames(_ absolute: Bool = false) {
+		linearUpdateTextViewFrame       (absolute)
+		linearUpdateChildrenWidgetFrames(absolute)
+		linearUpdateBothDotFrames       (absolute)
+		linearUpdateChildrenViewFrame   (absolute)
+		linearUpdateLinesViewFrame      (absolute)
 	}
 
 	func linearGrandRelayout() {
-		linearRelayoutAllFrames()
+		linearUpdateAllFrames()
 		updateFrameSize()
 		convertFrameToAbsolute(relativeTo: controller)
-		linearRelayoutAllFrames(true)
+		linearUpdateAllFrames(true)
 	}
 
 }
@@ -376,22 +376,25 @@ extension ZoneDot {
 		path.fill()
 	}
 
-	func linearRelayoutDotAbsoluteFrame(relativeTo center: CGPoint) {
+	func linearUpdateDotAbsoluteFrame(relativeTo center: CGPoint) {
 		absoluteFrame   = CGRect(origin: center, size: .zero).expandedBy(drawnSize.dividedInHalf)
 		absoluteHitRect = absoluteFrame.expandedEquallyBy(drawnSize.width / 2.0)
 
 		if  isReveal, traitWidgets.count > 1 {
 			for traitWidget in traitWidgets {
-				traitWidget.linearRelayoutTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame, angle: traitWidget.angle)
+				traitWidget.linearUpdateTraitWidgetAbsoluteFrame(relativeTo: absoluteFrame, angle: traitWidget.angle)
 			}
 		}
 	}
 
 }
 
+// MARK: - trait widget
+// MARK: -
+
 extension ZTraitWidget {
 
-	func linearRelayoutTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect, angle: CGFloat) {
+	func linearUpdateTraitWidgetAbsoluteFrame(relativeTo absoluteDotFrame: CGRect, angle: CGFloat) {
 		if  let            c = dot?.widget?.controller ?? gHelpController {
 			let       radius = c.dotExtraHeight
 			let       offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
