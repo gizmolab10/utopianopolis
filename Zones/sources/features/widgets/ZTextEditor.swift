@@ -272,7 +272,6 @@ class ZTextEditor: ZTextView {
 				deferEditingStateChange()
 				pack.updatePackText(isEditing: true)        // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
-				gRelayoutMaps()
 				gSetEditIdeaMode()
 
 				if  let t = zone.textWidget, t.becomeFirstResponder() {
@@ -288,6 +287,7 @@ class ZTextEditor: ZTextView {
 					setCursor(at: at)
 				}
 
+				zone.widget?.draw(.pSelections)
 				gDispatchSignals([.spCrumbs, .spPreferences])
 			}
         }
@@ -379,6 +379,7 @@ class ZTextEditor: ZTextView {
 			applyPreservingEdit {
 				capture()
 				e.packedZone?.grab()
+				e.packedZone?.widget?.draw(.pSelections)
 			}
 		}
 	}
@@ -397,8 +398,11 @@ class ZTextEditor: ZTextView {
 			cancelEdit()
 			zone?.grab()
 
+
 			if  andRedraw {
-				FOREGROUND(after: 0.001) { gRelayoutMaps() }
+				FOREGROUND(after: 0.001) {
+					zone?.widget?.draw(.pSelections)
+				}
 			}
 		}
 	}
@@ -433,15 +437,21 @@ class ZTextEditor: ZTextView {
 	// MARK: -
 
 	func moveLeft(left moveLeft: Bool) {
-		let revealed = currentlyEditedZone?.isExpanded ?? false
-		let start = gStartMeasurement()
+		let expanded = currentlyEditedZone?.isExpanded ?? false
+		let    start = gStartMeasurement()
 
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
-		let editAtOffset: FloatClosure = { [self] iOffset in
+		func editAtOffset(_ offset: CGFloat, _ reveal: Bool, _ save: Bool) {
+			gUndeferRedraw(save)
+
+			if  reveal {
+				gRelayoutMaps()
+			}
+
 			if  let grabbed = gSelecting.firstSortedGrab {
 				gSelecting.ungrabAll()
-				edit(grabbed, setOffset: iOffset, immediately: revealed)
+				edit(grabbed, setOffset: offset, immediately: expanded)
 			}
 
 			gTextEditorHandlesArrows = false       // done last
@@ -451,20 +461,16 @@ class ZTextEditor: ZTextView {
 		}
 
 		if  moveLeft {
+			let save = gDeferRedraw()
 			quickStopCurrentEdit()
 			gMapEditor.moveLeft { reveal in
-				editAtOffset(100000000.0)
+				editAtOffset(100000000.0, reveal, save)
 			}
 		} else if currentlyEditedZone?.children.count ?? 0 > 0 {
+			let save = gDeferRedraw()
 			quickStopCurrentEdit()
 			gMapEditor.moveRight { reveal in
-				if  !reveal {
-					editAtOffset(.zero)
-				} else {
-					gRelayoutMaps() {
-						editAtOffset(.zero)
-					}
-				}
+				editAtOffset(.zero, reveal, save)
 			}
 		}
 	}
@@ -476,6 +482,7 @@ class ZTextEditor: ZTextView {
 	func moveUp(_ up: Bool, stopEdit: Bool) {
         currentOffset = currentOffset ?? editingOffset(up)
         let         e = currentEdit // for the case where stopEdit is true
+		let      save = gDeferRedraw()
 
         if  stopEdit {
             applyPreservingOffset {
@@ -484,32 +491,35 @@ class ZTextEditor: ZTextView {
             }
         }
         
-        if  var original = e?.packedZone {
-            gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
+		if  var original = e?.packedZone {
+			gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
 				gDispatchSignals(kinds) { [self] in
 					if  let widget = original.widget, widget.isHere {       // offset has changed
-                        currentOffset = widget.textWidget?.offset(for: selectedRange, up)
-                    }
-                    
+						currentOffset = widget.textWidget?.offset(for: selectedRange, up)
+					}
+
 					if  let first = gSelecting.firstSortedGrab, stopEdit {
-                        original  = first
-                        
+						original  = first
+
 						if  original != currentlyEditedZone { // if move up (above) does nothing, ignore
-                            edit(original)
-                        } else {
-                            currentEdit = e // restore after capture sets it to nil
+							edit(original)
+						} else {
+							currentEdit = e // restore after capture sets it to nil
 
-                            gSelecting.ungrabAll()
+							gSelecting.ungrabAll()
 							assignAsFirstResponder(e?.textWidget)
-                        }
-                    } // else widgets are wrong
+						}
+					} // else widgets are wrong
 
-                    FOREGROUND(after: 0.01) { [self] in
-                        setCursor(at: currentOffset)
+					FOREGROUND(after: 0.01) { [self] in
+						setCursor(at: currentOffset)
+						gUndeferRedraw(save)
 						gMapView?.setNeedsDisplay()
-                    }
-                }
-            }
+					}
+				}
+			}
+		} else {
+			gUndeferRedraw(save)
         }
     }
 

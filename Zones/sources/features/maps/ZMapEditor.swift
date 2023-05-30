@@ -87,7 +87,7 @@ class ZMapEditor: ZBaseEditor {
 						case "t":      if SPECIAL { gCurrentlyEditingWidget?.swapWithParent() } else if COMMAND { showThesaurus(for: gCurrentlySelectedText) } 
 						case kSlash:   return handleSlash(flags)
 						case kComma,
-						     kPeriod:  commaAndPeriod(COMMAND, OPTION, with: key == kComma)
+						     kPeriod:  commaAndPeriod(flags, with: key == kComma)
 						case kReturn:  if COMMAND { editNote(flags: flags) }
 						case kEscape:               editNote(flags: flags, useGrabbed: false)
 						default:       return false // false means key not handled
@@ -140,7 +140,7 @@ class ZMapEditor: ZBaseEditor {
 						case kBackSlash: mapControl(OPTION)
 						case kHyphen:    return handleHyphen(COMMAND, OPTION)
 						case kComma,
-							 kPeriod:    commaAndPeriod(COMMAND, OPTION, with: key == kComma)
+							 kPeriod:    commaAndPeriod(flags, with: key == kComma)
 						case kBackspace,
 							 kDelete:    handleDelete(flags, isWindow)
 						default:         return false // indicate key was not handled
@@ -479,15 +479,18 @@ class ZMapEditor: ZBaseEditor {
 		}
 	}
 
-    func commaAndPeriod(_ COMMAND: Bool, _ OPTION: Bool, with COMMA: Bool) {
-        if  !COMMAND || (OPTION && COMMA) {
+    func commaAndPeriod(_ flags: ZEventFlags, with COMMA: Bool) {
+		let  OPTION = flags.hasOption
+		let CONTROL = flags.hasControl
+		let COMMAND = flags.hasCommand
+        if !COMMAND || (OPTION && COMMA) {
             toggleGrowthAndConfinementModes(changesDirection: COMMA)
             
-            if  gIsEditIdeaMode && COMMA {
+            if  gIsEditIdeaMode, COMMA, !CONTROL {
                 swapAndResumeEdit()
             }
 
-			gDispatchSignals([.spMain, .sDetails, .spMainMap])
+			gDispatchSignals([.spMain, .sDetails])
         } else if COMMA {
 			gDetailsController?.displayPreferences()
         } else if gIsEditIdeaMode {

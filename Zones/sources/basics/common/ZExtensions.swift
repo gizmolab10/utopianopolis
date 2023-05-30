@@ -27,13 +27,23 @@ func gRelayoutMaps(_ onCompletion: Closure? = nil) {
 	gDispatchSignals([.spRelayout], onCompletion)
 }
 
-func gDeferRedraw(_ closure: Closure) {
+func gDeferRedraw() -> Bool {
 	let         save = gDeferringRedraw
 	gDeferringRedraw = true
 
+	return save
+}
+
+func gUndeferRedraw(_ save: Bool) {
+	gDeferringRedraw = save
+}
+
+func gDeferRedraw(_ closure: Closure) {
+	let save = gDeferRedraw()
+
 	closure()
 
-	gDeferringRedraw = save   // in case closure doesn't reset it
+	gUndeferRedraw(save)   // in case closure doesn't reset it
 }
 
 func gDisablePush(_ closure: Closure) {

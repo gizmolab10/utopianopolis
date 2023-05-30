@@ -1288,7 +1288,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func addNextAndRedraw(containing: Bool = false, onCompletion: ZoneClosure? = nil) {
 		gDeferRedraw {
 			addNextAndRelayout(containing: containing) { iChild in
-				gDeferringRedraw = false
+				gUndeferRedraw(false)
 
 				gRelayoutMaps() {
 					onCompletion?(iChild)
@@ -1318,8 +1318,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					moveZone(to: iChild) {
 						gRelayoutMaps()
 
-						gDeferringRedraw = false
-
+						gUndeferRedraw(false)
 						iChild?.edit()
 					}
 				}
@@ -2985,7 +2984,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			} else {
 				gDeferRedraw {
 					addIdea(at: gListsGrowDown ? nil : 0, with: name) { [self] iChild in
-						gDeferringRedraw = false
+						gUndeferRedraw(false)
 
 						if  let child = iChild {
 							expand()

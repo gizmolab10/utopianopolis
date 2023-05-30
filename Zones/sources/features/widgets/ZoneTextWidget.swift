@@ -133,7 +133,7 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
 		if !gRefusesFirstResponder, window == gMainWindow { // ignore mouse down during startup
 			gTemporarilySetMouseZone(widgetZone, event.locationInWindow)
 
-			if !becomeFirstResponder() {
+			if !becomeFirstResponder() {  // false means did not become first responder
 				super.mouseDown(with: event)
 			}
 		}

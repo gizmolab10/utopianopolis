@@ -372,7 +372,13 @@ class ZSelecting: NSObject {
                 gCurrentBrowseLevel = level
             }
 
-			gDispatchSignals([.spCrumbs, .sDetails, .spPreferences, .spRelayout])                // so color wells and breadcrumbs are updated
+			var signals : ZSignalKindArray = [.spCrumbs, .sDetails, .spPreferences] // so color wells and breadcrumbs are updated
+
+			if  !gDeferringRedraw {
+				signals += [.spRelayout]
+			}
+
+			gDispatchSignals(signals)
         }
     }
     
