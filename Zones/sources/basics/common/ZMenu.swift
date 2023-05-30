@@ -18,6 +18,7 @@ import UIKit
 enum ZReorderMenuType: String {
 	case eAlphabetical = "a"
 	case eByLength     = "l"
+	case eByDate       = "d"
 	case eByKind       = "k"
 	case eReversed     = "r"
 	case eBySizeOfList = "s"
@@ -29,6 +30,7 @@ enum ZReorderMenuType: String {
 			case .eByLength:     return "by length of idea"
 			case .eBySizeOfList: return "by size of list"
 			case .eByKind:       return "by kind of idea"
+			case .eByDate:       return "by date of idea"
 		}
 	}
 

@@ -154,7 +154,7 @@ class ZRecord: ZManagedObject {
 	func adopt(recursively : Bool = false)           {}
 
 	func setModificationDateMaybe() {
-		if gCanSetModificationDates {
+		if  gCanSetModificationDates {
 			setModificationDate()
 		}
 	}

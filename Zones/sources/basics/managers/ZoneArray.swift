@@ -260,6 +260,7 @@ extension ZoneArray {
 				case .eBySizeOfList: sortByCount   (parent, iBackwards)
 				case .eByLength:     sortByLength  (parent, iBackwards)
 				case .eByKind:       sortByZoneType(parent, iBackwards)
+				case .eByDate:       sortByDate    (parent, iBackwards)
 			}
 		} else {
 			for (parent, children) in parentsAndChildren {
@@ -307,6 +308,20 @@ extension ZoneArray {
 				let bCount = b.count
 
 				return iBackwards ? (aCount > bCount) : (aCount < bCount)
+			}
+		}
+	}
+
+	func sortByDate(_ parent: Zone, _ iBackwards: Bool = false) {
+		alterOrdering(inParent: parent) { iZones -> (ZoneArray) in
+			return iZones.sorted { (a, b) -> Bool in
+				if  let aDate = a.modificationDate,
+					let bDate = b.modificationDate {
+
+					return iBackwards ? (aDate > bDate) : (aDate < bDate)
+				}
+
+				return false // not alter order
 			}
 		}
 	}

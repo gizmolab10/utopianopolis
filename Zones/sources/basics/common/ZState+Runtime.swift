@@ -95,6 +95,18 @@ func gInvokeUsingDatabaseID(_ databaseID: ZDatabaseID?, block: Closure) {
 	}
 }
 
+func gTemporarilyBlockModificationDateUpdate(_ block: Closure) {
+	gCanSetModificationDates = false
+
+	// WARNING: behavior is undetermined if code
+	//          within block does any thread changes
+
+	block()
+
+	gCanSetModificationDates = true
+}
+
+
 func gToggleLayoutMode() {
 	gMapLayoutMode = gMapLayoutMode.next
 

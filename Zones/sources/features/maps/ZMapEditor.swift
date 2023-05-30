@@ -16,7 +16,7 @@ import Foundation
 
 let gMapEditor = ZMapEditor()
 
-var gActiveReorderTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind] }
+var gActiveReorderTypes: [ZReorderMenuType] { return [.eReversed, .eByLength, .eAlphabetical, .eBySizeOfList, .eByKind, .eByDate] }
 
 // mix of zone mutations and web services requests
 

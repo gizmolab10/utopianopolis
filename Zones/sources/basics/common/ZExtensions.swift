@@ -2680,7 +2680,7 @@ extension Date {
 		return f.string(from: self)
 	}
 
-	var easyToReadDateTime: String { return easyToReadDateFrom("h:mm a MMM d, YYYY") }
+	var easyToReadDateTime: String { return easyToReadDateFrom("h:mm:ss a MMM d, YYYY") }
 	var easyToReadDate:     String { return easyToReadDateFrom("MMM d, YYYY") }
 	var easyToReadTime:     String { return easyToReadDateFrom("h:mm a") }
 
