@@ -436,17 +436,15 @@ class ZTextEditor: ZTextView {
 	// MARK: -
 
 	func moveLeft(left moveLeft: Bool) {
-		let expanded = currentlyEditedZone?.isExpanded ?? false
-		let    start = gStartMeasurement()
+		let   expanded = currentlyEditedZone?.isExpanded ?? false
+		let canGoRight = currentlyEditedZone?.children.count ?? 0 > 0
+		let      start = gStartMeasurement()
 
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
-		func editAtOffset(_ offset: CGFloat, _ reveal: Bool, _ save: Bool) {
+		func editAtOffset(_ offset: CGFloat, _ save: Bool) {
 			gUndeferRedraw(save)
-
-			if  reveal {
-				gRelayoutMaps()
-			}
+			gRelayoutMaps()
 
 			if  let grabbed = gSelecting.firstSortedGrab {
 				gSelecting.ungrabAll()
@@ -456,20 +454,22 @@ class ZTextEditor: ZTextView {
 			gTextEditorHandlesArrows = false       // done last
 			let duration = gEndMeasurement(start: start)
 
-			print("moving left took \(duration) seconds")
+			print("moving \(moveLeft ? " left" : "right") took \(duration) seconds")
 		}
 
-		if  moveLeft {
+		if  moveLeft || canGoRight {
 			let save = gDeferRedraw()
+
 			quickStopCurrentEdit()
-			gMapEditor.moveLeft { reveal in
-				editAtOffset(100000000.0, reveal, save)
-			}
-		} else if currentlyEditedZone?.children.count ?? 0 > 0 {
-			let save = gDeferRedraw()
-			quickStopCurrentEdit()
-			gMapEditor.moveRight { reveal in
-				editAtOffset(.zero, reveal, save)
+
+			if  moveLeft {
+				gMapEditor.moveLeft { reveal in
+					editAtOffset(100000000.0, save)
+				}
+			} else if canGoRight {
+				gMapEditor.moveRight { reveal in
+					editAtOffset(.zero, save)
+				}
 			}
 		}
 	}
@@ -481,6 +481,7 @@ class ZTextEditor: ZTextView {
 	func moveUp(_ up: Bool, stopEdit: Bool) {
         currentOffset = currentOffset ?? editingOffset(up)
         let         e = currentEdit // for the case where stopEdit is true
+		let     start = gStartMeasurement()
 		let      save = gDeferRedraw()
 
         if  stopEdit {
@@ -493,15 +494,14 @@ class ZTextEditor: ZTextView {
 		if  var original = e?.packedZone {
 			gMapEditor.moveUp(up, [original], targeting: currentOffset) { kinds in
 				gDispatchSignals(kinds) { [self] in
-					if  let widget = original.widget, widget.isHere {       // offset has changed
+					if  let    widget = original.widget, widget.isHere {       // offset has changed
 						currentOffset = widget.textWidget?.offset(for: selectedRange, up)
 					}
 
-					if  let first = gSelecting.firstSortedGrab, stopEdit {
-						original  = first
-
+					if  let   grabbed = gSelecting.firstSortedGrab, stopEdit {
+						original      = grabbed
 						if  original != currentlyEditedZone { // if move up (above) does nothing, ignore
-							edit(original)
+							edit(original, setOffset: currentOffset)
 						} else {
 							currentEdit = e // restore after capture sets it to nil
 
@@ -510,11 +510,12 @@ class ZTextEditor: ZTextView {
 						}
 					} // else widgets are wrong
 
-					FOREGROUND(after: 0.01) { [self] in
-						setCursor(at: currentOffset)
-						gUndeferRedraw(save)
-						gMapView?.setNeedsDisplay()
-					}
+					gUndeferRedraw(save)
+					gRelayoutMaps()
+
+					let duration = gEndMeasurement(start: start)
+
+					print("moving \(up ? "   up" : " down") took \(duration) seconds")
 				}
 			}
 		} else {
