@@ -787,7 +787,7 @@ extension ZoneTextWidget {
             }
 
             FOREGROUND { // execute on next cycle of runloop
-                gMainWindow?.handleKey(key, flags: flags)
+                gMainWindow?.handleKeyInMainWindow(key, flags: flags)
             }
         }
     }
@@ -807,7 +807,7 @@ extension ZTextEditor {
         }
     }
 	
-	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+	@discardableResult func handleKeyInTextEditor(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  var        key = iKey, !gRefusesFirstResponder {
 			let        ANY = flags.isAny
 			let     OPTION = flags.hasOption
@@ -822,7 +822,7 @@ extension ZTextEditor {
 			gHideExplanation()
 
 			if  let      a = arrow {
-				gTextEditor.handleArrow(a, flags: flags)
+				handleArrowInTextEditor(a, flags: flags)
 			} else if ANY {
 				switch key {
 					case "a":       currentTextWidget?.selectAllText()
@@ -855,7 +855,7 @@ extension ZTextEditor {
 		return true
 	}
 
-    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+    func handleArrowInTextEditor(_ arrow: ZArrowKey, flags: ZEventFlags) {
 		if gIsHelpFrontmost { return }
 
         switch arrow {
@@ -866,14 +866,14 @@ extension ZTextEditor {
 				moveLeft(left: true)
             } else {
                 clearOffset()
-                handleArrow(arrow, with: flags)
+                handleArrowInText(arrow, with: flags)    // calls NSText method (below)
             }
         case .right:
             if  atEnd {
                 moveLeft(left: false)
             } else {
                 clearOffset()
-				handleArrow(arrow, with: flags)
+				handleArrowInText(arrow, with: flags)    // calls NSText method (below)
             }
         }
     }
@@ -882,7 +882,7 @@ extension ZTextEditor {
 
 extension NSText {
 	
-	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
+	func handleArrowInText(_ arrow: ZArrowKey, with flags: ZEventFlags) {
 		let COMMAND = flags.hasCommand
 		let  OPTION = flags.hasOption
 		let   SHIFT = flags.hasShift

@@ -133,7 +133,7 @@ class ZSelecting: NSObject {
             }
         }
 
-		grabs.reorderAccordingToValue()
+		grabs.reorderAccordingToOrderValues()
 
         return grabs
     }

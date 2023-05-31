@@ -14,8 +14,8 @@ class ZHelpEditor: ZBaseEditor {
 
 	override var canHandleKey: Bool { return true }
 
-	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
-		if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
+	@discardableResult override func handleKeyInMapEditor(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
+		if !super.handleKeyInMapEditor(iKey, flags: flags, isWindow: isWindow) {
 			if  let    key = iKey {
 				switch key {
 					case kSlash: gHelpController?.show(flags: flags); return true

@@ -183,7 +183,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	// MARK: - events
 	// MARK: -
 
-	func handleKey(_ key: String, flags: ZEventFlags) -> Bool {   // false means key not handled
+	func handleKeyInHelpController(_ key: String, flags: ZEventFlags) -> Bool {   // false means key not handled
 		let  COMMAND = flags.hasCommand
 		let  SPECIAL = flags.exactlySpecial
 
@@ -208,7 +208,7 @@ class ZHelpController: ZGenericTableController, ZGeometry {
 	func handleEvent(_ event: ZEvent) -> ZEvent? {
 		if  let   key = event.key {
 			let flags = event.modifierFlags
-			return handleKey(key, flags: flags) ? nil : event
+			return handleKeyInHelpController(key, flags: flags) ? nil : event
 		}
 
 		return nil

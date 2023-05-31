@@ -213,11 +213,11 @@ class ZoneContextualMenu: ZContextualMenu {
 			w.validateMenuItem(item) {
 			let key = item.keyEquivalent
 
-			handleKey(key)
+			handleKeyInContextMenu(key)
 		}
 	}
 
-	override func handleKey(_ key: String) {
+	override func handleKeyInContextMenu(_ key: String) {
 		if  ["l", "u"].contains(key) {
 			textWidget?.alterCase(up: key == "u")
 		} else {
@@ -233,11 +233,11 @@ class ZContextualMenu: ZMenu {
 		if  let item = iItem {
 			let  key = item.keyEquivalent
 
-			handleKey(key)
+			handleKeyInContextMenu(key)
 		}
 	}
 
-	func handleKey(_ key: String) {
+	func handleKeyInContextMenu(_ key: String) {
 		switch key {
 			case kEquals,
 			kHyphen: gUpdateBaseFontSize(up: key == kEquals)
@@ -262,7 +262,7 @@ extension ZBaseEditor {
 			let  flags = item.keyEquivalentModifierMask
 			let    key = item.keyEquivalent
 
-			handleKey(key, flags: flags, isWindow: true)
+			handleKeyInMapEditor(key, flags: flags, isWindow: true)
 		}
 	}
 

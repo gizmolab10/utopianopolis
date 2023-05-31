@@ -61,13 +61,13 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		}
 	}
 
-	func handleArrow(_ arrow: ZArrowKey, with flags: ZEventFlags) {
+	func handleArrowInSearchBar(_ arrow: ZArrowKey, with flags: ZEventFlags) {
 		#if os(OSX)
 		if  searchBarIsFirstResponder {
-			searchBar?.currentEditor()?.handleArrow(arrow, with: flags)
+			searchBar?.currentEditor()?.handleArrowInText(arrow, with: flags)
 		} else if gIsResultsMode {
 		} else if gIsEssayMode {
-			gEssayView?.handleArrow(arrow, flags: flags)
+			gEssayView?.handleArrowInEssay(arrow, flags: flags)
 		}
 		#endif
 	}
@@ -86,7 +86,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		let   isInBar = searchBarIsFirstResponder
 
 		if (gIsEssayMode && !isInBar) || (COMMAND && key == "g") {
-			gEssayView?.handleKey(key, flags: flags)
+			gEssayView?.handleKeyInEssayView(key, flags: flags)
 		} else if isList, !isInBar {
 			if !isF {
 				return gSearchResultsController?.handleEvent(event)
@@ -102,7 +102,7 @@ class ZSearchBarController: ZGenericController, ZSearchFieldDelegate {
 		} else if isTab {
 			gSearching.setSearchStateTo(.sList)
 		} else if let arrow = key.arrow {
-			handleArrow(arrow, with: flags)
+			handleArrowInSearchBar(arrow, with: flags)
 		} else {
 			if !isReturn, isWaiting {
 				gSearching.searchState = .sFind    // don't call setSearchStateTo, it has unwanted side-effects

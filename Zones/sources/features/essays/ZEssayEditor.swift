@@ -24,9 +24,9 @@ class ZEssayEditor: ZBaseEditor {
 		return gIsEssayMode && inWindow
 	}
 
-	@discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
+	@discardableResult override func handleKeyInMapEditor(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		// let super try first
-		return super.handleKey(iKey, flags: flags, isWindow: isWindow) || gEssayView?.handleKey(iKey, flags: flags) ?? false
+		return super.handleKeyInMapEditor(iKey, flags: flags, isWindow: isWindow) || gEssayView?.handleKeyInEssayView(iKey, flags: flags) ?? false
 	}
 
 }

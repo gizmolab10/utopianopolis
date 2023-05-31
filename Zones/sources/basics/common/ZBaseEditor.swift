@@ -20,7 +20,7 @@ class ZBaseEditor : NSObject {
 
 	func isValid(_ key: String, _ flags: ZEventFlags, inWindow: Bool = true) -> Bool { return true }
 
-	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
+	@discardableResult func handleKeyInMapEditor(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {
 		if  var key  = iKey, !gRefusesFirstResponder {
 			if  key != key.lowercased() {
 				key  = key.lowercased()
@@ -66,7 +66,7 @@ class ZBaseEditor : NSObject {
 				return gHelpController?.handleEvent(event) // better to detect here than in ZEvents.keyDownMonitor
 			} else if  gIsSearching {
 				return gSearchBarController?.handleEvent(event)
-			} else if  handleKey(event.key, flags: event.modifierFlags, isWindow: isWindow) {
+			} else if  handleKeyInMapEditor(event.key, flags: event.modifierFlags, isWindow: isWindow) {
 				return nil
 			}
 		}

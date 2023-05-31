@@ -298,6 +298,10 @@ extension Zone {
 			let priorParent   = parentZoneMaybe
 			parentZoneWrapper = parent
 
+			if  priorParent != nil || modificationDate == nil {
+				setModificationDate()
+			}
+
 			if  gCDUseRelationships {
 				gRelationships.addOrSwapParentRelationship(self, parent: parent, priorParent: priorParent, in: databaseID)
 			}

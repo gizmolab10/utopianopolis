@@ -50,7 +50,7 @@ class ZMapEditor: ZBaseEditor {
         return gUndoManager
     }
 
-    @discardableResult override func handleKey(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
+    @discardableResult override func handleKeyInMapEditor(_ iKey: String?, flags: ZEventFlags, isWindow: Bool) -> Bool {   // false means key not handled
 		if !gIsEditingStateChanging, !gIsExportingToAFile, !gRefusesFirstResponder, !gIsPrinting,
 		    var     key = iKey {
 			let   arrow = key.arrow
@@ -77,7 +77,7 @@ class ZMapEditor: ZBaseEditor {
 			gHideExplanation()
 
             if  gIsEditIdeaMode {
-				if !gTextEditor.handleKey(iKey, flags: flags) {
+				if !gTextEditor.handleKeyInTextEditor(iKey, flags: flags) {
 					if !ANY { return false } // ignore key events which have no modifier keys
 
 					switch key {
@@ -97,10 +97,10 @@ class ZMapEditor: ZBaseEditor {
                 let widget = gWidgets.widgetForZone(gSelecting.currentMoveableMaybe)
                 
                 if  let a = arrow, isWindow {
-                    handleArrow(a, flags: flags)
+                    handleArrowInMap(a, flags: flags)
 				} else if kMarkingCharacters.contains(key), !COMMAND, !CONTROL, !OPTION {
                     prefix(with: key)
-                } else if !super.handleKey(iKey, flags: flags, isWindow: isWindow) {
+                } else if !super.handleKeyInMapEditor(iKey, flags: flags, isWindow: isWindow) {
 					let moveable = gSelecting.currentMoveable
 
 					switch key {
@@ -154,9 +154,9 @@ class ZMapEditor: ZBaseEditor {
 		return true // indicate key was handled
     }
 
-    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags, onCompletion: Closure? = nil) {
+    func handleArrowInMap(_ arrow: ZArrowKey, flags: ZEventFlags, onCompletion: Closure? = nil) {
 		if  gTextEditorHandlesArrows || gIsEditIdeaMode {
-			gTextEditor.handleArrow(arrow, flags: flags)
+			gTextEditor.handleArrowInTextEditor(arrow, flags: flags)
 		} else if !((flags.hasOption && !gSelecting.currentMoveable.userCanMove) || gIsHelpFrontmost) || gIsEssayMode {
 			switch arrow {
 				case .down,    .up: moveUp  (arrow == .up,   flags: flags);                             forceRedraw()
@@ -389,7 +389,7 @@ class ZMapEditor: ZBaseEditor {
 			let promoteToParent: ClosureClosure = { innerClosure in
 				original.convertFromLineWithTitle()
 
-				grabs.reversed().moveRight(into: original) { reveal in
+				grabs.reversed().moveInto(original) { reveal in
 					original.grab()
 					innerClosure()
 					onCompletion?()
@@ -870,7 +870,7 @@ class ZMapEditor: ZBaseEditor {
 				zone.orphan()
 			}
 
-			grabs.moveRight(into: done!) { good in
+			grabs.moveInto(done!) { good in
 				done?.grab()
 				gRelayoutMaps()
 			}
@@ -961,7 +961,7 @@ class ZMapEditor: ZBaseEditor {
 
 				printDebug(.dMoving, "index \(targetZones[index] == rootMost ? "matches" : "doesn't match") for \(rootMost)")
 
-				let moveClosure: ZonesClosure = { iZones in
+				func internalMove(_ iZones : ZoneArray) {
 					if  extreme {
 						toIndex = up ? 0 : targetMax
 					}
@@ -989,9 +989,9 @@ class ZMapEditor: ZBaseEditor {
 						let   newIndex = indexer.siblingIndex
 						let  moveThese = moveUp ? iZones.reversed() : iZones
 
-						moveThese.moveRight(into: intoParent, at: newIndex, orphan: true) { reveal in
+						moveThese.moveInto(intoParent, at: newIndex, orphan: true) { reveal in
 							gSelecting.grab(moveThese)
-							intoParent.children.updateOrder()
+							gSelecting.updateCousinList()
 							onCompletion?([.spRelayout])
 						}
 					}
@@ -1046,7 +1046,7 @@ class ZMapEditor: ZBaseEditor {
 					}
 
 					if !selectionOnly {
-						moveClosure(originalGrabs)
+						internalMove(originalGrabs)
 					} else if !growSelection {
 						findChildMatching(&grabThis, up, iOffset)    // TODO: should look at siblings, not children
 						grabThis.grab(updateBrowsingLevel: false)
@@ -1102,7 +1102,7 @@ class ZMapEditor: ZBaseEditor {
 					findChildMatching(&grab, up, iOffset)
 
 					if !selectionOnly {
-						moveClosure(originalGrabs)
+						internalMove(originalGrabs)
 					} else if growSelection {
 						grab.addToGrabs()
 					} else {

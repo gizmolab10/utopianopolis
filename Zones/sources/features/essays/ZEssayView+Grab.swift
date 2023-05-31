@@ -52,7 +52,7 @@ extension ZEssayView {
 			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
 				save()
 
-				gMapEditor.handleArrow(arrow, flags: flags) { [self] in
+				gMapEditor.handleArrowInMap(arrow, flags: flags) { [self] in
 					resetTextAndGrabs()
 				}
 			}

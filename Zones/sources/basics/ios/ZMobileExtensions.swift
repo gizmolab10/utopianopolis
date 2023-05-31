@@ -298,7 +298,7 @@ extension ZWindow {
 
         if  windowKeys                             == nil {
             windowKeys                              = [UIKeyCommand] ()
-            let                             handler = #selector(ZWindow.handleKey)
+            let                             handler = #selector(ZWindow.handleKeyInSearchResults)
             let                              noMods = UIKeyModifierFlags(rawValue: 0)
             let                       COMMAND_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags  .command.rawValue)
             let                        OPTION_SHIFT = UIKeyModifierFlags(rawValue: UIKeyModifierFlags  .shift.rawValue + UIKeyModifierFlags.alternate.rawValue)
@@ -331,13 +331,13 @@ extension ZWindow {
         return windowKeys
     }
 
-    @objc func handleKey(command: UIKeyCommand) {
+    @objc func handleKeyInWindow(command: UIKeyCommand) {
         var event = command
 
         if  let title = command.discoverabilityTitle, title.contains(" arrow"),
             let input = command.input {
             let flags = UIKeyModifierFlags(rawValue: command.modifierFlags.rawValue + UIKeyModifierFlags.numericPad.rawValue) 	// add .numericPad to flags
-            event     = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(UIWindow.handleKey), discoverabilityTitle: command.discoverabilityTitle!)
+            event     = UIKeyCommand(input: input, modifierFlags: flags, action: #selector(UIWindow.handleKeyInSearchResults), discoverabilityTitle: command.discoverabilityTitle!)
         }
 
         gMapEditor.handleEvent(event, isWindow: true)
@@ -495,7 +495,7 @@ extension ZAlerts {
 extension ZTextEditor {
 
     var  string: String { return text }
-    func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {}
+    func handleArrowInTextEditor(_ arrow: ZArrowKey, flags: ZEventFlags) {}
 	func showSpecialCharactersPopup() {}
 
     func fullResign()  {

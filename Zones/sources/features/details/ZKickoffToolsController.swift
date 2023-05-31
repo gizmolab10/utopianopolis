@@ -133,7 +133,7 @@ class ZKickoffToolsController: ZGenericController, ZToolTipper {
 				gTextEditor.stopCurrentEdit()                            // so browse ideas, not text
 			}
 
-			if  let m = gMainWindow, m.handleKey(key, flags: f) {        // this is so cool, ;-)
+			if  let m = gMainWindow, m.handleKeyInMainWindow(key, flags: f) {        // this is so cool, ;-)
 				FOREGROUND(after: 0.1) {
 					if  isEdit {
 						gSelecting.firstGrab()?.edit()                   // edit newly grabbed zone

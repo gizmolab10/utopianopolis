@@ -316,7 +316,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// MARK: - input
 	// MARK: -
 
-	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+	@discardableResult func handleKeyInEssayView(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		guard var key = iKey, !gRefusesFirstResponder else {
 			return false
 		}
@@ -336,7 +336,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 		if  let arrow = key.arrow {
 			clearResizing()
-			handleArrow(arrow, flags: flags)
+			handleArrowInEssay(arrow, flags: flags)
 
 			return true
 		} else if  hasGrabbedNote {
@@ -434,7 +434,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return !enabled
 	}
 
-	func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) {
+	func handleArrowInEssay(_ arrow: ZArrowKey, flags: ZEventFlags) {
 		let   SHIFT = flags.hasShift
 		let  OPTION = flags.hasOption
 		let COMMAND = flags.hasCommand

@@ -1113,7 +1113,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if  containing {
-				zones.reorderAccordingToValue()
+				zones.reorderAccordingToOrderValues()
 			}
 
 			parent.addIdea(at: index, with: name) { iChild in
@@ -1172,7 +1172,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		children.updateOrder()
+		gSelecting.updateCousinList()
+//		children.updateOrder()
 	}
 
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
@@ -2453,7 +2454,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		// case 4
 
-		zones.reorderAccordingToValue()
+		zones.reorderAccordingToOrderValues()
 
 		// //////////////// //
 		// prepare for UNDO //
@@ -2826,7 +2827,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			bookmarkTarget?.addChildAndUpdateOrder(iChild, at: iIndex, afterAdd)
 		} else if let child = iChild,
 			addChildNoDuplicate(child, at: iIndex, afterAdd) != nil {
-			children.updateOrder() // also marks children need save
+			gSelecting.updateCousinList()
+//			children.updateOrder()
 		}
 	}
 
@@ -2883,7 +2885,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			func finish() -> Int {
 				updateMaxLevel()
-				setModificationDateMaybe()
+//				setModificationDateMaybe()
 				onCompletion?(child)
 
 				return toIndex
@@ -2943,7 +2945,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				updateCoreDataRelationships()
 			}
 
-			setModificationDateMaybe()
 			updateMaxLevel()
 			onCompletion?(child)
 
@@ -2964,7 +2965,6 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			child.setParentZone(nil)
 			child.setValue(nil, forKeyPath: kParentRef)
 			updateCoreDataRelationships()
-			setModificationDateMaybe()
 			updateMaxLevel()
 			needCount()
 
@@ -3208,7 +3208,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func respectOrder() {
-		children.reorderAccordingToValue()
+		children.reorderAccordingToOrderValues()
 	}
 
 	func respectOrderForAllProgeny() {

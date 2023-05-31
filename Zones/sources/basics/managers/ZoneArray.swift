@@ -181,7 +181,7 @@ extension ZoneArray {
 		}
 	}
 
-	mutating func reorderAccordingToValue() { // was respectOrder
+	mutating func reorderAccordingToOrderValues() { // was respectOrder
 		sort { (a, b) -> Bool in
 			return a.order < b.order
 		}
@@ -191,7 +191,7 @@ extension ZoneArray {
 		var duplicated = ZoneArray ()
 		var    indices =  IntArray ()
 
-		reorderAccordingToValue()
+		reorderAccordingToOrderValues()
 
 		forEach { zone in
 			if  let     index = zone.siblingIndex {
@@ -207,7 +207,8 @@ extension ZoneArray {
 				index    += (gListsGrowDown ? 1 : 0)
 
 				p.addChild(duplicate, at: index)
-				p.children.updateOrder()
+				gSelecting.updateCousinList()
+//				p.children.updateOrder()
 				duplicate.grab()
 			}
 
@@ -394,7 +395,6 @@ extension ZoneArray {
 			zones.updateOrdering(start: start, end: end)
 			inParent.children.replace(zones)
 			inParent.respectOrder()
-			inParent.children.updateOrder()
 			gSelecting.updateCousinList(for: gSelecting.currentMoveable)
 			gRelayoutMaps()
 		}
@@ -461,10 +461,10 @@ extension ZoneArray {
 			parent.expand()
 		}
 
-		moveRight(into: parent, horizontal: true, grab: CONTROL || parent.isExpanded, onCompletion: onCompletion)
+		moveInto(parent, horizontal: true, grab: CONTROL || parent.isExpanded, onCompletion: onCompletion)
 	}
 
-	func moveRight(into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, travel: Bool = false, grab: Bool = true, onCompletion: BoolClosure?) {
+	func moveInto(_ into: Zone, at iIndex: Int? = nil, orphan: Bool = true, horizontal: Bool = false, travel: Bool = false, grab: Bool = true, onCompletion: BoolClosure?) {
 		if  into.isInFavorites, travel {
 			into.parentZone?.collapse()
 

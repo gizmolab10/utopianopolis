@@ -390,13 +390,13 @@ class ZSearchResultsController: ZGenericTableController {
             let  flags = event.modifierFlags
             let    key = string[string.startIndex].description        // N.B. test key first since getInput has a possible side-effect of exiting search
 
-			if !handleKey(key, flags: flags) { return event }
+			if !handleKeyInSearchResults(key, flags: flags) { return event }
         }
         
         return nil
 	}
 
-	@discardableResult func handleKey(_ key: String, flags: ZEventFlags) -> Bool { // false means not handled
+	@discardableResult func handleKeyInSearchResults(_ key: String, flags: ZEventFlags) -> Bool { // false means not handled
 		switch key {
 			case "f", kTab: gSearching.setSearchStateTo(.sFind)
 			case kReturn: if !resolve() { return false }
@@ -404,7 +404,7 @@ class ZSearchResultsController: ZGenericTableController {
 			case kDelete: removeSelection()
 			default:
 				if  let arrow = key.arrow,
-					!handleArrow(arrow, flags: flags) {
+					!handleArrowInSearchResults(arrow, flags: flags) {
 					return false
 			}
 		}
@@ -412,7 +412,7 @@ class ZSearchResultsController: ZGenericTableController {
 		return true
 	}
 
-	@discardableResult func handleArrow(_ arrow: ZArrowKey, flags: ZEventFlags) -> Bool { // false means not handled
+	@discardableResult func handleArrowInSearchResults(_ arrow: ZArrowKey, flags: ZEventFlags) -> Bool { // false means not handled
 		let COMMAND = flags.hasCommand
 
 		switch arrow {

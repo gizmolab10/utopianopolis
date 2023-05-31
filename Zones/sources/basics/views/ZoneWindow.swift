@@ -52,7 +52,7 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 		}
 	}
 
-	@discardableResult func handleKey(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
+	@discardableResult func handleKeyInMainWindow(_ iKey: String?, flags: ZEventFlags) -> Bool {   // false means key not handled
 		if  let key = iKey, !gRefusesFirstResponder {
 			gTemporarilySetKey(key)      // enable become first responder
 
@@ -61,10 +61,10 @@ class ZoneWindow: ZWindow, ZWindowDelegate {
 			// //////////////////////////////////////// //
 
 			switch gWorkMode {
-				case .wEssayMode:    return gEssayEditor             .handleKey(key, flags: flags, isWindow: true)
-				case .wMapMode:      return gMapEditor               .handleKey(key, flags: flags, isWindow: true)
-				case .wResultsMode:  return gSearchResultsController?.handleKey(key, flags: flags) ?? false
-				case .wEditIdeaMode: return gTextEditor              .handleKey(key, flags: flags)
+				case .wEssayMode:    return gEssayEditor             .handleKeyInMapEditor(key, flags: flags, isWindow: true)
+				case .wMapMode:      return gMapEditor               .handleKeyInMapEditor(key, flags: flags, isWindow: true)
+				case .wResultsMode:  return gSearchResultsController?.handleKeyInSearchResults(key, flags: flags) ?? false
+				case .wEditIdeaMode: return gTextEditor              .handleKeyInTextEditor(key, flags: flags)
 				default:             break
 			}
 		}
