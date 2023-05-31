@@ -142,24 +142,26 @@ class ZoneTextWidget: ZTextField, ZTextFieldDelegate, ZToolTipper, ZGeneric {
     @discardableResult override func becomeFirstResponder() -> Bool {
 		printDebug(.dEdit, " BECOME  " + (widgetZone?.unwrappedName ?? kEmpty))
 
-		if !isFirstResponder,
-			let zone = widgetZone,
-			zone.canEditNow,                 // detect if mouse down inside widget OR key pressed
-			super.becomeFirstResponder() {   // becomeFirstResponder is called first here so delegate methods will be called
+		if  !isFirstResponder,
+			let zone = widgetZone, zone.canEditNow,
+		    super.becomeFirstResponder() {                // becomeFirstResponder is called first here so delegate methods will be called
 
-			if  gIsSearching {
-                gExitSearchMode()
-			} else if gIsEssayMode {
-				gSwapMapAndEssay()
-			} else {
-				gSetEditIdeaMode()
+			if  self != gTextEditor.currentTextWidget {
+
+				if  gIsSearching {
+					gExitSearchMode()
+				} else if gIsEssayMode {
+					gSwapMapAndEssay()
+				} else {
+					gSetEditIdeaMode()
+				}
+
+				gSelecting.ungrabAll(retaining: [zone])
+				printDebug(.dEdit, " OFFSET  " + zone.unwrappedName)
+				gTextEditor.edit(zone, setOffset: gTextOffset) // recurses back to here if has not already been invoked in call chain
+
+				return true
 			}
-
-			gSelecting.ungrabAll(retaining: [zone])
-			printDebug(.dEdit, " OFFSET  " + zone.unwrappedName)
-			gTextEditor.edit(zone, setOffset: gTextOffset) // recurses back to here if has not already been invoked in call chain
-
-			return true
         }
 
         return false

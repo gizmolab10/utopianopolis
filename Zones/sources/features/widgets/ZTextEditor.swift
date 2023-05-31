@@ -261,10 +261,10 @@ class ZTextEditor: ZTextView {
 	// MARK: -
 
     @discardableResult func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) -> ZTextEditor {
-        if  (currentEdit == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside assignAsFirstResponder, called below
+        if  (currentEdit   == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside assignAsFirstResponder, called below
             let        pack = ZTextPack(zRecord)
-			if  let    zone = pack.packedZone,
-				zone.userCanWrite {
+			if  let    zone = pack.packedZone, zone.userCanWrite,
+				let       t = zone.textWidget {
 				currentEdit = pack
 				var  offset = setOffset
 
@@ -273,21 +273,20 @@ class ZTextEditor: ZTextView {
 				pack.updatePackText(isEditing: true)        // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
+				t.becomeFirstResponder()
+				t.enableUndo()
 
-				if  let t = zone.textWidget, t.becomeFirstResponder() {
-					t.enableUndo()
-
-					if  offset     == nil,
-						let current = gCurrentOffset {      // from mouse down event
-						offset      = current + t.frame.minX
-					}
+				if  offset     == nil,
+					let cOffset = gCurrentOffset {          // from mouse down event
+					offset      = cOffset + t.frame.minX
 				}
+
+				zone.widget?.draw(.pSelections)             // depends on the above call to become first responder
 
 				if  let at = offset {
 					setCursor(at: at)
 				}
 
-				zone.widget?.draw(.pSelections)
 				gDispatchSignals([.spCrumbs, .spPreferences])
 			}
         }
