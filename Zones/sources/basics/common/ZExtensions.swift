@@ -872,20 +872,20 @@ extension CGRect {
 	}
 
 	var selectionPoints: [ZDirection : CGPoint] {
-		var result           = cornerPoints
-		result[.top]         = centerTop
-		result[.left]        = centerLeft
-		result[.right]       = centerRight
-		result[.bottom]      = centerBottom
+		var points      = cornerPoints
+		points[.top]    = centerTop
+		points[.left]   = centerLeft
+		points[.right]  = centerRight
+		points[.bottom] = centerBottom
 
-		return result
+		return points
 	}
 
 	var normalized: CGRect {
-		var r = CGRect(origin: origin, size: size)
-		let h = size.height
-		let w = size.width
-		if  h < .zero {
+		var          r    = CGRect(origin: origin, size: size)
+		let          h    = size.height
+		let          w    = size.width
+		if           h    < .zero {
 			r.size.height = -h
 			r.origin.y   +=  h
 		}
@@ -1019,7 +1019,7 @@ extension CGRect {
 		return delta > 0
 	}
 
-	func hitTestForResizeDot(in testRect: CGRect) -> ZDirection? {
+	func hitTestForImageResizeDot(in testRect: CGRect) -> ZDirection? {
 		let   points = selectionPoints
 		let        s = size.dividedInHalf      .insetEquallyBy(kEssayImageDotRadius)
 

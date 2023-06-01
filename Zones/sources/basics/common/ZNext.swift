@@ -89,7 +89,7 @@ extension ZEssayView {
 
 	func nextNotemark(down: Bool) {
 		save()
-		clearResizing()
+		clearImageResizing()
 		gFavoritesCloud.nextBookmark(down: down, amongNotes: true)
 	}
 

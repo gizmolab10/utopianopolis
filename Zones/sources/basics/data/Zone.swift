@@ -1790,8 +1790,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	@discardableResult func createNoteMaybe() -> ZNote? {
-		if (noteMaybe == nil || !hasNoteOrEssay), let emptyNote = createNote() {
-			noteMaybe = emptyNote     // might be note from "child"
+		if (noteMaybe == nil || !hasNoteOrEssay), let freshNote = createNote() {
+			noteMaybe = freshNote     // might be note from "child"
 		}
 
 		return noteMaybe

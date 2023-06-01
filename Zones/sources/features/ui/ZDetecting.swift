@@ -62,7 +62,7 @@ extension ZoneWidget {
 		return nil
 	}
 
-	func detectHit(at location: CGPoint, recursive: Bool = true) -> Any? {
+	func hitTestInWidget(at location: CGPoint, recursive: Bool = true) -> Any? {
 		if                                        absoluteHitRect.contains(location) {
 			if  let    d = parentLine?.dragDot, d.absoluteHitRect.contains(location) {
 				return d
@@ -103,7 +103,7 @@ extension ZoneWidget {
 
 			if  recursive, widgetZone?.isExpanded ?? false {
 				for child in childrenWidgets {
-					if  let                        c = child.detectHit(at: location) {
+					if  let                        c = child.hitTestInWidget(at: location) {
 						return c
 					}
 				}
@@ -117,15 +117,15 @@ extension ZoneWidget {
 
 extension ZFavoritesMapController {
 
-	override func detectHit(at location: CGPoint) -> Any? {
-		return hereWidget?.detectHit(at: location)
+	override func hitTestInMap(at location: CGPoint) -> Any? {
+		return hereWidget?.hitTestInWidget(at: location)
 	}
 }
 
 extension ZMapController {
 
-	@objc func detectHit(at location: CGPoint) -> Any? {
-		return gFavoritesMapController.detectHit(at: location) ?? hereWidget?.detectHit(at: location)
+	@objc func hitTestInMap(at location: CGPoint) -> Any? {
+		return gFavoritesMapController.hitTestInMap(at: location) ?? hereWidget?.hitTestInWidget(at: location)
 	}
 
 }

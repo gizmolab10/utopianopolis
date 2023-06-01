@@ -521,10 +521,10 @@ func gDetailsViewIsVisible(for id: ZDetailsViewID) -> Bool {
 }
 
 enum ZWorkMode: String {
-	case wEditIdeaMode = "e"
+	case wEditIdeaMode = "i"
 	case wStartupMode  = "s"
 	case wResultsMode  = "?"
-	case wEssayMode    = "n"
+	case wEssayMode    = "e"
 	case wMapMode      = "m"
 }
 

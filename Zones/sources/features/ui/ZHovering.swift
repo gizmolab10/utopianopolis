@@ -97,7 +97,7 @@ extension ZMapView {
 		var     hoverDetected = false
 		if  let      location = currentMouseLocation,
 			let             h = hovering, shouldDetectHovering {
-			if  let       any = controller?.detectHit(at: location) {
+			if  let       any = controller?.hitTestInMap(at: location) {
 				hoverDetected = h.declareHover(any)
 			} else {
 				hoverDetected = h.clear()

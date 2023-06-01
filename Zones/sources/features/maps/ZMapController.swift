@@ -339,7 +339,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 		if (gIsMapOrEditIdeaMode || gIsEssayMode), gCurrentMouseDownZone == nil,
 		    let        gesture = iGesture as? ZKeyClickGestureRecognizer {
 			let       location = gesture.location(in: mapView)
-			let            hit = detectHit(at: location)
+			let            hit = hitTestInMap(at: location)
             var notEditingIdea = true
 
 			printDebug(.dClick, "only")

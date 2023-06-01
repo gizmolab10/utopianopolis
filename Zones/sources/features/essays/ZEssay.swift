@@ -102,8 +102,9 @@ class ZEssay: ZNote {
 
 	override func updateChildren() {
 		childrenNotes.removeAll()
+
 		if  let     zones = zone?.zonesWithVisibleNotes {
-			childrenNotes = zones.filter { $0.noteMaybe != nil }.map { $0.noteMaybe! }
+			childrenNotes = zones.filter { $0.createNoteMaybe() != nil }.map { $0.noteMaybe! }
 		}
 	}
 
@@ -118,7 +119,11 @@ class ZEssay: ZNote {
 
 	override func notes(in range: NSRange) -> ZNoteArray {
 		var result = ZNoteArray()
-		for child in childrenNotes {
+
+		updateChildren()              // needed when a note is created...
+		updateNoteOffsets()           // ...in a parent whose children have notes
+
+		for child in childrenNotes + [self] {
 			if  range.inclusiveIntersection(child.noteRange) != nil {
 				result.append(child)
 			}

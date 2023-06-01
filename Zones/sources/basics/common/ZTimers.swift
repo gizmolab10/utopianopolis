@@ -55,7 +55,7 @@ func gTemporarilySetMouseZone(_ zone: Zone?, _ location: CGPoint? = nil) {
 
 	if  let          l = location,
 		let          z = zone {
-		gCurrentHit    = z.widget?.detectHit(at: l)
+		gCurrentHit    = z.widget?.hitTestInWidget(at: l)
 		gCurrentOffset = z.textWidget?.convert(l, from: nil).x
 	}
 

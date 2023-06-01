@@ -1,5 +1,5 @@
 //
-//  ZEssay+Extras.swift
+//  ZEssay+Visibility.swift
 //  Seriously
 //
 //  Created by Jonathan Sand on 2/13/23.
@@ -27,7 +27,7 @@ enum ZNoteVisibilityIconType: Int {
 		}
 	}
 
-	func imageForVisibilityState(_ on: Bool) -> ZImage? {
+	func iconForVisibilityState(_ on: Bool) -> ZImage? {
 		switch self {
 			case .tChildren: return on ? kStackImage     : kSingleImage
 			case .tSelf:     return on ? kEyeImage       : kEyebrowImage

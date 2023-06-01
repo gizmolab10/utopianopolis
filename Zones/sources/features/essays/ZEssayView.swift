@@ -27,6 +27,7 @@ var gEssayView: ZEssayView? {
 class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	let margin             = CGFloat(20.0)
 	var dropped            = StringsArray()
+	var grabDots           = ZEssayGrabDotArray()
 	var visibilities       = ZNoteVisibilityArray()
 	var grabbedNotes       = ZNoteArray()
 	var selectionRect      = CGRect()  { didSet { if selectionRect.origin == .zero { selectedAttachment = nil } } }
@@ -104,12 +105,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			for type in ZNoteVisibilityIconType.all {
 				if  !(type.forEssayOnly && isANote),
 					let     on = v.stateFor(type),
-					let  image = type.imageForVisibilityState(on) {
+					let   icon = type.iconForVisibilityState(on) {
 					let origin = CGPoint(x: bounds.maxX, y: y).offsetBy(-type.offset, .zero)
-					let   rect = CGRect(origin: origin, size: .zero).expandedBy(image.size.dividedInHalf)
+					let   rect = CGRect(origin: origin, size: .zero).expandedBy(icon.size.dividedInHalf)
 
 					v.setRect(rect, for: type)
-					image.draw(in: rect)
+					icon.draw(in: rect)
 				}
 			}
 
@@ -117,7 +118,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func visibilityIconHit(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
+	func hitTestForVisibilityIcon(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
 		if !gHideNoteVisibility {
 			for visibility in visibilities {
 				for type in ZNoteVisibilityIconType.all {
@@ -174,7 +175,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	func essayViewSetup() {
 		updateTextStorage()
-		clearResizing()      // remove leftovers from last essay
+		clearImageResizing()      // remove leftovers from last essay
 	}
 
 	@discardableResult func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) -> Int {
@@ -241,6 +242,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 		if  gIsEssayMode {
 			assignAsFirstResponder(self)                                          // show cursor and respond to key input
+			gCurrentEssay?.updateNoteOffsets()
+			updateGrabDots()
 			gMainWindow?       .setupEssayInspectorBar()
 			gEssayControlsView?.setupEssayControls()
 			gEssayControlsView?.enableEssayControls(true)
@@ -335,7 +338,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 
 		if  let arrow = key.arrow {
-			clearResizing()
+			clearImageResizing()
 			handleArrowInEssay(arrow, flags: flags)
 
 			return true
@@ -428,8 +431,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			return true
 		} else if key == kDelete {
-			clearResizing()
+			clearImageResizing()
 		}
+
+		gCurrentEssay?.updateNoteOffsets()
+		updateGrabDots()
 
 		return !enabled
 	}
@@ -448,13 +454,12 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			handlePlainArrow(arrow)
 		} else if  SPECIAL {
 			switch arrow {
-				case .left:  fallthrough
-				case .right: move(out: arrow == .left)
+				case .left,
+					 .right: move(out: arrow == .left)
 				default:     break
 			}
 		} else if  ALL {
 			switch arrow {
-				case .left:  break
 				case .right: convertSelectionIntoChildIdeas(asSentences: true)
 				default:     break
 			}
@@ -523,8 +528,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 
 		switch arrow {
-			case .left:  fallthrough
-			case .right: setSelectedRange(selectedRange)     // work around stupid Apple bug
+			case .left,
+				 .right: setSelectedRange(selectedRange)     // work around stupid Apple bug
 			default:     break
 		}
 
@@ -548,13 +553,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			if  let         attach = hitTestForAttachment(in: rect) {
 				selectedAttachment = attach
 				resizeDragStart    = rect.origin
-				resizeDot          = attach.glyphRect(for: textStorage, margin: margin)?.hitTestForResizeDot(in: rect)
+				resizeDot          = attach.glyphRect(for: textStorage, margin: margin)?.hitTestForImageResizeDot(in: rect)
 				result             = resizeDot != nil
 
 				setSelectedRange(attach.glyphRange)
 				setNeedsDisplay()
 
-			} else if let      dot = dragDotHit(at: rect),
+			} else if let      dot = hitTestForGrabDot(at: rect),
 					  let     note = dot.dotNote {
 				if !ungrabNote(note){
 					if !event.modifierFlags.hasShift {
@@ -565,7 +570,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					setNeedsDisplay()
 					gDispatchSignals([.sDetails])
 				}
-			} else if let (zone, type) = visibilityIconHit(at: rect),
+			} else if let (zone, type) = hitTestForVisibilityIcon(at: rect),
 					  let        trait = zone.maybeNoteOrEssayTrait {
 				save()
 				trait.toggleVisibilityFor(type)
@@ -577,7 +582,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				}
 			} else {
 				ungrabAll()
-				clearResizing()
+				clearImageResizing()
 				setNeedsDisplay()
 
 				return false
@@ -587,7 +592,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return result
 	}
 
-	@objc func handleButtonAction(_ iButton: ZHoverableButton) {
+	@objc func essayActionFor(_ iButton: ZHoverableButton) {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
 				case .idForward:  nextNotemark(down:  true)
@@ -718,7 +723,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return found
 	}
 
-	func linkHit(at rect: CGRect) -> Bool {
+	func hitTestForLink(at rect: CGRect) -> Bool {
 		if  let array = textStorage?.linkRanges {
 			for range in array {
 				let linkRects = rectsForRange(range)
@@ -860,11 +865,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let noChild = note.childrenNotes.count == 0
 			let toEssay = noChild || !gCreateCombinedEssay
 
-			if  toEssay, gEssayTitleMode == .sEmpty, note.essayText!.string.length > 0 {
+			if  toEssay, note.essayText!.string.length > 0 {
 				note.updatedRangesFrom(textStorage)
 			}
 
-			save()
+			save() // so user does not lose recent work
 
 			gCreateCombinedEssay = toEssay      // toggle
 

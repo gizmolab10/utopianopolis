@@ -73,9 +73,9 @@ extension ZEssayView {
 	func updateCursor(for event: ZEvent) {
 		let rect = event.locationRect(in: self)
 
-		if  linkHit(at: rect) {
+		if  hitTestForLink(at: rect) {
 			NSCursor.arrow.set()
-		} else if let    dot = dragDotHit(at: rect) {
+		} else if let    dot = hitTestForGrabDot(at: rect) {
 			if  let     note = dot.dotNote {
 				let  grabbed = grabbedNotes.contains(note)
 				toolTip      = note.toolTipString(grabbed: grabbed)
@@ -83,7 +83,7 @@ extension ZEssayView {
 
 			NSCursor.arrow.set()
 		} else if let attach = hitTestForAttachment(in: rect) {
-			if  let      dot = rectForRangedAttachment(attach)?.hitTestForResizeDot(in: rect) {
+			if  let      dot = rectForRangedAttachment(attach)?.hitTestForImageResizeDot(in: rect) {
 				toolTip      = dot.toolTipString
 
 				dot.cursor.set()
@@ -256,7 +256,7 @@ extension ZEssayView {
 	// MARK: - image attachment
 	// MARK: -
 
-	func clearResizing() {
+	func clearImageResizing() {
 		selectedAttachment = nil
 		resizeDragStart    = nil
 		resizeDragRect     = nil
@@ -264,7 +264,7 @@ extension ZEssayView {
 	}
 
 	func updateImageInParagraph(containing range: NSRange) {
-		clearResizing()                                             // erase image rubberband
+		clearImageResizing()                                             // erase image rubberband
 
 		FOREGROUND(after: 0.075) { [self] in
 			if  let paragraphRange = textStorage?.string.rangeOfParagraph(for: range) {

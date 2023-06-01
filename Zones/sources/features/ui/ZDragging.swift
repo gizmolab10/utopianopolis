@@ -119,7 +119,7 @@ class ZDragging: NSObject {
 				cleanupAfterDrag()
 				controller.restartGestureRecognition()
 				gDispatchSignals([.spPreferences, .sData])             // so color well and indicators get updated
-			} else if let any = controller.detectHit(at: location),
+			} else if let any = controller.hitTestInMap(at: location),
 				let       dot = any as? ZoneDot {
 				if  dot.isReveal {
 					cleanupAfterDrag()                        // no dragging

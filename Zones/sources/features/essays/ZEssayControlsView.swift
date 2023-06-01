@@ -40,15 +40,15 @@ enum ZEssayButtonID : Int {
 }
 
 class ZEssayControlsView: ZView {
-	var      isTitlesControlDark = false
-	var           inspectorBar   : ZView?   { return gMainWindow?.inspectorBar }
-	@IBOutlet var titlesControl  : ZSegmentedControl?
-	@IBOutlet var cancelButton   : ZHoverableButton?
-	@IBOutlet var deleteButton   : ZHoverableButton?
-	@IBOutlet var printButton    : ZHoverableButton?
-	@IBOutlet var hideButton     : ZHoverableButton?
-	@IBOutlet var saveButton     : ZHoverableButton?
-	@IBAction func handleButtonAction(_ iButton: ZHoverableButton) { gEssayView?.handleButtonAction(iButton) }
+	var       isTitlesControlDark = false
+	var            inspectorBar   : ZView?   { return gMainWindow?.inspectorBar }
+	@IBOutlet var  titlesControl  : ZSegmentedControl?
+	@IBOutlet var  cancelButton   : ZHoverableButton?
+	@IBOutlet var  deleteButton   : ZHoverableButton?
+	@IBOutlet var  printButton    : ZHoverableButton?
+	@IBOutlet var  hideButton     : ZHoverableButton?
+	@IBOutlet var  saveButton     : ZHoverableButton?
+	@IBAction func essayControlAction(_ button: ZHoverableButton) { gEssayView?.essayActionFor(button) }
 
 	func setupEssayControls() {
 		if  let           b = inspectorBar, !b.subviews.contains(self) {

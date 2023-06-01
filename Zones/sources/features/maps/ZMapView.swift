@@ -33,6 +33,11 @@ class ZMapView: ZView {
 	// MARK: - initialize
 	// MARK: -
 
+	func clear() {
+		ZBezierPath.fillWithColor(gBackgroundColor, in: bounds)
+		setNeedsDisplay()
+	}
+
 	func setup(_ id: ZMapID = .mText, with iController: ZMapController) {
 		if  controller == nil {
 			controller  = iController
@@ -96,9 +101,9 @@ class ZMapView: ZView {
 
 		switch mapID {
 			case .mText:
-				super.draw(iDirtyRect) // text fields are drawn by OS
+				super.draw(iDirtyRect)    // text fields are drawn by OS
 			case .mDecorations:
-				ZBezierPath.fillWithColor(gBackgroundColor, in: iDirtyRect) // remove old rubberband and drag line/dot
+				clear()                   // remove old rubberband and drag line/dot
 
 				for phase in gAllDrawPhases {
 					drawWidgets(in: iDirtyRect, for: phase)
