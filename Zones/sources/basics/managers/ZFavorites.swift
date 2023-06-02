@@ -515,7 +515,7 @@ class ZFavorites: ZRecords {
 		}
 	}
 
-	@discardableResult func swapBetweenBookmarkAndTarget(_ flags: ZEventFlags = ZEventFlags(), doNotGrab: Bool = true) -> Bool {
+	@discardableResult func swapBookmarkAndTarget(_ flags: ZEventFlags = ZEventFlags(), doNotGrab: Bool = true) -> Bool {
 		if  let cb = otherCurrent,
 			cb.isGrabbed {            // grabbed in favorites map, so ...
 			cb.bookmarkTarget?.grab() // grab target in main map

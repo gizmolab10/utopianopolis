@@ -66,7 +66,7 @@ class ZFocusing : NSObject {
 				finishAndGrabHere()
 			}
 		} else if zone == gHere {       // state 2
-			if !gFavoritesCloud.swapBetweenBookmarkAndTarget(flags, doNotGrab: !shouldGrab) {
+			if !gFavoritesCloud.swapBookmarkAndTarget(flags, doNotGrab: !shouldGrab) {
 				gFavoritesCloud.matchOrCreateBookmark(for: zone, addToRecents: true)
 			}
 

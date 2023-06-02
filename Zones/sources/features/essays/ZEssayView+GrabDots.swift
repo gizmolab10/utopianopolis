@@ -35,7 +35,7 @@ extension ZEssayView {
 
 		essay.updateNoteOffsets()
 
-		return (essay.zone?.zonesWithVisibleNotes.filter {
+		return (essay.zone?.zoneProgenyWithVisibleNotes.filter {
 			guard let range = $0.note?.noteRange else { return false }
 			return selectedRange.intersects(range.extendedBy(1))
 		}.map {
@@ -92,7 +92,7 @@ extension ZEssayView {
 			if  indents == 0 {
 				done()
 			} else {
-				swapBetweenNoteAndEssay()
+				swapNoteAndEssay()
 			}
 		} else if [.up, .down].contains(arrow) {
 			grabNextNote(down: arrow == .down, ungrab: !flags.hasShift)
@@ -118,41 +118,35 @@ extension ZEssayView {
 	func updateGrabDots() {
 		grabDots.removeAll()
 
-		if  let essay = gCurrentEssay, !essay.isNote,
+		if  let essay = gCurrentEssay, essay.childrenNotes.count > 0,
 			let  zone = essay.zone,
 			let     l = layoutManager,
 			let     c = textContainer {
-			let zones = zone.zonesWithVisibleNotes
+			let notes = essay.childrenNotes
 			let level = zone.level
 
 			essay.updateNoteOffsets()
 
-			for (index, zone) in zones.enumerated() {
-				if  var note       = zone.note {
-					if  index     == 0 {
-						note       = essay
-					}
+			for (index, note) in notes.enumerated() {
+				let grabHeight = 15.0
+				let  grabWidth = 11.75
+				let      inset = CGFloat(2.0)
+				let     offset = index == 0 ? 0 : 1               // first note has an altered offset ... thus, an altered range
+				let     indent = (note.zone?.level ?? level) - level
+				let     noLine = indent == 0
+				let      color = zone.color ?? kDefaultIdeaColor
+				let  noteRange = note.noteRange.offsetBy(offset)
+				let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).expandedEquallyBy(inset)
+				let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: grabHeight - 2.0))
+				let  lineWidth = grabWidth * Double(indent)
+				let   lineSize = CGSize(width: lineWidth, height: 0.5)
+				let   lineRect = noLine ? nil : CGRect(origin: lineOrigin, size: lineSize)
+				let grabOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: grabHeight / -2.0))
+				let   grabSize = CGSize(width: grabWidth, height: grabHeight)
+				let   grabRect = CGRect(origin: grabOrigin, size: grabSize)
+				let        dot = ZEssayGrabDot(dotNote: note, noteRange: noteRange, noteLineRect: lineRect, noteGrabRect: grabRect, noteTextRect: noteRect, dotColor: color)
 
-					let grabHeight = 15.0
-					let  grabWidth = 11.75
-					let      inset = CGFloat(2.0)
-					let     offset = index == 0 ? 0 : 1               // first note has an altered offset ... thus, an altered range
-					let     indent = zone.level - level
-					let     noLine = indent == 0
-					let      color = zone.color ?? kDefaultIdeaColor
-					let  noteRange = note.noteRange.offsetBy(offset)
-					let   noteRect = l.boundingRect(forGlyphRange: noteRange, in: c).offsetBy(dx: 18.0, dy: margin + inset + 1.0).expandedEquallyBy(inset)
-					let lineOrigin = noteRect.origin.offsetBy(CGPoint(x: 3.0, y: grabHeight - 2.0))
-					let  lineWidth = grabWidth * Double(indent)
-					let   lineSize = CGSize(width: lineWidth, height: 0.5)
-					let   lineRect = noLine ? nil : CGRect(origin: lineOrigin, size: lineSize)
-					let grabOrigin = lineOrigin.offsetBy(CGPoint(x: lineWidth, y: grabHeight / -2.0))
-					let   grabSize = CGSize(width: grabWidth, height: grabHeight)
-					let   grabRect = CGRect(origin: grabOrigin, size: grabSize)
-					let        dot = ZEssayGrabDot(dotNote: note, noteRange: noteRange, noteLineRect: lineRect, noteGrabRect: grabRect, noteTextRect: noteRect, dotColor: color)
-
-					grabDots.append(dot)
-				}
+				grabDots.append(dot)
 			}
 		}
 	}
@@ -255,7 +249,7 @@ extension ZEssayView {
 		}
 
 		if  let  zone = selectedNotes.last?.zone,
-			let count = gCurrentEssay?.zone?.zonesWithNotes.count, count > 1 {
+			let count = gCurrentEssay?.zone?.zoneProgenyWithNotes.count, count > 1 {
 			zone.deleteNote()
 			resetTextAndGrabs()
 
@@ -319,13 +313,6 @@ extension ZEssayView {
 					let   filled = selected && !hasGrabbedNote
 					let    color = dot.dotColor
 
-					if  !selected {
-						noop()
-//						print("not selected: \(note.noteRange) \(zone)")
-					}
-
-					drawVisibilityIcons(for: index, y: dot.noteGrabRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
-
 					if  gEssayTitleMode == .sFull {
 						dot.noteGrabRect.drawColoredOval(color, thickness: 2.0, filled: filled || grabbed)   // draw grab dot
 
@@ -337,6 +324,8 @@ extension ZEssayView {
 							drawColoredRect(dot.noteTextRect, color)                         // draw box around entire note
 						}
 					}
+
+					drawVisibilityIcons(for: index, y: dot.noteGrabRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons
 				}
 			}
 		} else if let note = gCurrentEssay, visibilities.count > 0,

@@ -73,7 +73,7 @@ extension ZEssayView {
 			if  !zone.hasChildNotes {
 				visibilities.append(ZNoteVisibility(zone: zone))
 			} else {
-				for child in zone.zonesWithVisibleNotes {
+				for child in zone.zoneProgenyWithVisibleNotes {
 					visibilities.append(ZNoteVisibility(zone: child))
 				}
 			}

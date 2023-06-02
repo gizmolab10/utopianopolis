@@ -281,7 +281,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "c":      grabbedZones.copyToPaste()
 				case "n":      setGrabbedZoneAsCurrentEssay()
 				case "t":      swapGrabbedWithParent()
-				case kSlash:   if SPECIAL { gHelpController?.show(flags: flags) } else { swapBetweenNoteAndEssay() }
+				case kSlash:   if SPECIAL { gHelpController?.show(flags: flags) } else { swapNoteAndEssay() }
 				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
 				case kEscape:  save(); if ANY { grabDone()                      } else { done() }
 				case kReturn:  save(); if ANY { grabDone() }
@@ -332,7 +332,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			} else {
 				switch key {
 					case "a":      selectAll(nil)
-					case "n":      swapBetweenNoteAndEssay()
+					case "n":      swapNoteAndEssay()
 					case "t":      if let string = selectionString { showThesaurus(for: string) } else { return false }
 					case "]", "[": gFavoritesCloud.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 					case kSlash:   gHelpController?.show(flags: flags)
@@ -512,7 +512,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				setNeedsDisplay()
 
 				if  type != .tSelf, gCurrentEssay?.zone == zone {
-					swapBetweenNoteAndEssay()
+					swapNoteAndEssay()
 				}
 			} else {
 				ungrabAll()
@@ -792,7 +792,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func swapBetweenNoteAndEssay() {
+	func swapNoteAndEssay() {
 		let       range = selectedRange()
 		if  var    note = gCurrentEssay?.notes(in: range).first,
 			let    zone = note.zone {
@@ -820,6 +820,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			}
 
 			resetCurrentEssay(note, selecting: range)
+			gEssayControlsView?.updateTitlesControlAndMode()
 			gDispatchSignals([.sDetails])
 		}
 	}
@@ -912,7 +913,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let  index = atEnd ? parent.count : 0
 			child      = Zone.uniqueZoneNamed(text, databaseID: databaseID)     // create new zone from text
 
-			gCreateCombinedEssay = parent.zonesWithVisibleNotes.count > 0
+			gCreateCombinedEssay = parent.zoneProgenyWithVisibleNotes.count > 0
 
 			save()
 			parent.addChildNoDuplicate(child, at: index)                        // add as new child of parent

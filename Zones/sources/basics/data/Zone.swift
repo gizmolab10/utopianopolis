@@ -49,6 +49,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                              widget :       ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                                          textWidget :   ZoneTextWidget? { return widget?.textWidget }
 	var                                      linkDatabaseID :      ZDatabaseID? { return zoneLink?.maybeDatabaseID }
+	var                                                note :            ZNote? { return createNoteMaybe() }
 	var                               maybeNoteOrEssayTrait :           ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
 	var                                         widgetColor :           ZColor? { return (gColorfulMode && colorized) ? color : kBlackColor }
 	var                                           textColor :           ZColor? { return isDragged ? gActiveColor : widgetColor }
@@ -87,7 +88,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                       showRevealDot :             Bool  { return hasChildren || isTraveller }
 	var                                       hasZonesBelow :             Bool  { return hasAnyZonesAbove(false) }
 	var                                       hasZonesAbove :             Bool  { return hasAnyZonesAbove(true) }
-	var                                       hasChildNotes :             Bool  { return zonesWithNotes.count > 1 }
+	var                                       hasChildNotes :             Bool  { return zoneProgenyWithNotes.count > 1 }
 	var                                        hasHyperlink :             Bool  { return hasTrait(for: .tHyperlink) && hyperLink != kNullLink && !(hyperLink?.isEmpty ?? true) }
 	var                                         hasSiblings :             Bool  { return parentZoneMaybe?.count ?? 0 > 1 }
 	var                                         isTraveller :             Bool  { return isBookmark || hasHyperlink || hasEmail || hasPhone || hasNote }
@@ -1780,7 +1781,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return bookmarkTarget!.currentNote
 		}
 
-		let zones = zonesWithVisibleNotes
+		let zones = zoneProgenyWithVisibleNotes
 
 		if  zones.count > 0 {
 			return ZNote(zones[0])
@@ -1789,45 +1790,41 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	@discardableResult func createNoteMaybe(onlyTheNote: Bool = false) -> ZNote? {
-		if (noteMaybe == nil || !hasNoteOrEssay), let freshNote = createNote(onlyTheNote: onlyTheNote) {
+	@discardableResult func createNoteMaybe(singleNoteOnly: Bool = false) -> ZNote? {
+		if  isBookmark {
+			return bookmarkTarget!.createNoteMaybe(singleNoteOnly: singleNoteOnly)
+		}
+
+		if (noteMaybe == nil || !hasNoteOrEssay), let freshNote = createNote(singleNoteOnly: singleNoteOnly) {
 			noteMaybe = freshNote     // might be note from "child"
 		}
 
 		return noteMaybe
 	}
 
-	var note: ZNote? {
-		if  isBookmark {
-			return bookmarkTarget!.note
-		}
-
-		return createNoteMaybe()
-	}
-
-	@discardableResult func createNote(onlyTheNote: Bool = false) -> ZNote? {
-		let zones = zonesWithVisibleNotes
+	@discardableResult func createNote(singleNoteOnly: Bool = false) -> ZNote? {
+		let zones = zoneProgenyWithVisibleNotes
 		let count = zones.count
 		var  note : ZNote?
 
-		if  count > 1, gCreateCombinedEssay, zones.contains(self), !onlyTheNote {
+		if  count > 1, gCreateCombinedEssay, zones.contains(self), !singleNoteOnly {
 			note      = gCreateEssay(self)
 			noteMaybe = note
 
 			note?.updateChildren()
-		} else if !hasChildren || !gCreateCombinedEssay || !zones.contains(self) || onlyTheNote {
+//		} else if count > 0 {
+//			note      = zones[0].note
+		} else if !hasChildren || !gCreateCombinedEssay || !zones.contains(self) || singleNoteOnly {
 			note      = ZNote(self)
 			noteMaybe = note
-		} else if count > 0 {
-			let  zone = zones[0]
-			note      = zone.noteMaybe
+
 		}
 
 		return note
 	}
 
 	func clearAllNoteMaybes() {       // discard current essay text and all child note's text
-		for zone in zonesWithNotes {
+		for zone in zoneProgenyWithNotes {
 			zone.noteMaybe = nil
 		}
 	}
@@ -1865,10 +1862,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				var n : ZNote?
 
 				if  OPTION || useGrabbed || gCurrentEssay == nil {
-				    n      = note        // restore prior or create new (OPTION -> create)
-					if  n == nil {
-						n  = createNote()
-					}
+					n = createNote(singleNoteOnly: OPTION)        // restore prior or create new (OPTION -> create)
 				}
 
 				gCurrentEssay = n
@@ -1899,7 +1893,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		gSwapMapAndEssay(force: .wEssayMode)
 	}
 
-	var zonesWithNotes : ZoneArray {
+	var zoneProgenyWithNotes : ZoneArray {
 		var zones = ZoneArray()
 
 		traverseAllProgeny { zone in
@@ -1911,22 +1905,24 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return zones
 	}
 
-	var zonesWithVisibleNotes : ZoneArray {
+	var zoneProgenyWithVisibleNotes : ZoneArray {
 		if  gHideNoteVisibility {
-			return zonesWithNotes
+			return zoneProgenyWithNotes
 		}
 
-		var zones = [self]
+		var zones = ZoneArray()
 
 		if  let essayTrait = maybeNoteOrEssayTrait {
 			let showHidden = essayTrait.showsHidden
+
+			zones.append(self)
 
 			for  child in children {
 				if  let trait = child.maybeNoteOrEssayTrait, (trait.showsSelf || showHidden) {
 					zones.append(child)
 
 					if  trait.showsChildren {
-						zones.append(contentsOf: child.zonesWithVisibleNotes)
+						zones.append(contentsOf: child.zoneProgenyWithVisibleNotes)
 					}
 				}
 
@@ -3100,7 +3096,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				}
 
 				if  show {
-					gFavoritesCloud.swapBetweenBookmarkAndTarget()
+					gFavoritesCloud.swapBookmarkAndTarget()
 				} else if grabHere {
 					gHere.grab()
 				}

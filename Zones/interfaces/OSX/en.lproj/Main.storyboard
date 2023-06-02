@@ -1427,12 +1427,12 @@ CA
                                 <rect key="frame" x="0.0" y="135" width="213" height="21"/>
                                 <subviews>
                                     <button identifier="exit" toolTip="save changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sJ-7J-RbI" userLabel="exit" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="-1" y="-3" width="23" height="24"/>
+                                        <rect key="frame" x="24" y="-3" width="23" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="EjV-sM-NJ5"/>
                                             <constraint firstAttribute="width" constant="21" id="dbx-WR-CTS"/>
                                         </constraints>
-                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="exit" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="rrN-Ei-4H8">
+                                        <buttonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" image="save-close" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyUpOrDown" inset="2" id="rrN-Ei-4H8">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
@@ -1441,7 +1441,7 @@ CA
                                         </connections>
                                     </button>
                                     <button identifier="discard" toolTip="discard changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Bk-q7-w37" userLabel="cancel" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="24" y="-3" width="23" height="24"/>
+                                        <rect key="frame" x="-1" y="-3" width="23" height="24"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="21" id="2od-Um-DWP"/>
                                             <constraint firstAttribute="height" constant="21" id="COk-D3-jDS"/>
@@ -1517,18 +1517,18 @@ CA
                                     </segmentedControl>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="6Bk-q7-w37" firstAttribute="leading" secondItem="5Bm-oC-5lh" secondAttribute="leading" id="0n2-F9-QRt"/>
                                     <constraint firstItem="a5S-OQ-l6Y" firstAttribute="leading" secondItem="j4W-F3-JHg" secondAttribute="trailing" constant="4" id="1oI-dy-IOs"/>
                                     <constraint firstItem="a5S-OQ-l6Y" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" id="4Zv-o1-sAF"/>
-                                    <constraint firstItem="6Bk-q7-w37" firstAttribute="leading" secondItem="3sJ-7J-RbI" secondAttribute="trailing" constant="4" id="5Q0-ZE-e8z"/>
                                     <constraint firstItem="3sJ-7J-RbI" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="6Uf-86-Uz8"/>
-                                    <constraint firstItem="3sJ-7J-RbI" firstAttribute="leading" secondItem="5Bm-oC-5lh" secondAttribute="leading" id="Djd-3D-rfm"/>
+                                    <constraint firstItem="oEH-Lm-TYQ" firstAttribute="leading" secondItem="3sJ-7J-RbI" secondAttribute="trailing" constant="4" id="AlV-1D-fht"/>
                                     <constraint firstItem="M7F-Fr-RQL" firstAttribute="leading" secondItem="oEH-Lm-TYQ" secondAttribute="trailing" constant="4" id="Eig-C7-yg9"/>
                                     <constraint firstAttribute="trailing" secondItem="a5S-OQ-l6Y" secondAttribute="trailing" id="Hwu-Rb-vKz"/>
                                     <constraint firstItem="6Bk-q7-w37" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="JGM-80-gk0"/>
                                     <constraint firstItem="j4W-F3-JHg" firstAttribute="leading" secondItem="M7F-Fr-RQL" secondAttribute="trailing" constant="4" id="Jef-om-VLz"/>
                                     <constraint firstItem="M7F-Fr-RQL" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="Ql2-20-EJh"/>
+                                    <constraint firstItem="3sJ-7J-RbI" firstAttribute="leading" secondItem="6Bk-q7-w37" secondAttribute="trailing" constant="4" id="Qno-56-qSG"/>
                                     <constraint firstAttribute="height" constant="21" id="azi-HZ-1VY"/>
-                                    <constraint firstItem="oEH-Lm-TYQ" firstAttribute="leading" secondItem="6Bk-q7-w37" secondAttribute="trailing" constant="4" id="ecd-fc-U9d"/>
                                     <constraint firstItem="j4W-F3-JHg" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="gk0-DO-d5f"/>
                                     <constraint firstItem="oEH-Lm-TYQ" firstAttribute="centerY" secondItem="5Bm-oC-5lh" secondAttribute="centerY" constant="1" id="jQp-nl-ZfK"/>
                                 </constraints>
@@ -2631,9 +2631,9 @@ CA
         <image name="NSRevealFreestandingTemplate" width="19" height="19"/>
         <image name="NSStopProgressFreestandingTemplate" width="19" height="19"/>
         <image name="cancel" width="24" height="24"/>
-        <image name="exit" width="24" height="24"/>
         <image name="printer" width="24" height="24"/>
         <image name="save" width="24" height="24"/>
+        <image name="save-close" width="24" height="24"/>
         <image name="settings" width="736" height="736"/>
         <image name="show.drag.dot" width="512" height="512"/>
         <image name="show.note" width="512" height="512"/>

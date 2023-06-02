@@ -103,7 +103,7 @@ class ZDataDetailsController: ZGenericController {
 		} else {
 			let p = current.progenyCount
 			let c = current.count
-			let n = current.zonesWithNotes.count
+			let n = current.zoneProgenyWithNotes.count
 
 			if  c > 0 {
 				text.append("   (\(c) in list")

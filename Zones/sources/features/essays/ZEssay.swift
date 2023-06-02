@@ -36,7 +36,7 @@ class ZEssay: ZNote {
 
 	override var essayText: NSMutableAttributedString? {
 		if  let z = zone,
-			(z.zonesWithVisibleNotes.count < 2 || !gCreateCombinedEssay) {
+			(z.zoneProgenyWithVisibleNotes.count < 2 || !gCreateCombinedEssay) {
 
 			// this is not an essay, convert it to a note
 
@@ -103,8 +103,8 @@ class ZEssay: ZNote {
 	override func updateChildren() {
 		childrenNotes.removeAll()
 
-		if  let     zones = zone?.zonesWithVisibleNotes {
-			childrenNotes = zones.filter { $0.createNoteMaybe(onlyTheNote: false) != nil }.map { $0.noteMaybe! }
+		if  let     zones = zone?.zoneProgenyWithVisibleNotes {
+			childrenNotes = zones.filter { $0.createNoteMaybe(singleNoteOnly: false) != nil }.map { $0.noteMaybe! }
 		}
 	}
 
@@ -213,7 +213,7 @@ class ZEssay: ZNote {
 	override func updateFontSize(_ increment: Bool) -> Bool {
 		var updated = false
 
-		for  in childrenNotes {
+		for note in childrenNotes {
 		    updated = note.updateTraitFontSize(increment) || updated
 		}
 
