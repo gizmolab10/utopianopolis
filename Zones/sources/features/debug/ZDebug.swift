@@ -40,6 +40,7 @@ func gSetupDebugFeatures() {
 	gCoreDataMode.insert(.dNoRelationships)        // don't use the relationships table yet
 
 	gPrintModes         = []
+	gPrintModes  .insert(.dTime)
 	gPrintModes  .insert(.dError)
 //	gPrintModes  .insert(.dImages)
 //	gPrintModes  .insert(.dMigrate)

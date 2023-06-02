@@ -1437,7 +1437,7 @@ CA
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="eZA-QY-DOh"/>
+                                            <action selector="handleEssayControlClicked:" target="5Bm-oC-5lh" id="DGK-Ta-x18"/>
                                         </connections>
                                     </button>
                                     <button identifier="discard" toolTip="discard changes and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6Bk-q7-w37" userLabel="cancel" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
@@ -1451,7 +1451,7 @@ CA
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="sWu-zt-sYJ"/>
+                                            <action selector="handleEssayControlClicked:" target="5Bm-oC-5lh" id="S1M-d3-inQ"/>
                                         </connections>
                                     </button>
                                     <button identifier="save" toolTip="save changes" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oEH-Lm-TYQ" userLabel="save" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
@@ -1465,7 +1465,7 @@ CA
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="RKg-Mj-n5E"/>
+                                            <action selector="handleEssayControlClicked:" target="5Bm-oC-5lh" id="CTN-fi-Mmn"/>
                                         </connections>
                                     </button>
                                     <button identifier="trash" toolTip="delete and exit" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="M7F-Fr-RQL" userLabel="trash" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
@@ -1479,7 +1479,7 @@ CA
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="2tm-CL-1xj"/>
+                                            <action selector="handleEssayControlClicked:" target="5Bm-oC-5lh" id="PUL-4T-S9a"/>
                                         </connections>
                                     </button>
                                     <button identifier="printer" toolTip="print" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j4W-F3-JHg" userLabel="printer" customClass="ZHoverableButton" customModule="Seriously" customModuleProvider="target">
@@ -1493,7 +1493,7 @@ CA
                                             <font key="font" metaFont="system"/>
                                         </buttonCell>
                                         <connections>
-                                            <action selector="handleButtonAction:" target="5Bm-oC-5lh" id="wId-4b-3QH"/>
+                                            <action selector="handleEssayControlClicked:" target="5Bm-oC-5lh" id="ePV-7F-o1x"/>
                                         </connections>
                                     </button>
                                     <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="a5S-OQ-l6Y">

@@ -104,7 +104,7 @@ class ZEssay: ZNote {
 		childrenNotes.removeAll()
 
 		if  let     zones = zone?.zonesWithVisibleNotes {
-			childrenNotes = zones.filter { $0.createNoteMaybe() != nil }.map { $0.noteMaybe! }
+			childrenNotes = zones.filter { $0.createNoteMaybe(onlyTheNote: false) != nil }.map { $0.noteMaybe! }
 		}
 	}
 
@@ -112,8 +112,9 @@ class ZEssay: ZNote {
 		var offset = 0
 
 		for child in childrenNotes {				// update note offsets
-			child.noteOffset = offset
-			offset          += child.textRange.upperBound + kNoteSeparator.length
+			let        note = child.firstNote
+			note.noteOffset = offset
+			offset         += note.textRange.upperBound + kNoteSeparator.length
 		}
 	}
 
@@ -212,8 +213,8 @@ class ZEssay: ZNote {
 	override func updateFontSize(_ increment: Bool) -> Bool {
 		var updated = false
 
-		for child in childrenNotes {
-		    updated = child.updateTraitFontSize(increment) || updated
+		for  in childrenNotes {
+		    updated = note.updateTraitFontSize(increment) || updated
 		}
 
 		return updated

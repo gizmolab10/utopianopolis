@@ -28,6 +28,34 @@ extension ZEssayView {
 	var firstGrabbedZone   : Zone?     { return firstGrabbedNote?.zone }
 	var firstNote          : ZNote?    { return (grabDots.count == 0) ? nil : grabDots[0].dotNote }
 
+	var selectedNotes : ZNoteArray {
+		guard let essay = gCurrentEssay else {
+			return ZNoteArray() // empty because current essay is nil
+		}
+
+		essay.updateNoteOffsets()
+
+		return (essay.zone?.zonesWithVisibleNotes.filter {
+			guard let range = $0.note?.noteRange else { return false }
+			return selectedRange.intersects(range.extendedBy(1))
+		}.map {
+			$0.note!
+		})!
+	}
+
+	var lastGrabbedDot : ZEssayGrabDot? {
+		var    grabbed : ZEssayGrabDot?
+
+		for grabDot in grabDots {
+			if  let zone = grabDot.dotNote?.zone,
+				grabbedZones.contains(zone) {
+				grabbed  = grabDot
+			}
+		}
+
+		return grabbed
+	}
+
 	func grabNote(_ note: ZNote) {
 		grabbedNotes.appendUnique(item: note.firstNote)
 	}
@@ -85,19 +113,6 @@ extension ZEssayView {
 		}
 
 		return nil
-	}
-
-	var lastGrabbedDot : ZEssayGrabDot? {
-		var    grabbed : ZEssayGrabDot?
-
-		for dot in grabDots {
-			if  let zone = dot.dotNote?.zone,
-				grabbedZones.contains(zone) {
-				grabbed  = dot
-			}
-		}
-
-		return grabbed
 	}
 
 	func updateGrabDots() {
@@ -297,15 +312,16 @@ extension ZEssayView {
 
 		if  grabDots.count > 0 {
 			for (index, dot) in grabDots.enumerated() {
-				if  let     note = dot.dotNote?.firstNote,
+				if  let     note = dot.dotNote?.firstNote,     // first note has note's noteRange, not essay's
 					let     zone = note.zone {
 					let  grabbed = grabbedNotes.contains(note)
 					let selected = note.noteRange.inclusiveIntersection(selectedRange) != nil
 					let   filled = selected && !hasGrabbedNote
 					let    color = dot.dotColor
 
-					if  selected {
-						print("selected: \(note.noteRange) \(zone)")
+					if  !selected {
+						noop()
+//						print("not selected: \(note.noteRange) \(zone)")
 					}
 
 					drawVisibilityIcons(for: index, y: dot.noteGrabRect.midY, isANote: !zone.hasChildNotes)  // draw visibility icons

@@ -443,6 +443,10 @@ class ZTextEditor: ZTextView {
 		gTemporarilySetTextEditorHandlesArrows()   // done first, this timer is often not be needed, KLUDGE to fix a bug where arrow keys are ignored
 
 		func editAtOffset(_ offset: CGFloat, _ save: Bool) {
+			let duration = gEndMeasurement(start: start)
+
+			printDebug(.dTime, "moving \(moveLeft ? " left" : "right") took \(duration) seconds")
+			
 			gUndeferRedraw(save)
 			gRelayoutMaps()
 
@@ -452,9 +456,6 @@ class ZTextEditor: ZTextView {
 			}
 
 			gTextEditorHandlesArrows = false       // done last
-			let duration = gEndMeasurement(start: start)
-
-			print("moving \(moveLeft ? " left" : "right") took \(duration) seconds")
 		}
 
 		if  moveLeft || canGoRight {
@@ -470,6 +471,8 @@ class ZTextEditor: ZTextView {
 				gMapEditor.moveRight { reveal in
 					editAtOffset(.zero, save)
 				}
+			} else {
+				gUndeferRedraw(save)
 			}
 		}
 	}
@@ -515,7 +518,7 @@ class ZTextEditor: ZTextView {
 
 					let duration = gEndMeasurement(start: start)
 
-					print("moving \(up ? "   up" : " down") took \(duration) seconds")
+					printDebug(.dTime, "moving \(up ? "   up" : " down") took \(duration) seconds")
 				}
 			}
 		} else {

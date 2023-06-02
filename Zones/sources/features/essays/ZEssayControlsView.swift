@@ -8,37 +8,6 @@
 
 import Foundation
 
-enum ZEssayButtonID : Int {
-	case idForward
-	case idDiscard
-	case idDelete
-	case idTitles
-	case idPrint
-	case idBack
-	case idSave
-	case idHide
-
-	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idDiscard] } // , .idMultiple] }
-
-	static func essayID(for button: ZHoverableButton) -> ZEssayButtonID? {
-		if  let i = gConvertFromOptionalUserInterfaceItemIdentifier(button.identifier) {
-			switch i {
-				case "left.arrow":  return .idBack
-				case "right.arrow": return .idForward
-				case "discard":     return .idDiscard
-				case "trash":       return .idDelete
-				case "printer":     return .idPrint
-				case "exit":        return .idHide
-				case "save":        return .idSave
-				default: break
-			}
-		}
-
-		return nil
-	}
-
-}
-
 class ZEssayControlsView: ZView {
 	var       isTitlesControlDark = false
 	var            inspectorBar   : ZView?   { return gMainWindow?.inspectorBar }
@@ -48,7 +17,7 @@ class ZEssayControlsView: ZView {
 	@IBOutlet var  printButton    : ZHoverableButton?
 	@IBOutlet var  hideButton     : ZHoverableButton?
 	@IBOutlet var  saveButton     : ZHoverableButton?
-	@IBAction func essayControlAction(_ button: ZHoverableButton) { gEssayView?.essayActionFor(button) }
+	@IBAction func handleEssayControlClicked(_ button: ZHoverableButton) { gEssayView?.essayActionFor(button) }
 
 	func setupEssayControls() {
 		if  let           b = inspectorBar, !b.subviews.contains(self) {
@@ -181,6 +150,43 @@ class ZEssayControlsView: ZView {
 			gEssayView?.updateTextStorageRestoringSelection(range)
 			gDispatchSignals([.sEssay])
 		}
+	}
+
+}
+
+enum ZEssayTitleMode: Int {
+	case sEmpty // do not change the order, storyboard and code dependencies
+	case sTitle
+	case sFull
+}
+
+enum ZEssayButtonID : Int {
+	case idForward
+	case idDiscard
+	case idDelete
+	case idTitles
+	case idPrint
+	case idBack
+	case idSave
+	case idHide
+
+	static var all: [ZEssayButtonID] { return [.idBack, .idForward, .idSave, .idPrint, .idHide, .idDelete, .idDiscard] } // , .idMultiple] }
+
+	static func essayID(for button: ZHoverableButton) -> ZEssayButtonID? {
+		if  let i = gConvertFromOptionalUserInterfaceItemIdentifier(button.identifier) {
+			switch i {
+				case "left.arrow":  return .idBack
+				case "right.arrow": return .idForward
+				case "discard":     return .idDiscard
+				case "trash":       return .idDelete
+				case "printer":     return .idPrint
+				case "exit":        return .idHide
+				case "save":        return .idSave
+				default: break
+			}
+		}
+
+		return nil
 	}
 
 }

@@ -37,12 +37,6 @@ enum ZNoteVisibilityIconType: Int {
 
 }
 
-enum ZEssayTitleMode: Int {
-	case sEmpty // do not change the order, storyboard and code dependencies
-	case sTitle
-	case sFull
-}
-
 struct ZNoteVisibility {
 	var       eyeRect = CGRect .zero
 	var     stackRect = CGRect .zero
@@ -65,6 +59,58 @@ struct ZNoteVisibility {
 			case .tChildren: return     stackRect
 			case .tHidden:   return lightbulbRect
 		}
+	}
+
+}
+
+extension ZEssayView {
+
+	func resetVisibilities() {
+		visibilities.removeAll()
+
+		if  let essay = gCurrentEssay,
+			let  zone = essay.zone {
+			if  !zone.hasChildNotes {
+				visibilities.append(ZNoteVisibility(zone: zone))
+			} else {
+				for child in zone.zonesWithVisibleNotes {
+					visibilities.append(ZNoteVisibility(zone: child))
+				}
+			}
+		}
+	}
+
+	func drawVisibilityIcons(for index: Int, y: CGFloat, isANote: Bool) {
+		if  gEssayTitleMode   != .sEmpty, !gHideNoteVisibility {
+			var              v = visibilities[index]
+			for type in ZNoteVisibilityIconType.all {
+				if  !(type.forEssayOnly && isANote),
+					let     on = v.stateFor(type),
+					let   icon = type.iconForVisibilityState(on) {
+					let origin = CGPoint(x: bounds.maxX, y: y).offsetBy(-type.offset, .zero)
+					let   rect = CGRect(origin: origin, size: .zero).expandedBy(icon.size.dividedInHalf)
+
+					v.setRect(rect, for: type)
+					icon.draw(in: rect)
+				}
+			}
+
+			visibilities[index] = v
+		}
+	}
+
+	func hitTestForVisibilityIcon(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
+		if !gHideNoteVisibility {
+			for visibility in visibilities {
+				for type in ZNoteVisibilityIconType.all {
+					if  visibility.rectFor(type).intersects(rect) {
+						return (visibility.zone, type)
+					}
+				}
+			}
+		}
+
+		return nil
 	}
 
 }

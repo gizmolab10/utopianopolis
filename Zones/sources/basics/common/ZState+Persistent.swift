@@ -554,7 +554,7 @@ var gCurrentEssay: ZNote? {
 }
 
 var gAdjustedEssayTitleMode: ZEssayTitleMode {
-	let isNote = (gCurrentEssay?.childrenNotes.count ?? 0) == 0
+	let isNote = (gCurrentEssay?.zone?.zonesWithVisibleNotes.count ?? 0) == 0
 	var   mode = gEssayTitleMode
 
 	if !isNote {

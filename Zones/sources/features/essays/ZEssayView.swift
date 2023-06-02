@@ -41,21 +41,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var resizeDot          : ZDirection?
 	var selectedAttachment : ZRangedAttachment?
 
-	var selectedNotes : ZNoteArray {
-		guard let essay = gCurrentEssay else {
-			return ZNoteArray() // empty because current essay is nil
-		}
-
-		essay.updateNoteOffsets()
-
-		return (essay.zone?.zonesWithVisibleNotes.filter {
-			guard let range = $0.note?.noteRange else { return false }
-			return selectedRange.intersects(range.extendedBy(1))
-		}.map {
-			$0.note!
-		})!
-	}
-
 	var shouldOverwrite: Bool {
 		if  let          current = gCurrentEssay,
 			current.essayLength != 0,
@@ -79,57 +64,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var needsSave : Bool {
 		get { return gCurrentEssay?.needsSave ?? false }
 		set {        gCurrentEssay?.needsSave  = newValue }
-	}
-
-	// MARK: - note visibility
-	// MARK: -
-
-	func resetVisibilities() {
-		visibilities.removeAll()
-
-		if  let essay = gCurrentEssay,
-			let  zone = essay.zone {
-			if  !zone.hasChildNotes {
-				visibilities.append(ZNoteVisibility(zone: zone))
-			} else {
-				for child in zone.zonesWithVisibleNotes {
-					visibilities.append(ZNoteVisibility(zone: child))
-				}
-			}
-		}
-	}
-
-	func drawVisibilityIcons(for index: Int, y: CGFloat, isANote: Bool) {
-		if  gEssayTitleMode   != .sEmpty, !gHideNoteVisibility {
-			var              v = visibilities[index]
-			for type in ZNoteVisibilityIconType.all {
-				if  !(type.forEssayOnly && isANote),
-					let     on = v.stateFor(type),
-					let   icon = type.iconForVisibilityState(on) {
-					let origin = CGPoint(x: bounds.maxX, y: y).offsetBy(-type.offset, .zero)
-					let   rect = CGRect(origin: origin, size: .zero).expandedBy(icon.size.dividedInHalf)
-
-					v.setRect(rect, for: type)
-					icon.draw(in: rect)
-				}
-			}
-
-			visibilities[index] = v
-		}
-	}
-
-	func hitTestForVisibilityIcon(at rect: CGRect) -> (Zone, ZNoteVisibilityIconType)? {
-		if !gHideNoteVisibility {
-			for visibility in visibilities {
-				for type in ZNoteVisibilityIconType.all {
-					if  visibility.rectFor(type).intersects(rect) {
-						return (visibility.zone, type)
-					}
-				}
-			}
-		}
-
-		return nil
 	}
 
 	// MARK: - setup
@@ -1052,8 +986,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	func selectFirstNote() {
 		if  let essay = gCurrentEssay, essay.childrenNotes.count > 0 {
-			let child = essay.childrenNotes[0]
-			let range = child.textRange
+			let  note = essay.firstNote
+			let range = note.textRange
 			setSelectedRange(range)
 		}
 	}

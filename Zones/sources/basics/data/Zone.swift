@@ -1789,8 +1789,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	@discardableResult func createNoteMaybe() -> ZNote? {
-		if (noteMaybe == nil || !hasNoteOrEssay), let freshNote = createNote() {
+	@discardableResult func createNoteMaybe(onlyTheNote: Bool = false) -> ZNote? {
+		if (noteMaybe == nil || !hasNoteOrEssay), let freshNote = createNote(onlyTheNote: onlyTheNote) {
 			noteMaybe = freshNote     // might be note from "child"
 		}
 
@@ -1805,17 +1805,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return createNoteMaybe()
 	}
 
-	@discardableResult func createNote() -> ZNote? {
+	@discardableResult func createNote(onlyTheNote: Bool = false) -> ZNote? {
 		let zones = zonesWithVisibleNotes
 		let count = zones.count
 		var  note : ZNote?
 
-		if  count > 1, gCreateCombinedEssay, zones.contains(self) {
+		if  count > 1, gCreateCombinedEssay, zones.contains(self), !onlyTheNote {
 			note      = gCreateEssay(self)
 			noteMaybe = note
 
 			note?.updateChildren()
-		} else if !hasChildren || !gCreateCombinedEssay || !zones.contains(self) {
+		} else if !hasChildren || !gCreateCombinedEssay || !zones.contains(self) || onlyTheNote {
 			note      = ZNote(self)
 			noteMaybe = note
 		} else if count > 0 {
@@ -2138,13 +2138,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			if      target.isProgenyOfOrEqualTo(gHereMaybe) {
-				if !target.isGrabbed,
-				    target.isVisible {
-					target.grab()
-				} else {
-					gHere = target
+				if !target.isVisible || target.isGrabbed {
+					gHere = target   // if already grabbed from the last call here, or if not visible, actually focus (set here}
 				}
 
+				target.grab()
 				complete(target, [.spRelayout, .spCrumbs])
 			} else {
 				if  gDatabaseID != targetDBID {
