@@ -1795,18 +1795,16 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			return bookmarkTarget!.createNote(recreate: recreate, asNote: asNote)
 		}
 
-		if  !recreate, noteMaybe != nil, noteMaybe!.isNote == asNote {
-			return noteMaybe
-		}
+		if  recreate || noteMaybe == nil || (noteMaybe!.progenyNotes.count < 2) != asNote {
+			let notMultipleNotes = zoneProgenyWithVisibleNotes.count < 2
 
-		let notMultipleNotes = zoneProgenyWithVisibleNotes.count < 2
+			if  asNote || notMultipleNotes || !hasChildren || !gCreateCombinedEssay {
+				noteMaybe = ZNote(self)
+			} else {
+				noteMaybe = ZEssay(self)
 
-		if  asNote || notMultipleNotes || !hasChildren || !gCreateCombinedEssay {
-			noteMaybe = ZNote(self)
-		} else {
-			noteMaybe = ZEssay(self)
-
-			noteMaybe?.updateProgenyNotes()
+				noteMaybe?.updateProgenyNotes() // TODO: this converts noteMaybe from an essay to a note !!!!!!
+			}
 		}
 
 		return noteMaybe
@@ -1840,10 +1838,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 	func editNote(flags: ZEventFlags?, useGrabbed: Bool = true) {
 		if !gIsEssayMode {
-			let               ALL  = flags?.exactlyAll     ?? false
-			let            OPTION  = flags?.hasOption      ?? true
-			let           SPECIAL  = flags?.exactlySpecial ?? false
-			gCreateCombinedEssay   = !OPTION || SPECIAL                // default is multiple         (OPTION -> single)
+			let              ALL = flags?.exactlyAll     ?? false
+			let           OPTION = flags?.hasOption      ?? true
+			let          SPECIAL = flags?.exactlySpecial ?? false
+			gCreateCombinedEssay = !OPTION || SPECIAL                // default is multiple         (OPTION -> single)
 
 			if  ALL {
 				convertChildrenToNote()

@@ -118,7 +118,7 @@ extension ZEssayView {
 	func updateGrabDots() {
 		grabDots.removeAll()
 
-		if  let essay = gCurrentEssay, essay.progenyNotes.count > 0,
+		if  let essay = gCurrentEssay, essay.hasProgenyNotes,
 			let  zone = essay.zone,
 			let     l = layoutManager,
 			let     c = textContainer {
@@ -191,7 +191,7 @@ extension ZEssayView {
 		ungrabAll()
 
 		if  hadNoGrabs,
-			gCurrentEssay?.progenyNotes.count ?? 0 > 1 {     // ignore if does not have multiple children
+			gCurrentEssay?.hasProgenyNotes ?? false {     // ignore if does not have multiple children
 
 			for note in selectedNotes {
 				grabNote(note)

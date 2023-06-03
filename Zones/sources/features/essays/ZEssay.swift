@@ -10,8 +10,9 @@ import Foundation
 
 class ZEssay: ZNote {
 	var         essayRange : NSRange { return NSRange(location: 0, length: essayLength) }
+	override var firstNote : ZNote   { return hasProgenyNotes ? progenyNotes[0] : self }
 	override var      kind : String  { return "essay" }
-	override var firstNote : ZNote   { return progenyNotes.count == 0 ? self : progenyNotes[0] }
+	override var    isNote : Bool    { return false }
 
 	override var lastTextIsDefault: Bool {
 		if  let last = progenyNotes.last,
@@ -99,8 +100,10 @@ class ZEssay: ZNote {
 	override func updateProgenyNotes() {
 		progenyNotes.removeAll()
 
-		if  let    zones = zone?.zoneProgenyWithVisibleNotes {
-			progenyNotes = zones.filter { $0.note != nil }.map { $0.note! }
+		if  let zones = zone?.zoneProgenyWithVisibleNotes {
+			for z in zones {
+				progenyNotes.append(ZNote(z))
+			}
 		}
 	}
 
@@ -186,7 +189,7 @@ class ZEssay: ZNote {
 			}
 		}
 
-		if  progenyNotes.count == 0 {
+		if  !hasProgenyNotes {
 			examine(self)
 		} else {
 			for child in progenyNotes {

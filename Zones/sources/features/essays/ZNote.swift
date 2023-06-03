@@ -45,7 +45,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location }
 	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kDefaultNoteText }
-	var               isNote : Bool      { return !(zone?.hasChildNotes ?? false) }
+	var      hasProgenyNotes : Bool      { return progenyNotes.count > 0 }
+	var               isNote : Bool      { return true }
 	var            firstNote : ZNote     { return self }
 	var    	            zone : Zone?
 

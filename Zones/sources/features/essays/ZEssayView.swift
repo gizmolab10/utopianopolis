@@ -140,7 +140,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		var delta = 0
 
 		if  gCurrentEssay == nil {                           // make sure we actually have a current essay
-			gSwapMapAndEssay(force: .wMapMode)   // not show blank essay
+			gSwapMapAndEssay(force: .wMapMode)               // not show blank essay
 		} else {
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
@@ -796,7 +796,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		let       range = selectedRange()
 		if  var    note = gCurrentEssay?.notes(in: range).first,
 			let    zone = note.zone {
-			let noChild = note.progenyNotes.count == 0
+			let noChild = !note.hasProgenyNotes
 			let toEssay = noChild || !gCreateCombinedEssay
 
 			if  toEssay, note.essayText!.string.length > 0 {
@@ -986,7 +986,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func selectFirstNote() {
-		if  let essay = gCurrentEssay, essay.progenyNotes.count > 0 {
+		if  let essay = gCurrentEssay, essay.hasProgenyNotes {
 			let  note = essay.firstNote
 			let range = note.textRange
 			setSelectedRange(range)
