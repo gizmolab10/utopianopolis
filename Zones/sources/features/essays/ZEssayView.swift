@@ -118,7 +118,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			essayRecordName = nil
 			gCurrentEssay   = note
 
-			note.updateChildren()
+			note.updateProgenyNotes()
 
 			delta           = updateTextStorage()
 
@@ -584,7 +584,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case .eExit: exit(); return false
 				case .eDelete:
 					FOREGROUND { [self] in                // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
-						gCurrentEssay?.updateChildren()
+						gCurrentEssay?.updateProgenyNotes()
 						updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
 			}
@@ -723,7 +723,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 							let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
 							FOREGROUND { [self] in
-								if  let  note = target.noteMaybe, gCurrentEssay?.childrenNotes.contains(note) ?? false {
+								if  let  note = target.noteMaybe, gCurrentEssay?.progenyNotes.contains(note) ?? false {
 									let range = note.noteTextRange	    // text range of target essay
 									let start = NSRange(location: range.location, length: 1)
 
@@ -785,8 +785,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			zone.clearAllNoteMaybes()                 // discard current essay text and all child note's text
 
-			gCreateCombinedEssay = true               // so gCreateEssay does the right thing
-			gCurrentEssay        = gCreateEssay(zone) // create a new essay from the zone
+			gCreateCombinedEssay = true               // so ZEssay does the right thing
+			gCurrentEssay        = ZEssay(zone) // create a new essay from the zone
 
 			resetCurrentEssay(gCurrentEssay)
 		}
@@ -796,7 +796,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		let       range = selectedRange()
 		if  var    note = gCurrentEssay?.notes(in: range).first,
 			let    zone = note.zone {
-			let noChild = note.childrenNotes.count == 0
+			let noChild = note.progenyNotes.count == 0
 			let toEssay = noChild || !gCreateCombinedEssay
 
 			if  toEssay, note.essayText!.string.length > 0 {
@@ -808,9 +808,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			gCreateCombinedEssay = toEssay      // toggle
 
 			if  toEssay {
-				zone.clearAllNoteMaybes()            // discard current essay text and all child note's text
+				zone.clearAllNoteMaybes()       // discard current essay text and all child note's text
 
-				note = gCreateEssay(zone)       // create a new essay from the zone
+				note = ZEssay(zone)             // create a new essay from the zone
 			} else {
 				ungrabAll()
 
@@ -840,7 +840,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					let delta = resetCurrentEssay(essay)
 
 					if  let zone = note?.zone {
-						for within in essay.childrenNotes {
+						for within in essay.progenyNotes {
 							if  zone == within.zone {
 								let offset = within.noteOffset
 								let indent = within.indentCount
@@ -986,7 +986,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func selectFirstNote() {
-		if  let essay = gCurrentEssay, essay.childrenNotes.count > 0 {
+		if  let essay = gCurrentEssay, essay.progenyNotes.count > 0 {
 			let  note = essay.firstNote
 			let range = note.textRange
 			setSelectedRange(range)

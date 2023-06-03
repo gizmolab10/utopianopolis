@@ -118,11 +118,11 @@ extension ZEssayView {
 	func updateGrabDots() {
 		grabDots.removeAll()
 
-		if  let essay = gCurrentEssay, essay.childrenNotes.count > 0,
+		if  let essay = gCurrentEssay, essay.progenyNotes.count > 0,
 			let  zone = essay.zone,
 			let     l = layoutManager,
 			let     c = textContainer {
-			let notes = essay.childrenNotes
+			let notes = essay.progenyNotes
 			let level = zone.level
 
 			essay.updateNoteOffsets()
@@ -176,7 +176,7 @@ extension ZEssayView {
 			gDisablePush {
 				zone.swapWithParent { [self] in
 					if  reset {
-						gCurrentEssay = gCreateEssay(zone)
+						gCurrentEssay = ZEssay(zone)
 					}
 
 					resetTextAndGrabs(grab: parent)
@@ -191,7 +191,7 @@ extension ZEssayView {
 		ungrabAll()
 
 		if  hadNoGrabs,
-			gCurrentEssay?.childrenNotes.count ?? 0 > 1 {     // ignore if does not have multiple children
+			gCurrentEssay?.progenyNotes.count ?? 0 > 1 {     // ignore if does not have multiple children
 
 			for note in selectedNotes {
 				grabNote(note)
@@ -280,7 +280,7 @@ extension ZEssayView {
 
 			if  zone         == gCurrentEssay?.zone,
 				let     first = firstGrabbedZone {
-				gCurrentEssay = gCreateEssay(first)
+				gCurrentEssay = ZEssay(first)
 			}
 		}
 

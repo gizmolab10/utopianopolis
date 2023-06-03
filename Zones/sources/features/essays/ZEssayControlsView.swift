@@ -45,7 +45,7 @@ class ZEssayControlsView: ZView {
 	// MARK: -
 
 	func updateTitleSegments(_ enabled: Bool = true) {
-		let                  isNote = (gCurrentEssay?.childrenNotes.count ?? 0) == 0
+		let                  isNote = (gCurrentEssay?.progenyNotes.count ?? 0) == 0
 		let                  invert = isTitlesControlDark != gIsDark
 		let                segments = isNote ? 2 : 3
 		titlesControl?.segmentCount = segments
@@ -104,10 +104,10 @@ class ZEssayControlsView: ZView {
 			var  total = isOne ? -4 : isEmpty ? -2 : isFull ? -2 : 0
 
 			for zone in eZones {
-				if  let zNote = zone.note {
-					zNote.updateIndentCount(relativeTo: eZone)
+				if  let note = zone.note {
+					note.updateIndentCount(relativeTo: eZone)
 
-					total += zNote.titleOffsetFor(mode)
+					total += note.titleOffsetFor(mode)
 				}
 
 				if  zone  == target {

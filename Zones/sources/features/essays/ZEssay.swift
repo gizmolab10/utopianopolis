@@ -8,17 +8,13 @@
 
 import Foundation
 
-func gCreateEssay(_ zone: Zone) -> ZEssay {
-	return ZEssay(zone)
-}
-
 class ZEssay: ZNote {
 	var         essayRange : NSRange { return NSRange(location: 0, length: essayLength) }
 	override var      kind : String  { return "essay" }
-	override var firstNote : ZNote   { return childrenNotes.count == 0 ? self : childrenNotes[0] }
+	override var firstNote : ZNote   { return progenyNotes.count == 0 ? self : progenyNotes[0] }
 
 	override var lastTextIsDefault: Bool {
-		if  let last = childrenNotes.last,
+		if  let last = progenyNotes.last,
 			last    != self {
 			return last.lastTextIsDefault
 		}
@@ -27,7 +23,7 @@ class ZEssay: ZNote {
 	}
 
 	override var lastTextRange: NSRange? {
-		if  let    last = childrenNotes.last {
+		if  let    last = progenyNotes.last {
 			return last.textRange.offsetBy(last.noteOffset)
 		}
 
@@ -48,10 +44,10 @@ class ZEssay: ZNote {
 			return gCurrentEssay?.noteText
 		}
 
-		updateChildren()
+		updateProgenyNotes()
 
 		var result : NSMutableAttributedString?
-		var index  = childrenNotes.count
+		var index  = progenyNotes.count
 		let    max = index - 1
 
 		if  index == 0 {
@@ -69,7 +65,7 @@ class ZEssay: ZNote {
 		} else {
 			gCreateCombinedEssay = true
 
-			for child in childrenNotes.reversed() {
+			for child in progenyNotes.reversed() {
 				index           -= 1
 
 				child.updateIndentCount(relativeTo: zone)
@@ -100,18 +96,18 @@ class ZEssay: ZNote {
 		return result
 	}
 
-	override func updateChildren() {
-		childrenNotes.removeAll()
+	override func updateProgenyNotes() {
+		progenyNotes.removeAll()
 
-		if  let     zones = zone?.zoneProgenyWithVisibleNotes {
-			childrenNotes = zones.filter { $0.createNoteMaybe(singleNoteOnly: false) != nil }.map { $0.noteMaybe! }
+		if  let    zones = zone?.zoneProgenyWithVisibleNotes {
+			progenyNotes = zones.filter { $0.note != nil }.map { $0.note! }
 		}
 	}
 
 	override func updateNoteOffsets() {
 		var offset = 0
 
-		for child in childrenNotes {				// update note offsets
+		for child in progenyNotes {				// update note offsets
 			let        note = child.firstNote
 			note.noteOffset = offset
 			offset         += note.textRange.upperBound + kNoteSeparator.length
@@ -119,23 +115,21 @@ class ZEssay: ZNote {
 	}
 
 	override func notes(in range: NSRange) -> ZNoteArray {
-		var result = ZNoteArray()
+		var notes = ZNoteArray()
 
-		updateChildren()              // needed when a note is created...
-		updateNoteOffsets()           // ...in a parent whose children have notes
+		updateProgenyNotes()              // needed when a note is created...
+		updateNoteOffsets()               // ...in a parent whose children have notes
 
-		for child in childrenNotes + [self] {
-			if  range.inclusiveIntersection(child.noteRange) != nil {
-				result.append(child)
+		for note in progenyNotes {
+			if  range.inclusiveIntersection(note.noteRange) != nil {
+				notes.append(note)
 			}
 		}
 
-		return result
+		return notes
 	}
 
 	override func isLocked(within range: NSRange) -> Bool {
-		updateNoteOffsets()
-
 		for note in notes(in: range) {
 			if  note.zone != zone {
 				let lockRange = range.offsetBy(-note.noteOffset)
@@ -153,7 +147,7 @@ class ZEssay: ZNote {
 
 	override func saveAsEssay(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString {
-			for child in childrenNotes {
+			for child in progenyNotes {
 				let range  = child.noteRange
 
 				if  range.upperBound <= attributed.length {
@@ -192,10 +186,10 @@ class ZEssay: ZNote {
 			}
 		}
 
-		if  childrenNotes.count == 0 {
+		if  progenyNotes.count == 0 {
 			examine(self)
 		} else {
-			for child in childrenNotes {
+			for child in progenyNotes {
 				examine(child)
 			}
 		}
@@ -213,7 +207,7 @@ class ZEssay: ZNote {
 	override func updateFontSize(_ increment: Bool) -> Bool {
 		var updated = false
 
-		for note in childrenNotes {
+		for note in progenyNotes {
 		    updated = note.updateTraitFontSize(increment) || updated
 		}
 

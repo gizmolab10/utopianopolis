@@ -44,13 +44,14 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                         destroyZone :             Zone? { return zRecords?.destroyZone }
 	var                                           trashZone :             Zone? { return zRecords?.trashZone }
 	var                                             getRoot :             Zone  { return isARoot ? self : parentZone?.getRoot ?? self }
-	var                                            siblings :        ZoneArray? { return parentZone?.children }
 	var                                            manifest :        ZManifest? { return zRecords?.manifest }
 	var                                              widget :       ZoneWidget? { return gWidgets.widgetForZone(self) }
 	var                                          textWidget :   ZoneTextWidget? { return widget?.textWidget }
 	var                                      linkDatabaseID :      ZDatabaseID? { return zoneLink?.maybeDatabaseID }
-	var                                                note :            ZNote? { return createNoteMaybe() }
+	var                                                note :            ZNote? { return createNote() }
 	var                               maybeNoteOrEssayTrait :           ZTrait? { return maybeTraitFor(.tNote) ?? maybeTraitFor(.tEssay) }
+	var                                          traitTypes : ZTraitTypesArray  { return traits.map({ $0.key }) }
+	var                                            ckRecord :         CKRecord? { return gCoreDataStack.persistentContainer?.record(for: objectID) }
 	var                                         widgetColor :           ZColor? { return (gColorfulMode && colorized) ? color : kBlackColor }
 	var                                           textColor :           ZColor? { return isDragged ? gActiveColor : widgetColor }
 	var                                        lighterColor :           ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
@@ -120,9 +121,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                        userCanWrite :             Bool  { return userHasDirectOwnership || isIdeaEditable }
 	var                                userCanMutateProgeny :             Bool  { return userHasDirectOwnership || inheritedAccess != .eReadOnly }
 	var                                         hideDragDot :             Bool  { return isExpanded && (isFavoritesHere || (kIsPhone && (self == gHereMaybe))) }
-	var                                            ckRecord :         CKRecord? { return gCoreDataStack.persistentContainer?.record(for: objectID) }
 	var                                     inheritedAccess :       ZoneAccess  { return zoneWithInheritedAccess.directAccess }
-	var                                          traitTypes : ZTraitTypesArray  { return traits.map({ $0.key }) }
+	var                                            siblings :        ZoneArray? { return parentZone?.children }
 	var                                     bookmarkTargets :        ZoneArray  { return bookmarks.filter { $0.bookmarkTarget != nil }.map { $0.bookmarkTarget! } }
 	var                                           notemarks :        ZoneArray  { return zonesMatching(.wNotemarks) }
 	var                                           bookmarks :        ZoneArray  { return zonesMatching(.wBookmarks) }
@@ -1790,37 +1790,26 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		return nil
 	}
 
-	@discardableResult func createNoteMaybe(singleNoteOnly: Bool = false) -> ZNote? {
+	@discardableResult func createNote(recreate: Bool = false, asNote: Bool = true) -> ZNote? {
 		if  isBookmark {
-			return bookmarkTarget!.createNoteMaybe(singleNoteOnly: singleNoteOnly)
+			return bookmarkTarget!.createNote(recreate: recreate, asNote: asNote)
 		}
 
-		if (noteMaybe == nil || !hasNoteOrEssay), let freshNote = createNote(singleNoteOnly: singleNoteOnly) {
-			noteMaybe = freshNote     // might be note from "child"
+		if  !recreate, noteMaybe != nil, noteMaybe!.isNote == asNote {
+			return noteMaybe
+		}
+
+		let notMultipleNotes = zoneProgenyWithVisibleNotes.count < 2
+
+		if  asNote || notMultipleNotes || !hasChildren || !gCreateCombinedEssay {
+			noteMaybe = ZNote(self)
+		} else {
+			noteMaybe = ZEssay(self)
+
+			noteMaybe?.updateProgenyNotes()
 		}
 
 		return noteMaybe
-	}
-
-	@discardableResult func createNote(singleNoteOnly: Bool = false) -> ZNote? {
-		let zones = zoneProgenyWithVisibleNotes
-		let count = zones.count
-		var  note : ZNote?
-
-		if  count > 1, gCreateCombinedEssay, zones.contains(self), !singleNoteOnly {
-			note      = gCreateEssay(self)
-			noteMaybe = note
-
-			note?.updateChildren()
-//		} else if count > 0 {
-//			note      = zones[0].note
-		} else if !hasChildren || !gCreateCombinedEssay || !zones.contains(self) || singleNoteOnly {
-			note      = ZNote(self)
-			noteMaybe = note
-
-		}
-
-		return note
 	}
 
 	func clearAllNoteMaybes() {       // discard current essay text and all child note's text
@@ -1838,7 +1827,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	func deleteEssay() {
-		if  let c = note?.childrenNotes {
+		if  let c = note?.progenyNotes {
 			for child in c {
 				if  let z = child.zone, z != self {
 					z.deleteEssay()   // recurse
@@ -1862,7 +1851,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				var n : ZNote?
 
 				if  OPTION || useGrabbed || gCurrentEssay == nil {
-					n = createNote(singleNoteOnly: OPTION)        // restore prior or create new (OPTION -> create)
+					n = createNote(asNote: OPTION)        // restore prior or create new (OPTION -> as a note, ignoring any progeny notes)
 				}
 
 				gCurrentEssay = n
@@ -1935,7 +1924,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func convertChildrenToNote() {
 		let empty = NSMutableAttributedString(string: kEmpty)
 		let  text = noteText ?? empty
-		let     n = createNote()
+		let     n = note
 
 		traverseAllProgeny { child in
 			if  child != self {

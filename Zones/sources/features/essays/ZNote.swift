@@ -29,7 +29,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var          indentCount = 0
 	var           noteOffset = 0
 	var           autoDelete = false		// true means delete this note on exit from essay mode
-	var        childrenNotes = ZNoteArray()
+	var         progenyNotes = ZNoteArray()
 	var           titleRange = NSRange()
 	var            textRange = NSRange()
 	var            noteRange : NSRange   { return NSRange(location: noteOffset, length: textRange.upperBound) }
@@ -49,7 +49,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var            firstNote : ZNote     { return self }
 	var    	            zone : Zone?
 
-	func updateChildren() {}
+	func updateProgenyNotes() {}
 	func updateNoteOffsets() {}
 	func notes              (in range: NSRange)   -> ZNoteArray { return [self] }
 	func updateFontSize     (_ increment: Bool)   -> Bool       { return updateTraitFontSize(increment) }
@@ -124,7 +124,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		if  let       zone = gMaybeZoneForRecordName(recordName),
 			zone.hasTrait(for: .tNote) {
 
-			object = isExpanded ? gCreateEssay(zone) : ZNote(zone)
+			object = isExpanded ? ZEssay(zone) : ZNote(zone)
 
 			if  let note = object {
 				zone.noteMaybe = note
