@@ -84,9 +84,10 @@ class ZTrait: ZTraitAssets {
 	override   var    typePrefix : String { return traitType?.description ?? kEmpty }
 	override   var     isInScope : Bool   { return ownerZone?.isInScope   ?? false }
 	override   var  passesFilter : Bool   { return gSearchFilter.contains(.fNotes) && (traitType?.isEssayOrNote ?? false) }
-	var                needsSave = false
-	var               _ownerZone : Zone?
+	var                hasNoText : Bool   { return text?.isEmpty ?? true }
 	var               _traitType : ZTraitType?
+	var               _ownerZone : Zone?
+	var                needsSave = false
 
 	var attributedText : NSMutableAttributedString? {
 		didSet {
@@ -233,7 +234,7 @@ class ZTrait: ZTraitAssets {
 	var noteText: NSMutableAttributedString? {
 		get {
 			var        string : NSMutableAttributedString?
-			let       isEmpty = text == nil || text!.isEmpty
+			let       isEmpty = hasNoText
 
 			whileSelfIsCurrentTrait {
 				if  isEmpty {
@@ -262,7 +263,7 @@ class ZTrait: ZTraitAssets {
 					text 	   = string.string
 					format 	   = string.attributesAsString
 
-					if  text?.isEmpty ?? true {
+					if  hasNoText {
 						text = kDefaultNoteText
 					}
 

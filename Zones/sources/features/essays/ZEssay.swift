@@ -110,8 +110,7 @@ class ZEssay: ZNote {
 	override func updateNoteOffsets() {
 		var offset = 0
 
-		for child in progenyNotes {				// update note offsets
-			let        note = child.firstNote
+		for note in progenyNotes {				// update note offsets
 			note.noteOffset = offset
 			offset         += note.textRange.upperBound + kNoteSeparator.length
 		}
@@ -119,9 +118,9 @@ class ZEssay: ZNote {
 
 	override func notes(in range: NSRange) -> ZNoteArray {
 		var notes = ZNoteArray()
+		let  text = essayText
 
-		updateProgenyNotes()              // needed when a note is created...
-		updateNoteOffsets()               // ...in a parent whose children have notes
+		updatedRangesFrom(text)      // needed when a note is created in a parent whose children have notes
 
 		for note in progenyNotes {
 			if  range.inclusiveIntersection(note.noteRange) != nil {
@@ -150,13 +149,13 @@ class ZEssay: ZNote {
 
 	override func saveAsEssay(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString {
-			for child in progenyNotes {
-				let range  = child.noteRange
+			for note in progenyNotes {
+				let range  = note.noteRange
 
 				if  range.upperBound <= attributed.length {
 					let substring = attributed.attributedSubstring(from: range)
 
-					child.saveAsNote(substring)
+					note.saveAsNote(substring)
 				}
 			}
 

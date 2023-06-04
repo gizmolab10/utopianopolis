@@ -108,22 +108,21 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func essayViewSetup() {
-		updateTextStorage()
+		recreateEssayText()
 		clearImageResizing()      // remove leftovers from last essay
 	}
 
 	@discardableResult func resetCurrentEssay(_ current: ZNote? = gCurrentEssay, selecting range: NSRange? = nil) -> Int {
 		var           delta = 0
 		if  let        note = current {
-			essayRecordName = nil
-			gCurrentEssay   = note
-
 			note.updateProgenyNotes()
 
-			delta           = updateTextStorage()
+			essayRecordName = nil
+			gCurrentEssay   = note
+			delta           = recreateEssayText()
 
-			note.updateNoteOffsets()
 			note.updatedRangesFrom(note.noteTrait?.noteText)
+			note.updateNoteOffsets()
 			setNeedsDisplay()
 
 			if  let r = range {
@@ -136,7 +135,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return delta
 	}
 
-	@discardableResult func updateTextStorage(restoreSelection: NSRange? = nil) -> Int {
+	@discardableResult func recreateEssayText(restoreSelection: NSRange? = nil) -> Int {
 		var delta = 0
 
 		if  gCurrentEssay == nil {                           // make sure we actually have a current essay
@@ -144,13 +143,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else {
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
-			updateTextStorageRestoringSelection(restoreSelection)
+			recreateEssayTextRestoringSelection(restoreSelection)
 		}
 
 		return delta
 	}
 
-	func updateTextStorageRestoringSelection(_ range: NSRange?) {
+	func recreateEssayTextRestoringSelection(_ range: NSRange?) {
 
 		// activate the buttons in the control bar
 		// grab the current essay text and put it in place
@@ -346,7 +345,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		} else if CONTROL {
 			switch key {
-				case kSlash:   if gFavoritesCloud.popNoteAndUpdate() { updateTextStorage() }
+				case kSlash:   if gFavoritesCloud.popNoteAndUpdate() { recreateEssayText() }
 				default:       if !enabled { return false } else {
 					switch key {
 						case "d": convertSelectedTextToChild()
@@ -389,7 +388,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else if  SPECIAL {
 			switch arrow {
 				case .left,
-					 .right: move(out: arrow == .left)
+					 .right: move(left: arrow == .left)
 				default:     break
 			}
 		} else if  ALL {
@@ -572,26 +571,27 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return (locked && noKeys) ? oldRange : newRange
 	}
 
-	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool {
-		setNeedsDisplay()                                 // so image resize rubberband will be redrawn
+	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool { // false means do not change
+		setNeedsDisplay()                                      // so image resize rubberband will be redrawn
 
 		if  let replacementLength = replacement?.length,
 			let         hasReturn = replacement?.containsLineEndOrTab,
-			let   (result, delta) = gCurrentEssay?.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn) {
+			let             essay = gCurrentEssay {
+			let   (result, delta) = essay.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn)
 			switch result {
-				case .eAlter:        break
-				case .eLock:         return false
-				case .eExit: exit(); return false
 				case .eDelete:
-					FOREGROUND { [self] in                // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
-						gCurrentEssay?.updateProgenyNotes()
-						updateTextStorage(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
+					FOREGROUND(after: 0.05) { [self] in        // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
+						essay.updateProgenyNotes()
+						recreateEssayText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 					}
+				case .eExit: exit(); fallthrough
+				case .eLock: return false
+				default:     break
 			}
 
-			gCurrentEssay?.essayLength += delta           // compensate for change
+			essay.essayLength += delta                         // compensate for the change we are approving
 		} else {
-			updateImageInParagraph(containing: range)     // so image resize rubberband gets relocated correctly
+			updateImageInParagraph(containing: range)          // so image resize rubberband gets relocated correctly
 		}
 
 		return true // yes, change text
@@ -825,7 +825,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	func move(out: Bool) {
+	func move(left: Bool) {
 		gCreateCombinedEssay = true
 		let            range = selectedRange()
 		let             note = gCurrentEssay?.notes(in: range).first
@@ -833,7 +833,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 		save()
 
-		if  out {
+		if  left {
 			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
 				if  ancestor != gCurrentEssayZone, ancestor.hasNote,
 					let essay = ancestor.note {

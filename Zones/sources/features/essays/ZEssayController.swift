@@ -40,7 +40,7 @@ class ZEssayController : ZGesturesController, ZScrollDelegate {
 		if  gIsEssayMode {
 			essayView?.essayRecordName = nil // force shouldOverwrite to true
 
-			essayView?.updateTextStorage()
+			essayView?.recreateEssayText()
 		}
 	}
 

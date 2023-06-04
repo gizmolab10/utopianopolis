@@ -130,7 +130,7 @@ extension ZEssayView {
 			let  range = attach.glyphRange
 
 			updateSelectedImage()
-			updateTextStorageRestoringSelection(range)  // recreate essay after an image is dropped
+			recreateEssayTextRestoringSelection(range)  // recreate essay after an image is dropped
 			asssureSelectionIsVisible()
 			setNeedsLayout()
 			setNeedsDisplay()
@@ -157,7 +157,7 @@ extension ZEssayView {
 			setSelectedRange(attach.glyphRange)
 		}
 
-		updateTextStorageRestoringSelection(selectedRange)
+		recreateEssayTextRestoringSelection(selectedRange)
 	}
 
 	// MARK: - rects

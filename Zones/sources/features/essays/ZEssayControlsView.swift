@@ -147,7 +147,7 @@ class ZEssayControlsView: ZView {
 			range.location += deltaWithTransitionTo(mode)
 			titlesControl?.needsDisplay = true
 
-			gEssayView?.updateTextStorageRestoringSelection(range)
+			gEssayView?.recreateEssayTextRestoringSelection(range)
 			gDispatchSignals([.sEssay])
 		}
 	}

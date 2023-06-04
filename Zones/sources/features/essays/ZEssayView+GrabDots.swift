@@ -292,7 +292,7 @@ extension ZEssayView {
 		essayRecordName = nil                           // so shouldOverwrite will return true
 
 		gCurrentEssayZone?.clearAllNoteMaybes()         // discard current essay text and all child note's text
-		updateTextStorage()                             // assume text has been altered: re-assemble it
+		recreateEssayText()                             // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
 		gDispatchSignals([.spCrumbs, .sDetails])

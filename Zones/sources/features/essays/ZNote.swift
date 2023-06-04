@@ -254,6 +254,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return total
 	}
 
+	func updateNoteRanges() {
+		updatedRangesFrom(zone?.maybeNoteOrEssayTrait?.attributedText)
+	}
+
 	@discardableResult func updatedRangesFrom(_ fromText: NSAttributedString?) -> (NSAttributedString, String)? {
 		let     noTitle = gEssayTitleMode == .sEmpty
 		if  let    text = fromText,

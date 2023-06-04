@@ -2220,7 +2220,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gCurrentEssay        = note
 
 			if  gIsEssayMode {
-				gEssayView?.updateTextStorage()
+				gEssayView?.recreateEssayText()
 			} else {
 				gSwapMapAndEssay()
 			}
