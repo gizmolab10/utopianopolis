@@ -162,7 +162,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		save()
 
 		if  (shouldOverwrite || range != nil),
-			let text = gCurrentEssay?.essayText {
+			let essay = gCurrentEssay {
+			let  text = essay.updateEssayText() as Any
 
 			discardPriorText()
 			gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setNoteText(text) }   // inject text
@@ -175,7 +176,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 		if  gIsEssayMode {
 			assignAsFirstResponder(self)                                          // show cursor and respond to key input
-			gCurrentEssay?.updateNoteOffsets()
 			updateGrabDots()
 			gMainWindow?       .setupEssayInspectorBar()
 			gEssayControlsView?.setupEssayControls()
@@ -562,45 +562,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// MARK: - locked ranges
 	// MARK: -
 
-	override func insertText(_ string: Any, replacementRange: NSRange) {
-		super.insertText(string, replacementRange: replacementRange)
-
-		if  replacementRange.upperBound != 0,
-			let s = string as? String, s.length != 0 {
-			updateAllRanges(delta: s.length, in: selectedRange)
-		}
-	}
-
-	func updateAllRanges(delta: Int, in range: NSRange) {
-		if  selectedRange.upperBound != 0,
-			let    notes = gCurrentEssay?.notes(in: range) {
-			switch notes.count {
-				case 1:  addDelta(delta, to: notes[0])
-				case 0:  return
-				default: print("ack! change straddles notes")
-			}
-		}
-	}
-
-	func addDelta(_ delta: Int, to note: ZNote) {       // adjust range, then offsets
-		if  let             essay  = gCurrentEssay,	
-			let             index  = indexOfNote(note) {
-			note.textRange.length += delta
-
-			for (i, n) in essay.progenyNotes.enumerated() {
-				if  i > index {
-					n.textRange.location += delta
-				}
-			}
-
-			updateGrabDots()
-		}
-	}
-
-	func indexOfNote(_ note: ZNote) -> Int? {
-		return nil
-	}
-
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
 		let   noKeys = gCurrentKeyPressed == nil
 		let   locked = gCurrentEssay?.isLocked(within: newRange) ?? false
@@ -617,14 +578,18 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let             essay = gCurrentEssay {
 			let   (result, delta) = essay.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn)
 			switch result {
-				case .eDelete:
-					FOREGROUND(after: 0.05) { [self] in        // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
-						essay.updateProgenyNotes()
-						recreateEssayText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
-					}
 				case .eExit: exit(); fallthrough
 				case .eLock: return false
-				default:     break
+				default:
+					FOREGROUND(after: 0.05) { [self] in        // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
+						if  result == .eAlter {
+							updateGrabDots()
+							setNeedsDisplay()
+						} else {
+							essay.updateProgenyNotes()
+							recreateEssayText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
+						}
+					}
 			}
 
 			essay.essayLength += delta                         // compensate for the change we are approving
@@ -837,7 +802,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let noChild = !note.hasProgenyNotes
 			let toEssay = noChild || !gCreateCombinedEssay
 
-			if  toEssay, note.essayText!.string.length > 0 {
+			if  toEssay,
+				let t = note.updateEssayText(), t.string.length > 0 {
 				note.updatedRangesFrom(textStorage)
 			}
 

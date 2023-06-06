@@ -31,7 +31,7 @@ class ZEssay: ZNote {
 		return nil
 	}
 
-	override var essayText: NSMutableAttributedString? {
+	override func updateEssayText() -> NSMutableAttributedString? {
 		if  let z = zone,
 			(z.zoneProgenyWithVisibleNotes.count < 2 || !gCreateCombinedEssay) {
 
@@ -40,61 +40,58 @@ class ZEssay: ZNote {
 			z.clearAllNoteMaybes()
 
 			gCreateCombinedEssay = false
-			gCurrentEssay = ZNote(z)
-
-			return gCurrentEssay?.noteText
-		}
-
-		updateProgenyNotes()
-
-		var result : NSMutableAttributedString?
-		var index  = progenyNotes.count
-		let    max = index - 1
-
-		if  index == 0 {
-
-			// //////////////////////////// //
-			// empty essay: convert to note //
-			// //////////////////////////// //
-
-			gCreateCombinedEssay = false
-			let     note = ZNote(zone)
-
-			if  let text = note.noteText {
-				result?.insert(text, at: 0)
-			}
+			gCurrentEssay        = ZNote(z)
+			essayText            = gCurrentEssay?.updateNoteText()
 		} else {
-			gCreateCombinedEssay = true
+			updateProgenyNotes()
 
-			for child in progenyNotes.reversed() {
-				index           -= 1
+			var index  = progenyNotes.count
+			let    max = index - 1
+			if  index == 0 {
 
-				child.updateIndentCount(relativeTo: zone)
+				// //////////////////////////// //
+				// empty essay: convert to note //
+				// //////////////////////////// //
 
-				if  let  text = child.noteText {
-					result    = result ?? NSMutableAttributedString()
+				gCreateCombinedEssay = false
+				let     note = ZNote(zone)
 
-					if  index < max {
-						result?.insert(kNoteSeparator, at: 0)
-					}
+				if  let text = note.noteText {
+					essayText?.insert(text, at: 0)
+				}
+			} else {
+				gCreateCombinedEssay = true
 
-					result?    .insert(text,           at: 0)
+				for note in progenyNotes.reversed() {
+					index           -= 1
 
-					if  index > 0 {
-						result?.insert(kNoteSeparator, at: 0)
-						child.bumpLocations(by: kNoteSeparator.length)
+					note.updateIndentCount(relativeTo: zone)
+
+					if  let  text = note.updateNoteText() {
+						essayText = essayText ?? NSMutableAttributedString()
+
+						if  index < max {
+							essayText?.insert(kNoteSeparator, at: 0)
+						}
+
+						essayText?    .insert(text,           at: 0)
+
+						if  index > 0 {
+							essayText?.insert(kNoteSeparator, at: 0)
+							note.bumpLocations(by: kNoteSeparator.length)
+						}
 					}
 				}
+
+				updateNoteOffsets()
 			}
 
-			updateNoteOffsets()
+			essayText?.fixAllAttributes()
 		}
 
-		essayLength = result?.length ?? 0
+		essayLength = essayText?.length ?? 0
 
-		result?.fixAllAttributes()
-
-		return result
+		return essayText
 	}
 
 	override func updateProgenyNotes() {
@@ -118,9 +115,6 @@ class ZEssay: ZNote {
 
 	override func notes(in range: NSRange) -> ZNoteArray {
 		var notes = ZNoteArray()
-		let  text = essayText
-
-		updatedRangesFrom(text)      // needed when a note is created in a parent whose children have notes
 
 		for note in progenyNotes {
 			if  range.inclusiveIntersection(note.noteRange) != nil {

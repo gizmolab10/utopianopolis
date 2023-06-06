@@ -49,6 +49,8 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var               isNote : Bool      { return true }
 	var            firstNote : ZNote     { return self }
 	var    	            zone : Zone?
+	var             noteText : NSMutableAttributedString?
+	var            essayText : NSMutableAttributedString?
 
 	func updateProgenyNotes() {}
 	func updateNoteOffsets() {}
@@ -187,20 +189,17 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	var essayText : NSMutableAttributedString? {
+	@discardableResult func updateEssayText() -> NSMutableAttributedString? {
 		indentCount = 0
-		let  result = noteText
-		essayLength = result?.length ?? 0
+		essayText   = updateNoteText()
+		essayLength = essayText?.length ?? 0
 
-		return result
-
+		return essayText
 	}
 
-	var noteText: NSMutableAttributedString? {
-		var result : NSMutableAttributedString?
-
+	@discardableResult func updateNoteText() -> NSMutableAttributedString? {
 		if  let (text, name) = updatedRangesFrom(noteTrait?.noteText) {
-			result = NSMutableAttributedString(attributedString: text)
+			noteText = NSMutableAttributedString(attributedString: text)
 
 			if  gEssayTitleMode != .sEmpty {
 				let        title = name + suffix
@@ -213,14 +212,14 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 
 				let attributedTitle = NSMutableAttributedString(string: title, attributes: attributes)
 
-				result?.insert(kNoteSeparator,  at: 0)
-				result?.insert(attributedTitle, at: 0)
+				noteText?.insert(kNoteSeparator,  at: 0)
+				noteText?.insert(attributedTitle, at: 0)
 			}
 
-			result?.fixAllAttributes()
+			noteText?.fixAllAttributes()
 		}
 
-		return result
+		return noteText
 	}
 
 	func titleOffsetFor(_ mode: ZEssayTitleMode) -> Int {
@@ -263,7 +262,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		if  let    text = fromText,
 			let    name = noTitle ? kEmpty : zone?.zoneName {
 			let unicode = name.contains("􀅇") // it is two bytes
-			let tLength = noTitle ? 0 :   name.length
+			let tLength = noTitle ? 0 : name.length
 			let tOffset = noTitle ? 0 : tLength + kBlankLine.length + (unicode ? 2 : 1)
 			titleRange  = NSRange(location: 0,       length: tLength)
 			textRange   = NSRange(location: tOffset, length: text.length)

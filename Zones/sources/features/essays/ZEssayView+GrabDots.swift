@@ -146,6 +146,8 @@ extension ZEssayView {
 				let   grabRect = CGRect(origin: grabOrigin, size: grabSize)
 				let        dot = ZEssayGrabDot(dotNote: note, noteRange: noteRange, noteLineRect: lineRect, noteTextRect: noteRect, dotGrabRect: grabRect, dotColor: color)
 
+				print("\(index) \(noteRange) \(noteRect.minY.digits1) \(noteRect.maxY.digits1)")
+
 				grabDots.append(dot)
 			}
 		}
