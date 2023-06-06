@@ -1545,6 +1545,10 @@ extension NSRange {
 		return nil
 	}
 
+	func contains(_ other: NSRange) -> Bool {
+		return location <= other.location && upperBound >= other.upperBound
+	}
+
 }
 
 extension NSCursor {

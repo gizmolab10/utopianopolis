@@ -324,10 +324,10 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		var 	result  	  	        = ZAlterationType.eLock
 		var      delta                  = 0
 
-		if  zone?.userCanWrite ?? false,
-		    let range 		            = inRange.inclusiveIntersection(noteRange)?.offsetBy(-noteOffset) {
-			if  range                  == noteRange.offsetBy(-noteOffset),
-				replacementLength      == 0 {
+		if  zone?.userCanWrite ?? false {
+		    let range 		            = inRange.offsetBy(-noteOffset)
+			if  replacementLength      == 0,
+				inRange.contains(noteRange) {
 				result				    = .eDelete
 
 				zone?.deleteNote()

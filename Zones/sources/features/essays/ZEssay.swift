@@ -163,13 +163,13 @@ class ZEssay: ZNote {
 		var adjust = 0
 		var offset : Int?
 
-		let examine = { (note: ZNote) in
+		func examine(_ note: ZNote) {
 			if  exact {
 				adjust        -= note.noteRange.length
 
 				note.zone?.deleteNote()
 			} else {
-				let (alter,  delta) = note.shouldAlterNote(inRange: range, replacementLength: replacementLength, adjustment: adjust, hasReturn: hasReturn)
+				let (alter, delta) = note.shouldAlterNote(inRange: range, replacementLength: replacementLength, adjustment: adjust, hasReturn: hasReturn)
 
 				if  alter     != .eLock {
 					result     = .eAlter
@@ -185,8 +185,8 @@ class ZEssay: ZNote {
 		if  !hasProgenyNotes {
 			examine(self)
 		} else {
-			for child in progenyNotes {
-				examine(child)
+			for note in progenyNotes {
+				examine(note)
 			}
 		}
 
