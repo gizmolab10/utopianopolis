@@ -336,9 +336,9 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 					delta               = replacementLength - textIntersect.length
 					textRange  .length += delta
 					result              = .eAlter
-				}
-
-				if  titleRange  .length > 0, !hasReturn,
+				} else if !hasReturn, (replacementLength > 0 ||
+					titleRange         != range),
+					titleRange .length  > 0,
 					let  titleIntersect = range.inclusiveIntersection(titleRange) {
 					delta               = replacementLength - titleIntersect.length
 					titleRange .length += delta
