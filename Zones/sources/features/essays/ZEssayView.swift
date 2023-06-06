@@ -367,9 +367,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			clearImageResizing()
 		}
 
-		gCurrentEssay?.updateNoteOffsets()
-		updateGrabDots()
-
 		return !enabled
 	}
 
@@ -565,10 +562,51 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// MARK: - locked ranges
 	// MARK: -
 
+	override func insertText(_ string: Any, replacementRange: NSRange) {
+		super.insertText(string, replacementRange: replacementRange)
+
+		if  replacementRange.upperBound != 0,
+			let s = string as? String, s.length != 0 {
+			updateAllRanges(delta: s.length, in: selectedRange)
+		}
+	}
+
+	func updateAllRanges(delta: Int, in range: NSRange) {
+		if  selectedRange.upperBound != 0,
+			let    notes = gCurrentEssay?.notes(in: range) {
+			switch notes.count {
+				case 1:  addDelta(delta, to: notes[0])
+				case 0:  return
+				default: print("ack! change straddles notes")
+			}
+		}
+	}
+
+	func addDelta(_ delta: Int, to note: ZNote) {       // adjust range, then offsets
+		if  let             essay  = gCurrentEssay,	
+			let             index  = indexOfNote(note) {
+			note.textRange.length += delta
+
+			for (i, n) in essay.progenyNotes.enumerated() {
+				if  i > index {
+					n.textRange.location += delta
+				}
+			}
+
+			updateGrabDots()
+		}
+	}
+
+	func indexOfNote(_ note: ZNote) -> Int? {
+		return nil
+	}
+
 	func textView(_ textView: NSTextView, willChangeSelectionFromCharacterRange oldRange: NSRange, toCharacterRange newRange: NSRange) -> NSRange {
-		let     noKeys = gCurrentKeyPressed == nil
-		let     locked = gCurrentEssay?.isLocked(within: newRange) ?? false
-		return (locked && noKeys) ? oldRange : newRange
+		let   noKeys = gCurrentKeyPressed == nil
+		let   locked = gCurrentEssay?.isLocked(within: newRange) ?? false
+		let noChange = locked && noKeys
+
+		return noChange ? oldRange : newRange
 	}
 
 	func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString replacement: String?) -> Bool { // false means do not change
