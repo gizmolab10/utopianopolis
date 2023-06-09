@@ -358,7 +358,7 @@ class ZMapController: ZGesturesController, ZScrollDelegate, ZGeometry {
 				gTextEditor.stopCurrentEdit()
 
 				if  gIsEssayMode {
-					gEssayView?.exit()
+					gEssayView?.discardChangesAndExit()
 				} else {
 					gSetMapWorkMode()
 				}

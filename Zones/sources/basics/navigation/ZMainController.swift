@@ -114,7 +114,7 @@ class ZMainController: ZGesturesController {
 				let    location = gesture.location(in: eView)
 
 				if  location.x < .zero {				// is gesture located outside essay view?
-					eView.save()
+					eView.writeViewToTraits()
 					gSwapMapAndEssay(force: .wMapMode) {
 						gMapController?.handleControllerClickGesture(iGesture)
 					}

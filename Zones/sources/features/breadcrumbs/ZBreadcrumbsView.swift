@@ -143,7 +143,7 @@ class ZBreadcrumbsView : ZButtonsView {
 			}
 
 			if  gIsEssayMode {
-				gEssayView?.done()
+				gEssayView?.writeTraitsAndExit()
 			}
 
 			func displayEssay(_ asEssay: Bool = true) {

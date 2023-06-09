@@ -88,7 +88,7 @@ extension ZMapEditor {
 extension ZEssayView {
 
 	func nextNotemark(down: Bool) {
-		save()
+		writeViewToTraits()
 		clearImageResizing()
 		gFavoritesCloud.nextBookmark(down: down, amongNotes: true)
 	}

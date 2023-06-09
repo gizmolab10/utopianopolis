@@ -124,13 +124,13 @@ extension ZEssayView {
 
 	override func mouseUp(with event: ZEvent) {
 		super.mouseUp(with: event)
-		save()
+		writeViewToTraits()
 
 		if  let attach = selectedAttachment {
 			let  range = attach.glyphRange
 
 			updateSelectedImage()
-			recreateEssayTextRestoringSelection(range)  // recreate essay after an image is dropped
+			readTraitsIntoViewRestoringSelection(range)  // recreate essay after an image is dropped
 			asssureSelectionIsVisible()
 			setNeedsLayout()
 			setNeedsDisplay()
@@ -157,7 +157,7 @@ extension ZEssayView {
 			setSelectedRange(attach.glyphRange)
 		}
 
-		recreateEssayTextRestoringSelection(selectedRange)
+		readTraitsIntoViewRestoringSelection(selectedRange)
 	}
 
 	// MARK: - rects

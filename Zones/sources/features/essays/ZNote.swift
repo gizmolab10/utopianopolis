@@ -44,7 +44,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	override var description : String    { return zone?.unwrappedName ?? kEmptyIdea }
 	var          titleIndent : String    { return kNoteIndentSpacer * indentCount }
 	var      fullTitleOffset : Int       { return noteOffset + titleRange.location }
-	var    lastTextIsDefault : Bool      { return maybeNoteTrait?.text == kDefaultNoteText }
+	var    lastTextIsDefault : Bool      { return noteText?.string.substring(with: textRange) == kDefaultNoteText }
 	var      hasProgenyNotes : Bool      { return progenyNotes.count > 0 }
 	var               isNote : Bool      { return true }
 	var            firstNote : ZNote     { return self }
@@ -52,12 +52,11 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var             noteText : NSMutableAttributedString?
 	var            essayText : NSMutableAttributedString?
 
+	func updateNoteOffsets()  {}
 	func updateProgenyNotes() {}
-	func updateNoteOffsets() {}
-	func notes              (in range: NSRange)   -> ZNoteArray { return [self] }
-	func updateFontSize     (_ increment: Bool)   -> Bool       { return updateTraitFontSize(increment) }
-	func updateTraitFontSize(_ increment: Bool)   -> Bool       { return noteTrait?.updateEssayFontSize(increment) ?? false }
-	func saveAsEssay(_ attributedString: NSAttributedString?)   { saveAsNote(attributedString) }
+	func notes          (in range: NSRange)         -> ZNoteArray { return [self] }
+	func updateFontSize (_ increment: Bool)         -> Bool       { return noteTrait?.updateFontSize(increment) ?? false }
+	func writeNoteTraits(_ attributedString: NSAttributedString?) { writeNoteTrait(attributedString) }
 
 	init(zones: ZoneArray) {}
 
@@ -92,7 +91,7 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		set { zone?.maybeNoteOrEssayTrait?.needsSave = newValue }
 	}
 
-	func saveAsNote(_ attributedString: NSAttributedString?, force: Bool = false) {
+	func writeNoteTrait(_ attributedString: NSAttributedString?, force: Bool = false) {
 		if  let                trait  = noteTrait, force || needsSave,  // textOnly is for replacing only the text, and requires saving
 			let           attributed  = attributedString {
 			let                delta  = attributed.string.length - textRange.upperBound
@@ -189,17 +188,17 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 		return result
 	}
 
-	@discardableResult func updateEssayText() -> NSMutableAttributedString? {
+	@discardableResult func readNoteTraits() -> NSMutableAttributedString? {
 		indentCount = 0
-		essayText   = updateNoteText()
+		essayText   = readNoteTrait()
 		essayLength = essayText?.length ?? 0
 
 		return essayText
 	}
 
-	@discardableResult func updateNoteText() -> NSMutableAttributedString? {
-		if  let (text, name) = updatedRangesFrom(noteTrait?.noteText) {
-			noteText = NSMutableAttributedString(attributedString: text)
+	@discardableResult func readNoteTrait() -> NSMutableAttributedString? {
+		if  let     (text, name) = updatedRangesFrom(noteTrait?.noteText) {
+			noteText             = NSMutableAttributedString(attributedString: text)
 
 			if  gEssayTitleMode != .sEmpty {
 				let        title = name + suffix

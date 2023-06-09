@@ -42,11 +42,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var selectedAttachment : ZRangedAttachment?
 
 	var shouldOverwrite: Bool {
-		if  let          current = gCurrentEssay,
-			current.essayLength != 0,
-			current.recordName  == essayRecordName {	// been here before
+		if  let          essay = gCurrentEssay,
+			essay.essayLength != 0,
+			essay.recordName  == essayRecordName {	// been here before
 
-			return false						// has not yet been saved. don't overwrite
+			return false                            // has not yet been saved. don't overwrite
 		}
 
 		return true
@@ -108,7 +108,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func essayViewSetup() {
-		recreateEssayText()
+		readTraitsIntoView()
 		clearImageResizing()      // remove leftovers from last essay
 	}
 
@@ -119,7 +119,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			essayRecordName = nil
 			gCurrentEssay   = note
-			delta           = recreateEssayText()
+			delta           = readTraitsIntoView()
 
 			note.updatedRangesFrom(note.noteTrait?.noteText)
 			note.updateNoteOffsets()
@@ -135,7 +135,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return delta
 	}
 
-	@discardableResult func recreateEssayText(restoreSelection: NSRange? = nil) -> Int {
+	@discardableResult func readTraitsIntoView(restoreSelection: NSRange? = nil) -> Int {
 		var delta = 0
 
 		if  gCurrentEssay == nil {                           // make sure we actually have a current essay
@@ -143,13 +143,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		} else {
 			delta = gEssayControlsView?.updateTitlesControlAndMode() ?? 0
 
-			recreateEssayTextRestoringSelection(restoreSelection)
+			readTraitsIntoViewRestoringSelection(restoreSelection)
 		}
 
 		return delta
 	}
 
-	func recreateEssayTextRestoringSelection(_ range: NSRange?) {
+	func readTraitsIntoViewRestoringSelection(_ range: NSRange? = nil) {
 
 		// activate the buttons in the control bar
 		// grab the current essay text and put it in place
@@ -159,23 +159,24 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		updateTracking()
 		gEssayControlsView?.updateTitleSegments()
 		resetForDarkMode()
-		save()
+		writeViewToTraits()
 
 		if  (shouldOverwrite || range != nil),
-			let essay = gCurrentEssay {
-			let  text = essay.updateEssayText() as Any
+			let   essay = gCurrentEssay {
+			let   trait = essay.noteTrait
+			let    text = essay.readNoteTraits() as Any
 
 			discardPriorText()
-			gCurrentEssay?.noteTrait?.whileSelfIsCurrentTrait { setNoteText(text) }   // inject text
+			trait?.whileSelfIsCurrentTrait { setTextForView(text) }   // replace textStorage
 			selectAndScrollTo(range)
-			undoManager?.removeAllActions()                                       // clear the undo stack of prior / disastrous information (about prior text)
-		}
+			undoManager?.removeAllActions()                           // clear the undo stack of prior / disastrous information (about prior text)
+		}   
 
-		essayRecordName = gCurrentEssayZone?.recordName                           // do this after altering essay zone
-		delegate        = self 					    	                          // set delegate after discarding prior and injecting current text
+		essayRecordName = gCurrentEssayZone?.recordName               // do this after altering essay zone
+		delegate        = self 					    	              // set delegate after discarding prior and injecting current text
 
 		if  gIsEssayMode {
-			assignAsFirstResponder(self)                                          // show cursor and respond to key input
+			assignAsFirstResponder(self)                              // show cursor and respond to key input
 			updateGrabDots()
 			gMainWindow?       .setupEssayInspectorBar()
 			gEssayControlsView?.setupEssayControls()
@@ -186,41 +187,44 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	// MARK: - clean up
 	// MARK: -
 
-	func done() {
+	func writeTraitsAndExit() {
 		prepareToExit()
-		save()
-		exit()
+		writeViewToTraits()
+		discardChangesAndExit()
 	}
 
-	func exit() {
+	func discardChangesAndExit() {
 		prepareToExit()
 		gSwapMapAndEssay(force: .wMapMode)
 	}
 
-	func save() {
+	func writeViewToTraits() {
 		if  let e = gCurrentEssay {
-			e.saveAsEssay(textStorage)
+			e.writeNoteTraits(textStorage)
 		}
 	}
 
-	func prepareToExit() {
+	func maybeAutoDelete() {
 		if  let e = gCurrentEssay,
 			e.lastTextIsDefault,
 			e.autoDelete {
 			e.zone?.deleteNote()
 		}
+	}
 
+	func prepareToExit() {
+		maybeAutoDelete()
 		undoManager?.removeAllActions()
 	}
 
 	func grabSelectionHereDone() {
-		save()
+		writeViewToTraits()
 
 		if  let zone = selectedZone {
 			gHere = zone
 
 			zone.grab()
-			done()
+			writeTraitsAndExit()
 		} else {
 			grabDone()
 		}
@@ -233,7 +237,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			gCurrentEssayZone?.grab()
 		}
 
-		done()
+		writeTraitsAndExit()
 	}
 
 	// MARK: - output
@@ -282,8 +286,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "t":      swapGrabbedWithParent()
 				case kSlash:   if SPECIAL { gHelpController?.show(flags: flags) } else { swapNoteAndEssay() }
 				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
-				case kEscape:  save(); if ANY { grabDone()                      } else { done() }
-				case kReturn:  save(); if ANY { grabDone() }
+				case kEscape:  writeViewToTraits(); if ANY { grabDone()                      } else { writeTraitsAndExit() }
+				case kReturn:  writeViewToTraits(); if ANY { grabDone() }
 				case kDelete:  deleteGrabbedOrSelected()
 				default:       return false
 			}
@@ -297,7 +301,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			if  ANY {
 				grabSelectionHereDone()
 			} else {
-				done()
+				writeTraitsAndExit()
 			}
 
 			return true
@@ -312,10 +316,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					case "i":      showSpecialCharactersPopup()
 					case "l":      alterCase(up: false)
 					case "p":      printCurrentEssay()
-					case "s":      save()
+					case "s":      writeViewToTraits()
 					case "u":      if !OPTION { alterCase(up: true) }
 					case "v":      if  SHIFT  { return pasteTextAndMatchStyle() }
 					case "z":      if  SHIFT  { undoManager?.redo() } else { undoManager?.undo() }
+					case kDelete:  deleteSelectedNote(); return true // disallow kDelete case, below
 					default:       break
 				}
 			}
@@ -335,7 +340,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					case "t":      if let string = selectionString { showThesaurus(for: string) } else { return false }
 					case "]", "[": gFavoritesCloud.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 					case kSlash:   gHelpController?.show(flags: flags)
-					case kReturn:  if SEVERAL { grabSelectionHereDone() } else { save(); grabDone() }
+					case kReturn:  if SEVERAL { grabSelectionHereDone() } else { writeViewToTraits(); grabDone() }
 					case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
 					case kDelete:  deleteGrabbedOrSelected()
 					default:       return false
@@ -345,7 +350,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		} else if CONTROL {
 			switch key {
-				case kSlash:   if gFavoritesCloud.popNoteAndUpdate() { recreateEssayText() }
+				case kSlash:   if gFavoritesCloud.popNoteAndUpdate() { readTraitsIntoView() }
 				default:       if !enabled { return false } else {
 					switch key {
 						case "d": convertSelectedTextToChild()
@@ -502,7 +507,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				}
 			} else if let (zone, type) = hitTestForVisibilityIcon(at: rect),
 					  let        trait = zone.maybeNoteOrEssayTrait {
-				save()
+				writeViewToTraits()
 				trait.toggleVisibilityFor(type)
 				resetCurrentEssay()
 				setNeedsDisplay()
@@ -522,16 +527,39 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return result
 	}
 
+	func deleteSelectedNote() {
+		if  let essay = gCurrentEssay,
+			let sZone = selectedZone,
+			let eZone = essay.zone {
+
+			writeViewToTraits()                     // preserve changes to those notes whcih are not being deleted
+			sZone.deleteNote()
+
+			if  sZone == eZone {
+				gCurrentEssay = nil                 // essay no longer exists
+
+				gSwapMapAndEssay(force: .wMapMode)
+			} else {
+				essay.essayLength  = 0              // so readTraitsIntoView replaces entire essay
+				essay.progenyNotes = ZNoteArray()
+
+				discardPriorText()
+				eZone.clearAllNoteMaybes()          // discard all of zone's note objects
+				readTraitsIntoViewRestoringSelection()
+			}
+		}
+	}
+
 	@objc func essayActionFor(_ iButton: ZHoverableButton) {
 		if  let buttonID = ZEssayButtonID.essayID(for: iButton) {
 			switch buttonID {
 				case .idForward:  nextNotemark(down:  true)
 				case .idBack:     nextNotemark(down: false)
-				case .idSave:     save()
+				case .idSave:     writeViewToTraits()
 				case .idPrint:    printView()
 				case .idHide:     grabDone()
-				case .idDelete:   if !deleteGrabbedOrSelected() { gCurrentEssayZone?.deleteEssay(); exit() }
-				case .idDiscard:                                  gCurrentEssayZone?.grab();        exit()
+				case .idDelete:   deleteSelectedNote()
+				case .idDiscard:  gCurrentEssayZone?.grab(); discardChangesAndExit()
 				default:          break
 			}
 		}
@@ -578,7 +606,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let             essay = gCurrentEssay {
 			let   (result, delta) = essay.shouldAlterEssay(in: range, replacementLength: replacementLength, hasReturn: hasReturn)
 			switch result {
-				case .eExit: exit(); fallthrough
+				case .eExit: discardChangesAndExit(); fallthrough
 				case .eLock: return false
 				default:
 					FOREGROUND(after: 0.05) { [self] in        // DEFER UNTIL AFTER THIS METHOD RETURNS ... avoids corrupting resulting text
@@ -587,7 +615,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 							setNeedsDisplay()
 						} else {
 							essay.updateProgenyNotes()
-							recreateEssayText(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
+							readTraitsIntoView(restoreSelection: NSRange(location: delta, length: range.length))		// recreate essay text and restore cursor position within it
 						}
 					}
 			}
@@ -706,7 +734,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 							let eZone = gCurrentEssayZone
 
 							FOREGROUND {
-								self  .done()                           // changes grabs and here, so ...
+								self  .writeTraitsAndExit()             // changes grabs and here, so ...
 
 								gHere = grab			                // focus on zone
 
@@ -721,7 +749,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					case .hEssay, .hNote:
 						if  let target = zone {
 
-							save()
+							writeViewToTraits()
 
 							let common = gCurrentEssayZone?.closestCommonParent(of: target)
 
@@ -789,7 +817,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			zone.clearAllNoteMaybes()                 // discard current essay text and all child note's text
 
 			gCreateCombinedEssay = true               // so ZEssay does the right thing
-			gCurrentEssay        = ZEssay(zone) // create a new essay from the zone
+			gCurrentEssay        = ZEssay(zone)       // create a new essay from the zone
 
 			resetCurrentEssay(gCurrentEssay)
 		}
@@ -803,11 +831,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			let toEssay = noChild || !gCreateCombinedEssay
 
 			if  toEssay,
-				let t = note.updateEssayText(), t.string.length > 0 {
+				let t = note.readNoteTraits(), t.string.length > 0 {
 				note.updatedRangesFrom(textStorage)
 			}
 
-			save() // so user does not lose recent work
+			writeViewToTraits()                       // so user does not lose recent work
 
 			gCreateCombinedEssay = toEssay      // toggle
 
@@ -835,7 +863,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		let             note = gCurrentEssay?.notes(in: range).first
 		let            prior = (note?.noteOffset ?? 0) + (note?.indentCount ?? 0)
 
-		save()
+		writeViewToTraits()
 
 		if  left {
 			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
@@ -919,7 +947,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			gCreateCombinedEssay = parent.zoneProgenyWithVisibleNotes.count > 0
 
-			save()
+			writeViewToTraits()
 			parent.addChildNoDuplicate(child, at: index)                        // add as new child of parent
 			child?.setTraitText(text, for: .tNote, addDefaultAttributes: true)
 		}
@@ -976,15 +1004,15 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	override func setSelectedRange(_ range: NSRange) {
-		if  let         text = textStorage?.string {
-			let storageRange = NSRange(location: 0, length: text.length)
-			let     endRange = NSRange(location: text.length, length: 0) // immediately beyond final character of text
-			let       common = range.intersection(storageRange) ?? endRange
+		if  let          text = textStorage?.string {
+			let  storageRange = NSRange(location: 0, length: text.length)
+			let      endRange = NSRange(location: text.length, length: 0) // immediately beyond final character of text
+			let        common = range.intersection(storageRange) ?? endRange
 
 			super.setSelectedRange(common)
 
-			if  let        rect = rectForRange(common) {
-				selectionRect   = rect
+			if  let      rect = rectForRange(common) {
+				selectionRect = rect
 			}
 		}
 	}
@@ -998,8 +1026,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func selectAndScrollTo(_ range: NSRange? = nil) {
-		var        point = CGPoint()                          // scroll to top
-		if  let    essay = gCurrentEssay,
+		var     point    = CGPoint()                          // scroll to top
+		if  let essay    = gCurrentEssay,
 			(essay.lastTextIsDefault || range != nil),
 			let range    = range ?? essay.lastTextRange {     // default: select entire text of final essay
 

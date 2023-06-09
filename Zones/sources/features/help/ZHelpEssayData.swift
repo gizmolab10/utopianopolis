@@ -44,6 +44,7 @@ class ZHelpEssayData: ZHelpData {
 		" COMMAND + CONTROL + OPTION",	"   \"       \"        \"     from sentences   \"    \"    \"",	"",
 		"",																							"",	"",
 		"_COMMAND + KEY", 																			"", "",
+		" DELETE", 						"remove note cursor is in & exit the editor",					"",
 		" RETURN", 						"save changes & exit the editor",								"",
 		" [ or ]",						"save changes & edit the prior or next essay / note",			"",
 		" D",							"save changes & convert selected text into child note",			"",

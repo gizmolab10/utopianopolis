@@ -329,7 +329,7 @@ class ZTrait: ZTraitAssets {
 		}
 	}
 
-	func updateEssayFontSize(_ increment: Bool) -> Bool {
+	func updateFontSize(_ increment: Bool) -> Bool {
 		var updated       = false
 
 		if  let f         = format {

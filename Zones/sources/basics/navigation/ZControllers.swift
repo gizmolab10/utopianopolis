@@ -102,7 +102,7 @@ class ZControllers: NSObject {
 			gMainWindow?.revealEssayEditorInspectorBar(false)
 		}
 
-		gDispatchSignals([.sSwap, .spRelayout, .spCrumbs, .spFavoritesMap, .spDataDetails])
+		gDispatchSignals([.sSwap, .spRelayout, .spCrumbs, .spDataDetails])
 
 		closure?()
 	}

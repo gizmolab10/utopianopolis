@@ -142,12 +142,12 @@ class ZEssayControlsView: ZView {
 				gCurrentEssay?.updatedRangesFrom(gEssayView?.textStorage)
 			}
 
-			gEssayView?.save()
+			gEssayView?.writeViewToTraits()
 
 			range.location += deltaWithTransitionTo(mode)
 			titlesControl?.needsDisplay = true
 
-			gEssayView?.recreateEssayTextRestoringSelection(range)
+			gEssayView?.readTraitsIntoViewRestoringSelection(range)
 			gDispatchSignals([.sEssay])
 		}
 	}

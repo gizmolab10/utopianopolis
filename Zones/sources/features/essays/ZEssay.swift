@@ -31,7 +31,7 @@ class ZEssay: ZNote {
 		return nil
 	}
 
-	override func updateEssayText() -> NSMutableAttributedString? {
+	override func readNoteTraits() -> NSMutableAttributedString? {
 		if  let z = zone,
 			(z.zoneProgenyWithVisibleNotes.count < 2 || !gCreateCombinedEssay) {
 
@@ -41,10 +41,11 @@ class ZEssay: ZNote {
 
 			gCreateCombinedEssay = false
 			gCurrentEssay        = ZNote(z)
-			essayText            = gCurrentEssay?.updateNoteText()
+			essayText            = gCurrentEssay?.readNoteTrait()
 		} else {
 			updateProgenyNotes()
 
+			essayText  = NSMutableAttributedString()
 			var index  = progenyNotes.count
 			let    max = index - 1
 			if  index == 0 {
@@ -67,7 +68,7 @@ class ZEssay: ZNote {
 
 					note.updateIndentCount(relativeTo: zone)
 
-					if  let  text = note.updateNoteText() {
+					if  let  text = note.readNoteTrait() {
 						essayText = essayText ?? NSMutableAttributedString()
 
 						if  index < max {
@@ -141,7 +142,7 @@ class ZEssay: ZNote {
 		return false
 	}
 
-	override func saveAsEssay(_ attributedString: NSAttributedString?) {
+	override func writeNoteTraits(_ attributedString: NSAttributedString?) {
 		if  let attributed = attributedString {
 			for note in progenyNotes {
 				let range  = note.noteRange
@@ -149,7 +150,7 @@ class ZEssay: ZNote {
 				if  range.upperBound <= attributed.length {
 					let substring = attributed.attributedSubstring(from: range)
 
-					note.saveAsNote(substring)
+					note.writeNoteTrait(substring)
 				}
 			}
 
@@ -204,7 +205,7 @@ class ZEssay: ZNote {
 		var updated = false
 
 		for note in progenyNotes {
-		    updated = note.updateTraitFontSize(increment) || updated
+		    updated = note.updateFontSize(increment) || updated
 		}
 
 		return updated

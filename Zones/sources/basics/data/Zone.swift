@@ -1937,7 +1937,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 
-		n?.saveAsNote(text, force: true)
+		n?.writeNoteTrait(text, force: true)
 	}
 
 	func extractAsNoteText() -> NSAttributedString {
@@ -2220,7 +2220,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			gCurrentEssay        = note
 
 			if  gIsEssayMode {
-				gEssayView?.recreateEssayText()
+				gEssayView?.readTraitsIntoView()
 			} else {
 				gSwapMapAndEssay()
 			}

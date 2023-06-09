@@ -33,14 +33,13 @@ extension ZEssayView {
 			return ZNoteArray() // empty because current essay is nil
 		}
 
+		if !essay.hasProgenyNotes {
+			return [essay]
+		}
+
 		essay.updateNoteOffsets()
 
-		return (essay.zone?.zoneProgenyWithVisibleNotes.filter {
-			guard let range = $0.note?.noteRange else { return false }
-			return selectedRange.intersects(range.extendedBy(1))
-		}.map {
-			$0.note!
-		})!
+		return essay.progenyNotes.filter { selectedRange.intersects($0.noteRange.extendedBy(1)) }
 	}
 
 	var lastGrabbedDot : ZEssayGrabDot? {
@@ -78,7 +77,7 @@ extension ZEssayView {
 
 		if  flags.hasOption {
 			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
-				save()
+				writeViewToTraits()
 
 				gMapEditor.handleArrowInMap(arrow, flags: flags) { [self] in
 					resetTextAndGrabs()
@@ -90,7 +89,7 @@ extension ZEssayView {
 			}
 		} else if arrow == .left {
 			if  indents == 0 {
-				done()
+				writeTraitsAndExit()
 			} else {
 				swapNoteAndEssay()
 			}
@@ -165,7 +164,7 @@ extension ZEssayView {
 		if !firstIsGrabbed,
 		   let note = firstGrabbedNote,
 		   let zone = note.zone {
-			save()
+			writeViewToTraits()
 			gCurrentEssayZone?.clearAllNoteMaybes()            // discard current essay text and all child note's text
 			ungrabAll()
 
@@ -235,7 +234,7 @@ extension ZEssayView {
 	}
 
 	@discardableResult func deleteGrabbedOrSelected() -> Bool {
-		save() // capture all the current changes before deleting
+		writeViewToTraits() // capture all the current changes before deleting
 
 		if  hasGrabbedNote {
 			for zone in grabbedZones {
@@ -292,7 +291,7 @@ extension ZEssayView {
 		essayRecordName = nil                           // so shouldOverwrite will return true
 
 		gCurrentEssayZone?.clearAllNoteMaybes()         // discard current essay text and all child note's text
-		recreateEssayText()                             // assume text has been altered: re-assemble it
+		readTraitsIntoView()                             // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
 		gDispatchSignals([.spCrumbs, .sDetails])
