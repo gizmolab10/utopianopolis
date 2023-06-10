@@ -1019,8 +1019,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	func selectFirstNote() {
 		if  let essay = gCurrentEssay, essay.hasProgenyNotes {
-			let  note = essay.firstNote
-			let range = note.textRange
+			let range = essay.textRange
+
 			setSelectedRange(range)
 		}
 	}

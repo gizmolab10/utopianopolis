@@ -50,7 +50,7 @@ class ZGenericController: ZController, ZGeneric {
 			case .idFavoritesMap:  return [.sAppearance, .sDatum, .sData, .spRelayout, .sResize, .sToolTips, .spFavoritesMap]
 			case .idPreferences:   return [.sAppearance, .sDatum, .sData, .spPreferences, .sDetails]
 			case .idDataDetails:   return [.sAppearance, .sDatum, .sData, .spPreferences, .sDetails, .spDataDetails]
-			case .idNote:          return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
+			case .idEssay:         return [.sAppearance, .sDatum, .sEssay]      // ignore the signal from the end of process next batch
 			case .idStartup:       return [.spStartupStatus]
 			case .idSubscription:  return [.spSubscription]
 			case .idSearch:        return [.sSearch]

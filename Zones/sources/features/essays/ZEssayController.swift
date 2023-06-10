@@ -14,11 +14,11 @@ import Cocoa
 import UIKit
 #endif
 
-var gEssayController   : ZEssayController?   { return gControllerForID(.idNote) as? ZEssayController }
+var gEssayController   : ZEssayController?   { return gControllerForID(.idEssay) as? ZEssayController }
 var gEssayControlsView : ZEssayControlsView? { return gEssayController?.essayControlsView }
 
 class ZEssayController : ZGesturesController, ZScrollDelegate {
-	override  var      controllerID : ZControllerID { return .idNote }
+	override  var      controllerID : ZControllerID { return .idEssay }
 	var        linkDialogController : ZLinkDialogController?
 	var                  parameters : ZEssayLinkParameters?
 	@IBOutlet var essayControlsView : ZEssayControlsView?
@@ -41,6 +41,7 @@ class ZEssayController : ZGesturesController, ZScrollDelegate {
 			essayView?.essayRecordName = nil // force shouldOverwrite to true
 
 			essayView?.readTraitsIntoView()
+			essayView?.setNeedsDisplay()
 		}
 	}
 

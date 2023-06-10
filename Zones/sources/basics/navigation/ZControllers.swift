@@ -28,9 +28,9 @@ enum ZControllerID: Int {
 	case idMainMap
     case idSearch
 	case idCrumbs
+	case idEssay
 	case idDebug
 	case idLink
-	case idNote
 	case idMain
 }
 
@@ -134,7 +134,7 @@ class ZControllers: NSObject {
 				case .idFavoritesMap,
 					 .idDetails,
 					 .idMainMap: return kClearColor      // so rubberband is visible on both map and favorites
-				case .idNote:    return .white           // override dark mode, otherwise essay view looks like crap
+				case .idEssay:   return .white           // override dark mode, otherwise essay view looks like crap
 				default:         return gBackgroundColor // respects dark mode
 			}
 		}

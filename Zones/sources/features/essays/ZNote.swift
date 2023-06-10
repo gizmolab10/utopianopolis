@@ -47,7 +47,6 @@ class ZNote: NSObject, ZIdentifiable, ZToolable {
 	var    lastTextIsDefault : Bool      { return noteText?.string.substring(with: textRange) == kDefaultNoteText }
 	var      hasProgenyNotes : Bool      { return progenyNotes.count > 0 }
 	var               isNote : Bool      { return true }
-	var            firstNote : ZNote     { return self }
 	var    	            zone : Zone?
 	var             noteText : NSMutableAttributedString?
 	var            essayText : NSMutableAttributedString?

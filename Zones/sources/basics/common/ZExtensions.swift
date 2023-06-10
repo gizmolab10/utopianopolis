@@ -1350,7 +1350,7 @@ extension Array {
 		// TODO: use a dictionary of record names : records
 
 		if  let to = other as AnyObject? {
-			let compare = using ?? { (a: AnyObject, b: AnyObject) in
+			let compare = using ?? { (a, b) in
 				return a.isEqual(to: b)
 			}
 

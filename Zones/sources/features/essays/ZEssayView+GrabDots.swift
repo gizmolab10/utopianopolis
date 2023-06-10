@@ -56,11 +56,18 @@ extension ZEssayView {
 	}
 
 	func grabNote(_ note: ZNote) {
-		grabbedNotes.appendUnique(item: note.firstNote)
+		grabbedNotes.appendUnique(item: note) { (a, b) in
+			if  let aNote = a as? ZNote,
+				let bNote = b as? ZNote {
+				return aNote.zone == bNote.zone
+			}
+
+			return false
+		}
 	}
 
 	func ungrabNote(_ note: ZNote) -> Bool {
-		if  let index = grabbedNotes.firstIndex(of: note.firstNote) {
+		if  let index = grabbedNotes.firstIndex(of: note) {
 			grabbedNotes.remove(at: index)
 
 			return true
@@ -77,10 +84,12 @@ extension ZEssayView {
 
 		if  flags.hasOption {
 			if (arrow == .left && indents > 1) || ([.up, .down, .right].contains(arrow) && indents > 0) {
-				writeViewToTraits()
+				let grabs = grabbedZones
 
+				grabs.grab()         // so map editor does the right thing
+				writeViewToTraits()
 				gMapEditor.handleArrowInMap(arrow, flags: flags) { [self] in
-					resetTextAndGrabs()
+					resetTextAndGrabs(grabbed: grabs)
 				}
 			}
 		} else if flags.hasShift {
@@ -171,6 +180,7 @@ extension ZEssayView {
 			gNeedsRecount = true
 			let    parent = zone.parentZone                  // get the parent before we swap
 			let     reset = parent == firstNote?.zone        // check if current esssay should change
+			let   grabbed = parent == nil ? [] : [parent!]
 
 			gDisablePush {
 				zone.swapWithParent { [self] in
@@ -178,7 +188,7 @@ extension ZEssayView {
 						gCurrentEssay = ZEssay(zone)
 					}
 
-					resetTextAndGrabs(grab: parent)
+					resetTextAndGrabs(grabbed: grabbed)
 				}
 			}
 		}
@@ -286,15 +296,15 @@ extension ZEssayView {
 		return grabbed
 	}
 
-	func resetTextAndGrabs(grab: Zone? = nil) {
-		let     grabbed = willRegrab(grab)              // includes logic for optional grab parameter
+	func resetTextAndGrabs(grabbed: ZoneArray = []) {
+//		let     grabbed = willRegrab(grab)              // includes logic for optional grab parameter
 		essayRecordName = nil                           // so shouldOverwrite will return true
 
 		gCurrentEssayZone?.clearAllNoteMaybes()         // discard current essay text and all child note's text
-		readTraitsIntoView()                             // assume text has been altered: re-assemble it
+		readTraitsIntoView()                            // assume text has been altered: re-assemble it
 		regrab(grabbed)
 		scrollToGrabbed()
-		gDispatchSignals([.spCrumbs, .sDetails])
+		gDispatchSignals([.spCrumbs, .sDetails, .sEssay])
 	}
 
 	// MARK: - draw grab dots
@@ -305,9 +315,9 @@ extension ZEssayView {
 
 		if  grabDots.count > 0 {
 			for (index, dot) in grabDots.enumerated() {
-				if  let     note = dot.dotNote?.firstNote,     // first note has note's noteRange, not essay's
+				if  let     note = dot.dotNote,     // first note has note's noteRange, not essay's
 					let     zone = note.zone {
-					let  grabbed = grabbedNotes.contains(note)
+					let  grabbed = grabbedZones.contains(zone)
 					let selected = note.noteRange.inclusiveIntersection(selectedRange) != nil
 					let   filled = selected && !hasGrabbedNote
 					let    color = dot.dotColor
