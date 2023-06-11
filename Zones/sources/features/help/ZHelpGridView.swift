@@ -34,7 +34,7 @@ class ZHelpGridView: ZView {
 					let  d = ZoneDot(view: self)
 
 					func internalDraw(_ isFavorite: Bool = false, xOffset : Double = .zero, _ parameters: ZDotParameters) {
-						let point = CGPoint(x: x + xOffset, y: y)
+						let point = CGPoint(x: x + xOffset, y: y + 1.0)
 						let  rect = dt.rect(point)
 						let types = parameters.traitTypes
 

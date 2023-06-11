@@ -795,10 +795,24 @@ extension ZoneArray {
 	}
 
 	func applyGenerationally(_ show: Bool, extreme: Bool = false) {
-		let goal = generationalGoal(show, extreme: extreme)
+		let  goal = generationalGoal(show, extreme: extreme)
+		var  grab = !show && count > 1
+		var level = Int.max
+		var index = 0
 
-		for zone in self {
-			zone.generationalUpdate(show: show, to: goal)
+		for (i, zone) in enumerated() {
+			zone.generationalUpdate(show: show, to: goal) {
+				if  zone.isVisible {
+					grab        = false
+				} else if level > zone.level {
+					level       = zone.level
+					index       = i
+				}
+			}
+		}
+
+		if  grab {
+			self[index].parentZone?.grab()
 		}
 
 		gRelayoutMaps()

@@ -73,9 +73,10 @@ func gStartMeasurement() -> DispatchTime {
 }
 
 func gEndMeasurement(start: DispatchTime) -> TimeInterval {
-	let end = DispatchTime.now()
-	let nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
+	let          end = DispatchTime.now()
+	let     nanoTime = end.uptimeNanoseconds - start.uptimeNanoseconds
 	let timeInterval = Double(nanoTime) / 1_000_000_000
+
 	return timeInterval
 }
 

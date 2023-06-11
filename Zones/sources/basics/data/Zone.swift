@@ -3041,9 +3041,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			// COLLAPSE LEFT INTO PARENT //
 			// ///////////////////////// //
 
-//			if  let l = iLevel, level > l {
 			concealAllProgeny()
-
 			revealParentAndSiblings()
 
 			if  let parent = parentZone, parent != self {
@@ -3093,7 +3091,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			if !show {
 				gSelecting.deselectGrabsWithin(self);
-				self.grab()
+				grab()
 			}
 
 			apply()

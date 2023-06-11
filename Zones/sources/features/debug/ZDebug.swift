@@ -214,6 +214,49 @@ struct ZPrintMode: OptionSet, CustomStringConvertible {
 
 }
 
+extension NSObject {
+
+	var          debugTitle : String { return zClassInitial + kSpace + debugName }
+	@objc var     debugName : String { return description }
+	@objc var zClassInitial : String { return zClassName[0] }
+	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
+	func       performance(_ iMessage: Any?) { log(iMessage) }
+	func               bam(_ iMessage: Any?) { log("\(kHyphen.repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
+	func printSelf()                         { print(self) }
+	func printCurrentFocus()                 { gMapController?.hereWidget?.printWidget()}
+	func printCurrentEssay()                 { gEssayView?.printView() }
+
+	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
+		if  var prefix = iFirst as? String {
+			prefix.appendSpacesToLength(kLogTabStop)
+			printDebug(mode, "\(prefix)\(iSecond ?? kEmpty)")
+		}
+	}
+
+	func log(_ iMessage: Any?) {
+		if  let   message = iMessage as? String, message != kEmpty {
+			printDebug(.dLog, message)
+		}
+	}
+
+	func blankScreenDebug() {
+		if  let w = gMapController?.hereWidget?.bounds.size.width, w < 1.0 {
+			bam("blank map !!!!!!")
+		}
+	}
+
+	func time(of title: String, _ closure: Closure) {
+		let start = gStartMeasurement()
+
+		closure()
+
+		let duration = gEndMeasurement(start: start)
+
+		columnarReport(title, duration)
+	}
+
+}
+
 extension ZMainController {
 
 	@IBAction func debugInfoButtonAction(_ button: ZButton) {
@@ -257,5 +300,15 @@ func gClearUserDefaults() {
 		UserDefaults.standard.removePersistentDomain(forName: domain)
 		UserDefaults.standard.synchronize()
 	}
+}
+
+func gDebugTime(message: String, _ closure: Closure) {
+	let start = gStartMeasurement()
+
+	closure()
+
+	let duration = gEndMeasurement(start: start)
+
+	printDebug(.dTime, duration.stringTo(precision: 2) + kSpace + message)
 }
 

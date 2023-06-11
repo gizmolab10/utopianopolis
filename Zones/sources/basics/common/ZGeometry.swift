@@ -81,6 +81,5 @@ extension ZHelpDotsExemplarController {
 extension ZHelpController {
 
 	override var coreThickness: CGFloat { return kDefaultLineThickness * 0.8 }
-	override var  coreFontSize: CGFloat { return kDefaultBaseFontSize  * 1.4 }
 
 }

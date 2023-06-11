@@ -85,18 +85,8 @@ func noop() {}
 
 extension NSObject {
 
-    func       performance(_ iMessage: Any?) { log(iMessage) }
-	func               bam(_ iMessage: Any?) { log("\(kHyphen.repeatedFor(80)) " + (iMessage as? String ?? kEmpty)) }
-	func printSelf()                         { print(self) }
-	func printCurrentFocus()                 { gMapController?.hereWidget?.printWidget()}
-	func printCurrentEssay()                 { gEssayView?.printView() }
 	@objc func copyWithZone(_ with: NSZone) -> NSObject { return self }
-	func columnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) { rawColumnarReport(mode: mode, iFirst, iSecond) }
-
 	var        selfInQuotes : String { return "\"\(self)\"" }
-	var          debugTitle : String { return zClassInitial + kSpace + debugName }
-	@objc var     debugName : String { return description }
-	@objc var zClassInitial : String { return zClassName[0] }
 
 	@objc var zClassName: String {
 		let parts = className.componentsSeparatedByPeriod
@@ -108,45 +98,6 @@ extension NSObject {
 
 		return names.joinedWithSpace
 	}
-
-	func rawColumnarReport(mode: ZPrintMode = .dLog, _ iFirst: Any?, _ iSecond: Any?) {
-        if  var prefix = iFirst as? String {
-            prefix.appendSpacesToLength(kLogTabStop)
-            printDebug(mode, "\(prefix)\(iSecond ?? kEmpty)")
-        }
-    }
-
-    func log(_ iMessage: Any?) {
-        if  let   message = iMessage as? String, message != kEmpty {
-            printDebug(.dLog, message)
-        }
-    }
-
-	func debugTime(message: String, _ closure: Closure) {
-		let start = Date()
-
-		closure()
-
-		let duration = Date().timeIntervalSince(start)
-
-		printDebug(.dTime, duration.stringTo(precision: 2) + kSpace + message)
-	}
-
-    func time(of title: String, _ closure: Closure) {
-        let start = Date()
-
-        closure()
-
-        let duration = Date().timeIntervalSince(start)
-
-        columnarReport(title, duration)
-    }
-
-    func blankScreenDebug() {
-        if  let w = gMapController?.hereWidget?.bounds.size.width, w < 1.0 {
-            bam("blank map !!!!!!")
-        }
-    }
 
 	func temporarilyApplyThenDelay(for interval: Double, _ closure: BoolClosure?) {
 		closure?(true)
