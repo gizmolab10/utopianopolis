@@ -30,11 +30,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	var grabDots           = ZEssayGrabDotArray()
 	var visibilities       = ZNoteVisibilityArray()
 	var grabbedNotes       = ZNoteArray()
-	var selectionRect      = CGRect()  { didSet { if selectionRect.origin == .zero { selectedAttachment = nil } } }
-	var selectedNote       : ZNote?    { return selectedNotes.last ?? gCurrentEssay }
-	var selectedZone       : Zone?     { return selectedNote?.zone }
-	var lockedSelection    : Bool      { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
-	var selectionString    : String?   { return textStorage?.attributedSubstring(from: selectedRange).string }
+	var selectionRect      = CGRect() { didSet { if selectionRect.origin == .zero { selectedAttachment = nil } } }
+	var selectedNote       : ZNote?   { return selectedNotes.last ?? gCurrentEssay }
+	var selectedZone       : Zone?    { return selectedNote?.zone }
+	var lockedSelection    : Bool     { return gCurrentEssay?.isLocked(within: selectedRange) ?? false }
+	var selectionString    : String?  { return textStorage?.attributedSubstring(from: selectedRange).string }
 	var essayRecordName    : String?
 	var resizeDragStart    : CGPoint?
 	var resizeDragRect     : CGRect?
@@ -286,8 +286,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "t":      swapGrabbedWithParent()
 				case kSlash:   if SPECIAL { gHelpController?.show(flags: flags) } else { swapNoteAndEssay() }
 				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
-				case kEscape:  writeViewToTraits(); if ANY { grabDone()                      } else { writeTraitsAndExit() }
-				case kReturn:  writeViewToTraits(); if ANY { grabDone() }
+				case kEscape:  writeViewToTraits(); if ANY { grabDone()         } else { writeTraitsAndExit() }
+				case kReturn:  handleReturnOnGrabbed(flags)
 				case kDelete:  deleteGrabbedOrSelected()
 				default:       return false
 			}
@@ -329,8 +329,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 			if  OPTION {
 				switch key {
-					case "t":      gShowEssay(forGuide: false)
-					case "u":      gShowEssay(forGuide: true)
+					case "t", "u": gShowEssay(forGuide: key == "u")
 					default:       return false
 				}
 			} else {
@@ -341,7 +340,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 					case "]", "[": gFavoritesCloud.nextBookmark(down: key == "[", amongNotes: true); gRelayoutMaps()
 					case kSlash:   gHelpController?.show(flags: flags)
 					case kReturn:  if SEVERAL { grabSelectionHereDone() } else { writeViewToTraits(); grabDone() }
-					case kEquals:  if   SHIFT { grabSelected() } else { return followLinkInSelection() }
+					case kEquals:  if   SHIFT { grabSelected()          } else { return followLinkInSelection() }
 					case kDelete:  deleteGrabbedOrSelected()
 					default:       return false
 				}
@@ -363,8 +362,9 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			return true
 		} else if OPTION, enabled {
 			switch key {
-				case "d": convertSelectedTextToChild()
-				default:  return false
+				case "d":      convertSelectedTextToChild()
+				case kReturn:  extendSelection(); return true
+				default:       return false
 			}
 
 			return true
@@ -474,13 +474,6 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
-	override func mouseDown(with event: ZEvent) {
-		if  !handleEssayViewClick(with: event) {
-			super.mouseDown      (with: event)
-			mouseMoved           (with: event)
-		}
-	}
-
 	func handleEssayViewClick(with event: ZEvent) -> Bool { // true means do not further process this event
 		var                 result = true
 		if  !gPreferencesAreTakingEffect {
@@ -527,26 +520,28 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		return result
 	}
 
-	func deleteSelectedNote() {
-		if  let essay = gCurrentEssay,
-			let sZone = selectedZone,
-			let eZone = essay.zone {
+	func handleReturnOnGrabbed(_ flags: ZEventFlags) {
+		if  flags.hasOption {
+			if  let  note = firstGrabbedNote {
+				let range = note.noteTextRange
 
-			writeViewToTraits()                     // preserve changes to those notes whcih are not being deleted
-			sZone.deleteNote()
-
-			if  sZone == eZone {
-				gCurrentEssay = nil                 // essay no longer exists
-
-				gSwapMapAndEssay(force: .wMapMode)
-			} else {
-				essay.essayLength  = 0              // so readTraitsIntoView replaces entire essay
-				essay.progenyNotes = ZNoteArray()
-
-				discardPriorText()
-				eZone.clearAllNoteMaybes()          // discard all of zone's note objects
-				readTraitsIntoViewRestoringSelection()
+				ungrabNote(note)
+				setSelectedRange(range)    // select full text
+				setNeedsDisplay()
 			}
+		} else {
+			writeViewToTraits()
+
+			if  flags.isAny {
+				grabDone()
+			}
+		}
+	}
+
+	override func mouseDown(with event: ZEvent) {
+		if  !handleEssayViewClick(with: event) {
+			super.mouseDown      (with: event)
+			mouseMoved           (with: event)
 		}
 	}
 
@@ -997,9 +992,45 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 		}
 	}
 
+	func deleteSelectedNote() {
+		if  let essay = gCurrentEssay,
+			let sZone = selectedZone,
+			let eZone = essay.zone {
+
+			writeViewToTraits()                     // preserve changes to those notes whcih are not being deleted
+			sZone.deleteNote()
+
+			if  sZone == eZone {
+				gCurrentEssay = nil                 // essay no longer exists
+
+				gSwapMapAndEssay(force: .wMapMode)
+			} else {
+				essay.essayLength  = 0              // so readTraitsIntoView replaces entire essay
+				essay.progenyNotes = ZNoteArray()
+
+				discardPriorText()
+				eZone.clearAllNoteMaybes()          // discard all of zone's note objects
+				readTraitsIntoViewRestoringSelection()
+			}
+		}
+	}
+
 	func setSelectionNeedsSaving() {
 		for note in selectedNotes {
 			note.needsSave = true
+		}
+	}
+
+	func extendSelection() {
+		if  let  note  = selectedNote {
+			let range  = note.noteTextRange
+			if  range == selectedRange {
+				grabNote(note)
+			} else {
+				setSelectedRange(range)    // select full text of current note
+			}
+
+			setNeedsDisplay()
 		}
 	}
 

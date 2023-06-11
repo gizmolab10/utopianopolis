@@ -66,7 +66,7 @@ extension ZEssayView {
 		}
 	}
 
-	func ungrabNote(_ note: ZNote) -> Bool {
+	@discardableResult func ungrabNote(_ note: ZNote) -> Bool {
 		if  let index = grabbedNotes.firstIndex(of: note) {
 			grabbedNotes.remove(at: index)
 
