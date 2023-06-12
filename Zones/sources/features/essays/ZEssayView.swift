@@ -286,7 +286,7 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 				case "t":      swapGrabbedWithParent()
 				case kSlash:   if SPECIAL { gHelpController?.show(flags: flags) } else { swapNoteAndEssay() }
 				case kEquals:  if   SHIFT { grabSelected()                      } else { return followLinkInSelection() }
-				case kEscape:  writeViewToTraits(); if ANY { grabDone()         } else { writeTraitsAndExit() }
+				case kEscape:  grabbedNotes.removeAll(); setNeedsDisplay()
 				case kReturn:  handleReturnOnGrabbed(flags)
 				case kDelete:  deleteGrabbedOrSelected()
 				default:       return false

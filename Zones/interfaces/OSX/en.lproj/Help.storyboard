@@ -408,30 +408,29 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                                 </textFieldCell>
                             </textField>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="EIu-cm-elS" userLabel="Buttons Explanation View">
-                                <rect key="frame" x="101" y="198" width="400" height="194"/>
+                                <rect key="frame" x="111" y="208" width="380" height="184"/>
                                 <subviews>
                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uVC-WT-hfy" customClass="ZDarkableImageView" customModule="Seriously" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="154" width="400" height="40"/>
+                                        <rect key="frame" x="0.0" y="144" width="380" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="dwW-94-QMT"/>
                                         </constraints>
                                         <imageCell key="cell" controlSize="large" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="essay.controls" id="pms-Zt-RAa"/>
                                     </imageView>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OcL-aA-JRC">
-                                        <rect key="frame" x="-2" y="0.0" width="404" height="154"/>
+                                        <rect key="frame" x="14" y="0.0" width="368" height="144"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="154" id="4Sp-aU-j2P"/>
+                                            <constraint firstAttribute="height" constant="144" id="4Sp-aU-j2P"/>
                                         </constraints>
                                         <textFieldCell key="cell" lineBreakMode="clipping" alignment="justified" id="VgY-zG-Rxh">
                                             <font key="font" metaFont="label" size="11"/>
-                                            <string key="title">           1               2          3         4         5          6          7              8            9
+                                            <mutableString key="title">1            2            3            4            5             6                7                8
 
-   1     arrows take you to prior and next note/essay
-   2     save all changes and resume editing
-   3     print entire note/essay
-   4     save all changes and exit editing
-   5     erase content of all, or grabbed notes, and exit editing
-   6     discard all changes and exit editing    7     hide titles (idea text) grab dots    8     show titiles and hide grab dits    9     show both</string>
+1      discard all changes and exit the editor
+2     save all changes and exit the editor
+3     save all changes and resume editing
+4     delete the note the cursor is in 5     print entire note/essay
+6     hide titles and grab dots 7     show titles and hide grab dots 8     show titles and grab dots</mutableString>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
@@ -440,17 +439,17 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                                 <constraints>
                                     <constraint firstItem="OcL-aA-JRC" firstAttribute="top" secondItem="uVC-WT-hfy" secondAttribute="bottom" id="04r-Ja-bng"/>
                                     <constraint firstAttribute="bottom" secondItem="OcL-aA-JRC" secondAttribute="bottom" id="COy-MR-kAF"/>
-                                    <constraint firstAttribute="width" constant="400" id="Cfd-gX-1lF"/>
+                                    <constraint firstAttribute="width" constant="380" id="Cfd-gX-1lF"/>
                                     <constraint firstItem="uVC-WT-hfy" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" id="RK2-ZO-VlI"/>
-                                    <constraint firstAttribute="height" constant="194" id="Uxw-a9-qPz"/>
+                                    <constraint firstAttribute="height" constant="184" id="Uxw-a9-qPz"/>
                                     <constraint firstAttribute="trailing" secondItem="OcL-aA-JRC" secondAttribute="trailing" id="VKI-OY-BQr"/>
-                                    <constraint firstItem="OcL-aA-JRC" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" id="XrZ-WS-rtu"/>
+                                    <constraint firstItem="OcL-aA-JRC" firstAttribute="leading" secondItem="EIu-cm-elS" secondAttribute="leading" constant="16" id="XrZ-WS-rtu"/>
                                     <constraint firstItem="uVC-WT-hfy" firstAttribute="top" secondItem="EIu-cm-elS" secondAttribute="top" id="fCe-J9-mL5"/>
                                     <constraint firstAttribute="trailing" secondItem="uVC-WT-hfy" secondAttribute="trailing" id="hkn-kA-4p1"/>
                                 </constraints>
                             </customView>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="p1n-xy-ora">
-                                <rect key="frame" x="15" y="162" width="571" height="28"/>
+                                <rect key="frame" x="15" y="172" width="571" height="28"/>
                                 <textFieldCell key="cell" selectable="YES" id="Lsu-2X-LiW">
                                     <font key="font" metaFont="label" size="11"/>
                                     <string key="title">A grabbed note (inside an essay) has a rounded rectangle surrounding it and the drag dot is filled (see below). You can grab or ungrab a note by clicking on its drag dot.</string>
@@ -459,7 +458,7 @@ The essay editor has a typical toolbar with some special added buttons:</string>
                                 </textFieldCell>
                             </textField>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1LF-SL-gga" customClass="ZDarkableImageView" customModule="Seriously" customModuleProvider="target">
-                                <rect key="frame" x="97" y="58" width="407" height="100"/>
+                                <rect key="frame" x="97" y="68" width="407" height="100"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="100" id="JYh-DR-oiw"/>
                                     <constraint firstAttribute="width" constant="407" id="rlV-fW-sN0"/>
@@ -491,7 +490,7 @@ The essay editor has a typical toolbar with some special added buttons:</string>
         </scene>
     </scenes>
     <resources>
-        <image name="essay.controls" width="261" height="26"/>
+        <image name="essay.controls" width="209" height="22"/>
         <image name="grabbed.note" width="480" height="196"/>
         <image name="typical.note" width="738" height="198"/>
     </resources>

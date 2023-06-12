@@ -687,7 +687,7 @@ class ZMapEditor: ZBaseEditor {
 
 		for (child, (parent, index)) in gSelecting.pasteableZones {
 			child.orphan()
-			parent?.addChildAndUpdateOrder(child, at: index)
+			parent?.addChildAndUpdateOrderAccordingToArray(child, at: index)
 			child.addToGrabs()
 		}
 
@@ -744,7 +744,7 @@ class ZMapEditor: ZBaseEditor {
 
 			for child in children.reversed() {
 				child.orphan()
-				parent.addChildAndUpdateOrder(child, at: siblingIndex)
+				parent.addChildAndUpdateOrderAccordingToArray(child, at: siblingIndex)
 			}
 
 			UNDO(self) { iUndoSelf in
@@ -819,7 +819,7 @@ class ZMapEditor: ZBaseEditor {
 
 					pasteMe.orphan()
 					into.expand()
-					into.addChildAndUpdateOrder(pasteMe, at: insertAt)
+					into.addChildAndUpdateOrderAccordingToArray(pasteMe, at: insertAt)
 					pasteMe.recursivelyApplyDatabaseID(into.databaseID)
 					forUndo.append(pasteMe)
 					pasteMe.addToGrabs()
@@ -1311,7 +1311,7 @@ class ZMapEditor: ZBaseEditor {
 
 						zone.orphan()
 
-						into.addChildAndUpdateOrder(zone, at: insert)
+						into.addChildAndUpdateOrderAccordingToArray(zone, at: insert)
 					}
 
 					onCompletion?(true)

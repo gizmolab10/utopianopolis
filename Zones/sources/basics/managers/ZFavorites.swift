@@ -353,7 +353,7 @@ class ZFavorites: ZRecords {
 					bookmark.zoneLink = dbName + kDoubleColon
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? dbName
 
-					getRootsGroup().addChildAndUpdateOrder(bookmark)
+					getRootsGroup().addChildAndUpdateOrderAccordingToArray(bookmark)
 					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: dbName + kDoubleColon + kRootName, in: databaseID)
 				}
 			}
@@ -367,7 +367,7 @@ class ZFavorites: ZRecords {
 				}
 
 				bookmark.setName(to: named)
-				getRootsGroup().addChildAndUpdateOrder(bookmark)
+				getRootsGroup().addChildAndUpdateOrderAccordingToArray(bookmark)
 			}
 
 			// //////////////////// //

@@ -44,7 +44,7 @@ class ZHelpEssayData: ZHelpData {
 		" COMMAND + CONTROL + OPTION",	"   \"       \"        \"     from sentences   \"    \"    \"",	"",
 		"",																							"",	"",
 		"_COMMAND + KEY", 																			"", "",
-		" DELETE", 						"remove note cursor is in & exit the editor",					"",
+		" DELETE", 						"remove note cursor is in",										"",
 		" RETURN", 						"save changes & exit the editor",								"",
 		" [ or ]",						"save changes & edit the prior or next essay / note",			"",
 		" D",							"save changes & convert selected text into child note",			"",
@@ -60,13 +60,27 @@ class ZHelpEssayData: ZHelpData {
 		" ESCAPE", 						"ungrab them",			 										"",
 		" DELETE", 						"destroy & remove them",										"",
 		" EQAUALS",						"grab selected text, or clear grab",							"",
+		" RETURN + OPTION", 			"ungrab and then select text of note",							"",
+		" ARROWS + OPTION",				"move grabbed notes", 											"",
 		" ARROWS (vertical)",			"grab a different note", 										"",
 		" ARROWS (vertical) + SHIFT",	"grab an additional note", 										"",
-		" ARROWS + OPTION",				"move them", 													"",
 		" LEFT ARROW",					"if top is grabbed: save changes & exit the editor",			"",
 		"i         ",					"else: same as N, below",										"",
 		" N",							"save changes & swap between essay & first grabbed note",		"",
 		"",					 																		"",	""
 	]
 
+	var explanationOfEssayControls: String {
+		return ["           1               2          3         4         5          6          7              8            9",
+		kEmpty,
+		"1     arrows take you to prior and next note/essay",
+		"2     save all changes and resume editing",
+		"3     print entire note/essay",
+		"4     save all changes and exit the editor",
+		"5     delete the note the cursor is in",
+		"6     discard all changes and exit the editor",
+		"7     hide titles (idea text) grab dots",
+		"8     show titles and hide grab dots",
+		"9     show both"].joinedWithNewLine
+	}
 }

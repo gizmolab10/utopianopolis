@@ -79,7 +79,7 @@ extension ZoneArray {
 		}
 	}
 
-	func updateOrder() { updateOrdering(start: .zero, end: 1.0) }
+	func updateOrderAccordingToArray() { updateOrderAccordingToArraying(start: .zero, end: 1.0) }
 
 	func orderLimits() -> (start: Double, end: Double) {
 		var start = 1.0
@@ -108,7 +108,7 @@ extension ZoneArray {
 		}
 	}
 
-	func updateOrdering(start: Double, end: Double) {
+	func updateOrderAccordingToArraying(start: Double, end: Double) {
 		if  gWhileMigratingFromCloudKit { return }
 
 		let increment = (end - start) / Double(count + 2)
@@ -208,7 +208,7 @@ extension ZoneArray {
 
 				p.addChild(duplicate, at: index)
 				gSelecting.updateCousinList()
-//				p.children.updateOrder()
+				p.children.updateOrderAccordingToArray()
 				duplicate.grab()
 			}
 
@@ -392,7 +392,7 @@ extension ZoneArray {
 
 			zones = sort(zones)
 
-			zones.updateOrdering(start: start, end: end)
+			zones.updateOrderAccordingToArraying(start: start, end: end)
 			inParent.children.replace(zones)
 			inParent.respectOrder()
 			gSelecting.updateCousinList(for: gSelecting.currentMoveable)
@@ -481,7 +481,7 @@ extension ZoneArray {
 					zone.orphan()
 				}
 
-				into.addChildAndUpdateOrder(zone, at: iIndex)
+				into.addChildAndUpdateOrderAccordingToArray(zone, at: iIndex)
 
 				if  grab {
 					zone.addToGrabs()

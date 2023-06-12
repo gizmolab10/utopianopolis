@@ -1174,7 +1174,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 
 		gSelecting.updateCousinList()
-//		children.updateOrder()
+		children.updateOrderAccordingToArray()
 	}
 
 	func addIdea(at iIndex: Int?, with name: String? = nil, onCompletion: ZoneMaybeClosure?) {
@@ -1197,7 +1197,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 
 			ungrab()
-			addChildAndUpdateOrder(newIdea, at: iIndex, { addedChild in onCompletion?(newIdea) } )
+			addChildAndUpdateOrderAccordingToArray(newIdea, at: iIndex, { addedChild in onCompletion?(newIdea) } )
 		}
 	}
 
@@ -1345,7 +1345,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			self.orphan() // in case parent was restored
 		}
 
-		into.addChildAndUpdateOrder(self, at: iIndex) { addedChild in
+		into.addChildAndUpdateOrderAccordingToArray(self, at: iIndex) { addedChild in
 
 			if !addedChild.isInTrash { // so grab won't disappear
 				addedChild.grab()
@@ -2402,7 +2402,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 					}
 
 					newChild.orphan()
-					into.addChildAndUpdateOrder(newChild, at: iIndex)
+					into.addChildAndUpdateOrderAccordingToArray(newChild, at: iIndex)
 					newChild.recursivelyApplyDatabaseID(into.databaseID)
 					if  gBookmarks.addToReverseLookup(newChild) {
 						gRelationships.addBookmarkRelationship(newChild, target: zone, in: zone.databaseID)
@@ -2449,7 +2449,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		UNDO(self) { iUndoSelf in
 			for (child, (parent, index)) in restore {
 				child.orphan()
-				parent.addChildAndUpdateOrder(child, at: index)
+				parent.addChildAndUpdateOrderAccordingToArray(child, at: index)
 			}
 
 			iUndoSelf.UNDO(self) { iUndoUndoSelf in
@@ -2803,13 +2803,13 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		respectOrder()
 	}
 
-	func addChildAndUpdateOrder(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: ZoneClosure? = nil) {
+	func addChildAndUpdateOrderAccordingToArray(_ iChild: Zone?, at iIndex: Int? = nil, _ afterAdd: ZoneClosure? = nil) {
 		if  isBookmark {
-			bookmarkTarget?.addChildAndUpdateOrder(iChild, at: iIndex, afterAdd)
+			bookmarkTarget?.addChildAndUpdateOrderAccordingToArray(iChild, at: iIndex, afterAdd)
 		} else if let child = iChild,
 			addChildNoDuplicate(child, at: iIndex, afterAdd) != nil {
 			gSelecting.updateCousinList()
-//			children.updateOrder()
+			children.updateOrderAccordingToArray()
 		}
 	}
 
@@ -2851,7 +2851,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			let n = d.popLast() {     // pop next from duplicates
 
 			orphan()
-			p.addChildAndUpdateOrder(n, at: i)  // swap it into this zones sibling index
+			p.addChildAndUpdateOrderAccordingToArray(n, at: i)  // swap it into this zones sibling index
 		}
 	}
 
@@ -3685,7 +3685,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 		let zone = Zone.uniqueZoneNamed(name, recordName: nil, databaseID: databaseID)
 
-		addChildAndUpdateOrder(zone)
+		addChildAndUpdateOrderAccordingToArray(zone)
 
 		return zone
 	}
