@@ -99,7 +99,7 @@ class ZBaseEditor : NSObject {
 	func reopenMainWindow() {
 		gMainWindow?.makeKeyAndOrderFront(self)
 		assignAsFirstResponder(gMapView)
-		gDispatchSignals([.spRelayout])
+		gRelayoutMaps()
 	}
 
 }

@@ -14,14 +14,6 @@ import Cocoa
 import UIKit
 #endif
 
-enum ZMapID: String {
-	case mText        = "t"
-	case mDecorations = "d"
-
-	var title      : String { return "\(self)".lowercased().substring(fromInclusive: 1) }
-	var identifier : NSUserInterfaceItemIdentifier { return NSUserInterfaceItemIdentifier(title) }
-}
-
 class ZMapView: ZView {
 
 	var                     mapID : ZMapID?
@@ -136,4 +128,12 @@ class ZMapView: ZView {
 		gDragging.drawRotator()    // for rotating around here in star view
 	}
 
+}
+
+enum ZMapID: String {
+	case mText        = "t"
+	case mDecorations = "d" // lines, dots, highlights, hover
+
+	var title      : String { return "\(self)".lowercased().substring(fromInclusive: 1) }
+	var identifier : NSUserInterfaceItemIdentifier { return NSUserInterfaceItemIdentifier(title) }
 }

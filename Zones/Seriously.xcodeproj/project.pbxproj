@@ -250,6 +250,7 @@
 		A752FC2C24512D7700603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
 		A752FC2F24512E0B00603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
 		A752FC3024512E0C00603A54 /* ZoneArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = A752FC2B24512D7700603A54 /* ZoneArray.swift */; };
+		A75315B22A37A68D003CFFB7 /* bubble-mongodb-plugin.js in Resources */ = {isa = PBXBuildFile; fileRef = A75315B12A37A68D003CFFB7 /* bubble-mongodb-plugin.js */; };
 		A759F70124269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
 		A759F70224269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
 		A759F70324269D29008CEA59 /* ZTimers.swift in Sources */ = {isa = PBXBuildFile; fileRef = A759F70024269D29008CEA59 /* ZTimers.swift */; };
@@ -651,6 +652,7 @@
 		A74D6BAD29F85F1900F7D764 /* ZDatabaseID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZDatabaseID.swift; sourceTree = "<group>"; };
 		A74ECDBC2963BD82005191A9 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		A752FC2B24512D7700603A54 /* ZoneArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoneArray.swift; sourceTree = "<group>"; };
+		A75315B12A37A68D003CFFB7 /* bubble-mongodb-plugin.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = "bubble-mongodb-plugin.js"; path = "../../learning typescript/bubble/bubble-mongodb-plugin.js"; sourceTree = "<group>"; };
 		A759F70024269D29008CEA59 /* ZTimers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTimers.swift; sourceTree = "<group>"; };
 		A76243AD27EE8DB80007EDC1 /* ZExplanationPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZExplanationPopover.swift; sourceTree = "<group>"; };
 		A763DB97299AFA3E006D61D7 /* ZEssayView+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZEssayView+Images.swift"; sourceTree = "<group>"; };
@@ -1024,6 +1026,7 @@
 		0CA04B0B1D2ECF1A001892E5 = {
 			isa = PBXGroup;
 			children = (
+				A75315B12A37A68D003CFFB7 /* bubble-mongodb-plugin.js */,
 				0C39B3C11F198BAA0091F4D1 /* configuration */,
 				0C50FD2D2053467600E1D9A9 /* data */,
 				A7F5D690227E6AEE009FB225 /* documentation */,
@@ -1546,6 +1549,7 @@
 				0C39B3AE1F1988380091F4D1 /* LaunchScreen.storyboard in Resources */,
 				A7B48A7223E0D1DB00654DBD /* Main.storyboard in Resources */,
 				0C39B3A81F1988380091F4D1 /* Assets.xcassets in Resources */,
+				A75315B22A37A68D003CFFB7 /* bubble-mongodb-plugin.js in Resources */,
 				0C39B3AB1F1988380091F4D1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

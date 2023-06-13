@@ -1091,7 +1091,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		    userCanMutateProgeny {
 			expand()
 			addIdea(at: gListsGrowDown ? nil : 0) { iChild in
-				gDispatchSignals([.spRelayout]) {
+				gRelayoutMaps {
 					gTemporarilySetMouseZone(iChild)
 					iChild?.edit()
 				}

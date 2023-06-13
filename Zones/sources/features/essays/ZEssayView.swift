@@ -853,17 +853,17 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	}
 
 	func move(left: Bool) {
-		gCreateCombinedEssay = true
-		let            range = selectedRange()
-		let             note = gCurrentEssay?.notes(in: range).first
-		let            prior = (note?.noteOffset ?? 0) + (note?.indentCount ?? 0)
+		gCreateCombinedEssay  = true
+		let            range  = selectedRange()
+		let             note  = gCurrentEssay?.notes(in: range).first
+		let            prior  = (note?.noteOffset ?? 0) + (note?.indentCount ?? 0)
 
 		writeViewToTraits()
 
 		if  left {
 			gCurrentEssayZone?.traverseAncestors { ancestor -> (ZTraverseStatus) in
-				if  ancestor != gCurrentEssayZone, ancestor.hasNote,
-					let essay = ancestor.note {
+				if  ancestor != gCurrentEssayZone, ancestor.hasNoteOrEssay,
+					let essay = ancestor.createNote(asNote: false) {
 					let delta = resetCurrentEssay(essay)
 
 					if  let zone = note?.zone {

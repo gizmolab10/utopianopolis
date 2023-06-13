@@ -60,6 +60,7 @@ class ZHelpDotsData: ZHelpData {
 		".3",						"email                      compose & send",									"",
 		".3",						"hyperlink               open in a browser",									"",
 		".3",						"note                       edit",												"",
+		".3",						"phone number               edit",												"",
 		"",							"",																				"",
 		".3",						"multiple traits        each of the above",										"",
 		"",							"",																				""

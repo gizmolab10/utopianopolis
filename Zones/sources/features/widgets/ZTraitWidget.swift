@@ -30,7 +30,8 @@ class ZTraitWidget : ZPseudoView {
 			let isFilled = parameters.isFilled
 			let    color = isFilled ? gBackgroundColor : parameters.color
 			let altColor = isFilled ? parameters.color : gBackgroundColor
-			let   offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7))
+			let  vOffset = t == "#" ? -1.0 : 0.5
+			let   offset = drawnSize.dividedInHalf.multiplyBy(CGSize(width: 1.0, height: 0.7)).offsetBy(.zero, vOffset)
 			let   center = absoluteCenter.offsetBy(.zero, (-offset.height / 2.5))
 			let    other = CGRect(center: center, size: CGSize.squared(c.dotWidth))
 

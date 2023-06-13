@@ -907,7 +907,7 @@ class ZMapEditor: ZBaseEditor {
 		}
 
 		let minimalResponse : ZSignalKindArray = [.spDataDetails, .spCrumbs, .sToolTips]
-		var        response = forcedResponse ?? [ZSignalKind.spRelayout]
+		var        response = forcedResponse ?? [.spRelayout]
 		let    doCousinJump = !gBrowsingIsConfined
 		let   hereIsGrabbed = gHereMaybe != nil && originalGrabs.contains(gHereMaybe!)
 		let  rootMostParent = rootMost.parentZone

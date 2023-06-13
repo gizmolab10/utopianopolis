@@ -326,6 +326,7 @@ enum ZHelpDotType: String {
 	case email      = "email"
 	case essay      = "click"
 	case owner      = "owner"
+	case phone      = "phone"
 	case member     = "member"
 	case eleven     = "11"
 	case progeny    = "ideas"
@@ -346,7 +347,7 @@ enum ZHelpDotType: String {
 
 	var traitTypes: StringsArray {
 		switch self {
-			case .multiple: return  gActiveTraitTypes.map { $0.rawValue.convertedTrait }
+			case .multiple: return gActiveTraitTypes.map { $0.rawValue.convertedTrait }
 			default:        if let t = traitType { return [t] } else { return [] }
 		}
 	}
@@ -355,6 +356,7 @@ enum ZHelpDotType: String {
 		switch self {
 			case .note, .essay: return ZTraitType.tNote     .rawValue.convertedTrait
 			case .email:        return ZTraitType.tEmail    .rawValue.convertedTrait
+			case .phone:        return ZTraitType.tPhone    .rawValue.convertedTrait
 			case .hyperlink:    return ZTraitType.tHyperlink.rawValue.convertedTrait
 			default:            return nil
 		}
