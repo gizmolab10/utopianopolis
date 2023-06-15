@@ -366,7 +366,7 @@ extension ZoneDot {
 		var       path = ZBezierPath                (ovalIn: iDirtyRect.insetEquallyBy(fraction: 0.1))
 
 		if  parameters.isReveal, !parameters.isCircle {
-			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight:  parameters.showList)
+			path       = ZBezierPath.bloatedTrianglePath(in: iDirtyRect, aimedRight: parameters.showList)
 		}
 
 		path.lineWidth = thickness

@@ -264,7 +264,8 @@ class ZTextEditor: ZTextView {
         if  (currentEdit   == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside assignAsFirstResponder, called below
             let        pack = ZTextPack(zRecord)
 			if  let    zone = pack.packedZone, zone.userCanWrite,
-				let       t = zone.textWidget {
+				let  widget = zone.widget,
+				let tWidget = zone.textWidget {
 				currentEdit = pack
 				var  offset = setOffset
 
@@ -273,15 +274,15 @@ class ZTextEditor: ZTextView {
 				pack.updatePackText(isEditing: true)        // updates drawnSize of textWidget
 				gSelecting.ungrabAll(retaining: [zone])		// so crumbs will appear correctly
 				gSetEditIdeaMode()
-				t.becomeFirstResponder()
-				t.enableUndo()
+				tWidget.becomeFirstResponder()
+				tWidget.enableUndo()
+				tWidget.updateGUI()
+				widget.draw(.pSelections)
 
 				if  offset     == nil,
 					let cOffset = gCurrentOffset {          // from mouse down event
-					offset      = cOffset + t.frame.minX
+					offset      = cOffset + tWidget.frame.minX
 				}
-
-				zone.widget?.draw(.pSelections)             // depends on the above call to become first responder
 
 				if  let at = offset {
 					setCursor(at: at)

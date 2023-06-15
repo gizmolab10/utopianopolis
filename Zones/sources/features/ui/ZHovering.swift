@@ -61,7 +61,7 @@ class ZHovering: NSObject {
 		} else {
 			isHovering  = false
 		}
-		p.isHovering    = isHovering // isHovering affects draw (e.g., filled or dashed outline)
+		p.isHovering    = isHovering     // affects draw (e.g., filled or dashed outline)
 	}
 
 	func setHover(on t: ZoneTextWidget) {

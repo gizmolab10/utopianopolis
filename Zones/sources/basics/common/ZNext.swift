@@ -36,6 +36,28 @@ extension Array {
 
 extension ZoneArray {
 
+	func indexOfNextUngrabbed(up: Bool) -> Int {
+		let   array = up ? self : reversed()
+		let     max = count - 1
+		var highest = max
+
+		if  count > 1 {
+			for (index, zone) in array.enumerated() {
+				if !zone.isGrabbed {
+					highest = index
+				} else {
+					break
+				}
+			}
+		}
+
+		if !up {
+			highest = max - highest
+		}
+
+		return highest
+	}
+
 	func nextBookmarkIndex(increasing: Bool, from: Int) -> Int? {
 		var remaining = count
 		var      next = from

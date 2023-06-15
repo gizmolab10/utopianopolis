@@ -910,7 +910,7 @@ class ZMapEditor: ZBaseEditor {
 		var        response = forcedResponse ?? [.spRelayout]
 		let    doCousinJump = !gBrowsingIsConfined
 		let   hereIsGrabbed = gHereMaybe != nil && originalGrabs.contains(gHereMaybe!)
-		let  rootMostParent = rootMost.parentZone
+		let  parentOfRootMost = rootMost.parentZone
 
 		if  hereIsGrabbed {
 			if  rootMost.isARoot {
@@ -926,9 +926,9 @@ class ZMapEditor: ZBaseEditor {
 
 				rootMost.revealParentAndSiblings()
 
-				let recurse = hasSiblings && snapshot.isSame && (rootMostParent != nil)
+				let recurse = hasSiblings && snapshot.isSame && (parentOfRootMost != nil)
 
-				if  let parent = rootMostParent {
+				if  let parent = parentOfRootMost {
 					gHere = parent
 
 					if  recurse {
@@ -944,7 +944,7 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
 			}
-		} else if let    parent = rootMostParent {
+		} else if let    parent = parentOfRootMost {
 			let     targetZones = doCousinJump ? gSelecting.cousinList : parent.children // FUBAR : cousin list is empty
 			let     targetCount = targetZones.count
 			let       targetMax = targetCount - 1
@@ -953,8 +953,8 @@ class ZMapEditor: ZBaseEditor {
 			// parent is visible //
 			// ///////////////// //
 
-			if  let       index = targetZones.firstIndex(of: rootMost) {
-				var     toIndex = index + (up ? -1 : 1)   // TODO: need to account for essay mode when not all children are visible
+			if  let       index = targetZones.firstIndex(of: rootMost) {       // TODO: need to account for essay mode when not all children are visible
+				var     toIndex = targetZones.indexOfNextUngrabbed(up: up)     // account for multiple grabbed
 				var  allGrabbed = true
 				var soloGrabbed = false
 				var     hasGrab = false
