@@ -726,7 +726,7 @@ class ZMapEditor: ZBaseEditor {
 			for grab in grabs {
 				if !convertToTitledLine {       // delete, add to paste
 					grab.addToPaste()
-					grab.moveZone(to: grab.trashZone)
+					grab.moveSelf(to: grab.trashZone)
 				} else {
 					grab.addToGrabs()
 
@@ -863,7 +863,7 @@ class ZMapEditor: ZBaseEditor {
 				done  = Zone.uniqueZone(recordName: nil, in: parent.databaseID)
 				done?.zoneName = kDone
 
-				done?.moveZone(to: parent)
+				done?.moveSelf(to: parent)
 			}
 
 			for zone in grabs {

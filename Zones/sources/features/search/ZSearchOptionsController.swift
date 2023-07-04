@@ -53,13 +53,14 @@ class ZSearchOptionsController: ZGenericController {
 		scopeControl? .setSelected(o.contains(.sFavorites), forSegment: 2)
 		scopeControl? .setSelected(o.contains(.sOrphan),    forSegment: 3)
 		scopeControl? .setSelected(o.contains(.sTrash),     forSegment: 4)
+		scopeControl? .setSelected(o.contains(.sLost),      forSegment: 5)
 	}
 
 	func filterDidChange() {
 		let o = gSearchFilter    // flags for not / highlighting segments
 
 		filterControl?.setSelected(o.contains(.fBookmarks), forSegment: 0)
-		filterControl?.setSelected(o.contains(.fNotes),     forSegment: 1)
+		filterControl?.setSelected(o.contains(.fTraits),    forSegment: 1)
 		filterControl?.setSelected(o.contains(.fIdeas),     forSegment: 2)
 	}
 

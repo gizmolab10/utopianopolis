@@ -126,7 +126,7 @@ struct ZSearchFilter: OptionSet {
 	init(rawValue: Int) { self.rawValue = rawValue }
 
 	static let fBookmarks = ZSearchFilter(rawValue: 1 << 0)
-	static let     fNotes = ZSearchFilter(rawValue: 1 << 1)
+	static let    fTraits = ZSearchFilter(rawValue: 1 << 1)
 	static let     fIdeas = ZSearchFilter(rawValue: 1 << 2)
 	static let      fNone = ZSearchFilter([])
 	static let       fAll = ZSearchFilter(rawValue: 7)
@@ -148,7 +148,8 @@ struct ZSearchScope: OptionSet {
 	static let sFavorites =  ZSearchScope(rawValue: 1 << 2)
 	static let    sOrphan =  ZSearchScope(rawValue: 1 << 3)
 	static let     sTrash =  ZSearchScope(rawValue: 1 << 4)
-	static var        all : [ZSearchScope]                  { return [.sMine, .sPublic, .sFavorites, .sOrphan, .sTrash] }
+	static let      sLost =  ZSearchScope(rawValue: 1 << 5)
+	static var        all : [ZSearchScope]                  { return [.sMine, .sPublic, .sFavorites, .sOrphan, .sTrash, .sLost] }
 }
 
 var gSearchScope: ZSearchScope {

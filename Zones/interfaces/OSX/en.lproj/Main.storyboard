@@ -2557,7 +2557,7 @@ CA
                                     <font key="font" metaFont="system"/>
                                     <segments>
                                         <segment label="bookmarks"/>
-                                        <segment label="notes" selected="YES" tag="1"/>
+                                        <segment label="traits" selected="YES" tag="1"/>
                                         <segment label="ideas"/>
                                     </segments>
                                 </segmentedCell>
@@ -2566,7 +2566,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" tag="2" translatesAutoresizingMaskIntoConstraints="NO" id="e16-JP-Abj">
-                                <rect key="frame" x="169" y="-3" width="251" height="25"/>
+                                <rect key="frame" x="169" y="-3" width="283" height="25"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="cnb-Bz-45J"/>
                                 </constraints>
@@ -2578,6 +2578,7 @@ CA
                                         <segment label="favorites"/>
                                         <segment label="orphans"/>
                                         <segment label="trash"/>
+                                        <segment label="lost"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -2585,10 +2586,10 @@ CA
                                 </connections>
                             </segmentedControl>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="MGW-dw-IA6">
-                                <rect key="frame" x="421" y="0.0" width="108" height="20"/>
+                                <rect key="frame" x="453" y="0.0" width="76" height="20"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3Iz-PM-oYI">
-                                        <rect key="frame" x="8" y="0.0" width="93" height="20"/>
+                                        <rect key="frame" x="-8" y="0.0" width="93" height="20"/>
                                         <textFieldCell key="cell" controlSize="small" lineBreakMode="clipping" alignment="center" placeholderString="Results Count" id="rBM-sY-8re">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" red="0.34903714270000002" green="0.70305704329999996" blue="0.116099143" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

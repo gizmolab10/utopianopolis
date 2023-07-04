@@ -165,7 +165,7 @@ class ZBreadcrumbsView : ZButtonsView {
 							let span = gTextEditor.selectedRange()
 							edit.editAndSelect(range: span)
 						} else {
-							gBreadcrumbs.crumbTipZone?.grab()
+							gBreadcrumbs.currentCrumbRoot?.grab()
 						}
 					case .wMapMode:
 						if  COMMAND {

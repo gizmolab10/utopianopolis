@@ -122,7 +122,7 @@ extension ZFavorites {
 	@discardableResult func showNextList(down: Bool, moveCurrent: Bool = false, travel: Bool = true) -> Zone? {
 		if  let here  = nextList(down: down) {
 			if  let b = bookmarkToMove, moveCurrent {
-				b.moveZone(to: here)
+				b.moveSelf(to: here)
 			}
 
 			if  travel {

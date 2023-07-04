@@ -430,7 +430,7 @@ class ZSelecting: NSObject {
 			if  createNewGroup {
 				moveInto  = Zone.uniqueZoneNamed(nil, databaseID: toID)
 
-				moveInto.moveZone(to: toRecords.rootZone)
+				moveInto.moveSelf(to: toRecords.rootZone)
 
 				if  gFavoritesCloud == toRecords {
 					gFavoritesCloud.setHere(to: moveInto)
@@ -438,7 +438,7 @@ class ZSelecting: NSObject {
 			}
 
 			for mover in moveThese {
-				mover.moveZone(to: moveInto)   // move mover into to
+				mover.moveSelf(to: moveInto)   // move mover into to
 			}
 		}
 	}

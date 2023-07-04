@@ -179,6 +179,11 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				[kTrashName, kDestroyName].contains(rootName) {
 				return true
 			}
+
+			if  gSearchScope.contains(.sLost),
+				[kLostAndFoundName].contains(rootName) {
+				return true
+			}
 		}
 
 		return false
@@ -1266,19 +1271,17 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				concealAllProgeny()            // shrink gExpandedZones list
 
 				if !permanently, !isInDestroy, !isInTrash {
-					moveZone(to: trashZone) {
+					moveSelf(to: trashZone) {
 						finishDeletion(true)
 					}
 				} else {
 					traverseAllProgeny { iZone in
-						if !iZone.isInTrash {
-							iZone.needDestroy()    // gets written in file
-							iZone.unregister()
-							iZone.orphan()
-							gManifest?.smartAppend(iZone)
-							gFavoritesCloud.pop(iZone)  // avoid getting stuck on a zombie
-							iZone.deleteFromCD()
-						}
+						iZone.needDestroy()    // gets written in file
+						iZone.unregister()
+						iZone.orphan()
+						gManifest?.smartAppend(iZone)
+						gFavoritesCloud.pop(iZone)  // avoid getting stuck on a zombie
+						iZone.deleteFromCD()
 					}
 
 					finishDeletion(false)
@@ -1317,7 +1320,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			gDeferRedraw {
 				parent.addIdea(at: index, with: childName) { [self] iChild in
-					moveZone(to: iChild) {
+					moveSelf(to: iChild) {
 						gRelayoutMaps()
 
 						gUndeferRedraw(false)
@@ -1371,7 +1374,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		}
 	}
 
-	func moveZone(to iThere: Zone?, onCompletion: Closure? = nil) {
+	func moveSelf(to iThere: Zone?, onCompletion: Closure? = nil) {
 		guard let there = iThere else {
 			onCompletion?()
 
@@ -2120,10 +2123,8 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 				atArrival(iObject, kind)
 			}
 
-			if      target.isProgenyOfOrEqualTo(gHereMaybe) {
-				if !target.isVisible || target.isGrabbed {
-					gHere = target   // if already grabbed from the last call here, or if not visible, actually focus (set here}
-				}
+			if  target.isProgenyOfOrEqualTo(gHereMaybe) {
+				gHere = target
 
 				target.grab()
 				complete(target, [.spRelayout, .spCrumbs])
@@ -2837,7 +2838,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		for d in duplicateZones {
 			if  d != self {
 				d.deleteDuplicates()
-				d.moveZone(to: gDestroy)
+				d.moveSelf(to: gDestroy)
 			}
 		}
 
@@ -2992,7 +2993,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 
 			gDeferRedraw {
 				setModificationDateMaybe()
-				moveZone(to: gTrash)
+				moveSelf(to: gTrash)
 			}
 
 			gRelayoutMaps() {
