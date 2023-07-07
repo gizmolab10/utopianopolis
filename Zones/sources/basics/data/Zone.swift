@@ -3476,20 +3476,20 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 		p.color         = widgetDotsColor
 		p.isGrouped     = g != nil
 		p.showList      = isExpanded
-		p.hasTarget     = isBookmark
-		p.traitTypes  = traitKeys
+		p.isBookmark    = isBookmark
+		p.traitTypes    = traitKeys
 		p.showAccess    = hasAccessDecoration
-		p.hasTargetNote = t?.hasNote ?? false
+		p.isNotemark    = t?.hasNote ?? false
 		p.isGroupOwner  = g == self || g == t
 		p.showSideDot   = gFavoritesCloud.isCurrent(self)
-		p.childCount    = (gCountsMode == .progeny) ? progenyCount : indirectCount
+		p.tinyDotsCount = (gCountsMode == .progeny) ? progenyCount : indirectCount
 		p.accessType    = (directAccess == .eProgenyWritable) ? .sideDot : .vertical
 		p.isDragged     = gDragging.draggedZones.contains(self) && gDragging.dragLine != nil
 		p.isReveal      = isReveal
 		p.isDrop        = isDragDrop && d != nil && d == self
 		p.isFilled      = isFilled
 		p.fill          = isFilled ? widgetDotsColor.lighter(by: 2.5) : gBackgroundColor
-		p.isCircle      = p.hasTarget || p.hasTargetNote || p.childCount == 0
+		p.isCircle      = p.isBookmark || p.isNotemark || p.tinyDotsCount == 0
 
 		return p
 	}

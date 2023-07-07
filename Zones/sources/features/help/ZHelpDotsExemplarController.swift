@@ -55,7 +55,7 @@ class ZHelpDotsExemplarController : ZMapController {
 		rootZone?   .mapType = .tExemplar
 		rootZone? .colorized = true
 
-		for index in [3, 2, 1] {
+		for index in 1...3 {
 			let        child = Zone.create(within: name, for: index, databaseID: .everyoneID)
 			child  .zoneName = "\(index.ordinal) idea"
 			child   .mapType = .tExemplar

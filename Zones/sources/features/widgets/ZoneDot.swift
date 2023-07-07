@@ -22,7 +22,7 @@ enum ZDecorationType: Int {
 
 struct  ZDotParameters {
 
-	var childCount    = 0
+	var tinyDotsCount = 0
 	var isDrop        = false
 	var isReveal      = false
 	var isFilled      = false
@@ -31,8 +31,8 @@ struct  ZDotParameters {
 	var isGrouped     = false
 	var isGroupOwner  = false
 	var badRecordName = false
-	var hasTargetNote = false
-	var hasTarget     = false
+	var isNotemark    = false
+	var isBookmark    = false
 	var showList      = false
 	var showAccess    = false
 	var showSideDot   = false
@@ -152,7 +152,7 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 
 	func drawTinyCountDots(_ rect: CGRect, parameters: ZDotParameters) {
 		guard let    c = controller ?? gHelpController else { return } // for help dots, widget and controller are nil; so use help controller
-		let count      = parameters.childCount
+		let count      = parameters.tinyDotsCount
 		if  count      > 0 {
 			let  color = parameters.isDrop ? gActiveColor : parameters.color
 			let radius = rect.size.height * c.coreThickness / 13.0
@@ -239,14 +239,14 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 	func drawRevealDotDecoration(_ iDirtyRect: CGRect, _ parameters: ZDotParameters) {
 		let fillColor = parameters.isFilled ? gBackgroundColor : parameters.color
 
-		if  parameters.hasTarget || parameters.hasTargetNote {
+		if  parameters.isBookmark || parameters.isNotemark {
 
 			// //////////////////////////////// //
 			// TINY CENTER BOOKMARK DECORATIONS //
 			// //////////////////////////////// //
 
 			fillColor.setFill()
-			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.hasTargetNote)
+			drawCenterBookmarkDecorations(in: iDirtyRect, hasNote: parameters.isNotemark)
 		}
 	}
 
@@ -300,10 +300,9 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			// ///////////////////////////////// //
 
 			drawFavoriteSideDot(in: iDirtyRect, parameters)
-		} else if  isLinearMode, parameters.isReveal {
+		} else if parameters.isReveal, isLinearMode {
 			if gCountsMode == .dots,
-			   !parameters.hasTarget,
-			   !parameters.showList {
+			   !parameters.isBookmark {
 
 				// /////////////// //
 				// TINY COUNT DOTS //

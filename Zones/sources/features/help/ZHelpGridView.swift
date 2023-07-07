@@ -55,6 +55,9 @@ class ZHelpGridView: ZView {
 					}
 
 					if  ft != .fFilled {
+						if  ft == .fEmpty {
+							noop()
+						}
 						internalDraw(dt == .favorite, dt.helpDotParameters())                                    // draw empty dot in first column
 					}
 

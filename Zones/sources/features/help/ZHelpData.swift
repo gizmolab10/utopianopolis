@@ -48,6 +48,10 @@ class ZHelpData: NSObject {
 			dotType            = ZHelpDotType(rawValue: dotTypeRaw)
 		}
 
+		if  row == 17, column == 1 {
+			noop()
+		}
+
 		return (dotType, fillType)
 	}
 
@@ -316,13 +320,13 @@ extension String {
 
 enum ZHelpDotType: String {
 	case one        = "single"
-	case ten        = "10"
 	case has        = "in"
+	case ten        = "10"
+	case five       = "5"
 	case both       = "both"
 	case note       = "note"
+	case left       = "points"
 	case drag       = "editable"
-	case five       = "5"
-	case click      = "points"
 	case email      = "email"
 	case essay      = "click"
 	case owner      = "owner"
@@ -339,7 +343,7 @@ enum ZHelpDotType: String {
 	case unwritable = "not"
 
 	var  accessType    :    ZDecorationType { return self == .progeny ? .sideDot : .vertical }
-	var  pointLeft     :               Bool { return self == .click }
+	var  pointLeft     :               Bool { return self == .left }
 	var  showAccess    :               Bool { return  [.both, .unwritable,              .progeny].contains(self) }
 	var  isReveal      :               Bool { return ![.drag, .essay, .member, .owner, .favorite].contains(self) && !showAccess }
 	var  size          :             CGSize { return gHelpController?.dotSize(forReveal: isReveal) ?? .zero }
@@ -362,7 +366,7 @@ enum ZHelpDotType: String {
 		}
 	}
 
-	var childCount: Int {
+	var tinyDotsCount: Int {
 		switch self {
 			case .oneEleven: return 111
 			case .eleven:    return  11
@@ -374,6 +378,9 @@ enum ZHelpDotType: String {
 	}
 
 	func helpDotParameters(isFilled: Bool = false, showAsACircle: Bool = false) -> ZDotParameters {
+		if  !isFilled {
+			noop()
+		}
 		var p           = ZDotParameters()
 		p.color         = gHelpHyperlinkColor
 		p.showList      = !isFilled || pointLeft
@@ -385,11 +392,11 @@ enum ZHelpDotType: String {
 		p.accessType    = accessType
 		p.isGroupOwner  = self == .owner
 		p.isGrouped     = self == .owner    || self == .both || self == .member
-		p.hasTargetNote = self == .notemark || self == .has
-		p.hasTarget     = self == .bookmark
+		p.isNotemark    = self == .notemark || self == .has
+		p.isBookmark    = self == .bookmark
 		p.showSideDot   = self == .favorite
-		p.childCount    = showAsACircle ? 0 : childCount
-		p.isCircle      = showAsACircle || p.hasTarget || p.hasTargetNote
+		p.tinyDotsCount = showAsACircle ? 0 : tinyDotsCount
+		p.isCircle      = showAsACircle || p.isBookmark || p.isNotemark
 
 		return p
 	}

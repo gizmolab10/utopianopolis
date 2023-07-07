@@ -21,7 +21,7 @@ var gFavoritesHereMaybe: Zone? {
 
 class ZFavorites: ZRecords {
 
-	var rootsMaybe       : Zone?
+	var mainMaybe        : Zone?
 	var otherCurrent     : Zone?
 	var recentsMaybe     : Zone?
 	var recentCurrent    : Zone?
@@ -39,11 +39,11 @@ class ZFavorites: ZRecords {
 	// MARK: - initialization
 	// MARK: -
 
-	func getRootsGroup() -> Zone {
-		guard let zone = rootsMaybe else {
-			rootsMaybe = getOrSetupGroup(with: kRootsName)
+	func getMainGroup() -> Zone {
+		guard let zone = mainMaybe else {
+			mainMaybe  = getOrSetupGroup(with: kMainName)
 
-			return rootsMaybe!
+			return mainMaybe!
 		}
 
 		return zone
@@ -296,7 +296,7 @@ class ZFavorites: ZRecords {
 								hasDuplicate      = true
 							}
 						} else if let databaseID  = zone.linkDatabaseID, zone.linkIsRoot,
-								  let p           = zone.parentZone, p == getRootsGroup() {
+								  let p           = zone.parentZone, p == getMainGroup() {
 							if !hasDatabaseIDs.contains(databaseID) {
 								hasDatabaseIDs  .append(databaseID)
 							} else {
@@ -353,7 +353,7 @@ class ZFavorites: ZRecords {
 					bookmark.zoneLink = dbName + kDoubleColon
 					bookmark.zoneName = bookmark.bookmarkTarget?.zoneName ?? dbName
 
-					getRootsGroup().addChildAndUpdateOrderAccordingToArray(bookmark)
+					getMainGroup().addChildAndUpdateOrderAccordingToArray(bookmark)
 					gRelationships.addBookmarkRelationship(for: bookmark, targetNamed: dbName + kDoubleColon + kRootName, in: databaseID)
 				}
 			}
@@ -367,7 +367,7 @@ class ZFavorites: ZRecords {
 				}
 
 				bookmark.setName(to: named)
-				getRootsGroup().addChildAndUpdateOrderAccordingToArray(bookmark)
+				getMainGroup().addChildAndUpdateOrderAccordingToArray(bookmark)
 			}
 
 			// //////////////////// //
@@ -390,7 +390,7 @@ class ZFavorites: ZRecords {
 				createRootsBookmark(named: kDestroyName)
 			}
 
-			for zone in getRootsGroup().children {
+			for zone in getMainGroup().children {
 				zone.directAccess = .eReadOnly
 			}
 
