@@ -25,7 +25,7 @@ struct ZNoteVisibilityMode: OptionSet {
 	static let mHidden   = ZNoteVisibilityMode(rawValue: 1 << 2)
 }
 
-var gActiveTraitTypes : ZTraitTypesArray { return [.tNote, .tEmail, .tHyperlink, .tPhone] }
+var gActiveTraitTypes : ZTraitTypesArray { return [.tNote, .tPhone, .tHyperlink, .tEmail] }
 var  gPopupTraitTypes : ZTraitTypesArray { return gActiveTraitTypes + [.tSeparator, .tClear] }
 
 enum ZTraitType: String { // stored in database: do not change

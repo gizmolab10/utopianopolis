@@ -79,7 +79,7 @@ extension ZoneArray {
 		}
 	}
 
-	func updateOrderAccordingToArray() { updateOrderAccordingToArraying(start: .zero, end: 1.0) }
+	func updateOrderAccordingToArray() { updateOrderAccordingToArray(start: .zero, end: 1.0) }
 
 	func orderLimits() -> (start: Double, end: Double) {
 		var start = 1.0
@@ -108,8 +108,8 @@ extension ZoneArray {
 		}
 	}
 
-	func updateOrderAccordingToArraying(start: Double, end: Double) {
-		if  gWhileMigratingFromCloudKit { return }
+	func updateOrderAccordingToArray(start: Double, end: Double) {
+		if  gWhileMigratingFromCloudKit { return } // PERFORMANCE
 
 		let increment = (end - start) / Double(count + 2)
 
@@ -264,8 +264,9 @@ extension ZoneArray {
 				case .eByDate:       sortByDate    (parent, iBackwards)
 			}
 		} else {
-			for (parent, children) in parentsAndChildren {
-				children.sortBy(type, iBackwards, inParent: parent)   // recurse
+			for (parent, zones) in parentsAndZones { // grab each key / value pair
+				zones.updateOrderAccordingToArray()
+				zones.sortBy(type, iBackwards, inParent: parent)   // recurse
 			}
 		}
 	}
@@ -351,11 +352,11 @@ extension ZoneArray {
 		}
 	}
 
-	var parentsAndChildren : [Zone : ZoneArray] {
+	var parentsAndZones : [Zone : ZoneArray] {
 		var parents =        [Zone : ZoneArray]()
 
 		for zone in self {
-			if  let   parent = zone.parentZoneMaybe {
+			if  let   parent = zone.parentZone {
 				var children = parents[parent] ?? ZoneArray()
 
 				children.append(zone)
@@ -383,6 +384,8 @@ extension ZoneArray {
 			self[old] = zones[new]
 			new      += 1
 		}
+
+		updateOrderAccordingToArray()
 	}
 
 	func alterOrdering(_ iBackwards: Bool = false, inParent: Zone, with sort: ZonesToZonesClosure) {
@@ -392,9 +395,8 @@ extension ZoneArray {
 
 			zones = sort(zones)
 
-			zones.updateOrderAccordingToArraying(start: start, end: end)
+			zones.updateOrderAccordingToArray(start: start, end: end)
 			inParent.children.replace(zones)
-			inParent.respectOrder()
 			gSelecting.updateCousinList(for: gSelecting.currentMoveable)
 			gRelayoutMaps()
 		}
