@@ -302,7 +302,8 @@ class ZoneDot: ZPseudoView, ZToolTipper {
 			drawFavoriteSideDot(in: iDirtyRect, parameters)
 		} else if parameters.isReveal, isLinearMode {
 			if gCountsMode == .dots,
-			   !parameters.isBookmark {
+			   !parameters.isBookmark,
+			   !(widgetZone?.isExpanded ?? true) { // hide dots if children are visible or if widgetZone is nil
 
 				// /////////////// //
 				// TINY COUNT DOTS //

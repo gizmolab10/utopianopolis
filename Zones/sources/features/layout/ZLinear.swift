@@ -162,12 +162,12 @@ extension ZoneWidget {
 			let    narrow = zone.hasNarrowRevealDot
 			let    oWidth = c.dotThirdWidth * (multiple ? -12.0 : (narrow ? 1.0 : -10.6))
 			let    eWidth = c.dotThirdWidth * (multiple ?   1.5 : (narrow ? 1.0 :   1.3))
-			let   yExpand = c.dotHeight / -25.0 * mapReduction
+			let   yExpand = c.dotHeight / -5.0 * mapReduction
 			let   wExpand = hasReveal ? -0.1 : -2.5
 			let   hExpand = hasReveal ?  4.4 :  2.0
 			let   xOffset = oWidth * wExpand + thick * 3.0
 			let   xExpand = eWidth * hExpand + thick * 4.0
-			highlightRect = frame.offsetBy(dx: xOffset, dy: .zero).expandedBy(dx: xExpand, dy: yExpand + 2.0)
+			highlightRect = frame.offsetBy(dx: xOffset, dy: .zero).expandedBy(dx: xExpand, dy: yExpand + 1.0)
 		}
 	}
 
