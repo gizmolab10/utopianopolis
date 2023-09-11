@@ -79,6 +79,10 @@ class ZMapEditor: ZBaseEditor {
             if  gIsEditIdeaMode {
 				if !gTextEditor.handleKeyInTextEditor(iKey, flags: flags) {
 					if !ANY { return false } // ignore key events which have no modifier keys
+					
+					// ////////////////// //
+					// text widget editor //
+					// ////////////////// //
 
 					switch key {
 						case "k":      toggleColorized()
@@ -94,6 +98,11 @@ class ZMapEditor: ZBaseEditor {
 					}
 				}
             } else if isValid(key, flags) {
+				
+				// ////////// //
+				// map editor //
+				// ////////// //
+				
                 let widget = gWidgets.widgetForZone(gSelecting.currentMoveableMaybe)
                 
                 if  let a = arrow, isWindow {
@@ -120,7 +129,7 @@ class ZMapEditor: ZBaseEditor {
 						case "p":        printCurrentFocus()
 						case "r":        if     ANY { gNeedsRecount = true } else if gSelecting.hasMultipleGrabs { showReorderPopup() } else { reverseWordsInZoneName() }
 						case "s":        if SPLAYED { invokeShare() } else { gFiles.importExport(export: true, moveable, with: flags) }
-						case "t":        if SPECIAL { gShowEssay(forGuide: false) } else if COMMAND { showThesaurus() } else { swapWithParent() }
+						case "t":        if SPECIAL { gShowEssay(forGuide: false) } else if OPTION { asBookmarkSwapWithTarget() } else if COMMAND { showThesaurus() } else { swapWithParent() }
 						case "u":        if SPECIAL { gShowEssay(forGuide:  true) } else { alterCase(up: true) }
 						case "v":        if COMMAND { paste() }
 						case "w":        rotateWritable()
@@ -145,7 +154,7 @@ class ZMapEditor: ZBaseEditor {
 							 kDelete:    handleDelete(flags, isWindow)
 						default:         return false // indicate key was not handled
 					}
-                }
+				}
             }
         }
 
@@ -646,6 +655,14 @@ class ZMapEditor: ZBaseEditor {
 			zone.swapWithParent { gRelayoutMaps() }
 		}
     }
+	
+	func asBookmarkSwapWithTarget() {
+		if  gSelecting.currentMapGrabs.count == 1,
+			let bookmark = gSelecting.firstSortedGrab,
+			bookmark.isBookmark, !bookmark.isInFavoritesHere {
+			bookmark.swapWithTarget { gRelayoutMaps() }
+		}
+	}
 
     func swapAndResumeEdit() {
         let t = gTextEditor

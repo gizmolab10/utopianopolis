@@ -1139,19 +1139,33 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 			}
 		}
 	}
+	
+	func swapWithTarget(onCompletion: Closure? = nil) {
+		if  let bParent = parentZone,
+			let  bIndex = siblingIndex,
+			let  target = bookmarkTarget,
+			let tParent = target.parentZone,
+			let  tIndex = target.siblingIndex {
+			moveZone(into: tParent, at: tIndex, orphan: true) {
+				target.moveZone(into: bParent, at: bIndex, orphan: true) {
+					onCompletion?();
+				}
+			}
+		}
+	}
 
 	func swapWithParent(onCompletion: Closure? = nil) {
 		// swap places with parent
 
 		if  let grabbedI = siblingIndex,
 			let   parent = parentZone,
-			let  parentI = parent.siblingIndex,
+			let   pIndex = parent.siblingIndex,
 			let   grandP = parent.parentZone {
 
 			kScratchZone.children = []
 
 			kScratchZone.acquireZones(children)
-			moveZone(into: grandP, at: parentI, orphan: true) { [self] in
+			moveZone(into: grandP, at: pIndex, orphan: true) { [self] in
 				acquireZones(parent.children)
 				parent.moveZone(into: self, at: grabbedI, orphan: true) {
 					parent.acquireZones(kScratchZone.children)
