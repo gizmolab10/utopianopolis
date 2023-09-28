@@ -1945,8 +1945,8 @@ extension String {
 	var       spacesStripped :                  String  { return strip(kSpace) }
 	var      hyphensStripped :                  String  { return strip(kSuperHyphen).strip(kHyphen) }
 	var       extractedTitle :                  String  { return hyphensStripped.spacesStripped }
-	var     unconvertedTrait :                  String  { return self == kEquals ? "h" : self == "+" ? "n" : self == "#" ? "p" : self }
-	var       convertedTrait :                  String  { return self == "h" ? kEquals : self == "n" ? "+" : self == "p" ? "#" : self }
+	var     unconvertedTrait :                  String  { return self == kEquals ? "h" : self == "#" ? "p" : self }
+	var       convertedTrait :                  String  { return self == "h" ? kEquals : self == "p" ? "#" : self }
 	var             isHyphen :                    Bool  { return self == kHyphen }
     var              isDigit :                    Bool  { return "0123456789.+-=*/".contains(self[startIndex]) }
     var       isAlphabetical :                    Bool  { return "abcdefghijklmnopqrstuvwxyz".contains(self[startIndex]) }
@@ -1966,6 +1966,17 @@ extension String {
 	func substring(toExclusive:   Int)       -> String  { return String(self[..<index(at: toExclusive)]) }
 	static func from(_ ascii:  UInt32)       -> String  { return String(UnicodeScalar(ascii)!) }
 	subscript (i: Int)                       -> String  { return self[i ..< i + 1] }
+	
+	 func separatedBy(separator: String) -> String {
+		 var result = kEmpty
+		 for (index, character) in enumerated() {
+			 result.append(character)
+			 if  index < length - 1 {
+				 result.append(separator)
+			 }
+		 }
+		 return result
+	 }
 
     var opposite: String {
 		switch self {

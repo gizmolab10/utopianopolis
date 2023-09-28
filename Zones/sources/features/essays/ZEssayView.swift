@@ -305,6 +305,8 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 			}
 
 			return true
+		} else if kSurroundKeys.contains(key) {
+			surroundSelectedText(with: key); return true
 		} else if COMMAND {
 			if  enabled {
 				switch key {
@@ -952,6 +954,13 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 
 	// MARK: - selection
 	// MARK: -
+	
+	func surroundSelectedText(with surround: String) {
+		let range = selectedRange
+		let prior = textStorage?.string.substring(with: range) ?? kEmpty
+		let  text = surround + prior + surround
+		insertText(text, replacementRange: range)
+	}
 
 	private func alterCase(up: Bool) {
 		if  let        text = selectionString {

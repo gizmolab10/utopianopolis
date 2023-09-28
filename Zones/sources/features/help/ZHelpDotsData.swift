@@ -58,6 +58,7 @@ class ZHelpDotsData: ZHelpData {
 		".3",						"hyperlink               open in a browser",							"",
 		".3",						"phone number      edit",												"",
 		".3",						"note                       edit",										"",
+		".3",						"sum                        toggle",										"",
 		"",							"",																		"",
 		".3",						"multiple traits        each of the above",								"",
 		"",							"",																		""

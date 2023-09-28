@@ -1502,6 +1502,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	func        addToGrabs() { gSelecting.addMultipleGrabs([self]) }
 	func ungrabAssuringOne() { gSelecting.ungrabAssuringOne(self) }
 	func            ungrab() { gSelecting           .ungrab(self) }
+	
+	func toggleSumTrait() {
+		let sum = traitFor(.tSum)
+	}
 
 	func editTraitForType(_ type: ZTraitType) {
 		switch type {

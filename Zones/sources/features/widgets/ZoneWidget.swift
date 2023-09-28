@@ -329,8 +329,8 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 						
 						if        isEditing      { style = .sThickDashed
 						} else if tHovering      {
-							if    isCircularMode { style = .sDashed
-							} else               { style = .sThin        }
+							if    isCircularMode { style = .sDashed      }
+//							} else               { style = .sThin        }
 						} else if isHovering     {
 							if    isCircularMode { style = .sDashed
 							} else               { style = .sMedium      }

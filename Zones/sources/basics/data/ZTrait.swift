@@ -25,22 +25,21 @@ struct ZNoteVisibilityMode: OptionSet {
 	static let mHidden   = ZNoteVisibilityMode(rawValue: 1 << 2)
 }
 
-var gActiveTraitTypes : ZTraitTypesArray { return [.tNote, .tPhone, .tHyperlink, .tEmail] }
+var gActiveTraitTypes : ZTraitTypesArray { return [.tNote, .tPhone, .tHyperlink, .tEmail, .tSum] }
 var  gPopupTraitTypes : ZTraitTypesArray { return gActiveTraitTypes + [.tSeparator, .tClear] }
 
 enum ZTraitType: String { // stored in database: do not change
 
 	case tSeparator = "-"
-	case tDuration  = "!" // accumulative
-	case tMoney     = "$" //      "
+	case tSum       = "+" // accumulative
 	case tAssets    = "a" // can have multiple
-	case tDate      = "d"
+	case tDate      = "d" // calendar and duration
 	case tEmail     = "e"
 	case tHyperlink = "h"
 	case tNote      = "n"
 	case tPhone     = "p"
-	case tClear     = "x"
 	case tEssay     = "w"
+	case tClear     = "x"
 
 	var title         : String? { return description?.capitalized }
 	var isEssayOrNote :   Bool  { return [.tNote, .tEssay].contains(self) }
@@ -48,7 +47,6 @@ enum ZTraitType: String { // stored in database: do not change
 	var heightRatio: CGFloat {
 		switch self {
 			case .tHyperlink,
-				 .tMoney,
 				 .tDate: return 1.0
 			default:     return 0.66667
 		}
@@ -56,14 +54,15 @@ enum ZTraitType: String { // stored in database: do not change
 
 	var description: String? {
 		switch self {
-			case .tSeparator: return kLineOfDashes
-			case .tPhone:     return "PHONE NUMBER"
-			case .tClear:     return "REMOVE ALL"
-			case .tHyperlink: return "HYPERLINK"
-			case .tEmail:     return "EMAIL"
-			case .tEssay:     return "ESSAY"
-			case .tNote:      return "NOTE"
-			default:          return nil
+		case .tSeparator: return kLineOfDashes
+		case .tPhone:     return "PHONE NUMBER"
+		case .tClear:     return "REMOVE ALL"
+		case .tHyperlink: return "HYPERLINK"
+		case .tEmail:     return "EMAIL"
+		case .tEssay:     return "ESSAY"
+		case .tNote:      return "NOTE"
+		case .tSum:       return "SUM"
+		default:          return nil
 		}
 	}
 

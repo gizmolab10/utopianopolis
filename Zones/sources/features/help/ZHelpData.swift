@@ -320,6 +320,7 @@ extension String {
 
 enum ZHelpDotType: String {
 	case one        = "single"
+	case sum        = "sum"
 	case has        = "in"
 	case ten        = "10"
 	case five       = "5"
@@ -358,22 +359,23 @@ enum ZHelpDotType: String {
 
 	var traitType: String? {
 		switch self {
-			case .note, .essay: return ZTraitType.tNote     .rawValue.convertedTrait
-			case .email:        return ZTraitType.tEmail    .rawValue.convertedTrait
-			case .phone:        return ZTraitType.tPhone    .rawValue.convertedTrait
-			case .hyperlink:    return ZTraitType.tHyperlink.rawValue.convertedTrait
-			default:            return nil
+		case .sum:          return ZTraitType.tSum      .rawValue.convertedTrait
+		case .note, .essay: return ZTraitType.tNote     .rawValue.convertedTrait
+		case .email:        return ZTraitType.tEmail    .rawValue.convertedTrait
+		case .phone:        return ZTraitType.tPhone    .rawValue.convertedTrait
+		case .hyperlink:    return ZTraitType.tHyperlink.rawValue.convertedTrait
+		default:            return nil
 		}
 	}
 
 	var tinyDotsCount: Int {
 		switch self {
-			case .oneEleven: return 111
-			case .eleven:    return  11
-			case .ten:       return  10
-			case .five:      return   5
-			case .one:       return   1
-			default:         return   0
+		case .oneEleven: return 111
+		case .eleven:    return  11
+		case .ten:       return  10
+		case .five:      return   5
+		case .one:       return   1
+		default:         return   0
 		}
 	}
 

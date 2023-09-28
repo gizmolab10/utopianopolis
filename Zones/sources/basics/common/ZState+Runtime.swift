@@ -67,6 +67,7 @@ var             gMapIsResponder :               Bool  { return gMainWindow?.firs
 var                 gUserIsIdle :               Bool  { return gUserActiveInWindow == nil }
 var           gCurrentEssayZone :               Zone? { return gCurrentEssay?.zone }
 var           gUniqueRecordName :             String  { return CKRecordID().recordName }
+var    gSpacedMarkingCharacters :             String  { return kMarkingCharacters.separatedBy(separator: kSpace) }
 var                     gUserID :             String? { return (gFileManager.ubiquityIdentityToken as?   Data)?.base64EncodedString().fileSystemSafe }
 var                    gRecords :           ZRecords  { return (kIsPhone && gShowFavoritesMapForIOS) ? gFavoritesCloud :   gRemoteStorage.currentRecords }
 var                   gDarkMode :     InterfaceStyle  { return InterfaceStyle() }

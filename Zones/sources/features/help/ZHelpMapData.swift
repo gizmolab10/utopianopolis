@@ -101,7 +101,7 @@ class ZHelpMapData : ZHelpData {
 	let mapColumnThree: StringsArray = [
 		"0!WHILE NAVIGATING (SINGLE IDEA SELECTED, NOT BEING EDITED):",	"", "",
 		"2",			 												"", "",
-		"2mark:", 		kMarkingCharacters, 								"more+a+extras-2a9b1a7db21f",
+		"2mark:", 		gSpacedMarkingCharacters,							"more+a+extras-2a9b1a7db21f",
 		"0",			 												"", "",
 		"0_KEY",		 												"", "",
 		"0ARROWS", 		"browse map",	 									"",

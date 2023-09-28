@@ -252,11 +252,13 @@ class ZRecord: ZManagedObject {
 	}
 
 	func copyInto(_ other: ZRecord) {
+		let name = other.recordName
 		for keyPath in cloudProperties {
 			let copied = value(forKeyPath: keyPath)
 
 			other.setValue(copied, forKeyPath: keyPath)
 		}
+		other.recordName = name
 	}
 
     func setupLinks() {}

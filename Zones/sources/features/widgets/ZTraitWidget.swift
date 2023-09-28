@@ -11,8 +11,8 @@ import Foundation
 class ZTraitWidget : ZPseudoView {
 
 	var angle : CGFloat = .zero
-	var type  : String?
 	var dot   : ZoneDot?
+	var type  : String?
 
 	init(view: ZView?, with type: String, at angle: CGFloat, around dot: ZoneDot) {
 		super.init(view: view)

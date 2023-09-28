@@ -252,18 +252,21 @@ class ZMapEditor: ZBaseEditor {
 			let zone = gSelecting.currentMoveable
 
 			switch type {
-				case .tSeparator:
-					break
-				case .tClear:
-					zone.removeAllTraits()
-					gRelayoutMaps()
-				default:
-					UNDO(self) { iUndoSelf in
-						iUndoSelf.handleTraitsKey(key)
-					}
+			case .tSeparator:
+				break
+			case .tSum:
+				zone.toggleSumTrait()
+				gRelayoutMaps()
+			case .tClear:
+				zone.removeAllTraits()
+				gRelayoutMaps()
+			default:
+				UNDO(self) { iUndoSelf in
+					iUndoSelf.handleTraitsKey(key)
+				}
 
-					gTemporarilySetKey(key)
-					zone.editTraitForType(type)
+				gTemporarilySetKey(key)
+				zone.editTraitForType(type)
 			}
 		}
 	}
