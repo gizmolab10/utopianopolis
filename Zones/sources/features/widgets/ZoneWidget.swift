@@ -327,15 +327,15 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 					if  isEditing || isHovering || isGrabbed || tHovering || isCircularMode {
 						var style = ZHighlightStyle.sNone
 						
-						if        isEditing      { style = .sThickDashed
-						} else if tHovering      {
-							if    isCircularMode { style = .sDashed      }
-//							} else               { style = .sThin        }
-						} else if isHovering     {
-							if    isCircularMode { style = .sDashed
-							} else               { style = .sMedium      }
-						} else if isGrabbed      { style = .sThick
-						} else if isCircularMode { style = .sUltraThin   }
+						if        isEditing      { style = .sThickDashed }
+//						else if   tHovering      {
+//							 if   isCircularMode { style = .sDashed      }
+//							 else                { style = .sThin        } }
+//						else if   isHovering     {
+//							 if   isCircularMode { style = .sDashed      }
+//							 else                { style = .sMedium      } }
+						else if   isGrabbed      { style = .sThick       }
+						else if   isCircularMode { style = .sUltraThin   }
 						
 						if  style != .sNone {
 							drawSelectionHighlight(style)

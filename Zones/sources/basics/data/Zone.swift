@@ -1338,7 +1338,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						gRelayoutMaps()
 
 						gUndeferRedraw(false)
-						iChild?.edit()
+						iChild?.grab()
 					}
 				}
 			}
@@ -2989,7 +2989,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 						if  let child = iChild {
 							expand()
 							gRelayoutMaps() {
-								child.editAndSelect()
+								child.grab()
 							}
 						}
 					}
