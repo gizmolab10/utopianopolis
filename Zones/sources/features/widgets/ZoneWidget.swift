@@ -378,8 +378,10 @@ class ZoneWidget: ZPseudoView, ZToolTipper {
 			default:            break
 		}
 
+		gBackgroundColor.setFill()
 		color?.setStroke()
 		path.stroke()
+		path.fill()
 	}
 
 	func drawInterior(_ color: ZColor) {

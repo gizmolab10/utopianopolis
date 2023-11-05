@@ -20,7 +20,7 @@ enum ZDrawPhase: String {
 	case pDots       = "d"
 }
 
-let gAllDrawPhases: [ZDrawPhase] = [.pSelections, .pLines, .pDots]   // draw dots last so they can "cover" the ends of lines
+let gAllDrawPhases: [ZDrawPhase] = [.pLines, .pSelections, .pDots]   // draw dots last so they can "cover" the ends of lines
 
 class ZPseudoView: NSObject {
 
