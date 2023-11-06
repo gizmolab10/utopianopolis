@@ -55,7 +55,7 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	var                                         widgetColor :           ZColor? { return (gColorfulMode && colorized) ? color : kBlackColor }
 	var                                           textColor :           ZColor? { return isDragged ? gActiveColor : widgetColor }
 	var                                        lighterColor :           ZColor? { return gIsDark ? color : color?.withAlphaComponent(0.3) }
-	var                                      highlightColor :           ZColor? { return isDragged ? gActiveColor : (widget?.isCircularMode ?? true) ? color : lighterColor }
+	var                                      highlightColor :           ZColor? { return isDragged ? gActiveColor : color } // (widget?.isCircularMode ?? true) ? color : lighterColor }
 	var                                     widgetDotsColor :           ZColor  { return mapType.isExemplar ? gHelpHyperlinkColor : gColorfulMode ? (color ?? kDefaultIdeaColor) : kDefaultIdeaColor }
 	var                                               count :              Int  { return children.count }
 	var                                           halfCount :              Int  { return Int((Double(count) + 0.5) / 2.0) }
@@ -439,6 +439,10 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var ancestralPath: ZoneArray {
+		if isBookmark {
+			return bookmarkTarget!.ancestralPath
+		}
+
 		var  results = ZoneArray()
 
 		traverseAllAncestors { ancestor in

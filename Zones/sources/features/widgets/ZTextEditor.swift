@@ -235,6 +235,9 @@ class ZTextPack: NSObject {
 		if  let z = packedZone,
 			let w = gWidgets.widgetForZone(z),
 			let t = w.textWidget {
+			var f = t.frame
+			f.origin.y -= 0.5
+			t.frame = f
 			t.abortEditing()      // NOTE: this does NOT remove selection highlight
 			t.deselectAllText()
 			t.updateTextColor()
@@ -263,11 +266,11 @@ class ZTextEditor: ZTextView {
     @discardableResult func edit(_ zRecord: ZRecord, setOffset: CGFloat? = nil, immediately: Bool = false) -> ZTextEditor {
         if  (currentEdit   == nil || !currentEdit!.isEditing(zRecord)) { 			// prevent infinite recursion inside assignAsFirstResponder, called below
             let        pack = ZTextPack(zRecord)
-			if  let    zone = pack.packedZone, zone.userCanWrite,
-				let  widget = zone.widget,
-				let tWidget = zone.textWidget {
-				currentEdit = pack
-				var  offset = setOffset
+			if  let         zone = pack.packedZone, zone.userCanWrite,
+				let       widget = zone.widget,
+				let      tWidget = zone.textWidget {
+				currentEdit      = pack
+				var       offset = setOffset
 
 				printDebug(.dEdit, " EDIT    " + zone.unwrappedName)
 				deferEditingStateChange()
@@ -277,6 +280,11 @@ class ZTextEditor: ZTextView {
 				tWidget.becomeFirstResponder()
 				tWidget.enableUndo()
 				tWidget.updateGUI()
+
+				var       tFrame = tWidget.frame
+				tFrame.origin.y += 0.5
+				tWidget   .frame = tFrame
+
 				widget.draw(.pSelections)
 
 				if  offset     == nil,
@@ -397,7 +405,6 @@ class ZTextEditor: ZTextView {
 
 			cancelEdit()
 			zone?.grab()
-
 
 			if  andRedraw {
 				FOREGROUND(after: 0.001) {

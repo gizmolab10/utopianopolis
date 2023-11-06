@@ -1,3 +1,4 @@
+Carthage\ snapkit\ 1.0/
 aside
 xcshareddata/
 *.xcworkspace/
@@ -6,25 +7,24 @@ xcshareddata/
 *.xcuserstate
 *.xcbkptlist
 *.xcworkspacedata
-*/xcschememanagement.plist
+xcschememanagement.plist
 .DS_Store
-*/SnapKit.framework
-Carthage/*
-Carthage snap kit 1.0/*
-*/HockeySDK
-/.gitfubar
+SnapKit.framework
+Carthage/
+HockeySDK
+.gitfubar
 Apple ID Test.zip
-*/Breakpoints_v2.xcbkptlist
+Breakpoints_v2.xcbkptlist
 .DS_Store
-/Internet downloads
-/.build
+Internet downloads
+.build
 build
-/Perfect-SQLite
-/Zones/Frameworks
-/Zones/liblibPG.dylib
-/Zones/build
-/Zones/docs
-*/IDEFindNavigatorScopes.plist
+Perfect-SQLite
+Frameworks/
+liblibPG.dylib
+build
+docs
+IDEFindNavigatorScopes.plist
 /.swiftpm
 ZParagraph.swift
 /development

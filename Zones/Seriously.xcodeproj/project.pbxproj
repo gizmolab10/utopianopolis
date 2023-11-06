@@ -338,8 +338,6 @@
 		A796741526597EAF00F06769 /* ZControlsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A796741326597EAF00F06769 /* ZControlsController.swift */; };
 		A796741626597EAF00F06769 /* ZControlsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A796741326597EAF00F06769 /* ZControlsController.swift */; };
 		A79F023A262CC5D000E87742 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = A79F0238262CC5D000E87742 /* test.swift */; };
-		A7A00D302AF851CB001FCBAD /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A7A00D2D2AF851BD001FCBAD /* SnapKit.framework */; };
-		A7A00D312AF851CB001FCBAD /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A7A00D2D2AF851BD001FCBAD /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A7A0118329CFEC830048ADCD /* ZoneLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = A706444A247222A500F90B86 /* ZoneLink.swift */; };
 		A7A0118429CFEC830048ADCD /* ZoneLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = A706444A247222A500F90B86 /* ZoneLink.swift */; };
 		A7A0118529CFEC830048ADCD /* ZoneLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = A706444A247222A500F90B86 /* ZoneLink.swift */; };
@@ -387,6 +385,7 @@
 		A7BCB38B29C2606000A103FC /* ZRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BCB38A29C2606000A103FC /* ZRelationship.swift */; };
 		A7BCB38C29C2606000A103FC /* ZRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BCB38A29C2606000A103FC /* ZRelationship.swift */; };
 		A7BCB38D29C2606000A103FC /* ZRelationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BCB38A29C2606000A103FC /* ZRelationship.swift */; };
+		A7BCC05C2AF8613F0032B897 /* SnapKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A7BCC0592AF860FB0032B897 /* SnapKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A7C344E025FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */; };
 		A7C344E125FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */; };
 		A7C344E225FD4AA900ACB6A3 /* ZHoverableButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */; };
@@ -472,30 +471,16 @@
 			remoteGlobalIDString = 0CA04B131D2ECF1A001892E5;
 			remoteInfo = Seriously;
 		};
-		A7A00D232AF851B6001FCBAD /* PBXContainerItemProxy */ = {
+		A7BCC0582AF860FB0032B897 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A7A00D1E2AF851B6001FCBAD /* SnapKit.xcodeproj */;
+			containerPortal = A7BCC0532AF860FB0032B897 /* SnapKit.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = EEBCC9D819CC627D0083B827;
 			remoteInfo = SnapKit;
 		};
-		A7A00D252AF851B6001FCBAD /* PBXContainerItemProxy */ = {
+		A7BCC05A2AF860FB0032B897 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A7A00D1E2AF851B6001FCBAD /* SnapKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EEBCC9E219CC627E0083B827;
-			remoteInfo = "SnapKit Tests";
-		};
-		A7A00D2C2AF851BD001FCBAD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A7A00D272AF851BD001FCBAD /* SnapKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = EEBCC9D819CC627D0083B827;
-			remoteInfo = SnapKit;
-		};
-		A7A00D2E2AF851BD001FCBAD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A7A00D272AF851BD001FCBAD /* SnapKit.xcodeproj */;
+			containerPortal = A7BCC0532AF860FB0032B897 /* SnapKit.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = EEBCC9E219CC627E0083B827;
 			remoteInfo = "SnapKit Tests";
@@ -519,7 +504,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A7A00D312AF851CB001FCBAD /* SnapKit.framework in Embed Frameworks */,
+				A7BCC05C2AF8613F0032B897 /* SnapKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -689,8 +674,6 @@
 		A79F022E262CC5A300E87742 /* test.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = test.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A79F0238262CC5D000E87742 /* test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 		A79F0239262CC5D000E87742 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A7A00D1E2AF851B6001FCBAD /* SnapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SnapKit.xcodeproj; path = "../Carthage snapkit 1.0/SnapKit/SnapKit.xcodeproj"; sourceTree = "<group>"; };
-		A7A00D272AF851BD001FCBAD /* SnapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SnapKit.xcodeproj; path = "../Carthage snapkit 1.0/SnapKit/SnapKit.xcodeproj"; sourceTree = "<group>"; };
 		A7A4B52524E08E710092D6E0 /* ZStartup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZStartup.swift; sourceTree = "<group>"; };
 		A7AFAF8F29DB6F970039A537 /* ZState+Persistent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZState+Persistent.swift"; sourceTree = "<group>"; };
 		A7B48A7923E0E80C00654DBD /* ZEssayView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZEssayView.swift; sourceTree = "<group>"; };
@@ -706,6 +689,7 @@
 		A7B78D3C244B768400DB2C14 /* ZTraitAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZTraitAssets.swift; sourceTree = "<group>"; };
 		A7B78D41244C04F900DB2C14 /* ZBreadcrumbButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBreadcrumbButton.swift; sourceTree = "<group>"; };
 		A7BCB38A29C2606000A103FC /* ZRelationship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZRelationship.swift; sourceTree = "<group>"; };
+		A7BCC0532AF860FB0032B897 /* SnapKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SnapKit.xcodeproj; path = "../Carthage snapkit 1.0/SnapKit/SnapKit.xcodeproj"; sourceTree = "<group>"; };
 		A7C344DF25FD4AA900ACB6A3 /* ZHoverableButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZHoverableButton.swift; sourceTree = "<group>"; };
 		A7C7AF5823B6D0A000AAD593 /* ZEssay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZEssay.swift; sourceTree = "<group>"; };
 		A7C942FD2A1D42280000FB7E /* ZEssayView+GrabDots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZEssayView+GrabDots.swift"; sourceTree = "<group>"; };
@@ -748,7 +732,6 @@
 				A7EC319A29B7C4F600CE15D0 /* CloudKit.framework in Frameworks */,
 				A7CC53AD267C2A7F00370BC0 /* CryptoKit.framework in Frameworks */,
 				A74ECDBD2963BD82005191A9 /* StoreKit.framework in Frameworks */,
-				A7A00D302AF851CB001FCBAD /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -780,7 +763,7 @@
 		0C09A7D81FE86FCC00F3D736 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A7A00D272AF851BD001FCBAD /* SnapKit.xcodeproj */,
+				A7BCC0532AF860FB0032B897 /* SnapKit.xcodeproj */,
 				A74ECDBC2963BD82005191A9 /* StoreKit.framework */,
 				A7CC53AC267C2A7F00370BC0 /* CryptoKit.framework */,
 				A7F7C42D226D343400D52637 /* CloudKit.framework */,
@@ -1028,7 +1011,6 @@
 				0C39B3921F1988380091F4D1 /* interfaces */,
 				0CA04B151D2ECF1A001892E5 /* products */,
 				A76D19392703FEBB00E04044 /* simple */,
-				A7A00D1E2AF851B6001FCBAD /* SnapKit.xcodeproj */,
 				A79F0237262CC5D000E87742 /* test */,
 			);
 			sourceTree = "<group>";
@@ -1177,20 +1159,11 @@
 			path = test;
 			sourceTree = "<group>";
 		};
-		A7A00D1F2AF851B6001FCBAD /* Products */ = {
+		A7BCC0542AF860FB0032B897 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A7A00D242AF851B6001FCBAD /* SnapKit.framework */,
-				A7A00D262AF851B6001FCBAD /* SnapKit Tests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A7A00D282AF851BD001FCBAD /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A7A00D2D2AF851BD001FCBAD /* SnapKit.framework */,
-				A7A00D2F2AF851BD001FCBAD /* SnapKit Tests.xctest */,
+				A7BCC0592AF860FB0032B897 /* SnapKit.framework */,
+				A7BCC05B2AF860FB0032B897 /* SnapKit Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1501,12 +1474,8 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = A7A00D282AF851BD001FCBAD /* Products */;
-					ProjectRef = A7A00D272AF851BD001FCBAD /* SnapKit.xcodeproj */;
-				},
-				{
-					ProductGroup = A7A00D1F2AF851B6001FCBAD /* Products */;
-					ProjectRef = A7A00D1E2AF851B6001FCBAD /* SnapKit.xcodeproj */;
+					ProductGroup = A7BCC0542AF860FB0032B897 /* Products */;
+					ProjectRef = A7BCC0532AF860FB0032B897 /* SnapKit.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1521,32 +1490,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		A7A00D242AF851B6001FCBAD /* SnapKit.framework */ = {
+		A7BCC0592AF860FB0032B897 /* SnapKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = SnapKit.framework;
-			remoteRef = A7A00D232AF851B6001FCBAD /* PBXContainerItemProxy */;
+			remoteRef = A7BCC0582AF860FB0032B897 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A7A00D262AF851B6001FCBAD /* SnapKit Tests.xctest */ = {
+		A7BCC05B2AF860FB0032B897 /* SnapKit Tests.xctest */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.cfbundle;
 			path = "SnapKit Tests.xctest";
-			remoteRef = A7A00D252AF851B6001FCBAD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A7A00D2D2AF851BD001FCBAD /* SnapKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SnapKit.framework;
-			remoteRef = A7A00D2C2AF851BD001FCBAD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A7A00D2F2AF851BD001FCBAD /* SnapKit Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "SnapKit Tests.xctest";
-			remoteRef = A7A00D2E2AF851BD001FCBAD /* PBXContainerItemProxy */;
+			remoteRef = A7BCC05A2AF860FB0032B897 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

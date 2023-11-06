@@ -957,9 +957,11 @@ class ZEssayView: ZTextView, ZTextViewDelegate, ZSearcher {
 	
 	func surroundSelectedText(with surround: String) {
 		let range = selectedRange
-		let prior = textStorage?.string.substring(with: range) ?? kEmpty
-		let  text = surround + prior + surround
-		insertText(text, replacementRange: range)
+		if  range.length != 0 {
+			let prior = textStorage?.string.substring(with: range) ?? kEmpty
+			let  text = surround + prior + surround
+			insertText(text, replacementRange: range)
+		}
 	}
 
 	private func alterCase(up: Bool) {

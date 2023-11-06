@@ -35,7 +35,7 @@ class ZBreadcrumbs: NSObject {
 		}
 
 		switch gWorkMode {
-			case .wMapMode:      return gHere
+			case .wMapMode:      return gSelecting.firstGrab()
 			case .wEssayMode:    return gEssayView?.firstGrabbedNote?.zone ?? gCurrentEssayZone
 			case .wEditIdeaMode: return gCurrentlyEditingZone
 			default:             return nil
