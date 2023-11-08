@@ -154,7 +154,7 @@
                                         </constraints>
                                     </customView>
                                     <containerView translatesAutoresizingMaskIntoConstraints="NO" id="eYP-Bj-W4Q" userLabel="Essay Graphicals">
-                                        <rect key="frame" x="0.0" y="0.0" width="576" height="460"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="576" height="577"/>
                                         <connections>
                                             <segue destination="hfc-IY-bB0" kind="embed" id="4Lu-IR-AJz"/>
                                         </connections>
@@ -172,7 +172,7 @@
                                     <constraint firstItem="Irq-gp-pkb" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" id="Ost-8C-doH"/>
                                     <constraint firstItem="Irq-gp-pkb" firstAttribute="top" secondItem="xnX-b2-ZbK" secondAttribute="bottom" id="RI1-gj-fjl"/>
                                     <constraint firstAttribute="bottom" secondItem="eYP-Bj-W4Q" secondAttribute="bottom" id="fVQ-zH-7Ku"/>
-                                    <constraint firstItem="eYP-Bj-W4Q" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" constant="150" id="vnh-wX-ftW"/>
+                                    <constraint firstItem="eYP-Bj-W4Q" firstAttribute="top" secondItem="Irq-gp-pkb" secondAttribute="bottom" constant="33" id="vnh-wX-ftW"/>
                                     <constraint firstItem="PcV-Nl-m8i" firstAttribute="leading" secondItem="hxs-Fa-Xk4" secondAttribute="leading" constant="576" id="z6C-2h-9Bc"/>
                                 </constraints>
                             </customView>
@@ -402,7 +402,7 @@
                                     <font key="font" metaFont="label" size="11"/>
                                     <string key="title">A note can be of any length. All font, color and tabbing functionalities are available. One or more images can be inserted anywhere, and later moved, resized or deleted.
 
-The essay editor has a typical toolbar with some special added buttons:</string>
+The essay editor has a typical toolbar plus some Seriously buttons:</string>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>

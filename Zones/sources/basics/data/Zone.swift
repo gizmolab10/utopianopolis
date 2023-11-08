@@ -439,11 +439,12 @@ class Zone : ZRecord, ZIdentifiable, ZToolable {
 	}
 
 	var ancestralPath: ZoneArray {
-		if isBookmark {
-			return bookmarkTarget!.ancestralPath
+		let target = bookmarkTarget
+		if  target != nil {
+			return target!.ancestralPath
 		}
 
-		var  results = ZoneArray()
+		var results = ZoneArray()
 
 		traverseAllAncestors { ancestor in
 			results = [ancestor] + results

@@ -20,13 +20,6 @@ class ZHelpEssayData: ZHelpData {
 
 	let essayColumnOne: StringsArray = essayPrefixArray + [
 		"!GRAPHICS",																				"",	"",
-		"",																							"",	"",
-		"_drag dot",					"filled dot indicates note contains cursor or is grabbed",		"",
-		".b",							"click to grab or ungrab the note",								"",
-		"",																							"",	"",
-		"_reveal dot",					"two tiny dots inside indicates a note or essay",				"",
-		".f",							"in maps: COMMAND-click it to edit the note or essay",			"",
-		"",																							"",	""
 	]
 
 	let essayColumnTwo: StringsArray = essayPrefixArray + [
@@ -67,7 +60,7 @@ class ZHelpEssayData: ZHelpData {
 		" LEFT ARROW",					"if top is grabbed: save changes & exit the editor",			"",
 		"i         ",					"else: same as N, below",										"",
 		" N",							"save changes & swap between essay & first grabbed note",		"",
-		"",					 																		"",	""
+		kEmpty,					 																		"",	""
 	]
 
 	var explanationOfEssayControls: String {

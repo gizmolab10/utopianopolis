@@ -24,7 +24,7 @@ class ZHelpData: NSObject {
 	var rowHeight         :  CGFloat       { return 16.0 }
 	var dotOffset         :  CGFloat       { return  2.1 }
 	var noTabPrefix       :  String        { return "   " }
-	var tabOffsets        : IntArray          { return [0, 20, 85] }
+	var tabOffsets        : IntArray       { return [0, 20, 85] }
 	var columnWidth       :  Int           { return 580 }
 	var indexOfLastColumn :  Int           { return 1 }
 	var stringsPerColumn  :  Int           { return 3 }
@@ -162,7 +162,7 @@ class ZHelpData: NSObject {
 
 		func extract(at location: Int) {
 			let character = string.substring(with: NSMakeRange(location, 1))
-			if  let  type = ZHelpType(rawValue: character.lowercased()) {
+			if  let  type = ZHelpType(rawValue: character) {
 				types.append(type)
 			}
 		}
@@ -275,7 +275,7 @@ class ZHelpData: NSObject {
 		appendTab()
 
 		let    length = (first.length + second.length)
-		let   isShort = (first == "ARROW KEY")  // length is 8, but still too short
+		let   isShort = ["ARROW KEY", "SHIFT + KEY"].contains(first)  // lengths are 8 and 11, but still too short
 		let threshold = (helpMode == .essayMode) || isShort ? 12 : 6
 
 		if  length < threshold {                  // short string: needs an extra tab

@@ -99,7 +99,7 @@ class ZHelpMapData : ZHelpData {
 	]
 
 	let mapColumnThree: StringsArray = [
-		"0!WHILE NAVIGATING (SINGLE IDEA SELECTED, NOT BEING EDITED):",	"", "",
+		"0!WHILE BROWSING (SINGLE IDEA SELECTED, NOT BEING EDITED):",	"", "",
 		"2",			 												"", "",
 		"2mark:", 		gSpacedMarkingCharacters,							"more+a+extras-2a9b1a7db21f",
 		"0",			 												"", "",
@@ -137,10 +137,9 @@ class ZHelpMapData : ZHelpData {
 		"2_COMMAND + OPTION + CONTROL + KEY", 							"", "",
 		"2N", 			"convert list into a note",							"",
 		"2S", 			"write the focus map to a file",					"",
-		"2",			 												"", "",
 		"1",			 												"", "",
-		"1_SHIFT + MOUSE CLICK",										"", "",
-		"1 ", 			"un/extend selection", 								"select+b+selecting-ideas-cc2939720e53",
+		"1_SHIFT + MOUSE CLICK (on drag dot)",							"", "",
+		"1  ", 			"un/extend selection", 								"select+b+selecting-ideas-cc2939720e53",
 	]
 
 	let mapColumnFour: StringsArray = [
